@@ -10,7 +10,6 @@ import uuid
 from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, List, Tuple, Union
-
 from typing_extensions import Self
 
 from azure.core import PipelineClient
@@ -24,7 +23,9 @@ from .operations import AgentsOperations, ConnectionsOperations, EvaluationsOper
 from .operations._patch import InferenceOperations
 
 
-class AIProjectClient(ClientGenerated):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class AIProjectClient(
+    ClientGenerated
+):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     def __init__(  # pylint: disable=super-init-not-called,too-many-statements
         self,
         endpoint: str,
@@ -67,7 +68,7 @@ class AIProjectClient(ClientGenerated):  # pylint: disable=client-accepts-api-ve
             project_name=project_name,
             credential=credential,
             api_version="2020-02-02",
-            credential_scopes=["https://management.azure.com"],
+            credential_scopes=["https://management.azure.com/.default"],
             **kwargs0,
         )
 
@@ -105,7 +106,7 @@ class AIProjectClient(ClientGenerated):  # pylint: disable=client-accepts-api-ve
             project_name=project_name,
             credential=credential,
             api_version="2024-07-01-preview",
-            credential_scopes=["https://management.azure.com"],
+            credential_scopes=["https://management.azure.com/.default"],
             **kwargs1,
         )
         _policies1 = kwargs1.pop("policies", None)
@@ -136,7 +137,7 @@ class AIProjectClient(ClientGenerated):  # pylint: disable=client-accepts-api-ve
             project_name=project_name,
             credential=credential,
             api_version="2024-07-01-preview",  # TODO: Update me
-            credential_scopes=["https://ml.azure.com"],
+            credential_scopes=["https://ml.azure.com/.default"],
             **kwargs2,
         )
         _policies2 = kwargs2.pop("policies", None)
@@ -168,7 +169,7 @@ class AIProjectClient(ClientGenerated):  # pylint: disable=client-accepts-api-ve
             project_name=project_name,
             credential=credential,
             api_version="2024-07-01-preview",  # TODO: Update me
-            credential_scopes=["https://ml.azure.com"],  # TODO: Update once service changes are ready
+            credential_scopes=["https://ml.azure.com/.default"],  # TODO: Update once service changes are ready
             **kwargs3,
         )
         _policies3 = kwargs3.pop("policies", None)
@@ -222,7 +223,7 @@ class AIProjectClient(ClientGenerated):  # pylint: disable=client-accepts-api-ve
         self._client3.__exit__(*exc_details)
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, credential: "TokenCredential", **kwargs) -> "AIProjectClient":
+    def from_connection_string(cls, conn_str: str, credential: "TokenCredential", **kwargs) -> Self:
         """
         Create an AIProjectClient from a connection string.
 

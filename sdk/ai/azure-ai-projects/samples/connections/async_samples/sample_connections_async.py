@@ -62,7 +62,7 @@ async def sample_connections_async() -> None:
         # Get the properties of the default connection of a particular "type", with credentials
         connection = await project_client.connections.get_default(
             connection_type=ConnectionType.AZURE_AI_SERVICES,
-            with_credentials=True,  # Optional. Defaults to "False"
+            include_credentials=True,  # Optional. Defaults to "False"
         )
         print("====> Get default Azure AI Services connection:")
         print(connection)
@@ -70,7 +70,7 @@ async def sample_connections_async() -> None:
         # Get the properties of a connection by connection name:
         connection = await project_client.connections.get(
             connection_name=connection_name,
-            with_credentials=True,  # Optional. Defaults to "False"
+            include_credentials=True,  # Optional. Defaults to "False"
         )
         print("====> Get connection by name:")
         print(connection)
@@ -86,20 +86,20 @@ async def sample_connections_async() -> None:
             aoai_client = AsyncAzureOpenAI(
                 api_key=connection.key,
                 azure_endpoint=connection.endpoint_url,
-                api_version="2024-06-01",  # See "Data plane - inference" row in table https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
+                api_version="2024-06-01",  # See "Data plane - inference" row in table https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs
             )
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             print("====> Creating AzureOpenAI client using Entra ID authentication")
             from azure.identity.aio import get_bearer_token_provider
 
             aoai_client = AsyncAzureOpenAI(
-                # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
+                # See https://learn.microsoft.com/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
                 azure_ad_token_provider=get_bearer_token_provider(
                     cast(AsyncTokenCredential, connection.token_credential),
                     "https://cognitiveservices.azure.com/.default",
                 ),
                 azure_endpoint=connection.endpoint_url,
-                api_version="2024-06-01",  # See "Data plane - inference" row in table https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
+                api_version="2024-06-01",  # See "Data plane - inference" row in table https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs
             )
         else:
             raise ValueError(f"Authentication type {connection.authentication_type} not supported.")

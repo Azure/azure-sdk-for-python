@@ -13,14 +13,14 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects aiohttp openai_async
+    pip install azure-ai-projects aiohttp openai
 
     Set these environment variables with your own values:
     * PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
     * MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Studio Project.
 
     Update the Azure OpenAI api-version as needed (see `api_version=` below). Values can be found here:
-    https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
+    https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs
 """
 import os
 import asyncio

@@ -240,7 +240,7 @@ class SASTokenCredential(TokenCredential):
             project_name=self._project_name,
         )
 
-        connection = project_client.connections.get(connection_name=self._connection_name, with_credentials=True)
+        connection = project_client.connections.get(connection_name=self._connection_name, include_credentials=True)
 
         self._sas_token = ""
         if connection is not None and connection.token_credential is not None:

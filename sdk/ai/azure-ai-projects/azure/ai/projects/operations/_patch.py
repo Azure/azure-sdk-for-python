@@ -20,7 +20,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from .. import models as _models
 from .._vendor import FileType
-from ..models._enums import AuthenticationType, ConnectionType, FilePurpose
+from ..models._enums import AuthenticationType, ConnectionType, FilePurpose, RunStatus
 from ..models._models import (
     GetAppInsightsResponse,
     GetConnectionResponse,
@@ -81,11 +81,11 @@ class InferenceOperations:
 
         if use_serverless_connection:
             connection = self._outer_instance.connections.get_default(
-                connection_type=ConnectionType.SERVERLESS, with_credentials=True, **kwargs
+                connection_type=ConnectionType.SERVERLESS, include_credentials=True, **kwargs
             )
         else:
             connection = self._outer_instance.connections.get_default(
-                connection_type=ConnectionType.AZURE_AI_SERVICES, with_credentials=True, **kwargs
+                connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
             )
 
         try:
@@ -155,11 +155,11 @@ class InferenceOperations:
 
         if use_serverless_connection:
             connection = self._outer_instance.connections.get_default(
-                connection_type=ConnectionType.SERVERLESS, with_credentials=True, **kwargs
+                connection_type=ConnectionType.SERVERLESS, include_credentials=True, **kwargs
             )
         else:
             connection = self._outer_instance.connections.get_default(
-                connection_type=ConnectionType.AZURE_AI_SERVICES, with_credentials=True, **kwargs
+                connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
             )
 
         try:
@@ -211,7 +211,7 @@ class InferenceOperations:
 
         :keyword api_version: The Azure OpenAI api-version to use when creating the client. Optional.
          See "Data plane - Inference" row in the table at
-         https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs. If this keyword
+         https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs. If this keyword
          is not specified, you must set the environment variable `OPENAI_API_VERSION` instead.
         :paramtype api_version: str
         :return: An authenticated AzureOpenAI client
@@ -223,7 +223,7 @@ class InferenceOperations:
 
         kwargs.setdefault("merge_span", True)
         connection = self._outer_instance.connections.get_default(
-            connection_type=ConnectionType.AZURE_OPEN_AI, with_credentials=True, **kwargs
+            connection_type=ConnectionType.AZURE_OPEN_AI, include_credentials=True, **kwargs
         )
 
         try:
@@ -253,7 +253,7 @@ class InferenceOperations:
                 auth = "Creating AzureOpenAI using SAS authentication"
             logger.debug("[InferenceOperations.get_azure_openai_client] %s", auth)
             client = AzureOpenAI(
-                # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider # pylint: disable=line-too-long
+                # See https://learn.microsoft.com/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider # pylint: disable=line-too-long
                 azure_ad_token_provider=get_bearer_token_provider(
                     connection.token_credential, "https://cognitiveservices.azure.com/.default"
                 ),
@@ -270,7 +270,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
     @distributed_trace
     def get_default(
-        self, *, connection_type: ConnectionType, with_credentials: bool = False, **kwargs: Any
+        self, *, connection_type: ConnectionType, include_credentials: bool = False, **kwargs: Any
     ) -> ConnectionProperties:
         """Get the properties of the default connection of a certain connection type, with or without
         populating authentication credentials. Raises ~azure.core.exceptions.ResourceNotFoundError
@@ -278,9 +278,9 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
         :keyword connection_type: The connection type. Required.
         :type connection_type: ~azure.ai.projects.models._models.ConnectionType
-        :keyword with_credentials: Whether to populate the connection properties with authentication credentials.
+        :keyword include_credentials: Whether to populate the connection properties with authentication credentials.
             Optional.
-        :type with_credentials: bool
+        :type include_credentials: bool
         :return: The connection properties, or `None` if there are no connections of the specified type.
         :rtype: ~azure.ai.projects.models.ConnectionProperties
         :raises ~azure.core.exceptions.ResourceNotFoundError:
@@ -293,24 +293,26 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         # and return the first one
         connection_properties_list = self.list(connection_type=connection_type, **kwargs)
         if len(connection_properties_list) > 0:
-            if with_credentials:
+            if include_credentials:
                 return self.get(
-                    connection_name=connection_properties_list[0].name, with_credentials=with_credentials, **kwargs
+                    connection_name=connection_properties_list[0].name,
+                    include_credentials=include_credentials,
+                    **kwargs,
                 )
             return connection_properties_list[0]
         raise ResourceNotFoundError(f"No connection of type {connection_type} found")
 
     @distributed_trace
-    def get(self, *, connection_name: str, with_credentials: bool = False, **kwargs: Any) -> ConnectionProperties:
+    def get(self, *, connection_name: str, include_credentials: bool = False, **kwargs: Any) -> ConnectionProperties:
         """Get the properties of a single connection, given its connection name, with or without
         populating authentication credentials. Raises ~azure.core.exceptions.ResourceNotFoundError
         exception if a connection with the given name was not found.
 
         :keyword connection_name: Connection Name. Required.
         :type connection_name: str
-        :keyword with_credentials: Whether to populate the connection properties with authentication credentials.
+        :keyword include_credentials: Whether to populate the connection properties with authentication credentials.
             Optional.
-        :type with_credentials: bool
+        :type include_credentials: bool
         :return: The connection properties, or `None` if a connection with this name does not exist.
         :rtype: ~azure.ai.projects.models.ConnectionProperties
         :raises ~azure.core.exceptions.ResourceNotFoundError:
@@ -319,7 +321,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         kwargs.setdefault("merge_span", True)
         if not connection_name:
             raise ValueError("Connection name cannot be empty")
-        if with_credentials:
+        if include_credentials:
             connection: GetConnectionResponse = self._get_connection_with_secrets(
                 connection_name=connection_name, ignored="ignore", **kwargs
             )
@@ -472,7 +474,9 @@ def _configure_logging(log_exporter: Any) -> None:
         from opentelemetry import _logs, _events
         from opentelemetry.sdk._logs import LoggerProvider  # pylint: disable=import-error,no-name-in-module
         from opentelemetry.sdk._events import EventLoggerProvider  # pylint: disable=import-error,no-name-in-module
-        from opentelemetry.sdk._logs.export import SimpleLogRecordProcessor  # pylint: disable=import-error,no-name-in-module
+        from opentelemetry.sdk._logs.export import (
+            SimpleLogRecordProcessor,
+        )  # pylint: disable=import-error,no-name-in-module
 
         if not isinstance(_logs.get_logger_provider(), LoggerProvider):
             logger_provider = LoggerProvider()
@@ -575,7 +579,9 @@ class TelemetryOperations(TelemetryOperationsGenerated):
         """
         if not self._connection_string:
             # Get the AI Studio Project properties, including Application Insights resource URL if exists
-            get_workspace_response: GetWorkspaceResponse = self._outer_instance.connections._get_workspace()  # pylint: disable=protected-access
+            get_workspace_response: GetWorkspaceResponse = (
+                self._outer_instance.connections._get_workspace()  # pylint: disable=protected-access
+            )
 
             if not get_workspace_response.properties.application_insights:
                 raise ResourceNotFoundError("Application Insights resource was not enabled for this Project.")
@@ -620,9 +626,9 @@ class TelemetryOperations(TelemetryOperationsGenerated):
 
 class AgentsOperations(AgentsOperationsGenerated):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self._toolset: Optional[_models.ToolSet] = None
+        self._toolset: Dict[str, _models.ToolSet] = {}
 
     @overload
     def create_agent(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
@@ -638,6 +644,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     def create_agent(  # pylint: disable=arguments-differ
         self,
@@ -701,6 +708,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     def create_agent(  # pylint: disable=arguments-differ
         self,
@@ -835,11 +843,10 @@ class AgentsOperations(AgentsOperationsGenerated):
             return super().create_agent(body=body, **kwargs)
 
         if toolset is not None:
-            self._toolset = toolset
             tools = toolset.definitions
             tool_resources = toolset.resources
 
-        return super().create_agent(
+        new_agent = super().create_agent(
             model=model,
             name=name,
             description=description,
@@ -852,6 +859,10 @@ class AgentsOperations(AgentsOperationsGenerated):
             metadata=metadata,
             **kwargs,
         )
+
+        if toolset is not None:
+            self._toolset[new_agent.id] = toolset
+        return new_agent
 
     @overload
     def update_agent(
@@ -871,6 +882,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     def update_agent(  # pylint: disable=arguments-differ
         self,
@@ -939,6 +951,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     def update_agent(  # pylint: disable=arguments-differ
         self,
@@ -1098,7 +1111,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             return super().update_agent(body=body, **kwargs)
 
         if toolset is not None:
-            self._toolset = toolset
+            self._toolset[assistant_id] = toolset
             tools = toolset.definitions
             tool_resources = toolset.resources
 
@@ -1138,15 +1151,6 @@ class AgentsOperations(AgentsOperationsGenerated):
                 "Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided"
             )
 
-    def _get_toolset(self) -> Optional[_models.ToolSet]:
-        """
-        Get the toolset for the agent.
-
-        :return: The toolset for the agent. If not set, returns None.
-        :rtype: ~azure.ai.projects.models.ToolSet
-        """
-        return self._toolset
-
     @overload
     def create_run(
         self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
@@ -1165,6 +1169,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     def create_run(  # pylint: disable=arguments-differ
         self,
@@ -1419,7 +1424,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
         additional_messages: Optional[List[_models.ThreadMessage]] = None,
-        tools: Optional[List[_models.ToolDefinition]] = None,
+        toolset: Optional[_models.ToolSet] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_prompt_tokens: Optional[int] = None,
@@ -1450,9 +1455,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
         :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessage]
-        :keyword tools: The overridden list of enabled tools that the agent should use to run the
-         thread. Default value is None.
-        :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
+        :keyword toolset: The Collection of tools and resources (alternative to `tools` and
+         `tool_resources`). Default value is None.
+        :paramtype toolset: ~azure.ai.projects.models.ToolSet
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -1514,7 +1519,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             instructions=instructions,
             additional_instructions=additional_instructions,
             additional_messages=additional_messages,
-            tools=tools,
+            tools=toolset.definitions if toolset else None,
             temperature=temperature,
             top_p=top_p,
             max_prompt_tokens=max_prompt_tokens,
@@ -1527,26 +1532,34 @@ class AgentsOperations(AgentsOperationsGenerated):
         )
 
         # Monitor and process the run status
-        while run.status in ["queued", "in_progress", "requires_action"]:
+        while run.status in [
+            RunStatus.QUEUED,
+            RunStatus.IN_PROGRESS,
+            RunStatus.REQUIRES_ACTION,
+        ]:
             time.sleep(sleep_interval)
             run = self.get_run(thread_id=thread_id, run_id=run.id)
 
-            if run.status == "requires_action" and isinstance(run.required_action, _models.SubmitToolOutputsAction):
+            if run.status == RunStatus.REQUIRES_ACTION and isinstance(
+                run.required_action, _models.SubmitToolOutputsAction
+            ):
                 tool_calls = run.required_action.submit_tool_outputs.tool_calls
                 if not tool_calls:
                     logging.warning("No tool calls provided - cancelling run")
                     self.cancel_run(thread_id=thread_id, run_id=run.id)
                     break
+                # We need tool set only if we are executing local function. In case if
+                # the tool is azure_function we just need to wait when it will be finished.
+                if any(tool_call.type == "function" for tool_call in tool_calls):
+                    toolset = toolset or self._toolset.get(run.assistant_id)
+                    if toolset is not None:
+                        tool_outputs = toolset.execute_tool_calls(tool_calls)
+                    else:
+                        raise ValueError("Toolset is not available in the client.")
 
-                toolset = self._get_toolset()
-                if toolset:
-                    tool_outputs = toolset.execute_tool_calls(tool_calls)
-                else:
-                    raise ValueError("Toolset is not available in the client.")
-
-                logging.info("Tool outputs: %s", tool_outputs)
-                if tool_outputs:
-                    self.submit_tool_outputs_to_run(thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs)
+                    logging.info("Tool outputs: %s", tool_outputs)
+                    if tool_outputs:
+                        self.submit_tool_outputs_to_run(thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs)
 
             logging.info("Current run status: %s", run.status)
 
@@ -1852,6 +1865,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     def submit_tool_outputs_to_run(  # pylint: disable=arguments-differ
         self,
@@ -1914,7 +1928,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         tool_outputs: List[_models.ToolOutput] = _Unset,
-        event_handler: Optional[_models.AgentEventHandler] = None,  # pylint: disable=unused-argument
         **kwargs: Any,
     ) -> _models.ThreadRun:
         """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
@@ -1929,7 +1942,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type body: JSON or IO[bytes]
         :keyword tool_outputs: Required.
         :paramtype tool_outputs: list[~azure.ai.projects.models.ToolOutput]
-        :keyword event_handler: The event handler to use for processing events during the run.
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1941,7 +1953,12 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         elif tool_outputs is not _Unset:
             response = super().submit_tool_outputs_to_run(
-                thread_id, run_id, tool_outputs=tool_outputs, stream_parameter=False, stream=False, **kwargs
+                thread_id,
+                run_id,
+                tool_outputs=tool_outputs,
+                stream_parameter=False,
+                stream=False,
+                **kwargs,
             )
 
         elif isinstance(body, io.IOBase):
@@ -2064,7 +2081,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         elif tool_outputs is not _Unset:
             response = super().submit_tool_outputs_to_run(
-                thread_id, run_id, tool_outputs=tool_outputs, stream_parameter=True, stream=True, **kwargs
+                thread_id, run_id, tool_outputs=tool_outputs, stream_parameter=False, stream=False, **kwargs
             )
 
         elif isinstance(body, io.IOBase):
@@ -2088,19 +2105,25 @@ class AgentsOperations(AgentsOperationsGenerated):
                 logger.debug("No tool calls to execute.")
                 return
 
-            toolset = self._get_toolset()
-            if toolset:
-                tool_outputs = toolset.execute_tool_calls(tool_calls)
-            else:
-                logger.warning("Toolset is not available in the client.")
-                return
+            # We need tool set only if we are executing local function. In case if
+            # the tool is azure_function we just need to wait when it will be finished.
+            if any(tool_call.type == "function" for tool_call in tool_calls):
+                toolset = self._toolset.get(run.assistant_id)
+                if toolset:
+                    tool_outputs = toolset.execute_tool_calls(tool_calls)
+                else:
+                    logger.warning("Toolset is not available in the client.")
+                    return
 
-            logger.info("Tool outputs: %s", tool_outputs)
-            if tool_outputs:
-                with self.submit_tool_outputs_to_stream(
-                    thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs, event_handler=event_handler
-                ) as stream:
-                    stream.until_done()
+                logger.info("Tool outputs: %s", tool_outputs)
+                if tool_outputs:
+                    with self.submit_tool_outputs_to_stream(
+                        thread_id=run.thread_id,
+                        run_id=run.id,
+                        tool_outputs=tool_outputs,
+                        event_handler=event_handler,
+                    ) as stream:
+                        stream.until_done()
 
     @overload
     def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:
@@ -2113,6 +2136,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     def upload_file(  # pylint: disable=arguments-differ
         self, *, file: FileType, purpose: Union[str, _models.FilePurpose], filename: Optional[str] = None, **kwargs: Any
@@ -2131,6 +2155,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-differ
     @overload
     def upload_file(  # pylint: disable=arguments-differ
         self, *, file_path: str, purpose: Union[str, _models.FilePurpose], **kwargs: Any
@@ -2860,6 +2885,20 @@ class AgentsOperations(AgentsOperationsGenerated):
             )
 
         return vector_store_file
+
+    @distributed_trace
+    def delete_agent(self, assistant_id: str, **kwargs: Any) -> _models.AgentDeletionStatus:
+        """Deletes an agent.
+
+        :param assistant_id: Identifier of the agent. Required.
+        :type assistant_id: str
+        :return: AgentDeletionStatus. The AgentDeletionStatus is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDeletionStatus
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        if assistant_id in self._toolset:
+            del self._toolset[assistant_id]
+        return super().delete_agent(assistant_id, **kwargs)
 
 
 __all__: List[str] = [

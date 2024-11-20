@@ -12,7 +12,6 @@ import uuid
 from os import PathLike
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
-
 from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
@@ -22,7 +21,12 @@ from azure.core.pipeline import policies
 from .._serialization import Deserializer, Serializer
 from ._client import AIProjectClient as ClientGenerated
 from ._configuration import AIProjectClientConfiguration
-from .operations import AgentsOperations, ConnectionsOperations, EvaluationsOperations, TelemetryOperations
+from .operations import (
+    AgentsOperations,
+    ConnectionsOperations,
+    EvaluationsOperations,
+    TelemetryOperations,
+)
 from .operations._patch import InferenceOperations
 
 if TYPE_CHECKING:
@@ -30,7 +34,9 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AIProjectClient(ClientGenerated):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class AIProjectClient(
+    ClientGenerated
+):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     def __init__(  # pylint: disable=super-init-not-called,too-many-statements
         self,
         endpoint: str,
@@ -73,7 +79,7 @@ class AIProjectClient(ClientGenerated):  # pylint: disable=client-accepts-api-ve
             project_name=project_name,
             credential=credential,
             api_version="2020-02-02",
-            credential_scopes=["https://management.azure.com"],
+            credential_scopes=["https://management.azure.com/.default"],
             **kwargs0,
         )
 
@@ -91,7 +97,7 @@ class AIProjectClient(ClientGenerated):  # pylint: disable=client-accepts-api-ve
                 self._config0.custom_hook_policy,
                 self._config0.logging_policy,
                 policies.DistributedTracingPolicy(**kwargs0),
-                policies.SensitiveHeaderCleanupPolicy(**kwargs0) if self._config0.redirect_policy else None,
+                (policies.SensitiveHeaderCleanupPolicy(**kwargs0) if self._config0.redirect_policy else None),
                 self._config0.http_logging_policy,
             ]
         self._client0: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint0, policies=_policies0, **kwargs0)
@@ -105,7 +111,7 @@ class AIProjectClient(ClientGenerated):  # pylint: disable=client-accepts-api-ve
             project_name=project_name,
             credential=credential,
             api_version="2024-07-01-preview",
-            credential_scopes=["https://management.azure.com"],
+            credential_scopes=["https://management.azure.com/.default"],
             **kwargs1,
         )
         _policies1 = kwargs1.pop("policies", None)
@@ -122,7 +128,7 @@ class AIProjectClient(ClientGenerated):  # pylint: disable=client-accepts-api-ve
                 self._config1.custom_hook_policy,
                 self._config1.logging_policy,
                 policies.DistributedTracingPolicy(**kwargs1),
-                policies.SensitiveHeaderCleanupPolicy(**kwargs1) if self._config1.redirect_policy else None,
+                (policies.SensitiveHeaderCleanupPolicy(**kwargs1) if self._config1.redirect_policy else None),
                 self._config1.http_logging_policy,
             ]
         self._client1: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint1, policies=_policies1, **kwargs1)
@@ -136,7 +142,7 @@ class AIProjectClient(ClientGenerated):  # pylint: disable=client-accepts-api-ve
             project_name=project_name,
             credential=credential,
             api_version="2024-07-01-preview",  # TODO: Update me
-            credential_scopes=["https://ml.azure.com"],
+            credential_scopes=["https://ml.azure.com/.default"],
             **kwargs2,
         )
         _policies2 = kwargs2.pop("policies", None)
@@ -153,7 +159,7 @@ class AIProjectClient(ClientGenerated):  # pylint: disable=client-accepts-api-ve
                 self._config2.custom_hook_policy,
                 self._config2.logging_policy,
                 policies.DistributedTracingPolicy(**kwargs2),
-                policies.SensitiveHeaderCleanupPolicy(**kwargs2) if self._config2.redirect_policy else None,
+                (policies.SensitiveHeaderCleanupPolicy(**kwargs2) if self._config2.redirect_policy else None),
                 self._config2.http_logging_policy,
             ]
         self._client2: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint2, policies=_policies2, **kwargs2)
@@ -168,7 +174,7 @@ class AIProjectClient(ClientGenerated):  # pylint: disable=client-accepts-api-ve
             project_name=project_name,
             credential=credential,
             api_version="2024-07-01-preview",  # TODO: Update me
-            credential_scopes=["https://ml.azure.com"],  # TODO: Update once service changes are ready
+            credential_scopes=["https://ml.azure.com/.default"],  # TODO: Update once service changes are ready
             **kwargs3,
         )
         _policies3 = kwargs3.pop("policies", None)
@@ -185,7 +191,7 @@ class AIProjectClient(ClientGenerated):  # pylint: disable=client-accepts-api-ve
                 self._config3.custom_hook_policy,
                 self._config3.logging_policy,
                 policies.DistributedTracingPolicy(**kwargs3),
-                policies.SensitiveHeaderCleanupPolicy(**kwargs3) if self._config3.redirect_policy else None,
+                (policies.SensitiveHeaderCleanupPolicy(**kwargs3) if self._config3.redirect_policy else None),
                 self._config3.http_logging_policy,
             ]
         self._client3: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint3, policies=_policies3, **kwargs3)
@@ -195,8 +201,13 @@ class AIProjectClient(ClientGenerated):  # pylint: disable=client-accepts-api-ve
         self._serialize.client_side_validation = False
 
         self.telemetry = TelemetryOperations(
-            self._client0, self._config0, self._serialize, self._deserialize, outer_instance=self
+            self._client0,
+            self._config0,
+            self._serialize,
+            self._deserialize,
+            outer_instance=self,
         )
+        self._credential = credential
         self.connections = ConnectionsOperations(self._client1, self._config1, self._serialize, self._deserialize)
         self.agents = AgentsOperations(self._client2, self._config2, self._serialize, self._deserialize)
         self.evaluations = EvaluationsOperations(self._client3, self._config3, self._serialize, self._deserialize)
@@ -207,6 +218,8 @@ class AIProjectClient(ClientGenerated):  # pylint: disable=client-accepts-api-ve
         await self._client1.close()
         await self._client2.close()
         await self._client3.close()
+        if hasattr(self._credential, "close"):
+            await self._credential.close()
 
     async def __aenter__(self) -> Self:
         await self._client0.__aenter__()
@@ -220,9 +233,11 @@ class AIProjectClient(ClientGenerated):  # pylint: disable=client-accepts-api-ve
         await self._client1.__aexit__(*exc_details)
         await self._client2.__aexit__(*exc_details)
         await self._client3.__aexit__(*exc_details)
+        if hasattr(self._credential, "close"):
+            await self._credential.close()
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, credential: "AsyncTokenCredential", **kwargs) -> "AIProjectClient":
+    def from_connection_string(cls, conn_str: str, credential: "AsyncTokenCredential", **kwargs) -> Self:
         """
         Create an asynchronous AIProjectClient from a connection string.
 
@@ -240,7 +255,14 @@ class AIProjectClient(ClientGenerated):  # pylint: disable=client-accepts-api-ve
         subscription_id = parts[1]
         resource_group_name = parts[2]
         project_name = parts[3]
-        return cls(endpoint, subscription_id, resource_group_name, project_name, credential, **kwargs)
+        return cls(
+            endpoint,
+            subscription_id,
+            resource_group_name,
+            project_name,
+            credential,
+            **kwargs,
+        )
 
     def upload_file(self, file_path: Union[Path, str, PathLike]) -> Tuple[str, str]:
         """Upload a file to the Azure AI Studio project.
@@ -318,7 +340,11 @@ class _SyncCredentialWrapper(TokenCredential):
         return pool.submit(
             asyncio.run,
             self._async_credential.get_token(
-                *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+                *scopes,
+                claims=claims,
+                tenant_id=tenant_id,
+                enable_cae=enable_cae,
+                **kwargs,
             ),
         ).result()
 
