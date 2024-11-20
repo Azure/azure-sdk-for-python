@@ -23,8 +23,8 @@ from ._generated.models import (
     SnapshotComposition,
     LabelFields,
     ConfigurationSettingFields,
+    SnapshotUpdateParameters,
 )
-from ._generated.models._models import SnapshotUpdateParameters
 from ._models import (
     ConfigurationSetting,
     ConfigurationSettingPropertiesPaged,
