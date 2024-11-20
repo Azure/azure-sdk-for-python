@@ -1,14 +1,14 @@
 # Release History
 
-## 1.22.2 (2024-11-18)
+## 1.22.4 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
 
 ### Bugs Fixed
-  - **#3620407** - Fix Datastore credentials show up as NoneCredentials
 
-## 1.22.1 (2024-11-13)
-
-### Bugs Fixed
-  - **#38493** - Fix error NoneType object is not subscriptable
+### Other Changes
 
 ## 1.22.3 (2024-11-20)
 
