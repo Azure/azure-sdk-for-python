@@ -1,6 +1,6 @@
 # Release History
 
-## 4.20.1 (Unreleased)
+## 4.21.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.21.0 (2024-11-19)
+
+### Features Added
+
+- Added new enum values to `SystemEventNames` related to Azure Resource Notifications.
 
 ## 4.20.0 (2024-06-12)
 

@@ -216,7 +216,7 @@ class AsyncTablesBaseClient:  # pylint: disable=too-many-instance-attributes
         return f"{self.scheme}://{hostname}{self._query_str}"
 
     def _configure_policies(self, **kwargs):
-        credential_policy = _configure_credential(self.credential)
+        credential_policy = _configure_credential(self.credential, self._cosmos_endpoint)
         return [
             RequestIdPolicy(**kwargs),
             StorageHeadersPolicy(**kwargs),

@@ -111,6 +111,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
             project_scope=self._azure_ai_project,
             credential=self._credential,
             annotation_task=self._get_task(),
+            evaluator_name=self.__class__.__name__,
         )
 
     def _get_task(self):

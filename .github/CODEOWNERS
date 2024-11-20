@@ -87,7 +87,7 @@
 # ServiceLabel: %App Configuration Provider
 
 # PRLabel: %App Configuration Provider
-/sdk/appconfiguration/azure-appconfiguration-provider/               @mametcal @albertofori @avanigupta @mrm9084
+/sdk/appconfiguration/azure-appconfiguration-provider/               @albertofori @avanigupta @mrm9084 @rossgrambo
 
 # ServiceLabel: %Attestation
 # PRLabel: %Attestation
