@@ -40,7 +40,7 @@ from .._constants import (
 )
 from ._async_client_manager import AsyncConfigurationClientManager
 from .._azureappconfigurationprovider import (
-    __update_correlation_context_header,
+    _update_correlation_context_header,
     _RefreshTimer,
     _build_sentinel,
     _delay_failure,
@@ -54,6 +54,7 @@ if TYPE_CHECKING:
 JSON = Mapping[str, Any]
 _T = TypeVar("_T")
 logger = logging.getLogger(__name__)
+
 
 @overload
 async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -389,30 +390,31 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                         """
         exception: Exception = RuntimeError(error_message)
         is_failover_request = False
+        client_count = self._replica_client_manager.get_client_count()
         try:
             await self._replica_client_manager.refresh_clients()
             self._replica_client_manager.find_active_clients()
-
-            headers = __update_correlation_context_header(
-                kwargs.pop("headers", {}),
-                "Watch",
-                self._replica_client_manager.get_client_count() - 1,
-                self._feature_flag_enabled,
-                self._feature_filter_usage,
-                self._uses_key_vault,
-                self._uses_load_balancing,
-                is_failover_request,
-            )
 
             while self._replica_client_manager.has_next_client():
                 client = self._replica_client_manager.get_next_client()
                 if not client:
                     return
+                headers = _update_correlation_context_header(
+                    kwargs.pop("headers", {}),
+                    "Watch",
+                    client_count - 1,
+                    self._feature_flag_enabled,
+                    self._feature_filter_usage,
+                    self._uses_key_vault,
+                    self._uses_load_balancing,
+                    is_failover_request,
+                )
+
                 try:
                     if self._refresh_on:
                         need_refresh, self._refresh_on, configuration_settings = (
                             await client.refresh_configuration_settings(
-                                self._selects, self._refresh_on, headers, **kwargs
+                                self._selects, self._refresh_on, headers=headers, **kwargs
                             )
                         )
                         configuration_settings_processed = {}
@@ -429,7 +431,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     if self._feature_flag_refresh_enabled:
                         need_ff_refresh, refresh_on_feature_flags, feature_flags, filters_used = (
                             await client.refresh_feature_flags(
-                                self._refresh_on_feature_flags, self._feature_flag_selectors, headers, **kwargs
+                                self._refresh_on_feature_flags, self._feature_flag_selectors, headers=headers, **kwargs
                             )
                         )
                         if refresh_on_feature_flags:
@@ -462,14 +464,26 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
     async def _load_all(self, **kwargs):
         self._replica_client_manager.find_active_clients()
         is_failover_request = False
+        client_count = self._replica_client_manager.get_client_count()
 
         while self._replica_client_manager.has_next_client():
             client = self._replica_client_manager.get_next_client()
+
             if not client:
                 return
+            headers = _update_correlation_context_header(
+                kwargs.pop("headers", {}),
+                "Startup",
+                client_count - 1,
+                self._feature_flag_enabled,
+                self._feature_filter_usage,
+                self._uses_key_vault,
+                self._uses_load_balancing,
+                is_failover_request,
+            )
             try:
                 configuration_settings, sentinel_keys = await client.load_configuration_settings(
-                    self._selects, self._refresh_on, **kwargs
+                    self._selects, self._refresh_on, headers=headers, **kwargs
                 )
                 configuration_settings_processed = {}
                 for config in configuration_settings:
@@ -477,16 +491,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     value = await self._process_key_value(config)
                     configuration_settings_processed[key] = value
 
-                headers = __update_correlation_context_header(
-                    kwargs.pop("headers", {}),
-                    "Startup",
-                    self._replica_client_manager.get_client_count() - 1,
-                    self._feature_flag_enabled,
-                    self._feature_filter_usage,
-                    self._uses_key_vault,
-                    self._uses_load_balancing,
-                    is_failover_request,
-                )
                 if self._feature_flag_enabled:
                     feature_flags, feature_flag_sentinel_keys, used_filters = await client.load_feature_flags(
                         self._feature_flag_selectors, self._feature_flag_refresh_enabled, headers=headers, **kwargs

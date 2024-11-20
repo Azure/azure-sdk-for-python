@@ -8,7 +8,7 @@ import random
 import hashlib
 import base64
 from dataclasses import dataclass
-from typing import Dict, List, Mapping, Any
+from typing import Dict, Mapping, Any
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
     FeatureFlagConfigurationSetting,
 )
