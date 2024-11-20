@@ -217,7 +217,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             self._max_message_size_on_link = (
                 self._amqp_transport.get_remote_max_message_size(self._handler) or MAX_MESSAGE_LENGTH_BYTES
             )
-            if self._max_message_size_on_link > MAX_BATCH_SIZE_PREMIUM:
+            if self._max_message_size_on_link >= MAX_BATCH_SIZE_PREMIUM:
                 self._max_batch_size_on_link = MAX_BATCH_SIZE_PREMIUM
             else:
                 self._max_batch_size_on_link = MAX_BATCH_SIZE_STANDARD

@@ -28,7 +28,6 @@ extends:
   parameters:
     ServiceDirectory: personalizer
     TestProxy: true
-    ValidateFormatting: true
     Artifacts:
     - name: azure-ai-personalizer
       safeName: azureaipersonalizer

@@ -12,7 +12,7 @@ parameters:
 extends:
     template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      Location: 'canadacentral'
+      Location: 'westus2'
       # All 5 service stages run in parallel, and with no parallel limits the tests may get throttled.
       MaxParallel: 2
       ServiceDirectory: storage

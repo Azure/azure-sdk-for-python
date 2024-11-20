@@ -341,17 +341,15 @@ class Workspace(Resource):
 
         if hasattr(rest_obj, "ml_flow_tracking_uri"):
             try:
-                from azureml.mlflow import get_mlflow_tracking_uri_v2
+                if v2_service_context:
+                    # v2_service_context is required (not None) in get_mlflow_tracking_uri_v2
+                    from azureml.mlflow import get_mlflow_tracking_uri_v2
 
-                mlflow_tracking_uri = get_mlflow_tracking_uri_v2(rest_obj, v2_service_context)
+                    mlflow_tracking_uri = get_mlflow_tracking_uri_v2(rest_obj, v2_service_context)
+                else:
+                    mlflow_tracking_uri = rest_obj.ml_flow_tracking_uri
             except ImportError:
                 mlflow_tracking_uri = rest_obj.ml_flow_tracking_uri
-                error_msg = (
-                    "azureml.mlflow could not be imported. "
-                    "Please ensure that latest 'azureml-mlflow' has been installed in the current python environment"
-                )
-                print(error_msg)
-                # warnings.warn(error_msg, UserWarning)
 
         # TODO: Remove once Online Endpoints updates API version to at least 2023-08-01
         allow_roleassignment_on_rg = None

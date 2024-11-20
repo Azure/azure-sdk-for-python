@@ -2,10 +2,27 @@
 ## 1.23.0 (unreleased)
 
 ### Features Added
+  - Add support for additional include in spark component.
 
 ### Bugs Fixed
 
-## 1.22.0 (2024-11-05)
+## 1.22.3 (2024-11-20)
+
+### Bugs Fixed
+  - Fix error message while resolving mlflow url in get workspace details
+
+## 1.22.2 (2024-11-18)
+
+### Bugs Fixed
+  - **#3620407** - Fix Datastore credentials show up as NoneCredentials
+
+## 1.22.1 (2024-11-13)
+
+
+### Bugs Fixed
+  - **#38493** - Fix error NoneType object is not subscriptable
+
+## 1.22.0 (2024-11-11)
 
 ### Features Added
   - Added support to select firewall sku to used for provisioning azure firewall when FQDN rules are added in

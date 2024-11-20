@@ -1,20 +1,30 @@
 # Release History
 
-## 7.12.4 (Unreleased)
+## 7.13.1 (Unreleased)
 
 ### Features Added
-
-- Added `ssl_context` parameter to the clients to allow users to pass in the SSL context, in which case, `connection_verify` will be ignored if specified.([#37246](https://github.com/Azure/azure-sdk-for-python/issues/37246))
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
-- Fixed a broken f-string present in a `ValueError` when using the async client ([37695](https://github.com/Azure/azure-sdk-for-python/issues/37695))
+### Other Changes
+
+## 7.13.0 (2024-11-12)
+
+### Features Added
+
+- Added `ssl_context` parameter to the clients to allow users to pass in the SSL context, in which case, `connection_verify` will be ignored if specified.([#37246](https://github.com/Azure/azure-sdk-for-python/issues/37246))
+
+### Bugs Fixed
+
+- Fixed a broken f-string present in a `ValueError` when using the async client. ([37695](https://github.com/Azure/azure-sdk-for-python/issues/37695))
+- Fixed a bug with the incorrect error being raised for larger than allowed batch size. ([38260](https://github.com/Azure/azure-sdk-for-python/issues/38260))
+- Fixed a bug with an error being raised when the fully-qualified namespace included a port, rather than ignoring the port. ([37547](https://github.com/Azure/azure-sdk-for-python/issues/37547))
 
 ### Other Changes
 
-- Added logging to track received messages.
+- Added debug logging to track received messages.
 
 ## 7.12.3 (2024-09-19)
 
