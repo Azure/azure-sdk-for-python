@@ -8,7 +8,17 @@ from azure.ai.evaluation._common._experimental import experimental
 
 @experimental
 class AdversarialScenario(Enum):
-    """Adversarial scenario types"""
+    """Adversarial scenario types
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/evaluation_samples_simulate.py
+            :start-after: [START adversarial_scenario]
+            :end-before: [END adversarial_scenario]
+            :language: python
+            :dedent: 8
+            :caption: Configure an AdversarialSimulator with an Adversarial Conversation scenario.
+    """
 
     ADVERSARIAL_QA = "adv_qa"
     ADVERSARIAL_CONVERSATION = "adv_conversation"
@@ -18,6 +28,8 @@ class AdversarialScenario(Enum):
     ADVERSARIAL_CONTENT_GEN_UNGROUNDED = "adv_content_gen_ungrounded"
     ADVERSARIAL_CONTENT_GEN_GROUNDED = "adv_content_gen_grounded"
     ADVERSARIAL_CONTENT_PROTECTED_MATERIAL = "adv_content_protected_material"
+    ADVERSARIAL_IMAGE_GEN = "adv_image_gen"
+    ADVERSARIAL_IMAGE_UNDERSTANDING = "adv_image_understanding"
 
 
 @experimental

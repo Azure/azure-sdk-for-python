@@ -17,12 +17,12 @@ from ..._schema import PathAwareSchema
 from .._job.spark_job_entry_mixin import SparkJobEntry, SparkJobEntryMixin
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type
 from .._validation import MutableValidationResult
-from .code import ComponentCodeMixin
+from ._additional_includes import AdditionalIncludesMixin
 from .component import Component
 
 
 class SparkComponent(
-    Component, ParameterizedSpark, SparkJobEntryMixin, ComponentCodeMixin
+    Component, ParameterizedSpark, SparkJobEntryMixin, AdditionalIncludesMixin
 ):  # pylint: disable=too-many-instance-attributes
     """Spark component version, used to define a Spark Component or Job.
 
@@ -79,6 +79,8 @@ class SparkComponent(
     :paramtype outputs: Optional[dict[str, Union[str, ~azure.ai.ml.Output]]]
     :keyword args: The arguments for the job. Defaults to None.
     :paramtype args: Optional[str]
+    :keyword additional_includes: A list of shared additional files to be included in the component. Defaults to None.
+    :paramtype additional_includes: Optional[List[str]]
 
     .. admonition:: Example:
 
@@ -112,6 +114,7 @@ class SparkComponent(
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
         args: Optional[str] = None,
+        additional_includes: Optional[List] = None,
         **kwargs: Any,
     ) -> None:
         # validate init params are valid type
@@ -134,6 +137,7 @@ class SparkComponent(
         self.conf = conf
         self.environment = environment
         self.args = args
+        self.additional_includes = additional_includes or []
         # For pipeline spark job, we also allow user to set driver_cores, driver_memory and so on by setting conf.
         # If root level fields are not set by user, we promote conf setting to root level to facilitate subsequent
         # verification. This usually happens when we use to_component(SparkJob) or builder function spark() as a node
