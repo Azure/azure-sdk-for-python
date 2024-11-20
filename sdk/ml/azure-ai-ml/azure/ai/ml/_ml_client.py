@@ -1335,6 +1335,10 @@ def _(entity: Environment, operations):
     module_logger.debug("Creating or updating environment")
     return operations[AzureMLResourceType.ENVIRONMENT].create_or_update(entity)
 
+@_create_or_update.register(CapabilityHost)
+def _(entity: CapabilityHost, operations):
+    module_logger.debug("Creating or updating capability hosts")
+    return operations[AzureMLResourceType.CAPABILITY_HOST].create_or_update(entity)
 
 @_create_or_update.register(WorkspaceAssetReference)
 def _(entity: WorkspaceAssetReference, operations):

@@ -7,15 +7,15 @@ from azure.ai.ml._utils._experimental import experimental
 from typing import List, Optional
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.constants._workspace import CapabilityHostKind
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceKind
 from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Union
 from azure.ai.ml._schema.workspace.ai_workspaces.capability_host import CapabilityHostSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml._restclient.v2024_10_01_preview.models import CapabilityHost as RestCapabilityHost
-from azure.ai.ml._restclient.v2024_10_01_preview.models import CapabilityHostProperties as RestCapabilityHostProperties
+from azure.ai.ml._restclient.v2024_10_01_preview.models._models_py3 import CapabilityHost as RestCapabilityHost
+from azure.ai.ml._restclient.v2024_10_01_preview.models._models_py3 import CapabilityHostProperties as RestCapabilityHostProperties
 
 @experimental
 class CapabilityHost(Resource):
@@ -26,14 +26,14 @@ class CapabilityHost(Resource):
         self,
         *,
         name: str,
-        vector_store_connections: List[str],
-        ai_services_connections: List[str],
+        description: Optional[str] = None,
+        vector_store_connections: Optional[List[str]] = None,
+        ai_services_connections: Optional[List[str]] = None,
         storage_connections: Optional[List[str]] = None,
         capability_host_kind: CapabilityHostKind = CapabilityHostKind.AGENTS,
         **kwargs: Any,
     ):
-        super().__init__(name=name, **kwargs)
-        self.name = name
+        super().__init__(name=name,description=description, **kwargs)
         self.capability_host_kind = capability_host_kind
         self.ai_services_connections = ai_services_connections
         self.storage_connections = storage_connections
@@ -70,20 +70,33 @@ class CapabilityHost(Resource):
     def _from_rest_object(cls, rest_obj: RestCapabilityHost) -> 'CapabilityHost':
         capability_host = CapabilityHost(
             name=str(rest_obj.name),
-            ai_services_connections=rest_obj.properties.ai_services_connections or [],
+            description=rest_obj.properties.description if rest_obj.properties else None,
+            ai_services_connections=rest_obj.properties.ai_services_connections if rest_obj.properties else [],
             storage_connections=rest_obj.properties.storage_connections if rest_obj.properties else [],
-            vector_store_connections=rest_obj.properties.vector_store_connections or [],
-            capability_host_kind=rest_obj.properties.capability_host_kind if rest_obj.properties else None,
+            vector_store_connections=rest_obj.properties.vector_store_connections if rest_obj.properties else [],
+            capability_host_kind=rest_obj.properties.capability_host_kind if rest_obj.properties else CapabilityHostKind.AGENTS,
         )
         return capability_host
     
-    def _to_rest_object(self) -> RestCapabilityHost:
+    def _to_rest_object_for_hub(self) -> RestCapabilityHost:
+        properties = RestCapabilityHostProperties(
+                description = self.description,
+                capability_host_kind = str(self.capability_host_kind)
+        )
         resource = RestCapabilityHost(
-            properties = RestCapabilityHostProperties(
-                ai_services_connections=self.ai_services_connections,
-                storage_connections=self.storage_connections,
-                vector_store_connections=self.vector_store_connections,
-                CapabilityHostKind=self.capability_host_kind,
-            )
+            properties=properties,
+        )
+        return resource
+    
+    def _to_rest_object_for_project(self) -> RestCapabilityHost:
+        properties = RestCapabilityHostProperties(
+                ai_services_connections = self.ai_services_connections,
+                storage_connections = self.storage_connections,
+                vector_store_connections = self.vector_store_connections,
+                description = self.description,
+                capability_host_kind = str(self.capability_host_kind)
+        )
+        resource = RestCapabilityHost(
+            properties=properties,
         )
         return resource

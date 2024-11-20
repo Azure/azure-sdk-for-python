@@ -78,14 +78,17 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(ops_logger, "CapabilityHost.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     @distributed_trace
-    def create_or_update(
+    def begin_create_or_update(
             self,
-            capability_host: CapabilityHost
+            capability_host: CapabilityHost,
+            **kwargs: Any
     ) -> LROPoller[CapabilityHost]:
         """Begin the creation or update of a capability host in a Hub or Project workspace.
 
         :param capability_host: The CapabilityHost object containing the details of the capability host to create or update.
         :type capability_host: ~azure.ai.ml.entities.CapabilityHost
+        :param kwargs: Additional keyword arguments.
+        :type kwargs: Any
         :return: An LROPoller object that can be used to track the long-running operation that is creation of capability host.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.CapabilityHost]
         """
@@ -93,9 +96,6 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         self.__validate_workspace_name()
         
         workspace = self.__get_workspace()
-
-        self._init_kwargs.pop('cloud', None)
-        self._init_kwargs.pop('credential_scopes', None)
 
         if workspace is None:
             msg = f"Workspace '{self._workspace_name}' does not exist."
@@ -112,24 +112,19 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
 
         self.__validate_properties(capability_host, workspace_kind)
         
-        if workspace_kind == WorkspaceKind.HUB:
-            capability_host.ai_services_connections = []
-            capability_host.storage_connections = []
-            capability_host.vector_store_connections = []
-        elif workspace_kind == WorkspaceKind.PROJECT:
+        if workspace_kind == WorkspaceKind.PROJECT:
             if capability_host.storage_connections is None or len(capability_host.storage_connections) == 0:
                 capability_host.storage_connections = self.__get_default_storage_connections()
         
         try:
-
-            capability_host_resource = capability_host._to_rest_object()
+            capability_host_resource = capability_host._to_rest_object_for_hub() if workspace_kind == WorkspaceKind.HUB else capability_host._to_rest_object_for_project()
             poller = self._capability_hosts_operations.begin_create_or_update(
                 resource_group_name = self._resource_group_name,
                 workspace_name = self._workspace_name,
                 name = capability_host.name,
                 body = capability_host_resource,
                 polling=True,
-                **self._init_kwargs,
+                **kwargs,
                 cls=lambda response, deserialized, headers: CapabilityHost._from_rest_object(deserialized)
             )
             return poller
@@ -214,17 +209,15 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         return workspace
     
     def __validate_workspace_name(self) -> None:
-        """Validates that a workspace name set in MLClient.
+        """Validates that a hub name or project name set in MLClient.
 
-        :param name: Name for a workspace resource.
-        :type name: str
         :return: No Return.
         :rtype: None
-        :raises ~azure.ai.ml.ValidationException: Raised if MLClient does not have workspace name set.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if MLClient does not have workspace name set.
         """
         workspace_name = self._workspace_name
         if not workspace_name:
-            msg = "Please set workspace name in MLClient."
+            msg = "Please set hub name or project name in MLClient."
             raise ValidationException(
                 message=msg,
                 target=ErrorTarget.CAPABILITY_HOST,

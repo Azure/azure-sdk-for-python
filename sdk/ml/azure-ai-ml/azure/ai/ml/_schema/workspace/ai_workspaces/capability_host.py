@@ -5,9 +5,7 @@
 from marshmallow import fields
 
 from azure.ai.ml._schema.core.schema import PathAwareSchema
-from azure.ai.ml._utils._experimental import experimental
 
-@experimental
 class CapabilityHostSchema(PathAwareSchema):
     name = fields.Str(required = True)
     description = fields.Str(required = False)
