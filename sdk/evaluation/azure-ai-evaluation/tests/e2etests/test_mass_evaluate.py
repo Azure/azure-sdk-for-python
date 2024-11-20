@@ -78,9 +78,9 @@ class TestMassEvaluate:
         # glue disabled due to being unfriendly to CI playback for some reason.
         # content safety disabled temporarily to test CI PF teardown race condition
         evaluators = {
-            #"f1_score": F1ScoreEvaluator(),
+            # "f1_score": F1ScoreEvaluator(),
             # "gleu": GleuScoreEvaluator(),
-            #"bleu": BleuScoreEvaluator(),
+            # "bleu": BleuScoreEvaluator(),
             # "rouge": RougeScoreEvaluator(RougeType.ROUGE_L),
             # "meteor": MeteorScoreEvaluator(),
             # "grounded": GroundednessEvaluator(model_config),
@@ -89,11 +89,11 @@ class TestMassEvaluate:
             # "relevance": RelevanceEvaluator(model_config),
             # "similarity" : SimilarityEvaluator(model_config),
             # "qa" : QAEvaluator(model_config),
-            # "grounded_pro": GroundednessProEvaluator(azure_cred, project_scope),
-            # "protected_material": ProtectedMaterialEvaluator(azure_cred, project_scope),
+            "grounded_pro": GroundednessProEvaluator(azure_cred, project_scope),
+            "protected_material": ProtectedMaterialEvaluator(azure_cred, project_scope),
             # "indirect_attack": IndirectAttackEvaluator(azure_cred, project_scope),
             # "eci": ECIEvaluator(azure_cred, project_scope),
-            "content_safety": ContentSafetyEvaluator(azure_cred, project_scope),
+            # "content_safety": ContentSafetyEvaluator(azure_cred, project_scope),
         }
 
         # run the evaluation
