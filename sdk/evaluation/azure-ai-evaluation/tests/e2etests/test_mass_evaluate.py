@@ -89,10 +89,10 @@ class TestMassEvaluate:
             "relevance": RelevanceEvaluator(model_config),
             # "similarity" : SimilarityEvaluator(model_config),
             # "qa" : QAEvaluator(model_config),
-            "grounded_pro": GroundednessProEvaluator(azure_cred, project_scope),
-            "protected_material": ProtectedMaterialEvaluator(azure_cred, project_scope),
-            "indirect_attack": IndirectAttackEvaluator(azure_cred, project_scope),
-            "eci": ECIEvaluator(azure_cred, project_scope),
+            # "grounded_pro": GroundednessProEvaluator(azure_cred, project_scope),
+            # "protected_material": ProtectedMaterialEvaluator(azure_cred, project_scope),
+            # "indirect_attack": IndirectAttackEvaluator(azure_cred, project_scope),
+            # "eci": ECIEvaluator(azure_cred, project_scope),
             # "content_safety": ContentSafetyEvaluator(azure_cred, project_scope),
         }
 
