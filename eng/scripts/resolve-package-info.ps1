@@ -4,8 +4,6 @@ param (
     [bool] $IncludeIndirect = $true
 )
 
-Write-Host "Type of IncludeIndirect: $($IncludeIndirect.GetType().FullName)"
-
 $setting = $ParameterTargetingStringSetting
 $targetingString = $ParameterTargetingStringSetting
 
@@ -19,19 +17,21 @@ if ($env:BUILDTARGETINGSTRING) {
 Write-Host "The resolved targeting string within the script is `"$targetingString`""
 
 if (Test-Path "$PackagePropertiesFolder") {
-    if ($IncludeIndirect) {
-        Write-Host "Including indirect"
+    $packageProperties = Get-ChildItem -Recurse -Force "$PackagePropertiesFolder/*.json" `
+
+    if (-not $IncludeIndirect) {
         $packageProperties = Get-ChildItem -Recurse -Force "$PackagePropertiesFolder/*.json" `
-            | Where-Object { if ($_.Name.Replace(".json", "") -like "$targetingString") { return $true } else { Remove-Item $_.FullName; return $false; } }
-            | ForEach-Object { $_.Name.Replace(".json", "") }
+            | Where-Object {
+                $includedForValidation = (Get-Content -Raw $_ | ConvertFrom-Json).IncludedForValidation
+                if ($includedForValidation -eq $true) {
+                    Remove-Item $_.FullName; $false
+                } else { $true }
+            }
     }
-    else {
-        Write-Host "Not including indirect"
-        $packageProperties = Get-ChildItem -Recurse -Force "$PackagePropertiesFolder/*.json" `
-        | Where-Object { (Get-Content -Raw $_ | ConvertFrom-Json).IncludedForValidation -eq $false } `
+
+    $packageProperties = $packageProperties
         | Where-Object { if ($_.Name.Replace(".json", "") -like "$targetingString") { return $true } else { Remove-Item $_.FullName; return $false; } }
-        | ForEach-Object { $_.Name.Replace(".json", ""); }
-    }
+        | ForEach-Object { $_.Name.Replace(".json", "") }
 
     $setting = $packageProperties -join ","
 
