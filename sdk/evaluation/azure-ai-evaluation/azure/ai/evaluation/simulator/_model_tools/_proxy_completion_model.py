@@ -157,88 +157,115 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
 
         self._log_request(request_data)
 
-        token = self.token_manager.get_token()
+        max_retries = 3  # maximum number of retries
+        retry_count = 0
+        retry_delay = 1  # initial delay in seconds for exponential backoff
 
-        proxy_headers = {
-            "Authorization": f"Bearer {token}",
-            "Content-Type": "application/json",
-            "User-Agent": USER_AGENT,
-        }
+        while retry_count <= max_retries:
+            try:
+                token = self.token_manager.get_token()
 
-        headers = {
-            "Content-Type": "application/json",
-            "X-CV": f"{uuid.uuid4()}",
-            "X-ModelType": self.model or "",
-        }
-        # add all additional headers
-        headers.update(self.additional_headers)  # type: ignore[arg-type]
-        params = {}
-        if self.api_version:
-            params["api-version"] = self.api_version
+                proxy_headers = {
+                    "Authorization": f"Bearer {token}",
+                    "Content-Type": "application/json",
+                    "User-Agent": USER_AGENT,
+                }
 
-        sim_request_dto = SimulationRequestDTO(
-            url=self.endpoint_url,
-            headers=headers,
-            payload=request_data,
-            params=params,
-            templatekey=self.tkey,
-            template_parameters=self.tparam,
-        )
+                headers = {
+                    "Content-Type": "application/json",
+                    "X-CV": f"{uuid.uuid4()}",
+                    "X-ModelType": self.model or "",
+                }
+                # add all additional headers
+                headers.update(self.additional_headers)  # type: ignore[arg-type]
+                params = {}
+                if self.api_version:
+                    params["api-version"] = self.api_version
 
-        time_start = time.time()
-        full_response = None
+                sim_request_dto = SimulationRequestDTO(
+                    url=self.endpoint_url,
+                    headers=headers,
+                    payload=request_data,
+                    params=params,
+                    templatekey=self.tkey,
+                    template_parameters=self.tparam,
+                )
 
-        response = await session.post(url=self.endpoint_url, headers=proxy_headers, json=sim_request_dto.to_dict())
+                time_start = time.time()
+                full_response = None
 
-        if response.status_code != 202:
-            raise HttpResponseError(
-                message=f"Received unexpected HTTP status: {response.status_code} {response.text()}", response=response
-            )
+                response = await session.post(url=self.endpoint_url, headers=proxy_headers, json=sim_request_dto.to_dict())
 
-        response_data = response.json()
-        self.result_url = cast(str, response_data["location"])
+                if response.status_code != 202:
+                    raise HttpResponseError(
+                        message=f"Received unexpected HTTP status: {response.status_code} {response.text()}", response=response
+                    )
 
-        retry_policy = AsyncRetryPolicy(  # set up retry configuration
-            retry_on_status_codes=[202],  # on which statuses to retry
-            retry_total=7,
-            retry_backoff_factor=10.0,
-            retry_backoff_max=180,
-            retry_mode=RetryMode.Exponential,
-        )
+                response_data = response.json()
+                self.result_url = cast(str, response_data["location"])
 
-        # initial 15 seconds wait before attempting to fetch result
-        # Need to wait both in this thread and in the async thread for some reason?
-        # Someone not under a crunch and with better async understandings should dig into this more.
-        await asyncio.sleep(15)
-        time.sleep(15)
+                retry_policy = AsyncRetryPolicy(  # set up retry configuration
+                    retry_on_status_codes=[202],  # on which statuses to retry
+                    retry_total=7,
+                    retry_backoff_factor=10.0,
+                    retry_backoff_max=180,
+                    retry_mode=RetryMode.Exponential,
+                )
 
-        async with get_async_http_client().with_policies(retry_policy=retry_policy) as exp_retry_client:
-            token = await self.token_manager.get_token_async()
-            proxy_headers = {
-                "Authorization": f"Bearer {token}",
-                "Content-Type": "application/json",
-                "User-Agent": USER_AGENT,
-            }
-            response = await exp_retry_client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
-                self.result_url, headers=proxy_headers
-            )
+                # initial 15 seconds wait before attempting to fetch result
+                # Need to wait both in this thread and in the async thread for some reason?
+                # Someone not under a crunch and with better async understandings should dig into this more.
+                await asyncio.sleep(15)
+                time.sleep(15)
 
-        response.raise_for_status()
+                async with get_async_http_client().with_policies(retry_policy=retry_policy) as exp_retry_client:
+                    token = await self.token_manager.get_token_async()
+                    proxy_headers = {
+                        "Authorization": f"Bearer {token}",
+                        "Content-Type": "application/json",
+                        "User-Agent": USER_AGENT,
+                    }
+                    response = await exp_retry_client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
+                        self.result_url, headers=proxy_headers
+                    )
 
-        response_data = response.json()
-        self.logger.info("Response: %s", response_data)
+                response.raise_for_status()
 
-        # Copy the full response and return it to be saved in jsonl.
-        full_response = copy.copy(response_data)
+                response_data = response.json()
+                self.logger.info("Response: %s", response_data)
 
-        time_taken = time.time() - time_start
+                # Copy the full response to be saved in jsonl.
+                full_response = copy.copy(response_data)
 
-        # pylint: disable=unexpected-keyword-arg
-        parsed_response = self._parse_response(response_data, request_data=request_data)  # type: ignore[call-arg]
+                # check if completion_tokens == 0
+                completion_tokens = full_response.get('usage', {}).get('completion_tokens', 0)
+                if completion_tokens == 0:
+                    self.logger.warning(
+                        "Received completion_tokens == 0, retrying after %s seconds...", retry_delay
+                    )
+                    retry_count += 1
+                    await asyncio.sleep(retry_delay)
+                    retry_delay *= 2  # exponential backoff
+                    continue  # retry the request
+                else:
+                    # success
+                    time_taken = time.time() - time_start
 
-        return {
-            "request": request_data,
-            "response": parsed_response,
-            "time_taken": time_taken,
-            "full_response": full_response,
-        }
+                    # pylint: disable=unexpected-keyword-arg
+                    parsed_response = self._parse_response(response_data, request_data=request_data)  # type: ignore[call-arg]
+
+                    return {
+                        "request": request_data,
+                        "response": parsed_response,
+                        "time_taken": time_taken,
+                        "full_response": full_response,
+                    }
+            except Exception as e:
+                self.logger.warning("Error during API request: %s", str(e))
+                retry_count += 1
+                await asyncio.sleep(retry_delay)
+                retry_delay *= 2  # exponential backoff
+                continue
+
+        # we have exhausted retries
+        raise Exception(f"Failed to get a valid response after {max_retries} retries")

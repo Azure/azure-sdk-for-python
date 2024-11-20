@@ -136,49 +136,36 @@ async def simulate_conversation(
     # initialize the turn counter
     current_turn = 1
 
-    # Maximum number of retries for a single turn
-    max_retries = 3
-
     # Keep iterating and alternate between bots until a stopping word is
     # generated or maximum number of turns is reached.
     while (not stopping_criteria(conversation_history[-1].message)) and (current_turn < turn_limit):
-        retry_count = 3
-        success = False
-        while not success and retry_count < max_retries:
-            try:
-                current_character_idx = current_turn % len(bots)
-                current_bot = bots[current_character_idx]
-                # invoke Bot to generate response given the input request
-                # pass only the last generated turn without passing the bot name.
-                response, request, _, full_response = await current_bot.generate_response(
-                    session=session,
-                    conversation_history=conversation_history,
-                    max_history=history_limit,
-                    turn_number=current_turn,
+        try:
+            current_character_idx = current_turn % len(bots)
+            current_bot = bots[current_character_idx]
+            # invoke Bot to generate response given the input request
+            # pass only the last generated turn without passing the bot name.
+            response, request, _, full_response = await current_bot.generate_response(
+                session=session,
+                conversation_history=conversation_history,
+                max_history=history_limit,
+                turn_number=current_turn,
+            )
+
+            # check if conversation id is null, which means conversation starter was used. use id from next turn
+            if conversation_id is None and "id" in response:
+                conversation_id = response["id"]
+            # add the generated response to the list of generated responses
+            conversation_history.append(
+                ConversationTurn(
+                    role=current_bot.role,
+                    name=current_bot.name,
+                    message=response["samples"][0],
+                    full_response=full_response,
+                    request=request,
                 )
-                if full_response['usage']['completion_tokens'] == 0:
-                    # Retry
-                    logger.warning("Empty response, retrying...")
-                    retry_count += 1
-                    continue
-                else: 
-                    success = True
-                    # check if conversation id is null, which means conversation starter was used. use id from next turn
-                    if conversation_id is None and "id" in response:
-                        conversation_id = response["id"]
-                    # add the generated response to the list of generated responses
-                    conversation_history.append(
-                        ConversationTurn(
-                            role=current_bot.role,
-                            name=current_bot.name,
-                            message=response["samples"][0],
-                            full_response=full_response,
-                            request=request,
-                        )
-                    )
-            except Exception as e:  # pylint: disable=broad-except
-                logger.warning("Error: %s", str(e))
-                retry_count += 1
+            )
+        except Exception as e:  # pylint: disable=broad-except
+            logger.warning("Error: %s", str(e))
 
         # Increment outside the try block so we don't get stuck if
         # an exception is thrown
