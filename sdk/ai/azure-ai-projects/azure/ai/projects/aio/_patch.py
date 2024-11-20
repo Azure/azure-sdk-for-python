@@ -12,7 +12,7 @@ import inspect
 import uuid
 from os import PathLike
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union, cast
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
