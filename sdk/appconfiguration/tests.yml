@@ -25,6 +25,3 @@ extends:
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_SKIP_LIVE_RECORDING: 'true'
         AZURE_TEST_RUN_LIVE: 'true'
-        # Set fake authority host to ensure Managed Identity fail for Default Azure Credential
-        # so "execute samples" step correctly picks up Powershell credential.
-        AZURE_POD_IDENTITY_AUTHORITY_HOST: "FakeAuthorityHost"
