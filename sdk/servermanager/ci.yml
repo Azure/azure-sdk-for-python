@@ -28,6 +28,3 @@ extends:
   parameters:
     ServiceDirectory: servermanager
     TestProxy: true
-    Artifacts:
-    - name: azure-mgmt-servermanager
-      safeName: azuremgmtservermanager
