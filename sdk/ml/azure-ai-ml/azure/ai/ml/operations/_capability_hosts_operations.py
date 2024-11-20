@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
-
 from typing import Any, Optional, List
 
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations, OperationConfig
@@ -43,8 +41,6 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
     ):
         super(CapabilityHostsOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
-        self._workspace_name = operation_scope.workspace_name        
-        self._resource_group_name = operation_scope.resource_group_name
         self._all_operations = all_operations
         self._capability_hosts_operations = service_client_10_2024.capability_hosts
         self._workspace_operations = service_client_10_2024.workspaces
@@ -66,7 +62,9 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.CapabilityHost
         """
 
-        self.__validate_capability_host_name_exists(name)
+        self.__validate_workspace_name()
+
+        self.__validate_capability_host_name(name)
 
         rest_obj=self._capability_hosts_operations.get(
                 resource_group_name = self._resource_group_name, 
@@ -80,7 +78,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(ops_logger, "CapabilityHost.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     @distributed_trace
-    def begin_create_or_update(
+    def create_or_update(
             self,
             capability_host: CapabilityHost
     ) -> LROPoller[CapabilityHost]:
@@ -92,7 +90,12 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.CapabilityHost]
         """
 
+        self.__validate_workspace_name()
+        
         workspace = self.__get_workspace()
+
+        self._init_kwargs.pop('cloud', None)
+        self._init_kwargs.pop('credential_scopes', None)
 
         if workspace is None:
             msg = f"Workspace '{self._workspace_name}' does not exist."
@@ -103,8 +106,9 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
                 error_category=ErrorCategory.USER_ERROR,
             )
         
-        #REVIEW#use this as enum instead literal
-        workspace_kind = WorkspaceKind.HUB if workspace._hub_id is not None else WorkspaceKind.PROJECT
+        workspace_kind = WorkspaceKind.PROJECT
+        if workspace._hub_id is None: 
+            workspace_kind = WorkspaceKind.HUB
 
         self.__validate_properties(capability_host, workspace_kind)
         
@@ -112,13 +116,12 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
             capability_host.ai_services_connections = []
             capability_host.storage_connections = []
             capability_host.vector_store_connections = []
-            capability_host.capability_host_kind = CapabilityHostKind.AGENTS
-
         elif workspace_kind == WorkspaceKind.PROJECT:
             if capability_host.storage_connections is None or len(capability_host.storage_connections) == 0:
-                capability_host.storage_connections = self.__get_default_storage_connections(self._workspace_name)
+                capability_host.storage_connections = self.__get_default_storage_connections()
         
         try:
+
             capability_host_resource = capability_host._to_rest_object()
             poller = self._capability_hosts_operations.begin_create_or_update(
                 resource_group_name = self._resource_group_name,
@@ -136,7 +139,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
                 log_and_raise_error(ex)
             raise ex
         
-    def __validate_capability_host_name_exists(self, capability_host_name: Optional[str]) -> None:
+    def __validate_capability_host_name(self, capability_host_name: Optional[str]) -> None:
         """Validates that a capability host name exists.
 
         :param capability_host_name: Name for a capability host resource.
@@ -151,20 +154,16 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
                 error_category = ErrorCategory.USER_ERROR,
             )
     
-    def __get_default_storage_connections(self, workspace_name: Optional[str]) -> List[str]:
-        """Retrieve default storage connection name.
+    def __get_default_storage_connections(self) -> List[str]:
+        """Retrieve the default storage connections for a capability host.
 
-        Args:
-            workspace_name (str): Name of the workspace.
-
-        Returns:
-            List[str]: List of default storage connection names.
+        :return: A list of default storage connections.
+        :rtype: List[str]
         """
-        return [f"{workspace_name}/workspaceblobstore"]
+        return [f"{self._workspace_name}/workspaceblobstore"]
         
     def __validate_properties(self, capability_host: CapabilityHost, workspace_kind: str) -> None:
-        """
-        Validate the properties of the capability host based on the workspace kind.
+        """Validate the properties of the capability host based on the workspace kind.
 
         :param capability_host: The capability host to validate.
         :type capability_host: CapabilityHost
@@ -182,7 +181,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
             )
 
         if workspace_kind == WorkspaceKind.PROJECT:
-            if not (capability_host.ai_services_connections and capability_host.vector_store_connections):
+            if capability_host.ai_services_connections is None or capability_host.vector_store_connections is None:
                 msg = (
                     "For Project workspace kind, AI services connections and vector store connections are required."
                 )
@@ -205,11 +204,30 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         return kind in {WorkspaceKind.HUB, WorkspaceKind.PROJECT}
     
     def __get_workspace(self) -> Optional[Workspace]:
-        """_summary_
+        """Retrieve the workspace object.
 
-        Returns:
-            Optional[Workspace]: _description_
+        :return: The current workspace if it exists, otherwise None.
+        :rtype: Optional[~azure.ai.ml.entities._workspace.workspace.Workspace]
         """
         rest_workspace = self._workspace_operations.get(self._resource_group_name, self._workspace_name)
         workspace = Workspace._from_rest_object(rest_workspace)
         return workspace
+    
+    def __validate_workspace_name(self) -> None:
+        """Validates that a workspace name set in MLClient.
+
+        :param name: Name for a workspace resource.
+        :type name: str
+        :return: No Return.
+        :rtype: None
+        :raises ~azure.ai.ml.ValidationException: Raised if MLClient does not have workspace name set.
+        """
+        workspace_name = self._workspace_name
+        if not workspace_name:
+            msg = "Please set workspace name in MLClient."
+            raise ValidationException(
+                message=msg,
+                target=ErrorTarget.CAPABILITY_HOST,
+                no_personal_data_message=msg,
+                error_category=ErrorCategory.USER_ERROR,
+            )

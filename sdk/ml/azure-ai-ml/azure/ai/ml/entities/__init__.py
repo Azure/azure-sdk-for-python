@@ -300,7 +300,7 @@ from ._workspace.serverless_compute import ServerlessComputeSettings
 from ._workspace.workspace import Workspace
 from ._workspace._ai_workspaces.hub import Hub
 from ._workspace._ai_workspaces.project import Project
-from ._workspace._ai_workspaces.capability_host import CapabilityHost, CapabilityHostKind, CapabilityHostProperties
+from ._workspace._ai_workspaces.capability_host import CapabilityHost, CapabilityHostKind
 from ._workspace.workspace_keys import (
     ContainerRegistryCredential,
     NotebookAccessKeys,

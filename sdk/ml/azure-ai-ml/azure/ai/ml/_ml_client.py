@@ -94,8 +94,7 @@ from azure.ai.ml.operations import (
     RegistryOperations,
     ServerlessEndpointOperations,
     WorkspaceConnectionsOperations,
-    WorkspaceOperations,
-    CapabilityHostsOperations,
+    WorkspaceOperations
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._feature_set_operations import FeatureSetOperations
@@ -105,6 +104,7 @@ from azure.ai.ml.operations._local_deployment_helper import _LocalDeploymentHelp
 from azure.ai.ml.operations._local_endpoint_helper import _LocalEndpointHelper
 from azure.ai.ml.operations._schedule_operations import ScheduleOperations
 from azure.ai.ml.operations._workspace_outbound_rule_operations import WorkspaceOutboundRuleOperations
+from azure.ai.ml.operations._capability_hosts_operations import CapabilityHostsOperations
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 
@@ -1369,11 +1369,6 @@ def _begin_create_or_update(entity, operations, **kwargs):
 def _(entity: Workspace, operations, *args, **kwargs):
     module_logger.debug("Creating or updating workspaces")
     return operations[AzureMLResourceType.WORKSPACE].begin_create(entity, **kwargs)
-
-@_create_or_update.register(CapabilityHost)
-def _(entity: CapabilityHost, operations, *args, **kwargs):
-    module_logger.debug("Creating or updating capability host")
-    return operations[AzureMLResourceType.CAPABILITY_HOST].create_or_update(entity, **kwargs)
 
 
 @_begin_create_or_update.register(Registry)

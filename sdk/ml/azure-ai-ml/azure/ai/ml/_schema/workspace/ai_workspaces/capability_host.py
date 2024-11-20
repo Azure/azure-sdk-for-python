@@ -9,7 +9,8 @@ from azure.ai.ml._utils._experimental import experimental
 
 @experimental
 class CapabilityHostSchema(PathAwareSchema):
-    name = fields.Str(required=True)
+    name = fields.Str(required = True)
+    description = fields.Str(required = False)
     capability_host_kind = fields.Str()
     vector_store_connections = fields.List(fields.Str(), required = True)
     ai_services_connections =fields.List(fields.Str(), required = True)
