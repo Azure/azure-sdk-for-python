@@ -7,6 +7,11 @@ param (
 $setting = $ParameterTargetingStringSetting
 $targetingString = $ParameterTargetingStringSetting
 
+Write-Host "I see the following for env:BuildTargetingString"
+Write-Host $env:BuildTargetingString
+Write-Host "I see the following for env:BUILDTARGETINGSTRING"
+Write-Host $env:BUILDTARGETINGSTRING
+
 # users of internal service builds will set variable "BuildTargetingString" at runtime
 # if they want to artificially filter the discovered packages for the build.
 # when azure devops sets the variable, it will make it all capital letters, so we should check that
