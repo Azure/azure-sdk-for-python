@@ -40,7 +40,7 @@ from .._constants import (
 )
 from ._async_client_manager import AsyncConfigurationClientManager
 from .._azureappconfigurationprovider import (
-    _get_headers,
+    __update_correlation_context_header,
     _RefreshTimer,
     _build_sentinel,
     _delay_failure,
@@ -393,7 +393,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             await self._replica_client_manager.refresh_clients()
             self._replica_client_manager.find_active_clients()
 
-            headers = _get_headers(
+            headers = __update_correlation_context_header(
                 kwargs.pop("headers", {}),
                 "Watch",
                 self._replica_client_manager.get_client_count() - 1,
@@ -476,7 +476,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     value = await self._process_key_value(config)
                     configuration_settings_processed[key] = value
 
-                headers = _get_headers(
+                headers = __update_correlation_context_header(
                     kwargs.pop("headers", {}),
                     "Startup",
                     self._replica_client_manager.get_client_count() - 1,
