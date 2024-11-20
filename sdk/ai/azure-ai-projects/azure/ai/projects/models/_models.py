@@ -230,7 +230,7 @@ class AgentsNamedToolChoice(_model_base.Model):
     """
 
     type: Union[str, "_models.AgentsNamedToolChoiceType"] = rest_field()
-    """the type of tool. If type is ``function``, the function name must be set. Required. Known
+    """the type of tool. If type is ``function``\ , the function name must be set. Required. Known
      values are: \"function\", \"code_interpreter\", \"file_search\", \"bing_grounding\",
      \"microsoft_fabric\", \"sharepoint_grounding\", and \"azure_ai_search\"."""
     function: Optional["_models.FunctionName"] = rest_field()
@@ -499,9 +499,9 @@ class ToolDefinition(_model_base.Model):
     """An abstract representation of an input tool definition that an agent can use.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AzureAISearchToolDefinition, BingGroundingToolDefinition, CodeInterpreterToolDefinition,
-    FileSearchToolDefinition, FunctionToolDefinition, MicrosoftFabricToolDefinition,
-    SharepointToolDefinition
+    AzureAISearchToolDefinition, AzureFunctionToolDefinition, BingGroundingToolDefinition,
+    CodeInterpreterToolDefinition, FileSearchToolDefinition, FunctionToolDefinition,
+    MicrosoftFabricToolDefinition, SharepointToolDefinition
 
 
     :ivar type: The object type. Required. Default value is None.
@@ -557,6 +557,183 @@ class AzureAISearchToolDefinition(ToolDefinition, discriminator="azure_ai_search
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type="azure_ai_search", **kwargs)
+
+
+class AzureFunctionBinding(_model_base.Model):
+    """The Azure function binding.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureStorageQueueBinding
+
+
+    :ivar type: The type of binding. Required. Default value is None.
+    :vartype type: str
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    type: str = rest_discriminator(name="type")
+    """The type of binding. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AzureFunctionDefinition(_model_base.Model):
+    """The definition of Azure function.
+
+
+    :ivar function: The definition of azure function and its parameters. Required.
+    :vartype function: ~azure.ai.projects.models.FunctionDefinition
+    :ivar input_binding: Input storage queue. Required.
+    :vartype input_binding: ~azure.ai.projects.models.AzureStorageQueueBinding
+    :ivar output_binding: Output storage queue. Required.
+    :vartype output_binding: ~azure.ai.projects.models.AzureStorageQueueBinding
+    """
+
+    function: "_models.FunctionDefinition" = rest_field()
+    """The definition of azure function and its parameters. Required."""
+    input_binding: "_models.AzureStorageQueueBinding" = rest_field()
+    """Input storage queue. Required."""
+    output_binding: "_models.AzureStorageQueueBinding" = rest_field()
+    """Output storage queue. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        function: "_models.FunctionDefinition",
+        input_binding: "_models.AzureStorageQueueBinding",
+        output_binding: "_models.AzureStorageQueueBinding",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AzureFunctionStorageQueue(_model_base.Model):
+    """The structure for keeping storage queue name and URI.
+
+
+    :ivar storage_queue_uri: The URI of an Azure function storage queue. Required.
+    :vartype storage_queue_uri: str
+    :ivar queue_name: The name of an Azure function storage queue. Required.
+    :vartype queue_name: str
+    """
+
+    storage_queue_uri: str = rest_field(name="queue_service_uri")
+    """The URI of an Azure function storage queue. Required."""
+    queue_name: str = rest_field()
+    """The name of an Azure function storage queue. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        storage_queue_uri: str,
+        queue_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AzureFunctionToolDefinition(ToolDefinition, discriminator="azure_function"):
+    """The input definition information for a azure function tool as used to configure an agent.
+
+
+    :ivar type: The object type, which is always 'azure_function'. Required. Default value is
+     "azure_function".
+    :vartype type: str
+    :ivar azure_function: The definition of the concrete function that the function tool should
+     call. Required.
+    :vartype azure_function: ~azure.ai.projects.models.AzureFunctionDefinition
+    """
+
+    type: Literal["azure_function"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'azure_function'. Required. Default value is
+     \"azure_function\"."""
+    azure_function: "_models.AzureFunctionDefinition" = rest_field()
+    """The definition of the concrete function that the function tool should call. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        azure_function: "_models.AzureFunctionDefinition",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="azure_function", **kwargs)
+
+
+class AzureStorageQueueBinding(AzureFunctionBinding, discriminator="storage_queue"):
+    """The definition of input or output queue for Azure function.
+
+
+    :ivar type: The type of binding, which is always 'storage_queue'. Required. Default value is
+     "storage_queue".
+    :vartype type: str
+    :ivar storage_queue: Storage queue. Required.
+    :vartype storage_queue: ~azure.ai.projects.models.AzureFunctionStorageQueue
+    """
+
+    type: Literal["storage_queue"] = rest_discriminator(name="type")  # type: ignore
+    """The type of binding, which is always 'storage_queue'. Required. Default value is
+     \"storage_queue\"."""
+    storage_queue: "_models.AzureFunctionStorageQueue" = rest_field()
+    """Storage queue. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        storage_queue: "_models.AzureFunctionStorageQueue",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="storage_queue", **kwargs)
 
 
 class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"):
@@ -3736,7 +3913,7 @@ class RunStepDeltaCodeInterpreterDetailItemObject(_model_base.Model):  # pylint:
     """The input into the Code Interpreter tool call."""
     outputs: Optional[List["_models.RunStepDeltaCodeInterpreterOutput"]] = rest_field()
     """The outputs from the Code Interpreter tool call. Code Interpreter can output one or more
-     items, including text (``logs``) or images (``image``). Each of these are represented
+     items, including text (\ ``logs``\ ) or images (\ ``image``\ ). Each of these are represented
      by a
      different object type."""
 
@@ -4930,9 +5107,9 @@ class ThreadMessageOptions(_model_base.Model):
     """The role of the entity that is creating the message. Allowed values include:
      
      
-     * ``user``: Indicates the message is sent by an actual user and should be used in most
+     * ``user``\ : Indicates the message is sent by an actual user and should be used in most
        cases to represent user-generated messages.
-     * ``assistant``: Indicates the message is generated by the agent. Use this value to insert
+     * ``assistant``\ : Indicates the message is generated by the agent. Use this value to insert
        messages from the agent into the
        conversation. Required. Known values are: \"user\" and \"assistant\"."""
     content: str = rest_field()
@@ -5092,7 +5269,7 @@ class ThreadRun(_model_base.Model):
      Known values are: \"max_completion_tokens\" and \"max_prompt_tokens\"."""
     usage: "_models.RunCompletionUsage" = rest_field()
     """Usage statistics related to the run. This value will be ``null`` if the run is not in a
-     terminal state (i.e. ``in_progress``, ``queued``, etc.). Required."""
+     terminal state (i.e. ``in_progress``\ , ``queued``\ , etc.). Required."""
     temperature: Optional[float] = rest_field()
     """The sampling temperature used for this run. If not set, defaults to 1."""
     top_p: Optional[float] = rest_field()
@@ -5328,9 +5505,9 @@ class TruncationObject(_model_base.Model):
 
     type: Union[str, "_models.TruncationStrategy"] = rest_field()
     """The truncation strategy to use for the thread. The default is ``auto``. If set to
-     ``last_messages``, the thread will
+     ``last_messages``\ , the thread will
      be truncated to the ``lastMessages`` count most recent messages in the thread. When set to
-     ``auto``, messages in the middle of the thread
+     ``auto``\ , messages in the middle of the thread
      will be dropped to fit the context length of the model, ``max_prompt_tokens``. Required. Known
      values are: \"auto\" and \"last_messages\"."""
     last_messages: Optional[int] = rest_field()
@@ -5512,7 +5689,7 @@ class VectorStore(_model_base.Model):
     file_counts: "_models.VectorStoreFileCount" = rest_field()
     """Files count grouped by status processed or being processed by this vector store. Required."""
     status: Union[str, "_models.VectorStoreStatus"] = rest_field()
-    """The status of the vector store, which can be either ``expired``, ``in_progress``, or
+    """The status of the vector store, which can be either ``expired``\ , ``in_progress``\ , or
      ``completed``. A status of ``completed`` indicates that the vector store is ready for use.
      Required. Known values are: \"expired\", \"in_progress\", and \"completed\"."""
     expires_after: Optional["_models.VectorStoreExpirationPolicy"] = rest_field()
@@ -5751,14 +5928,14 @@ class VectorStoreDataSource(_model_base.Model):
 
     :ivar asset_identifier: Asset URI. Required.
     :vartype asset_identifier: str
-    :ivar asset_type: The asset type. Required. Known values are: "uri_asset" and "id_asset".
+    :ivar asset_type: The asset type *. Required. Known values are: "uri_asset" and "id_asset".
     :vartype asset_type: str or ~azure.ai.projects.models.VectorStoreDataSourceAssetType
     """
 
     asset_identifier: str = rest_field(name="uri")
     """Asset URI. Required."""
     asset_type: Union[str, "_models.VectorStoreDataSourceAssetType"] = rest_field(name="type")
-    """The asset type. Required. Known values are: \"uri_asset\" and \"id_asset\"."""
+    """The asset type *. Required. Known values are: \"uri_asset\" and \"id_asset\"."""
 
     @overload
     def __init__(
@@ -5903,8 +6080,8 @@ class VectorStoreFile(_model_base.Model):
     vector_store_id: str = rest_field()
     """The ID of the vector store that the file is attached to. Required."""
     status: Union[str, "_models.VectorStoreFileStatus"] = rest_field()
-    """The status of the vector store file, which can be either ``in_progress``, ``completed``,
-     ``cancelled``, or ``failed``. The status ``completed`` indicates that the vector store file
+    """The status of the vector store file, which can be either ``in_progress``\ , ``completed``\ ,
+     ``cancelled``\ , or ``failed``. The status ``completed`` indicates that the vector store file
      is ready for use. Required. Known values are: \"in_progress\", \"completed\", \"failed\", and
      \"cancelled\"."""
     last_error: "_models.VectorStoreFileError" = rest_field()
@@ -5973,8 +6150,8 @@ class VectorStoreFileBatch(_model_base.Model):
     vector_store_id: str = rest_field()
     """The ID of the vector store that the file is attached to. Required."""
     status: Union[str, "_models.VectorStoreFileBatchStatus"] = rest_field()
-    """The status of the vector store files batch, which can be either ``in_progress``,
-     ``completed``, ``cancelled`` or ``failed``. Required. Known values are: \"in_progress\",
+    """The status of the vector store files batch, which can be either ``in_progress``\ ,
+     ``completed``\ , ``cancelled`` or ``failed``. Required. Known values are: \"in_progress\",
      \"completed\", \"cancelled\", and \"failed\"."""
     file_counts: "_models.VectorStoreFileCount" = rest_field()
     """Files count grouped by status processed or being processed by this vector store. Required."""
@@ -6095,7 +6272,7 @@ class VectorStoreFileDeletionStatus(_model_base.Model):
 
 
 class VectorStoreFileError(_model_base.Model):
-    """Details on the error that may have occurred while processing a file for this vector store.
+    """Details on the error that may have ocurred while processing a file for this vector store.
 
 
     :ivar code: One of ``server_error`` or ``rate_limit_exceeded``. Required. Known values are:

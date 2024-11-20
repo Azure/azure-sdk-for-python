@@ -1,4 +1,5 @@
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -17,13 +18,19 @@ from azure.ai.projects.aio import AIProjectClient
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.projects.models import (
+    AzureFunctionDefinition,
+    AzureFunctionToolDefinition,
+    AzureFunctionStorageQueue,
+    AzureStorageQueueBinding,
     CodeInterpreterTool,
     CodeInterpreterToolResource,
     FilePurpose,
     FileSearchTool,
     FileSearchToolResource,
+    FunctionDefinition,
     FunctionTool,
     MessageAttachment,
+    RunStatus,
     ThreadMessageOptions,
     ToolResources,
     ToolSet,
@@ -64,15 +71,16 @@ agentClientPreparer = functools.partial(
     "azure_ai_projects",
     azure_ai_projects_connection_string="https://foo.bar.some-domain.ms;00000000-0000-0000-0000-000000000000;rg-resour-cegr-oupfoo1;abcd-abcdabcdabcda-abcdefghijklm",
     azure_ai_projects_data_path="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-resour-cegr-oupfoo1/workspaces/abcd-abcdabcdabcda-abcdefghijklm/datastores/workspaceblobstore/paths/LocalUpload/000000000000/product_info_1.md",
+    azure_ai_projects_storage_queue="https://foobar.queue.core.windows.net",
 )
 """
 agentClientPreparer = functools.partial(
     EnvironmentVariableLoader,
-    'azure_ai_project',
-    azure_ai_project_host_name="https://foo.bar.some-domain.ms",
-    azure_ai_project_subscription_id="00000000-0000-0000-0000-000000000000",
-    azure_ai_project_resource_group_name="rg-resour-cegr-oupfoo1",
-    azure_ai_project_workspace_name="abcd-abcdabcdabcda-abcdefghijklm",
+    'azure_ai_projects',
+    azure_ai_projects_host_name="https://foo.bar.some-domain.ms",
+    azure_ai_projects_subscription_id="00000000-0000-0000-0000-000000000000",
+    azure_ai_projects_resource_group_name="rg-resour-cegr-oupfoo1",
+    azure_ai_projects_workspace_name="abcd-abcdabcdabcda-abcdefghijklm",
 )
 """
 
@@ -1597,6 +1605,84 @@ class TestagentClientAsync(AzureRecordedTestCase):
         assert len(messages)
         await ai_client.agents.delete_agent(agent.id)
         await ai_client.close()
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_azure_function_call(self, **kwargs):
+        """Test calling Azure functions."""
+        storage_queue = kwargs["azure_ai_projects_storage_queue"]
+        async with self.create_client(**kwargs) as client:
+            agent = await client.agents.create_agent(
+                model="gpt-4",
+                name="azure-function-agent-foo",
+                instructions=(
+                    "You are a helpful support agent. Use the provided function any "
+                    "time the prompt contains the string 'What would foo say?'. When "
+                    "you invoke the function, ALWAYS specify the output queue uri parameter as "
+                    f"'{storage_queue}/azure-function-tool-output'"
+                    '. Always responds with "Foo says" and then the response from the tool.'
+                ),
+                headers={"x-ms-enable-preview": "true"},
+                tools=[
+                    AzureFunctionToolDefinition(
+                        azure_function=AzureFunctionDefinition(
+                            function=FunctionDefinition(
+                                name="foo",
+                                description="Get answers from the foo bot.",
+                                parameters={
+                                    "type": "object",
+                                    "properties": {
+                                        "query": {"type": "string", "description": "The question to ask."},
+                                        "outputqueueuri": {
+                                            "type": "string",
+                                            "description": "The full output queue uri.",
+                                        },
+                                    },
+                                },
+                            ),
+                            input_binding=AzureStorageQueueBinding(
+                                storage_queue=AzureFunctionStorageQueue(
+                                    queue_name="azure-function-foo-input",
+                                    storage_queue_uri=storage_queue,
+                                )
+                            ),
+                            output_binding=AzureStorageQueueBinding(
+                                storage_queue=AzureFunctionStorageQueue(
+                                    queue_name="azure-function-tool-output",
+                                    storage_queue_uri=storage_queue,
+                                )
+                            ),
+                        )
+                    )
+                ],
+            )
+            assert agent.id, "The agent was not created"
+
+            # Create a thread
+            thread = await client.agents.create_thread()
+            assert thread.id, "The thread was not created."
+
+            # Create a message
+            message = await client.agents.create_message(
+                thread_id=thread.id,
+                role="user",
+                content="What is the most prevalent element in the universe? What would foo say?",
+            )
+            assert message.id, "The message was not created."
+
+            run = await client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+            assert run.status == RunStatus.COMPLETED, f"The run is in {run.status} state."
+
+            # Get messages from the thread
+            messages = await client.agents.get_messages(thread_id=thread.id)
+            assert len(messages.text_messages), "No messages were received."
+
+            # Chech that we have function response in at least one message.
+            assert any("bar" in msg.text.value.lower() for msg in messages.text_messages)
+
+            # Delete the agent once done
+            result = await client.agents.delete_agent(agent.id)
+            assert result.deleted, "The agent was not deleted."
 
     async def _get_file_id_maybe(self, ai_client: AIProjectClient, **kwargs) -> str:
         """Return file id if kwargs has file path."""
