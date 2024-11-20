@@ -360,3 +360,20 @@ class SnapshotUpdateParameters(_model_base.Model):
     status: Optional[Union[str, "_models.SnapshotStatus"]] = rest_field()
     """The desired status of the snapshot. Known values are: \"provisioning\", \"ready\",
      \"archived\", and \"failed\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "_models.SnapshotStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)

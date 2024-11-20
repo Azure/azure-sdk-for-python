@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 from typing_extensions import Self
 
 from azure.core import PipelineClient
@@ -32,6 +32,9 @@ class AzureAppConfigurationClient(AzureAppConfigurationClientOperationsMixin):
      AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
+    :param sync_token: Used to guarantee real-time consistency between requests. Default value is
+     None.
+    :type sync_token: str
     :keyword api_version: The API version to use for this operation. Default value is "2023-11-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
@@ -39,9 +42,17 @@ class AzureAppConfigurationClient(AzureAppConfigurationClientOperationsMixin):
      Retry-After header is present.
     """
 
-    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "TokenCredential"],
+        sync_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         _endpoint = "{endpoint}"
-        self._config = AzureAppConfigurationClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = AzureAppConfigurationClientConfiguration(
+            endpoint=endpoint, credential=credential, sync_token=sync_token, **kwargs
+        )
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [

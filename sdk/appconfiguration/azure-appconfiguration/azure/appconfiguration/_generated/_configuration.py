@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
@@ -29,12 +29,21 @@ class AzureAppConfigurationClientConfiguration:  # pylint: disable=too-many-inst
      AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
+    :param sync_token: Used to guarantee real-time consistency between requests. Default value is
+     None.
+    :type sync_token: str
     :keyword api_version: The API version to use for this operation. Default value is "2023-11-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "TokenCredential"],
+        sync_token: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
         api_version: str = kwargs.pop("api_version", "2023-11-01")
 
         if endpoint is None:
@@ -44,6 +53,7 @@ class AzureAppConfigurationClientConfiguration:  # pylint: disable=too-many-inst
 
         self.endpoint = endpoint
         self.credential = credential
+        self.sync_token = sync_token
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://azconfig.io/.default"])
         kwargs.setdefault("sdk_moniker", "appconfiguration/{}".format(VERSION))

@@ -53,8 +53,8 @@ def build_azure_app_configuration_get_keys_request(  # pylint: disable=name-too-
     *,
     name: Optional[str] = None,
     after: Optional[str] = None,
-    sync_token: Optional[str] = None,
     accept_datetime: Optional[str] = None,
+    sync_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -87,9 +87,9 @@ def build_azure_app_configuration_get_keys_request(  # pylint: disable=name-too-
 def build_azure_app_configuration_check_keys_request(  # pylint: disable=name-too-long
     *,
     name: Optional[str] = None,
-    sync_token: Optional[str] = None,
     after: Optional[str] = None,
     accept_datetime: Optional[str] = None,
+    sync_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -122,7 +122,6 @@ def build_azure_app_configuration_get_key_values_request(  # pylint: disable=nam
     *,
     key: Optional[str] = None,
     label: Optional[str] = None,
-    sync_token: Optional[str] = None,
     after: Optional[str] = None,
     accept_datetime: Optional[str] = None,
     select: Optional[List[Union[str, _models.ConfigurationSettingFields]]] = None,
@@ -130,6 +129,7 @@ def build_azure_app_configuration_get_key_values_request(  # pylint: disable=nam
     tags: Optional[List[str]] = None,
     etag: Optional[str] = None,
     match_condition: Optional[MatchConditions] = None,
+    sync_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -177,7 +177,6 @@ def build_azure_app_configuration_check_key_values_request(  # pylint: disable=n
     *,
     key: Optional[str] = None,
     label: Optional[str] = None,
-    sync_token: Optional[str] = None,
     after: Optional[str] = None,
     accept_datetime: Optional[str] = None,
     select: Optional[List[Union[str, _models.ConfigurationSettingFields]]] = None,
@@ -185,6 +184,7 @@ def build_azure_app_configuration_check_key_values_request(  # pylint: disable=n
     tags: Optional[List[str]] = None,
     etag: Optional[str] = None,
     match_condition: Optional[MatchConditions] = None,
+    sync_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -232,10 +232,10 @@ def build_azure_app_configuration_get_key_value_request(  # pylint: disable=name
     *,
     label: Optional[str] = None,
     select: Optional[List[Union[str, _models.ConfigurationSettingFields]]] = None,
-    sync_token: Optional[str] = None,
     accept_datetime: Optional[str] = None,
     etag: Optional[str] = None,
     match_condition: Optional[MatchConditions] = None,
+    sync_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -280,9 +280,9 @@ def build_azure_app_configuration_put_key_value_request(  # pylint: disable=name
     key: str,
     *,
     label: Optional[str] = None,
-    sync_token: Optional[str] = None,
     etag: Optional[str] = None,
     match_condition: Optional[MatchConditions] = None,
+    sync_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -326,9 +326,9 @@ def build_azure_app_configuration_delete_key_value_request(  # pylint: disable=n
     key: str,
     *,
     label: Optional[str] = None,
-    sync_token: Optional[str] = None,
     etag: Optional[str] = None,
     match_condition: Optional[MatchConditions] = None,
+    sync_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -369,11 +369,11 @@ def build_azure_app_configuration_check_key_value_request(  # pylint: disable=na
     key: str,
     *,
     label: Optional[str] = None,
-    sync_token: Optional[str] = None,
     accept_datetime: Optional[str] = None,
     select: Optional[List[Union[str, _models.ConfigurationSettingFields]]] = None,
     etag: Optional[str] = None,
     match_condition: Optional[MatchConditions] = None,
+    sync_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -452,7 +452,7 @@ def build_azure_app_configuration_get_snapshots_request(  # pylint: disable=name
 
 
 def build_azure_app_configuration_check_snapshots_request(  # pylint: disable=name-too-long
-    *, sync_token: Optional[str] = None, after: Optional[str] = None, **kwargs: Any
+    *, after: Optional[str] = None, sync_token: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -480,9 +480,9 @@ def build_azure_app_configuration_get_snapshot_request(  # pylint: disable=name-
     name: str,
     *,
     select: Optional[List[Union[str, _models.SnapshotFields]]] = None,
-    sync_token: Optional[str] = None,
     etag: Optional[str] = None,
     match_condition: Optional[MatchConditions] = None,
+    sync_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -576,9 +576,9 @@ def build_azure_app_configuration_create_snapshot_request(  # pylint: disable=na
 def build_azure_app_configuration_update_snapshot_request(  # pylint: disable=name-too-long
     name: str,
     *,
-    sync_token: Optional[str] = None,
     etag: Optional[str] = None,
     match_condition: Optional[MatchConditions] = None,
+    sync_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -619,9 +619,9 @@ def build_azure_app_configuration_update_snapshot_request(  # pylint: disable=na
 def build_azure_app_configuration_check_snapshot_request(  # pylint: disable=name-too-long
     name: str,
     *,
-    sync_token: Optional[str] = None,
     etag: Optional[str] = None,
     match_condition: Optional[MatchConditions] = None,
+    sync_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -658,10 +658,10 @@ def build_azure_app_configuration_check_snapshot_request(  # pylint: disable=nam
 def build_azure_app_configuration_get_labels_request(  # pylint: disable=name-too-long
     *,
     name: Optional[str] = None,
-    sync_token: Optional[str] = None,
     after: Optional[str] = None,
     accept_datetime: Optional[str] = None,
     select: Optional[List[Union[str, _models.LabelFields]]] = None,
+    sync_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -696,10 +696,10 @@ def build_azure_app_configuration_get_labels_request(  # pylint: disable=name-to
 def build_azure_app_configuration_check_labels_request(  # pylint: disable=name-too-long
     *,
     name: Optional[str] = None,
-    sync_token: Optional[str] = None,
     after: Optional[str] = None,
     accept_datetime: Optional[str] = None,
     select: Optional[List[Union[str, _models.LabelFields]]] = None,
+    sync_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -734,9 +734,9 @@ def build_azure_app_configuration_put_lock_request(  # pylint: disable=name-too-
     key: str,
     *,
     label: Optional[str] = None,
-    sync_token: Optional[str] = None,
     etag: Optional[str] = None,
     match_condition: Optional[MatchConditions] = None,
+    sync_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -777,9 +777,9 @@ def build_azure_app_configuration_delete_lock_request(  # pylint: disable=name-t
     key: str,
     *,
     label: Optional[str] = None,
-    sync_token: Optional[str] = None,
     etag: Optional[str] = None,
     match_condition: Optional[MatchConditions] = None,
+    sync_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -820,11 +820,11 @@ def build_azure_app_configuration_get_revisions_request(  # pylint: disable=name
     *,
     key: Optional[str] = None,
     label: Optional[str] = None,
-    sync_token: Optional[str] = None,
     after: Optional[str] = None,
     accept_datetime: Optional[str] = None,
     select: Optional[List[Union[str, _models.ConfigurationSettingFields]]] = None,
     tags: Optional[List[str]] = None,
+    sync_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -864,11 +864,11 @@ def build_azure_app_configuration_check_revisions_request(  # pylint: disable=na
     *,
     key: Optional[str] = None,
     label: Optional[str] = None,
-    sync_token: Optional[str] = None,
     after: Optional[str] = None,
     accept_datetime: Optional[str] = None,
     select: Optional[List[Union[str, _models.ConfigurationSettingFields]]] = None,
     tags: Optional[List[str]] = None,
+    sync_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -913,7 +913,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         *,
         name: Optional[str] = None,
         after: Optional[str] = None,
-        sync_token: Optional[str] = None,
         accept_datetime: Optional[str] = None,
         **kwargs: Any
     ) -> Iterable["_models.Key"]:
@@ -926,9 +925,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :keyword after: Instructs the server to return elements that appear after the element referred
          to by the specified token. Default value is None.
         :paramtype after: str
-        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
-         None.
-        :paramtype sync_token: str
         :keyword accept_datetime: Requests the server to respond with the state of the resource at the
          specified
          time. Default value is None.
@@ -956,8 +952,8 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
                 _request = build_azure_app_configuration_get_keys_request(
                     name=name,
                     after=after,
-                    sync_token=sync_token,
                     accept_datetime=accept_datetime,
+                    sync_token=self._config.sync_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1021,7 +1017,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         self,
         *,
         name: Optional[str] = None,
-        sync_token: Optional[str] = None,
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
         **kwargs: Any
@@ -1032,9 +1027,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
         :keyword name: A filter for the name of the returned keys. Default value is None.
         :paramtype name: str
-        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
-         None.
-        :paramtype sync_token: str
         :keyword after: Instructs the server to return elements that appear after the element referred
          to by the specified token. Default value is None.
         :paramtype after: str
@@ -1061,9 +1053,9 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
         _request = build_azure_app_configuration_check_keys_request(
             name=name,
-            sync_token=sync_token,
             after=after,
             accept_datetime=accept_datetime,
+            sync_token=self._config.sync_token,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1098,7 +1090,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         *,
         key: Optional[str] = None,
         label: Optional[str] = None,
-        sync_token: Optional[str] = None,
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
         select: Optional[List[Union[str, _models.ConfigurationSettingFields]]] = None,
@@ -1118,9 +1109,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :keyword label: A filter used to match labels. Syntax reference:
          https://aka.ms/azconfig/docs/keyvaluefiltering. Default value is None.
         :paramtype label: str
-        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
-         None.
-        :paramtype sync_token: str
         :keyword after: Instructs the server to return elements that appear after the element referred
          to by the specified token. Default value is None.
         :paramtype after: str
@@ -1171,7 +1159,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
                 _request = build_azure_app_configuration_get_key_values_request(
                     key=key,
                     label=label,
-                    sync_token=sync_token,
                     after=after,
                     accept_datetime=accept_datetime,
                     select=select,
@@ -1179,6 +1166,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
                     tags=tags,
                     etag=etag,
                     match_condition=match_condition,
+                    sync_token=self._config.sync_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1243,7 +1231,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         *,
         key: Optional[str] = None,
         label: Optional[str] = None,
-        sync_token: Optional[str] = None,
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
         select: Optional[List[Union[str, _models.ConfigurationSettingFields]]] = None,
@@ -1263,9 +1250,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :keyword label: A filter used to match labels. Syntax reference:
          https://aka.ms/azconfig/docs/keyvaluefiltering. Default value is None.
         :paramtype label: str
-        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
-         None.
-        :paramtype sync_token: str
         :keyword after: Instructs the server to return elements that appear after the element referred
          to by the specified token. Default value is None.
         :paramtype after: str
@@ -1313,7 +1297,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         _request = build_azure_app_configuration_check_key_values_request(
             key=key,
             label=label,
-            sync_token=sync_token,
             after=after,
             accept_datetime=accept_datetime,
             select=select,
@@ -1321,6 +1304,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
             tags=tags,
             etag=etag,
             match_condition=match_condition,
+            sync_token=self._config.sync_token,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1357,7 +1341,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         *,
         label: Optional[str] = None,
         select: Optional[List[Union[str, _models.ConfigurationSettingFields]]] = None,
-        sync_token: Optional[str] = None,
         accept_datetime: Optional[str] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -1374,9 +1357,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :keyword select: Used to select what fields are present in the returned resource(s). Default
          value is None.
         :paramtype select: list[str or ~azure.appconfiguration.models.ConfigurationSettingFields]
-        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
-         None.
-        :paramtype sync_token: str
         :keyword accept_datetime: Requests the server to respond with the state of the resource at the
          specified
          time. Default value is None.
@@ -1413,10 +1393,10 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
             key=key,
             label=label,
             select=select,
-            sync_token=sync_token,
             accept_datetime=accept_datetime,
             etag=etag,
             match_condition=match_condition,
+            sync_token=self._config.sync_token,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1469,7 +1449,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         *,
         content_type: str,
         label: Optional[str] = None,
-        sync_token: Optional[str] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -1482,7 +1461,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         *,
         content_type: str,
         label: Optional[str] = None,
-        sync_token: Optional[str] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -1495,7 +1473,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         *,
         content_type: str,
         label: Optional[str] = None,
-        sync_token: Optional[str] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -1508,7 +1485,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         entity: Optional[Union[_models.KeyValue, JSON, IO[bytes]]] = None,
         *,
         label: Optional[str] = None,
-        sync_token: Optional[str] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -1524,9 +1500,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :type entity: ~azure.appconfiguration.models.KeyValue or JSON or IO[bytes]
         :keyword label: The label of the key-value to create. Default value is None.
         :paramtype label: str
-        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
-         None.
-        :paramtype sync_token: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -1569,9 +1542,9 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         _request = build_azure_app_configuration_put_key_value_request(
             key=key,
             label=label,
-            sync_token=sync_token,
             etag=etag,
             match_condition=match_condition,
+            sync_token=self._config.sync_token,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1621,7 +1594,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         key: str,
         *,
         label: Optional[str] = None,
-        sync_token: Optional[str] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -1634,9 +1606,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :type key: str
         :keyword label: The label of the key-value to delete. Default value is None.
         :paramtype label: str
-        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
-         None.
-        :paramtype sync_token: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -1668,9 +1637,9 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         _request = build_azure_app_configuration_delete_key_value_request(
             key=key,
             label=label,
-            sync_token=sync_token,
             etag=etag,
             match_condition=match_condition,
+            sync_token=self._config.sync_token,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1723,7 +1692,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         key: str,
         *,
         label: Optional[str] = None,
-        sync_token: Optional[str] = None,
         accept_datetime: Optional[str] = None,
         select: Optional[List[Union[str, _models.ConfigurationSettingFields]]] = None,
         etag: Optional[str] = None,
@@ -1738,9 +1706,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :type key: str
         :keyword label: The label of the key-value to retrieve. Default value is None.
         :paramtype label: str
-        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
-         None.
-        :paramtype sync_token: str
         :keyword accept_datetime: Requests the server to respond with the state of the resource at the
          specified
          time. Default value is None.
@@ -1779,11 +1744,11 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         _request = build_azure_app_configuration_check_key_value_request(
             key=key,
             label=label,
-            sync_token=sync_token,
             accept_datetime=accept_datetime,
             select=select,
             etag=etag,
             match_condition=match_condition,
+            sync_token=self._config.sync_token,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1821,7 +1786,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         after: Optional[str] = None,
         select: Optional[List[Union[str, _models.SnapshotFields]]] = None,
         status: Optional[List[Union[str, _models.SnapshotStatus]]] = None,
-        sync_token: Optional[str] = None,
         **kwargs: Any
     ) -> Iterable["_models.Snapshot"]:
         """Gets a list of key-value snapshots.
@@ -1839,9 +1803,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :keyword status: Used to filter returned snapshots by their status property. Default value is
          None.
         :paramtype status: list[str or ~azure.appconfiguration.models.SnapshotStatus]
-        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
-         None.
-        :paramtype sync_token: str
         :return: An iterator like instance of Snapshot
         :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.models.Snapshot]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1867,7 +1828,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
                     after=after,
                     select=select,
                     status=status,
-                    sync_token=sync_token,
+                    sync_token=self._config.sync_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1927,14 +1888,11 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def check_snapshots(self, *, sync_token: Optional[str] = None, after: Optional[str] = None, **kwargs: Any) -> bool:
+    def check_snapshots(self, *, after: Optional[str] = None, **kwargs: Any) -> bool:
         """Requests the headers and status of the given resource.
 
         Requests the headers and status of the given resource.
 
-        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
-         None.
-        :paramtype sync_token: str
         :keyword after: Instructs the server to return elements that appear after the element referred
          to by the specified token. Default value is None.
         :paramtype after: str
@@ -1956,8 +1914,8 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_azure_app_configuration_check_snapshots_request(
-            sync_token=sync_token,
             after=after,
+            sync_token=self._config.sync_token,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1992,7 +1950,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         name: str,
         *,
         select: Optional[List[Union[str, _models.SnapshotFields]]] = None,
-        sync_token: Optional[str] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -2006,9 +1963,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :keyword select: Used to select what fields are present in the returned resource(s). Default
          value is None.
         :paramtype select: list[str or ~azure.appconfiguration.models.SnapshotFields]
-        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
-         None.
-        :paramtype sync_token: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -2040,9 +1994,9 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         _request = build_azure_app_configuration_get_snapshot_request(
             name=name,
             select=select,
-            sync_token=sync_token,
             etag=etag,
             match_condition=match_condition,
+            sync_token=self._config.sync_token,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2152,12 +2106,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         return deserialized  # type: ignore
 
     def _create_snapshot_initial(
-        self,
-        name: str,
-        entity: Union[_models.Snapshot, JSON, IO[bytes]],
-        *,
-        sync_token: Optional[str] = None,
-        **kwargs: Any
+        self, name: str, entity: Union[_models.Snapshot, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2182,7 +2131,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
         _request = build_azure_app_configuration_create_snapshot_request(
             name=name,
-            sync_token=sync_token,
+            sync_token=self._config.sync_token,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2226,7 +2175,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
     @overload
     def begin_create_snapshot(
-        self, name: str, entity: _models.Snapshot, *, content_type: str, sync_token: Optional[str] = None, **kwargs: Any
+        self, name: str, entity: _models.Snapshot, *, content_type: str, **kwargs: Any
     ) -> LROPoller[_models.Snapshot]:
         """Creates a key-value snapshot.
 
@@ -2239,9 +2188,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Required.
         :paramtype content_type: str
-        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
-         None.
-        :paramtype sync_token: str
         :return: An instance of LROPoller that returns Snapshot. The Snapshot is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.models.Snapshot]
@@ -2250,7 +2196,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
     @overload
     def begin_create_snapshot(
-        self, name: str, entity: JSON, *, content_type: str, sync_token: Optional[str] = None, **kwargs: Any
+        self, name: str, entity: JSON, *, content_type: str, **kwargs: Any
     ) -> LROPoller[_models.Snapshot]:
         """Creates a key-value snapshot.
 
@@ -2263,9 +2209,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Required.
         :paramtype content_type: str
-        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
-         None.
-        :paramtype sync_token: str
         :return: An instance of LROPoller that returns Snapshot. The Snapshot is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.models.Snapshot]
@@ -2274,7 +2217,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
     @overload
     def begin_create_snapshot(
-        self, name: str, entity: IO[bytes], *, content_type: str, sync_token: Optional[str] = None, **kwargs: Any
+        self, name: str, entity: IO[bytes], *, content_type: str, **kwargs: Any
     ) -> LROPoller[_models.Snapshot]:
         """Creates a key-value snapshot.
 
@@ -2288,9 +2231,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
          Known values are: 'application/vnd.microsoft.appconfig.snapshot+json', 'application/json'.
          Required.
         :paramtype content_type: str
-        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
-         None.
-        :paramtype sync_token: str
         :return: An instance of LROPoller that returns Snapshot. The Snapshot is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.models.Snapshot]
@@ -2299,12 +2239,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
     @distributed_trace
     def begin_create_snapshot(
-        self,
-        name: str,
-        entity: Union[_models.Snapshot, JSON, IO[bytes]],
-        *,
-        sync_token: Optional[str] = None,
-        **kwargs: Any
+        self, name: str, entity: Union[_models.Snapshot, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.Snapshot]:
         """Creates a key-value snapshot.
 
@@ -2315,9 +2250,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :param entity: The key-value snapshot to create. Is one of the following types: Snapshot, JSON,
          IO[bytes] Required.
         :type entity: ~azure.appconfiguration.models.Snapshot or JSON or IO[bytes]
-        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
-         None.
-        :paramtype sync_token: str
         :return: An instance of LROPoller that returns Snapshot. The Snapshot is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.models.Snapshot]
@@ -2335,7 +2267,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
             raw_result = self._create_snapshot_initial(
                 name=name,
                 entity=entity,
-                sync_token=sync_token,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -2388,10 +2319,9 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
     def _update_snapshot(
         self,
         name: str,
-        entity: _models._models.SnapshotUpdateParameters,
+        entity: _models.SnapshotUpdateParameters,
         *,
         content_type: str,
-        sync_token: Optional[str] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -2403,7 +2333,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         entity: JSON,
         *,
         content_type: str,
-        sync_token: Optional[str] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -2415,7 +2344,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         entity: IO[bytes],
         *,
         content_type: str,
-        sync_token: Optional[str] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -2425,9 +2353,8 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
     def _update_snapshot(
         self,
         name: str,
-        entity: Union[_models._models.SnapshotUpdateParameters, JSON, IO[bytes]],
+        entity: Union[_models.SnapshotUpdateParameters, JSON, IO[bytes]],
         *,
-        sync_token: Optional[str] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -2440,11 +2367,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :type name: str
         :param entity: The parameters used to update the snapshot. Is one of the following types:
          SnapshotUpdateParameters, JSON, IO[bytes] Required.
-        :type entity: ~azure.appconfiguration.models._models.SnapshotUpdateParameters or JSON or
-         IO[bytes]
-        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
-         None.
-        :paramtype sync_token: str
+        :type entity: ~azure.appconfiguration.models.SnapshotUpdateParameters or JSON or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -2483,9 +2406,9 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
         _request = build_azure_app_configuration_update_snapshot_request(
             name=name,
-            sync_token=sync_token,
             etag=etag,
             match_condition=match_condition,
+            sync_token=self._config.sync_token,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2532,13 +2455,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
     @distributed_trace
     def check_snapshot(
-        self,
-        name: str,
-        *,
-        sync_token: Optional[str] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
+        self, name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
     ) -> bool:
         """Requests the headers and status of the given resource.
 
@@ -2546,9 +2463,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
         :param name: The name of the key-value snapshot to check. Required.
         :type name: str
-        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
-         None.
-        :paramtype sync_token: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -2579,9 +2493,9 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
         _request = build_azure_app_configuration_check_snapshot_request(
             name=name,
-            sync_token=sync_token,
             etag=etag,
             match_condition=match_condition,
+            sync_token=self._config.sync_token,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2617,7 +2531,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         self,
         *,
         name: Optional[str] = None,
-        sync_token: Optional[str] = None,
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
         select: Optional[List[Union[str, _models.LabelFields]]] = None,
@@ -2629,9 +2542,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
         :keyword name: A filter for the name of the returned labels. Default value is None.
         :paramtype name: str
-        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
-         None.
-        :paramtype sync_token: str
         :keyword after: Instructs the server to return elements that appear after the element referred
          to by the specified token. Default value is None.
         :paramtype after: str
@@ -2664,10 +2574,10 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
                 _request = build_azure_app_configuration_get_labels_request(
                     name=name,
-                    sync_token=sync_token,
                     after=after,
                     accept_datetime=accept_datetime,
                     select=select,
+                    sync_token=self._config.sync_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2731,7 +2641,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         self,
         *,
         name: Optional[str] = None,
-        sync_token: Optional[str] = None,
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
         select: Optional[List[Union[str, _models.LabelFields]]] = None,
@@ -2743,9 +2652,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
         :keyword name: A filter for the name of the returned labels. Default value is None.
         :paramtype name: str
-        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
-         None.
-        :paramtype sync_token: str
         :keyword after: Instructs the server to return elements that appear after the element referred
          to by the specified token. Default value is None.
         :paramtype after: str
@@ -2775,10 +2681,10 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
         _request = build_azure_app_configuration_check_labels_request(
             name=name,
-            sync_token=sync_token,
             after=after,
             accept_datetime=accept_datetime,
             select=select,
+            sync_token=self._config.sync_token,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2813,7 +2719,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         key: str,
         *,
         label: Optional[str] = None,
-        sync_token: Optional[str] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -2826,9 +2731,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :type key: str
         :keyword label: The label, if any, of the key-value to lock. Default value is None.
         :paramtype label: str
-        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
-         None.
-        :paramtype sync_token: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -2860,9 +2762,9 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         _request = build_azure_app_configuration_put_lock_request(
             key=key,
             label=label,
-            sync_token=sync_token,
             etag=etag,
             match_condition=match_condition,
+            sync_token=self._config.sync_token,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2910,7 +2812,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         key: str,
         *,
         label: Optional[str] = None,
-        sync_token: Optional[str] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -2923,9 +2824,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :type key: str
         :keyword label: The label, if any, of the key-value to unlock. Default value is None.
         :paramtype label: str
-        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
-         None.
-        :paramtype sync_token: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -2957,9 +2855,9 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         _request = build_azure_app_configuration_delete_lock_request(
             key=key,
             label=label,
-            sync_token=sync_token,
             etag=etag,
             match_condition=match_condition,
+            sync_token=self._config.sync_token,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3007,7 +2905,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         *,
         key: Optional[str] = None,
         label: Optional[str] = None,
-        sync_token: Optional[str] = None,
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
         select: Optional[List[Union[str, _models.ConfigurationSettingFields]]] = None,
@@ -3024,9 +2921,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :keyword label: A filter used to match labels. Syntax reference:
          https://aka.ms/azconfig/docs/restapirevisions. Default value is None.
         :paramtype label: str
-        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
-         None.
-        :paramtype sync_token: str
         :keyword after: Instructs the server to return elements that appear after the element referred
          to by the specified token. Default value is None.
         :paramtype after: str
@@ -3063,11 +2957,11 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
                 _request = build_azure_app_configuration_get_revisions_request(
                     key=key,
                     label=label,
-                    sync_token=sync_token,
                     after=after,
                     accept_datetime=accept_datetime,
                     select=select,
                     tags=tags,
+                    sync_token=self._config.sync_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -3132,7 +3026,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         *,
         key: Optional[str] = None,
         label: Optional[str] = None,
-        sync_token: Optional[str] = None,
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
         select: Optional[List[Union[str, _models.ConfigurationSettingFields]]] = None,
@@ -3149,9 +3042,6 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :keyword label: A filter used to match labels. Syntax reference:
          https://aka.ms/azconfig/docs/restapirevisions. Default value is None.
         :paramtype label: str
-        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
-         None.
-        :paramtype sync_token: str
         :keyword after: Instructs the server to return elements that appear after the element referred
          to by the specified token. Default value is None.
         :paramtype after: str
@@ -3185,11 +3075,11 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         _request = build_azure_app_configuration_check_revisions_request(
             key=key,
             label=label,
-            sync_token=sync_token,
             after=after,
             accept_datetime=accept_datetime,
             select=select,
             tags=tags,
+            sync_token=self._config.sync_token,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

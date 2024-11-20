@@ -21,6 +21,7 @@ from ._models import (  # type: ignore
     Label,
     OperationDetails,
     Snapshot,
+    SnapshotUpdateParameters,
 )
 
 from ._enums import (  # type: ignore
@@ -43,6 +44,7 @@ __all__ = [
     "Label",
     "OperationDetails",
     "Snapshot",
+    "SnapshotUpdateParameters",
     "ConfigurationSettingFields",
     "LabelFields",
     "OperationState",
