@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- Detect live metrics usage during runtime in addition to on startup
+  ([#37694](https://github.com/Azure/azure-sdk-for-python/pull/37694))
+
 ### Other Changes
 
 ## 1.0.0b32 (2024-11-04)
