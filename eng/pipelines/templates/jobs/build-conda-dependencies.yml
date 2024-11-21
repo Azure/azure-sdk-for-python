@@ -141,8 +141,10 @@ jobs:
 
     - pwsh: |
         Write-Host  $env:PATH
-        Write-Host $HOME/miniconda3/bin
-        $HOME/miniconda3/bin --version
+      displayName: Display Path
+
+    - pwsh: |
+        conda --version
       displayName: Display Installed Conda
 
     - bash: |
