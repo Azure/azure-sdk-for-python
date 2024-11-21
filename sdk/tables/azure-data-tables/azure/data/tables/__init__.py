@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from ._encoder import TableEntityEncoder, TableEntityEncoderABC
 from ._entity import TableEntity, EntityProperty, EdmType, EntityMetadata
 from ._error import RequestTooLargeError, TableTransactionError, TableErrorCode
 from ._table_shared_access_signature import generate_table_sas, generate_account_sas
@@ -32,8 +31,6 @@ __all__ = [
     "TableServiceClient",
     "ResourceTypes",
     "AccountSasPermissions",
-    "TableEntityEncoder",
-    "TableEntityEncoderABC",
     "TableErrorCode",
     "TableSasPermissions",
     "TableAccessPolicy",

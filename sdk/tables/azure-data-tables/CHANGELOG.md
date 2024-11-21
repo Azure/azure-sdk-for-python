@@ -1,19 +1,9 @@
 # Release History
 
-## 12.6.0b1 (Unreleased)
+## 12.6.0 (2024-11-21)
 
 ### Features Added
-* Added to support custom encoder in entity CRUD operations.
-* Added to support custom Entity type.
-* Added to support Entity property in Tuple and Enum types.
 * Added support for Microsoft Entra auth with Azure Cosmos DB for Table's OAuth scope (`https://cosmos.azure.com/.default`).
-
-### Bugs Fixed
-* Fixed a bug in encoder when Entity property has "@odata.type" provided.
-* Fixed a bug in encoder that int32 and int64 are mapped to int32 when no "@odata.type" provided.
-
-### Other Changes
-* Removed value range validation for Entity property in int32 and int64.
 
 ## 12.5.0 (2024-01-10)
 
