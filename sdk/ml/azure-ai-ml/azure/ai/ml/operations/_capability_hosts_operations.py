@@ -76,16 +76,16 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         
         return capability_host
 
-    @monitor_with_activity(ops_logger, "CapabilityHost.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "CapabilityHost.BeginCreate", ActivityType.PUBLICAPI)
     @distributed_trace
-    def begin_create_or_update(
+    def begin_create(
             self,
             capability_host: CapabilityHost,
             **kwargs: Any
     ) -> LROPoller[CapabilityHost]:
-        """Begin the creation or update of a capability host in a Hub or Project workspace.
+        """Begin the creation of a capability host in a Hub or Project workspace.
 
-        :param capability_host: The CapabilityHost object containing the details of the capability host to create or update.
+        :param capability_host: The CapabilityHost object containing the details of the capability host to create.
         :type capability_host: ~azure.ai.ml.entities.CapabilityHost
         :param kwargs: Additional keyword arguments.
         :type kwargs: Any
@@ -94,7 +94,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         """
 
         self.__validate_workspace_name()
-        
+
         workspace = self.__get_workspace()
 
         if workspace is None:
@@ -106,18 +106,31 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
                 error_category=ErrorCategory.USER_ERROR,
             )
         
+        """workspace._kind
         workspace_kind = WorkspaceKind.PROJECT
         if workspace._hub_id is None: 
             workspace_kind = WorkspaceKind.HUB
+        """
 
-        self.__validate_properties(capability_host, workspace_kind)
+        self.__validate_properties(capability_host, workspace._kind)
         
-        if workspace_kind == WorkspaceKind.PROJECT:
+        if workspace._kind == WorkspaceKind.PROJECT:
             if capability_host.storage_connections is None or len(capability_host.storage_connections) == 0:
                 capability_host.storage_connections = self.__get_default_storage_connections()
         
         try:
-            capability_host_resource = capability_host._to_rest_object_for_hub() if workspace_kind == WorkspaceKind.HUB else capability_host._to_rest_object_for_project()
+            capability_host_resource = capability_host._to_rest_object_for_hub() if workspace._kind == WorkspaceKind.HUB else capability_host._to_rest_object_for_project()
+
+            # pylint: disable=unused-argument, docstring-missing-param
+            def callback(_: Any, deserialized: Any, args: Any) -> CapabilityHost:
+                """Callback to be called after completion
+
+                :return: Capability host deserialized.
+                :rtype: ~azure.ai.ml.entities.CapabilityHost
+                """
+            
+                return CapabilityHost._from_rest_object(deserialized)  # pylint: disable=protected-access
+
             poller = self._capability_hosts_operations.begin_create_or_update(
                 resource_group_name = self._resource_group_name,
                 workspace_name = self._workspace_name,
@@ -125,7 +138,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
                 body = capability_host_resource,
                 polling=True,
                 **kwargs,
-                cls=lambda response, deserialized, headers: CapabilityHost._from_rest_object(deserialized)
+                cls=callback
             )
             return poller
     
@@ -133,6 +146,29 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
             raise ex
+        
+    @distributed_trace
+    @monitor_with_activity(ops_logger, "CapabilityHost.Delete", ActivityType.PUBLICAPI)
+    def begin_delete(
+        self,
+        name: str,
+        **kwargs: Any,
+    ) -> LROPoller[None]:
+        """Delete capability host.
+
+        :param name: capability host name.
+        :type name: str
+        :return: A poller for deletion status
+        :rtype: ~azure.core.polling.LROPoller[None]
+        """
+        poller = self._capability_hosts_operations.begin_delete(
+            resource_group_name=self._resource_group_name,
+            workspace_name=self._workspace_name,
+            name=name,
+            polling=True,
+            **kwargs,
+        )
+        return poller
         
     def __validate_capability_host_name(self, capability_host_name: Optional[str]) -> None:
         """Validates that a capability host name exists.
