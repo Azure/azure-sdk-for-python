@@ -7,6 +7,7 @@ jobs:
 - job: 'Build_Windows_Dependencies'
   displayName: 'Build Windows Dependencies'
   timeoutInMinutes: 90
+  condition: false
   pool:
     name: azsdk-pool-mms-win-2022-general
     image: azsdk-pool-mms-win-2022-1espt
@@ -83,6 +84,7 @@ jobs:
 - job: 'Build_Linux_Dependencies'
   displayName: 'Build Linux Dependencies'
   timeoutInMinutes: 90
+  condition: false
   pool:
     name: azsdk-pool-mms-ubuntu-2004-general
     image: azsdk-pool-mms-ubuntu-2004-1espt
