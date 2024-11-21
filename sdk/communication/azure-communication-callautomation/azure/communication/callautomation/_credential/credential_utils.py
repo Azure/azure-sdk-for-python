@@ -8,6 +8,7 @@ import os
 COMMUNICATION_CUSTOM_ENDPOINT_ENABLED = "COMMUNICATION_CUSTOM_ENDPOINT_ENABLED"
 COMMUNICATION_CUSTOM_URL = "COMMUNICATION_CUSTOM_URL"
 
+
 def get_custom_enabled():
     """From environment variable, get whether to use a custom endpoint.
     This is only for development purposes.
@@ -18,8 +19,9 @@ def get_custom_enabled():
     custom_enabled_str = get_environment_variable(COMMUNICATION_CUSTOM_ENDPOINT_ENABLED)
 
     if custom_enabled_str is not None:
-        return custom_enabled_str.lower() == 'true'
+        return custom_enabled_str.lower() == "true"
     return False
+
 
 def get_custom_url():
     """From environment variable, get the acs endpoint to call.
@@ -29,6 +31,7 @@ def get_custom_url():
     :rtype: str
     """
     return get_environment_variable(COMMUNICATION_CUSTOM_URL)
+
 
 def get_environment_variable(variable_name):
     """From environment variable, from variable name.
