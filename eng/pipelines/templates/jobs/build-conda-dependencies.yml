@@ -135,14 +135,6 @@ jobs:
         echo '##vso[task.prependpath]$HOME/miniconda3/bin'
       displayName: Install Conda
 
-    - script: |
-        mkdir -p ~/miniconda3
-        curl https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -o ~/miniconda3/miniconda.sh
-        bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
-        rm ~/miniconda3/miniconda.sh
-        echo '##vso[task.prependpath]~/miniconda3/bin'
-      displayName: Prepare Conda
-
     - bash: |
           echo "##vso[task.setvariable variable=CFLAGS;]-mmacosx-version-min=$(MacOSXDeploymentTarget) -I$(OpenSSLDir)/include"
           echo "##vso[task.setvariable variable=CMAKE_OSX_ARCHITECTURES;]x86_64"
