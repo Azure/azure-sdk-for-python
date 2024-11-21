@@ -1775,7 +1775,7 @@ class TestagentClient(AzureRecordedTestCase):
             agent = client.agents.create_agent(
                 model="gpt-4-1106-preview",
                 name="my-assistant",
-                instructions="You are helpful assistant",
+                instructions="You are a personal electronics tutor. Write and run code to answer questions.",
             )
             assert agent.id, "The agent was not created."
             thread = client.agents.create_thread()
