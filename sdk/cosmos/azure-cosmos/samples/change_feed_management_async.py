@@ -93,7 +93,6 @@ async def delete_all_items(container):
 
     async for item in container.query_items(query='SELECT * FROM c'):
         # Deleting the current item
-        print(item)
         await container.delete_item(item, partition_key=item['address']['state'])
 
     print('Deleted all items')

@@ -334,8 +334,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     ) -> ItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
-        :keyword max_item_count: Max number of items to be returned in the enumeration operation.
-        :paramtype max_item_count: Optional[int]
+        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword start_time:The start time to start processing chang feed items.
             Beginning: Processing the change feed items from the beginning of the change feed.
             Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
@@ -348,14 +347,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :paramtype priority: Optional[Literal["High", "Low"]]
+        :paramtype priority: Literal["High", "Low"]
         :keyword mode: The modes to query change feed. If `continuation` was passed, 'mode' argument will be ignored.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
-        :paramtype mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]]
+        :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
         :keyword response_hook: A callable invoked with the response metadata.
-        :type response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]]
+        :type response_hook: Callable[[Mapping[str, Any], Mapping[str, Any]], None]
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
@@ -386,14 +385,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :paramtype priority: Optional[Literal["High", "Low"]]
+        :paramtype priority: Literal["High", "Low"]
         :keyword mode: The modes to query change feed. If `continuation` was passed, 'mode' argument will be ignored.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
-        :paramtype mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]]
+        :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]]
+        :paramtype response_hook: Callable[[Mapping[str, Any], Mapping[str, Any]], None]
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
@@ -413,13 +412,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword str continuation: The continuation token retrieved from previous response. It contains chang feed mode.
         :paramtype continuation: str
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
-        :paramtype max_item_count: Optional[int]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :paramtype priority: Optional[Literal["High", "Low"]]
+        :paramtype priority: Literal["High", "Low"]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]]
+        :paramtype response_hook: Callable[[Mapping[str, Any], Mapping[str, Any]], None]
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
@@ -438,8 +436,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """Get a sorted list of items that were changed in the entire container,
          in the order in which they were modified,
 
-        :keyword max_item_count: Max number of items to be returned in the enumeration operation.
-        :paramtype max_item_count: Optional[int]
+        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword start_time:The start time to start processing chang feed items.
             Beginning: Processing the change feed items from the beginning of the change feed.
             Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
@@ -449,14 +446,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :paramtype priority: Optional[Literal["High", "Low"]]
+        :paramtype priority: Literal["High", "Low"]
         :keyword mode: The modes to query change feed. If `continuation` was passed, 'mode' argument will be ignored.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
-        :paramtype mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]]
+        :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]]
+        :paramtype response_hook: Callable[[Mapping[str, Any], Mapping[str, Any]], None]
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
@@ -490,9 +487,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
-        :paramtype mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]]
+        :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]]
+        :paramtype response_hook: Callable[[Mapping[str, Any], Mapping[str, Any]], None]
         :param Any args: args
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]

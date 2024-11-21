@@ -223,7 +223,7 @@ class HttpHeaders:
     ChangeFeedWireFormatVersion = "x-ms-cosmos-changefeed-wire-format-version"
 
     # Change feed wire format version
-    Separate_meta_with_crts = "2021-09-15"
+    SeparateMetaWithCrts = "2021-09-15"
 
     # For Using Multiple Write Locations
     AllowTentativeWrites = "x-ms-cosmos-allow-tentative-writes"

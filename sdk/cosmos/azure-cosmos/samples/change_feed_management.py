@@ -89,7 +89,6 @@ def delete_all_items(container):
 
     for item in container.query_items(query='SELECT * FROM c', enable_cross_partition_query=True):
         # Deleting the current item
-        print(item)
         container.delete_item(item, partition_key=item['address']['state'])
 
     print('Deleted all items')

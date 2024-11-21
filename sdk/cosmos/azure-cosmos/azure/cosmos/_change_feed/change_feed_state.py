@@ -269,7 +269,7 @@ class ChangeFeedStateV2(ChangeFeedState):
         if self._mode == "AllVersionsAndDeletes":
             request_headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.FullFidelityFeedHeaderValue
             request_headers[http_constants.HttpHeaders.ChangeFeedWireFormatVersion] = \
-                http_constants.HttpHeaders.Separate_meta_with_crts
+                http_constants.HttpHeaders.SeparateMetaWithCrts
         else:
             request_headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.IncrementalFeedHeaderValue
 
@@ -398,7 +398,7 @@ class ChangeFeedStateV2(ChangeFeedState):
                 raise ValueError("partitionKey is in the changeFeedStateContext, but missing partitionKeyFeedRange")
         else:
             # default to full range
-            logging.info("'feed_range' empty. Use full range by default.")
+            logging.info("'feed_range' empty. Using full range by default.")
             feed_range = FeedRangeInternalEpk(
                 Range(
                 "",
