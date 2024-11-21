@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -15,7 +15,6 @@ from .._model_base import rest_discriminator, rest_field
 from ._enums import ResourcePredictionsProfileType
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -25,9 +24,8 @@ class AgentProfile(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     Stateful, StatelessAgentProfile
 
-    All required parameters must be populated in order to send to server.
 
-    :ivar kind: Required. Default value is None.
+    :ivar kind: Discriminator property for AgentProfile. Required. Default value is None.
     :vartype kind: str
     :ivar resource_predictions: Defines pool buffer/stand-by agents.
     :vartype resource_predictions: ~azure.mgmt.devopsinfrastructure.models.ResourcePredictions
@@ -38,7 +36,7 @@ class AgentProfile(_model_base.Model):
 
     __mapping__: Dict[str, _model_base.Model] = {}
     kind: str = rest_discriminator(name="kind")
-    """Required. Default value is None."""
+    """Discriminator property for AgentProfile. Required. Default value is None."""
     resource_predictions: Optional["_models.ResourcePredictions"] = rest_field(name="resourcePredictions")
     """Defines pool buffer/stand-by agents."""
     resource_predictions_profile: Optional["_models.ResourcePredictionsProfile"] = rest_field(
@@ -53,10 +51,10 @@ class AgentProfile(_model_base.Model):
         kind: str,
         resource_predictions: Optional["_models.ResourcePredictions"] = None,
         resource_predictions_profile: Optional["_models.ResourcePredictionsProfile"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -72,7 +70,6 @@ class ResourcePredictionsProfile(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AutomaticResourcePredictionsProfile, ManualResourcePredictionsProfile
 
-    All required parameters must be populated in order to send to server.
 
     :ivar kind: Determines how the stand-by scheme should be provided. Required. Known values are:
      "Manual" and "Automatic".
@@ -89,10 +86,10 @@ class ResourcePredictionsProfile(_model_base.Model):
         self,
         *,
         kind: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -105,7 +102,6 @@ class ResourcePredictionsProfile(_model_base.Model):
 class AutomaticResourcePredictionsProfile(ResourcePredictionsProfile, discriminator="Automatic"):
     """The stand-by agent scheme is determined based on historical demand.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar kind: The stand-by agent scheme is determined based on historical demand. Required. The
      stand-by agent scheme is determined based on historical demand.
@@ -131,10 +127,10 @@ class AutomaticResourcePredictionsProfile(ResourcePredictionsProfile, discrimina
         self,
         *,
         prediction_preference: Optional[Union[str, "_models.PredictionPreference"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -150,25 +146,24 @@ class OrganizationProfile(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureDevOpsOrganizationProfile, GitHubOrganizationProfile
 
-    All required parameters must be populated in order to send to server.
 
-    :ivar kind: Required. Default value is None.
+    :ivar kind: Discriminator property for OrganizationProfile. Required. Default value is None.
     :vartype kind: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
     kind: str = rest_discriminator(name="kind")
-    """Required. Default value is None."""
+    """Discriminator property for OrganizationProfile. Required. Default value is None."""
 
     @overload
     def __init__(
         self,
         *,
         kind: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -181,7 +176,6 @@ class OrganizationProfile(_model_base.Model):
 class AzureDevOpsOrganizationProfile(OrganizationProfile, discriminator="AzureDevOps"):
     """Azure DevOps organization profile.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar kind: Azure DevOps organization profile. Required. Default value is "AzureDevOps".
     :vartype kind: str
@@ -207,10 +201,10 @@ class AzureDevOpsOrganizationProfile(OrganizationProfile, discriminator="AzureDe
         *,
         organizations: List["_models.Organization"],
         permission_profile: Optional["_models.AzureDevOpsPermissionProfile"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -223,7 +217,6 @@ class AzureDevOpsOrganizationProfile(OrganizationProfile, discriminator="AzureDe
 class AzureDevOpsPermissionProfile(_model_base.Model):
     """Defines the type of Azure DevOps pool permission.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar kind: Determines who has admin permissions to the Azure DevOps pool. Required. Known
      values are: "Inherit", "CreatorOnly", and "SpecificAccounts".
@@ -249,10 +242,10 @@ class AzureDevOpsPermissionProfile(_model_base.Model):
         kind: Union[str, "_models.AzureDevOpsPermissionType"],
         users: Optional[List[str]] = None,
         groups: Optional[List[str]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -305,10 +298,10 @@ class DataDisk(_model_base.Model):
         disk_size_gi_b: Optional[int] = None,
         storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
         drive_letter: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -321,7 +314,6 @@ class DataDisk(_model_base.Model):
 class DevOpsAzureSku(_model_base.Model):
     """The Azure SKU of the machines in the pool.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar name: The Azure SKU name of the machines in the pool. Required.
     :vartype name: str
@@ -335,10 +327,10 @@ class DevOpsAzureSku(_model_base.Model):
         self,
         *,
         name: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -412,10 +404,10 @@ class ErrorResponse(_model_base.Model):
         self,
         *,
         error: Optional["_models.ErrorDetail"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -431,25 +423,24 @@ class FabricProfile(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     VmssFabricProfile
 
-    All required parameters must be populated in order to send to server.
 
-    :ivar kind: Required. Default value is None.
+    :ivar kind: Discriminator property for FabricProfile. Required. Default value is None.
     :vartype kind: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
     kind: str = rest_discriminator(name="kind")
-    """Required. Default value is None."""
+    """Discriminator property for FabricProfile. Required. Default value is None."""
 
     @overload
     def __init__(
         self,
         *,
         kind: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -462,7 +453,6 @@ class FabricProfile(_model_base.Model):
 class GitHubOrganization(_model_base.Model):
     """Defines a GitHub organization.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar url: The GitHub organization URL in which the pool should be created. Required.
     :vartype url: str
@@ -481,10 +471,10 @@ class GitHubOrganization(_model_base.Model):
         *,
         url: str,
         repositories: Optional[List[str]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -497,7 +487,6 @@ class GitHubOrganization(_model_base.Model):
 class GitHubOrganizationProfile(OrganizationProfile, discriminator="GitHub"):
     """GitHub organization profile.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar kind: GitHub organization profile. Required. Default value is "GitHub".
     :vartype kind: str
@@ -516,10 +505,10 @@ class GitHubOrganizationProfile(OrganizationProfile, discriminator="GitHub"):
         self,
         *,
         organizations: List["_models.GitHubOrganization"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -530,7 +519,7 @@ class GitHubOrganizationProfile(OrganizationProfile, discriminator="GitHub"):
 
 
 class Resource(_model_base.Model):
-    """Common properties for all Azure Resource Manager resources.
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
@@ -560,7 +549,8 @@ class Resource(_model_base.Model):
 
 
 class ProxyResource(Resource):
-    """The base proxy resource.
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
@@ -598,7 +588,7 @@ class ImageVersion(ProxyResource):
     :vartype properties: ~azure.mgmt.devopsinfrastructure.models.ImageVersionProperties
     """
 
-    properties: Optional["_models.ImageVersionProperties"] = rest_field(visibility=["read", "create"])
+    properties: Optional["_models.ImageVersionProperties"] = rest_field()
     """The resource-specific properties for this resource."""
 
     @overload
@@ -606,10 +596,10 @@ class ImageVersion(ProxyResource):
         self,
         *,
         properties: Optional["_models.ImageVersionProperties"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -622,7 +612,6 @@ class ImageVersion(ProxyResource):
 class ImageVersionProperties(_model_base.Model):
     """Details of the ImageVersionProperties.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar version: Version of the image. Required.
     :vartype version: str
@@ -636,10 +625,10 @@ class ImageVersionProperties(_model_base.Model):
         self,
         *,
         version: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -650,31 +639,34 @@ class ImageVersionProperties(_model_base.Model):
 
 
 class ManagedServiceIdentity(_model_base.Model):
-    """The properties of the managed service identities assigned to this resource.
+    """Managed service identity (system assigned and/or user assigned identities).
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
-    :ivar tenant_id: The Active Directory tenant id of the principal.
-    :vartype tenant_id: str
-    :ivar principal_id: The active directory identifier of this principal.
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
     :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
     :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
-     "None", "SystemAssigned", "UserAssigned", and "SystemAssigned, UserAssigned".
+     "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
     :vartype type: str or ~azure.mgmt.devopsinfrastructure.models.ManagedServiceIdentityType
     :ivar user_assigned_identities: The identities assigned to this resource by the user.
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.devopsinfrastructure.models.UserAssignedIdentity]
     """
 
-    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
-    """The Active Directory tenant id of the principal."""
     principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
-    """The active directory identifier of this principal."""
+    """The service principal ID of the system assigned identity. This property will only be provided
+     for a system assigned identity."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
+    """The tenant ID of the system assigned identity. This property will only be provided for a system
+     assigned identity."""
     type: Union[str, "_models.ManagedServiceIdentityType"] = rest_field()
     """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
-     \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned, UserAssigned\"."""
+     \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
     user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = rest_field(
         name="userAssignedIdentities"
     )
@@ -686,10 +678,10 @@ class ManagedServiceIdentity(_model_base.Model):
         *,
         type: Union[str, "_models.ManagedServiceIdentityType"],
         user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -702,7 +694,6 @@ class ManagedServiceIdentity(_model_base.Model):
 class ManualResourcePredictionsProfile(ResourcePredictionsProfile, discriminator="Manual"):
     """Customer provides the stand-by agent scheme.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar kind: Customer provides the stand-by agent scheme. Required. Customer provides the
      stand-by agent scheme.
@@ -713,11 +704,25 @@ class ManualResourcePredictionsProfile(ResourcePredictionsProfile, discriminator
     """Customer provides the stand-by agent scheme. Required. Customer provides the stand-by agent
      scheme."""
 
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=ResourcePredictionsProfileType.MANUAL, **kwargs)
+
 
 class NetworkProfile(_model_base.Model):
     """The network profile of the machines in the pool.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar subnet_id: The subnet id on which to put all machines created in the pool. Required.
     :vartype subnet_id: str
@@ -731,10 +736,10 @@ class NetworkProfile(_model_base.Model):
         self,
         *,
         subnet_id: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -756,7 +761,7 @@ class Operation(_model_base.Model):
      data-plane operations and "false" for Azure Resource Manager/control-plane operations.
     :vartype is_data_action: bool
     :ivar display: Localized display information for this particular operation.
-    :vartype display: ~azure.mgmt.devopsinfrastructure.models.OperationDisplay
+    :vartype display: ~azure.mgmt.devopsinfrastructure.models._models.OperationDisplay
     :ivar origin: The intended executor of the operation; as in Resource Based Access Control
      (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
      and "user,system".
@@ -773,37 +778,21 @@ class Operation(_model_base.Model):
     is_data_action: Optional[bool] = rest_field(name="isDataAction", visibility=["read"])
     """Whether the operation applies to data-plane. This is \"true\" for data-plane operations and
      \"false\" for Azure Resource Manager/control-plane operations."""
-    display: Optional["_models.OperationDisplay"] = rest_field()
+    display: Optional["_models._models.OperationDisplay"] = rest_field(visibility=["read"])
     """Localized display information for this particular operation."""
-    origin: Optional[Union[str, "_models.Origin"]] = rest_field(visibility=["read"])
+    origin: Optional[Union[str, "_models._enums.Origin"]] = rest_field(visibility=["read"])
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
      logs UX. Default value is \"user,system\". Known values are: \"user\", \"system\", and
      \"user,system\"."""
-    action_type: Optional[Union[str, "_models.ActionType"]] = rest_field(name="actionType")
+    action_type: Optional[Union[str, "_models._enums.ActionType"]] = rest_field(name="actionType")
     """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for
      internal only APIs. \"Internal\""""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        display: Optional["_models.OperationDisplay"] = None,
-        action_type: Optional[Union[str, "_models.ActionType"]] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
 
 
 class OperationDisplay(_model_base.Model):
     """Localized display information for and operation.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -819,44 +808,23 @@ class OperationDisplay(_model_base.Model):
     :vartype description: str
     """
 
-    provider: Optional[str] = rest_field()
+    provider: Optional[str] = rest_field(visibility=["read"])
     """The localized friendly form of the resource provider name, e.g. \"Microsoft Monitoring
      Insights\" or \"Microsoft Compute\"."""
-    resource: Optional[str] = rest_field()
+    resource: Optional[str] = rest_field(visibility=["read"])
     """The localized friendly name of the resource type related to this operation. E.g. \"Virtual
      Machines\" or \"Job Schedule Collections\"."""
-    operation: Optional[str] = rest_field()
+    operation: Optional[str] = rest_field(visibility=["read"])
     """The concise, localized friendly name for the operation; suitable for dropdowns. E.g. \"Create
      or Update Virtual Machine\", \"Restart Virtual Machine\"."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read"])
     """The short, localized friendly description of the operation; suitable for tool tips and detailed
      views."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        provider: Optional[str] = None,
-        resource: Optional[str] = None,
-        operation: Optional[str] = None,
-        description: Optional[str] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
 
 
 class Organization(_model_base.Model):
     """Defines an Azure DevOps organization.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar url: The Azure DevOps organization URL in which the pool should be created. Required.
     :vartype url: str
@@ -882,10 +850,10 @@ class Organization(_model_base.Model):
         url: str,
         projects: Optional[List[str]] = None,
         parallelism: Optional[int] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -920,10 +888,10 @@ class OsProfile(_model_base.Model):
         *,
         secrets_management_settings: Optional["_models.SecretsManagementSettings"] = None,
         logon_type: Optional[Union[str, "_models.LogonType"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -939,7 +907,6 @@ class TrackedResource(Resource):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
@@ -952,16 +919,16 @@ class TrackedResource(Resource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.devopsinfrastructure.models.SystemData
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     """
 
-    location: str = rest_field(visibility=["read", "create"])
-    """The geo-location where the resource lives. Required."""
     tags: Optional[Dict[str, str]] = rest_field()
     """Resource tags."""
+    location: str = rest_field(visibility=["read", "create"])
+    """The geo-location where the resource lives. Required."""
 
     @overload
     def __init__(
@@ -969,10 +936,10 @@ class TrackedResource(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -988,7 +955,6 @@ class Pool(TrackedResource):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
@@ -1001,17 +967,17 @@ class Pool(TrackedResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.devopsinfrastructure.models.SystemData
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.devopsinfrastructure.models.PoolProperties
     :ivar identity: The managed service identities assigned to this resource.
     :vartype identity: ~azure.mgmt.devopsinfrastructure.models.ManagedServiceIdentity
     """
 
-    properties: Optional["_models.PoolProperties"] = rest_field(visibility=["read", "create"])
+    properties: Optional["_models.PoolProperties"] = rest_field()
     """The resource-specific properties for this resource."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field()
     """The managed service identities assigned to this resource."""
@@ -1024,10 +990,10 @@ class Pool(TrackedResource):
         tags: Optional[Dict[str, str]] = None,
         properties: Optional["_models.PoolProperties"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1068,10 +1034,10 @@ class PoolImage(_model_base.Model):
         well_known_image_name: Optional[str] = None,
         aliases: Optional[List[str]] = None,
         buffer: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1084,7 +1050,6 @@ class PoolImage(_model_base.Model):
 class PoolProperties(_model_base.Model):
     """Pool properties.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar provisioning_state: The status of the current operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
@@ -1127,10 +1092,10 @@ class PoolProperties(_model_base.Model):
         fabric_profile: "_models.FabricProfile",
         dev_center_project_resource_id: str,
         provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1147,7 +1112,7 @@ class PoolUpdate(_model_base.Model):
     :vartype identity: ~azure.mgmt.devopsinfrastructure.models.ManagedServiceIdentity
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar properties:
+    :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.devopsinfrastructure.models.PoolUpdateProperties
     """
 
@@ -1156,6 +1121,7 @@ class PoolUpdate(_model_base.Model):
     tags: Optional[Dict[str, str]] = rest_field()
     """Resource tags."""
     properties: Optional["_models.PoolUpdateProperties"] = rest_field()
+    """The resource-specific properties for this resource."""
 
     @overload
     def __init__(
@@ -1164,10 +1130,10 @@ class PoolUpdate(_model_base.Model):
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional["_models.PoolUpdateProperties"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1220,10 +1186,10 @@ class PoolUpdateProperties(_model_base.Model):
         agent_profile: Optional["_models.AgentProfile"] = None,
         fabric_profile: Optional["_models.FabricProfile"] = None,
         dev_center_project_resource_id: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1233,38 +1199,47 @@ class PoolUpdateProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Quota(ProxyResource):
+class Quota(_model_base.Model):
     """Describes Resource Quota.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+
+    :ivar name: The name of the quota.
+    :vartype name: ~azure.mgmt.devopsinfrastructure.models.QuotaName
+    :ivar id: Fully qualified ARM resource id. Required.
     :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.devopsinfrastructure.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.devopsinfrastructure.models.QuotaProperties
+    :ivar unit: The unit of usage measurement. Required.
+    :vartype unit: str
+    :ivar current_value: The current usage of the resource. Required.
+    :vartype current_value: int
+    :ivar limit: The maximum permitted usage of the resource. Required.
+    :vartype limit: int
     """
 
-    properties: Optional["_models.QuotaProperties"] = rest_field(visibility=["read", "create"])
-    """The resource-specific properties for this resource."""
+    name: Optional["_models.QuotaName"] = rest_field(visibility=["read"])
+    """The name of the quota."""
+    id: str = rest_field()
+    """Fully qualified ARM resource id. Required."""
+    unit: str = rest_field()
+    """The unit of usage measurement. Required."""
+    current_value: int = rest_field(name="currentValue")
+    """The current usage of the resource. Required."""
+    limit: int = rest_field()
+    """The maximum permitted usage of the resource. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        properties: Optional["_models.QuotaProperties"] = None,
-    ): ...
+        id: str,  # pylint: disable=redefined-builtin
+        unit: str,
+        current_value: int,
+        limit: int,
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1294,55 +1269,10 @@ class QuotaName(_model_base.Model):
         *,
         value: Optional[str] = None,
         localized_value: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class QuotaProperties(_model_base.Model):
-    """Describes Resource Quota properties.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar unit: The unit of usage measurement. Required.
-    :vartype unit: str
-    :ivar current_value: The current usage of the resource. Required.
-    :vartype current_value: int
-    :ivar limit: The maximum permitted usage of the resource. Required.
-    :vartype limit: int
-    :ivar name: The details of the quota. Required.
-    :vartype name: ~azure.mgmt.devopsinfrastructure.models.QuotaName
-    """
-
-    unit: str = rest_field()
-    """The unit of usage measurement. Required."""
-    current_value: int = rest_field(name="currentValue")
-    """The current usage of the resource. Required."""
-    limit: int = rest_field()
-    """The maximum permitted usage of the resource. Required."""
-    name: "_models.QuotaName" = rest_field()
-    """The details of the quota. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        unit: str,
-        current_value: int,
-        limit: int,
-        name: "_models.QuotaName",
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1372,7 +1302,7 @@ class ResourceDetailsObject(ProxyResource):
     :vartype properties: ~azure.mgmt.devopsinfrastructure.models.ResourceDetailsObjectProperties
     """
 
-    properties: Optional["_models.ResourceDetailsObjectProperties"] = rest_field(visibility=["read", "create"])
+    properties: Optional["_models.ResourceDetailsObjectProperties"] = rest_field()
     """The resource-specific properties for this resource."""
 
     @overload
@@ -1380,10 +1310,10 @@ class ResourceDetailsObject(ProxyResource):
         self,
         *,
         properties: Optional["_models.ResourceDetailsObjectProperties"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1396,7 +1326,6 @@ class ResourceDetailsObject(ProxyResource):
 class ResourceDetailsObjectProperties(_model_base.Model):
     """Details of the ResourceDetailsObject.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar status: The status of the resource. Required. Known values are: "Ready", "NotReady",
      "Allocated", "PendingReturn", "Returned", "Leased", "Provisioning", "Updating", "Starting",
@@ -1424,10 +1353,10 @@ class ResourceDetailsObjectProperties(_model_base.Model):
         status: Union[str, "_models.ResourceStatus"],
         image: str,
         image_version: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1461,7 +1390,7 @@ class ResourceSku(ProxyResource):
     :vartype properties: ~azure.mgmt.devopsinfrastructure.models.ResourceSkuProperties
     """
 
-    properties: Optional["_models.ResourceSkuProperties"] = rest_field(visibility=["read", "create"])
+    properties: Optional["_models.ResourceSkuProperties"] = rest_field()
     """The resource-specific properties for this resource."""
 
     @overload
@@ -1469,10 +1398,10 @@ class ResourceSku(ProxyResource):
         self,
         *,
         properties: Optional["_models.ResourceSkuProperties"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1485,7 +1414,6 @@ class ResourceSku(ProxyResource):
 class ResourceSkuCapabilities(_model_base.Model):
     """Describes The SKU capabilities object.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the SKU capability. Required.
     :vartype name: str
@@ -1504,10 +1432,10 @@ class ResourceSkuCapabilities(_model_base.Model):
         *,
         name: str,
         value: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1520,7 +1448,6 @@ class ResourceSkuCapabilities(_model_base.Model):
 class ResourceSkuLocationInfo(_model_base.Model):
     """Describes an available Compute SKU Location Information.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar location: Location of the SKU. Required.
     :vartype location: str
@@ -1545,10 +1472,10 @@ class ResourceSkuLocationInfo(_model_base.Model):
         location: str,
         zones: List[str],
         zone_details: List["_models.ResourceSkuZoneDetails"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1561,7 +1488,6 @@ class ResourceSkuLocationInfo(_model_base.Model):
 class ResourceSkuProperties(_model_base.Model):
     """Properties of a ResourceSku.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar resource_type: The type of resource the SKU applies to. Required.
     :vartype resource_type: str
@@ -1612,10 +1538,10 @@ class ResourceSkuProperties(_model_base.Model):
         location_info: List["_models.ResourceSkuLocationInfo"],
         capabilities: List["_models.ResourceSkuCapabilities"],
         restrictions: List["_models.ResourceSkuRestrictions"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1645,10 +1571,10 @@ class ResourceSkuRestrictionInfo(_model_base.Model):
         *,
         locations: Optional[List[str]] = None,
         zones: Optional[List[str]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1661,7 +1587,6 @@ class ResourceSkuRestrictionInfo(_model_base.Model):
 class ResourceSkuRestrictions(_model_base.Model):
     """The restrictions of the SKU.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar type: the type of restrictions. Known values are: "Location" and "Zone".
     :vartype type: str or ~azure.mgmt.devopsinfrastructure.models.ResourceSkuRestrictionsType
@@ -1695,10 +1620,10 @@ class ResourceSkuRestrictions(_model_base.Model):
         restriction_info: "_models.ResourceSkuRestrictionInfo",
         type: Optional[Union[str, "_models.ResourceSkuRestrictionsType"]] = None,
         reason_code: Optional[Union[str, "_models.ResourceSkuRestrictionsReasonCode"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1711,7 +1636,6 @@ class ResourceSkuRestrictions(_model_base.Model):
 class ResourceSkuZoneDetails(_model_base.Model):
     """Describes The zonal capabilities of a SKU.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar name: Gets the set of zones that the SKU is available in with the specified capabilities.
      Required.
@@ -1732,10 +1656,10 @@ class ResourceSkuZoneDetails(_model_base.Model):
         *,
         name: List[str],
         capabilities: List["_models.ResourceSkuCapabilities"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1748,7 +1672,6 @@ class ResourceSkuZoneDetails(_model_base.Model):
 class SecretsManagementSettings(_model_base.Model):
     """The secret management settings of the machines in the pool.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar certificate_store_location: Where to store certificates on the machine.
     :vartype certificate_store_location: str
@@ -1773,10 +1696,10 @@ class SecretsManagementSettings(_model_base.Model):
         observed_certificates: List[str],
         key_exportable: bool,
         certificate_store_location: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1789,7 +1712,6 @@ class SecretsManagementSettings(_model_base.Model):
 class Stateful(AgentProfile, discriminator="Stateful"):
     """Stateful profile meaning that the machines will be returned to the pool after running a job.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar resource_predictions: Defines pool buffer/stand-by agents.
     :vartype resource_predictions: ~azure.mgmt.devopsinfrastructure.models.ResourcePredictions
@@ -1824,10 +1746,10 @@ class Stateful(AgentProfile, discriminator="Stateful"):
         resource_predictions_profile: Optional["_models.ResourcePredictionsProfile"] = None,
         max_agent_lifetime: Optional[str] = None,
         grace_period_time_span: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1840,7 +1762,6 @@ class Stateful(AgentProfile, discriminator="Stateful"):
 class StatelessAgentProfile(AgentProfile, discriminator="Stateless"):
     """Stateless profile meaning that the machines will be cleaned up after running a job.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar resource_predictions: Defines pool buffer/stand-by agents.
     :vartype resource_predictions: ~azure.mgmt.devopsinfrastructure.models.ResourcePredictions
@@ -1862,10 +1783,10 @@ class StatelessAgentProfile(AgentProfile, discriminator="Stateless"):
         *,
         resource_predictions: Optional["_models.ResourcePredictions"] = None,
         resource_predictions_profile: Optional["_models.ResourcePredictionsProfile"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1900,10 +1821,10 @@ class StorageProfile(_model_base.Model):
         *,
         os_disk_storage_account_type: Optional[Union[str, "_models.OsDiskStorageAccountType"]] = None,
         data_disks: Optional[List["_models.DataDisk"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1916,68 +1837,51 @@ class StorageProfile(_model_base.Model):
 class SystemData(_model_base.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
     :ivar created_by_type: The type of identity that created the resource. Known values are:
      "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or ~azure.mgmt.devopsinfrastructure.models.CreatedByType
-    :ivar created_at: The type of identity that created the resource.
-    :vartype created_at: ~datetime.date
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
     :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or ~azure.mgmt.devopsinfrastructure.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: ~datetime.date
+    :vartype last_modified_at: ~datetime.datetime
     """
 
-    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read"])
+    created_by: Optional[str] = rest_field(name="createdBy")
     """The identity that created the resource."""
-    created_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
-        name="createdByType", visibility=["read"]
-    )
+    created_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(name="createdByType")
     """The type of identity that created the resource. Known values are: \"User\", \"Application\",
      \"ManagedIdentity\", and \"Key\"."""
-    created_at: Optional[datetime.date] = rest_field(name="createdAt", visibility=["read"])
-    """The type of identity that created the resource."""
-    last_modified_by: Optional[str] = rest_field(name="lastModifiedBy", visibility=["read"])
+    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", format="rfc3339")
+    """The timestamp of resource creation (UTC)."""
+    last_modified_by: Optional[str] = rest_field(name="lastModifiedBy")
     """The identity that last modified the resource."""
-    last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
-        name="lastModifiedByType", visibility=["read"]
-    )
+    last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(name="lastModifiedByType")
     """The type of identity that last modified the resource. Known values are: \"User\",
      \"Application\", \"ManagedIdentity\", and \"Key\"."""
-    last_modified_at: Optional[datetime.date] = rest_field(name="lastModifiedAt", visibility=["read"])
+    last_modified_at: Optional[datetime.datetime] = rest_field(name="lastModifiedAt", format="rfc3339")
     """The timestamp of resource last modification (UTC)."""
-
-
-class UserAssignedIdentity(_model_base.Model):
-    """A managed identity assigned by the user.
-
-    :ivar client_id: The active directory client identifier for this principal.
-    :vartype client_id: str
-    :ivar principal_id: The active directory identifier for this principal.
-    :vartype principal_id: str
-    """
-
-    client_id: Optional[str] = rest_field(name="clientId")
-    """The active directory client identifier for this principal."""
-    principal_id: Optional[str] = rest_field(name="principalId")
-    """The active directory identifier for this principal."""
 
     @overload
     def __init__(
         self,
         *,
-        client_id: Optional[str] = None,
-        principal_id: Optional[str] = None,
-    ): ...
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1987,10 +1891,26 @@ class UserAssignedIdentity(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class UserAssignedIdentity(_model_base.Model):
+    """User assigned identity properties.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal ID of the assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
+    """
+
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The principal ID of the assigned identity."""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
+    """The client ID of the assigned identity."""
+
+
 class VmssFabricProfile(FabricProfile, discriminator="Vmss"):
     """The agents will run on Virtual Machine Scale Sets.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar kind: Virtual Machine Scale Sets. Required. Default value is "Vmss".
     :vartype kind: str
@@ -2028,10 +1948,10 @@ class VmssFabricProfile(FabricProfile, discriminator="Vmss"):
         os_profile: Optional["_models.OsProfile"] = None,
         storage_profile: Optional["_models.StorageProfile"] = None,
         network_profile: Optional["_models.NetworkProfile"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]

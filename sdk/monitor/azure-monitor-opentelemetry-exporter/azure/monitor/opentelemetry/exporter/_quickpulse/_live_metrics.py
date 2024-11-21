@@ -82,6 +82,9 @@ def enable_live_metrics(**kwargs: Any) -> None:  # pylint: disable=C4758
     :rtype: None
     """
     _QuickpulseManager(**kwargs)
+    # We can detect feature usage for statsbeat since we are in an opt-in model currently
+    # Once we move to live metrics on-by-default, we will have to check for both explicit usage
+    # and whether or not user is actually using live metrics (being on live metrics blade in UX)
     set_statsbeat_live_metrics_feature_set()
 
 
@@ -100,7 +103,7 @@ class _QuickpulseManager(metaclass=Singleton):
         self._base_monitoring_data_point = MonitoringDataPoint(
             version=_get_sdk_version(),
             # Invariant version 5 indicates filtering is supported
-            invariant_version=5,
+            invariant_version=2,
             instance=part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE, ""),
             role_name=part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE, ""),
             machine_name=platform.node(),

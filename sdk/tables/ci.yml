@@ -30,7 +30,6 @@ extends:
   parameters:
     TestProxy: true
     ServiceDirectory: tables
-    ValidateFormatting: true
     Artifacts:
     - name: azure-data-tables
       safeName: azuredatatables

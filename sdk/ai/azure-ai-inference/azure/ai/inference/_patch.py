@@ -265,7 +265,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
     def complete(
         self,
         *,
-        messages: List[_models.ChatRequestMessage],
+        messages: Union[List[_models.ChatRequestMessage], List[Dict[str, Any]]],
         stream: Literal[False] = False,
         frequency_penalty: Optional[float] = None,
         presence_penalty: Optional[float] = None,
@@ -288,7 +288,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
     def complete(
         self,
         *,
-        messages: List[_models.ChatRequestMessage],
+        messages: Union[List[_models.ChatRequestMessage], List[Dict[str, Any]]],
         stream: Literal[True],
         frequency_penalty: Optional[float] = None,
         presence_penalty: Optional[float] = None,
@@ -311,7 +311,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
     def complete(
         self,
         *,
-        messages: List[_models.ChatRequestMessage],
+        messages: Union[List[_models.ChatRequestMessage], List[Dict[str, Any]]],
         stream: Optional[bool] = None,
         frequency_penalty: Optional[float] = None,
         presence_penalty: Optional[float] = None,
@@ -344,7 +344,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
          Typical usage begins with a chat message for the System role that provides instructions for
          the behavior of the assistant, followed by alternating messages between the User and
          Assistant roles. Required.
-        :paramtype messages: list[~azure.ai.inference.models.ChatRequestMessage]
+        :paramtype messages: list[~azure.ai.inference.models.ChatRequestMessage] or list[dict[str, Any]]
         :keyword stream: A value indicating whether chat completions should be streamed for this request.
          Default value is False. If streaming is enabled, the response will be a StreamingChatCompletions.
          Otherwise the response will be a ChatCompletions.
@@ -473,7 +473,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        messages: List[_models.ChatRequestMessage] = _Unset,
+        messages: Union[List[_models.ChatRequestMessage], List[Dict[str, Any]]] = _Unset,
         stream: Optional[bool] = None,
         frequency_penalty: Optional[float] = None,
         presence_penalty: Optional[float] = None,
@@ -507,7 +507,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
          Typical usage begins with a chat message for the System role that provides instructions for
          the behavior of the assistant, followed by alternating messages between the User and
          Assistant roles. Required.
-        :paramtype messages: list[~azure.ai.inference.models.ChatRequestMessage]
+        :paramtype messages: list[~azure.ai.inference.models.ChatRequestMessage] or list[dict[str, Any]]
         :keyword stream: A value indicating whether chat completions should be streamed for this request.
          Default value is False. If streaming is enabled, the response will be a StreamingChatCompletions.
          Otherwise the response will be a ChatCompletions.

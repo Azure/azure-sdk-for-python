@@ -102,7 +102,7 @@ class TestQuickpulseManager(unittest.TestCase):
             "4321abcd-5678-4efa-8abc-1234567890ac",
         )
         self.assertEqual(qpm._base_monitoring_data_point.version, _get_sdk_version())
-        self.assertEqual(qpm._base_monitoring_data_point.invariant_version, 5)
+        self.assertEqual(qpm._base_monitoring_data_point.invariant_version, 2)
         self.assertEqual(
             qpm._base_monitoring_data_point.instance, part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE, "")
         )
