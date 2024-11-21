@@ -16,6 +16,8 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     from_rest_data_outputs,
     to_rest_data_outputs,
 )
+from azure.ai.ml.entities._job.job_resources import JobResources
+from azure.ai.ml.entities._job.queue_settings import QueueSettings
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._job.finetuning.finetuning_vertical import FineTuningVertical
@@ -32,8 +34,6 @@ class CustomModelFineTuningJob(FineTuningVertical):
         # Extract any task specific settings
         model = kwargs.pop("model", None)
         task = kwargs.pop("task", None)
-        resources = kwargs.pop("resources", None)
-        queue_settings = kwargs.pop("queue_settings", None)
         # Convert task to lowercase first letter, this is when we create
         # object from the schema, using dict object from the REST api response.
         # TextCompletion => textCompletion
@@ -48,8 +48,6 @@ class CustomModelFineTuningJob(FineTuningVertical):
             model_provider=RestModelProvider.CUSTOM,
             training_data=training_data,
             validation_data=validation_data,
-            resources=resources,
-            queue_settings=queue_settings,
             **kwargs,
         )
 
@@ -96,6 +94,10 @@ class CustomModelFineTuningJob(FineTuningVertical):
             fine_tuning_details=custom_finetuning_vertical,
             outputs=to_rest_data_outputs(self.outputs),
         )
+        if self.resources:
+            finetuning_job.resources = self.resources._to_rest_object()
+        if self.queue_settings:
+            finetuning_job.queue_settings = self.queue_settings._to_rest_object()
 
         result = RestJobBase(properties=finetuning_job)
         result.name = self.name
@@ -170,10 +172,15 @@ class CustomModelFineTuningJob(FineTuningVertical):
             "status": properties.status,
             "creation_context": obj.system_data,
             "display_name": properties.display_name,
-            "resources": properties.resources,
-            "queue_settings": properties.queue_settings,
             "outputs": from_rest_data_outputs(properties.outputs),
         }
+
+        if properties.resources:
+            job_args_dict["resources"] = JobResources._from_rest_object(properties.resources)
+        if properties.queue_settings:
+            job_args_dict["queue_settings"] = QueueSettings._from_rest_object(
+                properties.queue_settings
+            )
 
         custom_model_finetuning_job = cls(
             task=finetuning_details.task_type,
