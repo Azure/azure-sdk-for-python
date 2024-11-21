@@ -849,7 +849,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         return AsyncAnalyzeDocumentLROPoller[_models.AnalyzeBatchResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
-    
+
     @distributed_trace_async
     async def get_batch_analyze_result(
         self, continuation_token: str

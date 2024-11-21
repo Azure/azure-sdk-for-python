@@ -46,7 +46,7 @@ from ..._operations._operations import (
     build_document_intelligence_administration_get_classifier_request,
     build_document_intelligence_administration_get_model_request,
     build_document_intelligence_administration_get_operation_request,
-    build_document_intelligence_administration_get_resource_info_request,
+    build_document_intelligence_administration_get_resource_details_request,
     build_document_intelligence_administration_list_classifiers_request,
     build_document_intelligence_administration_list_models_request,
     build_document_intelligence_administration_list_operations_request,
@@ -83,7 +83,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output_content_format: Optional[Union[str, _models.DocumentContentFormat]] = None,
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -144,7 +144,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -169,7 +169,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output_content_format: Optional[Union[str, _models.DocumentContentFormat]] = None,
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -180,8 +180,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :type model_id: str
         :param analyze_request: Analyze request parameters. Default value is None.
         :type analyze_request: ~azure.ai.documentintelligence.models.AnalyzeDocumentRequest
-        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
          only
@@ -198,7 +197,8 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :paramtype query_fields: list[str]
         :keyword output_content_format: Format of the analyze result top-level content. Known values
          are: "text" and "markdown". Default value is None.
-        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :paramtype output_content_format: str or
+         ~azure.ai.documentintelligence.models.DocumentContentFormat
         :keyword output: Additional outputs to generate during analysis. Default value is None.
         :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -221,7 +221,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output_content_format: Optional[Union[str, _models.DocumentContentFormat]] = None,
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -232,8 +232,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :type model_id: str
         :param analyze_request: Analyze request parameters. Default value is None.
         :type analyze_request: JSON
-        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
          only
@@ -250,7 +249,8 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :paramtype query_fields: list[str]
         :keyword output_content_format: Format of the analyze result top-level content. Known values
          are: "text" and "markdown". Default value is None.
-        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :paramtype output_content_format: str or
+         ~azure.ai.documentintelligence.models.DocumentContentFormat
         :keyword output: Additional outputs to generate during analysis. Default value is None.
         :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -273,7 +273,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output_content_format: Optional[Union[str, _models.DocumentContentFormat]] = None,
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -284,8 +284,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :type model_id: str
         :param analyze_request: Analyze request parameters. Default value is None.
         :type analyze_request: IO[bytes]
-        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
          only
@@ -302,7 +301,8 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :paramtype query_fields: list[str]
         :keyword output_content_format: Format of the analyze result top-level content. Known values
          are: "text" and "markdown". Default value is None.
-        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :paramtype output_content_format: str or
+         ~azure.ai.documentintelligence.models.DocumentContentFormat
         :keyword output: Additional outputs to generate during analysis. Default value is None.
         :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -325,7 +325,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output_content_format: Optional[Union[str, _models.DocumentContentFormat]] = None,
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AnalyzeResult]:
@@ -337,8 +337,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
          AnalyzeDocumentRequest, JSON, IO[bytes] Default value is None.
         :type analyze_request: ~azure.ai.documentintelligence.models.AnalyzeDocumentRequest or JSON or
          IO[bytes]
-        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
          only
@@ -355,7 +354,8 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :paramtype query_fields: list[str]
         :keyword output_content_format: Format of the analyze result top-level content. Known values
          are: "text" and "markdown". Default value is None.
-        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :paramtype output_content_format: str or
+         ~azure.ai.documentintelligence.models.DocumentContentFormat
         :keyword output: Additional outputs to generate during analysis. Default value is None.
         :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
         :return: An instance of AsyncLROPoller that returns AnalyzeResult. The AnalyzeResult is
@@ -479,7 +479,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -548,7 +548,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -607,7 +607,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -623,7 +623,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output_content_format: Optional[Union[str, _models.DocumentContentFormat]] = None,
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -684,7 +684,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -709,7 +709,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output_content_format: Optional[Union[str, _models.DocumentContentFormat]] = None,
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -720,8 +720,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :type model_id: str
         :param analyze_batch_request: Analyze batch request parameters. Default value is None.
         :type analyze_batch_request: ~azure.ai.documentintelligence.models.AnalyzeBatchDocumentsRequest
-        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
          only
@@ -738,7 +737,8 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :paramtype query_fields: list[str]
         :keyword output_content_format: Format of the analyze result top-level content. Known values
          are: "text" and "markdown". Default value is None.
-        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :paramtype output_content_format: str or
+         ~azure.ai.documentintelligence.models.DocumentContentFormat
         :keyword output: Additional outputs to generate during analysis. Default value is None.
         :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -762,7 +762,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output_content_format: Optional[Union[str, _models.DocumentContentFormat]] = None,
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -773,8 +773,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :type model_id: str
         :param analyze_batch_request: Analyze batch request parameters. Default value is None.
         :type analyze_batch_request: JSON
-        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
          only
@@ -791,7 +790,8 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :paramtype query_fields: list[str]
         :keyword output_content_format: Format of the analyze result top-level content. Known values
          are: "text" and "markdown". Default value is None.
-        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :paramtype output_content_format: str or
+         ~azure.ai.documentintelligence.models.DocumentContentFormat
         :keyword output: Additional outputs to generate during analysis. Default value is None.
         :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -815,7 +815,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output_content_format: Optional[Union[str, _models.DocumentContentFormat]] = None,
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -826,8 +826,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :type model_id: str
         :param analyze_batch_request: Analyze batch request parameters. Default value is None.
         :type analyze_batch_request: IO[bytes]
-        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
          only
@@ -844,7 +843,8 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :paramtype query_fields: list[str]
         :keyword output_content_format: Format of the analyze result top-level content. Known values
          are: "text" and "markdown". Default value is None.
-        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :paramtype output_content_format: str or
+         ~azure.ai.documentintelligence.models.DocumentContentFormat
         :keyword output: Additional outputs to generate during analysis. Default value is None.
         :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -868,7 +868,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output_content_format: Optional[Union[str, _models.DocumentContentFormat]] = None,
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AnalyzeBatchResult]:
@@ -880,8 +880,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
          AnalyzeBatchDocumentsRequest, JSON, IO[bytes] Default value is None.
         :type analyze_batch_request: ~azure.ai.documentintelligence.models.AnalyzeBatchDocumentsRequest
          or JSON or IO[bytes]
-        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
          only
@@ -898,7 +897,8 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :paramtype query_fields: list[str]
         :keyword output_content_format: Format of the analyze result top-level content. Known values
          are: "text" and "markdown". Default value is None.
-        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :paramtype output_content_format: str or
+         ~azure.ai.documentintelligence.models.DocumentContentFormat
         :keyword output: Additional outputs to generate during analysis. Default value is None.
         :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
         :return: An instance of AsyncLROPoller that returns AnalyzeBatchResult. The AnalyzeBatchResult
@@ -975,20 +975,20 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
     @distributed_trace
     def list_analyze_batch_results(
         self, model_id: str, **kwargs: Any
-    ) -> AsyncIterable["_models.AnalyzeBatchResultOperation"]:
+    ) -> AsyncIterable["_models.AnalyzeBatchOperation"]:
         """List batch document analysis results.
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :return: An iterator like instance of AnalyzeBatchResultOperation
+        :return: An iterator like instance of AnalyzeBatchOperation
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.documentintelligence.models.AnalyzeBatchResultOperation]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.documentintelligence.models.AnalyzeBatchOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.AnalyzeBatchResultOperation]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.AnalyzeBatchOperation]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1038,7 +1038,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AnalyzeBatchResultOperation], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.AnalyzeBatchOperation], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1054,7 +1054,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1107,7 +1107,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -1116,16 +1116,15 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
     @distributed_trace_async
     async def get_analyze_batch_result(
         self, model_id: str, result_id: str, **kwargs: Any
-    ) -> _models.AnalyzeBatchResultOperation:
+    ) -> _models.AnalyzeBatchOperation:
         """Gets the result of batch document analysis.
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
         :param result_id: Analyze batch operation result ID. Required.
         :type result_id: str
-        :return: AnalyzeBatchResultOperation. The AnalyzeBatchResultOperation is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.documentintelligence.models.AnalyzeBatchResultOperation
+        :return: AnalyzeBatchOperation. The AnalyzeBatchOperation is compatible with MutableMapping
+        :rtype: ~azure.ai.documentintelligence.models.AnalyzeBatchOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1139,7 +1138,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AnalyzeBatchResultOperation] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AnalyzeBatchOperation] = kwargs.pop("cls", None)
 
         _request = build_document_intelligence_get_analyze_batch_result_request(
             model_id=model_id,
@@ -1167,13 +1166,13 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AnalyzeBatchResultOperation, response.json())
+            deserialized = _deserialize(_models.AnalyzeBatchOperation, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1240,7 +1239,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1278,8 +1277,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword split: Document splitting mode. Known values are: "auto", "none", and "perPage".
          Default value is None.
         :paramtype split: str or ~azure.ai.documentintelligence.models.SplitMode
-        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1314,8 +1312,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword split: Document splitting mode. Known values are: "auto", "none", and "perPage".
          Default value is None.
         :paramtype split: str or ~azure.ai.documentintelligence.models.SplitMode
-        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1350,8 +1347,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword split: Document splitting mode. Known values are: "auto", "none", and "perPage".
          Default value is None.
         :paramtype split: str or ~azure.ai.documentintelligence.models.SplitMode
-        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1387,8 +1383,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword split: Document splitting mode. Known values are: "auto", "none", and "perPage".
          Default value is None.
         :paramtype split: str or ~azure.ai.documentintelligence.models.SplitMode
-        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :return: An instance of AsyncLROPoller that returns AnalyzeResult. The AnalyzeResult is
          compatible with MutableMapping
@@ -1510,7 +1505,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1700,7 +1695,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1852,7 +1847,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.CopyAuthorization:
+    ) -> _models.ModelCopyAuthorization:
         """Generates authorization to copy a document model to this location with
         specified modelId and optional description.
 
@@ -1861,15 +1856,15 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: CopyAuthorization. The CopyAuthorization is compatible with MutableMapping
-        :rtype: ~azure.ai.documentintelligence.models.CopyAuthorization
+        :return: ModelCopyAuthorization. The ModelCopyAuthorization is compatible with MutableMapping
+        :rtype: ~azure.ai.documentintelligence.models.ModelCopyAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def authorize_model_copy(
         self, authorize_copy_request: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.CopyAuthorization:
+    ) -> _models.ModelCopyAuthorization:
         """Generates authorization to copy a document model to this location with
         specified modelId and optional description.
 
@@ -1878,15 +1873,15 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: CopyAuthorization. The CopyAuthorization is compatible with MutableMapping
-        :rtype: ~azure.ai.documentintelligence.models.CopyAuthorization
+        :return: ModelCopyAuthorization. The ModelCopyAuthorization is compatible with MutableMapping
+        :rtype: ~azure.ai.documentintelligence.models.ModelCopyAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def authorize_model_copy(
         self, authorize_copy_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.CopyAuthorization:
+    ) -> _models.ModelCopyAuthorization:
         """Generates authorization to copy a document model to this location with
         specified modelId and optional description.
 
@@ -1895,15 +1890,15 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: CopyAuthorization. The CopyAuthorization is compatible with MutableMapping
-        :rtype: ~azure.ai.documentintelligence.models.CopyAuthorization
+        :return: ModelCopyAuthorization. The ModelCopyAuthorization is compatible with MutableMapping
+        :rtype: ~azure.ai.documentintelligence.models.ModelCopyAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
     async def authorize_model_copy(
         self, authorize_copy_request: Union[_models.AuthorizeCopyRequest, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.CopyAuthorization:
+    ) -> _models.ModelCopyAuthorization:
         """Generates authorization to copy a document model to this location with
         specified modelId and optional description.
 
@@ -1911,8 +1906,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
          types: AuthorizeCopyRequest, JSON, IO[bytes] Required.
         :type authorize_copy_request: ~azure.ai.documentintelligence.models.AuthorizeCopyRequest or
          JSON or IO[bytes]
-        :return: CopyAuthorization. The CopyAuthorization is compatible with MutableMapping
-        :rtype: ~azure.ai.documentintelligence.models.CopyAuthorization
+        :return: ModelCopyAuthorization. The ModelCopyAuthorization is compatible with MutableMapping
+        :rtype: ~azure.ai.documentintelligence.models.ModelCopyAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1927,7 +1922,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.CopyAuthorization] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ModelCopyAuthorization] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -1962,13 +1957,13 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.CopyAuthorization, response.json())
+            deserialized = _deserialize(_models.ModelCopyAuthorization, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1976,7 +1971,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         return deserialized  # type: ignore
 
     async def _copy_model_to_initial(
-        self, model_id: str, copy_to_request: Union[_models.CopyAuthorization, JSON, IO[bytes]], **kwargs: Any
+        self, model_id: str, copy_to_request: Union[_models.ModelCopyAuthorization, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2025,7 +2020,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2043,7 +2038,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
     async def begin_copy_model_to(
         self,
         model_id: str,
-        copy_to_request: _models.CopyAuthorization,
+        copy_to_request: _models.ModelCopyAuthorization,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2053,7 +2048,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :param model_id: Unique document model name. Required.
         :type model_id: str
         :param copy_to_request: Copy to request parameters. Required.
-        :type copy_to_request: ~azure.ai.documentintelligence.models.CopyAuthorization
+        :type copy_to_request: ~azure.ai.documentintelligence.models.ModelCopyAuthorization
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2106,15 +2101,15 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
     @distributed_trace_async
     async def begin_copy_model_to(
-        self, model_id: str, copy_to_request: Union[_models.CopyAuthorization, JSON, IO[bytes]], **kwargs: Any
+        self, model_id: str, copy_to_request: Union[_models.ModelCopyAuthorization, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentModelDetails]:
         """Copies document model to the target resource, region, and modelId.
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
         :param copy_to_request: Copy to request parameters. Is one of the following types:
-         CopyAuthorization, JSON, IO[bytes] Required.
-        :type copy_to_request: ~azure.ai.documentintelligence.models.CopyAuthorization or JSON or
+         ModelCopyAuthorization, JSON, IO[bytes] Required.
+        :type copy_to_request: ~azure.ai.documentintelligence.models.ModelCopyAuthorization or JSON or
          IO[bytes]
         :return: An instance of AsyncLROPoller that returns DocumentModelDetails. The
          DocumentModelDetails is compatible with MutableMapping
@@ -2228,7 +2223,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2323,7 +2318,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -2373,7 +2368,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2385,11 +2380,12 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def get_resource_info(self, **kwargs: Any) -> _models.ResourceDetails:
+    async def get_resource_details(self, **kwargs: Any) -> _models.DocumentIntelligenceResourceDetails:
         """Return information about the current resource.
 
-        :return: ResourceDetails. The ResourceDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.documentintelligence.models.ResourceDetails
+        :return: DocumentIntelligenceResourceDetails. The DocumentIntelligenceResourceDetails is
+         compatible with MutableMapping
+        :rtype: ~azure.ai.documentintelligence.models.DocumentIntelligenceResourceDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2403,9 +2399,9 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ResourceDetails] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DocumentIntelligenceResourceDetails] = kwargs.pop("cls", None)
 
-        _request = build_document_intelligence_administration_get_resource_info_request(
+        _request = build_document_intelligence_administration_get_resource_details_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2429,13 +2425,13 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ResourceDetails, response.json())
+            deserialized = _deserialize(_models.DocumentIntelligenceResourceDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2443,13 +2439,14 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_operation(self, operation_id: str, **kwargs: Any) -> _models.OperationDetails:
+    async def get_operation(self, operation_id: str, **kwargs: Any) -> _models.DocumentIntelligenceOperationDetails:
         """Gets operation info.
 
         :param operation_id: Operation ID. Required.
         :type operation_id: str
-        :return: OperationDetails. The OperationDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.documentintelligence.models.OperationDetails
+        :return: DocumentIntelligenceOperationDetails. The DocumentIntelligenceOperationDetails is
+         compatible with MutableMapping
+        :rtype: ~azure.ai.documentintelligence.models.DocumentIntelligenceOperationDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2463,7 +2460,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.OperationDetails] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DocumentIntelligenceOperationDetails] = kwargs.pop("cls", None)
 
         _request = build_document_intelligence_administration_get_operation_request(
             operation_id=operation_id,
@@ -2490,7 +2487,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2501,7 +2498,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.OperationDetails, response.json())
+            deserialized = _deserialize(_models.DocumentIntelligenceOperationDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2509,18 +2506,19 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_operations(self, **kwargs: Any) -> AsyncIterable["_models.OperationDetails"]:
+    def list_operations(self, **kwargs: Any) -> AsyncIterable["_models.DocumentIntelligenceOperationDetails"]:
+        # pylint: disable=line-too-long
         """Lists all operations.
 
-        :return: An iterator like instance of OperationDetails
+        :return: An iterator like instance of DocumentIntelligenceOperationDetails
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.documentintelligence.models.OperationDetails]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.documentintelligence.models.DocumentIntelligenceOperationDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.OperationDetails]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.DocumentIntelligenceOperationDetails]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2569,7 +2567,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.OperationDetails], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.DocumentIntelligenceOperationDetails], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2585,7 +2583,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -2641,7 +2639,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2908,7 +2906,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2974,7 +2972,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3181,7 +3179,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3276,7 +3274,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -3326,7 +3324,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

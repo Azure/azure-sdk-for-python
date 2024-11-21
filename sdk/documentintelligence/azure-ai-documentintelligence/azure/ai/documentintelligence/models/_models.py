@@ -175,39 +175,102 @@ class AnalyzeBatchDocumentsRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class AnalyzeBatchOperation(_model_base.Model):
+    """Status and result of the analyze batch operation.
+
+
+    :ivar result_id: Analyze batch operation result ID.
+    :vartype result_id: str
+    :ivar status: Operation status.  notStarted, running, succeeded, or failed. Required. Known
+     values are: "notStarted", "running", "failed", "succeeded", "canceled", and "skipped".
+    :vartype status: str or
+     ~azure.ai.documentintelligence.models.DocumentIntelligenceOperationStatus
+    :ivar created_date_time: Date and time (UTC) when the operation was submitted. Required.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_updated_date_time: Date and time (UTC) when the status was last updated. Required.
+    :vartype last_updated_date_time: ~datetime.datetime
+    :ivar percent_completed: Operation progress (0-100).
+    :vartype percent_completed: int
+    :ivar error: Encountered error during batch document analysis.
+    :vartype error: ~azure.ai.documentintelligence.models.DocumentIntelligenceError
+    :ivar result: Batch document analysis result.
+    :vartype result: ~azure.ai.documentintelligence.models.AnalyzeBatchResult
+    """
+
+    result_id: Optional[str] = rest_field(name="resultId")
+    """Analyze batch operation result ID."""
+    status: Union[str, "_models.DocumentIntelligenceOperationStatus"] = rest_field()
+    """Operation status.  notStarted, running, succeeded, or failed. Required. Known values are:
+     \"notStarted\", \"running\", \"failed\", \"succeeded\", \"canceled\", and \"skipped\"."""
+    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
+    """Date and time (UTC) when the operation was submitted. Required."""
+    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
+    """Date and time (UTC) when the status was last updated. Required."""
+    percent_completed: Optional[int] = rest_field(name="percentCompleted")
+    """Operation progress (0-100)."""
+    error: Optional["_models.DocumentIntelligenceError"] = rest_field()
+    """Encountered error during batch document analysis."""
+    result: Optional["_models.AnalyzeBatchResult"] = rest_field()
+    """Batch document analysis result."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Union[str, "_models.DocumentIntelligenceOperationStatus"],
+        created_date_time: datetime.datetime,
+        last_updated_date_time: datetime.datetime,
+        result_id: Optional[str] = None,
+        percent_completed: Optional[int] = None,
+        error: Optional["_models.DocumentIntelligenceError"] = None,
+        result: Optional["_models.AnalyzeBatchResult"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AnalyzeBatchOperationDetail(_model_base.Model):
     """Operation detail for a document in a batch analysis.
 
 
     :ivar status: Analyze status.  succeeded, failed, or skipped. Required. Known values are:
      "notStarted", "running", "failed", "succeeded", "canceled", and "skipped".
-    :vartype status: str or ~azure.ai.documentintelligence.models.OperationStatus
+    :vartype status: str or
+     ~azure.ai.documentintelligence.models.DocumentIntelligenceOperationStatus
     :ivar source_url: URL of the source document. Required.
     :vartype source_url: str
     :ivar result_url: URL of the analyze result JSON.
     :vartype result_url: str
     :ivar error: Encountered error.
-    :vartype error: ~azure.ai.documentintelligence.models.Error
+    :vartype error: ~azure.ai.documentintelligence.models.DocumentIntelligenceError
     """
 
-    status: Union[str, "_models.OperationStatus"] = rest_field()
+    status: Union[str, "_models.DocumentIntelligenceOperationStatus"] = rest_field()
     """Analyze status.  succeeded, failed, or skipped. Required. Known values are: \"notStarted\",
      \"running\", \"failed\", \"succeeded\", \"canceled\", and \"skipped\"."""
     source_url: str = rest_field(name="sourceUrl")
     """URL of the source document. Required."""
     result_url: Optional[str] = rest_field(name="resultUrl")
     """URL of the analyze result JSON."""
-    error: Optional["_models.Error"] = rest_field()
+    error: Optional["_models.DocumentIntelligenceError"] = rest_field()
     """Encountered error."""
 
     @overload
     def __init__(
         self,
         *,
-        status: Union[str, "_models.OperationStatus"],
+        status: Union[str, "_models.DocumentIntelligenceOperationStatus"],
         source_url: str,
         result_url: Optional[str] = None,
-        error: Optional["_models.Error"] = None,
+        error: Optional["_models.DocumentIntelligenceError"] = None,
     ) -> None: ...
 
     @overload
@@ -265,49 +328,42 @@ class AnalyzeBatchResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalyzeBatchResultOperation(_model_base.Model):
-    """Status and result of the analyze batch operation.
+class AnalyzedDocument(_model_base.Model):
+    """An object describing the location and semantic content of a document.
 
 
-    :ivar status: Operation status.  notStarted, running, succeeded, or failed. Required. Known
-     values are: "notStarted", "running", "failed", "succeeded", "canceled", and "skipped".
-    :vartype status: str or ~azure.ai.documentintelligence.models.OperationStatus
-    :ivar created_date_time: Date and time (UTC) when the operation was submitted. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: Date and time (UTC) when the status was last updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar percent_completed: Operation progress (0-100).
-    :vartype percent_completed: int
-    :ivar error: Encountered error during batch document analysis.
-    :vartype error: ~azure.ai.documentintelligence.models.Error
-    :ivar result: Batch document analysis result.
-    :vartype result: ~azure.ai.documentintelligence.models.AnalyzeBatchResult
+    :ivar doc_type: Document type. Required.
+    :vartype doc_type: str
+    :ivar bounding_regions: Bounding regions covering the document.
+    :vartype bounding_regions: list[~azure.ai.documentintelligence.models.BoundingRegion]
+    :ivar spans: Location of the document in the reading order concatenated content. Required.
+    :vartype spans: list[~azure.ai.documentintelligence.models.DocumentSpan]
+    :ivar fields: Dictionary of named field values.
+    :vartype fields: dict[str, ~azure.ai.documentintelligence.models.DocumentField]
+    :ivar confidence: Confidence of correctly extracting the document. Required.
+    :vartype confidence: float
     """
 
-    status: Union[str, "_models.OperationStatus"] = rest_field()
-    """Operation status.  notStarted, running, succeeded, or failed. Required. Known values are:
-     \"notStarted\", \"running\", \"failed\", \"succeeded\", \"canceled\", and \"skipped\"."""
-    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
-    """Date and time (UTC) when the operation was submitted. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
-    """Date and time (UTC) when the status was last updated. Required."""
-    percent_completed: Optional[int] = rest_field(name="percentCompleted")
-    """Operation progress (0-100)."""
-    error: Optional["_models.Error"] = rest_field()
-    """Encountered error during batch document analysis."""
-    result: Optional["_models.AnalyzeBatchResult"] = rest_field()
-    """Batch document analysis result."""
+    doc_type: str = rest_field(name="docType")
+    """Document type. Required."""
+    bounding_regions: Optional[List["_models.BoundingRegion"]] = rest_field(name="boundingRegions")
+    """Bounding regions covering the document."""
+    spans: List["_models.DocumentSpan"] = rest_field()
+    """Location of the document in the reading order concatenated content. Required."""
+    fields: Optional[Dict[str, "_models.DocumentField"]] = rest_field()
+    """Dictionary of named field values."""
+    confidence: float = rest_field()
+    """Confidence of correctly extracting the document. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        status: Union[str, "_models.OperationStatus"],
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        percent_completed: Optional[int] = None,
-        error: Optional["_models.Error"] = None,
-        result: Optional["_models.AnalyzeBatchResult"] = None,
+        doc_type: str,
+        spans: List["_models.DocumentSpan"],
+        confidence: float,
+        bounding_regions: Optional[List["_models.BoundingRegion"]] = None,
+        fields: Optional[Dict[str, "_models.DocumentField"]] = None,
     ) -> None: ...
 
     @overload
@@ -357,6 +413,59 @@ class AnalyzeDocumentRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class AnalyzeOperation(_model_base.Model):
+    """Status and result of the analyze operation.
+
+
+    :ivar status: Operation status.  notStarted, running, succeeded, or failed. Required. Known
+     values are: "notStarted", "running", "failed", "succeeded", "canceled", and "skipped".
+    :vartype status: str or
+     ~azure.ai.documentintelligence.models.DocumentIntelligenceOperationStatus
+    :ivar created_date_time: Date and time (UTC) when the analyze operation was submitted.
+     Required.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_updated_date_time: Date and time (UTC) when the status was last updated. Required.
+    :vartype last_updated_date_time: ~datetime.datetime
+    :ivar error: Encountered error during document analysis.
+    :vartype error: ~azure.ai.documentintelligence.models.DocumentIntelligenceError
+    :ivar analyze_result: Document analysis result.
+    :vartype analyze_result: ~azure.ai.documentintelligence.models.AnalyzeResult
+    """
+
+    status: Union[str, "_models.DocumentIntelligenceOperationStatus"] = rest_field()
+    """Operation status.  notStarted, running, succeeded, or failed. Required. Known values are:
+     \"notStarted\", \"running\", \"failed\", \"succeeded\", \"canceled\", and \"skipped\"."""
+    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
+    """Date and time (UTC) when the analyze operation was submitted. Required."""
+    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
+    """Date and time (UTC) when the status was last updated. Required."""
+    error: Optional["_models.DocumentIntelligenceError"] = rest_field()
+    """Encountered error during document analysis."""
+    analyze_result: Optional["_models.AnalyzeResult"] = rest_field(name="analyzeResult")
+    """Document analysis result."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Union[str, "_models.DocumentIntelligenceOperationStatus"],
+        created_date_time: datetime.datetime,
+        last_updated_date_time: datetime.datetime,
+        error: Optional["_models.DocumentIntelligenceError"] = None,
+        analyze_result: Optional["_models.AnalyzeResult"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AnalyzeResult(_model_base.Model):
     """Document analysis result.
 
@@ -370,7 +479,7 @@ class AnalyzeResult(_model_base.Model):
     :vartype string_index_type: str or ~azure.ai.documentintelligence.models.StringIndexType
     :ivar content_format: Format of the analyze result top-level content. Known values are: "text"
      and "markdown".
-    :vartype content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+    :vartype content_format: str or ~azure.ai.documentintelligence.models.DocumentContentFormat
     :ivar content: Concatenate string representation of all textual and visual elements in reading
      order. Required.
     :vartype content: str
@@ -391,9 +500,9 @@ class AnalyzeResult(_model_base.Model):
     :ivar languages: Detected languages.
     :vartype languages: list[~azure.ai.documentintelligence.models.DocumentLanguage]
     :ivar documents: Extracted documents.
-    :vartype documents: list[~azure.ai.documentintelligence.models.Document]
+    :vartype documents: list[~azure.ai.documentintelligence.models.AnalyzedDocument]
     :ivar warnings: List of warnings encountered.
-    :vartype warnings: list[~azure.ai.documentintelligence.models.Warning]
+    :vartype warnings: list[~azure.ai.documentintelligence.models.DocumentIntelligenceWarning]
     """
 
     api_version: str = rest_field(name="apiVersion")
@@ -403,7 +512,7 @@ class AnalyzeResult(_model_base.Model):
     string_index_type: Union[str, "_models.StringIndexType"] = rest_field(name="stringIndexType")
     """Method used to compute string offset and length. Required. Known values are: \"textElements\",
      \"unicodeCodePoint\", and \"utf16CodeUnit\"."""
-    content_format: Optional[Union[str, "_models.ContentFormat"]] = rest_field(name="contentFormat")
+    content_format: Optional[Union[str, "_models.DocumentContentFormat"]] = rest_field(name="contentFormat")
     """Format of the analyze result top-level content. Known values are: \"text\" and \"markdown\"."""
     content: str = rest_field()
     """Concatenate string representation of all textual and visual elements in reading
@@ -424,9 +533,9 @@ class AnalyzeResult(_model_base.Model):
     """Extracted font styles."""
     languages: Optional[List["_models.DocumentLanguage"]] = rest_field()
     """Detected languages."""
-    documents: Optional[List["_models.Document"]] = rest_field()
+    documents: Optional[List["_models.AnalyzedDocument"]] = rest_field()
     """Extracted documents."""
-    warnings: Optional[List["_models.Warning"]] = rest_field()
+    warnings: Optional[List["_models.DocumentIntelligenceWarning"]] = rest_field()
     """List of warnings encountered."""
 
     @overload
@@ -438,7 +547,7 @@ class AnalyzeResult(_model_base.Model):
         string_index_type: Union[str, "_models.StringIndexType"],
         content: str,
         pages: List["_models.DocumentPage"],
-        content_format: Optional[Union[str, "_models.ContentFormat"]] = None,
+        content_format: Optional[Union[str, "_models.DocumentContentFormat"]] = None,
         paragraphs: Optional[List["_models.DocumentParagraph"]] = None,
         tables: Optional[List["_models.DocumentTable"]] = None,
         figures: Optional[List["_models.DocumentFigure"]] = None,
@@ -446,60 +555,8 @@ class AnalyzeResult(_model_base.Model):
         key_value_pairs: Optional[List["_models.DocumentKeyValuePair"]] = None,
         styles: Optional[List["_models.DocumentStyle"]] = None,
         languages: Optional[List["_models.DocumentLanguage"]] = None,
-        documents: Optional[List["_models.Document"]] = None,
-        warnings: Optional[List["_models.Warning"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AnalyzeResultOperation(_model_base.Model):
-    """Status and result of the analyze operation.
-
-
-    :ivar status: Operation status.  notStarted, running, succeeded, or failed. Required. Known
-     values are: "notStarted", "running", "failed", "succeeded", "canceled", and "skipped".
-    :vartype status: str or ~azure.ai.documentintelligence.models.OperationStatus
-    :ivar created_date_time: Date and time (UTC) when the analyze operation was submitted.
-     Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: Date and time (UTC) when the status was last updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar error: Encountered error during document analysis.
-    :vartype error: ~azure.ai.documentintelligence.models.Error
-    :ivar analyze_result: Document analysis result.
-    :vartype analyze_result: ~azure.ai.documentintelligence.models.AnalyzeResult
-    """
-
-    status: Union[str, "_models.OperationStatus"] = rest_field()
-    """Operation status.  notStarted, running, succeeded, or failed. Required. Known values are:
-     \"notStarted\", \"running\", \"failed\", \"succeeded\", \"canceled\", and \"skipped\"."""
-    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
-    """Date and time (UTC) when the analyze operation was submitted. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
-    """Date and time (UTC) when the status was last updated. Required."""
-    error: Optional["_models.Error"] = rest_field()
-    """Encountered error during document analysis."""
-    analyze_result: Optional["_models.AnalyzeResult"] = rest_field(name="analyzeResult")
-    """Document analysis result."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        status: Union[str, "_models.OperationStatus"],
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        error: Optional["_models.Error"] = None,
-        analyze_result: Optional["_models.AnalyzeResult"] = None,
+        documents: Optional[List["_models.AnalyzedDocument"]] = None,
+        warnings: Optional[List["_models.DocumentIntelligenceWarning"]] = None,
     ) -> None: ...
 
     @overload
@@ -1034,65 +1091,6 @@ class ComposeDocumentModelRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class CopyAuthorization(_model_base.Model):
-    """Authorization to copy a document model to the specified target resource and
-    modelId.
-
-
-    :ivar target_resource_id: ID of the target Azure resource where the document model should be
-     copied to. Required.
-    :vartype target_resource_id: str
-    :ivar target_resource_region: Location of the target Azure resource where the document model
-     should be copied
-     to. Required.
-    :vartype target_resource_region: str
-    :ivar target_model_id: Identifier of the target document model. Required.
-    :vartype target_model_id: str
-    :ivar target_model_location: URL of the copied document model in the target account. Required.
-    :vartype target_model_location: str
-    :ivar access_token: Token used to authorize the request. Required.
-    :vartype access_token: str
-    :ivar expiration_date_time: Date/time when the access token expires. Required.
-    :vartype expiration_date_time: ~datetime.datetime
-    """
-
-    target_resource_id: str = rest_field(name="targetResourceId")
-    """ID of the target Azure resource where the document model should be copied to. Required."""
-    target_resource_region: str = rest_field(name="targetResourceRegion")
-    """Location of the target Azure resource where the document model should be copied
-     to. Required."""
-    target_model_id: str = rest_field(name="targetModelId")
-    """Identifier of the target document model. Required."""
-    target_model_location: str = rest_field(name="targetModelLocation")
-    """URL of the copied document model in the target account. Required."""
-    access_token: str = rest_field(name="accessToken")
-    """Token used to authorize the request. Required."""
-    expiration_date_time: datetime.datetime = rest_field(name="expirationDateTime", format="rfc3339")
-    """Date/time when the access token expires. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        target_resource_id: str,
-        target_resource_region: str,
-        target_model_id: str,
-        target_model_location: str,
-        access_token: str,
-        expiration_date_time: datetime.datetime,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class CurrencyValue(_model_base.Model):
     """Currency field value.
 
@@ -1154,55 +1152,6 @@ class CustomDocumentModelsDetails(_model_base.Model):
         *,
         count: int,
         limit: int,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class Document(_model_base.Model):
-    """An object describing the location and semantic content of a document.
-
-
-    :ivar doc_type: Document type. Required.
-    :vartype doc_type: str
-    :ivar bounding_regions: Bounding regions covering the document.
-    :vartype bounding_regions: list[~azure.ai.documentintelligence.models.BoundingRegion]
-    :ivar spans: Location of the document in the reading order concatenated content. Required.
-    :vartype spans: list[~azure.ai.documentintelligence.models.DocumentSpan]
-    :ivar fields: Dictionary of named field values.
-    :vartype fields: dict[str, ~azure.ai.documentintelligence.models.DocumentField]
-    :ivar confidence: Confidence of correctly extracting the document. Required.
-    :vartype confidence: float
-    """
-
-    doc_type: str = rest_field(name="docType")
-    """Document type. Required."""
-    bounding_regions: Optional[List["_models.BoundingRegion"]] = rest_field(name="boundingRegions")
-    """Bounding regions covering the document."""
-    spans: List["_models.DocumentSpan"] = rest_field()
-    """Location of the document in the reading order concatenated content. Required."""
-    fields: Optional[Dict[str, "_models.DocumentField"]] = rest_field()
-    """Dictionary of named field values."""
-    confidence: float = rest_field()
-    """Confidence of correctly extracting the document. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        doc_type: str,
-        spans: List["_models.DocumentSpan"],
-        confidence: float,
-        bounding_regions: Optional[List["_models.BoundingRegion"]] = None,
-        fields: Optional[Dict[str, "_models.DocumentField"]] = None,
     ) -> None: ...
 
     @overload
@@ -1319,7 +1268,7 @@ class DocumentCaption(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDetails(_model_base.Model):
+class DocumentIntelligenceOperationDetails(_model_base.Model):
     """Operation info.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1332,7 +1281,8 @@ class OperationDetails(_model_base.Model):
     :vartype operation_id: str
     :ivar status: Operation status.  notStarted, running, completed, or failed. Required. Known
      values are: "notStarted", "running", "failed", "succeeded", "canceled", and "skipped".
-    :vartype status: str or ~azure.ai.documentintelligence.models.OperationStatus
+    :vartype status: str or
+     ~azure.ai.documentintelligence.models.DocumentIntelligenceOperationStatus
     :ivar percent_completed: Operation progress (0-100).
     :vartype percent_completed: int
     :ivar created_date_time: Date and time (UTC) when the operation was created. Required.
@@ -1350,13 +1300,13 @@ class OperationDetails(_model_base.Model):
     :ivar tags: List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     :ivar error: Encountered error.
-    :vartype error: ~azure.ai.documentintelligence.models.Error
+    :vartype error: ~azure.ai.documentintelligence.models.DocumentIntelligenceError
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
     operation_id: str = rest_field(name="operationId", visibility=["read", "create"])
     """Operation ID. Required."""
-    status: Union[str, "_models.OperationStatus"] = rest_field()
+    status: Union[str, "_models.DocumentIntelligenceOperationStatus"] = rest_field()
     """Operation status.  notStarted, running, completed, or failed. Required. Known values are:
      \"notStarted\", \"running\", \"failed\", \"succeeded\", \"canceled\", and \"skipped\"."""
     percent_completed: Optional[int] = rest_field(name="percentCompleted")
@@ -1375,7 +1325,7 @@ class OperationDetails(_model_base.Model):
     """API version used to create this operation."""
     tags: Optional[Dict[str, str]] = rest_field()
     """List of key-value tag attributes associated with the document model."""
-    error: Optional["_models.Error"] = rest_field()
+    error: Optional["_models.DocumentIntelligenceError"] = rest_field()
     """Encountered error."""
 
     @overload
@@ -1383,7 +1333,7 @@ class OperationDetails(_model_base.Model):
         self,
         *,
         operation_id: str,
-        status: Union[str, "_models.OperationStatus"],
+        status: Union[str, "_models.DocumentIntelligenceOperationStatus"],
         created_date_time: datetime.datetime,
         last_updated_date_time: datetime.datetime,
         kind: str,
@@ -1391,7 +1341,7 @@ class OperationDetails(_model_base.Model):
         percent_completed: Optional[int] = None,
         api_version: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        error: Optional["_models.Error"] = None,
+        error: Optional["_models.DocumentIntelligenceError"] = None,
     ) -> None: ...
 
     @overload
@@ -1405,7 +1355,9 @@ class OperationDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentClassifierBuildOperationDetails(OperationDetails, discriminator="documentClassifierBuild"):
+class DocumentClassifierBuildOperationDetails(
+    DocumentIntelligenceOperationDetails, discriminator="documentClassifierBuild"
+):
     """Get Operation response object.
 
 
@@ -1413,7 +1365,8 @@ class DocumentClassifierBuildOperationDetails(OperationDetails, discriminator="d
     :vartype operation_id: str
     :ivar status: Operation status.  notStarted, running, completed, or failed. Required. Known
      values are: "notStarted", "running", "failed", "succeeded", "canceled", and "skipped".
-    :vartype status: str or ~azure.ai.documentintelligence.models.OperationStatus
+    :vartype status: str or
+     ~azure.ai.documentintelligence.models.DocumentIntelligenceOperationStatus
     :ivar percent_completed: Operation progress (0-100).
     :vartype percent_completed: int
     :ivar created_date_time: Date and time (UTC) when the operation was created. Required.
@@ -1427,7 +1380,7 @@ class DocumentClassifierBuildOperationDetails(OperationDetails, discriminator="d
     :ivar tags: List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     :ivar error: Encountered error.
-    :vartype error: ~azure.ai.documentintelligence.models.Error
+    :vartype error: ~azure.ai.documentintelligence.models.DocumentIntelligenceError
     :ivar result: Operation result upon success.
     :vartype result: ~azure.ai.documentintelligence.models.DocumentClassifierDetails
     :ivar kind: Type of operation. Required. Build a new custom classifier model.
@@ -1444,14 +1397,14 @@ class DocumentClassifierBuildOperationDetails(OperationDetails, discriminator="d
         self,
         *,
         operation_id: str,
-        status: Union[str, "_models.OperationStatus"],
+        status: Union[str, "_models.DocumentIntelligenceOperationStatus"],
         created_date_time: datetime.datetime,
         last_updated_date_time: datetime.datetime,
         resource_location: str,
         percent_completed: Optional[int] = None,
         api_version: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        error: Optional["_models.Error"] = None,
+        error: Optional["_models.DocumentIntelligenceError"] = None,
         result: Optional["_models.DocumentClassifierDetails"] = None,
     ) -> None: ...
 
@@ -1466,7 +1419,9 @@ class DocumentClassifierBuildOperationDetails(OperationDetails, discriminator="d
         super().__init__(*args, kind=OperationKind.DOCUMENT_CLASSIFIER_BUILD, **kwargs)
 
 
-class DocumentClassifierCopyToOperationDetails(OperationDetails, discriminator="documentClassifierCopyTo"):
+class DocumentClassifierCopyToOperationDetails(
+    DocumentIntelligenceOperationDetails, discriminator="documentClassifierCopyTo"
+):
     """Get Operation response object.
 
 
@@ -1474,7 +1429,8 @@ class DocumentClassifierCopyToOperationDetails(OperationDetails, discriminator="
     :vartype operation_id: str
     :ivar status: Operation status.  notStarted, running, completed, or failed. Required. Known
      values are: "notStarted", "running", "failed", "succeeded", "canceled", and "skipped".
-    :vartype status: str or ~azure.ai.documentintelligence.models.OperationStatus
+    :vartype status: str or
+     ~azure.ai.documentintelligence.models.DocumentIntelligenceOperationStatus
     :ivar percent_completed: Operation progress (0-100).
     :vartype percent_completed: int
     :ivar created_date_time: Date and time (UTC) when the operation was created. Required.
@@ -1488,7 +1444,7 @@ class DocumentClassifierCopyToOperationDetails(OperationDetails, discriminator="
     :ivar tags: List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     :ivar error: Encountered error.
-    :vartype error: ~azure.ai.documentintelligence.models.Error
+    :vartype error: ~azure.ai.documentintelligence.models.DocumentIntelligenceError
     :ivar result: Operation result upon success.
     :vartype result: ~azure.ai.documentintelligence.models.DocumentClassifierDetails
     :ivar kind: Type of operation. Required. Copy an existing document classifier to potentially a
@@ -1509,14 +1465,14 @@ class DocumentClassifierCopyToOperationDetails(OperationDetails, discriminator="
         self,
         *,
         operation_id: str,
-        status: Union[str, "_models.OperationStatus"],
+        status: Union[str, "_models.DocumentIntelligenceOperationStatus"],
         created_date_time: datetime.datetime,
         last_updated_date_time: datetime.datetime,
         resource_location: str,
         percent_completed: Optional[int] = None,
         api_version: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        error: Optional["_models.Error"] = None,
+        error: Optional["_models.DocumentIntelligenceError"] = None,
         result: Optional["_models.DocumentClassifierDetails"] = None,
     ) -> None: ...
 
@@ -1556,7 +1512,7 @@ class DocumentClassifierDetails(_model_base.Model):
     :vartype doc_types: dict[str,
      ~azure.ai.documentintelligence.models.ClassifierDocumentTypeDetails]
     :ivar warnings: List of warnings encountered while building the classifier.
-    :vartype warnings: list[~azure.ai.documentintelligence.models.Warning]
+    :vartype warnings: list[~azure.ai.documentintelligence.models.DocumentIntelligenceWarning]
     """
 
     classifier_id: str = rest_field(name="classifierId", visibility=["read", "create"])
@@ -1577,7 +1533,7 @@ class DocumentClassifierDetails(_model_base.Model):
     """Base classifierId on top of which the classifier was trained."""
     doc_types: Dict[str, "_models.ClassifierDocumentTypeDetails"] = rest_field(name="docTypes")
     """List of document types to classify against. Required."""
-    warnings: Optional[List["_models.Warning"]] = rest_field()
+    warnings: Optional[List["_models.DocumentIntelligenceWarning"]] = rest_field()
     """List of warnings encountered while building the classifier."""
 
     @overload
@@ -1591,7 +1547,7 @@ class DocumentClassifierDetails(_model_base.Model):
         description: Optional[str] = None,
         expiration_date_time: Optional[datetime.datetime] = None,
         base_classifier_id: Optional[str] = None,
-        warnings: Optional[List["_models.Warning"]] = None,
+        warnings: Optional[List["_models.DocumentIntelligenceWarning"]] = None,
     ) -> None: ...
 
     @overload
@@ -1944,6 +1900,193 @@ class DocumentFormula(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class DocumentIntelligenceError(_model_base.Model):
+    """The error object.
+
+
+    :ivar code: One of a server-defined set of error codes. Required.
+    :vartype code: str
+    :ivar message: A human-readable representation of the error. Required.
+    :vartype message: str
+    :ivar target: The target of the error.
+    :vartype target: str
+    :ivar details: An array of details about specific errors that led to this reported error.
+    :vartype details: list[~azure.ai.documentintelligence.models.DocumentIntelligenceError]
+    :ivar innererror: An object containing more specific information than the current object about
+     the error.
+    :vartype innererror: ~azure.ai.documentintelligence.models.DocumentIntelligenceInnerError
+    """
+
+    code: str = rest_field()
+    """One of a server-defined set of error codes. Required."""
+    message: str = rest_field()
+    """A human-readable representation of the error. Required."""
+    target: Optional[str] = rest_field()
+    """The target of the error."""
+    details: Optional[List["_models.DocumentIntelligenceError"]] = rest_field()
+    """An array of details about specific errors that led to this reported error."""
+    innererror: Optional["_models.DocumentIntelligenceInnerError"] = rest_field()
+    """An object containing more specific information than the current object about the error."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: str,
+        message: str,
+        target: Optional[str] = None,
+        details: Optional[List["_models.DocumentIntelligenceError"]] = None,
+        innererror: Optional["_models.DocumentIntelligenceInnerError"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DocumentIntelligenceErrorResponse(_model_base.Model):
+    """Error response object.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar error: Error info. Required.
+    :vartype error: ~azure.ai.documentintelligence.models.DocumentIntelligenceError
+    """
+
+    error: "_models.DocumentIntelligenceError" = rest_field()
+    """Error info. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error: "_models.DocumentIntelligenceError",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DocumentIntelligenceInnerError(_model_base.Model):
+    """An object containing more specific information about the error.
+
+    :ivar code: One of a server-defined set of error codes.
+    :vartype code: str
+    :ivar message: A human-readable representation of the error.
+    :vartype message: str
+    :ivar innererror: Inner error.
+    :vartype innererror: ~azure.ai.documentintelligence.models.DocumentIntelligenceInnerError
+    """
+
+    code: Optional[str] = rest_field()
+    """One of a server-defined set of error codes."""
+    message: Optional[str] = rest_field()
+    """A human-readable representation of the error."""
+    innererror: Optional["_models.DocumentIntelligenceInnerError"] = rest_field()
+    """Inner error."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Optional[str] = None,
+        message: Optional[str] = None,
+        innererror: Optional["_models.DocumentIntelligenceInnerError"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DocumentIntelligenceResourceDetails(_model_base.Model):
+    """General information regarding the current resource.
+
+
+    :ivar custom_document_models: Details regarding custom document models. Required.
+    :vartype custom_document_models:
+     ~azure.ai.documentintelligence.models.CustomDocumentModelsDetails
+    """
+
+    custom_document_models: "_models.CustomDocumentModelsDetails" = rest_field(name="customDocumentModels")
+    """Details regarding custom document models. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        custom_document_models: "_models.CustomDocumentModelsDetails",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DocumentIntelligenceWarning(_model_base.Model):
+    """The error object.
+
+
+    :ivar code: One of a server-defined set of warning codes. Required.
+    :vartype code: str
+    :ivar message: A human-readable representation of the warning. Required.
+    :vartype message: str
+    :ivar target: The target of the error.
+    :vartype target: str
+    """
+
+    code: str = rest_field()
+    """One of a server-defined set of warning codes. Required."""
+    message: str = rest_field()
+    """A human-readable representation of the warning. Required."""
+    target: Optional[str] = rest_field()
+    """The target of the error."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: str,
+        message: str,
+        target: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class DocumentKeyValueElement(_model_base.Model):
     """An object representing the field key or value in a key-value pair.
 
@@ -2113,7 +2256,7 @@ class DocumentLine(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentModelBuildOperationDetails(OperationDetails, discriminator="documentModelBuild"):
+class DocumentModelBuildOperationDetails(DocumentIntelligenceOperationDetails, discriminator="documentModelBuild"):
     """Get Operation response object.
 
 
@@ -2121,7 +2264,8 @@ class DocumentModelBuildOperationDetails(OperationDetails, discriminator="docume
     :vartype operation_id: str
     :ivar status: Operation status.  notStarted, running, completed, or failed. Required. Known
      values are: "notStarted", "running", "failed", "succeeded", "canceled", and "skipped".
-    :vartype status: str or ~azure.ai.documentintelligence.models.OperationStatus
+    :vartype status: str or
+     ~azure.ai.documentintelligence.models.DocumentIntelligenceOperationStatus
     :ivar percent_completed: Operation progress (0-100).
     :vartype percent_completed: int
     :ivar created_date_time: Date and time (UTC) when the operation was created. Required.
@@ -2135,7 +2279,7 @@ class DocumentModelBuildOperationDetails(OperationDetails, discriminator="docume
     :ivar tags: List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     :ivar error: Encountered error.
-    :vartype error: ~azure.ai.documentintelligence.models.Error
+    :vartype error: ~azure.ai.documentintelligence.models.DocumentIntelligenceError
     :ivar result: Operation result upon success.
     :vartype result: ~azure.ai.documentintelligence.models.DocumentModelDetails
     :ivar kind: Type of operation. Required. Build a new custom document model.
@@ -2152,14 +2296,14 @@ class DocumentModelBuildOperationDetails(OperationDetails, discriminator="docume
         self,
         *,
         operation_id: str,
-        status: Union[str, "_models.OperationStatus"],
+        status: Union[str, "_models.DocumentIntelligenceOperationStatus"],
         created_date_time: datetime.datetime,
         last_updated_date_time: datetime.datetime,
         resource_location: str,
         percent_completed: Optional[int] = None,
         api_version: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        error: Optional["_models.Error"] = None,
+        error: Optional["_models.DocumentIntelligenceError"] = None,
         result: Optional["_models.DocumentModelDetails"] = None,
     ) -> None: ...
 
@@ -2174,7 +2318,7 @@ class DocumentModelBuildOperationDetails(OperationDetails, discriminator="docume
         super().__init__(*args, kind=OperationKind.DOCUMENT_MODEL_BUILD, **kwargs)
 
 
-class DocumentModelComposeOperationDetails(OperationDetails, discriminator="documentModelCompose"):
+class DocumentModelComposeOperationDetails(DocumentIntelligenceOperationDetails, discriminator="documentModelCompose"):
     """Get Operation response object.
 
 
@@ -2182,7 +2326,8 @@ class DocumentModelComposeOperationDetails(OperationDetails, discriminator="docu
     :vartype operation_id: str
     :ivar status: Operation status.  notStarted, running, completed, or failed. Required. Known
      values are: "notStarted", "running", "failed", "succeeded", "canceled", and "skipped".
-    :vartype status: str or ~azure.ai.documentintelligence.models.OperationStatus
+    :vartype status: str or
+     ~azure.ai.documentintelligence.models.DocumentIntelligenceOperationStatus
     :ivar percent_completed: Operation progress (0-100).
     :vartype percent_completed: int
     :ivar created_date_time: Date and time (UTC) when the operation was created. Required.
@@ -2196,7 +2341,7 @@ class DocumentModelComposeOperationDetails(OperationDetails, discriminator="docu
     :ivar tags: List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     :ivar error: Encountered error.
-    :vartype error: ~azure.ai.documentintelligence.models.Error
+    :vartype error: ~azure.ai.documentintelligence.models.DocumentIntelligenceError
     :ivar result: Operation result upon success.
     :vartype result: ~azure.ai.documentintelligence.models.DocumentModelDetails
     :ivar kind: Type of operation. Required. Compose a new custom document model from existing
@@ -2214,14 +2359,14 @@ class DocumentModelComposeOperationDetails(OperationDetails, discriminator="docu
         self,
         *,
         operation_id: str,
-        status: Union[str, "_models.OperationStatus"],
+        status: Union[str, "_models.DocumentIntelligenceOperationStatus"],
         created_date_time: datetime.datetime,
         last_updated_date_time: datetime.datetime,
         resource_location: str,
         percent_completed: Optional[int] = None,
         api_version: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        error: Optional["_models.Error"] = None,
+        error: Optional["_models.DocumentIntelligenceError"] = None,
         result: Optional["_models.DocumentModelDetails"] = None,
     ) -> None: ...
 
@@ -2236,7 +2381,7 @@ class DocumentModelComposeOperationDetails(OperationDetails, discriminator="docu
         super().__init__(*args, kind=OperationKind.DOCUMENT_MODEL_COMPOSE, **kwargs)
 
 
-class DocumentModelCopyToOperationDetails(OperationDetails, discriminator="documentModelCopyTo"):
+class DocumentModelCopyToOperationDetails(DocumentIntelligenceOperationDetails, discriminator="documentModelCopyTo"):
     """Get Operation response object.
 
 
@@ -2244,7 +2389,8 @@ class DocumentModelCopyToOperationDetails(OperationDetails, discriminator="docum
     :vartype operation_id: str
     :ivar status: Operation status.  notStarted, running, completed, or failed. Required. Known
      values are: "notStarted", "running", "failed", "succeeded", "canceled", and "skipped".
-    :vartype status: str or ~azure.ai.documentintelligence.models.OperationStatus
+    :vartype status: str or
+     ~azure.ai.documentintelligence.models.DocumentIntelligenceOperationStatus
     :ivar percent_completed: Operation progress (0-100).
     :vartype percent_completed: int
     :ivar created_date_time: Date and time (UTC) when the operation was created. Required.
@@ -2258,7 +2404,7 @@ class DocumentModelCopyToOperationDetails(OperationDetails, discriminator="docum
     :ivar tags: List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     :ivar error: Encountered error.
-    :vartype error: ~azure.ai.documentintelligence.models.Error
+    :vartype error: ~azure.ai.documentintelligence.models.DocumentIntelligenceError
     :ivar result: Operation result upon success.
     :vartype result: ~azure.ai.documentintelligence.models.DocumentModelDetails
     :ivar kind: Type of operation. Required. Copy an existing document model to potentially a
@@ -2279,14 +2425,14 @@ class DocumentModelCopyToOperationDetails(OperationDetails, discriminator="docum
         self,
         *,
         operation_id: str,
-        status: Union[str, "_models.OperationStatus"],
+        status: Union[str, "_models.DocumentIntelligenceOperationStatus"],
         created_date_time: datetime.datetime,
         last_updated_date_time: datetime.datetime,
         resource_location: str,
         percent_completed: Optional[int] = None,
         api_version: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        error: Optional["_models.Error"] = None,
+        error: Optional["_models.DocumentIntelligenceError"] = None,
         result: Optional["_models.DocumentModelDetails"] = None,
     ) -> None: ...
 
@@ -2340,7 +2486,7 @@ class DocumentModelDetails(_model_base.Model):
     :ivar doc_types: Supported document types.
     :vartype doc_types: dict[str, ~azure.ai.documentintelligence.models.DocumentTypeDetails]
     :ivar warnings: List of warnings encountered while building the model.
-    :vartype warnings: list[~azure.ai.documentintelligence.models.Warning]
+    :vartype warnings: list[~azure.ai.documentintelligence.models.DocumentIntelligenceWarning]
     :ivar training_hours: Number of V100-equivalent GPU hours consumed for model training.
     :vartype training_hours: float
     """
@@ -2382,7 +2528,7 @@ class DocumentModelDetails(_model_base.Model):
      \"perPage\"."""
     doc_types: Optional[Dict[str, "_models.DocumentTypeDetails"]] = rest_field(name="docTypes", visibility=["read"])
     """Supported document types."""
-    warnings: Optional[List["_models.Warning"]] = rest_field(visibility=["read"])
+    warnings: Optional[List["_models.DocumentIntelligenceWarning"]] = rest_field(visibility=["read"])
     """List of warnings encountered while building the model."""
     training_hours: Optional[float] = rest_field(name="trainingHours", visibility=["read"])
     """Number of V100-equivalent GPU hours consumed for model training."""
@@ -2673,9 +2819,9 @@ class DocumentStyle(_model_base.Model):
      fallback fonts following CSS convention (ex. 'Arial, sans-serif').
     :vartype similar_font_family: str
     :ivar font_style: Font style. Known values are: "normal" and "italic".
-    :vartype font_style: str or ~azure.ai.documentintelligence.models.FontStyle
+    :vartype font_style: str or ~azure.ai.documentintelligence.models.DocumentFontStyle
     :ivar font_weight: Font weight. Known values are: "normal" and "bold".
-    :vartype font_weight: str or ~azure.ai.documentintelligence.models.FontWeight
+    :vartype font_weight: str or ~azure.ai.documentintelligence.models.DocumentFontWeight
     :ivar color: Foreground color in #rrggbb hexadecimal format.
     :vartype color: str
     :ivar background_color: Background color in #rrggbb hexadecimal format..
@@ -2692,9 +2838,9 @@ class DocumentStyle(_model_base.Model):
     similar_font_family: Optional[str] = rest_field(name="similarFontFamily")
     """Visually most similar font from among the set of supported font families, with
      fallback fonts following CSS convention (ex. 'Arial, sans-serif')."""
-    font_style: Optional[Union[str, "_models.FontStyle"]] = rest_field(name="fontStyle")
+    font_style: Optional[Union[str, "_models.DocumentFontStyle"]] = rest_field(name="fontStyle")
     """Font style. Known values are: \"normal\" and \"italic\"."""
-    font_weight: Optional[Union[str, "_models.FontWeight"]] = rest_field(name="fontWeight")
+    font_weight: Optional[Union[str, "_models.DocumentFontWeight"]] = rest_field(name="fontWeight")
     """Font weight. Known values are: \"normal\" and \"bold\"."""
     color: Optional[str] = rest_field()
     """Foreground color in #rrggbb hexadecimal format."""
@@ -2713,8 +2859,8 @@ class DocumentStyle(_model_base.Model):
         confidence: float,
         is_handwritten: Optional[bool] = None,
         similar_font_family: Optional[str] = None,
-        font_style: Optional[Union[str, "_models.FontStyle"]] = None,
-        font_weight: Optional[Union[str, "_models.FontWeight"]] = None,
+        font_style: Optional[Union[str, "_models.DocumentFontStyle"]] = None,
+        font_weight: Optional[Union[str, "_models.DocumentFontWeight"]] = None,
         color: Optional[str] = None,
         background_color: Optional[str] = None,
     ) -> None: ...
@@ -2982,179 +3128,52 @@ class DocumentWord(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Error(_model_base.Model):
-    """The error object.
+class ModelCopyAuthorization(_model_base.Model):
+    """Authorization to copy a document model to the specified target resource and
+    modelId.
 
 
-    :ivar code: One of a server-defined set of error codes. Required.
-    :vartype code: str
-    :ivar message: A human-readable representation of the error. Required.
-    :vartype message: str
-    :ivar target: The target of the error.
-    :vartype target: str
-    :ivar details: An array of details about specific errors that led to this reported error.
-    :vartype details: list[~azure.ai.documentintelligence.models.Error]
-    :ivar innererror: An object containing more specific information than the current object about
-     the error.
-    :vartype innererror: ~azure.ai.documentintelligence.models.InnerError
+    :ivar target_resource_id: ID of the target Azure resource where the document model should be
+     copied to. Required.
+    :vartype target_resource_id: str
+    :ivar target_resource_region: Location of the target Azure resource where the document model
+     should be copied
+     to. Required.
+    :vartype target_resource_region: str
+    :ivar target_model_id: Identifier of the target document model. Required.
+    :vartype target_model_id: str
+    :ivar target_model_location: URL of the copied document model in the target account. Required.
+    :vartype target_model_location: str
+    :ivar access_token: Token used to authorize the request. Required.
+    :vartype access_token: str
+    :ivar expiration_date_time: Date/time when the access token expires. Required.
+    :vartype expiration_date_time: ~datetime.datetime
     """
 
-    code: str = rest_field()
-    """One of a server-defined set of error codes. Required."""
-    message: str = rest_field()
-    """A human-readable representation of the error. Required."""
-    target: Optional[str] = rest_field()
-    """The target of the error."""
-    details: Optional[List["_models.Error"]] = rest_field()
-    """An array of details about specific errors that led to this reported error."""
-    innererror: Optional["_models.InnerError"] = rest_field()
-    """An object containing more specific information than the current object about the error."""
+    target_resource_id: str = rest_field(name="targetResourceId")
+    """ID of the target Azure resource where the document model should be copied to. Required."""
+    target_resource_region: str = rest_field(name="targetResourceRegion")
+    """Location of the target Azure resource where the document model should be copied
+     to. Required."""
+    target_model_id: str = rest_field(name="targetModelId")
+    """Identifier of the target document model. Required."""
+    target_model_location: str = rest_field(name="targetModelLocation")
+    """URL of the copied document model in the target account. Required."""
+    access_token: str = rest_field(name="accessToken")
+    """Token used to authorize the request. Required."""
+    expiration_date_time: datetime.datetime = rest_field(name="expirationDateTime", format="rfc3339")
+    """Date/time when the access token expires. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        code: str,
-        message: str,
-        target: Optional[str] = None,
-        details: Optional[List["_models.Error"]] = None,
-        innererror: Optional["_models.InnerError"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ErrorResponse(_model_base.Model):
-    """Error response object.
-
-
-    :ivar error: Error info. Required.
-    :vartype error: ~azure.ai.documentintelligence.models.Error
-    """
-
-    error: "_models.Error" = rest_field()
-    """Error info. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        error: "_models.Error",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class InnerError(_model_base.Model):
-    """An object containing more specific information about the error.
-
-    :ivar code: One of a server-defined set of error codes.
-    :vartype code: str
-    :ivar message: A human-readable representation of the error.
-    :vartype message: str
-    :ivar innererror: Inner error.
-    :vartype innererror: ~azure.ai.documentintelligence.models.InnerError
-    """
-
-    code: Optional[str] = rest_field()
-    """One of a server-defined set of error codes."""
-    message: Optional[str] = rest_field()
-    """A human-readable representation of the error."""
-    innererror: Optional["_models.InnerError"] = rest_field()
-    """Inner error."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        innererror: Optional["_models.InnerError"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ResourceDetails(_model_base.Model):
-    """General information regarding the current resource.
-
-
-    :ivar custom_document_models: Details regarding custom document models. Required.
-    :vartype custom_document_models:
-     ~azure.ai.documentintelligence.models.CustomDocumentModelsDetails
-    """
-
-    custom_document_models: "_models.CustomDocumentModelsDetails" = rest_field(name="customDocumentModels")
-    """Details regarding custom document models. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        custom_document_models: "_models.CustomDocumentModelsDetails",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class Warning(_model_base.Model):
-    """The error object.
-
-
-    :ivar code: One of a server-defined set of warning codes. Required.
-    :vartype code: str
-    :ivar message: A human-readable representation of the warning. Required.
-    :vartype message: str
-    :ivar target: The target of the error.
-    :vartype target: str
-    """
-
-    code: str = rest_field()
-    """One of a server-defined set of warning codes. Required."""
-    message: str = rest_field()
-    """A human-readable representation of the warning. Required."""
-    target: Optional[str] = rest_field()
-    """The target of the error."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: str,
-        message: str,
-        target: Optional[str] = None,
+        target_resource_id: str,
+        target_resource_region: str,
+        target_model_id: str,
+        target_model_location: str,
+        access_token: str,
+        expiration_date_time: datetime.datetime,
     ) -> None: ...
 
     @overload
