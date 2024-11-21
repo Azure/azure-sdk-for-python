@@ -12,6 +12,7 @@ from azure.cosmos import ContainerProxy, DatabaseProxy, documents, exceptions, C
 from azure.core.exceptions import ServiceRequestError
 from devtools_testutils.azure_recorded_testcase import get_credential
 from devtools_testutils.helpers import is_live
+from functools import wraps
 
 try:
     import urllib3
@@ -244,3 +245,16 @@ class MockConnectionRetryPolicy(ConnectionRetryPolicy):
     def mock_send(self):
         raise ServiceRequestError("mock-service")
 
+
+# Used to keep track of how many times a function is called
+def count_calls(func):
+    call_counter = {"count": 0}
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        call_counter["count"] += 1
+        result = func(*args, **kwargs)
+        return result
+
+    wrapper.call_counter = call_counter
+    return wrapper

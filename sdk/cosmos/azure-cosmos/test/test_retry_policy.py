@@ -1,6 +1,7 @@
 ﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
+import time
 import unittest
 import uuid
 
@@ -67,8 +68,9 @@ class TestRetryPolicy(unittest.TestCase):
         connection_policy.RetryOptions = retry_options.RetryOptions(5)
 
         self.original_execute_function = _retry_utility.ExecuteFunction
+        start_time = time.time()
         try:
-            _retry_utility.ExecuteFunction = self._MockExecuteFunction
+            _retry_utility.ExecuteFunction = test_config.count_calls(self._MockExecuteFunction)
 
             document_definition = {'id': str(uuid.uuid4()),
                                    'pk': 'pk',
@@ -78,14 +80,12 @@ class TestRetryPolicy(unittest.TestCase):
             try:
                 self.created_collection.create_item(body=document_definition)
             except exceptions.CosmosHttpResponseError as e:
+                duration = time.time() - start_time
                 self.assertEqual(e.status_code, StatusCodes.TOO_MANY_REQUESTS)
                 self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,
-                                 self.created_collection.client_connection.last_response_headers[
-                                     HttpHeaders.ThrottleRetryCount])
-                self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[
-                                            HttpHeaders.ThrottleRetryWaitTimeInMs],
-                                        connection_policy.RetryOptions.MaxRetryAttemptCount *
-                                        self.retry_after_in_milliseconds)
+                                 _retry_utility.ExecuteFunction.call_counter["count"] - 1)
+                self.assertGreaterEqual(duration * self.retry_after_in_milliseconds,
+                                        connection_policy.RetryOptions.MaxRetryAttemptCount * self.retry_after_in_milliseconds)
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
 
@@ -94,8 +94,9 @@ class TestRetryPolicy(unittest.TestCase):
         connection_policy.RetryOptions = retry_options.RetryOptions(5, 2000)
 
         self.original_execute_function = _retry_utility.ExecuteFunction
+        start_time = time.time()
         try:
-            _retry_utility.ExecuteFunction = self._MockExecuteFunction
+            _retry_utility.ExecuteFunction = test_config.count_calls(self._MockExecuteFunction)
 
             document_definition = {'id': str(uuid.uuid4()),
                                    'pk': 'pk',
@@ -105,13 +106,13 @@ class TestRetryPolicy(unittest.TestCase):
             try:
                 self.created_collection.create_item(body=document_definition)
             except exceptions.CosmosHttpResponseError as e:
+                duration = time.time() - start_time
                 self.assertEqual(e.status_code, StatusCodes.TOO_MANY_REQUESTS)
                 self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,
-                                 self.created_collection.client_connection.last_response_headers[
-                                     HttpHeaders.ThrottleRetryCount])
-                self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[
-                                            HttpHeaders.ThrottleRetryWaitTimeInMs],
-                                        connection_policy.RetryOptions.MaxRetryAttemptCount * connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds)
+                                 _retry_utility.ExecuteFunction.call_counter["count"] - 1)
+                self.assertGreaterEqual(duration * connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds,
+                                        connection_policy.RetryOptions.MaxRetryAttemptCount *
+                                        connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds)
 
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
@@ -121,8 +122,9 @@ class TestRetryPolicy(unittest.TestCase):
         connection_policy.RetryOptions = retry_options.RetryOptions(5, 2000, 3)
 
         self.original_execute_function = _retry_utility.ExecuteFunction
+        start_time = time.time()
         try:
-            _retry_utility.ExecuteFunction = self._MockExecuteFunction
+            _retry_utility.ExecuteFunction = test_config.count_calls(self._MockExecuteFunction)
 
             document_definition = {'id': str(uuid.uuid4()),
                                    'pk': 'pk',
@@ -132,10 +134,11 @@ class TestRetryPolicy(unittest.TestCase):
             try:
                 self.created_collection.create_item(body=document_definition)
             except exceptions.CosmosHttpResponseError as e:
+                duration = time.time() - start_time
                 self.assertEqual(e.status_code, StatusCodes.TOO_MANY_REQUESTS)
-                self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[
-                                            HttpHeaders.ThrottleRetryWaitTimeInMs],
-                                        connection_policy.RetryOptions.MaxWaitTimeInSeconds * 1000)
+                self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,
+                                 _retry_utility.ExecuteFunction.call_counter["count"] - 1)
+                self.assertGreaterEqual(duration, connection_policy.RetryOptions.MaxWaitTimeInSeconds)
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
 
@@ -151,8 +154,9 @@ class TestRetryPolicy(unittest.TestCase):
         self.created_collection.create_item(body=document_definition)
 
         self.original_execute_function = _retry_utility.ExecuteFunction
+        start_time = time.time()
         try:
-            _retry_utility.ExecuteFunction = self._MockExecuteFunction
+            _retry_utility.ExecuteFunction = test_config.count_calls(self._MockExecuteFunction)
 
             try:
                 list(self.created_collection.query_items(
@@ -163,12 +167,11 @@ class TestRetryPolicy(unittest.TestCase):
                         ]
                     }))
             except exceptions.CosmosHttpResponseError as e:
+                duration = time.time() - start_time
                 self.assertEqual(e.status_code, StatusCodes.TOO_MANY_REQUESTS)
                 self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,
-                                 self.created_collection.client_connection.last_response_headers[
-                                     HttpHeaders.ThrottleRetryCount])
-                self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[
-                                            HttpHeaders.ThrottleRetryWaitTimeInMs],
+                                 _retry_utility.ExecuteFunction.call_counter["count"] - 1)
+                self.assertGreaterEqual(duration * self.retry_after_in_milliseconds,
                                         connection_policy.RetryOptions.MaxRetryAttemptCount * self.retry_after_in_milliseconds)
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
