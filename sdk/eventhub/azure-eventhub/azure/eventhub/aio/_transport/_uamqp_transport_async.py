@@ -23,6 +23,7 @@ try:
     )
     from uamqp.async_ops import ConnectionAsync
     from ..._transport._uamqp_transport import UamqpTransport
+
     uamqp_installed = True
 except ImportError:
     uamqp_installed = False
@@ -39,6 +40,7 @@ if TYPE_CHECKING:
     from .._client_base_async import ClientBaseAsync, ConsumerProducerMixin
     from ..._consumer_async import EventHubConsumer
     from ..._common import EventData
+
     try:
         from uamqp import Message
     except ImportError:
@@ -47,13 +49,14 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 if uamqp_installed:
+
     class UamqpTransportAsync(UamqpTransport, AmqpTransportAsync):
         """
         Class which defines uamqp-based methods used by the producer and consumer.
         """
 
         @staticmethod
-        async def create_connection_async( # pylint:disable=unused-argument
+        async def create_connection_async(  # pylint:disable=unused-argument
             *,
             endpoint: str,
             auth: authentication.JWTTokenAuth,
@@ -66,7 +69,7 @@ if uamqp_installed:
             error_policy: Any,
             debug: bool,
             encoding: str,
-            **kwargs: Any
+            **kwargs: Any,
         ) -> ConnectionAsync:
             """
             Creates and returns the uamqp async Connection object.
@@ -96,7 +99,7 @@ if uamqp_installed:
                 remote_idle_timeout_empty_frame_send_ratio=remote_idle_timeout_empty_frame_send_ratio,
                 encoding=encoding,
                 debug=debug,
-                **kwargs
+                **kwargs,
             )
 
         @staticmethod
@@ -108,7 +111,7 @@ if uamqp_installed:
             await connection.destroy_async()
 
         @staticmethod
-        def create_send_client(# pylint: disable=unused-argument
+        def create_send_client(  # pylint: disable=unused-argument
             *,
             config,
             target: str,
@@ -120,7 +123,7 @@ if uamqp_installed:
             client_name: str,
             link_properties: Optional[Dict[str, Any]] = None,
             properties: Optional[Dict[str, Any]] = None,
-            **kwargs: Any
+            **kwargs: Any,
         ):
             """
             Creates and returns the uamqp SendClient.
@@ -149,7 +152,7 @@ if uamqp_installed:
                 link_properties=link_properties,
                 idle_timeout=idle_timeout,
                 auth=auth,
-                **kwargs
+                **kwargs,
             )
 
         @staticmethod
@@ -175,7 +178,7 @@ if uamqp_installed:
                     raise producer._condition
 
         @staticmethod
-        def create_receive_client(# pylint:disable=unused-argument
+        def create_receive_client(  # pylint:disable=unused-argument
             *,
             config,
             source: Source,
@@ -192,7 +195,7 @@ if uamqp_installed:
             streaming_receive: bool,
             message_received_callback: Callable,
             timeout: float,
-            **kwargs
+            **kwargs,
         ):
             """
             Creates and returns the receive client.
@@ -237,7 +240,7 @@ if uamqp_installed:
                 auth=auth,
                 keep_alive_interval=keep_alive_interval,
                 timeout=timeout,
-                **kwargs
+                **kwargs,
             )
             # pylint:disable=protected-access
             client._streaming_receive = streaming_receive
@@ -246,14 +249,11 @@ if uamqp_installed:
 
         @staticmethod
         def message_received_async(consumer, message: "Message") -> None:
-            consumer._message_buffer.append(message) # pylint: disable=protected-access
+            consumer._message_buffer.append(message)  # pylint: disable=protected-access
 
         @staticmethod
         async def receive_messages_async(
-            consumer: "EventHubConsumer",
-            batch: bool,
-            max_batch_size: int,
-            max_wait_time: Optional[int] = None
+            consumer: "EventHubConsumer", batch: bool, max_batch_size: int, max_wait_time: Optional[int] = None
         ):
             """
             Receives messages, creates events, and returns them by calling the on received callback.
@@ -263,14 +263,10 @@ if uamqp_installed:
             :param int or None max_wait_time: Max wait time.
             """
             # pylint:disable=protected-access
-            max_retries = (
-                consumer._client._config.max_retries  # pylint:disable=protected-access
-            )
+            max_retries = consumer._client._config.max_retries  # pylint:disable=protected-access
             has_not_fetched_once = True  # ensure one trip when max_wait_time is very small
             deadline = time.time() + (max_wait_time or 0)  # max_wait_time can be None
-            while len(consumer._message_buffer) < max_batch_size and (
-                time.time() < deadline or has_not_fetched_once
-            ):
+            while len(consumer._message_buffer) < max_batch_size and (time.time() < deadline or has_not_fetched_once):
                 retried_times = 0
                 has_not_fetched_once = False
                 while retried_times <= max_retries:
@@ -355,7 +351,7 @@ if uamqp_installed:
                 custom_endpoint_hostname=config.custom_endpoint_hostname,
                 port=config.connection_port,
                 verify=config.connection_verify,
-                refresh_window=refresh_window
+                refresh_window=refresh_window,
             )
             if update_token:
                 await token_auth.update_token()
@@ -374,11 +370,7 @@ if uamqp_installed:
             """
 
             mgmt_target = f"amqps://{address.hostname}{address.path}"
-            return AMQPClientAsync(
-                mgmt_target,
-                auth=mgmt_auth,
-                debug=config.network_tracing
-            )
+            return AMQPClientAsync(mgmt_target, auth=mgmt_auth, debug=config.network_tracing)
 
         @staticmethod
         async def get_updated_token_async(mgmt_auth):
@@ -408,7 +400,7 @@ if uamqp_installed:
             operation_type: bytes,
             status_code_field: bytes,
             description_fields: bytes,
-            **kwargs: Any
+            **kwargs: Any,
         ):
             """
             Send mgmt request.
@@ -428,12 +420,10 @@ if uamqp_installed:
                 op_type=operation_type,
                 status_code_field=status_code_field,
                 description_fields=description_fields,
-                **kwargs
+                **kwargs,
             )
             status_code = response.application_properties[status_code_field]
-            description: Optional[Union[str, bytes]] = response.application_properties.get(
-                description_fields
-            )
+            description: Optional[Union[str, bytes]] = response.application_properties.get(description_fields)
             return status_code, description, response
 
         @staticmethod
@@ -441,7 +431,7 @@ if uamqp_installed:
             exception: Exception,
             closable: Union["ClientBaseAsync", "ConsumerProducerMixin"],
             *,
-            is_consumer=False   # pylint:disable=unused-argument
+            is_consumer=False,  # pylint:disable=unused-argument
         ) -> Exception:
             # pylint: disable=protected-access
             if isinstance(exception, asyncio.CancelledError):

@@ -238,8 +238,15 @@ class ClusterConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The latest heartbeat status between the cluster manager and the cluster."""
 
     CONNECTED = "Connected"
+    DISCONNECTED = "Disconnected"
     TIMEOUT = "Timeout"
     UNDEFINED = "Undefined"
+
+
+class ClusterContinueUpdateVersionMachineGroupTargetingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The mode by which the cluster will target the next grouping of servers to continue the update."""
+
+    ALPHA_BY_RACK = "AlphaByRack"
 
 
 class ClusterDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -249,6 +256,7 @@ class ClusterDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DEPLOYING = "Deploying"
     RUNNING = "Running"
     UPDATING = "Updating"
+    UPDATE_PAUSED = "UpdatePaused"
     DEGRADED = "Degraded"
     DELETING = "Deleting"
     DISCONNECTED = "Disconnected"
@@ -313,11 +321,32 @@ class ClusterProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UPDATING = "Updating"
 
 
+class ClusterScanRuntimeParametersScanActivity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The choice of if the scan operation should run the scan."""
+
+    SCAN = "Scan"
+    SKIP = "Skip"
+
+
+class ClusterSecretArchiveEnabled(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The indicator if the specified key vault should be used to archive the secrets of the cluster."""
+
+    TRUE = "True"
+    FALSE = "False"
+
+
 class ClusterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of rack configuration for the cluster."""
 
     SINGLE_RACK = "SingleRack"
     MULTI_RACK = "MultiRack"
+
+
+class ClusterUpdateStrategyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The mode of operation for runtime protection."""
+
+    RACK = "Rack"
+    PAUSE_AFTER_RACK = "PauseAfterRack"
 
 
 class ConsoleDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -328,7 +357,7 @@ class ConsoleDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ConsoleEnabled(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The credentials used to login to the image repository that has access to the specified image."""
+    """The indicator of whether the console access is enabled."""
 
     TRUE = "True"
     FALSE = "False"
@@ -441,6 +470,41 @@ class KubernetesClusterDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMe
     PROVISIONING = "Provisioning"
 
 
+class KubernetesClusterFeatureAvailabilityLifecycle(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The lifecycle indicator of the feature."""
+
+    PREVIEW = "Preview"
+    GENERALLY_AVAILABLE = "GenerallyAvailable"
+
+
+class KubernetesClusterFeatureDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The detailed status of the feature."""
+
+    ERROR = "Error"
+    PROVISIONING = "Provisioning"
+    INSTALLED = "Installed"
+
+
+class KubernetesClusterFeatureProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the Kubernetes cluster feature."""
+
+    ACCEPTED = "Accepted"
+    CANCELED = "Canceled"
+    DELETING = "Deleting"
+    FAILED = "Failed"
+    SUCCEEDED = "Succeeded"
+    UPDATING = "Updating"
+
+
+class KubernetesClusterFeatureRequired(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The indicator of if the feature is required or optional. Optional features may be deleted by
+    the user, while required features are managed with the kubernetes cluster lifecycle.
+    """
+
+    TRUE = "True"
+    FALSE = "False"
+
+
 class KubernetesClusterNodeDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The detailed state of this node."""
 
@@ -546,6 +610,24 @@ class MachineSkuDiskConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     SAS = "SAS"
 
 
+class ManagedServiceIdentitySelectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of managed identity that is being selected."""
+
+    SYSTEM_ASSIGNED_IDENTITY = "SystemAssignedIdentity"
+    USER_ASSIGNED_IDENTITY = "UserAssignedIdentity"
+
+
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (where both SystemAssigned and UserAssigned types are
+    allowed).
+    """
+
+    NONE = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
+
+
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
     logs UX. Default value is "user,system".
@@ -589,6 +671,8 @@ class RackProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class RackSkuProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provisioning state of the rack SKU resource."""
 
+    CANCELED = "Canceled"
+    FAILED = "Failed"
     SUCCEEDED = "Succeeded"
 
 
@@ -615,6 +699,16 @@ class RemoteVendorManagementStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     ENABLED = "Enabled"
     DISABLED = "Disabled"
     UNSUPPORTED = "Unsupported"
+
+
+class RuntimeProtectionEnforcementLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The mode of operation for runtime protection."""
+
+    AUDIT = "Audit"
+    DISABLED = "Disabled"
+    ON_DEMAND = "OnDemand"
+    PASSIVE = "Passive"
+    REAL_TIME = "RealTime"
 
 
 class SkipShutdown(str, Enum, metaclass=CaseInsensitiveEnumMeta):

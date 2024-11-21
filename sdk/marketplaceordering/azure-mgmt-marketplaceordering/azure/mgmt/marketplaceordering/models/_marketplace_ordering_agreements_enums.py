@@ -23,3 +23,10 @@ class OfferType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """OfferType."""
 
     VIRTUALMACHINE = "virtualmachine"
+
+
+class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether the agreement is active or cancelled."""
+
+    ACTIVE = "Active"
+    CANCELED = "Canceled"

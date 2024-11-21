@@ -15,7 +15,6 @@ USAGE: python blob_sammples_enumerate_blobs.py
     1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
-from __future__ import print_function
 import os
 import sys
 from azure.storage.blob import ContainerClient

@@ -163,7 +163,7 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
             stack=str(stack_trace)[:32768],
         )
         data = TelemetryExceptionData(  # type: ignore
-            severity_level=severity_level,
+            severity_level=severity_level,  # type: ignore
             properties=properties,
             exceptions=[exc_details],
         )
@@ -175,7 +175,7 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
         # Severity number: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-severitynumber
         data = MessageData(  # type: ignore
             message=_map_body_to_message(log_record.body),
-            severity_level=severity_level,
+            severity_level=severity_level,  # type: ignore
             properties=properties,
         )
         envelope.data = MonitorBase(base_data=data, base_type="MessageData")

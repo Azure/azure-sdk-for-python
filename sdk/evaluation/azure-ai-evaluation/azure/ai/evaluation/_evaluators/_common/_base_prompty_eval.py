@@ -4,7 +4,7 @@
 
 import math
 import re
-from typing import Dict, Union
+from typing import Dict, TypeVar, Union
 
 from promptflow.core import AsyncPrompty
 from typing_extensions import override
@@ -18,8 +18,10 @@ try:
 except ImportError:
     USER_AGENT = "None"
 
+T = TypeVar("T")
 
-class PromptyEvaluatorBase(EvaluatorBase[float]):
+
+class PromptyEvaluatorBase(EvaluatorBase[T]):
     """Base class for all evaluators that make use of context as an input. It's also assumed that such evaluators
     make use of a prompty file, and return their results as a dictionary, with a single key-value pair
     linking the result name to a float value (unless multi-turn evaluation occurs, in which case the
@@ -45,10 +47,12 @@ class PromptyEvaluatorBase(EvaluatorBase[float]):
         self._prompty_file = prompty_file
         super().__init__(eval_last_turn=eval_last_turn)
 
+        subclass_name = self.__class__.__name__
+        user_agent = f"{USER_AGENT} (type=evaluator subtype={subclass_name})"
         prompty_model_config = construct_prompty_model_config(
             validate_model_config(model_config),
             self._DEFAULT_OPEN_API_VERSION,
-            USER_AGENT,
+            user_agent,
         )
 
         self._flow = AsyncPrompty.load(source=prompty_file, model=prompty_model_config)

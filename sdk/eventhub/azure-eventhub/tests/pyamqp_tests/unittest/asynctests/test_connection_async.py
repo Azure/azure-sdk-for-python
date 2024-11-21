@@ -1,10 +1,12 @@
 import sys
+
 if sys.version_info >= (3, 8):
     from unittest.mock import AsyncMock, Mock
 
 import pytest
 
 from azure.eventhub._pyamqp.aio import Connection
+
 
 @pytest.mark.asyncio
 async def test_connection_begin_session():
@@ -20,7 +22,7 @@ async def test_connection_begin_session():
     session.begin()
     # in response from the server we should get back a BEGIN frame
     incoming_channel = 0
-    incoming_frame= (1,0,0,0,0,0,0,0)
+    incoming_frame = (1, 0, 0, 0, 0, 0, 0, 0)
     connection.listen = AsyncMock(side_effect=await connection._incoming_begin(incoming_channel, incoming_frame))
     await connection.listen()
     assert incoming_channel in connection._incoming_endpoints
@@ -43,7 +45,7 @@ async def test_connection_end_session_on_timeout():
     session.begin()
     # in response from the server we should get back a BEGIN frame
     incoming_channel = 0
-    incoming_frame= (1,0,0,0,0,0,0,0)
+    incoming_frame = (1, 0, 0, 0, 0, 0, 0, 0)
     connection.listen = AsyncMock(side_effect=await connection._incoming_begin(incoming_channel, incoming_frame))
     await connection.listen()
     assert outgoing_channel == connection._incoming_endpoints[incoming_channel].channel

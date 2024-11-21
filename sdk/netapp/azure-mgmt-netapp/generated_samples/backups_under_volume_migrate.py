@@ -41,6 +41,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2024-07-01/examples/BackupsUnderVolume_Migrate.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/preview/2024-07-01-preview/examples/BackupsUnderVolume_Migrate.json
 if __name__ == "__main__":
     main()
