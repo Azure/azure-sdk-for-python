@@ -99,7 +99,7 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         :return: the debug information for the query
         :rtype: ~azure.search.documents.models.DebugInfo
         """
-        return cast(int, self._first_iterator_instance().get_debug_info())
+        return cast(DebugInfo, self._first_iterator_instance().get_debug_info())
 
 
 # The pylint error silenced below seems spurious, as the inner wrapper does, in
@@ -173,4 +173,4 @@ class SearchPageIterator(PageIterator):
     def get_debug_info(self) -> DebugInfo:
         self.continuation_token = None
         response = cast(SearchDocumentsResult, self._response)
-        return cast(int, response.debug_info)
+        return cast(DebugInfo, response.debug_info)

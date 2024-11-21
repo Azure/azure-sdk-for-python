@@ -83,7 +83,7 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         :return: the debug information for the query.
         :rtype: ~azure.search.documents.models.DebugInfo
         """
-        return cast(List[QueryAnswerResult], await self._first_iterator_instance().get_debug_info())
+        return cast(DebugInfo, await self._first_iterator_instance().get_debug_info())
 
 # The pylint error silenced below seems spurious, as the inner wrapper does, in
 # fact, become a method of the class when it is applied.
