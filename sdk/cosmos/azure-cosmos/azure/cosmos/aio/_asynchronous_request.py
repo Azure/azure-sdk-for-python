@@ -109,7 +109,10 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     response = response.http_response
     headers = copy.copy(response.headers)
 
-    data = response.body()
+    try:
+        data = response.content
+    except AttributeError:
+        data = response.body()
     if data:
         data = data.decode("utf-8")
 
