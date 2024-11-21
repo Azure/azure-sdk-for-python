@@ -540,7 +540,9 @@ class MLClient:
             dataplane_client=self._service_client_workspace_dataplane,
             **app_insights_handler_kwargs,
         )
-        self._operation_container.add(AzureMLResourceType.WORKSPACE, self._workspaces)  # type: ignore[arg-type]
+        self._operation_container.add(
+            AzureMLResourceType.WORKSPACE, self._workspaces
+        )  # type: ignore[arg-type]
 
         self._workspace_outbound_rules = WorkspaceOutboundRuleOperations(
             self._operation_scope,
@@ -558,7 +560,9 @@ class MLClient:
             self._credential,
             **app_insights_handler_kwargs,  # type: ignore[arg-type]
         )
-        self._operation_container.add(AzureMLResourceType.REGISTRY, self._registries)  # type: ignore[arg-type]
+        self._operation_container.add(
+            AzureMLResourceType.REGISTRY, self._registries
+        )  # type: ignore[arg-type]
 
         self._connections = WorkspaceConnectionsOperations(
             self._operation_scope,
@@ -773,7 +777,9 @@ class MLClient:
                 **ops_kwargs,  # type: ignore[arg-type]
             )
             self._operation_container.add(
-                AzureMLResourceType.VIRTUALCLUSTER, self._virtual_clusters  # type: ignore[arg-type]
+                # type: ignore[arg-type]
+                AzureMLResourceType.VIRTUALCLUSTER,
+                self._virtual_clusters,
             )
         except Exception as ex:  # pylint: disable=broad-except
             module_logger.debug(
@@ -821,7 +827,9 @@ class MLClient:
             self._operation_config,
             self._service_client_01_2024_preview,
         )
-        self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)  # type: ignore[arg-type]
+        self._operation_container.add(
+            AzureMLResourceType.FEATURE_STORE, self._featurestores
+        )  # type: ignore[arg-type]
         self._operation_container.add(AzureMLResourceType.FEATURE_SET, self._featuresets)
         self._operation_container.add(
             AzureMLResourceType.FEATURE_STORE_ENTITY, self._featurestoreentities

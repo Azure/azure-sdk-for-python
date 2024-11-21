@@ -14,11 +14,11 @@ def create_finetuning_job(
     task: str,
     training_data: str,
     output_model_name_prefix: str,
-    instance_types: Optional[List[str]] = None,
     validation_data: Optional[str] = None,
     hyperparameters: Optional[Dict[str, str]] = None,
+    compute: Optional[str] = None,
+    instance_types: Optional[List[str]] = None,
     job_tier: Optional[str] = None,
-    priority: Optional[str] = None,
     **kwargs,
 ) -> CustomModelFineTuningJob:
 
@@ -55,8 +55,8 @@ def create_finetuning_job(
         job_resources = JobResources(instance_types=instance_types)
 
     queue_settings = None
-    if job_tier or priority:
-        queue_settings = QueueSettings(tier=job_tier, priority=priority)
+    if job_tier:
+        queue_settings = QueueSettings(job_tier=job_tier)
 
     custom_model_finetuning_job = CustomModelFineTuningJob(
         task=task,
@@ -64,6 +64,7 @@ def create_finetuning_job(
         training_data=training_data,
         validation_data=validation_data,
         hyperparameters=hyperparameters,
+        compute=compute,
         resources=job_resources,
         queue_settings=queue_settings,
         outputs=outputs,

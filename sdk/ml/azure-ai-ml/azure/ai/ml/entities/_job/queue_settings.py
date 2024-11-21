@@ -47,19 +47,31 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
 
     def _to_rest_object(self) -> RestQueueSettings:
         self._validate()
-        job_tier = JobTierNames.ENTITY_TO_REST.get(self.job_tier.lower(), None) if self.job_tier else None
-        priority = JobPriorityValues.ENTITY_TO_REST.get(self.priority.lower(), None) if self.priority else None
+        job_tier = (
+            JobTierNames.ENTITY_TO_REST.get(self.job_tier.lower(), None) if self.job_tier else None
+        )
+        priority = (
+            JobPriorityValues.ENTITY_TO_REST.get(self.priority.lower(), None)
+            if self.priority
+            else None
+        )
         return RestQueueSettings(job_tier=job_tier, priority=priority)
 
     @classmethod
-    def _from_rest_object(cls, obj: Union[Dict[str, Any], RestQueueSettings, None]) -> Optional["QueueSettings"]:
+    def _from_rest_object(
+        cls, obj: Union[Dict[str, Any], RestQueueSettings, None]
+    ) -> Optional["QueueSettings"]:
         if obj is None:
             return None
         if isinstance(obj, dict):
             queue_settings = RestQueueSettings.from_dict(obj)
             return cls._from_rest_object(queue_settings)
         job_tier = JobTierNames.REST_TO_ENTITY.get(obj.job_tier, None) if obj.job_tier else None
-        priority = JobPriorityValues.REST_TO_ENTITY.get(obj.priority, None) if obj.priority else None
+        priority = (
+            JobPriorityValues.REST_TO_ENTITY.get(obj.priority, None)
+            if hasattr(obj, "priority")
+            else None
+        )
         return cls(job_tier=job_tier, priority=priority)
 
     def _validate(self) -> None:

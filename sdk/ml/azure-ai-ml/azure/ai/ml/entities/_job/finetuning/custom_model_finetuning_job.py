@@ -91,6 +91,7 @@ class CustomModelFineTuningJob(FineTuningVertical):
             experiment_name=self.experiment_name,
             tags=self.tags,
             properties=self.properties,
+            compute_id=self.compute,
             fine_tuning_details=custom_finetuning_vertical,
             outputs=to_rest_data_outputs(self.outputs),
         )
@@ -172,6 +173,7 @@ class CustomModelFineTuningJob(FineTuningVertical):
             "status": properties.status,
             "creation_context": obj.system_data,
             "display_name": properties.display_name,
+            "compute": properties.compute_id,
             "outputs": from_rest_data_outputs(properties.outputs),
         }
 
