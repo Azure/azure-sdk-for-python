@@ -119,7 +119,7 @@ class TestRetryPolicy(unittest.TestCase):
 
     def test_resource_throttle_retry_policy_max_wait_time(self):
         connection_policy = TestRetryPolicy.connectionPolicy
-        connection_policy.RetryOptions = retry_options.RetryOptions(5, 2000, 3)
+        connection_policy.RetryOptions = retry_options.RetryOptions(5, 500, 3)
 
         self.original_execute_function = _retry_utility.ExecuteFunction
         start_time = time.time()

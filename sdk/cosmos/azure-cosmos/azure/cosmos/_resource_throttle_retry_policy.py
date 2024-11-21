@@ -23,8 +23,8 @@
 Cosmos database service.
 """
 
-from . import http_constants
 import logging
+from . import http_constants
 
 
 class ResourceThrottleRetryPolicy(object):
@@ -57,7 +57,7 @@ class ResourceThrottleRetryPolicy(object):
 
             if self.cumulative_wait_time_in_milliseconds < self._max_wait_time_in_milliseconds:
                 self.cumulative_wait_time_in_milliseconds += self.retry_after_in_milliseconds
-                self._logger.info("Current retry attempt: {}".format(self.current_retry_attempt_count))
+                self._logger.info("Current retry attempt: %d", self.current_retry_attempt_count)
                 return True
 
         return False
