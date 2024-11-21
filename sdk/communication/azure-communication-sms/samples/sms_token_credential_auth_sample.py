@@ -36,20 +36,23 @@ class SmsTokenCredentialAuthSample(object):
         # AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
         endpoint, _ = parse_connection_str(self.connection_string)
         sms_client = SmsClient(endpoint, DefaultAzureCredential())
+        try:
+            # calling send() with sms values
+            sms_responses = sms_client.send(
+                from_=self.phone_number,
+                to=self.phone_number,
+                message="Hello World via SMS")
+            sms_response = sms_responses[0]
 
-        # calling send() with sms values
-        sms_responses = sms_client.send(
-            from_=self.phone_number,
-            to=self.phone_number,
-            message="Hello World via SMS")
-        sms_response = sms_responses[0]
-        
-        if (sms_response.successful):
-            print("Message with message id {} was successful sent to {}"
-            .format(sms_response.message_id, sms_response.to))
-        else:
-            print("Message failed to send to {} with the status code {} and error: {}"
-            .format(sms_response.to, sms_response.http_status_code, sms_response.error_message))
+            if (sms_response.successful):
+                print("Message with message id {} was successful sent to {}"
+                .format(sms_response.message_id, sms_response.to))
+            else:
+                print("Message failed to send to {} with the status code {} and error: {}"
+                .format(sms_response.to, sms_response.http_status_code, sms_response.error_message))
+        except Exception:
+            print(Exception)
+            pass
 
 if __name__ == '__main__':
     sample = SmsTokenCredentialAuthSample()
