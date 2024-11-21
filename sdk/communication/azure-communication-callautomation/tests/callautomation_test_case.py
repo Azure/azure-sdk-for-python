@@ -14,37 +14,38 @@ from typing import Dict, Any, List
 import requests
 from azure.servicebus import ServiceBusClient
 from devtools_testutils import AzureRecordedTestCase, is_live
-from devtools_testutils.helpers import (
-    get_test_id
-)
+from devtools_testutils.helpers import get_test_id
 
 from azure.communication.callautomation import (
     CommunicationIdentifierKind,
     CallAutomationClient,
     CallConnectionClient,
-    CommunicationIdentifier
+    CommunicationIdentifier,
 )
 from azure.communication.callautomation._shared.models import identifier_from_raw_id
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.phonenumbers import PhoneNumbersClient
+
 
 class CallAutomationRecordedTestCase(AzureRecordedTestCase):
     @classmethod
     def setup_class(cls):
         if is_live():
             print("Live Test")
-            cls.connection_str = os.environ.get('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
-            cls.servicebus_connection_str = os.environ.get('SERVICEBUS_STRING')
-            cls.dispatcher_endpoint = os.environ.get('DISPATCHER_ENDPOINT')
-            cls.file_source_url = os.environ.get('FILE_SOURCE_URL')
+            cls.connection_str = os.environ.get("COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING")
+            cls.servicebus_connection_str = os.environ.get("SERVICEBUS_STRING")
+            cls.dispatcher_endpoint = os.environ.get("DISPATCHER_ENDPOINT")
+            cls.file_source_url = os.environ.get("FILE_SOURCE_URL")
         else:
             print("Recorded Test")
             cls.connection_str = "endpoint=https://someEndpoint/;accesskey=someAccessKeyw=="
-            cls.servicebus_connection_str =  "Endpoint=sb://someEndpoint/;SharedAccessKeyName=somekey;SharedAccessKey=someAccessKey="
+            cls.servicebus_connection_str = (
+                "Endpoint=sb://someEndpoint/;SharedAccessKeyName=somekey;SharedAccessKey=someAccessKey="
+            )
             cls.dispatcher_endpoint = "https://REDACTED.azurewebsites.net"
             cls.file_source_url = "https://REDACTED/prompt.wav"
 
-        cls.dispatcher_callback = cls.dispatcher_endpoint + '/api/servicebuscallback/events'
+        cls.dispatcher_callback = cls.dispatcher_endpoint + "/api/servicebuscallback/events"
         cls.identity_client = CommunicationIdentityClient.from_connection_string(cls.connection_str)
         cls.phonenumber_client = PhoneNumbersClient.from_connection_string(cls.connection_str)
         cls.service_bus_client = ServiceBusClient.from_connection_string(cls.servicebus_connection_str)
@@ -88,7 +89,7 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
         if identifier is None:
             raise ValueError("Identifier cannot be None")
         elif identifier.kind == CommunicationIdentifierKind.COMMUNICATION_USER:
-            return CallAutomationRecordedTestCase._format_string(''.join(filter(str.isalnum, identifier.raw_id)))
+            return CallAutomationRecordedTestCase._format_string("".join(filter(str.isalnum, identifier.raw_id)))
         elif identifier.kind == CommunicationIdentifierKind.PHONE_NUMBER:
             return CallAutomationRecordedTestCase._format_phonenumber_string(identifier.raw_id)
         else:
@@ -96,15 +97,19 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
 
     @staticmethod
     def _event_key_gen(event_type: str) -> str:
-        return  event_type
+        return event_type
 
     @staticmethod
-    def _unique_key_gen(caller_identifier: CommunicationIdentifier, receiver_identifier: CommunicationIdentifier) -> str:
-        return CallAutomationRecordedTestCase._parse_ids_from_identifier(caller_identifier) + CallAutomationRecordedTestCase._parse_ids_from_identifier(receiver_identifier)
+    def _unique_key_gen(
+        caller_identifier: CommunicationIdentifier, receiver_identifier: CommunicationIdentifier
+    ) -> str:
+        return CallAutomationRecordedTestCase._parse_ids_from_identifier(
+            caller_identifier
+        ) + CallAutomationRecordedTestCase._parse_ids_from_identifier(receiver_identifier)
 
     def _get_test_event_file_name(self):
         script_dir = os.path.dirname(os.path.realpath(__file__))
-        file_path = os.path.join(script_dir, 'events', f'{self.test_name}.event.json')
+        file_path = os.path.join(script_dir, "events", f"{self.test_name}.event.json")
         return file_path
 
     def _message_awaiter(self, unique_id) -> None:
@@ -112,8 +117,8 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
         while unique_id in self.wait_for_event_flags:
             received_messages = service_bus_receiver.receive_messages(max_wait_time=20)
             for msg in received_messages:
-                body_bytes = b''.join(msg.body)
-                body_str = body_bytes.decode('utf-8')
+                body_bytes = b"".join(msg.body)
+                body_str = body_bytes.decode("utf-8")
                 mapper = json.loads(body_str)
                 if "incomingCallContext" in mapper:
                     caller = identifier_from_raw_id(mapper["from"]["rawId"])
@@ -140,7 +145,7 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
         if not is_live():
             file_path = self._get_test_event_file_name()
             try:
-                with open(file_path, 'r') as json_file:
+                with open(file_path, "r") as json_file:
                     self.event_store = json.load(json_file)
             except IOError as e:
                 raise SystemExit(f"File write operation failed: {e}")
@@ -150,7 +155,7 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
         if is_live():
             file_path = self._get_test_event_file_name()
             try:
-                with open(file_path, 'w') as json_file:
+                with open(file_path, "w") as json_file:
                     json.dump(self.event_to_save, json_file)
             except IOError as e:
                 raise SystemExit(f"File write operation failed: {e}")
@@ -160,15 +165,19 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
         time_out_time = datetime.now() + wait_time
         while datetime.now() < time_out_time:
             popped_event = self.event_store.pop(key, None)
-            if (popped_event is not None):
+            if popped_event is not None:
                 print(f"Matching Event Found [{key}]")
                 return popped_event
             time.sleep(1)
         return None
 
     def establish_callconnection_voip(self, caller, target) -> tuple:
-        call_automation_client_caller = CallAutomationClient.from_connection_string(self.connection_str, source=caller) # for creating call
-        call_automation_client_target = CallAutomationClient.from_connection_string(self.connection_str, source=target) # answering call, all other actions
+        call_automation_client_caller = CallAutomationClient.from_connection_string(
+            self.connection_str, source=caller
+        )  # for creating call
+        call_automation_client_target = CallAutomationClient.from_connection_string(
+            self.connection_str, source=target
+        )  # answering call, all other actions
 
         unique_id = self._unique_key_gen(caller, target)
         if is_live():
@@ -185,7 +194,9 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
             thread.start()
 
         # create a call
-        create_call_result = call_automation_client_caller.create_call(target_participant=target, callback_url=(self.dispatcher_callback + "?q={}".format(unique_id)))
+        create_call_result = call_automation_client_caller.create_call(
+            target_participant=target, callback_url=(self.dispatcher_callback + "?q={}".format(unique_id))
+        )
 
         if create_call_result is None:
             raise ValueError("Invalid create_call_result")
@@ -195,25 +206,33 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
             raise ValueError("Caller connection ID is None")
 
         # wait for incomingCallContext
-        incoming_call_event = self.check_for_event('IncomingCall', unique_id, timedelta(seconds=30))
+        incoming_call_event = self.check_for_event("IncomingCall", unique_id, timedelta(seconds=30))
         if incoming_call_event is None:
             raise ValueError("incoming_call_event is None")
         incoming_call_context = incoming_call_event["incomingCallContext"]
 
         # answer the call
-        answer_call_result = call_automation_client_target.answer_call(incoming_call_context=incoming_call_context, callback_url=self.dispatcher_callback)
+        answer_call_result = call_automation_client_target.answer_call(
+            incoming_call_context=incoming_call_context, callback_url=self.dispatcher_callback
+        )
         if answer_call_result is None:
             raise ValueError("Invalid answer_call result")
 
         call_connection_caller = CallConnectionClient.from_connection_string(self.connection_str, caller_connection_id)
-        call_connection_target = CallConnectionClient.from_connection_string(self.connection_str, answer_call_result.call_connection_id)
+        call_connection_target = CallConnectionClient.from_connection_string(
+            self.connection_str, answer_call_result.call_connection_id
+        )
         self.open_call_connections[unique_id] = call_connection_caller
 
         return unique_id, call_connection_caller, call_connection_target
 
     def establish_callconnection_pstn(self, caller, target) -> tuple:
-        call_automation_client_caller = CallAutomationClient.from_connection_string(self.connection_str) # for creating call
-        call_automation_client_target = CallAutomationClient.from_connection_string(self.connection_str) # answering call, all other actions
+        call_automation_client_caller = CallAutomationClient.from_connection_string(
+            self.connection_str
+        )  # for creating call
+        call_automation_client_target = CallAutomationClient.from_connection_string(
+            self.connection_str
+        )  # answering call, all other actions
 
         unique_id = self._unique_key_gen(caller, target)
         if is_live():
@@ -230,7 +249,11 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
             thread.start()
 
         # create a call
-        create_call_result = call_automation_client_caller.create_call(target_participant=target, source_caller_id_number=caller, callback_url=(self.dispatcher_callback + "?q={}".format(unique_id)))
+        create_call_result = call_automation_client_caller.create_call(
+            target_participant=target,
+            source_caller_id_number=caller,
+            callback_url=(self.dispatcher_callback + "?q={}".format(unique_id)),
+        )
 
         if create_call_result is None:
             raise ValueError("Invalid create_call_result")
@@ -240,18 +263,22 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
             raise ValueError("Caller connection ID is None")
 
         # wait for incomingCallContext
-        incoming_call_event = self.check_for_event('IncomingCall', unique_id, timedelta(seconds=30))
+        incoming_call_event = self.check_for_event("IncomingCall", unique_id, timedelta(seconds=30))
         if incoming_call_event is None:
             raise ValueError("incoming_call_event is None")
         incoming_call_context = incoming_call_event["incomingCallContext"]
 
         # answer the call
-        answer_call_result = call_automation_client_target.answer_call(incoming_call_context=incoming_call_context, callback_url=self.dispatcher_callback)
+        answer_call_result = call_automation_client_target.answer_call(
+            incoming_call_context=incoming_call_context, callback_url=self.dispatcher_callback
+        )
         if answer_call_result is None:
             raise ValueError("Invalid answer_call result")
 
         call_connection_caller = CallConnectionClient.from_connection_string(self.connection_str, caller_connection_id)
-        call_connection_target = CallConnectionClient.from_connection_string(self.connection_str, answer_call_result.call_connection_id)
+        call_connection_target = CallConnectionClient.from_connection_string(
+            self.connection_str, answer_call_result.call_connection_id
+        )
         self.open_call_connections[unique_id] = call_connection_caller
 
         return unique_id, call_connection_caller, call_connection_target
@@ -259,11 +286,14 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
     def terminate_call(self, unique_id) -> None:
         try:
             call_connection = self.open_call_connections.pop(unique_id, None)
-            if (call_connection is not None):
+            if call_connection is not None:
                 call_connection.hang_up(is_for_everyone=True)
-                disconnected_event = self.check_for_event('CallDisconnected', call_connection._call_connection_id, timedelta(seconds=15))
+                disconnected_event = self.check_for_event(
+                    "CallDisconnected", call_connection._call_connection_id, timedelta(seconds=15)
+                )
                 if disconnected_event is None:
                     raise ValueError("Receiver CallDisconnected event is None")
         finally:
-            while unique_id in self.wait_for_event_flags: self.wait_for_event_flags.remove(unique_id)
+            while unique_id in self.wait_for_event_flags:
+                self.wait_for_event_flags.remove(unique_id)
             pass
