@@ -92,33 +92,17 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         :return: An LROPoller object that can be used to track the long-running operation that is creation of capability host.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.CapabilityHost]
         """
-
-        self.__validate_workspace_name()
-
-        workspace = self.__get_workspace()
-
-        if workspace is None:
-            msg = f"Workspace '{self._workspace_name}' does not exist."
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.CAPABILITY_HOST,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-            )
-        
-        """workspace._kind
-        workspace_kind = WorkspaceKind.PROJECT
-        if workspace._hub_id is None: 
-            workspace_kind = WorkspaceKind.HUB
-        """
-
-        self.__validate_properties(capability_host, workspace._kind)
-        
-        if workspace._kind == WorkspaceKind.PROJECT:
-            if capability_host.storage_connections is None or len(capability_host.storage_connections) == 0:
-                capability_host.storage_connections = self.__get_default_storage_connections()
-        
         try:
+            self.__validate_workspace_name()
+
+            workspace = self.__get_workspace()
+            
+            self.__validate_properties(capability_host, workspace._kind)
+            
+            if workspace._kind == WorkspaceKind.PROJECT:
+                if capability_host.storage_connections is None or len(capability_host.storage_connections) == 0:
+                    capability_host.storage_connections = self.__get_default_storage_connections()
+        
             capability_host_resource = capability_host._to_rest_object_for_hub() if workspace._kind == WorkspaceKind.HUB else capability_host._to_rest_object_for_project()
 
             # pylint: disable=unused-argument, docstring-missing-param
@@ -234,7 +218,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         
         return kind in {WorkspaceKind.HUB, WorkspaceKind.PROJECT}
     
-    def __get_workspace(self) -> Optional[Workspace]:
+    def __get_workspace(self) -> Workspace:
         """Retrieve the workspace object.
 
         :return: The current workspace if it exists, otherwise None.
@@ -242,6 +226,14 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         """
         rest_workspace = self._workspace_operations.get(self._resource_group_name, self._workspace_name)
         workspace = Workspace._from_rest_object(rest_workspace)
+        if(workspace is None):
+            msg = f"Workspace with name {self._workspace_name} does not exist."
+            raise ValidationException(
+                message=msg,
+                target=ErrorTarget.CAPABILITY_HOST,
+                no_personal_data_message=msg,
+                error_category=ErrorCategory.USER_ERROR,
+            )
         return workspace
     
     def __validate_workspace_name(self) -> None:
