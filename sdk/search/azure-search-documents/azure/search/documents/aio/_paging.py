@@ -156,4 +156,4 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
     async def get_debug_info(self) -> DebugInfo:
         self.continuation_token = None
         response = cast(SearchDocumentsResult, self._response)
-        return response.debug_info
+        return cast(DebugInfo, response.debug_info)
