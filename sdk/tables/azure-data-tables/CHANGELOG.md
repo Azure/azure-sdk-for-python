@@ -1,6 +1,6 @@
 # Release History
 
-## 12.6.0 (2024-11-20)
+## 12.6.0 (2024-11-21)
 
 ### Features Added
 * Added support for Microsoft Entra auth with Azure Cosmos DB for Table's OAuth scope (`https://cosmos.azure.com/.default`).
