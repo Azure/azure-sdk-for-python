@@ -420,11 +420,11 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
         where = "\"tag1\"='firsttag' and \"tag2\"='secondtag'"
         blob_list = self.bsc.find_blobs_by_tags(filter_expression=where, results_per_page=2).by_page()
         first_page = await blob_list.__anext__()
-        items_on_page1 = list()
+        items_on_page1 = []
         async for item in first_page:
             items_on_page1.append(item)
         second_page = await blob_list.__anext__()
-        items_on_page2 = list()
+        items_on_page2 = []
         async for item in second_page:
             items_on_page2.append(item)
 

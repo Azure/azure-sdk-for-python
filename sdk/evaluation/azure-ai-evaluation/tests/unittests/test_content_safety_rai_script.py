@@ -178,6 +178,7 @@ class TestContentSafetyEvaluator:
             rai_svc_url="www.notarealurl.com",
             token="dummy",
             annotation_task=Tasks.CONTENT_HARM,
+            evaluator_name="dummy-evaluator",
         )
         assert result == "dummy-operation-id"
 
@@ -198,6 +199,7 @@ class TestContentSafetyEvaluator:
                 rai_svc_url="www.notarealurl.com",
                 token="dummy",
                 annotation_task=Tasks.CONTENT_HARM,
+                evaluator_name="dummy-evaluator",
             )
         assert "Operation returned an invalid status '404 Not Found'" in str(exc_info._excinfo[1])
 

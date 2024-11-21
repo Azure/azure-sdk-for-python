@@ -182,7 +182,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         with pytest.raises(ResourceNotFoundError):
             await share_client.get_share_properties()
 
-        share_list = list()
+        share_list = []
         async for share in self.fsc.list_shares(include_deleted=True):
             share_list.append(share)
         assert len(share_list) >= 1
@@ -1342,7 +1342,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         await share.create_share()
 
         # Act
-        identifiers = dict()
+        identifiers = {}
         expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
         start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow() - timedelta(minutes=1))
         identifiers['testid'] = AccessPolicy(
@@ -1373,7 +1373,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         await share.create_share()
 
         # Act
-        identifiers = dict()
+        identifiers = {}
         for i in range(0, 6):
             identifiers['id{}'.format(i)] = AccessPolicy()
 

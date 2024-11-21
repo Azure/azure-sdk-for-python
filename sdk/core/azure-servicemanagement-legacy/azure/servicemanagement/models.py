@@ -66,27 +66,27 @@ class StorageService(WindowsAzureData):
 class StorageAccountProperties(WindowsAzureData):
 
     def __init__(self):
-        self.description = u''
-        self.affinity_group = u''
-        self.location = u''
+        self.description = ''
+        self.affinity_group = ''
+        self.location = ''
         self.label = _Base64String()
-        self.status = u''
+        self.status = ''
         self.endpoints = _scalar_list_of(_unicode_type, 'Endpoint')
         self.geo_replication_enabled = False
-        self.geo_primary_region = u''
-        self.status_of_primary = u''
-        self.geo_secondary_region = u''
-        self.status_of_secondary = u''
-        self.last_geo_failover_time = u''
-        self.creation_time = u''
-        self.account_type = u''
+        self.geo_primary_region = ''
+        self.status_of_primary = ''
+        self.geo_secondary_region = ''
+        self.status_of_secondary = ''
+        self.last_geo_failover_time = ''
+        self.creation_time = ''
+        self.account_type = ''
 
 
 class StorageServiceKeys(WindowsAzureData):
 
     def __init__(self):
-        self.primary = u''
-        self.secondary = u''
+        self.primary = ''
+        self.secondary = ''
 
 
 class Locations(WindowsAzureData):
@@ -107,8 +107,8 @@ class Locations(WindowsAzureData):
 class Location(WindowsAzureData):
 
     def __init__(self):
-        self.name = u''
-        self.display_name = u''
+        self.name = ''
+        self.display_name = ''
         self.available_services = _scalar_list_of(_unicode_type, 'AvailableService')
         self.compute_capabilities = ComputeCapabilities()
 
@@ -125,8 +125,8 @@ class AffinityGroup(WindowsAzureData):
     def __init__(self):
         self.name = ''
         self.label = _Base64String()
-        self.description = u''
-        self.location = u''
+        self.description = ''
+        self.location = ''
         self.hosted_services = HostedServices()
         self.storage_services = StorageServices()
         self.capabilities = _scalar_list_of(_unicode_type, 'Capability')
@@ -165,8 +165,8 @@ class HostedServices(WindowsAzureData):
 class HostedService(WindowsAzureData):
 
     def __init__(self):
-        self.url = u''
-        self.service_name = u''
+        self.url = ''
+        self.service_name = ''
         self.hosted_service_properties = HostedServiceProperties()
         self.deployments = Deployments()
 
@@ -174,13 +174,13 @@ class HostedService(WindowsAzureData):
 class HostedServiceProperties(WindowsAzureData):
 
     def __init__(self):
-        self.description = u''
-        self.location = u''
-        self.affinity_group = u''
+        self.description = ''
+        self.location = ''
+        self.affinity_group = ''
         self.label = _Base64String()
-        self.status = u''
-        self.date_created = u''
-        self.date_last_modified = u''
+        self.status = ''
+        self.date_created = ''
+        self.date_last_modified = ''
         self.extended_properties = _dict_of(
             'ExtendedProperty', 'Name', 'Value')
 
@@ -203,9 +203,9 @@ class VirtualNetworkSites(WindowsAzureData):
 class VirtualNetworkSite(WindowsAzureData):
 
     def __init__(self):
-        self.name = u''
-        self.id = u''
-        self.affinity_group = u''
+        self.name = ''
+        self.id = ''
+        self.affinity_group = ''
         self.subnets = Subnets()
 
 
@@ -227,8 +227,8 @@ class Subnets(WindowsAzureData):
 class Subnet(WindowsAzureData):
 
     def __init__(self):
-        self.name = u''
-        self.address_prefix = u''
+        self.name = ''
+        self.address_prefix = ''
 
 
 
@@ -250,25 +250,25 @@ class Deployments(WindowsAzureData):
 class Deployment(WindowsAzureData):
 
     def __init__(self):
-        self.name = u''
-        self.deployment_slot = u''
-        self.private_id = u''
-        self.status = u''
+        self.name = ''
+        self.deployment_slot = ''
+        self.private_id = ''
+        self.status = ''
         self.label = _Base64String()
-        self.url = u''
+        self.url = ''
         self.configuration = _Base64String()
         self.role_instance_list = RoleInstanceList()
         self.upgrade_status = UpgradeStatus()
-        self.upgrade_domain_count = u''
+        self.upgrade_domain_count = ''
         self.role_list = RoleList()
-        self.sdk_version = u''
+        self.sdk_version = ''
         self.input_endpoint_list = InputEndpoints()
         self.locked = False
         self.rollback_allowed = False
         self.persistent_vm_downtime_info = PersistentVMDowntimeInfo()
-        self.created_time = u''
-        self.virtual_network_name = u''
-        self.last_modified_time = u''
+        self.created_time = ''
+        self.virtual_network_name = ''
+        self.last_modified_time = ''
         self.extended_properties = _dict_of(
             'ExtendedProperty', 'Name', 'Value')
         self.virtual_ips = VirtualIPs()
@@ -292,19 +292,19 @@ class RoleInstanceList(WindowsAzureData):
 class RoleInstance(WindowsAzureData):
 
     def __init__(self):
-        self.role_name = u''
-        self.instance_name = u''
-        self.instance_status = u''
+        self.role_name = ''
+        self.instance_name = ''
+        self.instance_status = ''
         self.instance_upgrade_domain = 0
         self.instance_fault_domain = 0
-        self.instance_size = u''
-        self.instance_state_details = u''
-        self.instance_error_code = u''
-        self.ip_address = u''
+        self.instance_size = ''
+        self.instance_state_details = ''
+        self.instance_error_code = ''
+        self.ip_address = ''
         self.instance_endpoints = InstanceEndpoints()
-        self.power_state = u''
-        self.fqdn = u''
-        self.host_name = u''
+        self.power_state = ''
+        self.fqdn = ''
+        self.host_name = ''
         self.public_ips = PublicIPs()
 
 class InstanceEndpoints(WindowsAzureData):
@@ -325,19 +325,19 @@ class InstanceEndpoints(WindowsAzureData):
 class InstanceEndpoint(WindowsAzureData):
 
     def __init__(self):
-        self.name = u''
-        self.vip = u''
-        self.public_port = u''
-        self.local_port = u''
-        self.protocol = u''
+        self.name = ''
+        self.vip = ''
+        self.public_port = ''
+        self.local_port = ''
+        self.protocol = ''
 
 
 class UpgradeStatus(WindowsAzureData):
 
     def __init__(self):
-        self.upgrade_type = u''
-        self.current_upgrade_domain_state = u''
-        self.current_upgrade_domain = u''
+        self.upgrade_type = ''
+        self.current_upgrade_domain_state = ''
+        self.current_upgrade_domain = ''
 
 
 class InputEndpoints(WindowsAzureData):
@@ -358,9 +358,9 @@ class InputEndpoints(WindowsAzureData):
 class InputEndpoint(WindowsAzureData):
 
     def __init__(self):
-        self.role_name = u''
-        self.vip = u''
-        self.port = u''
+        self.role_name = ''
+        self.vip = ''
+        self.port = ''
 
 
 class RoleList(WindowsAzureData):
@@ -381,15 +381,15 @@ class RoleList(WindowsAzureData):
 class Role(WindowsAzureData):
 
     def __init__(self):
-        self.role_name = u''
-        self.role_type = u''
-        self.os_version = u''
+        self.role_name = ''
+        self.role_type = ''
+        self.os_version = ''
         self.configuration_sets = ConfigurationSets()
-        self.availability_set_name = u''
+        self.availability_set_name = ''
         self.data_virtual_hard_disks = DataVirtualHardDisks()
         self.os_virtual_hard_disk = OSVirtualHardDisk()
-        self.role_size = u''
-        self.default_win_rm_certificate_thumbprint = u''
+        self.role_size = ''
+        self.default_win_rm_certificate_thumbprint = ''
 
 
 class CaptureRoleAsVMImage(WindowsAzureData):
@@ -505,24 +505,24 @@ class ResourceExtensions(WindowsAzureData):
 class ResourceExtension(WindowsAzureData):
 
     def __init__(self):
-        self.publisher = u''
-        self.name = u''
-        self.version = u''
-        self.label = u''
-        self.description = u''
-        self.public_configuration_schema = u''
-        self.private_configuration_schema = u''
-        self.sample_config = u''
+        self.publisher = ''
+        self.name = ''
+        self.version = ''
+        self.label = ''
+        self.description = ''
+        self.public_configuration_schema = ''
+        self.private_configuration_schema = ''
+        self.sample_config = ''
         self.replication_completed = False
-        self.eula = u''
-        self.privacy_uri = u''
-        self.homepage_uri = u''
+        self.eula = ''
+        self.privacy_uri = ''
+        self.homepage_uri = ''
         self.is_json_extension = False
         self.is_internal_extension = False
         self.disallow_major_version_upgrade = False
-        self.company_name = u''
-        self.supported_os = u''
-        self.published_date = u''
+        self.company_name = ''
+        self.supported_os = ''
+        self.published_date = ''
 
 
 class ResourceExtensionParameterValues(WindowsAzureData):
@@ -543,9 +543,9 @@ class ResourceExtensionParameterValues(WindowsAzureData):
 class ResourceExtensionParameterValue(WindowsAzureData):
 
     def __init__(self):
-        self.key = u''
-        self.value = u''
-        self.type = u''
+        self.key = ''
+        self.value = ''
+        self.type = ''
 
 
 class ResourceExtensionReferences(WindowsAzureData):
@@ -565,13 +565,13 @@ class ResourceExtensionReferences(WindowsAzureData):
 
 class ResourceExtensionReference(WindowsAzureData):
 
-    def __init__(self, reference_name=u'', publisher=u'', name=u'', version=u''):
+    def __init__(self, reference_name='', publisher='', name='', version=''):
         self.reference_name = reference_name
         self.publisher = publisher
         self.name = name
         self.version = version
         self.resource_extension_parameter_values = ResourceExtensionParameterValues()
-        self.state = u''
+        self.state = ''
         self.certificates = Certificates()
 
 
@@ -599,7 +599,7 @@ class Passes(WindowsAzureData):
 class UnattendPass(WindowsAzureData):
 
     def __init__(self):
-        self.pass_name = u''
+        self.pass_name = ''
         self.components = Components()
 
 
@@ -621,7 +621,7 @@ class Components(WindowsAzureData):
 class UnattendComponent(WindowsAzureData):
 
     def __init__(self):
-        self.component_name = u''
+        self.component_name = ''
         self.component_settings = ComponentSettings()
 
 
@@ -643,15 +643,15 @@ class ComponentSettings(WindowsAzureData):
 class ComponentSetting(WindowsAzureData):
 
     def __init__(self):
-        self.setting_name = u''
-        self.content = u''
+        self.setting_name = ''
+        self.content = ''
 
 
 class DnsServer(WindowsAzureData):
 
     def __init__(self):
-        self.name = u''
-        self.address = u''
+        self.name = ''
+        self.address = ''
 
 
 class ReservedIPs(WindowsAzureData):
@@ -672,23 +672,23 @@ class ReservedIPs(WindowsAzureData):
 class ReservedIP(WindowsAzureData):
 
     def __init__(self):
-        self.name = u''
-        self.address = u''
-        self.id = u''
-        self.label = u''
-        self.state = u''
+        self.name = ''
+        self.address = ''
+        self.id = ''
+        self.label = ''
+        self.state = ''
         self.in_use = False
-        self.service_name = u''
-        self.deployment_name = u''
-        self.location = u''
+        self.service_name = ''
+        self.deployment_name = ''
+        self.location = ''
 
 
 class PersistentVMDowntimeInfo(WindowsAzureData):
 
     def __init__(self):
-        self.start_time = u''
-        self.end_time = u''
-        self.status = u''
+        self.start_time = ''
+        self.end_time = ''
+        self.status = ''
 
 class VirtualIPs(WindowsAzureData):
 
@@ -707,10 +707,10 @@ class VirtualIPs(WindowsAzureData):
 class VirtualIP(WindowsAzureData):
 
     def __init__(self):
-        self.address = u''
+        self.address = ''
         self.is_reserved = False
-        self.reserved_ip_name = u''
-        self.type = u''
+        self.reserved_ip_name = ''
+        self.type = ''
 
 
 class Certificates(WindowsAzureData):
@@ -731,32 +731,32 @@ class Certificates(WindowsAzureData):
 class Certificate(WindowsAzureData):
 
     def __init__(self):
-        self.certificate_url = u''
-        self.thumbprint = u''
-        self.thumbprint_algorithm = u''
-        self.data = u''
+        self.certificate_url = ''
+        self.thumbprint = ''
+        self.thumbprint_algorithm = ''
+        self.data = ''
 
 
 class OperationError(WindowsAzureData):
 
     def __init__(self):
-        self.code = u''
-        self.message = u''
+        self.code = ''
+        self.message = ''
 
 
 class Operation(WindowsAzureData):
 
     def __init__(self):
-        self.id = u''
-        self.status = u''
-        self.http_status_code = u''
+        self.id = ''
+        self.status = ''
+        self.http_status_code = ''
         self.error = OperationError()
 
 
 class OperatingSystem(WindowsAzureData):
 
     def __init__(self):
-        self.version = u''
+        self.version = ''
         self.label = _Base64String()
         self.is_default = True
         self.is_active = True
@@ -782,7 +782,7 @@ class OperatingSystems(WindowsAzureData):
 class OperatingSystemFamily(WindowsAzureData):
 
     def __init__(self):
-        self.name = u''
+        self.name = ''
         self.label = _Base64String()
         self.operating_systems = OperatingSystems()
 
@@ -820,11 +820,11 @@ class Subscriptions(WindowsAzureData):
 class Subscription(WindowsAzureData):
 
     def __init__(self):
-        self.subscription_id = u''
-        self.subscription_name = u''
-        self.subscription_status = u''
-        self.account_admin_live_email_id = u''
-        self.service_admin_live_email_id = u''
+        self.subscription_id = ''
+        self.subscription_name = ''
+        self.subscription_status = ''
+        self.account_admin_live_email_id = ''
+        self.service_admin_live_email_id = ''
         self.max_core_count = 0
         self.max_storage_accounts = 0
         self.max_hosted_services = 0
@@ -835,15 +835,15 @@ class Subscription(WindowsAzureData):
         self.current_virtual_network_sites = 0
         self.max_local_network_sites = 0
         self.max_dns_servers = 0
-        self.aad_tenant_id = u''
-        self.created_time = u''
+        self.aad_tenant_id = ''
+        self.created_time = ''
 
 
 class SubscriptionOperationCollection(WindowsAzureData):
 
     def __init__(self):
         self.subscription_operations = SubscriptionOperations()
-        self.continuation_token = u''
+        self.continuation_token = ''
 
 
 class SubscriptionOperations(WindowsAzureData):
@@ -864,24 +864,24 @@ class SubscriptionOperations(WindowsAzureData):
 class SubscriptionOperation(WindowsAzureData):
 
     def __init__(self):
-        self.operation_id = u''
-        self.operation_object_id = u''
-        self.operation_name = u''
+        self.operation_id = ''
+        self.operation_object_id = ''
+        self.operation_name = ''
         self.operation_parameters = _dict_of(
             'OperationParameter', 'a:Name', 'a:Value')
         self.operation_caller = OperationCaller()
         self.operation_status = SubscriptionOperationStatus()
-        self.operation_started_time = u''
-        self.operation_completed_time = u''
-        self.operation_kind = u''
+        self.operation_started_time = ''
+        self.operation_completed_time = ''
+        self.operation_kind = ''
 
 
 class SubscriptionOperationStatus(WindowsAzureData):
     _xml_name = 'OperationStatus'
 
     def __init__(self):
-        self.status_id = u''
-        self.status = u''
+        self.status_id = ''
+        self.status = ''
         self.http_status_code = 0
 
 
@@ -889,9 +889,9 @@ class OperationCaller(WindowsAzureData):
 
     def __init__(self):
         self.used_service_management_api = False
-        self.user_email_address = u''
-        self.subscription_certificate_thumbprint = u''
-        self.client_ip = u''
+        self.user_email_address = ''
+        self.subscription_certificate_thumbprint = ''
+        self.client_ip = ''
 
 
 class AvailabilityResponse(WindowsAzureData):
@@ -919,10 +919,10 @@ class SubscriptionCertificates(WindowsAzureData):
 class SubscriptionCertificate(WindowsAzureData):
 
     def __init__(self):
-        self.subscription_certificate_public_key = u''
-        self.subscription_certificate_thumbprint = u''
-        self.subscription_certificate_data = u''
-        self.created = u''
+        self.subscription_certificate_public_key = ''
+        self.subscription_certificate_thumbprint = ''
+        self.subscription_certificate_data = ''
+        self.created = ''
 
 
 class RoleSizes(WindowsAzureData):
@@ -943,8 +943,8 @@ class RoleSizes(WindowsAzureData):
 class RoleSize(WindowsAzureData):
 
     def __init__(self):
-        self.name = u''
-        self.label = u''
+        self.name = ''
+        self.label = ''
         self.cores = 0
         self.memory_in_mb = 0
         self.supported_by_web_worker_roles = False
@@ -972,51 +972,51 @@ class Images(WindowsAzureData):
 class OSImage(WindowsAzureData):
 
     def __init__(self):
-        self.affinity_group = u''
-        self.category = u''
-        self.location = u''
+        self.affinity_group = ''
+        self.category = ''
+        self.location = ''
         self.logical_size_in_gb = 0
-        self.label = u''
-        self.media_link = u''
-        self.name = u''
-        self.os = u''
-        self.eula = u''
-        self.description = u''
-        self.image_family = u''
+        self.label = ''
+        self.media_link = ''
+        self.name = ''
+        self.os = ''
+        self.eula = ''
+        self.description = ''
+        self.image_family = ''
         self.show_in_gui = True
-        self.published_date = u''
+        self.published_date = ''
         self.is_premium = True
-        self.icon_uri = u''
-        self.privacy_uri = u''
-        self.recommended_vm_size = u''
-        self.publisher_name = u''
-        self.pricing_detail_link = u''
-        self.small_icon_uri = u''
-        self.os_state = u''
-        self.language = u''
+        self.icon_uri = ''
+        self.privacy_uri = ''
+        self.recommended_vm_size = ''
+        self.publisher_name = ''
+        self.pricing_detail_link = ''
+        self.small_icon_uri = ''
+        self.os_state = ''
+        self.language = ''
 
 
 class OSImageDetails(WindowsAzureData):
 
     def __init__(self):
-        self.category = u''
-        self.label = u''
-        self.location = u''
+        self.category = ''
+        self.label = ''
+        self.location = ''
         self.logical_size_in_gb = 0
-        self.media_link = u''
-        self.name = u''
-        self.os = u''
-        self.eula = u''
-        self.description = u''
-        self.image_family = u''
+        self.media_link = ''
+        self.name = ''
+        self.os = ''
+        self.eula = ''
+        self.description = ''
+        self.image_family = ''
         self.show_in_gui = True
-        self.published_date = u''
+        self.published_date = ''
         self.is_premium = True
-        self.icon_uri = u''
-        self.privacy_uri = u''
-        self.recommended_vm_size = u''
-        self.small_icon_uri = u''
-        self.language = u''
+        self.icon_uri = ''
+        self.privacy_uri = ''
+        self.recommended_vm_size = ''
+        self.small_icon_uri = ''
+        self.language = ''
         self.replication_progress = ReplicationProgress()
 
 
@@ -1038,7 +1038,7 @@ class ReplicationProgress(WindowsAzureData):
 class ReplicationProgressElement(WindowsAzureData):
 
     def __init__(self):
-        self.location = u''
+        self.location = ''
         self.progress = 0
 
 
@@ -1060,39 +1060,39 @@ class Disks(WindowsAzureData):
 class Disk(WindowsAzureData):
 
     def __init__(self):
-        self.affinity_group = u''
+        self.affinity_group = ''
         self.attached_to = AttachedTo()
-        self.has_operating_system = u''
-        self.is_corrupted = u''
-        self.location = u''
+        self.has_operating_system = ''
+        self.is_corrupted = ''
+        self.location = ''
         self.logical_disk_size_in_gb = 0
-        self.label = u''
-        self.media_link = u''
-        self.name = u''
-        self.os = u''
-        self.source_image_name = u''
+        self.label = ''
+        self.media_link = ''
+        self.name = ''
+        self.os = ''
+        self.source_image_name = ''
 
 
 class AttachedTo(WindowsAzureData):
 
     def __init__(self):
-        self.hosted_service_name = u''
-        self.deployment_name = u''
-        self.role_name = u''
+        self.hosted_service_name = ''
+        self.deployment_name = ''
+        self.role_name = ''
 
 
 class PersistentVMRole(WindowsAzureData):
 
     def __init__(self):
-        self.role_name = u''
-        self.role_type = u''
-        self.os_version = u''  # undocumented
+        self.role_name = ''
+        self.role_type = ''
+        self.os_version = ''  # undocumented
         self.configuration_sets = ConfigurationSets()
-        self.availability_set_name = u''
+        self.availability_set_name = ''
         self.data_virtual_hard_disks = DataVirtualHardDisks()
         self.os_virtual_hard_disk = OSVirtualHardDisk()
-        self.role_size = u''
-        self.default_win_rm_certificate_thumbprint = u''
+        self.role_size = ''
+        self.default_win_rm_certificate_thumbprint = ''
 
 
 class ConfigurationSets(WindowsAzureData):
@@ -1127,7 +1127,7 @@ class PublicIPs(WindowsAzureData):
 
 class PublicIP(WindowsAzureData):
 
-    def __init__(self, name=u''):
+    def __init__(self, name=''):
         self.name = name
         self.idle_timeout_in_minutes = 4
         self.address = None
@@ -1136,7 +1136,7 @@ class ConfigurationSet(WindowsAzureData):
 
     def __init__(self):
         self.configuration_set_type = u'NetworkConfiguration'
-        self.role_type = u''
+        self.role_type = ''
         self.input_endpoints = ConfigurationSetInputEndpoints()
         self.subnet_names = _scalar_list_of(_unicode_type, 'SubnetName')
         self.public_ips = PublicIPs()
@@ -1183,8 +1183,8 @@ class ConfigurationSetInputEndpoint(WindowsAzureData):
         Specifies whether direct server return load balancing is enabled.
     '''
 
-    def __init__(self, name=u'', protocol=u'', port=u'', local_port=u'',
-                 load_balanced_endpoint_set_name=u'',
+    def __init__(self, name='', protocol='', port='', local_port='',
+                 load_balanced_endpoint_set_name='',
                  enable_direct_server_return=False,
                  idle_timeout_in_minutes=4):
         self.enable_direct_server_return = enable_direct_server_return
@@ -1221,16 +1221,16 @@ class DomainJoin(WindowsAzureData):
 
     def __init__(self):
         self.credentials = Credentials()
-        self.join_domain = u''
-        self.machine_object_ou = u''
+        self.join_domain = ''
+        self.machine_object_ou = ''
 
 
 class Credentials(WindowsAzureData):
 
     def __init__(self):
-        self.domain = u''
-        self.username = u''
-        self.password = u''
+        self.domain = ''
+        self.username = ''
+        self.password = ''
 
 
 class StoredCertificateSettings(WindowsAzureData):
@@ -1264,7 +1264,7 @@ class CertificateSetting(WindowsAzureData):
         The only supported value is LocalMachine.
     '''
 
-    def __init__(self, thumbprint=u'', store_name=u'', store_location=u''):
+    def __init__(self, thumbprint='', store_name='', store_location=''):
         self.thumbprint = thumbprint
         self.store_name = store_name
         self.store_location = store_location
@@ -1310,7 +1310,7 @@ class Listener(WindowsAzureData):
         generated and used for the Virtual Machine.
     '''
 
-    def __init__(self, protocol=u'', certificate_thumbprint=u''):
+    def __init__(self, protocol='', certificate_thumbprint=''):
         self.protocol = protocol
         self.certificate_thumbprint = certificate_thumbprint
 
@@ -1353,7 +1353,7 @@ class PublicKeys(WindowsAzureData):
 
 class PublicKey(WindowsAzureData):
 
-    def __init__(self, fingerprint=u'', path=u''):
+    def __init__(self, fingerprint='', path=''):
         self.fingerprint = fingerprint
         self.path = path
 
@@ -1375,7 +1375,7 @@ class KeyPairs(WindowsAzureData):
 
 class KeyPair(WindowsAzureData):
 
-    def __init__(self, fingerprint=u'', path=u''):
+    def __init__(self, fingerprint='', path=''):
         self.fingerprint = fingerprint
         self.path = path
 
@@ -1383,9 +1383,9 @@ class KeyPair(WindowsAzureData):
 class LoadBalancerProbe(WindowsAzureData):
 
     def __init__(self):
-        self.path = u''
-        self.port = u''
-        self.protocol = u''
+        self.path = ''
+        self.port = ''
+        self.protocol = ''
 
 
 class DataVirtualHardDisks(WindowsAzureData):
@@ -1405,8 +1405,8 @@ class DataVirtualHardDisks(WindowsAzureData):
 
 class DataVirtualHardDisk(WindowsAzureData):
 
-    def __init__(self, media_link=u'', host_caching=None,
-                 disk_label=u'', disk_name=u'',
+    def __init__(self, media_link='', host_caching=None,
+                 disk_label='', disk_name='',
                  lun=0, logical_disk_size_in_gb=0,
                  source_media_link=None):
         self.host_caching = host_caching
@@ -1441,38 +1441,38 @@ class AsynchronousOperationResult(WindowsAzureData):
 class ServiceBusRegion(WindowsAzureData):
 
     def __init__(self):
-        self.code = u''
-        self.fullname = u''
+        self.code = ''
+        self.fullname = ''
 
 
 class ServiceBusNamespace(WindowsAzureData):
 
     def __init__(self):
-        self.name = u''
-        self.region = u''
-        self.default_key = u''
-        self.status = u''
-        self.created_at = u''
-        self.acs_management_endpoint = u''
-        self.servicebus_endpoint = u''
-        self.connection_string = u''
-        self.subscription_id = u''
+        self.name = ''
+        self.region = ''
+        self.default_key = ''
+        self.status = ''
+        self.created_at = ''
+        self.acs_management_endpoint = ''
+        self.servicebus_endpoint = ''
+        self.connection_string = ''
+        self.subscription_id = ''
         self.enabled = False
 
 
 class MetricProperties(WindowsAzureData):
 
     def __init__(self):
-        self.name = u''
-        self.primary_aggregation = u''
-        self.unit = u''
-        self.display_name = u''
+        self.name = ''
+        self.primary_aggregation = ''
+        self.unit = ''
+        self.display_name = ''
 
 
 class MetricValues(WindowsAzureData):
 
     def __init__(self):
-        self.timestamp = u''
+        self.timestamp = ''
         self.min = 0
         self.max = 0
         self.average = 0
@@ -1482,8 +1482,8 @@ class MetricValues(WindowsAzureData):
 class MetricRollups(WindowsAzureData):
 
     def __init__(self):
-        self.time_grain = u''
-        self.retention = u''
+        self.time_grain = ''
+        self.retention = ''
 
 
 class WebSpaces(WindowsAzureData):
@@ -1504,13 +1504,13 @@ class WebSpaces(WindowsAzureData):
 class WebSpace(WindowsAzureData):
 
     def __init__(self):
-        self.availability_state = u''
-        self.geo_location = u''
-        self.geo_region = u''
-        self.name = u''
-        self.plan = u''
-        self.status = u''
-        self.subscription = u''
+        self.availability_state = ''
+        self.geo_location = ''
+        self.geo_region = ''
+        self.name = ''
+        self.plan = ''
+        self.status = ''
+        self.subscription = ''
 
 
 class Sites(WindowsAzureData):
@@ -1568,8 +1568,8 @@ class HostNameSslStates(WindowsAzureData):
 class HostNameSslState(WindowsAzureData):
 
     def __init__(self):
-        self.name = u''
-        self.ssl_state = u''
+        self.name = ''
+        self.ssl_state = ''
 
 
 class PublishData(WindowsAzureData):
@@ -1596,44 +1596,44 @@ class PublishProfile(WindowsAzureData):
 class QueueDescription(WindowsAzureData):
 
     def __init__(self):
-        self.lock_duration = u''
+        self.lock_duration = ''
         self.max_size_in_megabytes = 0
         self.requires_duplicate_detection = False
         self.requires_session = False
-        self.default_message_time_to_live = u''
+        self.default_message_time_to_live = ''
         self.dead_lettering_on_message_expiration = False
-        self.duplicate_detection_history_time_window = u''
+        self.duplicate_detection_history_time_window = ''
         self.max_delivery_count = 0
         self.enable_batched_operations = False
         self.size_in_bytes = 0
         self.message_count = 0
         self.is_anonymous_accessible = False
         self.authorization_rules = AuthorizationRules()
-        self.status = u''
-        self.created_at = u''
-        self.updated_at = u''
-        self.accessed_at = u''
+        self.status = ''
+        self.created_at = ''
+        self.updated_at = ''
+        self.accessed_at = ''
         self.support_ordering = False
-        self.auto_delete_on_idle = u''
+        self.auto_delete_on_idle = ''
         self.count_details = CountDetails()
-        self.entity_availability_status = u''
+        self.entity_availability_status = ''
 
 class TopicDescription(WindowsAzureData):
 
     def __init__(self):
-        self.default_message_time_to_live = u''
+        self.default_message_time_to_live = ''
         self.max_size_in_megabytes = 0
         self.requires_duplicate_detection = False
-        self.duplicate_detection_history_time_window = u''
+        self.duplicate_detection_history_time_window = ''
         self.enable_batched_operations = False
         self.size_in_bytes = 0
         self.filtering_messages_before_publishing = False
         self.is_anonymous_accessible = False
         self.authorization_rules = AuthorizationRules()
-        self.status = u''
-        self.created_at = u''
-        self.updated_at = u''
-        self.accessed_at = u''
+        self.status = ''
+        self.created_at = ''
+        self.updated_at = ''
+        self.accessed_at = ''
         self.support_ordering = False
         self.count_details = CountDetails()
         self.subscription_count = 0
@@ -1650,7 +1650,7 @@ class CountDetails(WindowsAzureData):
 class NotificationHubDescription(WindowsAzureData):
 
     def __init__(self):
-        self.registration_ttl = u''
+        self.registration_ttl = ''
         self.authorization_rules = AuthorizationRules()
 
 class AuthorizationRules(WindowsAzureData):
@@ -1670,23 +1670,23 @@ class AuthorizationRules(WindowsAzureData):
 class AuthorizationRule(WindowsAzureData):
 
     def __init__(self):
-        self.claim_type = u''
-        self.claim_value = u''
+        self.claim_type = ''
+        self.claim_value = ''
         self.rights = _scalar_list_of(_unicode_type, 'AccessRights')
-        self.created_time = u''
-        self.modified_time = u''
-        self.key_name = u''
-        self.primary_key = u''
-        self.secondary_keu = u''
+        self.created_time = ''
+        self.modified_time = ''
+        self.key_name = ''
+        self.primary_key = ''
+        self.secondary_keu = ''
 
 class RelayDescription(WindowsAzureData):
 
     def __init__(self):
-        self.path = u''
-        self.listener_type = u''
+        self.path = ''
+        self.listener_type = ''
         self.listener_count = 0
-        self.created_at = u''
-        self.updated_at = u''
+        self.created_at = ''
+        self.updated_at = ''
 
 
 class MetricResponses(WindowsAzureData):
@@ -1707,21 +1707,21 @@ class MetricResponses(WindowsAzureData):
 class MetricResponse(WindowsAzureData):
 
     def __init__(self):
-        self.code = u''
+        self.code = ''
         self.data = Data()
-        self.message = u''
+        self.message = ''
 
 
 class Data(WindowsAzureData):
 
     def __init__(self):
-        self.display_name = u''
-        self.end_time = u''
-        self.name = u''
-        self.primary_aggregation_type = u''
-        self.start_time = u''
-        self.time_grain = u''
-        self.unit = u''
+        self.display_name = ''
+        self.end_time = ''
+        self.name = ''
+        self.primary_aggregation_type = ''
+        self.start_time = ''
+        self.time_grain = ''
+        self.unit = ''
         self.values = Values()
 
 
@@ -1744,7 +1744,7 @@ class MetricSample(WindowsAzureData):
 
     def __init__(self):
         self.count = 0
-        self.time_created = u''
+        self.time_created = ''
         self.total = 0
 
 
@@ -1766,11 +1766,11 @@ class MetricDefinitions(WindowsAzureData):
 class MetricDefinition(WindowsAzureData):
 
     def __init__(self):
-        self.display_name = u''
+        self.display_name = ''
         self.metric_availabilities = MetricAvailabilities()
-        self.name = u''
-        self.primary_aggregation_type = u''
-        self.unit = u''
+        self.name = ''
+        self.primary_aggregation_type = ''
+        self.unit = ''
 
 
 class MetricAvailabilities(WindowsAzureData):
@@ -1791,8 +1791,8 @@ class MetricAvailabilities(WindowsAzureData):
 class MetricAvailability(WindowsAzureData):
 
     def __init__(self):
-        self.retention = u''
-        self.time_grain = u''
+        self.retention = ''
+        self.time_grain = ''
 
 
 class Servers(WindowsAzureData):
@@ -1813,65 +1813,65 @@ class Servers(WindowsAzureData):
 class Server(WindowsAzureData):
 
     def __init__(self):
-        self.name = u''
-        self.administrator_login = u''
-        self.location = u''
-        self.geo_paired_region = u''
-        self.fully_qualified_domain_name = u''
-        self.version = u''
+        self.name = ''
+        self.administrator_login = ''
+        self.location = ''
+        self.geo_paired_region = ''
+        self.fully_qualified_domain_name = ''
+        self.version = ''
 
 
 class ServerQuota(WindowsAzureData):
 
     def __init__(self):
-        self.name = u''
-        self.type = u''
-        self.state = u''
-        self.self_link = u''
-        self.parent_link = u''
+        self.name = ''
+        self.type = ''
+        self.state = ''
+        self.self_link = ''
+        self.parent_link = ''
         self.value = 0
 
 
 class EventLog(WindowsAzureData):
 
     def __init__(self):
-        self.name = u''
-        self.type = u''
-        self.state = u''
-        self.self_link = u''
-        self.parent_link = u''
-        self.database_name = u''
-        self.name = u''
-        self.start_time_utc = u''
+        self.name = ''
+        self.type = ''
+        self.state = ''
+        self.self_link = ''
+        self.parent_link = ''
+        self.database_name = ''
+        self.name = ''
+        self.start_time_utc = ''
         self.interval_size_in_minutes = 0
-        self.event_category = u''
-        self.event_type = u''
+        self.event_category = ''
+        self.event_type = ''
         self.event_subtype = 0
-        self.event_subtype_description = u''
+        self.event_subtype_description = ''
         self.number_of_events = 0
         self.severity = 0
-        self.description = u''
-        self.additional_data = u''
+        self.description = ''
+        self.additional_data = ''
 
 
 class CreateServerResponse(WindowsAzureData):
 
     def __init__(self):
-        self.server_name = u''
+        self.server_name = ''
 
 
 class Database(WindowsAzureData):
 
     def __init__(self):
-        self.name = u''
-        self.type = u''
-        self.state = u''
-        self.self_link = u''
-        self.parent_link = u''
+        self.name = ''
+        self.type = ''
+        self.state = ''
+        self.self_link = ''
+        self.parent_link = ''
         self.id = 0
-        self.edition = u''
-        self.collation_name = u''
-        self.creation_date = u''
+        self.edition = ''
+        self.collation_name = ''
+        self.creation_date = ''
         self.is_federation_root = False
         self.is_system_object = False
         self.max_size_bytes = 0
@@ -1880,27 +1880,27 @@ class Database(WindowsAzureData):
 class FirewallRule(WindowsAzureData):
 
     def __init__(self):
-        self.name = u''
-        self.type = u''
-        self.state = u''
-        self.self_link = u''
-        self.parent_link = u''
-        self.start_ip_address = u''
-        self.end_ip_address = u''
+        self.name = ''
+        self.type = ''
+        self.state = ''
+        self.self_link = ''
+        self.parent_link = ''
+        self.start_ip_address = ''
+        self.end_ip_address = ''
 
 
 class ServiceObjective(WindowsAzureData):
 
     def __init__(self):
-        self.name = u''
-        self.type = u''
-        self.state = u''
-        self.self_link = u''
-        self.parent_link = u''
-        self.id = u''
+        self.name = ''
+        self.type = ''
+        self.state = ''
+        self.self_link = ''
+        self.parent_link = ''
+        self.id = ''
         self.is_default = False
         self.is_system = False
-        self.description = u''
+        self.description = ''
         self.enabled = False
 
 
@@ -1922,10 +1922,10 @@ class CloudServices(WindowsAzureData):
 class CloudService(WindowsAzureData):
 
     def __init__(self):
-        self.name = u''
-        self.label = u''
-        self.description = u''
-        self.geo_region = u''
+        self.name = ''
+        self.label = ''
+        self.description = ''
+        self.geo_region = ''
         self.resources = Resources()
 
 
@@ -1947,12 +1947,12 @@ class Resources(WindowsAzureData):
 class Resource(WindowsAzureData):
 
     def __init__(self):
-        self.resource_provider_namespace = u''
-        self.type = u''
-        self.name = u''
-        self.schema_version = u''
-        self.e_tag = u''
-        self.state = u''
+        self.resource_provider_namespace = ''
+        self.type = ''
+        self.name = ''
+        self.schema_version = ''
+        self.e_tag = ''
+        self.state = ''
         self.intrinsic_settings = IntrinsicSettings()
         self.operation_status = OperationStatus()
 
@@ -1960,7 +1960,7 @@ class Resource(WindowsAzureData):
 class IntrinsicSettings(WindowsAzureData):
 
     def __init__(self):
-        self.plan = u''
+        self.plan = ''
         self.quota = Quota()
 
 
@@ -1974,12 +1974,12 @@ class Quota(WindowsAzureData):
 class MaxRecurrence(WindowsAzureData):
 
     def __init__(self):
-        self.frequency = u''
+        self.frequency = ''
         self.interval = 0
 
 
 class OperationStatus(WindowsAzureData):
 
     def __init__(self):
-        self.type = u''
-        self.result = u''
+        self.type = ''
+        self.result = ''
