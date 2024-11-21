@@ -24,6 +24,7 @@ from ._bare_metal_machine_key_sets_operations import BareMetalMachineKeySetsOper
 from ._bmc_key_sets_operations import BmcKeySetsOperations
 from ._metrics_configurations_operations import MetricsConfigurationsOperations
 from ._agent_pools_operations import AgentPoolsOperations
+from ._kubernetes_cluster_features_operations import KubernetesClusterFeaturesOperations
 from ._consoles_operations import ConsolesOperations
 
 from ._patch import __all__ as _patch_all
@@ -49,6 +50,7 @@ __all__ = [
     "BmcKeySetsOperations",
     "MetricsConfigurationsOperations",
     "AgentPoolsOperations",
+    "KubernetesClusterFeaturesOperations",
     "ConsolesOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
