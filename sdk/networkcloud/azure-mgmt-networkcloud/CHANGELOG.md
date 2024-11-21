@@ -76,7 +76,7 @@
 
 ### Breaking Changes
 
-  - Parameter `max_surge` of model `AgentPoolUpgradeSettings` is now not required
+  - Parameter `max_surge` of model `AgentPoolUpgradeSettings` is no longer required
 
 ## 1.0.0 (2023-08-18)
 
