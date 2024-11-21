@@ -24,6 +24,7 @@ Cosmos database service.
 """
 
 from . import http_constants
+import logging
 
 
 class ResourceThrottleRetryPolicy(object):
@@ -33,6 +34,7 @@ class ResourceThrottleRetryPolicy(object):
         self._max_wait_time_in_milliseconds = max_wait_time_in_seconds * 1000
         self.current_retry_attempt_count = 0
         self.cumulative_wait_time_in_milliseconds = 0
+        self._logger = logging.getLogger("azure.cosmos.retry_policy")
 
     def ShouldRetry(self, exception):
         """Returns true if the request should retry based on the passed-in exception.
@@ -44,7 +46,6 @@ class ResourceThrottleRetryPolicy(object):
         if self.current_retry_attempt_count < self._max_retry_attempt_count:
             self.current_retry_attempt_count += 1
             self.retry_after_in_milliseconds = 0  # pylint: disable=attribute-defined-outside-init
-
             if self._fixed_retry_interval_in_milliseconds:
                 self.retry_after_in_milliseconds = (  # pylint: disable=attribute-defined-outside-init
                     self._fixed_retry_interval_in_milliseconds
@@ -56,6 +57,7 @@ class ResourceThrottleRetryPolicy(object):
 
             if self.cumulative_wait_time_in_milliseconds < self._max_wait_time_in_milliseconds:
                 self.cumulative_wait_time_in_milliseconds += self.retry_after_in_milliseconds
+                self._logger.info("Current retry attempt: {}".format(self.current_retry_attempt_count))
                 return True
 
         return False

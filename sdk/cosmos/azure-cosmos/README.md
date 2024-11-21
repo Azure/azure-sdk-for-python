@@ -783,8 +783,8 @@ import sys
 import logging
 from azure.cosmos import CosmosClient
 
-# Create a logger for the 'azure' SDK
-logger = logging.getLogger('azure')
+# Create a logger for the 'azure.cosmos' SDK
+logger = logging.getLogger('azure.cosmos')
 logger.setLevel(logging.DEBUG)
 
 # Configure a console output
@@ -802,17 +802,17 @@ database = client.create_database(DATABASE_NAME, logging_enable=True)
 ```
 Alternatively, you can log using the CosmosHttpLoggingPolicy, which extends from the azure core HttpLoggingPolicy, by passing in your logger to the `logger` argument.
 By default, it will use the behaviour from HttpLoggingPolicy. Passing in the `enable_diagnostics_logging` argument will enable the
-CosmosHttpLoggingPolicy, and will have additional information in the response relevant to debugging Cosmos issues.
+CosmosHttpLoggingPolicy. This is **always recommended** since it will have additional information in the response relevant to debugging Cosmos issues.
 ```python
 import logging
 from azure.cosmos import CosmosClient
 
-#Create a logger for the 'azure' SDK
-logger = logging.getLogger('azure')
+#Create a logger for the 'azure.cosmos' SDK
+logger = logging.getLogger('azure.cosmos')
 logger.setLevel(logging.DEBUG)
 
 # Configure a file output
-handler = logging.FileHandler(filename="azure")
+handler = logging.FileHandler(filename="azure_cosmos_logs")
 logger.addHandler(handler)
 
 # This client will log diagnostic information from the HTTP session by using the CosmosHttpLoggingPolicy.
