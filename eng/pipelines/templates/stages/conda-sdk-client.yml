@@ -192,6 +192,7 @@ extends:
                 timeoutInMinutes: 5
 
               - template: /eng/pipelines/templates/steps/build-conda-artifacts.yml@self
+                parameters:
                   CondaArtifacts:
                     - name: azure-core
                       common_root: azure
