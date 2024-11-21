@@ -36,6 +36,7 @@ class SmsTokenCredentialAuthSample(object):
         # AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
         endpoint, _ = parse_connection_str(self.connection_string)
         sms_client = SmsClient(endpoint, DefaultAzureCredential())
+
         try:
             # calling send() with sms values
             sms_responses = sms_client.send(
