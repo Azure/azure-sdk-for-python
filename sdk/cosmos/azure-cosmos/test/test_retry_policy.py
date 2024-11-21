@@ -138,7 +138,7 @@ class TestRetryPolicy(unittest.TestCase):
                 self.assertEqual(e.status_code, StatusCodes.TOO_MANY_REQUESTS)
                 self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,
                                  _retry_utility.ExecuteFunction.call_counter["count"] - 1)
-                self.assertGreaterEqual(duration, connection_policy.RetryOptions.MaxWaitTimeInSeconds)
+                self.assertLess(duration, connection_policy.RetryOptions.MaxWaitTimeInSeconds)
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
 
