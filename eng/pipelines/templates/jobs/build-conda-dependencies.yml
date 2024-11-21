@@ -136,14 +136,13 @@ jobs:
       displayName: Install Conda
 
     - pwsh: |
-        Get-ChildItem -R $($env:HOME)/miniconda3/bin `
-          | % { Write-Host $_.FullName }
+        Get-ChildItem -R $HOME/miniconda3/bin | % { Write-Host $_.FullName }
       displayName: Dump Visible Files
 
     - pwsh: |
         Write-Host  $env:PATH
-        Write-Host $($env:HOME)/miniconda3/bin
-        $($env:HOME)/miniconda3/bin --version
+        Write-Host $HOME/miniconda3/bin
+        $HOME/miniconda3/bin --version
       displayName: Display Installed Conda
 
     - bash: |
