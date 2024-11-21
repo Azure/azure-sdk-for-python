@@ -755,6 +755,39 @@ def _get_next_version_from_container(
     return version
 
 
+def _get_next_latest_versions_from_container(
+    name: str,
+    container_operation: Any,
+    resource_group_name: str,
+    workspace_name: str,
+    registry_name: str = None,
+    **kwargs,
+) -> str:
+    try:
+        container = (
+            container_operation.get(
+                name=name,
+                resource_group_name=resource_group_name,
+                registry_name=registry_name,
+                **kwargs,
+            )
+            if registry_name
+            else container_operation.get(
+                name=name,
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+                **kwargs,
+            )
+        )
+        next_version = container.properties.next_version
+        latest_version = container.properties.latest_version
+
+    except ResourceNotFoundError:
+        next_version = "1"
+        latest_version = "1"
+    return next_version, latest_version
+
+
 def _get_latest_version_from_container(
     asset_name: str,
     container_operation: Any,
