@@ -9,6 +9,7 @@
 #### Bugs Fixed
 
 #### Other Changes
+* Added support for custom HTTP/2 transports. See [PR 38640](https://github.com/Azure/azure-sdk-for-python/pull/38640).
 
 ### 4.9.0 (2024-11-18)
 
