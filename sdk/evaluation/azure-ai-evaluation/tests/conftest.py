@@ -541,6 +541,8 @@ def pytest_sessionfinish() -> None:
         """
         from promptflow._cli._pf._service import stop_service
 
+        time.sleep(60)
         stop_service()
+        time.sleep(60)
 
     stop_promptflow_service()
