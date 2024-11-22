@@ -530,8 +530,21 @@ def prep_and_create_environment(environment_dir: str) -> None:
             environment_dir,
             "conda-build",
             "conda-verify",
-            "typing-extensions>=12.2.1",
             "conda-index",
+        ],
+        cwd=environment_dir,
+        check=True,
+    )
+    subprocess.run(
+        [
+            "conda",
+            "install",
+            "--yes",
+            "--quiet",
+            "--prefix",
+            environment_dir,
+            "typing-extensions>=12.2.1",
+            "-c conda-forge"
         ],
         cwd=environment_dir,
         check=True,

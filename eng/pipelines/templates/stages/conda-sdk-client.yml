@@ -190,8 +190,6 @@ extends:
                           version: 1.5.0
                         - package: azure-common
                           version: 1.1.28
-                      channels:
-                        - conda-forge
                     - name: msrest
                       in_batch: true
                       checkout:
