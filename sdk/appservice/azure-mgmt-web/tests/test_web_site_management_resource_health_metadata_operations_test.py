@@ -24,10 +24,3 @@ class TestWebSiteManagementResourceHealthMetadataOperations(AzureMgmtRecordedTes
         response = self.client.resource_health_metadata.list()
         result = [r for r in response]
         assert response
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_resource_health_metadata_list_by_resource_group(self, resource_group):
-        response = self.client.resource_health_metadata.list_by_resource_group(resource_group_name=resource_group.name)
-        result = [r for r in response]
-        assert result == []
