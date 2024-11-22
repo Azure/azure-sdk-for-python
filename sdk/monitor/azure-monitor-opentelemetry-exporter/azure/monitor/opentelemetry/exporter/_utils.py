@@ -224,6 +224,7 @@ def _create_telemetry_item(timestamp: int) -> TelemetryItem:
     )
 
 
+
 def _populate_part_a_fields(resource: Resource):
     tags = {}
     if resource and resource.attributes:
