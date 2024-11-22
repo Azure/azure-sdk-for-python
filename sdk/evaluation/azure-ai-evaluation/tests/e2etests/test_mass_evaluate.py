@@ -89,13 +89,13 @@ class TestMassEvaluate:
             "coherence": CoherenceEvaluator(model_config),
             "fluency": FluencyEvaluator(model_config),
             "relevance": RelevanceEvaluator(model_config),
-            "similarity": SimilarityEvaluator(model_config),
+            # "similarity": SimilarityEvaluator(model_config),
             # "qa" : QAEvaluator(model_config),
-            # "grounded_pro": GroundednessProEvaluator(azure_cred, project_scope),
-            # "protected_material": ProtectedMaterialEvaluator(azure_cred, project_scope),
-            # "indirect_attack": IndirectAttackEvaluator(azure_cred, project_scope),
-            # "eci": ECIEvaluator(azure_cred, project_scope),
-            # "content_safety": ContentSafetyEvaluator(azure_cred, project_scope),
+            "grounded_pro": GroundednessProEvaluator(azure_cred, project_scope),
+            "protected_material": ProtectedMaterialEvaluator(azure_cred, project_scope),
+            "indirect_attack": IndirectAttackEvaluator(azure_cred, project_scope),
+            "eci": ECIEvaluator(azure_cred, project_scope),
+            "content_safety": ContentSafetyEvaluator(azure_cred, project_scope),
         }
 
         # run the evaluation
@@ -107,7 +107,6 @@ class TestMassEvaluate:
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
 
-        _ = """
         assert len(row_result_df.keys()) == 45  #  63 with gleu, qa/similarity
         assert len(row_result_df["inputs.query"]) == 3
         assert len(row_result_df["inputs.context"]) == 3
@@ -212,9 +211,8 @@ class TestMassEvaluate:
         # assert metrics['qa.relevance'] >= 0
         # assert metrics['qa.gpt_relevance'] >= 0
         # assert metrics['qa.similarity'] >= 0
-        # assert metrics['qa.gpt_similarity'] >= 0"""
+        # assert metrics['qa.gpt_similarity'] >= 0
 
-    @pytest.mark.skip(reason="CI testing skip for now")
     def test_evaluate_conversation(self, model_config, data_convo_file, azure_cred, project_scope):
         evaluators = {
             "grounded": GroundednessEvaluator(model_config),
@@ -295,7 +293,6 @@ class TestMassEvaluate:
         assert metrics["indirect_attack.xpia_defect_rate"] >= 0
         assert metrics["eci.eci_defect_rate"] >= 0
 
-    @pytest.mark.skip(reason="CI testing skip for now")
     @pytest.mark.parametrize(
         "multi_modal_input_type",
         [
