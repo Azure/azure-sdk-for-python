@@ -543,7 +543,7 @@ def prep_and_create_environment(environment_dir: str) -> None:
             "--quiet",
             "--prefix",
             environment_dir,
-            "typing-extensions>=12.2.1",
+            "typing_extensions>=12.2.1",
             "-c",
             "conda-forge"
         ],
