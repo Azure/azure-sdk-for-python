@@ -298,7 +298,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
         replica_discovery_enabled,
         min_backoff_sec,
         max_backoff_sec,
-        load_balance: bool,
+        load_balancing_enabled: bool,
         **kwargs
     ):
         super(ConfigurationClientManager, self).__init__(
@@ -309,7 +309,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
             replica_discovery_enabled,
             min_backoff_sec,
             max_backoff_sec,
-            load_balance,
+            load_balancing_enabled,
             **kwargs
         )
         self._original_connection_string = connection_string
