@@ -1,15 +1,20 @@
 ## Release History
 
-### 4.9.0 (Unreleased)
+### 4.9.1 (Unreleased)
 
 #### Features Added
-* Added full text policy and full text indexing policy. See [PR 37891](https://github.com/Azure/azure-sdk-for-python/pull/37891).
 
 #### Breaking Changes
 
 #### Bugs Fixed
 
 #### Other Changes
+
+### 4.9.0 (2024-11-18)
+
+#### Features Added
+* Added full text policy and full text indexing policy. See [PR 37891](https://github.com/Azure/azure-sdk-for-python/pull/37891).
+* Added support for full text search and hybrid search queries. See [PR 38275](https://github.com/Azure/azure-sdk-for-python/pull/38275).
 
 ### 4.8.0 (2024-11-12)
 This version and all future versions will support Python 3.13.

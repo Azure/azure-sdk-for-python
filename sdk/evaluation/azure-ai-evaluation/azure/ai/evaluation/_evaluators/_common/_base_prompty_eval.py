@@ -47,10 +47,12 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         self._prompty_file = prompty_file
         super().__init__(eval_last_turn=eval_last_turn)
 
+        subclass_name = self.__class__.__name__
+        user_agent = f"{USER_AGENT} (type=evaluator subtype={subclass_name})"
         prompty_model_config = construct_prompty_model_config(
             validate_model_config(model_config),
             self._DEFAULT_OPEN_API_VERSION,
-            USER_AGENT,
+            user_agent,
         )
 
         self._flow = AsyncPrompty.load(source=prompty_file, model=prompty_model_config)
