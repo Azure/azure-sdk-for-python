@@ -5,7 +5,6 @@ type_check_samples = false
 pylint = true
 mindependency = false
 latestdependency = false
-black = true
 
 [tool.isort]
 profile = "black"

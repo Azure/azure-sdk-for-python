@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-
 from azure.mgmt.networkcloud import NetworkCloudMgmtClient
 
 """
@@ -30,14 +29,13 @@ def main():
         subscription_id="123e4567-e89b-12d3-a456-426655440000",
     )
 
-    response = client.bmc_key_sets.begin_delete(
+    client.bmc_key_sets.begin_delete(
         resource_group_name="resourceGroupName",
         cluster_name="clusterName",
         bmc_key_set_name="bmcKeySetName",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2024-06-01-preview/examples/BmcKeySets_Delete.json
+# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/BmcKeySets_Delete.json
 if __name__ == "__main__":
     main()

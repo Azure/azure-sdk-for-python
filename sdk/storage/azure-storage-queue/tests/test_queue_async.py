@@ -1268,7 +1268,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
         queue_client = await self._create_queue(qsc)
 
         # Act
-        identifiers = {}
+        identifiers = dict()
         for i in range(0, 16):
             identifiers[f'id{i}'] = AccessPolicy()
 

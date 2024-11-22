@@ -137,7 +137,7 @@ LOG_PER_COUNT = args.output_interval
 start_time = time.perf_counter()
 recv_cnt_map = defaultdict(int)
 recv_cnt_iteration_map = defaultdict(int)
-recv_time_map = {}
+recv_time_map = dict()
 
 azure_metric_monitor = AzureMonitorMetric("Async EventHubConsumerClient")
 

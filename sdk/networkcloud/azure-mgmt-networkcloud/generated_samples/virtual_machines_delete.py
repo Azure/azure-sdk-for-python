@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-
 from azure.mgmt.networkcloud import NetworkCloudMgmtClient
 
 """
@@ -30,13 +29,12 @@ def main():
         subscription_id="123e4567-e89b-12d3-a456-426655440000",
     )
 
-    response = client.virtual_machines.begin_delete(
+    client.virtual_machines.begin_delete(
         resource_group_name="resourceGroupName",
         virtual_machine_name="virtualMachineName",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2024-06-01-preview/examples/VirtualMachines_Delete.json
+# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/VirtualMachines_Delete.json
 if __name__ == "__main__":
     main()

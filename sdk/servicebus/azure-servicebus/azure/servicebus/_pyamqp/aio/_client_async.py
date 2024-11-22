@@ -122,7 +122,6 @@ class AMQPClientAsync(AMQPClientSync):
     :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
      the Event Hubs service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
-     Unless specified otherwise, default transport type is TransportType.AmqpOverWebsockets.
      If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
     :paramtype custom_endpoint_address: str
     :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
@@ -479,7 +478,6 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
     :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
      the Event Hubs service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
-     Unless specified otherwise, default transport type is TransportType.AmqpOverWebsockets.
      If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
     :paramtype custom_endpoint_address: str
     :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
@@ -688,7 +686,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
      the Event Hubs service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
-     Unless specified otherwise, default transport type is TransportType.AmqpOverWebsockets.
      If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
     :paramtype custom_endpoint_address: str
     :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to

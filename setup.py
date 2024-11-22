@@ -6,6 +6,7 @@
 # license information.
 #--------------------------------------------------------------------------
 
+from __future__ import print_function
 import os.path
 import glob
 import copy

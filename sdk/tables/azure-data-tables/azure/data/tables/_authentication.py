@@ -19,7 +19,7 @@ except ImportError:
 
 from ._common_conversion import _sign_string
 from ._error import _wrap_exception
-from ._constants import STORAGE_OAUTH_SCOPE, COSMOS_OAUTH_SCOPE
+from ._constants import STORAGE_OAUTH_SCOPE
 
 
 class AzureSigningError(ClientAuthenticationError):
@@ -236,15 +236,11 @@ def _configure_credential(credential: None) -> None: ...
 
 
 def _configure_credential(
-    credential: Optional[
-        Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential, SharedKeyCredentialPolicy]
-    ],
-    cosmos_endpoint: bool = False,
+    credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential, SharedKeyCredentialPolicy]]
 ) -> Optional[Union[BearerTokenChallengePolicy, AzureSasCredentialPolicy, SharedKeyCredentialPolicy]]:
     if hasattr(credential, "get_token"):
         credential = cast(TokenCredential, credential)
-        scope = COSMOS_OAUTH_SCOPE if cosmos_endpoint else STORAGE_OAUTH_SCOPE
-        return BearerTokenChallengePolicy(credential, scope)
+        return BearerTokenChallengePolicy(credential, STORAGE_OAUTH_SCOPE)
     if isinstance(credential, SharedKeyCredentialPolicy):
         return credential
     if isinstance(credential, AzureSasCredential):

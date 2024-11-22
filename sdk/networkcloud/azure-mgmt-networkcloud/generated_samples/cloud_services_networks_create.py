@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-
 from azure.mgmt.networkcloud import NetworkCloudMgmtClient
 
 """
@@ -43,7 +42,7 @@ def main():
                 "additionalEgressEndpoints": [
                     {
                         "category": "azure-resource-management",
-                        "endpoints": [{"domainName": "storageaccountex.blob.core.windows.net", "port": 443}],
+                        "endpoints": [{"domainName": "https://storageaccountex.blob.core.windows.net", "port": 443}],
                     }
                 ],
                 "enableDefaultEgressEndpoints": "False",
@@ -54,6 +53,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2024-06-01-preview/examples/CloudServicesNetworks_Create.json
+# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/CloudServicesNetworks_Create.json
 if __name__ == "__main__":
     main()

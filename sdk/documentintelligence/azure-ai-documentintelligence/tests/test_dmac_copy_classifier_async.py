@@ -43,6 +43,7 @@ class TestCopyClassifierAsync(AsyncDocumentIntelligenceTest):
         with pytest.raises(ResourceNotFoundError):
             await client.begin_copy_classifier_to(classifier_id="", copy_to_request={})
 
+    @pytest.mark.skip(reason="https://github.com/Azure/azure-sdk-for-python/issues/36989")
     @DocumentIntelligencePreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -95,13 +96,14 @@ class TestCopyClassifierAsync(AsyncDocumentIntelligenceTest):
             )
         )
         poller = await client.begin_copy_classifier_to(classifier.classifier_id, copy_to_request=copy_auth)
-        copy = await poller.result()
+        copy = poller.result()
 
         assert copy.api_version == classifier.api_version
         assert copy.classifier_id != classifier.classifier_id
         assert copy.classifier_id == copy_auth["targetClassifierId"]
-        assert copy.base_classifier_id == classifier.base_classifier_id
-        assert copy.base_classifier_id is None
         assert copy.description == classifier.description
+        for name, doc_type in copy.doc_types.items():
+            assert name == copy_auth["targetClassifierId"]
+            assert doc_type.source_kind is None
 
         return recorded_variables

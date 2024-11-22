@@ -52,7 +52,6 @@ class _DocumentProducer(object):
         self._is_finished = False
         self._has_started = False
         self._cur_item = None
-        self._query = query
         # initiate execution context
 
         path = _base.GetPathFromLink(collection_link, "docs")

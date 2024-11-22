@@ -23,6 +23,8 @@ from ._models import ImageVersionProperties
 from ._models import ManagedServiceIdentity
 from ._models import ManualResourcePredictionsProfile
 from ._models import NetworkProfile
+from ._models import Operation
+from ._models import OperationDisplay
 from ._models import Organization
 from ._models import OrganizationProfile
 from ._models import OsProfile
@@ -34,6 +36,7 @@ from ._models import PoolUpdateProperties
 from ._models import ProxyResource
 from ._models import Quota
 from ._models import QuotaName
+from ._models import QuotaProperties
 from ._models import Resource
 from ._models import ResourceDetailsObject
 from ._models import ResourceDetailsObjectProperties
@@ -55,11 +58,13 @@ from ._models import TrackedResource
 from ._models import UserAssignedIdentity
 from ._models import VmssFabricProfile
 
+from ._enums import ActionType
 from ._enums import AzureDevOpsPermissionType
 from ._enums import CachingType
 from ._enums import CreatedByType
 from ._enums import LogonType
 from ._enums import ManagedServiceIdentityType
+from ._enums import Origin
 from ._enums import OsDiskStorageAccountType
 from ._enums import PredictionPreference
 from ._enums import ProvisioningState
@@ -90,6 +95,8 @@ __all__ = [
     "ManagedServiceIdentity",
     "ManualResourcePredictionsProfile",
     "NetworkProfile",
+    "Operation",
+    "OperationDisplay",
     "Organization",
     "OrganizationProfile",
     "OsProfile",
@@ -101,6 +108,7 @@ __all__ = [
     "ProxyResource",
     "Quota",
     "QuotaName",
+    "QuotaProperties",
     "Resource",
     "ResourceDetailsObject",
     "ResourceDetailsObjectProperties",
@@ -121,11 +129,13 @@ __all__ = [
     "TrackedResource",
     "UserAssignedIdentity",
     "VmssFabricProfile",
+    "ActionType",
     "AzureDevOpsPermissionType",
     "CachingType",
     "CreatedByType",
     "LogonType",
     "ManagedServiceIdentityType",
+    "Origin",
     "OsDiskStorageAccountType",
     "PredictionPreference",
     "ProvisioningState",
@@ -135,5 +145,5 @@ __all__ = [
     "ResourceStatus",
     "StorageAccountType",
 ]
-__all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
+__all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

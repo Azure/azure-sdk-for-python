@@ -30,12 +30,7 @@ def from_rest_datastore_credentials(
     config_class: Any = NoneCredentialConfiguration
 
     if isinstance(rest_credentials, (models.AccountKeyDatastoreCredentials, models2024.AccountKeyDatastoreCredentials)):
-        # we are no more using key for key base account.
-        # https://github.com/Azure/azure-sdk-for-python/pull/35716
-        if isinstance(rest_credentials.secrets, models2024.SasDatastoreSecrets):
-            config_class = SasTokenConfiguration
-        else:
-            config_class = AccountKeyConfiguration
+        config_class = AccountKeyConfiguration
     elif isinstance(rest_credentials, (models.SasDatastoreCredentials, models2024.SasDatastoreCredentials)):
         config_class = SasTokenConfiguration
     elif isinstance(

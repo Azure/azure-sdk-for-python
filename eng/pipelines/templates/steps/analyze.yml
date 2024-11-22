@@ -5,6 +5,7 @@ parameters:
   Artifacts: []
   TestPipeline: false
   VerifyAutorest: false
+  ValidateFormatting: false
   GenerateApiReviewForManualOnly: false
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
@@ -109,9 +110,11 @@ steps:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
 
-  - template: run_black.yml
-    parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+  - ${{ if parameters.ValidateFormatting }}:
+    - template: run_black.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        ValidateFormatting: ${{ parameters.ValidateFormatting }}
 
   - task: PythonScript@0
     displayName: 'Run Keyword Validation Check'

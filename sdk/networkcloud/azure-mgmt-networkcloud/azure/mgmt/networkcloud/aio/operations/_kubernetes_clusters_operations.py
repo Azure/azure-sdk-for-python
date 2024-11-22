@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,8 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-import sys
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -18,13 +17,12 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
-    StreamClosedError,
-    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
+from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
-from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
@@ -32,6 +30,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
+from ..._vendor import _convert_request
 from ...operations._kubernetes_clusters_operations import (
     build_create_or_update_request,
     build_delete_request,
@@ -42,10 +41,6 @@ from ...operations._kubernetes_clusters_operations import (
     build_update_request,
 )
 
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -75,6 +70,7 @@ class KubernetesClustersOperations:
 
         Get a list of Kubernetes clusters in the provided subscription.
 
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KubernetesCluster or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.networkcloud.models.KubernetesCluster]
@@ -86,7 +82,7 @@ class KubernetesClustersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.KubernetesClusterList] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -97,13 +93,15 @@ class KubernetesClustersOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_list_by_subscription_request(
+                request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
+                    template_url=self.list_by_subscription.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                _request.url = self._client.format_url(_request.url)
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -115,12 +113,13 @@ class KubernetesClustersOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
+                request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
+            return request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("KubernetesClusterList", pipeline_response)
@@ -130,11 +129,11 @@ class KubernetesClustersOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            _request = prepare_request(next_link)
+            request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -146,6 +145,10 @@ class KubernetesClustersOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
+
+    list_by_subscription.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.NetworkCloud/kubernetesClusters"
+    }
 
     @distributed_trace
     def list_by_resource_group(
@@ -158,6 +161,7 @@ class KubernetesClustersOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KubernetesCluster or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.networkcloud.models.KubernetesCluster]
@@ -169,7 +173,7 @@ class KubernetesClustersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.KubernetesClusterList] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -180,14 +184,16 @@ class KubernetesClustersOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_list_by_resource_group_request(
+                request = build_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
+                    template_url=self.list_by_resource_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                _request.url = self._client.format_url(_request.url)
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -199,12 +205,13 @@ class KubernetesClustersOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
+                request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
+            return request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("KubernetesClusterList", pipeline_response)
@@ -214,11 +221,11 @@ class KubernetesClustersOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            _request = prepare_request(next_link)
+            request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -230,6 +237,10 @@ class KubernetesClustersOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
+
+    list_by_resource_group.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/kubernetesClusters"
+    }
 
     @distributed_trace_async
     async def get(
@@ -244,11 +255,12 @@ class KubernetesClustersOperations:
         :type resource_group_name: str
         :param kubernetes_cluster_name: The name of the Kubernetes cluster. Required.
         :type kubernetes_cluster_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KubernetesCluster or the result of cls(response)
         :rtype: ~azure.mgmt.networkcloud.models.KubernetesCluster
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -262,19 +274,21 @@ class KubernetesClustersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.KubernetesCluster] = kwargs.pop("cls", None)
 
-        _request = build_get_request(
+        request = build_get_request(
             resource_group_name=resource_group_name,
             kubernetes_cluster_name=kubernetes_cluster_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
+            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        _request.url = self._client.format_url(_request.url)
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -284,21 +298,25 @@ class KubernetesClustersOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("KubernetesCluster", pipeline_response.http_response)
+        deserialized = self._deserialize("KubernetesCluster", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})
 
-        return deserialized  # type: ignore
+        return deserialized
+
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/kubernetesClusters/{kubernetesClusterName}"
+    }
 
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         kubernetes_cluster_name: str,
-        kubernetes_cluster_parameters: Union[_models.KubernetesCluster, IO[bytes]],
+        kubernetes_cluster_parameters: Union[_models.KubernetesCluster, IO],
         **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+    ) -> _models.KubernetesCluster:
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -311,7 +329,7 @@ class KubernetesClustersOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.KubernetesCluster] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -321,7 +339,7 @@ class KubernetesClustersOperations:
         else:
             _json = self._serialize.body(kubernetes_cluster_parameters, "KubernetesCluster")
 
-        _request = build_create_or_update_request(
+        request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             kubernetes_cluster_name=kubernetes_cluster_name,
             subscription_id=self._config.subscription_id,
@@ -329,40 +347,44 @@ class KubernetesClustersOperations:
             content_type=content_type,
             json=_json,
             content=_content,
+            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        _request.url = self._client.format_url(_request.url)
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
+        if response.status_code == 200:
+            deserialized = self._deserialize("KubernetesCluster", pipeline_response)
+
         if response.status_code == 201:
             response_headers["Azure-AsyncOperation"] = self._deserialize(
                 "str", response.headers.get("Azure-AsyncOperation")
             )
 
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+            deserialized = self._deserialize("KubernetesCluster", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
+
+    _create_or_update_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/kubernetesClusters/{kubernetesClusterName}"
+    }
 
     @overload
     async def begin_create_or_update(
@@ -388,6 +410,14 @@ class KubernetesClustersOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either KubernetesCluster or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.KubernetesCluster]
@@ -399,7 +429,7 @@ class KubernetesClustersOperations:
         self,
         resource_group_name: str,
         kubernetes_cluster_name: str,
-        kubernetes_cluster_parameters: IO[bytes],
+        kubernetes_cluster_parameters: IO,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -414,10 +444,18 @@ class KubernetesClustersOperations:
         :param kubernetes_cluster_name: The name of the Kubernetes cluster. Required.
         :type kubernetes_cluster_name: str
         :param kubernetes_cluster_parameters: The request body. Required.
-        :type kubernetes_cluster_parameters: IO[bytes]
+        :type kubernetes_cluster_parameters: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either KubernetesCluster or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.KubernetesCluster]
@@ -429,7 +467,7 @@ class KubernetesClustersOperations:
         self,
         resource_group_name: str,
         kubernetes_cluster_name: str,
-        kubernetes_cluster_parameters: Union[_models.KubernetesCluster, IO[bytes]],
+        kubernetes_cluster_parameters: Union[_models.KubernetesCluster, IO],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.KubernetesCluster]:
         """Create or update the Kubernetes cluster.
@@ -442,9 +480,19 @@ class KubernetesClustersOperations:
         :param kubernetes_cluster_name: The name of the Kubernetes cluster. Required.
         :type kubernetes_cluster_name: str
         :param kubernetes_cluster_parameters: The request body. Is either a KubernetesCluster type or a
-         IO[bytes] type. Required.
-        :type kubernetes_cluster_parameters: ~azure.mgmt.networkcloud.models.KubernetesCluster or
-         IO[bytes]
+         IO type. Required.
+        :type kubernetes_cluster_parameters: ~azure.mgmt.networkcloud.models.KubernetesCluster or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either KubernetesCluster or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.KubernetesCluster]
@@ -471,13 +519,12 @@ class KubernetesClustersOperations:
                 params=_params,
                 **kwargs
             )
-            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("KubernetesCluster", pipeline_response.http_response)
+            deserialized = self._deserialize("KubernetesCluster", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
+                return cls(pipeline_response, deserialized, {})
             return deserialized
 
         if polling is True:
@@ -490,20 +537,22 @@ class KubernetesClustersOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.KubernetesCluster].from_continuation_token(
+            return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.KubernetesCluster](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _delete_initial(
+    begin_create_or_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/kubernetesClusters/{kubernetesClusterName}"
+    }
+
+    async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, kubernetes_cluster_name: str, **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+    ) -> None:
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -515,31 +564,28 @@ class KubernetesClustersOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_delete_request(
+        request = build_delete_request(
             resource_group_name=resource_group_name,
             kubernetes_cluster_name=kubernetes_cluster_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
+            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        _request.url = self._client.format_url(_request.url)
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -548,17 +594,17 @@ class KubernetesClustersOperations:
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, None, response_headers)
 
-        return deserialized  # type: ignore
+    _delete_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/kubernetesClusters/{kubernetesClusterName}"
+    }
 
     @distributed_trace_async
     async def begin_delete(
         self, resource_group_name: str, kubernetes_cluster_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[_models.OperationStatusResult]:
+    ) -> AsyncLROPoller[None]:
         """Delete the Kubernetes cluster.
 
         Delete the provided Kubernetes cluster.
@@ -568,22 +614,28 @@ class KubernetesClustersOperations:
         :type resource_group_name: str
         :param kubernetes_cluster_name: The name of the Kubernetes cluster. Required.
         :type kubernetes_cluster_name: str
-        :return: An instance of AsyncLROPoller that returns either OperationStatusResult or the result
-         of cls(response)
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._delete_initial(
+            raw_result = await self._delete_initial(  # type: ignore
                 resource_group_name=resource_group_name,
                 kubernetes_cluster_name=kubernetes_cluster_name,
                 api_version=api_version,
@@ -592,14 +644,11 @@ class KubernetesClustersOperations:
                 params=_params,
                 **kwargs
             )
-            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("OperationStatusResult", pipeline_response.http_response)
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
+                return cls(pipeline_response, None, {})
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
@@ -610,26 +659,26 @@ class KubernetesClustersOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.OperationStatusResult].from_continuation_token(
+            return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.OperationStatusResult](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    begin_delete.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/kubernetesClusters/{kubernetesClusterName}"
+    }
 
     async def _update_initial(
         self,
         resource_group_name: str,
         kubernetes_cluster_name: str,
-        kubernetes_cluster_update_parameters: Optional[
-            Union[_models.KubernetesClusterPatchParameters, IO[bytes]]
-        ] = None,
+        kubernetes_cluster_update_parameters: Optional[Union[_models.KubernetesClusterPatchParameters, IO]] = None,
         **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+    ) -> _models.KubernetesCluster:
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -642,7 +691,7 @@ class KubernetesClustersOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.KubernetesCluster] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -655,7 +704,7 @@ class KubernetesClustersOperations:
             else:
                 _json = None
 
-        _request = build_update_request(
+        request = build_update_request(
             resource_group_name=resource_group_name,
             kubernetes_cluster_name=kubernetes_cluster_name,
             subscription_id=self._config.subscription_id,
@@ -663,41 +712,44 @@ class KubernetesClustersOperations:
             content_type=content_type,
             json=_json,
             content=_content,
+            template_url=self._update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        _request.url = self._client.format_url(_request.url)
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
+        if response.status_code == 200:
+            deserialized = self._deserialize("KubernetesCluster", pipeline_response)
+
         if response.status_code == 202:
             response_headers["Azure-AsyncOperation"] = self._deserialize(
                 "str", response.headers.get("Azure-AsyncOperation")
             )
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+            deserialized = self._deserialize("KubernetesCluster", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
+
+    _update_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/kubernetesClusters/{kubernetesClusterName}"
+    }
 
     @overload
     async def begin_update(
@@ -725,6 +777,14 @@ class KubernetesClustersOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either KubernetesCluster or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.KubernetesCluster]
@@ -736,7 +796,7 @@ class KubernetesClustersOperations:
         self,
         resource_group_name: str,
         kubernetes_cluster_name: str,
-        kubernetes_cluster_update_parameters: Optional[IO[bytes]] = None,
+        kubernetes_cluster_update_parameters: Optional[IO] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -752,10 +812,18 @@ class KubernetesClustersOperations:
         :param kubernetes_cluster_name: The name of the Kubernetes cluster. Required.
         :type kubernetes_cluster_name: str
         :param kubernetes_cluster_update_parameters: The request body. Default value is None.
-        :type kubernetes_cluster_update_parameters: IO[bytes]
+        :type kubernetes_cluster_update_parameters: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either KubernetesCluster or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.KubernetesCluster]
@@ -767,9 +835,7 @@ class KubernetesClustersOperations:
         self,
         resource_group_name: str,
         kubernetes_cluster_name: str,
-        kubernetes_cluster_update_parameters: Optional[
-            Union[_models.KubernetesClusterPatchParameters, IO[bytes]]
-        ] = None,
+        kubernetes_cluster_update_parameters: Optional[Union[_models.KubernetesClusterPatchParameters, IO]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.KubernetesCluster]:
         """Patch the Kubernetes cluster.
@@ -783,9 +849,20 @@ class KubernetesClustersOperations:
         :param kubernetes_cluster_name: The name of the Kubernetes cluster. Required.
         :type kubernetes_cluster_name: str
         :param kubernetes_cluster_update_parameters: The request body. Is either a
-         KubernetesClusterPatchParameters type or a IO[bytes] type. Default value is None.
+         KubernetesClusterPatchParameters type or a IO type. Default value is None.
         :type kubernetes_cluster_update_parameters:
-         ~azure.mgmt.networkcloud.models.KubernetesClusterPatchParameters or IO[bytes]
+         ~azure.mgmt.networkcloud.models.KubernetesClusterPatchParameters or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either KubernetesCluster or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.KubernetesCluster]
@@ -812,13 +889,12 @@ class KubernetesClustersOperations:
                 params=_params,
                 **kwargs
             )
-            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("KubernetesCluster", pipeline_response.http_response)
+            deserialized = self._deserialize("KubernetesCluster", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
+                return cls(pipeline_response, deserialized, {})
             return deserialized
 
         if polling is True:
@@ -831,24 +907,26 @@ class KubernetesClustersOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.KubernetesCluster].from_continuation_token(
+            return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.KubernetesCluster](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    begin_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/kubernetesClusters/{kubernetesClusterName}"
+    }
 
     async def _restart_node_initial(
         self,
         resource_group_name: str,
         kubernetes_cluster_name: str,
-        kubernetes_cluster_restart_node_parameters: Union[_models.KubernetesClusterRestartNodeParameters, IO[bytes]],
+        kubernetes_cluster_restart_node_parameters: Union[_models.KubernetesClusterRestartNodeParameters, IO],
         **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+    ) -> Optional[_models.OperationStatusResult]:
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -861,7 +939,7 @@ class KubernetesClustersOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[_models.OperationStatusResult]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -873,7 +951,7 @@ class KubernetesClustersOperations:
                 kubernetes_cluster_restart_node_parameters, "KubernetesClusterRestartNodeParameters"
             )
 
-        _request = build_restart_node_request(
+        request = build_restart_node_request(
             resource_group_name=resource_group_name,
             kubernetes_cluster_name=kubernetes_cluster_name,
             subscription_id=self._config.subscription_id,
@@ -881,38 +959,41 @@ class KubernetesClustersOperations:
             content_type=content_type,
             json=_json,
             content=_content,
+            template_url=self._restart_node_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        _request.url = self._client.format_url(_request.url)
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
+        if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = None
         response_headers = {}
+        if response.status_code == 200:
+            deserialized = self._deserialize("OperationStatusResult", pipeline_response)
+
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)
 
-        return deserialized  # type: ignore
+        return deserialized
+
+    _restart_node_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/kubernetesClusters/{kubernetesClusterName}/restartNode"
+    }
 
     @overload
     async def begin_restart_node(
@@ -939,6 +1020,14 @@ class KubernetesClustersOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationStatusResult or the result
          of cls(response)
         :rtype:
@@ -951,7 +1040,7 @@ class KubernetesClustersOperations:
         self,
         resource_group_name: str,
         kubernetes_cluster_name: str,
-        kubernetes_cluster_restart_node_parameters: IO[bytes],
+        kubernetes_cluster_restart_node_parameters: IO,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -966,10 +1055,18 @@ class KubernetesClustersOperations:
         :param kubernetes_cluster_name: The name of the Kubernetes cluster. Required.
         :type kubernetes_cluster_name: str
         :param kubernetes_cluster_restart_node_parameters: The request body. Required.
-        :type kubernetes_cluster_restart_node_parameters: IO[bytes]
+        :type kubernetes_cluster_restart_node_parameters: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationStatusResult or the result
          of cls(response)
         :rtype:
@@ -982,7 +1079,7 @@ class KubernetesClustersOperations:
         self,
         resource_group_name: str,
         kubernetes_cluster_name: str,
-        kubernetes_cluster_restart_node_parameters: Union[_models.KubernetesClusterRestartNodeParameters, IO[bytes]],
+        kubernetes_cluster_restart_node_parameters: Union[_models.KubernetesClusterRestartNodeParameters, IO],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
         """Restart a targeted node.
@@ -995,9 +1092,20 @@ class KubernetesClustersOperations:
         :param kubernetes_cluster_name: The name of the Kubernetes cluster. Required.
         :type kubernetes_cluster_name: str
         :param kubernetes_cluster_restart_node_parameters: The request body. Is either a
-         KubernetesClusterRestartNodeParameters type or a IO[bytes] type. Required.
+         KubernetesClusterRestartNodeParameters type or a IO type. Required.
         :type kubernetes_cluster_restart_node_parameters:
-         ~azure.mgmt.networkcloud.models.KubernetesClusterRestartNodeParameters or IO[bytes]
+         ~azure.mgmt.networkcloud.models.KubernetesClusterRestartNodeParameters or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either OperationStatusResult or the result
          of cls(response)
         :rtype:
@@ -1025,13 +1133,12 @@ class KubernetesClustersOperations:
                 params=_params,
                 **kwargs
             )
-            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("OperationStatusResult", pipeline_response.http_response)
+            deserialized = self._deserialize("OperationStatusResult", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
+                return cls(pipeline_response, deserialized, {})
             return deserialized
 
         if polling is True:
@@ -1043,12 +1150,14 @@ class KubernetesClustersOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.OperationStatusResult].from_continuation_token(
+            return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.OperationStatusResult](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    begin_restart_node.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/kubernetesClusters/{kubernetesClusterName}/restartNode"
+    }

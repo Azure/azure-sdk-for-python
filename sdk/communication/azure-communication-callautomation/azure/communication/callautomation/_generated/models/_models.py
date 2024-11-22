@@ -1,5 +1,5 @@
-# pylint: disable=too-many-lines
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -15,9 +15,10 @@ from .. import _serialization
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
@@ -272,10 +273,6 @@ class AnswerCallRequest(_serialization.Model):
     :vartype incoming_call_context: str
     :ivar callback_uri: The callback uri. Required.
     :vartype callback_uri: str
-    :ivar custom_calling_context: Used by customer to send custom calling context to targets when
-     answering On-Behalf-Of call.
-    :vartype custom_calling_context:
-     ~azure.communication.callautomation.models.CustomCallingContext
     :ivar operation_context: A customer set value used to track the answering of a call.
     :vartype operation_context: str
     :ivar media_streaming_configuration: Media Streaming Configuration.
@@ -300,7 +297,6 @@ class AnswerCallRequest(_serialization.Model):
     _attribute_map = {
         "incoming_call_context": {"key": "incomingCallContext", "type": "str"},
         "callback_uri": {"key": "callbackUri", "type": "str"},
-        "custom_calling_context": {"key": "customCallingContext", "type": "CustomCallingContext"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "media_streaming_configuration": {"key": "mediaStreamingConfiguration", "type": "MediaStreamingConfiguration"},
         "transcription_configuration": {"key": "transcriptionConfiguration", "type": "TranscriptionConfiguration"},
@@ -313,7 +309,6 @@ class AnswerCallRequest(_serialization.Model):
         *,
         incoming_call_context: str,
         callback_uri: str,
-        custom_calling_context: Optional["_models.CustomCallingContext"] = None,
         operation_context: Optional[str] = None,
         media_streaming_configuration: Optional["_models.MediaStreamingConfiguration"] = None,
         transcription_configuration: Optional["_models.TranscriptionConfiguration"] = None,
@@ -326,10 +321,6 @@ class AnswerCallRequest(_serialization.Model):
         :paramtype incoming_call_context: str
         :keyword callback_uri: The callback uri. Required.
         :paramtype callback_uri: str
-        :keyword custom_calling_context: Used by customer to send custom calling context to targets
-         when answering On-Behalf-Of call.
-        :paramtype custom_calling_context:
-         ~azure.communication.callautomation.models.CustomCallingContext
         :keyword operation_context: A customer set value used to track the answering of a call.
         :paramtype operation_context: str
         :keyword media_streaming_configuration: Media Streaming Configuration.
@@ -348,7 +339,6 @@ class AnswerCallRequest(_serialization.Model):
         super().__init__(**kwargs)
         self.incoming_call_context = incoming_call_context
         self.callback_uri = callback_uri
-        self.custom_calling_context = custom_calling_context
         self.operation_context = operation_context
         self.media_streaming_configuration = media_streaming_configuration
         self.transcription_configuration = transcription_configuration
@@ -575,7 +565,7 @@ class CallConnected(_serialization.Model):
         self.correlation_id = None
 
 
-class CallConnectionProperties(_serialization.Model):
+class CallConnectionProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Properties of a call connection.
 
     :ivar call_connection_id: The call connection id.
@@ -1703,9 +1693,6 @@ class CreateCallRequest(_serialization.Model):
     :vartype source_display_name: str
     :ivar source: The identifier of the source of the call.
     :vartype source: ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
-    :ivar ops_source: The identifier of the source in an OPS call.
-    :vartype ops_source:
-     ~azure.communication.callautomation.models.MicrosoftTeamsAppIdentifierModel
     :ivar operation_context: A customer set value used to track the answering of a call.
     :vartype operation_context: str
     :ivar callback_uri: The callback URI. Required.
@@ -1734,7 +1721,6 @@ class CreateCallRequest(_serialization.Model):
         "source_caller_id_number": {"key": "sourceCallerIdNumber", "type": "PhoneNumberIdentifierModel"},
         "source_display_name": {"key": "sourceDisplayName", "type": "str"},
         "source": {"key": "source", "type": "CommunicationUserIdentifierModel"},
-        "ops_source": {"key": "opsSource", "type": "MicrosoftTeamsAppIdentifierModel"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "callback_uri": {"key": "callbackUri", "type": "str"},
         "media_streaming_configuration": {"key": "mediaStreamingConfiguration", "type": "MediaStreamingConfiguration"},
@@ -1751,7 +1737,6 @@ class CreateCallRequest(_serialization.Model):
         source_caller_id_number: Optional["_models.PhoneNumberIdentifierModel"] = None,
         source_display_name: Optional[str] = None,
         source: Optional["_models.CommunicationUserIdentifierModel"] = None,
-        ops_source: Optional["_models.MicrosoftTeamsAppIdentifierModel"] = None,
         operation_context: Optional[str] = None,
         media_streaming_configuration: Optional["_models.MediaStreamingConfiguration"] = None,
         transcription_configuration: Optional["_models.TranscriptionConfiguration"] = None,
@@ -1772,9 +1757,6 @@ class CreateCallRequest(_serialization.Model):
         :paramtype source_display_name: str
         :keyword source: The identifier of the source of the call.
         :paramtype source: ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
-        :keyword ops_source: The identifier of the source in an OPS call.
-        :paramtype ops_source:
-         ~azure.communication.callautomation.models.MicrosoftTeamsAppIdentifierModel
         :keyword operation_context: A customer set value used to track the answering of a call.
         :paramtype operation_context: str
         :keyword callback_uri: The callback URI. Required.
@@ -1797,7 +1779,6 @@ class CreateCallRequest(_serialization.Model):
         self.source_caller_id_number = source_caller_id_number
         self.source_display_name = source_display_name
         self.source = source
-        self.ops_source = ops_source
         self.operation_context = operation_context
         self.callback_uri = callback_uri
         self.media_streaming_configuration = media_streaming_configuration
@@ -2552,7 +2533,7 @@ class ExternalStorage(_serialization.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar recording_storage_kind: Defines the kind of external storage. Required. Known values are:
-     "azureCommunicationServices" and "azureBlobStorage".
+     "azureCommunicationServices" and "AzureBlobStorage".
     :vartype recording_storage_kind: str or
      ~azure.communication.callautomation.models.RecordingStorageKind
     :ivar recording_destination_container_url: Uri of a container or a location within a container.
@@ -2577,7 +2558,7 @@ class ExternalStorage(_serialization.Model):
     ) -> None:
         """
         :keyword recording_storage_kind: Defines the kind of external storage. Required. Known values
-         are: "azureCommunicationServices" and "azureBlobStorage".
+         are: "azureCommunicationServices" and "AzureBlobStorage".
         :paramtype recording_storage_kind: str or
          ~azure.communication.callautomation.models.RecordingStorageKind
         :keyword recording_destination_container_url: Uri of a container or a location within a

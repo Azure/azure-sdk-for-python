@@ -1238,7 +1238,7 @@ class TestStorageQueue(StorageRecordedTestCase):
         queue_client.create_queue()
 
         # Act
-        identifiers = {}
+        identifiers = dict()
         for i in range(0, 16):
             identifiers[f'id{i}'] = AccessPolicy()
 

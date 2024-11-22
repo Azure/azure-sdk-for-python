@@ -28,3 +28,6 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: batchai
+    Artifacts:
+    - name: azure-mgmt-batchai
+      safeName: azuremgmtbatchai

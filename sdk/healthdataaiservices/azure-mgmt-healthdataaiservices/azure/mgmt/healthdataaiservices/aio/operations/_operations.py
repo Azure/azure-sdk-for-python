@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +9,21 @@
 from io import IOBase
 import json
 import sys
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from typing import (
+    Any,
+    AsyncIterable,
+    AsyncIterator,
+    Callable,
+    Dict,
+    IO,
+    List,
+    Optional,
+    Type,
+    TypeVar,
+    Union,
+    cast,
+    overload,
+)
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -52,7 +66,7 @@ from ...operations._operations import (
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
@@ -83,13 +97,30 @@ class Operations:
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.healthdataaiservices.models.Operation]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "actionType": "str",
+                    "display": {
+                        "description": "str",
+                        "operation": "str",
+                        "provider": "str",
+                        "resource": "str"
+                    },
+                    "isDataAction": bool,
+                    "name": "str",
+                    "origin": "str"
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         cls: ClsType[List[_models.Operation]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -189,8 +220,75 @@ class DeidServicesOperations:
         :return: DeidService. The DeidService is compatible with MutableMapping
         :rtype: ~azure.mgmt.healthdataaiservices.models.DeidService
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "location": "str",
+                    "id": "str",
+                    "identity": {
+                        "type": "str",
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",
+                                "principalId": "str"
+                            }
+                        }
+                    },
+                    "name": "str",
+                    "properties": {
+                        "privateEndpointConnections": [
+                            {
+                                "id": "str",
+                                "name": "str",
+                                "properties": {
+                                    "privateLinkServiceConnectionState": {
+                                        "actionsRequired": "str",
+                                        "description": "str",
+                                        "status": "str"
+                                    },
+                                    "groupIds": [
+                                        "str"
+                                    ],
+                                    "privateEndpoint": {
+                                        "id": "str"
+                                    },
+                                    "provisioningState": "str"
+                                },
+                                "systemData": {
+                                    "createdAt": "2020-02-20 00:00:00",
+                                    "createdBy": "str",
+                                    "createdByType": "str",
+                                    "lastModifiedAt": "2020-02-20 00:00:00",
+                                    "lastModifiedBy": "str",
+                                    "lastModifiedByType": "str"
+                                },
+                                "type": "str"
+                            }
+                        ],
+                        "provisioningState": "str",
+                        "publicNetworkAccess": "str",
+                        "serviceUrl": "str"
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
+                    },
+                    "tags": {
+                        "str": "str"
+                    },
+                    "type": "str"
+                }
         """
-        error_map: MutableMapping = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -254,13 +352,80 @@ class DeidServicesOperations:
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.healthdataaiservices.models.DeidService]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "location": "str",
+                    "id": "str",
+                    "identity": {
+                        "type": "str",
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",
+                                "principalId": "str"
+                            }
+                        }
+                    },
+                    "name": "str",
+                    "properties": {
+                        "privateEndpointConnections": [
+                            {
+                                "id": "str",
+                                "name": "str",
+                                "properties": {
+                                    "privateLinkServiceConnectionState": {
+                                        "actionsRequired": "str",
+                                        "description": "str",
+                                        "status": "str"
+                                    },
+                                    "groupIds": [
+                                        "str"
+                                    ],
+                                    "privateEndpoint": {
+                                        "id": "str"
+                                    },
+                                    "provisioningState": "str"
+                                },
+                                "systemData": {
+                                    "createdAt": "2020-02-20 00:00:00",
+                                    "createdBy": "str",
+                                    "createdByType": "str",
+                                    "lastModifiedAt": "2020-02-20 00:00:00",
+                                    "lastModifiedBy": "str",
+                                    "lastModifiedByType": "str"
+                                },
+                                "type": "str"
+                            }
+                        ],
+                        "provisioningState": "str",
+                        "publicNetworkAccess": "str",
+                        "serviceUrl": "str"
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
+                    },
+                    "tags": {
+                        "str": "str"
+                    },
+                    "type": "str"
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         cls: ClsType[List[_models.DeidService]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -340,13 +505,80 @@ class DeidServicesOperations:
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.healthdataaiservices.models.DeidService]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "location": "str",
+                    "id": "str",
+                    "identity": {
+                        "type": "str",
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",
+                                "principalId": "str"
+                            }
+                        }
+                    },
+                    "name": "str",
+                    "properties": {
+                        "privateEndpointConnections": [
+                            {
+                                "id": "str",
+                                "name": "str",
+                                "properties": {
+                                    "privateLinkServiceConnectionState": {
+                                        "actionsRequired": "str",
+                                        "description": "str",
+                                        "status": "str"
+                                    },
+                                    "groupIds": [
+                                        "str"
+                                    ],
+                                    "privateEndpoint": {
+                                        "id": "str"
+                                    },
+                                    "provisioningState": "str"
+                                },
+                                "systemData": {
+                                    "createdAt": "2020-02-20 00:00:00",
+                                    "createdBy": "str",
+                                    "createdByType": "str",
+                                    "lastModifiedAt": "2020-02-20 00:00:00",
+                                    "lastModifiedBy": "str",
+                                    "lastModifiedByType": "str"
+                                },
+                                "type": "str"
+                            }
+                        ],
+                        "provisioningState": "str",
+                        "publicNetworkAccess": "str",
+                        "serviceUrl": "str"
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
+                    },
+                    "tags": {
+                        "str": "str"
+                    },
+                    "type": "str"
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         cls: ClsType[List[_models.DeidService]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -424,7 +656,7 @@ class DeidServicesOperations:
         resource: Union[_models.DeidService, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -516,6 +748,137 @@ class DeidServicesOperations:
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.healthdataaiservices.models.DeidService]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                resource = {
+                    "location": "str",
+                    "id": "str",
+                    "identity": {
+                        "type": "str",
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",
+                                "principalId": "str"
+                            }
+                        }
+                    },
+                    "name": "str",
+                    "properties": {
+                        "privateEndpointConnections": [
+                            {
+                                "id": "str",
+                                "name": "str",
+                                "properties": {
+                                    "privateLinkServiceConnectionState": {
+                                        "actionsRequired": "str",
+                                        "description": "str",
+                                        "status": "str"
+                                    },
+                                    "groupIds": [
+                                        "str"
+                                    ],
+                                    "privateEndpoint": {
+                                        "id": "str"
+                                    },
+                                    "provisioningState": "str"
+                                },
+                                "systemData": {
+                                    "createdAt": "2020-02-20 00:00:00",
+                                    "createdBy": "str",
+                                    "createdByType": "str",
+                                    "lastModifiedAt": "2020-02-20 00:00:00",
+                                    "lastModifiedBy": "str",
+                                    "lastModifiedByType": "str"
+                                },
+                                "type": "str"
+                            }
+                        ],
+                        "provisioningState": "str",
+                        "publicNetworkAccess": "str",
+                        "serviceUrl": "str"
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
+                    },
+                    "tags": {
+                        "str": "str"
+                    },
+                    "type": "str"
+                }
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "location": "str",
+                    "id": "str",
+                    "identity": {
+                        "type": "str",
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",
+                                "principalId": "str"
+                            }
+                        }
+                    },
+                    "name": "str",
+                    "properties": {
+                        "privateEndpointConnections": [
+                            {
+                                "id": "str",
+                                "name": "str",
+                                "properties": {
+                                    "privateLinkServiceConnectionState": {
+                                        "actionsRequired": "str",
+                                        "description": "str",
+                                        "status": "str"
+                                    },
+                                    "groupIds": [
+                                        "str"
+                                    ],
+                                    "privateEndpoint": {
+                                        "id": "str"
+                                    },
+                                    "provisioningState": "str"
+                                },
+                                "systemData": {
+                                    "createdAt": "2020-02-20 00:00:00",
+                                    "createdBy": "str",
+                                    "createdByType": "str",
+                                    "lastModifiedAt": "2020-02-20 00:00:00",
+                                    "lastModifiedBy": "str",
+                                    "lastModifiedByType": "str"
+                                },
+                                "type": "str"
+                            }
+                        ],
+                        "provisioningState": "str",
+                        "publicNetworkAccess": "str",
+                        "serviceUrl": "str"
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
+                    },
+                    "tags": {
+                        "str": "str"
+                    },
+                    "type": "str"
+                }
         """
 
     @overload
@@ -544,6 +907,73 @@ class DeidServicesOperations:
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.healthdataaiservices.models.DeidService]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "location": "str",
+                    "id": "str",
+                    "identity": {
+                        "type": "str",
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",
+                                "principalId": "str"
+                            }
+                        }
+                    },
+                    "name": "str",
+                    "properties": {
+                        "privateEndpointConnections": [
+                            {
+                                "id": "str",
+                                "name": "str",
+                                "properties": {
+                                    "privateLinkServiceConnectionState": {
+                                        "actionsRequired": "str",
+                                        "description": "str",
+                                        "status": "str"
+                                    },
+                                    "groupIds": [
+                                        "str"
+                                    ],
+                                    "privateEndpoint": {
+                                        "id": "str"
+                                    },
+                                    "provisioningState": "str"
+                                },
+                                "systemData": {
+                                    "createdAt": "2020-02-20 00:00:00",
+                                    "createdBy": "str",
+                                    "createdByType": "str",
+                                    "lastModifiedAt": "2020-02-20 00:00:00",
+                                    "lastModifiedBy": "str",
+                                    "lastModifiedByType": "str"
+                                },
+                                "type": "str"
+                            }
+                        ],
+                        "provisioningState": "str",
+                        "publicNetworkAccess": "str",
+                        "serviceUrl": "str"
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
+                    },
+                    "tags": {
+                        "str": "str"
+                    },
+                    "type": "str"
+                }
         """
 
     @overload
@@ -572,6 +1002,73 @@ class DeidServicesOperations:
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.healthdataaiservices.models.DeidService]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "location": "str",
+                    "id": "str",
+                    "identity": {
+                        "type": "str",
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",
+                                "principalId": "str"
+                            }
+                        }
+                    },
+                    "name": "str",
+                    "properties": {
+                        "privateEndpointConnections": [
+                            {
+                                "id": "str",
+                                "name": "str",
+                                "properties": {
+                                    "privateLinkServiceConnectionState": {
+                                        "actionsRequired": "str",
+                                        "description": "str",
+                                        "status": "str"
+                                    },
+                                    "groupIds": [
+                                        "str"
+                                    ],
+                                    "privateEndpoint": {
+                                        "id": "str"
+                                    },
+                                    "provisioningState": "str"
+                                },
+                                "systemData": {
+                                    "createdAt": "2020-02-20 00:00:00",
+                                    "createdBy": "str",
+                                    "createdByType": "str",
+                                    "lastModifiedAt": "2020-02-20 00:00:00",
+                                    "lastModifiedBy": "str",
+                                    "lastModifiedByType": "str"
+                                },
+                                "type": "str"
+                            }
+                        ],
+                        "provisioningState": "str",
+                        "publicNetworkAccess": "str",
+                        "serviceUrl": "str"
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
+                    },
+                    "tags": {
+                        "str": "str"
+                    },
+                    "type": "str"
+                }
         """
 
     @distributed_trace_async
@@ -596,6 +1093,137 @@ class DeidServicesOperations:
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.healthdataaiservices.models.DeidService]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                resource = {
+                    "location": "str",
+                    "id": "str",
+                    "identity": {
+                        "type": "str",
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",
+                                "principalId": "str"
+                            }
+                        }
+                    },
+                    "name": "str",
+                    "properties": {
+                        "privateEndpointConnections": [
+                            {
+                                "id": "str",
+                                "name": "str",
+                                "properties": {
+                                    "privateLinkServiceConnectionState": {
+                                        "actionsRequired": "str",
+                                        "description": "str",
+                                        "status": "str"
+                                    },
+                                    "groupIds": [
+                                        "str"
+                                    ],
+                                    "privateEndpoint": {
+                                        "id": "str"
+                                    },
+                                    "provisioningState": "str"
+                                },
+                                "systemData": {
+                                    "createdAt": "2020-02-20 00:00:00",
+                                    "createdBy": "str",
+                                    "createdByType": "str",
+                                    "lastModifiedAt": "2020-02-20 00:00:00",
+                                    "lastModifiedBy": "str",
+                                    "lastModifiedByType": "str"
+                                },
+                                "type": "str"
+                            }
+                        ],
+                        "provisioningState": "str",
+                        "publicNetworkAccess": "str",
+                        "serviceUrl": "str"
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
+                    },
+                    "tags": {
+                        "str": "str"
+                    },
+                    "type": "str"
+                }
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "location": "str",
+                    "id": "str",
+                    "identity": {
+                        "type": "str",
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",
+                                "principalId": "str"
+                            }
+                        }
+                    },
+                    "name": "str",
+                    "properties": {
+                        "privateEndpointConnections": [
+                            {
+                                "id": "str",
+                                "name": "str",
+                                "properties": {
+                                    "privateLinkServiceConnectionState": {
+                                        "actionsRequired": "str",
+                                        "description": "str",
+                                        "status": "str"
+                                    },
+                                    "groupIds": [
+                                        "str"
+                                    ],
+                                    "privateEndpoint": {
+                                        "id": "str"
+                                    },
+                                    "provisioningState": "str"
+                                },
+                                "systemData": {
+                                    "createdAt": "2020-02-20 00:00:00",
+                                    "createdBy": "str",
+                                    "createdByType": "str",
+                                    "lastModifiedAt": "2020-02-20 00:00:00",
+                                    "lastModifiedBy": "str",
+                                    "lastModifiedByType": "str"
+                                },
+                                "type": "str"
+                            }
+                        ],
+                        "provisioningState": "str",
+                        "publicNetworkAccess": "str",
+                        "serviceUrl": "str"
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
+                    },
+                    "tags": {
+                        "str": "str"
+                    },
+                    "type": "str"
+                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -656,7 +1284,7 @@ class DeidServicesOperations:
         properties: Union[_models.DeidUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -746,6 +1374,92 @@ class DeidServicesOperations:
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.healthdataaiservices.models.DeidService]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                properties = {
+                    "identity": {
+                        "type": "str",
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",
+                                "principalId": "str"
+                            }
+                        }
+                    },
+                    "properties": {
+                        "publicNetworkAccess": "str"
+                    },
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # response body for status code(s): 200, 202
+                response == {
+                    "location": "str",
+                    "id": "str",
+                    "identity": {
+                        "type": "str",
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",
+                                "principalId": "str"
+                            }
+                        }
+                    },
+                    "name": "str",
+                    "properties": {
+                        "privateEndpointConnections": [
+                            {
+                                "id": "str",
+                                "name": "str",
+                                "properties": {
+                                    "privateLinkServiceConnectionState": {
+                                        "actionsRequired": "str",
+                                        "description": "str",
+                                        "status": "str"
+                                    },
+                                    "groupIds": [
+                                        "str"
+                                    ],
+                                    "privateEndpoint": {
+                                        "id": "str"
+                                    },
+                                    "provisioningState": "str"
+                                },
+                                "systemData": {
+                                    "createdAt": "2020-02-20 00:00:00",
+                                    "createdBy": "str",
+                                    "createdByType": "str",
+                                    "lastModifiedAt": "2020-02-20 00:00:00",
+                                    "lastModifiedBy": "str",
+                                    "lastModifiedByType": "str"
+                                },
+                                "type": "str"
+                            }
+                        ],
+                        "provisioningState": "str",
+                        "publicNetworkAccess": "str",
+                        "serviceUrl": "str"
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
+                    },
+                    "tags": {
+                        "str": "str"
+                    },
+                    "type": "str"
+                }
         """
 
     @overload
@@ -774,6 +1488,73 @@ class DeidServicesOperations:
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.healthdataaiservices.models.DeidService]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200, 202
+                response == {
+                    "location": "str",
+                    "id": "str",
+                    "identity": {
+                        "type": "str",
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",
+                                "principalId": "str"
+                            }
+                        }
+                    },
+                    "name": "str",
+                    "properties": {
+                        "privateEndpointConnections": [
+                            {
+                                "id": "str",
+                                "name": "str",
+                                "properties": {
+                                    "privateLinkServiceConnectionState": {
+                                        "actionsRequired": "str",
+                                        "description": "str",
+                                        "status": "str"
+                                    },
+                                    "groupIds": [
+                                        "str"
+                                    ],
+                                    "privateEndpoint": {
+                                        "id": "str"
+                                    },
+                                    "provisioningState": "str"
+                                },
+                                "systemData": {
+                                    "createdAt": "2020-02-20 00:00:00",
+                                    "createdBy": "str",
+                                    "createdByType": "str",
+                                    "lastModifiedAt": "2020-02-20 00:00:00",
+                                    "lastModifiedBy": "str",
+                                    "lastModifiedByType": "str"
+                                },
+                                "type": "str"
+                            }
+                        ],
+                        "provisioningState": "str",
+                        "publicNetworkAccess": "str",
+                        "serviceUrl": "str"
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
+                    },
+                    "tags": {
+                        "str": "str"
+                    },
+                    "type": "str"
+                }
         """
 
     @overload
@@ -802,6 +1583,73 @@ class DeidServicesOperations:
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.healthdataaiservices.models.DeidService]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200, 202
+                response == {
+                    "location": "str",
+                    "id": "str",
+                    "identity": {
+                        "type": "str",
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",
+                                "principalId": "str"
+                            }
+                        }
+                    },
+                    "name": "str",
+                    "properties": {
+                        "privateEndpointConnections": [
+                            {
+                                "id": "str",
+                                "name": "str",
+                                "properties": {
+                                    "privateLinkServiceConnectionState": {
+                                        "actionsRequired": "str",
+                                        "description": "str",
+                                        "status": "str"
+                                    },
+                                    "groupIds": [
+                                        "str"
+                                    ],
+                                    "privateEndpoint": {
+                                        "id": "str"
+                                    },
+                                    "provisioningState": "str"
+                                },
+                                "systemData": {
+                                    "createdAt": "2020-02-20 00:00:00",
+                                    "createdBy": "str",
+                                    "createdByType": "str",
+                                    "lastModifiedAt": "2020-02-20 00:00:00",
+                                    "lastModifiedBy": "str",
+                                    "lastModifiedByType": "str"
+                                },
+                                "type": "str"
+                            }
+                        ],
+                        "provisioningState": "str",
+                        "publicNetworkAccess": "str",
+                        "serviceUrl": "str"
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
+                    },
+                    "tags": {
+                        "str": "str"
+                    },
+                    "type": "str"
+                }
         """
 
     @distributed_trace_async
@@ -826,6 +1674,92 @@ class DeidServicesOperations:
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.healthdataaiservices.models.DeidService]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                properties = {
+                    "identity": {
+                        "type": "str",
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",
+                                "principalId": "str"
+                            }
+                        }
+                    },
+                    "properties": {
+                        "publicNetworkAccess": "str"
+                    },
+                    "tags": {
+                        "str": "str"
+                    }
+                }
+
+                # response body for status code(s): 200, 202
+                response == {
+                    "location": "str",
+                    "id": "str",
+                    "identity": {
+                        "type": "str",
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",
+                                "principalId": "str"
+                            }
+                        }
+                    },
+                    "name": "str",
+                    "properties": {
+                        "privateEndpointConnections": [
+                            {
+                                "id": "str",
+                                "name": "str",
+                                "properties": {
+                                    "privateLinkServiceConnectionState": {
+                                        "actionsRequired": "str",
+                                        "description": "str",
+                                        "status": "str"
+                                    },
+                                    "groupIds": [
+                                        "str"
+                                    ],
+                                    "privateEndpoint": {
+                                        "id": "str"
+                                    },
+                                    "provisioningState": "str"
+                                },
+                                "systemData": {
+                                    "createdAt": "2020-02-20 00:00:00",
+                                    "createdBy": "str",
+                                    "createdByType": "str",
+                                    "lastModifiedAt": "2020-02-20 00:00:00",
+                                    "lastModifiedBy": "str",
+                                    "lastModifiedByType": "str"
+                                },
+                                "type": "str"
+                            }
+                        ],
+                        "provisioningState": "str",
+                        "publicNetworkAccess": "str",
+                        "serviceUrl": "str"
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
+                    },
+                    "tags": {
+                        "str": "str"
+                    },
+                    "type": "str"
+                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -882,7 +1816,7 @@ class DeidServicesOperations:
     async def _delete_initial(
         self, resource_group_name: str, deid_service_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1031,8 +1965,40 @@ class PrivateEndpointConnectionsOperations:
          with MutableMapping
         :rtype: ~azure.mgmt.healthdataaiservices.models.PrivateEndpointConnectionResource
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "id": "str",
+                    "name": "str",
+                    "properties": {
+                        "privateLinkServiceConnectionState": {
+                            "actionsRequired": "str",
+                            "description": "str",
+                            "status": "str"
+                        },
+                        "groupIds": [
+                            "str"
+                        ],
+                        "privateEndpoint": {
+                            "id": "str"
+                        },
+                        "provisioningState": "str"
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
+                    },
+                    "type": "str"
+                }
         """
-        error_map: MutableMapping = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1094,7 +2060,7 @@ class PrivateEndpointConnectionsOperations:
         resource: Union[_models.PrivateEndpointConnectionResource, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1192,6 +2158,67 @@ class PrivateEndpointConnectionsOperations:
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.healthdataaiservices.models.PrivateEndpointConnectionResource]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                resource = {
+                    "id": "str",
+                    "name": "str",
+                    "properties": {
+                        "privateLinkServiceConnectionState": {
+                            "actionsRequired": "str",
+                            "description": "str",
+                            "status": "str"
+                        },
+                        "groupIds": [
+                            "str"
+                        ],
+                        "privateEndpoint": {
+                            "id": "str"
+                        },
+                        "provisioningState": "str"
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
+                    },
+                    "type": "str"
+                }
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "id": "str",
+                    "name": "str",
+                    "properties": {
+                        "privateLinkServiceConnectionState": {
+                            "actionsRequired": "str",
+                            "description": "str",
+                            "status": "str"
+                        },
+                        "groupIds": [
+                            "str"
+                        ],
+                        "privateEndpoint": {
+                            "id": "str"
+                        },
+                        "provisioningState": "str"
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
+                    },
+                    "type": "str"
+                }
         """
 
     @overload
@@ -1225,6 +2252,38 @@ class PrivateEndpointConnectionsOperations:
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.healthdataaiservices.models.PrivateEndpointConnectionResource]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "id": "str",
+                    "name": "str",
+                    "properties": {
+                        "privateLinkServiceConnectionState": {
+                            "actionsRequired": "str",
+                            "description": "str",
+                            "status": "str"
+                        },
+                        "groupIds": [
+                            "str"
+                        ],
+                        "privateEndpoint": {
+                            "id": "str"
+                        },
+                        "provisioningState": "str"
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
+                    },
+                    "type": "str"
+                }
         """
 
     @overload
@@ -1258,6 +2317,38 @@ class PrivateEndpointConnectionsOperations:
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.healthdataaiservices.models.PrivateEndpointConnectionResource]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "id": "str",
+                    "name": "str",
+                    "properties": {
+                        "privateLinkServiceConnectionState": {
+                            "actionsRequired": "str",
+                            "description": "str",
+                            "status": "str"
+                        },
+                        "groupIds": [
+                            "str"
+                        ],
+                        "privateEndpoint": {
+                            "id": "str"
+                        },
+                        "provisioningState": "str"
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
+                    },
+                    "type": "str"
+                }
         """
 
     @distributed_trace_async
@@ -1288,6 +2379,67 @@ class PrivateEndpointConnectionsOperations:
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.healthdataaiservices.models.PrivateEndpointConnectionResource]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                resource = {
+                    "id": "str",
+                    "name": "str",
+                    "properties": {
+                        "privateLinkServiceConnectionState": {
+                            "actionsRequired": "str",
+                            "description": "str",
+                            "status": "str"
+                        },
+                        "groupIds": [
+                            "str"
+                        ],
+                        "privateEndpoint": {
+                            "id": "str"
+                        },
+                        "provisioningState": "str"
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
+                    },
+                    "type": "str"
+                }
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "id": "str",
+                    "name": "str",
+                    "properties": {
+                        "privateLinkServiceConnectionState": {
+                            "actionsRequired": "str",
+                            "description": "str",
+                            "status": "str"
+                        },
+                        "groupIds": [
+                            "str"
+                        ],
+                        "privateEndpoint": {
+                            "id": "str"
+                        },
+                        "provisioningState": "str"
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
+                    },
+                    "type": "str"
+                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -1345,7 +2497,7 @@ class PrivateEndpointConnectionsOperations:
     async def _delete_initial(
         self, resource_group_name: str, deid_service_name: str, private_endpoint_connection_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1467,7 +2619,6 @@ class PrivateEndpointConnectionsOperations:
     def list_by_deid_service(
         self, resource_group_name: str, deid_service_name: str, **kwargs: Any
     ) -> AsyncIterable["_models.PrivateEndpointConnectionResource"]:
-        # pylint: disable=line-too-long
         """List private endpoint connections on the given resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1479,13 +2630,45 @@ class PrivateEndpointConnectionsOperations:
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.healthdataaiservices.models.PrivateEndpointConnectionResource]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "id": "str",
+                    "name": "str",
+                    "properties": {
+                        "privateLinkServiceConnectionState": {
+                            "actionsRequired": "str",
+                            "description": "str",
+                            "status": "str"
+                        },
+                        "groupIds": [
+                            "str"
+                        ],
+                        "privateEndpoint": {
+                            "id": "str"
+                        },
+                        "provisioningState": "str"
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
+                    },
+                    "type": "str"
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         cls: ClsType[List[_models.PrivateEndpointConnectionResource]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1591,13 +2774,40 @@ class PrivateLinksOperations:
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.healthdataaiservices.models.PrivateLinkResource]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "id": "str",
+                    "name": "str",
+                    "properties": {
+                        "groupId": "str",
+                        "requiredMembers": [
+                            "str"
+                        ],
+                        "requiredZoneNames": [
+                            "str"
+                        ]
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
+                    },
+                    "type": "str"
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         cls: ClsType[List[_models.PrivateLinkResource]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

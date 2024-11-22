@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-
 from azure.mgmt.networkcloud import NetworkCloudMgmtClient
 
 """
@@ -77,7 +76,7 @@ def main():
                 "mode": "System",
                 "taints": [{"key": "kubernetes.taint", "value": "true"}],
                 "upgradeSettings": {"maxSurge": "1"},
-                "vmSkuName": "NC_XXXX",
+                "vmSkuName": "NC_M16_v1",
             },
             "tags": {"key1": "myvalue1", "key2": "myvalue2"},
         },
@@ -85,6 +84,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2024-06-01-preview/examples/AgentPools_Create.json
+# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/AgentPools_Create.json
 if __name__ == "__main__":
     main()

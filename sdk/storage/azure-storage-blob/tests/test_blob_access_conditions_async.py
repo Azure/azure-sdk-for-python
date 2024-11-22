@@ -462,7 +462,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        counter = []
+        counter = list()
 
         def _validate_headers(request):
             counter.append(request)
@@ -3056,7 +3056,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         ascii_subset = "!#$%&*+.-^_~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz|~"
 
         # Build out metadata
-        metadata = {}
+        metadata = dict()
         for c in ascii_subset:
             metadata[c] = 'a'
 

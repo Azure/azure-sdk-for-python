@@ -12,11 +12,10 @@ from azure.communication.callautomation import (
     ServerCallLocator,
     GroupCallLocator,
     ChannelAffinity,
-    CommunicationUserIdentifier,
+    CommunicationUserIdentifier
 )
 from unittest_helpers import mock_response
 from unittest.mock import Mock
-
 
 class TestCallRecordingClient(unittest.TestCase):
     recording_id = "123"
@@ -26,14 +25,15 @@ class TestCallRecordingClient(unittest.TestCase):
             kwargs.pop("stream", None)
             if kwargs:
                 raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
-            return mock_response(status_code=200, json_payload={"recording_id": "1", "recording_state": "2"})
+            return mock_response(status_code=200, json_payload={
+                "recording_id": "1",
+                "recording_state": "2"
+            })
 
-        callautomation_client = CallAutomationClient(
-            "https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send)
-        )
+        callautomation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
         call_locator = ServerCallLocator(server_call_id="locatorId")
         target_participant = CommunicationUserIdentifier("testId")
-        channel_affinity = ChannelAffinity(target_participant=target_participant, channel=0)
+        channel_affinity=ChannelAffinity(target_participant=target_participant, channel=0)
         callautomation_client.start_recording(call_locator=call_locator, channel_affinity=[channel_affinity])
         callautomation_client.start_recording(call_locator, channel_affinity=[channel_affinity])
         callautomation_client.start_recording(group_call_id="locatorId", channel_affinity=[channel_affinity])
@@ -55,9 +55,7 @@ class TestCallRecordingClient(unittest.TestCase):
                 raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
             return mock_response(status_code=204)
 
-        callautomation_client = CallAutomationClient(
-            "https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send)
-        )
+        callautomation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
         callautomation_client.stop_recording(recording_id=self.recording_id)
 
     def test_resume_recording(self):
@@ -67,9 +65,7 @@ class TestCallRecordingClient(unittest.TestCase):
                 raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
             return mock_response(status_code=202)
 
-        callautomation_client = CallAutomationClient(
-            "https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send)
-        )
+        callautomation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
         callautomation_client.resume_recording(recording_id=self.recording_id)
 
     def test_pause_recording(self):
@@ -79,9 +75,7 @@ class TestCallRecordingClient(unittest.TestCase):
                 raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
             return mock_response(status_code=202)
 
-        callautomation_client = CallAutomationClient(
-            "https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send)
-        )
+        callautomation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
         callautomation_client.pause_recording(recording_id=self.recording_id)
 
     def test_get_recording_properties(self):
@@ -89,9 +83,10 @@ class TestCallRecordingClient(unittest.TestCase):
             kwargs.pop("stream", None)
             if kwargs:
                 raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
-            return mock_response(status_code=200, json_payload={"recording_id": "1", "recording_state": "2"})
+            return mock_response(status_code=200, json_payload={
+                "recording_id": "1",
+                "recording_state": "2"
+            })
 
-        callautomation_client = CallAutomationClient(
-            "https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send)
-        )
+        callautomation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
         callautomation_client.get_recording_properties(recording_id=self.recording_id)

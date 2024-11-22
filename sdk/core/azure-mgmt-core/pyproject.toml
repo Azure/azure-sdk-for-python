@@ -4,4 +4,3 @@ verifytypes = true
 pyright = false
 type_check_samples = false
 breaking = false
-black = true

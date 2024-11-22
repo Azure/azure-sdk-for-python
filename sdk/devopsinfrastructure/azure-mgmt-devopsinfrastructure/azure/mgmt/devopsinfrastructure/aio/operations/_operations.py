@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +9,7 @@
 from io import IOBase
 import json
 import sys
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -19,8 +19,6 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
-    StreamClosedError,
-    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -45,13 +43,13 @@ from ...operations._operations import (
     build_pools_update_request,
     build_resource_details_list_by_pool_request,
     build_sku_list_by_location_request,
-    build_subscription_usages_usages_request,
+    build_subscription_usages_list_by_location_request,
 )
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
@@ -75,20 +73,52 @@ class Operations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models._models.Operation"]:
+    def list(self, **kwargs: Any) -> AsyncIterable["_models.Operation"]:
+        # pylint: disable=line-too-long
         """List the operations for the provider.
 
         :return: An iterator like instance of Operation
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.devopsinfrastructure.models._models.Operation]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.devopsinfrastructure.models.Operation]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "actionType": "str",  # Optional. Extensible enum. Indicates the action type.
+                      "Internal" refers to actions that are for internal only APIs. "Internal"
+                    "display": {
+                        "description": "str",  # Optional. The short, localized friendly
+                          description of the operation; suitable for tool tips and detailed views.
+                        "operation": "str",  # Optional. The concise, localized friendly name
+                          for the operation; suitable for dropdowns. E.g. "Create or Update Virtual
+                          Machine", "Restart Virtual Machine".
+                        "provider": "str",  # Optional. The localized friendly form of the
+                          resource provider name, e.g. "Microsoft Monitoring Insights" or "Microsoft
+                          Compute".
+                        "resource": "str"  # Optional. The localized friendly name of the
+                          resource type related to this operation. E.g. "Virtual Machines" or "Job
+                          Schedule Collections".
+                    },
+                    "isDataAction": bool,  # Optional. Whether the operation applies to
+                      data-plane. This is "true" for data-plane operations and "false" for Azure
+                      Resource Manager/control-plane operations.
+                    "name": "str",  # Optional. The name of the operation, as per Resource-Based
+                      Access Control (RBAC). Examples: "Microsoft.Compute/virtualMachines/write",
+                      "Microsoft.Compute/virtualMachines/capture/action".
+                    "origin": "str"  # Optional. The intended executor of the operation; as in
+                      Resource Based Access Control (RBAC) and audit logs UX. Default value is
+                      "user,system". Known values are: "user", "system", and "user,system".
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models._models.Operation]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.Operation]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -104,12 +134,7 @@ class Operations:
                     headers=_headers,
                     params=_params,
                 )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -124,18 +149,13 @@ class Operations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url)
 
             return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models._models.Operation], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.Operation], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -150,6 +170,8 @@ class Operations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -178,6 +200,7 @@ class PoolsOperations:
 
     @distributed_trace_async
     async def get(self, resource_group_name: str, pool_name: str, **kwargs: Any) -> _models.Pool:
+        # pylint: disable=line-too-long
         """Get a Pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -188,8 +211,141 @@ class PoolsOperations:
         :return: Pool. The Pool is compatible with MutableMapping
         :rtype: ~azure.mgmt.devopsinfrastructure.models.Pool
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "AzureDevOps":
+                organization_profile = {
+                    "kind": "AzureDevOps",
+                    "organizations": [
+                        {
+                            "url": "str",  # The Azure DevOps organization URL in which
+                              the pool should be created. Required.
+                            "parallelism": 0,  # Optional. How many machines can be
+                              created at maximum in this organization out of the maximumConcurrency of
+                              the pool.
+                            "projects": [
+                                "str"  # Optional. Optional list of projects in which
+                                  the pool should be created.
+                            ]
+                        }
+                    ],
+                    "permissionProfile": {
+                        "kind": "str",  # Determines who has admin permissions to the Azure
+                          DevOps pool. Required. Known values are: "Inherit", "CreatorOnly", and
+                          "SpecificAccounts".
+                        "groups": [
+                            "str"  # Optional. Group email addresses.
+                        ],
+                        "users": [
+                            "str"  # Optional. User email addresses.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "GitHub":
+                organization_profile = {
+                    "kind": "GitHub",
+                    "organizations": [
+                        {
+                            "url": "str",  # The GitHub organization URL in which the
+                              pool should be created. Required.
+                            "repositories": [
+                                "str"  # Optional. Optional list of repositories in
+                                  which the pool should be created.
+                            ]
+                        }
+                    ]
+                }
+
+                # JSON input template for discriminator value "Stateful":
+                agent_profile = {
+                    "kind": "Stateful",
+                    "gracePeriodTimeSpan": "str",  # Optional. How long should the machine be
+                      kept around after it ran a workload when there are no stand-by agents. The
+                      maximum is one week.
+                    "maxAgentLifetime": "str",  # Optional. How long should stateful machines be
+                      kept around. The maximum is one week.
+                    "resourcePredictions": {},
+                    "resourcePredictionsProfile": resource_predictions_profile
+                }
+
+                # JSON input template for discriminator value "Automatic":
+                resource_predictions_profile = {
+                    "kind": "Automatic",
+                    "predictionPreference": "str"  # Optional. Determines the balance between
+                      cost and performance. Known values are: "Balanced", "MostCostEffective",
+                      "MoreCostEffective", "MorePerformance", and "BestPerformance".
+                }
+
+                # JSON input template for discriminator value "Manual":
+                resource_predictions_profile = {
+                    "kind": "Manual"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "location": "str",  # The geo-location where the resource lives. Required.
+                    "id": "str",  # Optional. Fully qualified resource ID for the resource. Ex -
+                      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+                    "identity": {
+                        "type": "str",  # The type of managed identity assigned to this
+                          resource. Required. Known values are: "None", "SystemAssigned",
+                          "UserAssigned", and "SystemAssigned, UserAssigned".
+                        "principalId": "str",  # Optional. The active directory identifier of
+                          this principal.
+                        "tenantId": "str",  # Optional. The Active Directory tenant id of the
+                          principal.
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
+                    },
+                    "name": "str",  # Optional. The name of the resource.
+                    "properties": {
+                        "agentProfile": agent_profile,
+                        "devCenterProjectResourceId": "str",  # The resource id of the
+                          DevCenter Project the pool belongs to. Required.
+                        "fabricProfile": fabric_profile,
+                        "maximumConcurrency": 0,  # Defines how many resources can there be
+                          created at any given time. Required.
+                        "organizationProfile": organization_profile,
+                        "provisioningState": "str"  # Optional. The status of the current
+                          operation. Known values are: "Succeeded", "Failed", "Canceled",
+                          "Provisioning", "Updating", "Deleting", and "Accepted".
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20",  # Optional. The type of identity that
+                          created the resource.
+                        "createdBy": "str",  # Optional. The identity that created the
+                          resource.
+                        "createdByType": "str",  # Optional. The type of identity that
+                          created the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                        "lastModifiedAt": "2020-02-20",  # Optional. The timestamp of
+                          resource last modification (UTC).
+                        "lastModifiedBy": "str",  # Optional. The identity that last modified
+                          the resource.
+                        "lastModifiedByType": "str"  # Optional. The type of identity that
+                          last modified the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                    },
+                    "tags": {
+                        "str": "str"  # Optional. Resource tags.
+                    },
+                    "type": "str"  # Optional. The type of the resource. E.g.
+                      "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts".
+                }
         """
-        error_map: MutableMapping = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -210,10 +366,7 @@ class PoolsOperations:
             headers=_headers,
             params=_params,
         )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
@@ -224,10 +377,7 @@ class PoolsOperations:
 
         if response.status_code not in [200]:
             if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -244,8 +394,8 @@ class PoolsOperations:
 
     async def _create_or_update_initial(
         self, resource_group_name: str, pool_name: str, resource: Union[_models.Pool, JSON, IO[bytes]], **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
+    ) -> JSON:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -257,7 +407,7 @@ class PoolsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -276,12 +426,9 @@ class PoolsOperations:
             headers=_headers,
             params=_params,
         )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url)
 
-        _stream = True
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -289,19 +436,20 @@ class PoolsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
-            try:
+            if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
+        if response.status_code == 200:
+            deserialized = _deserialize(JSON, response.json())
+
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+            deserialized = _deserialize(JSON, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -318,6 +466,7 @@ class PoolsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Pool]:
+        # pylint: disable=line-too-long
         """Create a Pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -334,6 +483,341 @@ class PoolsOperations:
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.devopsinfrastructure.models.Pool]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "kind":
+
+                # JSON input template for discriminator value "AzureDevOps":
+                organization_profile = {
+                    "kind": "AzureDevOps",
+                    "organizations": [
+                        {
+                            "url": "str",  # The Azure DevOps organization URL in which
+                              the pool should be created. Required.
+                            "parallelism": 0,  # Optional. How many machines can be
+                              created at maximum in this organization out of the maximumConcurrency of
+                              the pool.
+                            "projects": [
+                                "str"  # Optional. Optional list of projects in which
+                                  the pool should be created.
+                            ]
+                        }
+                    ],
+                    "permissionProfile": {
+                        "kind": "str",  # Determines who has admin permissions to the Azure
+                          DevOps pool. Required. Known values are: "Inherit", "CreatorOnly", and
+                          "SpecificAccounts".
+                        "groups": [
+                            "str"  # Optional. Group email addresses.
+                        ],
+                        "users": [
+                            "str"  # Optional. User email addresses.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "GitHub":
+                organization_profile = {
+                    "kind": "GitHub",
+                    "organizations": [
+                        {
+                            "url": "str",  # The GitHub organization URL in which the
+                              pool should be created. Required.
+                            "repositories": [
+                                "str"  # Optional. Optional list of repositories in
+                                  which the pool should be created.
+                            ]
+                        }
+                    ]
+                }
+
+                # JSON input template for discriminator value "Stateful":
+                agent_profile = {
+                    "kind": "Stateful",
+                    "gracePeriodTimeSpan": "str",  # Optional. How long should the machine be
+                      kept around after it ran a workload when there are no stand-by agents. The
+                      maximum is one week.
+                    "maxAgentLifetime": "str",  # Optional. How long should stateful machines be
+                      kept around. The maximum is one week.
+                    "resourcePredictions": {},
+                    "resourcePredictionsProfile": resource_predictions_profile
+                }
+
+                # JSON input template for discriminator value "Automatic":
+                resource_predictions_profile = {
+                    "kind": "Automatic",
+                    "predictionPreference": "str"  # Optional. Determines the balance between
+                      cost and performance. Known values are: "Balanced", "MostCostEffective",
+                      "MoreCostEffective", "MorePerformance", and "BestPerformance".
+                }
+
+                # JSON input template for discriminator value "Manual":
+                resource_predictions_profile = {
+                    "kind": "Manual"
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                resource = {
+                    "location": "str",  # The geo-location where the resource lives. Required.
+                    "id": "str",  # Optional. Fully qualified resource ID for the resource. Ex -
+                      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+                    "identity": {
+                        "type": "str",  # The type of managed identity assigned to this
+                          resource. Required. Known values are: "None", "SystemAssigned",
+                          "UserAssigned", and "SystemAssigned, UserAssigned".
+                        "principalId": "str",  # Optional. The active directory identifier of
+                          this principal.
+                        "tenantId": "str",  # Optional. The Active Directory tenant id of the
+                          principal.
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
+                    },
+                    "name": "str",  # Optional. The name of the resource.
+                    "properties": {
+                        "agentProfile": agent_profile,
+                        "devCenterProjectResourceId": "str",  # The resource id of the
+                          DevCenter Project the pool belongs to. Required.
+                        "fabricProfile": fabric_profile,
+                        "maximumConcurrency": 0,  # Defines how many resources can there be
+                          created at any given time. Required.
+                        "organizationProfile": organization_profile,
+                        "provisioningState": "str"  # Optional. The status of the current
+                          operation. Known values are: "Succeeded", "Failed", "Canceled",
+                          "Provisioning", "Updating", "Deleting", and "Accepted".
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20",  # Optional. The type of identity that
+                          created the resource.
+                        "createdBy": "str",  # Optional. The identity that created the
+                          resource.
+                        "createdByType": "str",  # Optional. The type of identity that
+                          created the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                        "lastModifiedAt": "2020-02-20",  # Optional. The timestamp of
+                          resource last modification (UTC).
+                        "lastModifiedBy": "str",  # Optional. The identity that last modified
+                          the resource.
+                        "lastModifiedByType": "str"  # Optional. The type of identity that
+                          last modified the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                    },
+                    "tags": {
+                        "str": "str"  # Optional. Resource tags.
+                    },
+                    "type": "str"  # Optional. The type of the resource. E.g.
+                      "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts".
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "AzureDevOps":
+                organization_profile = {
+                    "kind": "AzureDevOps",
+                    "organizations": [
+                        {
+                            "url": "str",  # The Azure DevOps organization URL in which
+                              the pool should be created. Required.
+                            "parallelism": 0,  # Optional. How many machines can be
+                              created at maximum in this organization out of the maximumConcurrency of
+                              the pool.
+                            "projects": [
+                                "str"  # Optional. Optional list of projects in which
+                                  the pool should be created.
+                            ]
+                        }
+                    ],
+                    "permissionProfile": {
+                        "kind": "str",  # Determines who has admin permissions to the Azure
+                          DevOps pool. Required. Known values are: "Inherit", "CreatorOnly", and
+                          "SpecificAccounts".
+                        "groups": [
+                            "str"  # Optional. Group email addresses.
+                        ],
+                        "users": [
+                            "str"  # Optional. User email addresses.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "GitHub":
+                organization_profile = {
+                    "kind": "GitHub",
+                    "organizations": [
+                        {
+                            "url": "str",  # The GitHub organization URL in which the
+                              pool should be created. Required.
+                            "repositories": [
+                                "str"  # Optional. Optional list of repositories in
+                                  which the pool should be created.
+                            ]
+                        }
+                    ]
+                }
+
+                # JSON input template for discriminator value "Stateful":
+                agent_profile = {
+                    "kind": "Stateful",
+                    "gracePeriodTimeSpan": "str",  # Optional. How long should the machine be
+                      kept around after it ran a workload when there are no stand-by agents. The
+                      maximum is one week.
+                    "maxAgentLifetime": "str",  # Optional. How long should stateful machines be
+                      kept around. The maximum is one week.
+                    "resourcePredictions": {},
+                    "resourcePredictionsProfile": resource_predictions_profile
+                }
+
+                # JSON input template for discriminator value "Automatic":
+                resource_predictions_profile = {
+                    "kind": "Automatic",
+                    "predictionPreference": "str"  # Optional. Determines the balance between
+                      cost and performance. Known values are: "Balanced", "MostCostEffective",
+                      "MoreCostEffective", "MorePerformance", and "BestPerformance".
+                }
+
+                # JSON input template for discriminator value "Manual":
+                resource_predictions_profile = {
+                    "kind": "Manual"
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "AzureDevOps":
+                organization_profile = {
+                    "kind": "AzureDevOps",
+                    "organizations": [
+                        {
+                            "url": "str",  # The Azure DevOps organization URL in which
+                              the pool should be created. Required.
+                            "parallelism": 0,  # Optional. How many machines can be
+                              created at maximum in this organization out of the maximumConcurrency of
+                              the pool.
+                            "projects": [
+                                "str"  # Optional. Optional list of projects in which
+                                  the pool should be created.
+                            ]
+                        }
+                    ],
+                    "permissionProfile": {
+                        "kind": "str",  # Determines who has admin permissions to the Azure
+                          DevOps pool. Required. Known values are: "Inherit", "CreatorOnly", and
+                          "SpecificAccounts".
+                        "groups": [
+                            "str"  # Optional. Group email addresses.
+                        ],
+                        "users": [
+                            "str"  # Optional. User email addresses.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "GitHub":
+                organization_profile = {
+                    "kind": "GitHub",
+                    "organizations": [
+                        {
+                            "url": "str",  # The GitHub organization URL in which the
+                              pool should be created. Required.
+                            "repositories": [
+                                "str"  # Optional. Optional list of repositories in
+                                  which the pool should be created.
+                            ]
+                        }
+                    ]
+                }
+
+                # JSON input template for discriminator value "Stateful":
+                agent_profile = {
+                    "kind": "Stateful",
+                    "gracePeriodTimeSpan": "str",  # Optional. How long should the machine be
+                      kept around after it ran a workload when there are no stand-by agents. The
+                      maximum is one week.
+                    "maxAgentLifetime": "str",  # Optional. How long should stateful machines be
+                      kept around. The maximum is one week.
+                    "resourcePredictions": {},
+                    "resourcePredictionsProfile": resource_predictions_profile
+                }
+
+                # JSON input template for discriminator value "Automatic":
+                resource_predictions_profile = {
+                    "kind": "Automatic",
+                    "predictionPreference": "str"  # Optional. Determines the balance between
+                      cost and performance. Known values are: "Balanced", "MostCostEffective",
+                      "MoreCostEffective", "MorePerformance", and "BestPerformance".
+                }
+
+                # JSON input template for discriminator value "Manual":
+                resource_predictions_profile = {
+                    "kind": "Manual"
+                }
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "location": "str",  # The geo-location where the resource lives. Required.
+                    "id": "str",  # Optional. Fully qualified resource ID for the resource. Ex -
+                      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+                    "identity": {
+                        "type": "str",  # The type of managed identity assigned to this
+                          resource. Required. Known values are: "None", "SystemAssigned",
+                          "UserAssigned", and "SystemAssigned, UserAssigned".
+                        "principalId": "str",  # Optional. The active directory identifier of
+                          this principal.
+                        "tenantId": "str",  # Optional. The Active Directory tenant id of the
+                          principal.
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
+                    },
+                    "name": "str",  # Optional. The name of the resource.
+                    "properties": {
+                        "agentProfile": agent_profile,
+                        "devCenterProjectResourceId": "str",  # The resource id of the
+                          DevCenter Project the pool belongs to. Required.
+                        "fabricProfile": fabric_profile,
+                        "maximumConcurrency": 0,  # Defines how many resources can there be
+                          created at any given time. Required.
+                        "organizationProfile": organization_profile,
+                        "provisioningState": "str"  # Optional. The status of the current
+                          operation. Known values are: "Succeeded", "Failed", "Canceled",
+                          "Provisioning", "Updating", "Deleting", and "Accepted".
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20",  # Optional. The type of identity that
+                          created the resource.
+                        "createdBy": "str",  # Optional. The identity that created the
+                          resource.
+                        "createdByType": "str",  # Optional. The type of identity that
+                          created the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                        "lastModifiedAt": "2020-02-20",  # Optional. The timestamp of
+                          resource last modification (UTC).
+                        "lastModifiedBy": "str",  # Optional. The identity that last modified
+                          the resource.
+                        "lastModifiedByType": "str"  # Optional. The type of identity that
+                          last modified the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                    },
+                    "tags": {
+                        "str": "str"  # Optional. Resource tags.
+                    },
+                    "type": "str"  # Optional. The type of the resource. E.g.
+                      "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts".
+                }
         """
 
     @overload
@@ -346,6 +830,7 @@ class PoolsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Pool]:
+        # pylint: disable=line-too-long
         """Create a Pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -362,6 +847,211 @@ class PoolsOperations:
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.devopsinfrastructure.models.Pool]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "AzureDevOps":
+                organization_profile = {
+                    "kind": "AzureDevOps",
+                    "organizations": [
+                        {
+                            "url": "str",  # The Azure DevOps organization URL in which
+                              the pool should be created. Required.
+                            "parallelism": 0,  # Optional. How many machines can be
+                              created at maximum in this organization out of the maximumConcurrency of
+                              the pool.
+                            "projects": [
+                                "str"  # Optional. Optional list of projects in which
+                                  the pool should be created.
+                            ]
+                        }
+                    ],
+                    "permissionProfile": {
+                        "kind": "str",  # Determines who has admin permissions to the Azure
+                          DevOps pool. Required. Known values are: "Inherit", "CreatorOnly", and
+                          "SpecificAccounts".
+                        "groups": [
+                            "str"  # Optional. Group email addresses.
+                        ],
+                        "users": [
+                            "str"  # Optional. User email addresses.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "GitHub":
+                organization_profile = {
+                    "kind": "GitHub",
+                    "organizations": [
+                        {
+                            "url": "str",  # The GitHub organization URL in which the
+                              pool should be created. Required.
+                            "repositories": [
+                                "str"  # Optional. Optional list of repositories in
+                                  which the pool should be created.
+                            ]
+                        }
+                    ]
+                }
+
+                # JSON input template for discriminator value "Stateful":
+                agent_profile = {
+                    "kind": "Stateful",
+                    "gracePeriodTimeSpan": "str",  # Optional. How long should the machine be
+                      kept around after it ran a workload when there are no stand-by agents. The
+                      maximum is one week.
+                    "maxAgentLifetime": "str",  # Optional. How long should stateful machines be
+                      kept around. The maximum is one week.
+                    "resourcePredictions": {},
+                    "resourcePredictionsProfile": resource_predictions_profile
+                }
+
+                # JSON input template for discriminator value "Automatic":
+                resource_predictions_profile = {
+                    "kind": "Automatic",
+                    "predictionPreference": "str"  # Optional. Determines the balance between
+                      cost and performance. Known values are: "Balanced", "MostCostEffective",
+                      "MoreCostEffective", "MorePerformance", and "BestPerformance".
+                }
+
+                # JSON input template for discriminator value "Manual":
+                resource_predictions_profile = {
+                    "kind": "Manual"
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "AzureDevOps":
+                organization_profile = {
+                    "kind": "AzureDevOps",
+                    "organizations": [
+                        {
+                            "url": "str",  # The Azure DevOps organization URL in which
+                              the pool should be created. Required.
+                            "parallelism": 0,  # Optional. How many machines can be
+                              created at maximum in this organization out of the maximumConcurrency of
+                              the pool.
+                            "projects": [
+                                "str"  # Optional. Optional list of projects in which
+                                  the pool should be created.
+                            ]
+                        }
+                    ],
+                    "permissionProfile": {
+                        "kind": "str",  # Determines who has admin permissions to the Azure
+                          DevOps pool. Required. Known values are: "Inherit", "CreatorOnly", and
+                          "SpecificAccounts".
+                        "groups": [
+                            "str"  # Optional. Group email addresses.
+                        ],
+                        "users": [
+                            "str"  # Optional. User email addresses.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "GitHub":
+                organization_profile = {
+                    "kind": "GitHub",
+                    "organizations": [
+                        {
+                            "url": "str",  # The GitHub organization URL in which the
+                              pool should be created. Required.
+                            "repositories": [
+                                "str"  # Optional. Optional list of repositories in
+                                  which the pool should be created.
+                            ]
+                        }
+                    ]
+                }
+
+                # JSON input template for discriminator value "Stateful":
+                agent_profile = {
+                    "kind": "Stateful",
+                    "gracePeriodTimeSpan": "str",  # Optional. How long should the machine be
+                      kept around after it ran a workload when there are no stand-by agents. The
+                      maximum is one week.
+                    "maxAgentLifetime": "str",  # Optional. How long should stateful machines be
+                      kept around. The maximum is one week.
+                    "resourcePredictions": {},
+                    "resourcePredictionsProfile": resource_predictions_profile
+                }
+
+                # JSON input template for discriminator value "Automatic":
+                resource_predictions_profile = {
+                    "kind": "Automatic",
+                    "predictionPreference": "str"  # Optional. Determines the balance between
+                      cost and performance. Known values are: "Balanced", "MostCostEffective",
+                      "MoreCostEffective", "MorePerformance", and "BestPerformance".
+                }
+
+                # JSON input template for discriminator value "Manual":
+                resource_predictions_profile = {
+                    "kind": "Manual"
+                }
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "location": "str",  # The geo-location where the resource lives. Required.
+                    "id": "str",  # Optional. Fully qualified resource ID for the resource. Ex -
+                      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+                    "identity": {
+                        "type": "str",  # The type of managed identity assigned to this
+                          resource. Required. Known values are: "None", "SystemAssigned",
+                          "UserAssigned", and "SystemAssigned, UserAssigned".
+                        "principalId": "str",  # Optional. The active directory identifier of
+                          this principal.
+                        "tenantId": "str",  # Optional. The Active Directory tenant id of the
+                          principal.
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
+                    },
+                    "name": "str",  # Optional. The name of the resource.
+                    "properties": {
+                        "agentProfile": agent_profile,
+                        "devCenterProjectResourceId": "str",  # The resource id of the
+                          DevCenter Project the pool belongs to. Required.
+                        "fabricProfile": fabric_profile,
+                        "maximumConcurrency": 0,  # Defines how many resources can there be
+                          created at any given time. Required.
+                        "organizationProfile": organization_profile,
+                        "provisioningState": "str"  # Optional. The status of the current
+                          operation. Known values are: "Succeeded", "Failed", "Canceled",
+                          "Provisioning", "Updating", "Deleting", and "Accepted".
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20",  # Optional. The type of identity that
+                          created the resource.
+                        "createdBy": "str",  # Optional. The identity that created the
+                          resource.
+                        "createdByType": "str",  # Optional. The type of identity that
+                          created the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                        "lastModifiedAt": "2020-02-20",  # Optional. The timestamp of
+                          resource last modification (UTC).
+                        "lastModifiedBy": "str",  # Optional. The identity that last modified
+                          the resource.
+                        "lastModifiedByType": "str"  # Optional. The type of identity that
+                          last modified the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                    },
+                    "tags": {
+                        "str": "str"  # Optional. Resource tags.
+                    },
+                    "type": "str"  # Optional. The type of the resource. E.g.
+                      "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts".
+                }
         """
 
     @overload
@@ -374,6 +1064,7 @@ class PoolsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Pool]:
+        # pylint: disable=line-too-long
         """Create a Pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -390,12 +1081,218 @@ class PoolsOperations:
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.devopsinfrastructure.models.Pool]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "AzureDevOps":
+                organization_profile = {
+                    "kind": "AzureDevOps",
+                    "organizations": [
+                        {
+                            "url": "str",  # The Azure DevOps organization URL in which
+                              the pool should be created. Required.
+                            "parallelism": 0,  # Optional. How many machines can be
+                              created at maximum in this organization out of the maximumConcurrency of
+                              the pool.
+                            "projects": [
+                                "str"  # Optional. Optional list of projects in which
+                                  the pool should be created.
+                            ]
+                        }
+                    ],
+                    "permissionProfile": {
+                        "kind": "str",  # Determines who has admin permissions to the Azure
+                          DevOps pool. Required. Known values are: "Inherit", "CreatorOnly", and
+                          "SpecificAccounts".
+                        "groups": [
+                            "str"  # Optional. Group email addresses.
+                        ],
+                        "users": [
+                            "str"  # Optional. User email addresses.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "GitHub":
+                organization_profile = {
+                    "kind": "GitHub",
+                    "organizations": [
+                        {
+                            "url": "str",  # The GitHub organization URL in which the
+                              pool should be created. Required.
+                            "repositories": [
+                                "str"  # Optional. Optional list of repositories in
+                                  which the pool should be created.
+                            ]
+                        }
+                    ]
+                }
+
+                # JSON input template for discriminator value "Stateful":
+                agent_profile = {
+                    "kind": "Stateful",
+                    "gracePeriodTimeSpan": "str",  # Optional. How long should the machine be
+                      kept around after it ran a workload when there are no stand-by agents. The
+                      maximum is one week.
+                    "maxAgentLifetime": "str",  # Optional. How long should stateful machines be
+                      kept around. The maximum is one week.
+                    "resourcePredictions": {},
+                    "resourcePredictionsProfile": resource_predictions_profile
+                }
+
+                # JSON input template for discriminator value "Automatic":
+                resource_predictions_profile = {
+                    "kind": "Automatic",
+                    "predictionPreference": "str"  # Optional. Determines the balance between
+                      cost and performance. Known values are: "Balanced", "MostCostEffective",
+                      "MoreCostEffective", "MorePerformance", and "BestPerformance".
+                }
+
+                # JSON input template for discriminator value "Manual":
+                resource_predictions_profile = {
+                    "kind": "Manual"
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "AzureDevOps":
+                organization_profile = {
+                    "kind": "AzureDevOps",
+                    "organizations": [
+                        {
+                            "url": "str",  # The Azure DevOps organization URL in which
+                              the pool should be created. Required.
+                            "parallelism": 0,  # Optional. How many machines can be
+                              created at maximum in this organization out of the maximumConcurrency of
+                              the pool.
+                            "projects": [
+                                "str"  # Optional. Optional list of projects in which
+                                  the pool should be created.
+                            ]
+                        }
+                    ],
+                    "permissionProfile": {
+                        "kind": "str",  # Determines who has admin permissions to the Azure
+                          DevOps pool. Required. Known values are: "Inherit", "CreatorOnly", and
+                          "SpecificAccounts".
+                        "groups": [
+                            "str"  # Optional. Group email addresses.
+                        ],
+                        "users": [
+                            "str"  # Optional. User email addresses.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "GitHub":
+                organization_profile = {
+                    "kind": "GitHub",
+                    "organizations": [
+                        {
+                            "url": "str",  # The GitHub organization URL in which the
+                              pool should be created. Required.
+                            "repositories": [
+                                "str"  # Optional. Optional list of repositories in
+                                  which the pool should be created.
+                            ]
+                        }
+                    ]
+                }
+
+                # JSON input template for discriminator value "Stateful":
+                agent_profile = {
+                    "kind": "Stateful",
+                    "gracePeriodTimeSpan": "str",  # Optional. How long should the machine be
+                      kept around after it ran a workload when there are no stand-by agents. The
+                      maximum is one week.
+                    "maxAgentLifetime": "str",  # Optional. How long should stateful machines be
+                      kept around. The maximum is one week.
+                    "resourcePredictions": {},
+                    "resourcePredictionsProfile": resource_predictions_profile
+                }
+
+                # JSON input template for discriminator value "Automatic":
+                resource_predictions_profile = {
+                    "kind": "Automatic",
+                    "predictionPreference": "str"  # Optional. Determines the balance between
+                      cost and performance. Known values are: "Balanced", "MostCostEffective",
+                      "MoreCostEffective", "MorePerformance", and "BestPerformance".
+                }
+
+                # JSON input template for discriminator value "Manual":
+                resource_predictions_profile = {
+                    "kind": "Manual"
+                }
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "location": "str",  # The geo-location where the resource lives. Required.
+                    "id": "str",  # Optional. Fully qualified resource ID for the resource. Ex -
+                      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+                    "identity": {
+                        "type": "str",  # The type of managed identity assigned to this
+                          resource. Required. Known values are: "None", "SystemAssigned",
+                          "UserAssigned", and "SystemAssigned, UserAssigned".
+                        "principalId": "str",  # Optional. The active directory identifier of
+                          this principal.
+                        "tenantId": "str",  # Optional. The Active Directory tenant id of the
+                          principal.
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
+                    },
+                    "name": "str",  # Optional. The name of the resource.
+                    "properties": {
+                        "agentProfile": agent_profile,
+                        "devCenterProjectResourceId": "str",  # The resource id of the
+                          DevCenter Project the pool belongs to. Required.
+                        "fabricProfile": fabric_profile,
+                        "maximumConcurrency": 0,  # Defines how many resources can there be
+                          created at any given time. Required.
+                        "organizationProfile": organization_profile,
+                        "provisioningState": "str"  # Optional. The status of the current
+                          operation. Known values are: "Succeeded", "Failed", "Canceled",
+                          "Provisioning", "Updating", "Deleting", and "Accepted".
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20",  # Optional. The type of identity that
+                          created the resource.
+                        "createdBy": "str",  # Optional. The identity that created the
+                          resource.
+                        "createdByType": "str",  # Optional. The type of identity that
+                          created the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                        "lastModifiedAt": "2020-02-20",  # Optional. The timestamp of
+                          resource last modification (UTC).
+                        "lastModifiedBy": "str",  # Optional. The identity that last modified
+                          the resource.
+                        "lastModifiedByType": "str"  # Optional. The type of identity that
+                          last modified the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                    },
+                    "tags": {
+                        "str": "str"  # Optional. Resource tags.
+                    },
+                    "type": "str"  # Optional. The type of the resource. E.g.
+                      "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts".
+                }
         """
 
     @distributed_trace_async
     async def begin_create_or_update(
         self, resource_group_name: str, pool_name: str, resource: Union[_models.Pool, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.Pool]:
+        # pylint: disable=line-too-long
         """Create a Pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -410,6 +1307,341 @@ class PoolsOperations:
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.devopsinfrastructure.models.Pool]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "kind":
+
+                # JSON input template for discriminator value "AzureDevOps":
+                organization_profile = {
+                    "kind": "AzureDevOps",
+                    "organizations": [
+                        {
+                            "url": "str",  # The Azure DevOps organization URL in which
+                              the pool should be created. Required.
+                            "parallelism": 0,  # Optional. How many machines can be
+                              created at maximum in this organization out of the maximumConcurrency of
+                              the pool.
+                            "projects": [
+                                "str"  # Optional. Optional list of projects in which
+                                  the pool should be created.
+                            ]
+                        }
+                    ],
+                    "permissionProfile": {
+                        "kind": "str",  # Determines who has admin permissions to the Azure
+                          DevOps pool. Required. Known values are: "Inherit", "CreatorOnly", and
+                          "SpecificAccounts".
+                        "groups": [
+                            "str"  # Optional. Group email addresses.
+                        ],
+                        "users": [
+                            "str"  # Optional. User email addresses.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "GitHub":
+                organization_profile = {
+                    "kind": "GitHub",
+                    "organizations": [
+                        {
+                            "url": "str",  # The GitHub organization URL in which the
+                              pool should be created. Required.
+                            "repositories": [
+                                "str"  # Optional. Optional list of repositories in
+                                  which the pool should be created.
+                            ]
+                        }
+                    ]
+                }
+
+                # JSON input template for discriminator value "Stateful":
+                agent_profile = {
+                    "kind": "Stateful",
+                    "gracePeriodTimeSpan": "str",  # Optional. How long should the machine be
+                      kept around after it ran a workload when there are no stand-by agents. The
+                      maximum is one week.
+                    "maxAgentLifetime": "str",  # Optional. How long should stateful machines be
+                      kept around. The maximum is one week.
+                    "resourcePredictions": {},
+                    "resourcePredictionsProfile": resource_predictions_profile
+                }
+
+                # JSON input template for discriminator value "Automatic":
+                resource_predictions_profile = {
+                    "kind": "Automatic",
+                    "predictionPreference": "str"  # Optional. Determines the balance between
+                      cost and performance. Known values are: "Balanced", "MostCostEffective",
+                      "MoreCostEffective", "MorePerformance", and "BestPerformance".
+                }
+
+                # JSON input template for discriminator value "Manual":
+                resource_predictions_profile = {
+                    "kind": "Manual"
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                resource = {
+                    "location": "str",  # The geo-location where the resource lives. Required.
+                    "id": "str",  # Optional. Fully qualified resource ID for the resource. Ex -
+                      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+                    "identity": {
+                        "type": "str",  # The type of managed identity assigned to this
+                          resource. Required. Known values are: "None", "SystemAssigned",
+                          "UserAssigned", and "SystemAssigned, UserAssigned".
+                        "principalId": "str",  # Optional. The active directory identifier of
+                          this principal.
+                        "tenantId": "str",  # Optional. The Active Directory tenant id of the
+                          principal.
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
+                    },
+                    "name": "str",  # Optional. The name of the resource.
+                    "properties": {
+                        "agentProfile": agent_profile,
+                        "devCenterProjectResourceId": "str",  # The resource id of the
+                          DevCenter Project the pool belongs to. Required.
+                        "fabricProfile": fabric_profile,
+                        "maximumConcurrency": 0,  # Defines how many resources can there be
+                          created at any given time. Required.
+                        "organizationProfile": organization_profile,
+                        "provisioningState": "str"  # Optional. The status of the current
+                          operation. Known values are: "Succeeded", "Failed", "Canceled",
+                          "Provisioning", "Updating", "Deleting", and "Accepted".
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20",  # Optional. The type of identity that
+                          created the resource.
+                        "createdBy": "str",  # Optional. The identity that created the
+                          resource.
+                        "createdByType": "str",  # Optional. The type of identity that
+                          created the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                        "lastModifiedAt": "2020-02-20",  # Optional. The timestamp of
+                          resource last modification (UTC).
+                        "lastModifiedBy": "str",  # Optional. The identity that last modified
+                          the resource.
+                        "lastModifiedByType": "str"  # Optional. The type of identity that
+                          last modified the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                    },
+                    "tags": {
+                        "str": "str"  # Optional. Resource tags.
+                    },
+                    "type": "str"  # Optional. The type of the resource. E.g.
+                      "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts".
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "AzureDevOps":
+                organization_profile = {
+                    "kind": "AzureDevOps",
+                    "organizations": [
+                        {
+                            "url": "str",  # The Azure DevOps organization URL in which
+                              the pool should be created. Required.
+                            "parallelism": 0,  # Optional. How many machines can be
+                              created at maximum in this organization out of the maximumConcurrency of
+                              the pool.
+                            "projects": [
+                                "str"  # Optional. Optional list of projects in which
+                                  the pool should be created.
+                            ]
+                        }
+                    ],
+                    "permissionProfile": {
+                        "kind": "str",  # Determines who has admin permissions to the Azure
+                          DevOps pool. Required. Known values are: "Inherit", "CreatorOnly", and
+                          "SpecificAccounts".
+                        "groups": [
+                            "str"  # Optional. Group email addresses.
+                        ],
+                        "users": [
+                            "str"  # Optional. User email addresses.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "GitHub":
+                organization_profile = {
+                    "kind": "GitHub",
+                    "organizations": [
+                        {
+                            "url": "str",  # The GitHub organization URL in which the
+                              pool should be created. Required.
+                            "repositories": [
+                                "str"  # Optional. Optional list of repositories in
+                                  which the pool should be created.
+                            ]
+                        }
+                    ]
+                }
+
+                # JSON input template for discriminator value "Stateful":
+                agent_profile = {
+                    "kind": "Stateful",
+                    "gracePeriodTimeSpan": "str",  # Optional. How long should the machine be
+                      kept around after it ran a workload when there are no stand-by agents. The
+                      maximum is one week.
+                    "maxAgentLifetime": "str",  # Optional. How long should stateful machines be
+                      kept around. The maximum is one week.
+                    "resourcePredictions": {},
+                    "resourcePredictionsProfile": resource_predictions_profile
+                }
+
+                # JSON input template for discriminator value "Automatic":
+                resource_predictions_profile = {
+                    "kind": "Automatic",
+                    "predictionPreference": "str"  # Optional. Determines the balance between
+                      cost and performance. Known values are: "Balanced", "MostCostEffective",
+                      "MoreCostEffective", "MorePerformance", and "BestPerformance".
+                }
+
+                # JSON input template for discriminator value "Manual":
+                resource_predictions_profile = {
+                    "kind": "Manual"
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "AzureDevOps":
+                organization_profile = {
+                    "kind": "AzureDevOps",
+                    "organizations": [
+                        {
+                            "url": "str",  # The Azure DevOps organization URL in which
+                              the pool should be created. Required.
+                            "parallelism": 0,  # Optional. How many machines can be
+                              created at maximum in this organization out of the maximumConcurrency of
+                              the pool.
+                            "projects": [
+                                "str"  # Optional. Optional list of projects in which
+                                  the pool should be created.
+                            ]
+                        }
+                    ],
+                    "permissionProfile": {
+                        "kind": "str",  # Determines who has admin permissions to the Azure
+                          DevOps pool. Required. Known values are: "Inherit", "CreatorOnly", and
+                          "SpecificAccounts".
+                        "groups": [
+                            "str"  # Optional. Group email addresses.
+                        ],
+                        "users": [
+                            "str"  # Optional. User email addresses.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "GitHub":
+                organization_profile = {
+                    "kind": "GitHub",
+                    "organizations": [
+                        {
+                            "url": "str",  # The GitHub organization URL in which the
+                              pool should be created. Required.
+                            "repositories": [
+                                "str"  # Optional. Optional list of repositories in
+                                  which the pool should be created.
+                            ]
+                        }
+                    ]
+                }
+
+                # JSON input template for discriminator value "Stateful":
+                agent_profile = {
+                    "kind": "Stateful",
+                    "gracePeriodTimeSpan": "str",  # Optional. How long should the machine be
+                      kept around after it ran a workload when there are no stand-by agents. The
+                      maximum is one week.
+                    "maxAgentLifetime": "str",  # Optional. How long should stateful machines be
+                      kept around. The maximum is one week.
+                    "resourcePredictions": {},
+                    "resourcePredictionsProfile": resource_predictions_profile
+                }
+
+                # JSON input template for discriminator value "Automatic":
+                resource_predictions_profile = {
+                    "kind": "Automatic",
+                    "predictionPreference": "str"  # Optional. Determines the balance between
+                      cost and performance. Known values are: "Balanced", "MostCostEffective",
+                      "MoreCostEffective", "MorePerformance", and "BestPerformance".
+                }
+
+                # JSON input template for discriminator value "Manual":
+                resource_predictions_profile = {
+                    "kind": "Manual"
+                }
+
+                # response body for status code(s): 200, 201
+                response == {
+                    "location": "str",  # The geo-location where the resource lives. Required.
+                    "id": "str",  # Optional. Fully qualified resource ID for the resource. Ex -
+                      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+                    "identity": {
+                        "type": "str",  # The type of managed identity assigned to this
+                          resource. Required. Known values are: "None", "SystemAssigned",
+                          "UserAssigned", and "SystemAssigned, UserAssigned".
+                        "principalId": "str",  # Optional. The active directory identifier of
+                          this principal.
+                        "tenantId": "str",  # Optional. The Active Directory tenant id of the
+                          principal.
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
+                    },
+                    "name": "str",  # Optional. The name of the resource.
+                    "properties": {
+                        "agentProfile": agent_profile,
+                        "devCenterProjectResourceId": "str",  # The resource id of the
+                          DevCenter Project the pool belongs to. Required.
+                        "fabricProfile": fabric_profile,
+                        "maximumConcurrency": 0,  # Defines how many resources can there be
+                          created at any given time. Required.
+                        "organizationProfile": organization_profile,
+                        "provisioningState": "str"  # Optional. The status of the current
+                          operation. Known values are: "Succeeded", "Failed", "Canceled",
+                          "Provisioning", "Updating", "Deleting", and "Accepted".
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20",  # Optional. The type of identity that
+                          created the resource.
+                        "createdBy": "str",  # Optional. The identity that created the
+                          resource.
+                        "createdByType": "str",  # Optional. The type of identity that
+                          created the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                        "lastModifiedAt": "2020-02-20",  # Optional. The timestamp of
+                          resource last modification (UTC).
+                        "lastModifiedBy": "str",  # Optional. The identity that last modified
+                          the resource.
+                        "lastModifiedByType": "str"  # Optional. The type of identity that
+                          last modified the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                    },
+                    "tags": {
+                        "str": "str"  # Optional. Resource tags.
+                    },
+                    "type": "str"  # Optional. The type of the resource. E.g.
+                      "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts".
+                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -430,7 +1662,6 @@ class PoolsOperations:
                 params=_params,
                 **kwargs
             )
-            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
@@ -440,14 +1671,8 @@ class PoolsOperations:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
+            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -469,8 +1694,8 @@ class PoolsOperations:
         pool_name: str,
         properties: Union[_models.PoolUpdate, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
+    ) -> Optional[JSON]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -482,7 +1707,7 @@ class PoolsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -501,12 +1726,9 @@ class PoolsOperations:
             headers=_headers,
             params=_params,
         )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url)
 
-        _stream = True
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -514,20 +1736,20 @@ class PoolsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            try:
+            if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = None
         response_headers = {}
+        if response.status_code == 200:
+            deserialized = _deserialize(JSON, response.json())
+
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -544,6 +1766,7 @@ class PoolsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Pool]:
+        # pylint: disable=line-too-long
         """Update a Pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -560,6 +1783,319 @@ class PoolsOperations:
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.devopsinfrastructure.models.Pool]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "kind":
+
+                # JSON input template for discriminator value "AzureDevOps":
+                organization_profile = {
+                    "kind": "AzureDevOps",
+                    "organizations": [
+                        {
+                            "url": "str",  # The Azure DevOps organization URL in which
+                              the pool should be created. Required.
+                            "parallelism": 0,  # Optional. How many machines can be
+                              created at maximum in this organization out of the maximumConcurrency of
+                              the pool.
+                            "projects": [
+                                "str"  # Optional. Optional list of projects in which
+                                  the pool should be created.
+                            ]
+                        }
+                    ],
+                    "permissionProfile": {
+                        "kind": "str",  # Determines who has admin permissions to the Azure
+                          DevOps pool. Required. Known values are: "Inherit", "CreatorOnly", and
+                          "SpecificAccounts".
+                        "groups": [
+                            "str"  # Optional. Group email addresses.
+                        ],
+                        "users": [
+                            "str"  # Optional. User email addresses.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "GitHub":
+                organization_profile = {
+                    "kind": "GitHub",
+                    "organizations": [
+                        {
+                            "url": "str",  # The GitHub organization URL in which the
+                              pool should be created. Required.
+                            "repositories": [
+                                "str"  # Optional. Optional list of repositories in
+                                  which the pool should be created.
+                            ]
+                        }
+                    ]
+                }
+
+                # JSON input template for discriminator value "Stateful":
+                agent_profile = {
+                    "kind": "Stateful",
+                    "gracePeriodTimeSpan": "str",  # Optional. How long should the machine be
+                      kept around after it ran a workload when there are no stand-by agents. The
+                      maximum is one week.
+                    "maxAgentLifetime": "str",  # Optional. How long should stateful machines be
+                      kept around. The maximum is one week.
+                    "resourcePredictions": {},
+                    "resourcePredictionsProfile": resource_predictions_profile
+                }
+
+                # JSON input template for discriminator value "Automatic":
+                resource_predictions_profile = {
+                    "kind": "Automatic",
+                    "predictionPreference": "str"  # Optional. Determines the balance between
+                      cost and performance. Known values are: "Balanced", "MostCostEffective",
+                      "MoreCostEffective", "MorePerformance", and "BestPerformance".
+                }
+
+                # JSON input template for discriminator value "Manual":
+                resource_predictions_profile = {
+                    "kind": "Manual"
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                properties = {
+                    "identity": {
+                        "type": "str",  # The type of managed identity assigned to this
+                          resource. Required. Known values are: "None", "SystemAssigned",
+                          "UserAssigned", and "SystemAssigned, UserAssigned".
+                        "principalId": "str",  # Optional. The active directory identifier of
+                          this principal.
+                        "tenantId": "str",  # Optional. The Active Directory tenant id of the
+                          principal.
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
+                    },
+                    "properties": {
+                        "agentProfile": agent_profile,
+                        "devCenterProjectResourceId": "str",  # Optional. The resource id of
+                          the DevCenter Project the pool belongs to.
+                        "fabricProfile": fabric_profile,
+                        "maximumConcurrency": 0,  # Optional. Defines how many resources can
+                          there be created at any given time.
+                        "organizationProfile": organization_profile,
+                        "provisioningState": "str"  # Optional. The status of the current
+                          operation. Known values are: "Succeeded", "Failed", "Canceled",
+                          "Provisioning", "Updating", "Deleting", and "Accepted".
+                    },
+                    "tags": {
+                        "str": "str"  # Optional. Resource tags.
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "AzureDevOps":
+                organization_profile = {
+                    "kind": "AzureDevOps",
+                    "organizations": [
+                        {
+                            "url": "str",  # The Azure DevOps organization URL in which
+                              the pool should be created. Required.
+                            "parallelism": 0,  # Optional. How many machines can be
+                              created at maximum in this organization out of the maximumConcurrency of
+                              the pool.
+                            "projects": [
+                                "str"  # Optional. Optional list of projects in which
+                                  the pool should be created.
+                            ]
+                        }
+                    ],
+                    "permissionProfile": {
+                        "kind": "str",  # Determines who has admin permissions to the Azure
+                          DevOps pool. Required. Known values are: "Inherit", "CreatorOnly", and
+                          "SpecificAccounts".
+                        "groups": [
+                            "str"  # Optional. Group email addresses.
+                        ],
+                        "users": [
+                            "str"  # Optional. User email addresses.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "GitHub":
+                organization_profile = {
+                    "kind": "GitHub",
+                    "organizations": [
+                        {
+                            "url": "str",  # The GitHub organization URL in which the
+                              pool should be created. Required.
+                            "repositories": [
+                                "str"  # Optional. Optional list of repositories in
+                                  which the pool should be created.
+                            ]
+                        }
+                    ]
+                }
+
+                # JSON input template for discriminator value "Stateful":
+                agent_profile = {
+                    "kind": "Stateful",
+                    "gracePeriodTimeSpan": "str",  # Optional. How long should the machine be
+                      kept around after it ran a workload when there are no stand-by agents. The
+                      maximum is one week.
+                    "maxAgentLifetime": "str",  # Optional. How long should stateful machines be
+                      kept around. The maximum is one week.
+                    "resourcePredictions": {},
+                    "resourcePredictionsProfile": resource_predictions_profile
+                }
+
+                # JSON input template for discriminator value "Automatic":
+                resource_predictions_profile = {
+                    "kind": "Automatic",
+                    "predictionPreference": "str"  # Optional. Determines the balance between
+                      cost and performance. Known values are: "Balanced", "MostCostEffective",
+                      "MoreCostEffective", "MorePerformance", and "BestPerformance".
+                }
+
+                # JSON input template for discriminator value "Manual":
+                resource_predictions_profile = {
+                    "kind": "Manual"
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "AzureDevOps":
+                organization_profile = {
+                    "kind": "AzureDevOps",
+                    "organizations": [
+                        {
+                            "url": "str",  # The Azure DevOps organization URL in which
+                              the pool should be created. Required.
+                            "parallelism": 0,  # Optional. How many machines can be
+                              created at maximum in this organization out of the maximumConcurrency of
+                              the pool.
+                            "projects": [
+                                "str"  # Optional. Optional list of projects in which
+                                  the pool should be created.
+                            ]
+                        }
+                    ],
+                    "permissionProfile": {
+                        "kind": "str",  # Determines who has admin permissions to the Azure
+                          DevOps pool. Required. Known values are: "Inherit", "CreatorOnly", and
+                          "SpecificAccounts".
+                        "groups": [
+                            "str"  # Optional. Group email addresses.
+                        ],
+                        "users": [
+                            "str"  # Optional. User email addresses.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "GitHub":
+                organization_profile = {
+                    "kind": "GitHub",
+                    "organizations": [
+                        {
+                            "url": "str",  # The GitHub organization URL in which the
+                              pool should be created. Required.
+                            "repositories": [
+                                "str"  # Optional. Optional list of repositories in
+                                  which the pool should be created.
+                            ]
+                        }
+                    ]
+                }
+
+                # JSON input template for discriminator value "Stateful":
+                agent_profile = {
+                    "kind": "Stateful",
+                    "gracePeriodTimeSpan": "str",  # Optional. How long should the machine be
+                      kept around after it ran a workload when there are no stand-by agents. The
+                      maximum is one week.
+                    "maxAgentLifetime": "str",  # Optional. How long should stateful machines be
+                      kept around. The maximum is one week.
+                    "resourcePredictions": {},
+                    "resourcePredictionsProfile": resource_predictions_profile
+                }
+
+                # JSON input template for discriminator value "Automatic":
+                resource_predictions_profile = {
+                    "kind": "Automatic",
+                    "predictionPreference": "str"  # Optional. Determines the balance between
+                      cost and performance. Known values are: "Balanced", "MostCostEffective",
+                      "MoreCostEffective", "MorePerformance", and "BestPerformance".
+                }
+
+                # JSON input template for discriminator value "Manual":
+                resource_predictions_profile = {
+                    "kind": "Manual"
+                }
+
+                # response body for status code(s): 200, 202
+                response == {
+                    "location": "str",  # The geo-location where the resource lives. Required.
+                    "id": "str",  # Optional. Fully qualified resource ID for the resource. Ex -
+                      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+                    "identity": {
+                        "type": "str",  # The type of managed identity assigned to this
+                          resource. Required. Known values are: "None", "SystemAssigned",
+                          "UserAssigned", and "SystemAssigned, UserAssigned".
+                        "principalId": "str",  # Optional. The active directory identifier of
+                          this principal.
+                        "tenantId": "str",  # Optional. The Active Directory tenant id of the
+                          principal.
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
+                    },
+                    "name": "str",  # Optional. The name of the resource.
+                    "properties": {
+                        "agentProfile": agent_profile,
+                        "devCenterProjectResourceId": "str",  # The resource id of the
+                          DevCenter Project the pool belongs to. Required.
+                        "fabricProfile": fabric_profile,
+                        "maximumConcurrency": 0,  # Defines how many resources can there be
+                          created at any given time. Required.
+                        "organizationProfile": organization_profile,
+                        "provisioningState": "str"  # Optional. The status of the current
+                          operation. Known values are: "Succeeded", "Failed", "Canceled",
+                          "Provisioning", "Updating", "Deleting", and "Accepted".
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20",  # Optional. The type of identity that
+                          created the resource.
+                        "createdBy": "str",  # Optional. The identity that created the
+                          resource.
+                        "createdByType": "str",  # Optional. The type of identity that
+                          created the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                        "lastModifiedAt": "2020-02-20",  # Optional. The timestamp of
+                          resource last modification (UTC).
+                        "lastModifiedBy": "str",  # Optional. The identity that last modified
+                          the resource.
+                        "lastModifiedByType": "str"  # Optional. The type of identity that
+                          last modified the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                    },
+                    "tags": {
+                        "str": "str"  # Optional. Resource tags.
+                    },
+                    "type": "str"  # Optional. The type of the resource. E.g.
+                      "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts".
+                }
         """
 
     @overload
@@ -572,6 +2108,7 @@ class PoolsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Pool]:
+        # pylint: disable=line-too-long
         """Update a Pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -588,6 +2125,211 @@ class PoolsOperations:
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.devopsinfrastructure.models.Pool]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "AzureDevOps":
+                organization_profile = {
+                    "kind": "AzureDevOps",
+                    "organizations": [
+                        {
+                            "url": "str",  # The Azure DevOps organization URL in which
+                              the pool should be created. Required.
+                            "parallelism": 0,  # Optional. How many machines can be
+                              created at maximum in this organization out of the maximumConcurrency of
+                              the pool.
+                            "projects": [
+                                "str"  # Optional. Optional list of projects in which
+                                  the pool should be created.
+                            ]
+                        }
+                    ],
+                    "permissionProfile": {
+                        "kind": "str",  # Determines who has admin permissions to the Azure
+                          DevOps pool. Required. Known values are: "Inherit", "CreatorOnly", and
+                          "SpecificAccounts".
+                        "groups": [
+                            "str"  # Optional. Group email addresses.
+                        ],
+                        "users": [
+                            "str"  # Optional. User email addresses.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "GitHub":
+                organization_profile = {
+                    "kind": "GitHub",
+                    "organizations": [
+                        {
+                            "url": "str",  # The GitHub organization URL in which the
+                              pool should be created. Required.
+                            "repositories": [
+                                "str"  # Optional. Optional list of repositories in
+                                  which the pool should be created.
+                            ]
+                        }
+                    ]
+                }
+
+                # JSON input template for discriminator value "Stateful":
+                agent_profile = {
+                    "kind": "Stateful",
+                    "gracePeriodTimeSpan": "str",  # Optional. How long should the machine be
+                      kept around after it ran a workload when there are no stand-by agents. The
+                      maximum is one week.
+                    "maxAgentLifetime": "str",  # Optional. How long should stateful machines be
+                      kept around. The maximum is one week.
+                    "resourcePredictions": {},
+                    "resourcePredictionsProfile": resource_predictions_profile
+                }
+
+                # JSON input template for discriminator value "Automatic":
+                resource_predictions_profile = {
+                    "kind": "Automatic",
+                    "predictionPreference": "str"  # Optional. Determines the balance between
+                      cost and performance. Known values are: "Balanced", "MostCostEffective",
+                      "MoreCostEffective", "MorePerformance", and "BestPerformance".
+                }
+
+                # JSON input template for discriminator value "Manual":
+                resource_predictions_profile = {
+                    "kind": "Manual"
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "AzureDevOps":
+                organization_profile = {
+                    "kind": "AzureDevOps",
+                    "organizations": [
+                        {
+                            "url": "str",  # The Azure DevOps organization URL in which
+                              the pool should be created. Required.
+                            "parallelism": 0,  # Optional. How many machines can be
+                              created at maximum in this organization out of the maximumConcurrency of
+                              the pool.
+                            "projects": [
+                                "str"  # Optional. Optional list of projects in which
+                                  the pool should be created.
+                            ]
+                        }
+                    ],
+                    "permissionProfile": {
+                        "kind": "str",  # Determines who has admin permissions to the Azure
+                          DevOps pool. Required. Known values are: "Inherit", "CreatorOnly", and
+                          "SpecificAccounts".
+                        "groups": [
+                            "str"  # Optional. Group email addresses.
+                        ],
+                        "users": [
+                            "str"  # Optional. User email addresses.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "GitHub":
+                organization_profile = {
+                    "kind": "GitHub",
+                    "organizations": [
+                        {
+                            "url": "str",  # The GitHub organization URL in which the
+                              pool should be created. Required.
+                            "repositories": [
+                                "str"  # Optional. Optional list of repositories in
+                                  which the pool should be created.
+                            ]
+                        }
+                    ]
+                }
+
+                # JSON input template for discriminator value "Stateful":
+                agent_profile = {
+                    "kind": "Stateful",
+                    "gracePeriodTimeSpan": "str",  # Optional. How long should the machine be
+                      kept around after it ran a workload when there are no stand-by agents. The
+                      maximum is one week.
+                    "maxAgentLifetime": "str",  # Optional. How long should stateful machines be
+                      kept around. The maximum is one week.
+                    "resourcePredictions": {},
+                    "resourcePredictionsProfile": resource_predictions_profile
+                }
+
+                # JSON input template for discriminator value "Automatic":
+                resource_predictions_profile = {
+                    "kind": "Automatic",
+                    "predictionPreference": "str"  # Optional. Determines the balance between
+                      cost and performance. Known values are: "Balanced", "MostCostEffective",
+                      "MoreCostEffective", "MorePerformance", and "BestPerformance".
+                }
+
+                # JSON input template for discriminator value "Manual":
+                resource_predictions_profile = {
+                    "kind": "Manual"
+                }
+
+                # response body for status code(s): 200, 202
+                response == {
+                    "location": "str",  # The geo-location where the resource lives. Required.
+                    "id": "str",  # Optional. Fully qualified resource ID for the resource. Ex -
+                      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+                    "identity": {
+                        "type": "str",  # The type of managed identity assigned to this
+                          resource. Required. Known values are: "None", "SystemAssigned",
+                          "UserAssigned", and "SystemAssigned, UserAssigned".
+                        "principalId": "str",  # Optional. The active directory identifier of
+                          this principal.
+                        "tenantId": "str",  # Optional. The Active Directory tenant id of the
+                          principal.
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
+                    },
+                    "name": "str",  # Optional. The name of the resource.
+                    "properties": {
+                        "agentProfile": agent_profile,
+                        "devCenterProjectResourceId": "str",  # The resource id of the
+                          DevCenter Project the pool belongs to. Required.
+                        "fabricProfile": fabric_profile,
+                        "maximumConcurrency": 0,  # Defines how many resources can there be
+                          created at any given time. Required.
+                        "organizationProfile": organization_profile,
+                        "provisioningState": "str"  # Optional. The status of the current
+                          operation. Known values are: "Succeeded", "Failed", "Canceled",
+                          "Provisioning", "Updating", "Deleting", and "Accepted".
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20",  # Optional. The type of identity that
+                          created the resource.
+                        "createdBy": "str",  # Optional. The identity that created the
+                          resource.
+                        "createdByType": "str",  # Optional. The type of identity that
+                          created the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                        "lastModifiedAt": "2020-02-20",  # Optional. The timestamp of
+                          resource last modification (UTC).
+                        "lastModifiedBy": "str",  # Optional. The identity that last modified
+                          the resource.
+                        "lastModifiedByType": "str"  # Optional. The type of identity that
+                          last modified the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                    },
+                    "tags": {
+                        "str": "str"  # Optional. Resource tags.
+                    },
+                    "type": "str"  # Optional. The type of the resource. E.g.
+                      "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts".
+                }
         """
 
     @overload
@@ -600,6 +2342,7 @@ class PoolsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Pool]:
+        # pylint: disable=line-too-long
         """Update a Pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -616,6 +2359,211 @@ class PoolsOperations:
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.devopsinfrastructure.models.Pool]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "AzureDevOps":
+                organization_profile = {
+                    "kind": "AzureDevOps",
+                    "organizations": [
+                        {
+                            "url": "str",  # The Azure DevOps organization URL in which
+                              the pool should be created. Required.
+                            "parallelism": 0,  # Optional. How many machines can be
+                              created at maximum in this organization out of the maximumConcurrency of
+                              the pool.
+                            "projects": [
+                                "str"  # Optional. Optional list of projects in which
+                                  the pool should be created.
+                            ]
+                        }
+                    ],
+                    "permissionProfile": {
+                        "kind": "str",  # Determines who has admin permissions to the Azure
+                          DevOps pool. Required. Known values are: "Inherit", "CreatorOnly", and
+                          "SpecificAccounts".
+                        "groups": [
+                            "str"  # Optional. Group email addresses.
+                        ],
+                        "users": [
+                            "str"  # Optional. User email addresses.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "GitHub":
+                organization_profile = {
+                    "kind": "GitHub",
+                    "organizations": [
+                        {
+                            "url": "str",  # The GitHub organization URL in which the
+                              pool should be created. Required.
+                            "repositories": [
+                                "str"  # Optional. Optional list of repositories in
+                                  which the pool should be created.
+                            ]
+                        }
+                    ]
+                }
+
+                # JSON input template for discriminator value "Stateful":
+                agent_profile = {
+                    "kind": "Stateful",
+                    "gracePeriodTimeSpan": "str",  # Optional. How long should the machine be
+                      kept around after it ran a workload when there are no stand-by agents. The
+                      maximum is one week.
+                    "maxAgentLifetime": "str",  # Optional. How long should stateful machines be
+                      kept around. The maximum is one week.
+                    "resourcePredictions": {},
+                    "resourcePredictionsProfile": resource_predictions_profile
+                }
+
+                # JSON input template for discriminator value "Automatic":
+                resource_predictions_profile = {
+                    "kind": "Automatic",
+                    "predictionPreference": "str"  # Optional. Determines the balance between
+                      cost and performance. Known values are: "Balanced", "MostCostEffective",
+                      "MoreCostEffective", "MorePerformance", and "BestPerformance".
+                }
+
+                # JSON input template for discriminator value "Manual":
+                resource_predictions_profile = {
+                    "kind": "Manual"
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "AzureDevOps":
+                organization_profile = {
+                    "kind": "AzureDevOps",
+                    "organizations": [
+                        {
+                            "url": "str",  # The Azure DevOps organization URL in which
+                              the pool should be created. Required.
+                            "parallelism": 0,  # Optional. How many machines can be
+                              created at maximum in this organization out of the maximumConcurrency of
+                              the pool.
+                            "projects": [
+                                "str"  # Optional. Optional list of projects in which
+                                  the pool should be created.
+                            ]
+                        }
+                    ],
+                    "permissionProfile": {
+                        "kind": "str",  # Determines who has admin permissions to the Azure
+                          DevOps pool. Required. Known values are: "Inherit", "CreatorOnly", and
+                          "SpecificAccounts".
+                        "groups": [
+                            "str"  # Optional. Group email addresses.
+                        ],
+                        "users": [
+                            "str"  # Optional. User email addresses.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "GitHub":
+                organization_profile = {
+                    "kind": "GitHub",
+                    "organizations": [
+                        {
+                            "url": "str",  # The GitHub organization URL in which the
+                              pool should be created. Required.
+                            "repositories": [
+                                "str"  # Optional. Optional list of repositories in
+                                  which the pool should be created.
+                            ]
+                        }
+                    ]
+                }
+
+                # JSON input template for discriminator value "Stateful":
+                agent_profile = {
+                    "kind": "Stateful",
+                    "gracePeriodTimeSpan": "str",  # Optional. How long should the machine be
+                      kept around after it ran a workload when there are no stand-by agents. The
+                      maximum is one week.
+                    "maxAgentLifetime": "str",  # Optional. How long should stateful machines be
+                      kept around. The maximum is one week.
+                    "resourcePredictions": {},
+                    "resourcePredictionsProfile": resource_predictions_profile
+                }
+
+                # JSON input template for discriminator value "Automatic":
+                resource_predictions_profile = {
+                    "kind": "Automatic",
+                    "predictionPreference": "str"  # Optional. Determines the balance between
+                      cost and performance. Known values are: "Balanced", "MostCostEffective",
+                      "MoreCostEffective", "MorePerformance", and "BestPerformance".
+                }
+
+                # JSON input template for discriminator value "Manual":
+                resource_predictions_profile = {
+                    "kind": "Manual"
+                }
+
+                # response body for status code(s): 200, 202
+                response == {
+                    "location": "str",  # The geo-location where the resource lives. Required.
+                    "id": "str",  # Optional. Fully qualified resource ID for the resource. Ex -
+                      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+                    "identity": {
+                        "type": "str",  # The type of managed identity assigned to this
+                          resource. Required. Known values are: "None", "SystemAssigned",
+                          "UserAssigned", and "SystemAssigned, UserAssigned".
+                        "principalId": "str",  # Optional. The active directory identifier of
+                          this principal.
+                        "tenantId": "str",  # Optional. The Active Directory tenant id of the
+                          principal.
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
+                    },
+                    "name": "str",  # Optional. The name of the resource.
+                    "properties": {
+                        "agentProfile": agent_profile,
+                        "devCenterProjectResourceId": "str",  # The resource id of the
+                          DevCenter Project the pool belongs to. Required.
+                        "fabricProfile": fabric_profile,
+                        "maximumConcurrency": 0,  # Defines how many resources can there be
+                          created at any given time. Required.
+                        "organizationProfile": organization_profile,
+                        "provisioningState": "str"  # Optional. The status of the current
+                          operation. Known values are: "Succeeded", "Failed", "Canceled",
+                          "Provisioning", "Updating", "Deleting", and "Accepted".
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20",  # Optional. The type of identity that
+                          created the resource.
+                        "createdBy": "str",  # Optional. The identity that created the
+                          resource.
+                        "createdByType": "str",  # Optional. The type of identity that
+                          created the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                        "lastModifiedAt": "2020-02-20",  # Optional. The timestamp of
+                          resource last modification (UTC).
+                        "lastModifiedBy": "str",  # Optional. The identity that last modified
+                          the resource.
+                        "lastModifiedByType": "str"  # Optional. The type of identity that
+                          last modified the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                    },
+                    "tags": {
+                        "str": "str"  # Optional. Resource tags.
+                    },
+                    "type": "str"  # Optional. The type of the resource. E.g.
+                      "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts".
+                }
         """
 
     @distributed_trace_async
@@ -626,6 +2574,7 @@ class PoolsOperations:
         properties: Union[_models.PoolUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Pool]:
+        # pylint: disable=line-too-long
         """Update a Pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -640,6 +2589,319 @@ class PoolsOperations:
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.devopsinfrastructure.models.Pool]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "kind":
+
+                # JSON input template for discriminator value "AzureDevOps":
+                organization_profile = {
+                    "kind": "AzureDevOps",
+                    "organizations": [
+                        {
+                            "url": "str",  # The Azure DevOps organization URL in which
+                              the pool should be created. Required.
+                            "parallelism": 0,  # Optional. How many machines can be
+                              created at maximum in this organization out of the maximumConcurrency of
+                              the pool.
+                            "projects": [
+                                "str"  # Optional. Optional list of projects in which
+                                  the pool should be created.
+                            ]
+                        }
+                    ],
+                    "permissionProfile": {
+                        "kind": "str",  # Determines who has admin permissions to the Azure
+                          DevOps pool. Required. Known values are: "Inherit", "CreatorOnly", and
+                          "SpecificAccounts".
+                        "groups": [
+                            "str"  # Optional. Group email addresses.
+                        ],
+                        "users": [
+                            "str"  # Optional. User email addresses.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "GitHub":
+                organization_profile = {
+                    "kind": "GitHub",
+                    "organizations": [
+                        {
+                            "url": "str",  # The GitHub organization URL in which the
+                              pool should be created. Required.
+                            "repositories": [
+                                "str"  # Optional. Optional list of repositories in
+                                  which the pool should be created.
+                            ]
+                        }
+                    ]
+                }
+
+                # JSON input template for discriminator value "Stateful":
+                agent_profile = {
+                    "kind": "Stateful",
+                    "gracePeriodTimeSpan": "str",  # Optional. How long should the machine be
+                      kept around after it ran a workload when there are no stand-by agents. The
+                      maximum is one week.
+                    "maxAgentLifetime": "str",  # Optional. How long should stateful machines be
+                      kept around. The maximum is one week.
+                    "resourcePredictions": {},
+                    "resourcePredictionsProfile": resource_predictions_profile
+                }
+
+                # JSON input template for discriminator value "Automatic":
+                resource_predictions_profile = {
+                    "kind": "Automatic",
+                    "predictionPreference": "str"  # Optional. Determines the balance between
+                      cost and performance. Known values are: "Balanced", "MostCostEffective",
+                      "MoreCostEffective", "MorePerformance", and "BestPerformance".
+                }
+
+                # JSON input template for discriminator value "Manual":
+                resource_predictions_profile = {
+                    "kind": "Manual"
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                properties = {
+                    "identity": {
+                        "type": "str",  # The type of managed identity assigned to this
+                          resource. Required. Known values are: "None", "SystemAssigned",
+                          "UserAssigned", and "SystemAssigned, UserAssigned".
+                        "principalId": "str",  # Optional. The active directory identifier of
+                          this principal.
+                        "tenantId": "str",  # Optional. The Active Directory tenant id of the
+                          principal.
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
+                    },
+                    "properties": {
+                        "agentProfile": agent_profile,
+                        "devCenterProjectResourceId": "str",  # Optional. The resource id of
+                          the DevCenter Project the pool belongs to.
+                        "fabricProfile": fabric_profile,
+                        "maximumConcurrency": 0,  # Optional. Defines how many resources can
+                          there be created at any given time.
+                        "organizationProfile": organization_profile,
+                        "provisioningState": "str"  # Optional. The status of the current
+                          operation. Known values are: "Succeeded", "Failed", "Canceled",
+                          "Provisioning", "Updating", "Deleting", and "Accepted".
+                    },
+                    "tags": {
+                        "str": "str"  # Optional. Resource tags.
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "AzureDevOps":
+                organization_profile = {
+                    "kind": "AzureDevOps",
+                    "organizations": [
+                        {
+                            "url": "str",  # The Azure DevOps organization URL in which
+                              the pool should be created. Required.
+                            "parallelism": 0,  # Optional. How many machines can be
+                              created at maximum in this organization out of the maximumConcurrency of
+                              the pool.
+                            "projects": [
+                                "str"  # Optional. Optional list of projects in which
+                                  the pool should be created.
+                            ]
+                        }
+                    ],
+                    "permissionProfile": {
+                        "kind": "str",  # Determines who has admin permissions to the Azure
+                          DevOps pool. Required. Known values are: "Inherit", "CreatorOnly", and
+                          "SpecificAccounts".
+                        "groups": [
+                            "str"  # Optional. Group email addresses.
+                        ],
+                        "users": [
+                            "str"  # Optional. User email addresses.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "GitHub":
+                organization_profile = {
+                    "kind": "GitHub",
+                    "organizations": [
+                        {
+                            "url": "str",  # The GitHub organization URL in which the
+                              pool should be created. Required.
+                            "repositories": [
+                                "str"  # Optional. Optional list of repositories in
+                                  which the pool should be created.
+                            ]
+                        }
+                    ]
+                }
+
+                # JSON input template for discriminator value "Stateful":
+                agent_profile = {
+                    "kind": "Stateful",
+                    "gracePeriodTimeSpan": "str",  # Optional. How long should the machine be
+                      kept around after it ran a workload when there are no stand-by agents. The
+                      maximum is one week.
+                    "maxAgentLifetime": "str",  # Optional. How long should stateful machines be
+                      kept around. The maximum is one week.
+                    "resourcePredictions": {},
+                    "resourcePredictionsProfile": resource_predictions_profile
+                }
+
+                # JSON input template for discriminator value "Automatic":
+                resource_predictions_profile = {
+                    "kind": "Automatic",
+                    "predictionPreference": "str"  # Optional. Determines the balance between
+                      cost and performance. Known values are: "Balanced", "MostCostEffective",
+                      "MoreCostEffective", "MorePerformance", and "BestPerformance".
+                }
+
+                # JSON input template for discriminator value "Manual":
+                resource_predictions_profile = {
+                    "kind": "Manual"
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "AzureDevOps":
+                organization_profile = {
+                    "kind": "AzureDevOps",
+                    "organizations": [
+                        {
+                            "url": "str",  # The Azure DevOps organization URL in which
+                              the pool should be created. Required.
+                            "parallelism": 0,  # Optional. How many machines can be
+                              created at maximum in this organization out of the maximumConcurrency of
+                              the pool.
+                            "projects": [
+                                "str"  # Optional. Optional list of projects in which
+                                  the pool should be created.
+                            ]
+                        }
+                    ],
+                    "permissionProfile": {
+                        "kind": "str",  # Determines who has admin permissions to the Azure
+                          DevOps pool. Required. Known values are: "Inherit", "CreatorOnly", and
+                          "SpecificAccounts".
+                        "groups": [
+                            "str"  # Optional. Group email addresses.
+                        ],
+                        "users": [
+                            "str"  # Optional. User email addresses.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "GitHub":
+                organization_profile = {
+                    "kind": "GitHub",
+                    "organizations": [
+                        {
+                            "url": "str",  # The GitHub organization URL in which the
+                              pool should be created. Required.
+                            "repositories": [
+                                "str"  # Optional. Optional list of repositories in
+                                  which the pool should be created.
+                            ]
+                        }
+                    ]
+                }
+
+                # JSON input template for discriminator value "Stateful":
+                agent_profile = {
+                    "kind": "Stateful",
+                    "gracePeriodTimeSpan": "str",  # Optional. How long should the machine be
+                      kept around after it ran a workload when there are no stand-by agents. The
+                      maximum is one week.
+                    "maxAgentLifetime": "str",  # Optional. How long should stateful machines be
+                      kept around. The maximum is one week.
+                    "resourcePredictions": {},
+                    "resourcePredictionsProfile": resource_predictions_profile
+                }
+
+                # JSON input template for discriminator value "Automatic":
+                resource_predictions_profile = {
+                    "kind": "Automatic",
+                    "predictionPreference": "str"  # Optional. Determines the balance between
+                      cost and performance. Known values are: "Balanced", "MostCostEffective",
+                      "MoreCostEffective", "MorePerformance", and "BestPerformance".
+                }
+
+                # JSON input template for discriminator value "Manual":
+                resource_predictions_profile = {
+                    "kind": "Manual"
+                }
+
+                # response body for status code(s): 200, 202
+                response == {
+                    "location": "str",  # The geo-location where the resource lives. Required.
+                    "id": "str",  # Optional. Fully qualified resource ID for the resource. Ex -
+                      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+                    "identity": {
+                        "type": "str",  # The type of managed identity assigned to this
+                          resource. Required. Known values are: "None", "SystemAssigned",
+                          "UserAssigned", and "SystemAssigned, UserAssigned".
+                        "principalId": "str",  # Optional. The active directory identifier of
+                          this principal.
+                        "tenantId": "str",  # Optional. The Active Directory tenant id of the
+                          principal.
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
+                    },
+                    "name": "str",  # Optional. The name of the resource.
+                    "properties": {
+                        "agentProfile": agent_profile,
+                        "devCenterProjectResourceId": "str",  # The resource id of the
+                          DevCenter Project the pool belongs to. Required.
+                        "fabricProfile": fabric_profile,
+                        "maximumConcurrency": 0,  # Defines how many resources can there be
+                          created at any given time. Required.
+                        "organizationProfile": organization_profile,
+                        "provisioningState": "str"  # Optional. The status of the current
+                          operation. Known values are: "Succeeded", "Failed", "Canceled",
+                          "Provisioning", "Updating", "Deleting", and "Accepted".
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20",  # Optional. The type of identity that
+                          created the resource.
+                        "createdBy": "str",  # Optional. The identity that created the
+                          resource.
+                        "createdByType": "str",  # Optional. The type of identity that
+                          created the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                        "lastModifiedAt": "2020-02-20",  # Optional. The timestamp of
+                          resource last modification (UTC).
+                        "lastModifiedBy": "str",  # Optional. The identity that last modified
+                          the resource.
+                        "lastModifiedByType": "str"  # Optional. The type of identity that
+                          last modified the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                    },
+                    "tags": {
+                        "str": "str"  # Optional. Resource tags.
+                    },
+                    "type": "str"  # Optional. The type of the resource. E.g.
+                      "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts".
+                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -660,7 +2922,6 @@ class PoolsOperations:
                 params=_params,
                 **kwargs
             )
-            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
@@ -670,14 +2931,8 @@ class PoolsOperations:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
+            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -693,8 +2948,10 @@ class PoolsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    async def _delete_initial(self, resource_group_name: str, pool_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
+    async def _delete_initial(  # pylint: disable=inconsistent-return-statements
+        self, resource_group_name: str, pool_name: str, **kwargs: Any
+    ) -> None:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -705,7 +2962,7 @@ class PoolsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_pools_delete_request(
             resource_group_name=resource_group_name,
@@ -715,12 +2972,9 @@ class PoolsOperations:
             headers=_headers,
             params=_params,
         )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url)
 
-        _stream = True
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -728,10 +2982,8 @@ class PoolsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 204]:
-            try:
+            if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -741,12 +2993,8 @@ class PoolsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
-
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(self, resource_group_name: str, pool_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
@@ -769,7 +3017,7 @@ class PoolsOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._delete_initial(
+            raw_result = await self._delete_initial(  # type: ignore
                 resource_group_name=resource_group_name,
                 pool_name=pool_name,
                 cls=lambda x, y, z: x,
@@ -777,21 +3025,14 @@ class PoolsOperations:
                 params=_params,
                 **kwargs
             )
-            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
                 return cls(pipeline_response, None, {})  # type: ignore
 
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
+            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -807,6 +3048,7 @@ class PoolsOperations:
 
     @distributed_trace
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.Pool"]:
+        # pylint: disable=line-too-long
         """List Pool resources by resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -815,13 +3057,146 @@ class PoolsOperations:
         :return: An iterator like instance of Pool
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.devopsinfrastructure.models.Pool]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "AzureDevOps":
+                organization_profile = {
+                    "kind": "AzureDevOps",
+                    "organizations": [
+                        {
+                            "url": "str",  # The Azure DevOps organization URL in which
+                              the pool should be created. Required.
+                            "parallelism": 0,  # Optional. How many machines can be
+                              created at maximum in this organization out of the maximumConcurrency of
+                              the pool.
+                            "projects": [
+                                "str"  # Optional. Optional list of projects in which
+                                  the pool should be created.
+                            ]
+                        }
+                    ],
+                    "permissionProfile": {
+                        "kind": "str",  # Determines who has admin permissions to the Azure
+                          DevOps pool. Required. Known values are: "Inherit", "CreatorOnly", and
+                          "SpecificAccounts".
+                        "groups": [
+                            "str"  # Optional. Group email addresses.
+                        ],
+                        "users": [
+                            "str"  # Optional. User email addresses.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "GitHub":
+                organization_profile = {
+                    "kind": "GitHub",
+                    "organizations": [
+                        {
+                            "url": "str",  # The GitHub organization URL in which the
+                              pool should be created. Required.
+                            "repositories": [
+                                "str"  # Optional. Optional list of repositories in
+                                  which the pool should be created.
+                            ]
+                        }
+                    ]
+                }
+
+                # JSON input template for discriminator value "Stateful":
+                agent_profile = {
+                    "kind": "Stateful",
+                    "gracePeriodTimeSpan": "str",  # Optional. How long should the machine be
+                      kept around after it ran a workload when there are no stand-by agents. The
+                      maximum is one week.
+                    "maxAgentLifetime": "str",  # Optional. How long should stateful machines be
+                      kept around. The maximum is one week.
+                    "resourcePredictions": {},
+                    "resourcePredictionsProfile": resource_predictions_profile
+                }
+
+                # JSON input template for discriminator value "Automatic":
+                resource_predictions_profile = {
+                    "kind": "Automatic",
+                    "predictionPreference": "str"  # Optional. Determines the balance between
+                      cost and performance. Known values are: "Balanced", "MostCostEffective",
+                      "MoreCostEffective", "MorePerformance", and "BestPerformance".
+                }
+
+                # JSON input template for discriminator value "Manual":
+                resource_predictions_profile = {
+                    "kind": "Manual"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "location": "str",  # The geo-location where the resource lives. Required.
+                    "id": "str",  # Optional. Fully qualified resource ID for the resource. Ex -
+                      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+                    "identity": {
+                        "type": "str",  # The type of managed identity assigned to this
+                          resource. Required. Known values are: "None", "SystemAssigned",
+                          "UserAssigned", and "SystemAssigned, UserAssigned".
+                        "principalId": "str",  # Optional. The active directory identifier of
+                          this principal.
+                        "tenantId": "str",  # Optional. The Active Directory tenant id of the
+                          principal.
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
+                    },
+                    "name": "str",  # Optional. The name of the resource.
+                    "properties": {
+                        "agentProfile": agent_profile,
+                        "devCenterProjectResourceId": "str",  # The resource id of the
+                          DevCenter Project the pool belongs to. Required.
+                        "fabricProfile": fabric_profile,
+                        "maximumConcurrency": 0,  # Defines how many resources can there be
+                          created at any given time. Required.
+                        "organizationProfile": organization_profile,
+                        "provisioningState": "str"  # Optional. The status of the current
+                          operation. Known values are: "Succeeded", "Failed", "Canceled",
+                          "Provisioning", "Updating", "Deleting", and "Accepted".
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20",  # Optional. The type of identity that
+                          created the resource.
+                        "createdBy": "str",  # Optional. The identity that created the
+                          resource.
+                        "createdByType": "str",  # Optional. The type of identity that
+                          created the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                        "lastModifiedAt": "2020-02-20",  # Optional. The timestamp of
+                          resource last modification (UTC).
+                        "lastModifiedBy": "str",  # Optional. The identity that last modified
+                          the resource.
+                        "lastModifiedByType": "str"  # Optional. The type of identity that
+                          last modified the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                    },
+                    "tags": {
+                        "str": "str"  # Optional. Resource tags.
+                    },
+                    "type": "str"  # Optional. The type of the resource. E.g.
+                      "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts".
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         cls: ClsType[List[_models.Pool]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -839,12 +3214,7 @@ class PoolsOperations:
                     headers=_headers,
                     params=_params,
                 )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -859,12 +3229,7 @@ class PoolsOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url)
 
             return _request
 
@@ -885,6 +3250,8 @@ class PoolsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -895,18 +3262,152 @@ class PoolsOperations:
 
     @distributed_trace
     def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.Pool"]:
+        # pylint: disable=line-too-long
         """List Pool resources by subscription ID.
 
         :return: An iterator like instance of Pool
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.devopsinfrastructure.models.Pool]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "AzureDevOps":
+                organization_profile = {
+                    "kind": "AzureDevOps",
+                    "organizations": [
+                        {
+                            "url": "str",  # The Azure DevOps organization URL in which
+                              the pool should be created. Required.
+                            "parallelism": 0,  # Optional. How many machines can be
+                              created at maximum in this organization out of the maximumConcurrency of
+                              the pool.
+                            "projects": [
+                                "str"  # Optional. Optional list of projects in which
+                                  the pool should be created.
+                            ]
+                        }
+                    ],
+                    "permissionProfile": {
+                        "kind": "str",  # Determines who has admin permissions to the Azure
+                          DevOps pool. Required. Known values are: "Inherit", "CreatorOnly", and
+                          "SpecificAccounts".
+                        "groups": [
+                            "str"  # Optional. Group email addresses.
+                        ],
+                        "users": [
+                            "str"  # Optional. User email addresses.
+                        ]
+                    }
+                }
+
+                # JSON input template for discriminator value "GitHub":
+                organization_profile = {
+                    "kind": "GitHub",
+                    "organizations": [
+                        {
+                            "url": "str",  # The GitHub organization URL in which the
+                              pool should be created. Required.
+                            "repositories": [
+                                "str"  # Optional. Optional list of repositories in
+                                  which the pool should be created.
+                            ]
+                        }
+                    ]
+                }
+
+                # JSON input template for discriminator value "Stateful":
+                agent_profile = {
+                    "kind": "Stateful",
+                    "gracePeriodTimeSpan": "str",  # Optional. How long should the machine be
+                      kept around after it ran a workload when there are no stand-by agents. The
+                      maximum is one week.
+                    "maxAgentLifetime": "str",  # Optional. How long should stateful machines be
+                      kept around. The maximum is one week.
+                    "resourcePredictions": {},
+                    "resourcePredictionsProfile": resource_predictions_profile
+                }
+
+                # JSON input template for discriminator value "Automatic":
+                resource_predictions_profile = {
+                    "kind": "Automatic",
+                    "predictionPreference": "str"  # Optional. Determines the balance between
+                      cost and performance. Known values are: "Balanced", "MostCostEffective",
+                      "MoreCostEffective", "MorePerformance", and "BestPerformance".
+                }
+
+                # JSON input template for discriminator value "Manual":
+                resource_predictions_profile = {
+                    "kind": "Manual"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "location": "str",  # The geo-location where the resource lives. Required.
+                    "id": "str",  # Optional. Fully qualified resource ID for the resource. Ex -
+                      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+                    "identity": {
+                        "type": "str",  # The type of managed identity assigned to this
+                          resource. Required. Known values are: "None", "SystemAssigned",
+                          "UserAssigned", and "SystemAssigned, UserAssigned".
+                        "principalId": "str",  # Optional. The active directory identifier of
+                          this principal.
+                        "tenantId": "str",  # Optional. The Active Directory tenant id of the
+                          principal.
+                        "userAssignedIdentities": {
+                            "str": {
+                                "clientId": "str",  # Optional. The active directory
+                                  client identifier for this principal.
+                                "principalId": "str"  # Optional. The active
+                                  directory identifier for this principal.
+                            }
+                        }
+                    },
+                    "name": "str",  # Optional. The name of the resource.
+                    "properties": {
+                        "agentProfile": agent_profile,
+                        "devCenterProjectResourceId": "str",  # The resource id of the
+                          DevCenter Project the pool belongs to. Required.
+                        "fabricProfile": fabric_profile,
+                        "maximumConcurrency": 0,  # Defines how many resources can there be
+                          created at any given time. Required.
+                        "organizationProfile": organization_profile,
+                        "provisioningState": "str"  # Optional. The status of the current
+                          operation. Known values are: "Succeeded", "Failed", "Canceled",
+                          "Provisioning", "Updating", "Deleting", and "Accepted".
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20",  # Optional. The type of identity that
+                          created the resource.
+                        "createdBy": "str",  # Optional. The identity that created the
+                          resource.
+                        "createdByType": "str",  # Optional. The type of identity that
+                          created the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                        "lastModifiedAt": "2020-02-20",  # Optional. The timestamp of
+                          resource last modification (UTC).
+                        "lastModifiedBy": "str",  # Optional. The identity that last modified
+                          the resource.
+                        "lastModifiedByType": "str"  # Optional. The type of identity that
+                          last modified the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                    },
+                    "tags": {
+                        "str": "str"  # Optional. Resource tags.
+                    },
+                    "type": "str"  # Optional. The type of the resource. E.g.
+                      "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts".
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         cls: ClsType[List[_models.Pool]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -923,12 +3424,7 @@ class PoolsOperations:
                     headers=_headers,
                     params=_params,
                 )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -943,12 +3439,7 @@ class PoolsOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url)
 
             return _request
 
@@ -969,6 +3460,8 @@ class PoolsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -999,6 +3492,7 @@ class ResourceDetailsOperations:
     def list_by_pool(
         self, resource_group_name: str, pool_name: str, **kwargs: Any
     ) -> AsyncIterable["_models.ResourceDetailsObject"]:
+        # pylint: disable=line-too-long
         """List ResourceDetailsObject resources by Pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1010,13 +3504,49 @@ class ResourceDetailsOperations:
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.devopsinfrastructure.models.ResourceDetailsObject]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "id": "str",  # Optional. Fully qualified resource ID for the resource. Ex -
+                      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+                    "name": "str",  # Optional. The name of the resource.
+                    "properties": {
+                        "image": "str",  # The image name of the resource. Required.
+                        "imageVersion": "str",  # The version of the image running on the
+                          resource. Required.
+                        "status": "str"  # The status of the resource. Required. Known values
+                          are: "Ready", "NotReady", "Allocated", "PendingReturn", "Returned", "Leased",
+                          "Provisioning", "Updating", "Starting", "PendingReimage", and "Reimaging".
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20",  # Optional. The type of identity that
+                          created the resource.
+                        "createdBy": "str",  # Optional. The identity that created the
+                          resource.
+                        "createdByType": "str",  # Optional. The type of identity that
+                          created the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                        "lastModifiedAt": "2020-02-20",  # Optional. The timestamp of
+                          resource last modification (UTC).
+                        "lastModifiedBy": "str",  # Optional. The identity that last modified
+                          the resource.
+                        "lastModifiedByType": "str"  # Optional. The type of identity that
+                          last modified the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                    },
+                    "type": "str"  # Optional. The type of the resource. E.g.
+                      "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts".
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         cls: ClsType[List[_models.ResourceDetailsObject]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1035,12 +3565,7 @@ class ResourceDetailsOperations:
                     headers=_headers,
                     params=_params,
                 )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1055,12 +3580,7 @@ class ResourceDetailsOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url)
 
             return _request
 
@@ -1081,6 +3601,8 @@ class ResourceDetailsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -1109,6 +3631,7 @@ class SkuOperations:
 
     @distributed_trace
     def list_by_location(self, location_name: str, **kwargs: Any) -> AsyncIterable["_models.ResourceSku"]:
+        # pylint: disable=line-too-long
         """List ResourceSku resources by subscription ID.
 
         :param location_name: Name of the location. Required.
@@ -1117,13 +3640,111 @@ class SkuOperations:
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.devopsinfrastructure.models.ResourceSku]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "id": "str",  # Optional. Fully qualified resource ID for the resource. Ex -
+                      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+                    "name": "str",  # Optional. The name of the resource.
+                    "properties": {
+                        "capabilities": [
+                            {
+                                "name": "str",  # The name of the SKU capability.
+                                  Required.
+                                "value": "str"  # The value of the SKU capability.
+                                  Required.
+                            }
+                        ],
+                        "family": "str",  # The family of the SKU. Required.
+                        "locationInfo": [
+                            {
+                                "location": "str",  # Location of the SKU. Required.
+                                "zoneDetails": [
+                                    {
+                                        "capabilities": [
+                                            {
+                                                "name": "str",  # The
+                                                  name of the SKU capability. Required.
+                                                "value": "str"  # The
+                                                  value of the SKU capability. Required.
+                                            }
+                                        ],
+                                        "name": [
+                                            "str"  # Gets the set of
+                                              zones that the SKU is available in with the specified
+                                              capabilities. Required.
+                                        ]
+                                    }
+                                ],
+                                "zones": [
+                                    "str"  # List of availability zones where the
+                                      SKU is supported. Required.
+                                ]
+                            }
+                        ],
+                        "locations": [
+                            "str"  # The set of locations that the SKU is available.
+                              Required.
+                        ],
+                        "resourceType": "str",  # The type of resource the SKU applies to.
+                          Required.
+                        "restrictions": [
+                            {
+                                "restrictionInfo": {
+                                    "locations": [
+                                        "str"  # Optional. Locations where
+                                          the SKU is restricted.
+                                    ],
+                                    "zones": [
+                                        "str"  # Optional. List of
+                                          availability zones where the SKU is restricted.
+                                    ]
+                                },
+                                "values": [
+                                    "str"  # The value of restrictions. If the
+                                      restriction type is set to location. This would be different
+                                      locations where the SKU is restricted. Required.
+                                ],
+                                "reasonCode": "str",  # Optional. the reason for
+                                  restriction. Known values are: "QuotaId" and
+                                  "NotAvailableForSubscription".
+                                "type": "str"  # Optional. the type of restrictions.
+                                  Known values are: "Location" and "Zone".
+                            }
+                        ],
+                        "size": "str",  # The size of the SKU. Required.
+                        "tier": "str"  # The tier of virtual machines in a scale set.
+                          Required.
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20",  # Optional. The type of identity that
+                          created the resource.
+                        "createdBy": "str",  # Optional. The identity that created the
+                          resource.
+                        "createdByType": "str",  # Optional. The type of identity that
+                          created the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                        "lastModifiedAt": "2020-02-20",  # Optional. The timestamp of
+                          resource last modification (UTC).
+                        "lastModifiedBy": "str",  # Optional. The identity that last modified
+                          the resource.
+                        "lastModifiedByType": "str"  # Optional. The type of identity that
+                          last modified the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                    },
+                    "type": "str"  # Optional. The type of the resource. E.g.
+                      "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts".
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         cls: ClsType[List[_models.ResourceSku]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1141,12 +3762,7 @@ class SkuOperations:
                     headers=_headers,
                     params=_params,
                 )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1161,12 +3777,7 @@ class SkuOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url)
 
             return _request
 
@@ -1187,6 +3798,8 @@ class SkuOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -1214,21 +3827,60 @@ class SubscriptionUsagesOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def usages(self, location: str, **kwargs: Any) -> AsyncIterable["_models.Quota"]:
+    def list_by_location(self, location_name: str, **kwargs: Any) -> AsyncIterable["_models.Quota"]:
+        # pylint: disable=line-too-long
         """List Quota resources by subscription ID.
 
-        :param location: The name of the Azure region. Required.
-        :type location: str
+        :param location_name: Name of the location. Required.
+        :type location_name: str
         :return: An iterator like instance of Quota
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.devopsinfrastructure.models.Quota]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "id": "str",  # Optional. Fully qualified resource ID for the resource. Ex -
+                      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+                    "name": "str",  # Optional. The name of the resource.
+                    "properties": {
+                        "currentValue": 0,  # The current usage of the resource. Required.
+                        "limit": 0,  # The maximum permitted usage of the resource. Required.
+                        "name": {
+                            "localizedValue": "str",  # Optional. The localized name of
+                              the resource.
+                            "value": "str"  # Optional. The name of the resource.
+                        },
+                        "unit": "str"  # The unit of usage measurement. Required.
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20",  # Optional. The type of identity that
+                          created the resource.
+                        "createdBy": "str",  # Optional. The identity that created the
+                          resource.
+                        "createdByType": "str",  # Optional. The type of identity that
+                          created the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                        "lastModifiedAt": "2020-02-20",  # Optional. The timestamp of
+                          resource last modification (UTC).
+                        "lastModifiedBy": "str",  # Optional. The identity that last modified
+                          the resource.
+                        "lastModifiedByType": "str"  # Optional. The type of identity that
+                          last modified the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                    },
+                    "type": "str"  # Optional. The type of the resource. E.g.
+                      "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts".
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         cls: ClsType[List[_models.Quota]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1239,19 +3891,14 @@ class SubscriptionUsagesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_subscription_usages_usages_request(
-                    location=location,
+                _request = build_subscription_usages_list_by_location_request(
+                    location_name=location_name,
                     subscription_id=self._config.subscription_id,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1266,12 +3913,7 @@ class SubscriptionUsagesOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url)
 
             return _request
 
@@ -1292,6 +3934,8 @@ class SubscriptionUsagesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -1322,6 +3966,7 @@ class ImageVersionsOperations:
     def list_by_image(
         self, resource_group_name: str, image_name: str, **kwargs: Any
     ) -> AsyncIterable["_models.ImageVersion"]:
+        # pylint: disable=line-too-long
         """List ImageVersion resources by Image.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1333,13 +3978,44 @@ class ImageVersionsOperations:
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.devopsinfrastructure.models.ImageVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "id": "str",  # Optional. Fully qualified resource ID for the resource. Ex -
+                      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+                    "name": "str",  # Optional. The name of the resource.
+                    "properties": {
+                        "version": "str"  # Version of the image. Required.
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20",  # Optional. The type of identity that
+                          created the resource.
+                        "createdBy": "str",  # Optional. The identity that created the
+                          resource.
+                        "createdByType": "str",  # Optional. The type of identity that
+                          created the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                        "lastModifiedAt": "2020-02-20",  # Optional. The timestamp of
+                          resource last modification (UTC).
+                        "lastModifiedBy": "str",  # Optional. The identity that last modified
+                          the resource.
+                        "lastModifiedByType": "str"  # Optional. The type of identity that
+                          last modified the resource. Known values are: "User", "Application",
+                          "ManagedIdentity", and "Key".
+                    },
+                    "type": "str"  # Optional. The type of the resource. E.g.
+                      "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts".
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         cls: ClsType[List[_models.ImageVersion]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1358,12 +4034,7 @@ class ImageVersionsOperations:
                     headers=_headers,
                     params=_params,
                 )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1378,12 +4049,7 @@ class ImageVersionsOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url)
 
             return _request
 
@@ -1404,6 +4070,8 @@ class ImageVersionsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)

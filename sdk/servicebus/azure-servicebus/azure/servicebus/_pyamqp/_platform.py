@@ -2,6 +2,8 @@
 
 # pylint: skip-file
 
+from __future__ import absolute_import, unicode_literals
+
 from typing import Tuple, cast
 import platform
 import re

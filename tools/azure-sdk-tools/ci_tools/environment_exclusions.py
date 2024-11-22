@@ -35,10 +35,9 @@ IGNORE_PACKAGES = [
     "azure-template",
 ]
 
-MUST_RUN_ENVS = ["bandit"]
-
-# all of our checks default to ON, other than the below
-CHECK_DEFAULTS = {"black": False}
+MUST_RUN_ENVS = [
+    "bandit"
+]
 
 def is_check_enabled(package_path: str, check: str, default: Any = True) -> bool:
     """
@@ -82,8 +81,7 @@ def filter_tox_environment_string(namespace_argument: str, package_path: str) ->
         filtered_set = []
 
         for tox_env in [env.strip().lower() for env in tox_envs]:
-            check_enabled = is_check_enabled(package_path, tox_env, CHECK_DEFAULTS.get(tox_env, True))
-            if check_enabled or tox_env in MUST_RUN_ENVS:
+            if is_check_enabled(package_path, tox_env, True) or tox_env in MUST_RUN_ENVS:
                 filtered_set.append(tox_env)
         return ",".join(filtered_set)
 

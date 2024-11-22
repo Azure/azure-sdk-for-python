@@ -140,7 +140,6 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
     :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
      the service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
-     Unless specified otherwise, default transport type is TransportType.AmqpOverWebsockets.
      If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
     :paramtype custom_endpoint_address: str
     :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
@@ -562,7 +561,6 @@ class SendClient(AMQPClient):
     :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
      the service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
-     Unless specified otherwise, default transport type is TransportType.AmqpOverWebsockets.
      If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
     :paramtype custom_endpoint_address: str
     :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
@@ -788,7 +786,6 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
     :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
      the service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
-     Unless specified otherwise, default transport type is TransportType.AmqpOverWebsockets.
      If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
     :paramtype custom_endpoint_address: str
     :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to

@@ -187,7 +187,7 @@ class _QueryExecutionAggregateEndpointComponent(_QueryExecutionEndpointComponent
         for operator in aggregate_operators:
             if operator == "Average":
                 self._local_aggregators.append(_AverageAggregator())
-            elif operator in ("Count", "CountIf"):
+            elif operator == "Count":
                 self._local_aggregators.append(_CountAggregator())
             elif operator == "Max":
                 self._local_aggregators.append(_MaxAggregator())

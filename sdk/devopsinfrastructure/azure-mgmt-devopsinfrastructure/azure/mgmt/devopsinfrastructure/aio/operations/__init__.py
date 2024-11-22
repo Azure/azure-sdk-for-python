@@ -25,5 +25,5 @@ __all__ = [
     "SubscriptionUsagesOperations",
     "ImageVersionsOperations",
 ]
-__all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
+__all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

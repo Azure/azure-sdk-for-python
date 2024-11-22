@@ -36,6 +36,7 @@ extends:
   parameters:
     ServiceDirectory: core
     BuildTargetingString: "*"
+    ValidateFormatting: true
     TestProxy: false
     TestTimeoutInMinutes: 120
     Artifacts:

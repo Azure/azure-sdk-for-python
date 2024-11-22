@@ -16,7 +16,6 @@
 import logging
 import sys
 from datetime import datetime
-from enum import Enum
 from threading import Lock
 from typing import Optional
 
@@ -44,19 +43,6 @@ def get_format_value() -> Optional[str]:
 
 def get_default_logging_format() -> str:
     return f"%({get_format_key()})s{logging.BASIC_FORMAT}"
-
-
-class DataCategory(Enum):
-    """
-    Enumeration of data categories in compliant machine learning.
-
-    Values:
-    - PRIVATE: data which is private. Researchers may not view this.
-    - PUBLIC: data which may safely be viewed by researchers.
-    """
-
-    PRIVATE = 1
-    PUBLIC = 2
 
 
 class CompliantLogger(logging.getLoggerClass()):  # type: ignore
@@ -95,9 +81,9 @@ class CompliantLogger(logging.getLoggerClass()):  # type: ignore
         extra=None,
         stack_info=False,
         stacklevel=1,
-        category=DataCategory.PRIVATE,
+        is_compliant=False,
     ):
-        if category == DataCategory.PUBLIC:
+        if is_compliant:
             format_value = self.format_value
         else:
             format_value = ""
