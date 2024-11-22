@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, List
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml._restclient.v2024_10_01_preview.models import JobResources as RestJobResources
 
@@ -9,7 +9,7 @@ class JobResources(RestTranslatableMixin):
     This class should not be instantiated directly. Instead, use its subclasses.
     """
 
-    def __init__(self, *, instance_types: list[str]) -> None:
+    def __init__(self, *, instance_types: List[str]) -> None:
         self.instance_types = instance_types
 
     def _to_rest_object(self) -> Any:

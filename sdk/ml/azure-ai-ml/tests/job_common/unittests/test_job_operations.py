@@ -254,7 +254,7 @@ class TestJobOperations:
                 token=jwt.encode({"aud": aml_resource_id}, key="utf-8"), expires_on=1234
             )
             mock_job_operation.create_or_update(job=job)
-            mock_job_operation._operation_2023_02_preview.create_or_update.assert_called_once()
+            mock_job_operation._operation_2024_10_preview.create_or_update.assert_called_once()
             mock_job_operation._credential.get_token.assert_called_once_with(azure_ml_scopes[0])
 
         with patch.object(mock_job_operation._credential, "get_token") as mock_get_token:
@@ -285,14 +285,14 @@ class TestJobOperations:
         mock_method.return_value = Command(component=None)
         mock_job_operation.archive(name="random_name")
         mock_job_operation.service_client_10_2024_preview.jobs.get.assert_called_once()
-        mock_job_operation._operation_2023_02_preview.create_or_update.assert_called_once()
+        mock_job_operation._operation_2024_10_preview.create_or_update.assert_called_once()
 
     @patch.object(Job, "_from_rest_object")
     def test_restore(self, mock_method, mock_job_operation: JobOperations) -> None:
         mock_method.return_value = Command(component=None)
         mock_job_operation.restore(name="random_name")
         mock_job_operation.service_client_10_2024_preview.jobs.get.assert_called_once()
-        mock_job_operation._operation_2023_02_preview.create_or_update.assert_called_once()
+        mock_job_operation._operation_2024_10_preview.create_or_update.assert_called_once()
 
     @pytest.mark.parametrize(
         "corrupt_job_data",
