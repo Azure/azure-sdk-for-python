@@ -4,7 +4,7 @@
 
 import os
 from azure.ai.ml._utils._experimental import experimental
-from typing import List, Optional
+from typing import List, Optional, Union
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.constants._workspace import CapabilityHostKind
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceKind
@@ -30,7 +30,7 @@ class CapabilityHost(Resource):
         vector_store_connections: Optional[List[str]] = None,
         ai_services_connections: Optional[List[str]] = None,
         storage_connections: Optional[List[str]] = None,
-        capability_host_kind: CapabilityHostKind = CapabilityHostKind.AGENTS,
+        capability_host_kind: Optional[Union[str, CapabilityHostKind]] = CapabilityHostKind.AGENTS,
         **kwargs: Any,
     ):
         super().__init__(name=name,description=description, **kwargs)
@@ -81,7 +81,7 @@ class CapabilityHost(Resource):
     def _to_rest_object_for_hub(self) -> RestCapabilityHost:
         properties = RestCapabilityHostProperties(
                 description = self.description,
-                capability_host_kind = str(self.capability_host_kind)
+                capability_host_kind = self.capability_host_kind
         )
         resource = RestCapabilityHost(
             properties=properties,
@@ -94,7 +94,7 @@ class CapabilityHost(Resource):
                 storage_connections = self.storage_connections,
                 vector_store_connections = self.vector_store_connections,
                 description = self.description,
-                capability_host_kind = str(self.capability_host_kind)
+                capability_host_kind = self.capability_host_kind
         )
         resource = RestCapabilityHost(
             properties=properties,

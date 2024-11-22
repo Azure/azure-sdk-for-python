@@ -46,7 +46,7 @@ class OutboundRuleType:
     PRIVATE_ENDPOINT = "PrivateEndpoint"
     SERVICE_TAG = "ServiceTag"
 
-class CapabilityHostKind:
+class CapabilityHostKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Capabilityhost kind."""
 
     AGENTS = "Agents"

@@ -15,7 +15,6 @@ from azure.ai.ml.entities._workspace._ai_workspaces.capability_host import Capab
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml.constants._common import WorkspaceKind
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml.constants._workspace import CapabilityHostKind
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
