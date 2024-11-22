@@ -324,7 +324,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
                 )
             )
             self._setup_failover_endpoints()
-            if load_balance:
+            if load_balancing_enabled:
                 random.shuffle(self._replica_clients)
             return
         if endpoint and credential:
@@ -334,7 +334,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
                 )
             )
             self._setup_failover_endpoints()
-            if load_balance:
+            if load_balancing_enabled:
                 random.shuffle(self._replica_clients)
             return
         raise ValueError("Please pass either endpoint and credential, or a connection string with a value.")
@@ -342,15 +342,15 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
     def get_next_client(self) -> Optional[_ConfigurationClientWrapper]:
         """
         Get the next client to be used for the request. find_active_clients needs be called before this method or None
-        client will be returned. If load_balance isn't enabled the first active client will be returned, which is the
-        provided endpoint unless it has failed. If load_balance is enabled the next client in the list will be returned.
+        client will be returned. If load_balancing_enabled isn't enabled the first active client will be returned, which is the
+        provided endpoint unless it has failed. If load_balancing_enabled is enabled the next client in the list will be returned.
 
         :return: The next client to be used for the request.
         """
         if not self._active_clients:
             self._last_active_client_name = ""
             return None
-        if not self._load_balance:
+        if not self._load_balancing_enabled:
             for client in self._active_clients:
                 if client.is_active():
                     return client
@@ -371,13 +371,13 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
 
     def find_active_clients(self):
         """
-        Figures out the current active clients, if load_balance is enabled the start of the list will be the one after
+        Figures out the current active clients, if _load_balancing_enabled is enabled the start of the list will be the one after
         the last active client used.
         """
         active_clients = [client for client in self._replica_clients if client.is_active()]
 
         self._active_clients = active_clients
-        if not self._load_balance or len(self._last_active_client_name) == 0:
+        if not self._load_balancing_enabled or len(self._last_active_client_name) == 0:
             return
         for i, client in enumerate(active_clients):
             if client.endpoint == self._last_active_client_name:
@@ -391,8 +391,8 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
         if self._next_update_time > time.time():
             return
         updated_endpoints = self._setup_failover_endpoints()
-        if updated_endpoints and self._load_balance:
-            # Reshuffle only if a new client was added and load_balance is enabled
+        if updated_endpoints and self._load_balancing_enabled:
+            # Reshuffle only if a new client was added and _load_balancing_enabled is enabled
             random.shuffle(self._replica_clients)
 
     def get_client_count(self) -> int:

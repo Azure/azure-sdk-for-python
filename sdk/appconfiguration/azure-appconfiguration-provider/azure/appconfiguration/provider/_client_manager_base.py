@@ -90,7 +90,7 @@ class ConfigurationClientManagerBase:  # pylint:disable=too-many-instance-attrib
         replica_discovery_enabled,
         min_backoff_sec,
         max_backoff_sec,
-        load_balance: bool,
+        _load_balancing_enabled: bool,
         **kwargs,
     ):
         self._last_active_client_name = ""
@@ -103,7 +103,7 @@ class ConfigurationClientManagerBase:  # pylint:disable=too-many-instance-attrib
         self._args = dict(kwargs)
         self._min_backoff_sec = min_backoff_sec
         self._max_backoff_sec = max_backoff_sec
-        self._load_balance = load_balance
+        self._load_balancing_enabled = _load_balancing_enabled
 
     def _calculate_backoff(self, attempts: int) -> float:
         max_attempts = 63

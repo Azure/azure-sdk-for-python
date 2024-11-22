@@ -304,7 +304,7 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
         replica_discovery_enabled,
         min_backoff_sec,
         max_backoff_sec,
-        load_balance: bool,
+        load_balancing_enabled: bool,
         **kwargs
     ):
         super(AsyncConfigurationClientManager, self).__init__(
@@ -315,7 +315,7 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
             replica_discovery_enabled,
             min_backoff_sec,
             max_backoff_sec,
-            load_balance,
+            load_balancing_enabled,
             **kwargs
         )
         self._original_connection_string = connection_string
@@ -342,15 +342,15 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
     def get_next_client(self) -> Optional[_AsyncConfigurationClientWrapper]:
         """
         Get the next client to be used for the request. find_active_clients needs be called before this method or None
-        client will be returned. If load_balance isn't enabled the first active client will be returned, which is the
-        provided endpoint unless it has failed. If load_balance is enabled the next client in the list will be returned.
+        client will be returned. If load_balancing_enabled isn't enabled the first active client will be returned, which is the
+        provided endpoint unless it has failed. If load_balancing_enabled is enabled the next client in the list will be returned.
 
         :return: The next client to be used for the request.
         """
         if not self._active_clients:
             self._last_active_client_name = ""
             return None
-        if not self._load_balance:
+        if not self._load_balancing_enabled:
             for client in self._active_clients:
                 if client.is_active():
                     return client
@@ -371,12 +371,12 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
 
     def find_active_clients(self):
         """
-        Figures out the current active clients, if load_balance is enabled the start of the list will be the one after
+        Figures out the current active clients, if _load_balancing_enabled is enabled the start of the list will be the one after
         the last active client used.
         """
         active_clients = [client for client in self._replica_clients if client.is_active()]
 
-        if not self._load_balance or not self._last_active_client_name:
+        if not self._load_balancing_enabled or not self._last_active_client_name:
             self._active_clients = active_clients
             return
         for i, client in enumerate(active_clients):
@@ -387,7 +387,7 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
 
     async def setup_initial_clients(self):
         await self._setup_failover_endpoints()
-        if self._load_balance:
+        if self._load_balancing_enabled:
             random.shuffle(self._replica_clients)
 
     async def refresh_clients(self):
@@ -397,8 +397,8 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
             return
 
         updated_endpoints = await self._setup_failover_endpoints()
-        if updated_endpoints and self._load_balance:
-            # Reshuffle only if a new client was added and load_balance is enabled
+        if updated_endpoints and self._load_balancing_enabled:
+            # Reshuffle only if a new client was added and _load_balancing_enabled is enabled
             random.shuffle(self._replica_clients)
 
     def get_client_count(self) -> int:
