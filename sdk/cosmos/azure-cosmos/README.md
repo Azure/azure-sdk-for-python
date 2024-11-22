@@ -107,8 +107,9 @@ aad_credentials = DefaultAzureCredential()
 client = CosmosClient(url, aad_credentials)
 ```
 Always ensure that the managed identity you use for AAD authentication has `readMetadata` permissions. <br>
-More information on how to set up AAD authentication: [Set up RBAC for AAD authentication](https://docs.microsoft.com/azure/cosmos-db/how-to-setup-rbac) <br>
-More information on allowed operations for AAD authenticated clients: [RBAC Permission Model](https://aka.ms/cosmos-native-rbac)
+More information on how to set up AAD authentication: [Set up RBAC for AAD authentication - data plane](https://docs.microsoft.com/azure/cosmos-db/how-to-setup-rbac) <br>
+Using AAD authentication with this SDK **only allows for item-level operations** to be executed.
+If you'd like to perform database or container-level operations with AAD authentication, you will have to use our management SDKs: [Set up RBAC for AAD authentication - control plane](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/security/how-to-grant-control-plane-role-based-access).
 
 ## Key concepts
 
