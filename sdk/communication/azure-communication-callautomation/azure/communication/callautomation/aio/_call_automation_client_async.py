@@ -291,7 +291,7 @@ class CallAutomationClient:
         )
 
         process_repeatability_first_sent(kwargs)
-        result = self._client.connect(
+        result = await self._client.connect(
             connect_call_request=connect_call_request,
             **kwargs
         )
