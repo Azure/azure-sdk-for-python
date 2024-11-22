@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any
+from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -26,9 +27,7 @@ from .operations import (
 )
 
 
-class AzureCommunicationCallAutomationService(
-    AzureCommunicationCallAutomationServiceOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class AzureCommunicationCallAutomationService(AzureCommunicationCallAutomationServiceOperationsMixin):
     """Azure Communication Service Call Automation APIs.
 
     :ivar call_connection: CallConnectionOperations operations
@@ -112,7 +111,7 @@ class AzureCommunicationCallAutomationService(
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "AzureCommunicationCallAutomationService":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

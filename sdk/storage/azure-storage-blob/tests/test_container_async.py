@@ -884,7 +884,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         container_name = await self._create_container(bsc)
 
         # Act
-        identifiers = dict()
+        identifiers = {}
         for i in range(0, 6):
             identifiers['id{}'.format(i)] = AccessPolicy()
 
@@ -1107,7 +1107,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         with pytest.raises(ResourceNotFoundError):
             await container_client.get_container_properties()
 
-        container_list = list()
+        container_list = []
         async for c in bsc.list_containers(include_deleted=True):
             container_list.append(c)
         assert len(container_list) >= 1
@@ -1401,7 +1401,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         await container.get_blob_client('blob3').upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
 
         # Act
-        blobs = list()
+        blobs = []
 
         # include deletedwithversions will give you all alive root blobs and the the deleted root blobs when versioning is on.
         async for blob in container.list_blobs(include=["deletedwithversions"]):
@@ -1548,11 +1548,11 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         # Act
         blob_pages = container.find_blobs_by_tags(filter_expression, results_per_page=2).by_page()
         first_page = await blob_pages.__anext__()
-        items_on_page1 = list()
+        items_on_page1 = []
         async for item in first_page:
             items_on_page1.append(item)
         second_page = await blob_pages.__anext__()
-        items_on_page2 = list()
+        items_on_page2 = []
         async for item in second_page:
             items_on_page2.append(item)
 
@@ -1565,7 +1565,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
     def test_batch_delete_empty_blob_list(self):
         container_client = ContainerClient("https://mystorageaccount.blob.core.windows.net", "container")
-        blob_list = list()
+        blob_list = []
         container_client.delete_blobs(*blob_list)
 
     @pytest.mark.live_test_only
@@ -1710,7 +1710,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
             if_tags_match_condition="\"tag1\"='firsttag'"
         )
 
-        response = list()
+        response = []
         async for sub_resp in blob_list:
             response.append(sub_resp)
 
@@ -1757,7 +1757,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         blob_props = await blob_client1.get_blob_properties()
         blob_props.snapshot = snapshot['snapshot']
 
-        blob_props_d = dict()
+        blob_props_d = {}
         blob_props_d['name'] = "blobd"
         blob_props_d['delete_snapshots'] = "include"
         blob_props_d['lease_id'] = lease.id
@@ -1834,7 +1834,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         new_blob_version_id = (await blob.get_blob_properties()).get("version_id")
         assert old_blob_version_id != new_blob_version_id
 
-        blob1_del_data = dict()
+        blob1_del_data = {}
         blob1_del_data['name'] = 'blob1'
         blob1_del_data['version_id'] = old_blob_version_id
 
@@ -2014,7 +2014,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
             if_tags_match_condition="\"tag1\"='firsttag'"
         )
 
-        parts = list()
+        parts = []
         async for part in parts_list:
             parts.append(part)
         assert len(parts) == 3
@@ -2402,7 +2402,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         # Act
         downloader = await container.download_blob(blob_name)
         downloaded_data = b''
-        chunk_size_list = list()
+        chunk_size_list = []
         async for chunk in downloader.chunks():
             chunk_size_list.append(len(chunk))
             downloaded_data += chunk
@@ -2431,7 +2431,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         # Act
         downloader= await container.download_blob(blob_name)
         downloaded_data = b''
-        chunk_size_list = list()
+        chunk_size_list = []
         async for chunk in downloader.chunks():
             chunk_size_list.append(len(chunk))
             downloaded_data += chunk
@@ -2460,7 +2460,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         downloader = await container.download_blob(blob_name)
         downloaded_data = b''
-        chunk_size_list = list()
+        chunk_size_list = []
         async for chunk in downloader.chunks():
             chunk_size_list.append(len(chunk))
             downloaded_data += chunk

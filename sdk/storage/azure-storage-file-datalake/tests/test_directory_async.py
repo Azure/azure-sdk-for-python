@@ -522,7 +522,7 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         num_file_per_sub_dir = 5
         await self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
 
-        response_list = list()
+        response_list = []
 
         def callback(response):
             response_list.append(response)
