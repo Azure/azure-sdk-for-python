@@ -7,10 +7,6 @@ parameters:
     displayName: 'msal'
     type: boolean
     default: true
-  - name: release_uamqp
-    displayName: 'uamqp'
-    type: boolean
-    default: false
   - name: release_msal_extensions
     displayName: 'msal-extensions'
     type: boolean
@@ -187,7 +183,6 @@ extends:
 
       - stage: Build_Universal_Dependencies
         displayName: Build Universal Conda Packages
-        dependsOn: Build_Dependencies
         variables:
           - template: /eng/pipelines/templates/variables/globals.yml@self
 
@@ -201,22 +196,9 @@ extends:
               os: linux
 
             steps:
-              - download: current
-                artifact: windows_conda
-                timeoutInMinutes: 5
-
-              - download: current
-                artifact: linux_conda
-                timeoutInMinutes: 5
-
-              - download: current
-                artifact: mac_conda
-                timeoutInMinutes: 5
 
               - template: /eng/pipelines/templates/steps/build-conda-artifacts.yml@self
                 parameters:
-                  Arguments: '--channel "$(Pipeline.Workspace)/mac_conda" "$(Pipeline.Workspace)/windows_conda" "$(Pipeline.Workspace)/linux_conda"'
-
                   CondaArtifacts:
                     - name: azure-core
                       common_root: azure
