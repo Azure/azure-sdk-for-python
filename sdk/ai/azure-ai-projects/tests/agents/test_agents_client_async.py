@@ -24,6 +24,8 @@ from azure.ai.projects.models import (
     FileSearchToolResource,
     FunctionTool,
     MessageAttachment,
+    MessageRole,
+    RunStatus,
     ThreadMessageOptions,
     ToolResources,
     ToolSet,
@@ -1597,6 +1599,49 @@ class TestagentClientAsync(AzureRecordedTestCase):
         assert len(messages)
         await ai_client.agents.delete_agent(agent.id)
         await ai_client.close()
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_client_with_thread_messages(self, **kwargs):
+        """Test agent with thread messages."""
+        async with self.create_client(**kwargs) as client:
+
+            # [START create_agent]
+            agent = await client.agents.create_agent(
+                model="gpt-4-1106-preview",
+                name="my-assistant",
+                instructions="You are helpful assistant",
+            )
+            assert agent.id, "The agent was not created."
+            thread = await client.agents.create_thread()
+            assert thread.id, "Thread was not created"
+
+            message = await client.agents.create_message(
+                thread_id=thread.id, role="user", content="What is the equation of light energy?"
+            )
+            assert message.id, "The message was not created."
+
+            additional_messages = [
+                ThreadMessageOptions(role=MessageRole.AGENT, content="E=mc^2"),
+                ThreadMessageOptions(role=MessageRole.USER, content="What is the impedance formula?"),
+            ]
+            run = await client.agents.create_run(
+                thread_id=thread.id, assistant_id=agent.id, additional_messages=additional_messages
+            )
+
+            # poll the run as long as run status is queued or in progress
+            while run.status in [RunStatus.QUEUED, RunStatus.IN_PROGRESS]:
+                # wait for a second
+                time.sleep(1)
+                run = await client.agents.get_run(
+                    thread_id=thread.id,
+                    run_id=run.id,
+                )
+            assert run.status in RunStatus.COMPLETED
+
+            assert (await client.agents.delete_agent(agent.id)).deleted, "The agent was not deleted"
+            messages = await client.agents.list_messages(thread_id=thread.id)
+            assert len(messages.data), "The data from the agent was not received."
 
     async def _get_file_id_maybe(self, ai_client: AIProjectClient, **kwargs) -> str:
         """Return file id if kwargs has file path."""

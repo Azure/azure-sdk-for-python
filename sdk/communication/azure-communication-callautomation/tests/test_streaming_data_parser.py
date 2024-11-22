@@ -6,8 +6,15 @@
 
 import json
 import unittest
-from azure.communication.callautomation.streaming.models import (TranscriptionMetadata,TranscriptionData,WordData,TextFormat,ResultStatus)
+from azure.communication.callautomation.streaming.models import (
+    TranscriptionMetadata,
+    TranscriptionData,
+    WordData,
+    TextFormat,
+    ResultStatus,
+)
 from azure.communication.callautomation.streaming.streaming_data_parser import StreamingDataParser
+
 
 class TestStreamDataParser(unittest.TestCase):
     def setUp(self):
@@ -15,7 +22,7 @@ class TestStreamDataParser(unittest.TestCase):
         self.transcriptionDataJson = '{"kind":"TranscriptionData","transcriptionData":{"text":"Is everything fine.","format":"display","confidence":0.8138430714607239,"offset":868464674,"duration":11600000,"words":[{"text":"is","offset":868464674,"duration":2400000},{"text":"everything","offset":870864674,"duration":5200000},{"text":"fine","offset":876064674,"duration":4000000}],"participantRawID":"4:+910000000000","resultStatus":"Final"}}'
 
     def test_parse_binary_to_transcription_metadata(self):
-        transcriptionMetaDataBinary = self.transcriptionMetaDataJson.encode('utf-8')
+        transcriptionMetaDataBinary = self.transcriptionMetaDataJson.encode("utf-8")
         parsedData = StreamingDataParser.parse(transcriptionMetaDataBinary)
         self.assertTrue(isinstance(parsedData, TranscriptionMetadata))
         self.validate_transcription_metadata(parsedData)
@@ -26,7 +33,7 @@ class TestStreamDataParser(unittest.TestCase):
         self.validate_transcription_metadata(parsedData)
 
     def test_parse_binary_to_transcription_data(self):
-        transcriptionDataBinary = self.transcriptionDataJson.encode('utf-8')
+        transcriptionDataBinary = self.transcriptionDataJson.encode("utf-8")
         parsedData = StreamingDataParser.parse(transcriptionDataBinary)
         self.assertTrue(isinstance(parsedData, TranscriptionData))
         self.validate_transcription_data(parsedData)
@@ -60,5 +67,3 @@ class TestStreamDataParser(unittest.TestCase):
         self.assertEqual(transcriptionData.words[2].offset, 876064674)
         self.assertEqual(transcriptionData.words[2].duration, 4000000)
         self.assertEqual(transcriptionData.participant.raw_id, "4:+910000000000")
-
-

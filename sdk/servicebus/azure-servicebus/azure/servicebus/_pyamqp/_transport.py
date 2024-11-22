@@ -32,9 +32,6 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 # -------------------------------------------------------------------------
 
-
-from __future__ import absolute_import, unicode_literals
-
 import errno
 import re
 import socket
