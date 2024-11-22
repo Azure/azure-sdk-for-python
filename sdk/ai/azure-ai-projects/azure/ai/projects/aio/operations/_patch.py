@@ -34,7 +34,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ... import models as _models
 from ..._vendor import FileType
-from ...models._enums import AuthenticationType, ConnectionType, FilePurpose
+from ...models._enums import AuthenticationType, ConnectionType, FilePurpose, RunStatus
 from ...models._models import (
     GetAppInsightsResponse,
     GetConnectionResponse,
@@ -452,7 +452,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self._toolset: Optional[_models.AsyncToolSet] = None
+        self._toolset: Dict[str, _models.AsyncToolSet] = {}
 
     @overload
     async def create_agent(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
@@ -564,7 +564,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype instructions: str
         :keyword toolset: The Collection of tools and resources (alternative to `tools` and `tool_resources`
          and adds automatic execution logic for functions). Default value is None.
-        :paramtype toolset: ~azure.ai.projects.models.ToolSet
+        :paramtype toolset: ~azure.ai.projects.models.AsyncToolSet
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output more random,
          while lower values like 0.2 will make it more focused and deterministic. Default value is
@@ -667,11 +667,10 @@ class AgentsOperations(AgentsOperationsGenerated):
             return await super().create_agent(body=body, **kwargs)
 
         if toolset is not None:
-            self._toolset = toolset
             tools = toolset.definitions
             tool_resources = toolset.resources
 
-        return await super().create_agent(
+        new_agent = await super().create_agent(
             model=model,
             name=name,
             description=description,
@@ -684,6 +683,10 @@ class AgentsOperations(AgentsOperationsGenerated):
             metadata=metadata,
             **kwargs,
         )
+
+        if toolset is not None:
+            self._toolset[new_agent.id] = toolset
+        return new_agent
 
     @overload
     async def update_agent(
@@ -808,7 +811,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype instructions: str
         :keyword toolset: The Collection of tools and resources (alternative to `tools` and `tool_resources`
          and adds automatic execution logic for functions). Default value is None.
-        :paramtype toolset: ~azure.ai.projects.models.ToolSet
+        :paramtype toolset: ~azure.ai.projects.models.AsyncToolSet
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output more random,
          while lower values like 0.2 will make it more focused and deterministic. Default value is
@@ -898,7 +901,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype tool_resources: ~azure.ai.projects.models.ToolResources
         :keyword toolset: The Collection of tools and resources (alternative to `tools` and `tool_resources`
          and adds automatic execution logic for functions). Default value is None.
-        :paramtype toolset: ~azure.ai.projects.models.ToolSet
+        :paramtype toolset: ~azure.ai.projects.models.AsyncToolSet
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output more random,
          while lower values like 0.2 will make it more focused and deterministic. Default value is
@@ -932,7 +935,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             return await super().update_agent(body=body, **kwargs)
 
         if toolset is not None:
-            self._toolset = toolset
+            self._toolset[assistant_id] = toolset
             tools = toolset.definitions
             tool_resources = toolset.resources
 
@@ -972,15 +975,6 @@ class AgentsOperations(AgentsOperationsGenerated):
                 "Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided"
             )
 
-    def _get_toolset(self) -> Optional[_models.AsyncToolSet]:
-        """
-        Get the toolset for the agent.
-
-        :return: The toolset for the agent. If not set, returns None.
-        :rtype: ~azure.ai.projects.models.AsyncToolSet
-        """
-        return self._toolset
-
     @overload
     async def create_run(
         self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
@@ -1010,7 +1004,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
-        additional_messages: Optional[List[_models.ThreadMessage]] = None,
+        additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
@@ -1124,7 +1118,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
-        additional_messages: Optional[List[_models.ThreadMessage]] = None,
+        additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
@@ -1156,7 +1150,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessage]
+        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessageOptions]
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
         :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
@@ -1253,8 +1247,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
-        additional_messages: Optional[List[_models.ThreadMessage]] = None,
-        tools: Optional[List[_models.ToolDefinition]] = None,
+        additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
+        toolset: Optional[_models.AsyncToolSet] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_prompt_tokens: Optional[int] = None,
@@ -1284,10 +1278,10 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessage]
-        :keyword tools: The overridden list of enabled tools that the agent should use to run the
-         thread. Default value is None.
-        :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
+        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessageOptions]
+        :keyword toolset: The Collection of tools and resources (alternative to `tools` and
+         `tool_resources`). Default value is None.
+        :paramtype toolset: ~azure.ai.projects.models.AsyncToolSet
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -1349,7 +1343,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             instructions=instructions,
             additional_instructions=additional_instructions,
             additional_messages=additional_messages,
-            tools=tools,
+            tools=toolset.definitions if toolset else None,
             temperature=temperature,
             top_p=top_p,
             max_prompt_tokens=max_prompt_tokens,
@@ -1362,7 +1356,11 @@ class AgentsOperations(AgentsOperationsGenerated):
         )
 
         # Monitor and process the run status
-        while run.status in ["queued", "in_progress", "requires_action"]:
+        while run.status in [
+            RunStatus.QUEUED,
+            RunStatus.IN_PROGRESS,
+            RunStatus.REQUIRES_ACTION,
+        ]:
             time.sleep(sleep_interval)
             run = await self.get_run(thread_id=thread_id, run_id=run.id)
 
@@ -1372,16 +1370,20 @@ class AgentsOperations(AgentsOperationsGenerated):
                     logging.warning("No tool calls provided - cancelling run")
                     await self.cancel_run(thread_id=thread_id, run_id=run.id)
                     break
+                # We need tool set only if we are executing local function. In case if
+                # the tool is azure_function we just need to wait when it will be finished.
+                if any(tool_call.type == "function" for tool_call in tool_calls):
+                    toolset = toolset or self._toolset.get(run.assistant_id)
+                    if toolset:
+                        tool_outputs = await toolset.execute_tool_calls(tool_calls)
+                    else:
+                        raise ValueError("Toolset is not available in the client.")
 
-                toolset = self._get_toolset()
-                if toolset:
-                    tool_outputs = await toolset.execute_tool_calls(tool_calls)
-                else:
-                    raise ValueError("Toolset is not available in the client.")
-
-                logging.info("Tool outputs: %s", tool_outputs)
-                if tool_outputs:
-                    await self.submit_tool_outputs_to_run(thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs)
+                    logging.info("Tool outputs: %s", tool_outputs)
+                    if tool_outputs:
+                        await self.submit_tool_outputs_to_run(
+                            thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs
+                        )
 
             logging.info("Current run status: %s", run.status)
 
@@ -1397,7 +1399,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
-        additional_messages: Optional[List[_models.ThreadMessage]] = None,
+        additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
@@ -1431,7 +1433,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessage]
+        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessageOptions]
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
         :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
@@ -1517,7 +1519,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
-        additional_messages: Optional[List[_models.ThreadMessage]] = None,
+        additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
@@ -1552,7 +1554,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessage]
+        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessageOptions]
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
         :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
@@ -1902,19 +1904,22 @@ class AgentsOperations(AgentsOperationsGenerated):
                 logger.debug("No tool calls to execute.")
                 return
 
-            toolset = self._get_toolset()
-            if toolset:
-                tool_outputs = await toolset.execute_tool_calls(tool_calls)
-            else:
-                logger.warning("Toolset is not available in the client.")
-                return
+            # We need tool set only if we are executing local function. In case if
+            # the tool is azure_function we just need to wait when it will be finished.
+            if any(tool_call.type == "function" for tool_call in tool_calls):
+                toolset = self._toolset.get(run.assistant_id)
+                if toolset:
+                    tool_outputs = await toolset.execute_tool_calls(tool_calls)
+                else:
+                    logger.warning("Toolset is not available in the client.")
+                    return
 
-            logger.info("Tool outputs: %s", tool_outputs)
-            if tool_outputs:
-                async with await self.submit_tool_outputs_to_stream(
-                    thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs, event_handler=event_handler
-                ) as stream:
-                    await stream.until_done()
+                logger.info("Tool outputs: %s", tool_outputs)
+                if tool_outputs:
+                    async with await self.submit_tool_outputs_to_stream(
+                        thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs, event_handler=event_handler
+                    ) as stream:
+                        await stream.until_done()
 
     @overload
     async def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:
@@ -2682,6 +2687,20 @@ class AgentsOperations(AgentsOperationsGenerated):
         except (ValueError, RuntimeError, TypeError, IOError) as e:
             logger.error("An error occurred in save_file: %s", e)
             raise
+
+    @distributed_trace_async
+    async def delete_agent(self, assistant_id: str, **kwargs: Any) -> _models.AgentDeletionStatus:
+        """Deletes an agent.
+
+        :param assistant_id: Identifier of the agent. Required.
+        :type assistant_id: str
+        :return: AgentDeletionStatus. The AgentDeletionStatus is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDeletionStatus
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        if assistant_id in self._toolset:
+            del self._toolset[assistant_id]
+        return await super().delete_agent(assistant_id, **kwargs)
 
 
 __all__: List[str] = [
