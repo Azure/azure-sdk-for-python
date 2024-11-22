@@ -1,6 +1,6 @@
 type: finetuning
 
-name: "llama3-8B-with-instance-types"
+name: "llama3-8B-with-compute"
 experiment_name: "llama3-8B-finetuning-experiment"
 display_name: "llama3-8B-display-name"
 task: text_completion
@@ -9,8 +9,6 @@ model:
   path: "azureml://registries/azureml-meta/models/Meta-Llama-3-8B/versions/8"
   type: mlflow_model
 compute: "gpu-compute-low-pri"
-queue_settings:
-  job_tier: "Standard"
 training_data: tests/test_configs/finetuning_job/test_datasets/text_completion/train.jsonl
 validation_data:
   path: tests/test_configs/finetuning_job/test_datasets/text_completion/validation.jsonl
