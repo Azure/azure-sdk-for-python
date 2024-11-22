@@ -1188,11 +1188,11 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         # Act
         page_list = blob.list_page_ranges(results_per_page=2).by_page()
         first_page = await page_list.__anext__()
-        items_on_page1 = list()
+        items_on_page1 = []
         async for item in first_page:
             items_on_page1.append(item)
         second_page = await page_list.__anext__()
-        items_on_page2 = list()
+        items_on_page2 = []
         async for item in second_page:
             items_on_page2.append(item)
 
@@ -1312,11 +1312,11 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         # Act
         page_list = blob.list_page_ranges(previous_snapshot=snapshot, results_per_page=2).by_page()
         first_page = await page_list.__anext__()
-        items_on_page1 = list()
+        items_on_page1 = []
         async for item in first_page:
             items_on_page1.append(item)
         second_page = await page_list.__anext__()
-        items_on_page2 = list()
+        items_on_page2 = []
         async for item in second_page:
             items_on_page2.append(item)
 

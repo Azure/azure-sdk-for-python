@@ -1,10 +1,33 @@
 # Release History
 
-## 2.0.0b2 (2024-09-12)
+## 2.0.0b4 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
 
 ### Bugs Fixed
 
-* Fixing ETag to be "ETag" instead of "etag" in feature flag telemetry.
+### Other Changes
+
+## 2.0.0b3 (2024-11-13)
+
+### Breaking Changes
+
+* Allocation Id value changed so other providers can match the value.
+
+## 2.0.0b2 (2024-10-11)
+
+### Feature Added
+
+* Added AllocationId to the feature flag telemetry metadata when the feature flag has telemetry enabled.
+
+### Bugs Fixed
+
+* Fixed a number of cases where snake case was used instead of pascal case for feature flag telemetry.
+  * etag -> ETag
+  * feature_flag_reference -> FeatureFlagReference
+  * feature_flag_id -> FeatureFlagId
 
 ## 2.0.0b1 (2024-09-11)
 

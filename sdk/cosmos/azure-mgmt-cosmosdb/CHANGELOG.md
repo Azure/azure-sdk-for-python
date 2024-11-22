@@ -1,5 +1,23 @@
 # Release History
 
+## 9.7.0 (2024-11-18)
+
+### Features Added
+
+  - Model `DatabaseAccountCreateUpdateParameters` added property `enable_per_region_per_partition_autoscale`
+  - Model `DatabaseAccountGetResults` added property `enable_per_region_per_partition_autoscale`
+  - Model `DatabaseAccountUpdateParameters` added property `enable_per_region_per_partition_autoscale`
+  - Model `IndexingPolicy` added property `vector_indexes`
+  - Model `RestorableSqlContainerPropertiesResourceContainer` added property `vector_embedding_policy`
+  - Model `SqlContainerGetPropertiesResource` added property `vector_embedding_policy`
+  - Model `SqlContainerResource` added property `vector_embedding_policy`
+  - Added enum `DistanceFunction`
+  - Added enum `VectorDataType`
+  - Added model `VectorEmbedding`
+  - Added model `VectorEmbeddingPolicy`
+  - Added model `VectorIndex`
+  - Added enum `VectorIndexType`
+
 ## 10.0.0b4 (2024-09-23)
 
 ### Features Added

@@ -36,6 +36,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2024-07-01/examples/RegionInfos_Get.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/preview/2024-07-01-preview/examples/RegionInfos_Get.json
 if __name__ == "__main__":
     main()

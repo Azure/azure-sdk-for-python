@@ -48,7 +48,7 @@ def build_list_request(resource_group_name: str, account_name: str, subscription
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -83,7 +83,7 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -122,7 +122,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -158,7 +158,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -349,10 +349,17 @@ class ServiceOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("azure-AsyncOperation")
+            )
+            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
