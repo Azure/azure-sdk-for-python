@@ -29,9 +29,9 @@ steps:
       $argFile = "$(Agent.TempDirectory)/conda-args.json"
       Set-Content -Path $argFile -Value $argContent
       cat $argFile
-      sdk_build_conda -f "$argFile" ${{ parameters.Arguments }}
+      sdk_build_conda -f "$argFile"
     displayName: Assemble Conda Packages
-  
+
   - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
     parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/conda/assembled'
