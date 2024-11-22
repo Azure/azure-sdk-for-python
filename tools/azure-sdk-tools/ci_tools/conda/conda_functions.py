@@ -544,7 +544,8 @@ def prep_and_create_environment(environment_dir: str) -> None:
             "--prefix",
             environment_dir,
             "typing-extensions>=12.2.1",
-            "-c conda-forge"
+            "-c",
+            "conda-forge"
         ],
         cwd=environment_dir,
         check=True,
