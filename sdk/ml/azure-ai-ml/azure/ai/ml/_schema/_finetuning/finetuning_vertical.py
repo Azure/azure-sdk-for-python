@@ -22,8 +22,6 @@ from azure.ai.ml.constants._job.finetuning import FineTuningConstants
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import AzureMLResourceType
 
-from ..queue_settings import QueueSettingsSchema
-from ..resources_configuration import JobResourcesSchema
 
 # This is meant to match the yaml definition NOT the models defined in _restclient
 
@@ -32,8 +30,6 @@ from ..resources_configuration import JobResourcesSchema
 class FineTuningVerticalSchema(FineTuningJobSchema):
     type = StringTransformedEnum(required=True, allowed_values=JobType.FINE_TUNING)
     model = NestedField(ModelInputSchema, required=True)
-    queue_settings = NestedField(QueueSettingsSchema)
-    resources = NestedField(JobResourcesSchema)
     training_data = UnionField(
         [
             NestedField(DataInputSchema),

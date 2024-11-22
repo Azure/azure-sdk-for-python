@@ -1,0 +1,29 @@
+type: finetuning
+
+name: simple_custom_model_finetuning_job
+experiment_name: "llama-finetuning-experiment"
+display_name: "llama-display-name-1234"
+task: text_completion
+model_provider: custom
+model: 
+  path: "azureml://registries/azureml-meta/models/Llama-2-7b/versions/9"
+  type: mlflow_model
+compute: "amlcompute"
+queue_settings:
+  job_tier: "Standard"
+training_data: ./samsum_dataset/small_train.jsonl
+validation_data:
+  path: ./samsum_dataset/small_validation.jsonl
+  type: uri_file
+hyperparameters:
+  num_train_epochs: "1"
+  per_device_train_batch_size: "1"
+  learning_rate: "0.00002"
+properties:
+  my_property: "my_value"
+tags:
+  foo_tag: "bar"
+outputs:
+  registered_model:
+    name: "llama-finetune-registered-1234"
+    type: mlflow_model
