@@ -289,7 +289,15 @@ def create_combined_sdist(
 
     create_package(targeted_folder_for_assembly, config_assembled_folder, enable_wheel=False, enable_sdist=True)
 
-    assembled_sdist = next(iter([os.path.join(config_assembled_folder, a) for a in os.listdir(config_assembled_folder) if os.path.isfile(os.path.join(config_assembled_folder, a)) and conda_build.name in a]))
+    assembled_sdist = next(
+        iter(
+            [
+                os.path.join(config_assembled_folder, a)
+                for a in os.listdir(config_assembled_folder)
+                if os.path.isfile(os.path.join(config_assembled_folder, a)) and conda_build.name in a
+            ]
+        )
+    )
 
     return assembled_sdist
 
@@ -536,21 +544,6 @@ def prep_and_create_environment(environment_dir: str) -> None:
         cwd=environment_dir,
         check=True,
     )
-    # subprocess.run(
-    #     [
-    #         "conda",
-    #         "install",
-    #         "--yes",
-    #         "--quiet",
-    #         "--prefix",
-    #         environment_dir,
-    #         ">=4.12.1",
-    #         "-c",
-    #         "conda-forge"
-    #     ],
-    #     cwd=environment_dir,
-    #     check=True,
-    # )
     subprocess.run(["conda", "run", "--prefix", environment_dir, "conda", "list"], cwd=environment_dir, check=True)
 
 
@@ -585,7 +578,9 @@ def build_conda_packages(
     conda_broken_output_dir = prep_directory(os.path.join(repo_root, "conda", "broken")).replace("\\", "/")
     conda_sdist_dir = os.path.join(repo_root, "conda", "assembled").replace("\\", "/")
     conda_env_dir = prep_directory(os.path.join(repo_root, "conda", "conda-env")).replace("\\", "/")
-    conda_broken_dir = prep_directory(os.path.join(repo_root, "conda", "conda-env", "conda-bld", "broken")).replace("\\", "/")
+    conda_broken_dir = prep_directory(os.path.join(repo_root, "conda", "conda-env", "conda-bld", "broken")).replace(
+        "\\", "/"
+    )
 
     prep_and_create_environment(conda_env_dir)
     if additional_channel_folders:
@@ -610,9 +605,15 @@ def build_conda_packages(
 
         if conda_build.conda_py_versions:
             for pyversion in conda_build.conda_py_versions:
-                return_codes.append(invoke_conda_build(conda_output_dir, conda_env_dir, conda_build_folder, pyversion, conda_build.channels))
+                return_codes.append(
+                    invoke_conda_build(
+                        conda_output_dir, conda_env_dir, conda_build_folder, pyversion, conda_build.channels
+                    )
+                )
         else:
-            return_codes.append(invoke_conda_build(conda_output_dir, conda_env_dir, conda_build_folder, None, conda_build.channels))
+            return_codes.append(
+                invoke_conda_build(conda_output_dir, conda_env_dir, conda_build_folder, None, conda_build.channels)
+            )
 
         if os.path.exists(conda_broken_dir):
             if len(os.listdir(conda_broken_dir)):
@@ -630,6 +631,7 @@ def build_conda_packages(
     if any([code for code in return_codes if code > 0]):
         print("One or more conda builds failed. Exiting with a non-zero return code.")
         exit(1)
+
 
 def invoke_conda_build(
     conda_output_dir: str,
@@ -732,5 +734,3 @@ def entrypoint():
 
     # now build the conda packages
     build_conda_packages(run_configurations, repo_root, args.channel)
-
-
