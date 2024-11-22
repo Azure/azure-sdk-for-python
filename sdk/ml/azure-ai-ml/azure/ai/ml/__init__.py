@@ -39,6 +39,7 @@ from .entities._load_functions import (
     load_serverless_endpoint,
     load_workspace,
     load_workspace_connection,
+    load_capability_host,
 )
 
 module_logger = logging.getLogger(__name__)
@@ -77,6 +78,7 @@ __all__ = [
     "load_model_package",
     "load_marketplace_subscription",
     "load_serverless_endpoint",
+    "load_capability_host",
 ]
 
 __version__ = VERSION
