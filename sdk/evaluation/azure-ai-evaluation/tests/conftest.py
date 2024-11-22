@@ -1,6 +1,7 @@
 from .__openai_patcher import TestProxyConfig, TestProxyHttpxClientBase  # isort: split
 from . import __pf_service_isolation  # isort: split  # noqa: F401
 
+import os
 import json
 import multiprocessing
 import time
@@ -521,6 +522,9 @@ def pytest_collection_modifyitems(items):
                 # it was marked as 'azuretest'.
                 item.add_marker(pytest.mark.localtest)
 
+def pytest_sessionstart() -> None:
+    os.environ["PF_DISABLE_TRACING"] = "True"
+    os.environ["PF_TRACING_SKIP_LOCAL_SETUP_ENVIRON"] = "True"
 
 def pytest_sessionfinish() -> None:
     def stop_promptflow_service() -> None:
@@ -541,8 +545,6 @@ def pytest_sessionfinish() -> None:
         """
         from promptflow._cli._pf._service import stop_service
 
-        time.sleep(60)
         stop_service()
-        time.sleep(60)
 
     stop_promptflow_service()
