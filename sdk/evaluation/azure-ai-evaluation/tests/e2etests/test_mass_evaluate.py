@@ -9,16 +9,16 @@ import pytest
 
 from azure.ai.evaluation import (
     F1ScoreEvaluator,
-    GleuScoreEvaluator,
+    # GleuScoreEvaluator,
     BleuScoreEvaluator,
     RougeScoreEvaluator,
     MeteorScoreEvaluator,
     CoherenceEvaluator,
     FluencyEvaluator,
     RelevanceEvaluator,
-    SimilarityEvaluator,
+    # SimilarityEvaluator,
     GroundednessEvaluator,
-    QAEvaluator,
+    # QAEvaluator,
     ContentSafetyEvaluator,
     GroundednessProEvaluator,
     ProtectedMaterialEvaluator,
@@ -77,8 +77,6 @@ class TestMassEvaluate:
         # qa and similarity disabled due to being playback-unfriendly due to URL sanitization problems.
         # glue disabled due to being unfriendly to CI playback for some reason.
         # content safety disabled temporarily to test CI PF teardown race condition
-        os.environ["PF_DISABLE_TRACING"] = "true"
-        os.environ["PF_TRACING_SKIP_LOCAL_SETUP_ENVIRON"] = "true"
         evaluators = {
             "f1_score": F1ScoreEvaluator(),
             # "gleu": GleuScoreEvaluator(),

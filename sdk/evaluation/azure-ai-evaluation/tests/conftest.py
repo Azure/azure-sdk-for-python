@@ -523,11 +523,6 @@ def pytest_collection_modifyitems(items):
                 item.add_marker(pytest.mark.localtest)
 
 
-def pytest_sessionstart() -> None:
-    os.environ["PF_DISABLE_TRACING"] = "true"
-    os.environ["PF_TRACING_SKIP_LOCAL_SETUP_ENVIRON"] = "true"
-
-
 def pytest_sessionfinish() -> None:
     def stop_promptflow_service() -> None:
         """Ensure that the promptflow service is stopped when pytest exits.
