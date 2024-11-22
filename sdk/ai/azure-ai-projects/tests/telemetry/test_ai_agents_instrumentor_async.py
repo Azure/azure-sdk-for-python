@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# cSpell:disable# cSpell:disable
+# cSpell:disable
 import pytest
 import os
 import json
@@ -13,7 +13,7 @@ from typing import Set, Callable, Any
 from azure.ai.projects.telemetry.agents._ai_agents_instrumentor import _AIAgentsInstrumentorPreview
 from azure.ai.projects.models import AgentsApiResponseFormatMode, AgentsApiResponseFormat
 
-from azure.ai.projects.models import AgentEventHandler
+from azure.ai.projects.models import AsyncAgentEventHandler
 
 from azure.ai.projects.telemetry.agents import AIAgentsInstrumentor
 from azure.core.settings import settings
@@ -23,21 +23,18 @@ from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 
-from azure.ai.projects import AIProjectClient
-from devtools_testutils import (
-    AzureRecordedTestCase,
-    EnvironmentVariableLoader,
-    recorded_by_proxy,
-)
+from azure.ai.projects.aio import AIProjectClient
+from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
+from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.ai.projects.models import (
-    FunctionTool,
+    AsyncFunctionTool,
     MessageDeltaChunk,
     MessageDeltaTextContent,
     RunStep,
     ThreadMessage,
     ThreadRun,
-    ToolSet,
+    AsyncToolSet,
 )
 
 agentClientPreparer = functools.partial(
@@ -73,7 +70,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
     def create_client(self, **kwargs):
         # fetch environment variables
         connection_string = kwargs.pop("azure_ai_projects_connection_string")
-        credential = self.get_credential(AIProjectClient, is_async=False)
+        credential = self.get_credential(AIProjectClient, is_async=True)
 
         # create and return client
         client = AIProjectClient.from_connection_string(
@@ -120,145 +117,8 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
 
     @pytest.mark.skip
     @agentClientPreparer()
-    @recorded_by_proxy
-    def test_instrumentation(self, **kwargs):
-        # Make sure code is not instrumented due to a previous test exception
-        AIAgentsInstrumentor().uninstrument()
-        with self.create_client(**kwargs) as client:
-            exception_caught = False
-            try:
-                assert AIAgentsInstrumentor().is_instrumented() == False
-                AIAgentsInstrumentor().instrument()
-                assert AIAgentsInstrumentor().is_instrumented() == True
-                AIAgentsInstrumentor().uninstrument()
-                assert AIAgentsInstrumentor().is_instrumented() == False
-            except RuntimeError as e:
-                exception_caught = True
-                print(e)
-            assert exception_caught == False
-
-    @pytest.mark.skip
-    @agentClientPreparer()
-    @recorded_by_proxy
-    def test_instrumenting_twice_does_not_cause_exception(self, **kwargs):
-        # Make sure code is not instrumented due to a previous test exception
-        AIAgentsInstrumentor().uninstrument()
-        with self.create_client(**kwargs) as client:
-            exception_caught = False
-            try:
-                AIAgentsInstrumentor().instrument()
-                AIAgentsInstrumentor().instrument()
-            except RuntimeError as e:
-                exception_caught = True
-                print(e)
-            AIAgentsInstrumentor().uninstrument()
-            assert exception_caught == False
-
-    @pytest.mark.skip
-    @agentClientPreparer()
-    @recorded_by_proxy
-    def test_uninstrumenting_uninstrumented_does_not_cause_exception(self, **kwargs):
-        # Make sure code is not instrumented due to a previous test exception
-        AIAgentsInstrumentor().uninstrument()
-        with self.create_client(**kwargs) as client:
-            exception_caught = False
-            try:
-                AIAgentsInstrumentor().uninstrument()
-            except RuntimeError as e:
-                exception_caught = True
-                print(e)
-            assert exception_caught == False
-
-    @pytest.mark.skip
-    @agentClientPreparer()
-    @recorded_by_proxy
-    def test_uninstrumenting_twice_does_not_cause_exception(self, **kwargs):
-        # Make sure code is not instrumented due to a previous test exception
-        AIAgentsInstrumentor().uninstrument()
-        with self.create_client(**kwargs) as client:
-            exception_caught = False
-            uninstrumented_once = False
-            try:
-                AIAgentsInstrumentor().instrument()
-                AIAgentsInstrumentor().uninstrument()
-                AIAgentsInstrumentor().uninstrument()
-            except RuntimeError as e:
-                exception_caught = True
-                print(e)
-            assert exception_caught == False
-
-    @pytest.mark.skip
-    @agentClientPreparer()
-    @recorded_by_proxy
-    def test_is_content_recording_enabled(self, **kwargs):
-        # Make sure code is not instrumented due to a previous test exception
-        AIAgentsInstrumentor().uninstrument()
-        self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
-        with self.create_client(**kwargs) as client:
-            exception_caught = False
-            uninstrumented_once = False
-            try:
-                # From environment variable instrumenting from uninstrumented
-                AIAgentsInstrumentor().instrument()
-                self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
-                AIAgentsInstrumentor().instrument()
-                content_recording_enabled = AIAgentsInstrumentor().is_content_recording_enabled()
-                assert content_recording_enabled == False
-                AIAgentsInstrumentor().uninstrument()
-                self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
-                AIAgentsInstrumentor().instrument()
-                content_recording_enabled = AIAgentsInstrumentor().is_content_recording_enabled()
-                assert content_recording_enabled == True
-                AIAgentsInstrumentor().uninstrument()
-                self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "invalid")
-                AIAgentsInstrumentor().instrument()
-                content_recording_enabled = AIAgentsInstrumentor().is_content_recording_enabled()
-                assert content_recording_enabled == False
-
-                # From environment variable instrumenting from instrumented
-                self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
-                AIAgentsInstrumentor().instrument()
-                content_recording_enabled = AIAgentsInstrumentor().is_content_recording_enabled()
-                assert content_recording_enabled == True
-                self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
-                AIAgentsInstrumentor().instrument()
-                content_recording_enabled = AIAgentsInstrumentor().is_content_recording_enabled()
-                assert content_recording_enabled == True
-                self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "invalid")
-                AIAgentsInstrumentor().instrument()
-                content_recording_enabled = AIAgentsInstrumentor().is_content_recording_enabled()
-                assert content_recording_enabled == False
-
-                # From parameter instrumenting from uninstrumented
-                AIAgentsInstrumentor().uninstrument()
-                self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
-                AIAgentsInstrumentor().instrument(enable_content_recording=False)
-                content_recording_enabled = AIAgentsInstrumentor().is_content_recording_enabled()
-                assert content_recording_enabled == False
-                AIAgentsInstrumentor().uninstrument()
-                self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
-                AIAgentsInstrumentor().instrument(enable_content_recording=True)
-                content_recording_enabled = AIAgentsInstrumentor().is_content_recording_enabled()
-                assert content_recording_enabled == True
-
-                # From parameter instrumenting from instrumented
-                self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
-                AIAgentsInstrumentor().instrument(enable_content_recording=False)
-                content_recording_enabled = AIAgentsInstrumentor().is_content_recording_enabled()
-                assert content_recording_enabled == False
-                self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
-                AIAgentsInstrumentor().instrument(enable_content_recording=True)
-                content_recording_enabled = AIAgentsInstrumentor().is_content_recording_enabled()
-                assert content_recording_enabled == True
-            except RuntimeError as e:
-                exception_caught = True
-                print(e)
-            assert exception_caught == False
-
-    @pytest.mark.skip
-    @agentClientPreparer()
-    @recorded_by_proxy
-    def test_agent_chat_with_tracing_content_recording_enabled(self, **kwargs):
+    @recorded_by_proxy_async
+    async def test_agent_chat_with_tracing_content_recording_enabled(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
             AIAgentsInstrumentor().uninstrument()
@@ -270,23 +130,23 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         AIAgentsInstrumentor().instrument()
 
         client = self.create_client(**kwargs)
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        thread = client.agents.create_thread()
-        message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+        agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+        thread = await client.agents.create_thread()
+        message = await client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+        run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
 
         while run.status in ["queued", "in_progress", "requires_action"]:
             # wait for a second
             time.sleep(1)
-            run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
+            run = await client.agents.get_run(thread_id=thread.id, run_id=run.id)
             print("Run status:", run.status)
         print("Run completed with status:", run.status)
 
         # delete agent and close client
-        client.agents.delete_agent(agent.id)
+        await client.agents.delete_agent(agent.id)
         print("Deleted agent")
-        messages = client.agents.list_messages(thread_id=thread.id)
-        client.close()
+        messages = await client.agents.list_messages(thread_id=thread.id)
+        await client.close()
 
         processor.force_flush()
         spans = exporter.get_spans_by_name("create_agent my-agent")
@@ -410,8 +270,8 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
 
     @pytest.mark.skip
     @agentClientPreparer()
-    @recorded_by_proxy
-    def test_agent_chat_with_tracing_content_recording_disabled(self, **kwargs):
+    @recorded_by_proxy_async
+    async def test_agent_chat_with_tracing_content_recording_disabled(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
             AIAgentsInstrumentor().uninstrument()
@@ -423,23 +283,23 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         AIAgentsInstrumentor().instrument()
 
         client = self.create_client(**kwargs)
-        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        thread = client.agents.create_thread()
-        message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+        agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+        thread = await client.agents.create_thread()
+        message = await client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+        run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
 
         while run.status in ["queued", "in_progress", "requires_action"]:
             # wait for a second
             time.sleep(1)
-            run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
+            run = await client.agents.get_run(thread_id=thread.id, run_id=run.id)
             print("Run status:", run.status)
         print("Run completed with status:", run.status)
 
         # delete agent and close client
-        client.agents.delete_agent(agent.id)
+        await client.agents.delete_agent(agent.id)
         print("Deleted agent")
-        messages = client.agents.list_messages(thread_id=thread.id)
-        client.close()
+        messages = await client.agents.list_messages(thread_id=thread.id)
+        await client.close()
 
         processor.force_flush()
         spans = exporter.get_spans_by_name("create_agent my-agent")
@@ -563,8 +423,8 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
 
     @pytest.mark.skip
     @agentClientPreparer()
-    @recorded_by_proxy
-    def test_agent_streaming_with_toolset_with_tracing_content_recording_enabled(self, **kwargs):
+    @recorded_by_proxy_async
+    async def test_agent_streaming_with_toolset_with_tracing_content_recording_enabled(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
             AIAgentsInstrumentor().uninstrument()
@@ -594,29 +454,29 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
             fetch_weather,
         }
 
-        functions = FunctionTool(user_functions)
-        toolset = ToolSet()
+        functions = AsyncFunctionTool(user_functions)
+        toolset = AsyncToolSet()
         toolset.add(functions)
 
         client = self.create_client(**kwargs)
-        agent = client.agents.create_agent(
+        agent = await client.agents.create_agent(
             model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset
         )
-        thread = client.agents.create_thread()
-        message = client.agents.create_message(
+        thread = await client.agents.create_thread()
+        message = await client.agents.create_message(
             thread_id=thread.id, role="user", content="What is the weather in New York?"
         )
 
-        with client.agents.create_stream(
+        async with await client.agents.create_stream(
             thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
         ) as stream:
-            stream.until_done()
+            await stream.until_done()
 
         # delete agent and close client
-        client.agents.delete_agent(agent.id)
+        await client.agents.delete_agent(agent.id)
         print("Deleted agent")
-        messages = client.agents.list_messages(thread_id=thread.id)
-        client.close()
+        messages = await client.agents.list_messages(thread_id=thread.id)
+        await client.close()
 
         processor.force_flush()
         spans = exporter.get_spans_by_name("create_agent my-agent")
@@ -791,8 +651,8 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
 
     @pytest.mark.skip
     @agentClientPreparer()
-    @recorded_by_proxy
-    def test_agent_streaming_with_toolset_with_tracing_content_recording_disabled(self, **kwargs):
+    @recorded_by_proxy_async
+    async def test_agent_streaming_with_toolset_with_tracing_content_recording_disabled(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
             AIAgentsInstrumentor().uninstrument()
@@ -822,29 +682,29 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
             fetch_weather,
         }
 
-        functions = FunctionTool(user_functions)
-        toolset = ToolSet()
+        functions = AsyncFunctionTool(user_functions)
+        toolset = AsyncToolSet()
         toolset.add(functions)
 
         client = self.create_client(**kwargs)
-        agent = client.agents.create_agent(
+        agent = await client.agents.create_agent(
             model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset
         )
-        thread = client.agents.create_thread()
-        message = client.agents.create_message(
+        thread = await client.agents.create_thread()
+        message = await client.agents.create_message(
             thread_id=thread.id, role="user", content="What is the weather in New York?"
         )
 
-        with client.agents.create_stream(
+        async with await client.agents.create_stream(
             thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
         ) as stream:
-            stream.until_done()
+            await stream.until_done()
 
         # delete agent and close client
-        client.agents.delete_agent(agent.id)
+        await client.agents.delete_agent(agent.id)
         print("Deleted agent")
-        messages = client.agents.list_messages(thread_id=thread.id)
-        client.close()
+        messages = await client.agents.list_messages(thread_id=thread.id)
+        await client.close()
 
         processor.force_flush()
         spans = exporter.get_spans_by_name("create_agent my-agent")
@@ -1018,31 +878,31 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         AIAgentsInstrumentor().uninstrument()
 
 
-class MyEventHandler(AgentEventHandler):
+class MyEventHandler(AsyncAgentEventHandler):
 
-    def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
+    async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         for content_part in delta.delta.content:
             if isinstance(content_part, MessageDeltaTextContent):
                 text_value = content_part.text.value if content_part.text else "No text"
                 print(f"Text delta received: {text_value}")
 
-    def on_thread_message(self, message: "ThreadMessage") -> None:
+    async def on_thread_message(self, message: "ThreadMessage") -> None:
         print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
 
-    def on_thread_run(self, run: "ThreadRun") -> None:
+    async def on_thread_run(self, run: "ThreadRun") -> None:
         print(f"ThreadRun status: {run.status}")
 
         if run.status == "failed":
             print(f"Run failed. Error: {run.last_error}")
 
-    def on_run_step(self, step: "RunStep") -> None:
+    async def on_run_step(self, step: "RunStep") -> None:
         print(f"RunStep type: {step.type}, Status: {step.status}")
 
-    def on_error(self, data: str) -> None:
+    async def on_error(self, data: str) -> None:
         print(f"An error occurred. Data: {data}")
 
-    def on_done(self) -> None:
+    async def on_done(self) -> None:
         print("Stream completed.")
 
-    def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
+    async def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
         print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
