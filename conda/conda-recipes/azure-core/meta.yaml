@@ -18,12 +18,12 @@ requirements:
     - python
     - requests
     - six
-    - typing_extensions >= 4.12.1
+    - typing_extensions
   run:
     - python
     - requests
     - six
-    - typing_extensions >= 4.12.1
+    - typing_extensions
 
 test:
   imports:
