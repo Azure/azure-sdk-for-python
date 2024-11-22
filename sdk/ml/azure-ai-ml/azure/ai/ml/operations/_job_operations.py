@@ -708,7 +708,7 @@ class JobOperations(_ScopeDependentOperations):
         # set headers with user aml token if job is a pipeline or has a user identity setting
         if (rest_job_resource.properties.job_type == RestJobType.PIPELINE) or (
             hasattr(rest_job_resource.properties, "identity")
-            and (isinstance(rest_job_resource.properties.identity, UserIdentity))
+            and type(rest_job_resource.properties.identity).__name__ == "UserIdentity"
         ):
             self._set_headers_with_user_aml_token(kwargs)
 
