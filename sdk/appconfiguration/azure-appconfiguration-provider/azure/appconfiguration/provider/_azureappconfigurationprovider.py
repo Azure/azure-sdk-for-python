@@ -492,7 +492,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             replica_discovery_enabled=kwargs.pop("replica_discovery_enabled", True),
             min_backoff_sec=min_backoff,
             max_backoff_sec=max_backoff,
-            _load_balancing_enabled=self._uses_load_balancing,
+            load_balancing_enabled=self._uses_load_balancing,
             **kwargs
         )
         self._dict: Dict[str, Any] = {}
