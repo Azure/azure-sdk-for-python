@@ -50,9 +50,6 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
-# def _is_local_endpoint(endpoint: str) -> bool:
-#     return re.match("^(127\\.[\\d.]+|[0:]+1|localhost)", endpoint.lower()) is not None
-
 def _parse_conn_str(
     conn_str: str, check_case: Optional[bool] = False
 ) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int], bool]:
@@ -120,14 +117,6 @@ def _parse_conn_str(
     host = cast(str, parsed.netloc.strip())
 
     emulator = use_emulator=="true"
-    # if emulator and not _is_local_endpoint(host):
-    #     raise ValueError(
-    #         "Invalid endpoint on the connection string. "
-    #         "For development connection strings, should be in the format: "
-    #         "Endpoint=sb://localhost;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>;"
-    #         "UseDevelopmentEmulator=true;"
-    #     ) 
-
 
     if any([shared_access_key, shared_access_key_name]) and not all([shared_access_key, shared_access_key_name]):
         raise ValueError("Connection string must have both SharedAccessKeyName and SharedAccessKey.")
@@ -278,7 +267,6 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         else:
             self._credential = credential  # type: ignore
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
-        print(kwargs)
         self._config = Configuration(
             hostname=self.fully_qualified_namespace, amqp_transport=self._amqp_transport, **kwargs
         )
