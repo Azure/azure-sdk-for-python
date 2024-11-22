@@ -367,6 +367,8 @@ class ChangeFeedStateV2(ChangeFeedState):
         continuation = FeedRangeCompositeContinuation.from_json(continuation_data)
 
         mode = continuation_json.get(ChangeFeedStateV2.mode_property_name)
+        # All 'continuation_json' from ChangeFeedStateV2 must contain 'mode' property. For the 'continuation_json'
+        # from older ChangeFeedState versions won't even hit this point, since their version is not 'v2'.
         if mode is None:
             raise ValueError(f"Invalid continuation: [Missing {ChangeFeedStateV2.mode_property_name}]")
 
