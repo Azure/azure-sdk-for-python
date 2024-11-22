@@ -2428,203 +2428,239 @@ class TestAgentClient(AzureRecordedTestCase):
     @agentClientPreparer()
     @recorded_by_proxy
     def test_tools_with_string_input(self, **kwargs):
-        self._test_tools_with_different_functions(
-            function={user_functions.fetch_weather}, 
-            content="Hello, what is the weather in New York?", 
-            expected_values=["sunny", "25"], 
-            **kwargs
-        )
+        # create client
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
+
+            # run test with function input, content, and expected/possible values
+            self._test_tools_with_different_functions(
+                client=client,
+                function={user_functions.fetch_weather}, 
+                content="Hello, what is the weather in New York?", 
+                expected_values=["sunny", "25"], 
+            )
 
     # test submitting tool outputs to run with function input being multiple strings
     @agentClientPreparer()
     @recorded_by_proxy
     def test_tools_with_multiple_strings(self, **kwargs):
-        self._test_tools_with_different_functions(
-            function = {user_functions.send_email}, 
-            content = "Hello, can you send an email to my manager (manager@microsoft.com) with the subject 'thanksgiving' asking when he is OOF?", 
-            possible_values= ["email has been sent", "email has been successfully sent"], 
-            **kwargs
-        )
+        # create client
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
+
+            # run test with function input, content, and expected/possible values
+            self._test_tools_with_different_functions(
+                client=client,
+                function = {user_functions.send_email}, 
+                content = "Hello, can you send an email to my manager (manager@microsoft.com) with the subject 'thanksgiving' asking when he is OOF?", 
+                possible_values= ["email has been sent", "email has been successfully sent"], 
+            )
 
 
     # test submitting tool outputs to run with function input being multiple integers
     @agentClientPreparer()
     @recorded_by_proxy
     def test_tools_with_integers(self, **kwargs):
-        self._test_tools_with_different_functions(
-            function = {user_functions.calculate_sum}, 
-            content = "Hello, what is 293 + 243?", 
-            expected_values = ["536"], 
-            **kwargs
-        )
+        # create client
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
+
+            # run test with function input, content, and expected/possible values
+            self._test_tools_with_different_functions(
+                client=client,
+                function = {user_functions.calculate_sum}, 
+                content = "Hello, what is 293 + 243?", 
+                expected_values = ["536"], 
+            )
 
     # test submitting tool outputs to run with function input being one integer
     @agentClientPreparer()
     @recorded_by_proxy
     def test_tools_with_integer(self, **kwargs):
-        self._test_tools_with_different_functions(
-            function = {user_functions.convert_temperature}, 
-            content = "Hello, what is 32 degrees Celsius in Fahrenheit?", 
-            expected_value = ["89.6"], 
-            **kwargs
-        )
+        # create client
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
+
+            # run test with function input, content, and expected/possible values
+            self._test_tools_with_different_functions(
+                client=client,
+                function = {user_functions.convert_temperature}, 
+                content = "Hello, what is 32 degrees Celsius in Fahrenheit?", 
+                expected_value = ["89.6"], 
+            )
 
     # test submitting tool outputs to run with function input being multiple dictionaries
     @agentClientPreparer()
     @recorded_by_proxy
     def test_tools_with_multiple_dicts(self, **kwargs):
-        self._test_tools_with_different_functions(
-            function = {user_functions.merge_dicts}, 
-            content = "If I have a dictionary with the key 'name' and value 'John' and another dictionary with the key 'age' and value '25', what is the merged dictionary?", 
-            possible_values = ["{'name': 'john', 'age': '25'}", "{'age': '25', 'name': 'john'}", '{"name": "john", "age": "25"}', '{"age": "25", "name": "john"}', 'json\n{\n  "name": "john",\n  "age": 25\n}\n'],
-            **kwargs
-        )
+        # create client
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
+
+            # run test with function input, content, and expected/possible values
+            self._test_tools_with_different_functions(
+                client=client,
+                function = {user_functions.merge_dicts}, 
+                content = "If I have a dictionary with the key 'name' and value 'John' and another dictionary with the key 'age' and value '25', what is the merged dictionary?", 
+                possible_values = ["{'name': 'john', 'age': '25'}", "{'age': '25', 'name': 'john'}", '{"name": "john", "age": "25"}', '{"age": "25", "name": "john"}', "{'name': 'john', 'age': 25}", "{'age': 25, 'name': 'john'}", '"name": "john",\n  "age": 25', '"name": "john",\n  "age": "25"', '"name": "john",\n    "age": 25'],
+            )
 
     # test submitting tool outputs to run with function input being one string  and output being a dictionary
     @agentClientPreparer()
     @recorded_by_proxy
     def test_tools_with_input_string_output_dict(self, **kwargs):
-        self._test_tools_with_different_functions(
-            function = {user_functions.get_user_info}, 
-            content = "What is the name and email of the first user in our database?", 
-            expected_values= ["alice", "alice@example.com"],
-            **kwargs
-        )
+        # create client
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
+
+            # run test with function input, content, and expected/possible values
+            self._test_tools_with_different_functions(
+                client=client,
+                function = {user_functions.get_user_info}, 
+                content = "What is the name and email of the first user in our database?", 
+                expected_values= ["alice", "alice@example.com"],
+            )
 
     # test submitting tool outputs to run with function input being one string  and output being a dictionary
     @agentClientPreparer()
     @recorded_by_proxy
     def test_tools_with_list(self, **kwargs):
-        self._test_tools_with_different_functions(
-            function = {user_functions.longest_word_in_sentences}, 
-            content = "Hello, please give me the longest word in the following sentences: 'Hello, how are you?' and 'I am good.'", 
-            expected_values= ["hello", "good"],
-            **kwargs
-        )
+        # create client
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AIProjectClient)
+
+            # run test with function input, content, and expected/possible values
+            self._test_tools_with_different_functions(
+                client=client,
+                function = {user_functions.longest_word_in_sentences}, 
+                content = "Hello, please give me the longest word in the following sentences: 'Hello, how are you?' and 'I am good.'", 
+                expected_values= ["hello", "good"]
+            )
 
     # test submitting tool outputs to run with function input being multiple dictionaries
     @agentClientPreparer()
     @recorded_by_proxy
     def test_tools_with_multiple_dicts2(self, **kwargs):
-        self._test_tools_with_different_functions(
-            function = {user_functions.process_records}, 
-            content = "Hello, please process the following records: [{'a': 10, 'b': 20}, {'x': 5, 'y': 15, 'z': 25}, {'m': 35}]", 
-            expected_values= ["30", "45", "35"],
-            **kwargs
-        )
-
-    # test submitting tool outputs to run with function input being multiple strings
-    @agentClientPreparer()
-    @recorded_by_proxy
-    def _test_tools_with_different_functions(self, function: set, content: str, expected_values = None, possible_values = None, **kwargs):
         # create client
         with self.create_client(**kwargs) as client:
             assert isinstance(client, AIProjectClient)
 
-            # Initialize agent tools
-            functions = FunctionTool(functions=function)
-            toolset = ToolSet()
-            toolset.add(functions)
-
-            # create agent
-            agent = client.agents.create_agent(
-                model="gpt-4o",
-                name="my-agent",
-                instructions="You are helpful agent",
-                toolset=toolset,
-            )
-            assert agent.id
-            print("Created agent, agent ID", agent.id)
-
-            # create thread
-            thread = client.agents.create_thread()
-            assert thread.id
-            print("Created thread, thread ID", thread.id)
-
-            # create message
-            message = client.agents.create_message(
-                thread_id=thread.id, role="user", content=content
-            )
-            assert message.id
-            print("Created message, message ID", message.id)
-
-            # create run
-            run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
-            assert run.id
-            print("Created run, run ID", run.id)
-
-            # check that tools are uploaded
-            assert run.tools
-            assert (
-                run.tools[0]["function"]["name"]
-                == functions.definitions[0]["function"]["name"]
-            )
-            print(
-                "Tool successfully submitted:", functions.definitions[0]["function"]["name"]
+            # run test with function input, content, and expected/possible values
+            self._test_tools_with_different_functions(
+                client=client,
+                function = {user_functions.process_records}, 
+                content = "Hello, please process the following records: [{'a': 10, 'b': 20}, {'x': 5, 'y': 15, 'z': 25}, {'m': 35}]", 
+                expected_values= ["30", "45", "35"]
             )
 
-            # check status
-            assert run.status in [
-                "queued",
-                "in_progress",
-                "requires_action",
-                "cancelling",
-                "cancelled",
-                "failed",
-                "completed",
-                "expired",
-            ]
-            while run.status in ["queued", "in_progress", "requires_action"]:
-                time.sleep(1)
-                run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
+    # test submitting tool outputs to run with function input being multiple strings
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def _test_tools_with_different_functions(self, client, function, content, expected_values=None, possible_values=None):
+        # Initialize agent tools
+        functions = FunctionTool(functions=function)
+        toolset = ToolSet()
+        toolset.add(functions)
 
-                # check if tools are needed
-                if (
-                    run.status == "requires_action"
-                    and run.required_action.submit_tool_outputs
-                ):
-                    print("Requires action: submit tool outputs")
-                    tool_calls = run.required_action.submit_tool_outputs.tool_calls
-                    if not tool_calls:
-                        print(
-                            "No tool calls provided - cancelling run"
-                        )
-                        client.agents.cancel_run(thread_id=thread.id, run_id=run.id)
-                        break
+        # create agent
+        agent = client.agents.create_agent(
+            model="gpt-4o",
+            name="my-agent",
+            instructions="You are helpful agent",
+            toolset=toolset,
+        )
+        assert agent.id
+        print("Created agent, agent ID", agent.id)
 
-                    # submit tool outputs to run
-                    tool_outputs = toolset.execute_tool_calls(
-                        tool_calls
+        # create thread
+        thread = client.agents.create_thread()
+        assert thread.id
+        print("Created thread, thread ID", thread.id)
+
+        # create message
+        message = client.agents.create_message(
+            thread_id=thread.id, role="user", content=content
+        )
+        assert message.id
+        print("Created message, message ID", message.id)
+
+        # create run
+        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+        assert run.id
+        print("Created run, run ID", run.id)
+
+        # check that tools are uploaded
+        assert run.tools
+        assert (
+            run.tools[0]["function"]["name"]
+            == functions.definitions[0]["function"]["name"]
+        )
+        print(
+            "Tool successfully submitted:", functions.definitions[0]["function"]["name"]
+        )
+
+        # check status
+        assert run.status in [
+            "queued",
+            "in_progress",
+            "requires_action",
+            "cancelling",
+            "cancelled",
+            "failed",
+            "completed",
+            "expired",
+        ]
+        while run.status in ["queued", "in_progress", "requires_action"]:
+            time.sleep(1)
+            run = client.agents.get_run(thread_id=thread.id, run_id=run.id)
+
+            # check if tools are needed
+            if (
+                run.status == "requires_action"
+                and run.required_action.submit_tool_outputs
+            ):
+                print("Requires action: submit tool outputs")
+                tool_calls = run.required_action.submit_tool_outputs.tool_calls
+                if not tool_calls:
+                    print(
+                        "No tool calls provided - cancelling run"
                     )
-                    print("Tool outputs:", tool_outputs)
-                    if tool_outputs:
-                        client.agents.submit_tool_outputs_to_run(
-                            thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs
-                    )
+                    client.agents.cancel_run(thread_id=thread.id, run_id=run.id)
+                    break
 
-                print("Current run status:", run.status)
+                # submit tool outputs to run
+                tool_outputs = toolset.execute_tool_calls(
+                    tool_calls
+                )
+                print("Tool outputs:", tool_outputs)
+                if tool_outputs:
+                    client.agents.submit_tool_outputs_to_run(
+                        thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs
+                )
 
-            print("Run completed with status:", run.status)
+            print("Current run status:", run.status)
 
-            # check that messages used the tool
-            messages = client.agents.list_messages(thread_id=thread.id, run_id=run.id)
-            print("Messages: ", messages)
-            tool_message = messages["data"][0]["content"][0]["text"]["value"]
-            if expected_values:
-                for value in expected_values:
-                    assert value in tool_message.lower()
-            if possible_values:
-                value_used = False
-                for value in possible_values:
-                    if value in tool_message.lower():
-                        value_used = True 
-                assert value_used
-            # assert expected_value in tool_message
-            print("Used tool_outputs")
+        print("Run completed with status:", run.status)
 
-            # delete agent and close client
-            client.agents.delete_agent(agent.id)
-            print("Deleted agent")
+        # check that messages used the tool
+        messages = client.agents.list_messages(thread_id=thread.id, run_id=run.id)
+        print("Messages: ", messages)
+        tool_message = messages["data"][0]["content"][0]["text"]["value"]
+        if expected_values:
+            for value in expected_values:
+                assert value in tool_message.lower()
+        if possible_values:
+            value_used = False
+            for value in possible_values:
+                if value in tool_message.lower():
+                    value_used = True 
+            assert value_used
+        # assert expected_value in tool_message
+        print("Used tool_outputs")
+
+        # delete agent and close client
+        client.agents.delete_agent(agent.id)
+        print("Deleted agent")
 
 
     # # **********************************************************************************
