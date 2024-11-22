@@ -530,7 +530,7 @@ def prep_and_create_environment(environment_dir: str) -> None:
             environment_dir,
             "conda-build",
             "conda-verify",
-            "typing-extensions",
+            "typing-extensions>=12.2.1",
             "conda-index",
         ],
         cwd=environment_dir,
