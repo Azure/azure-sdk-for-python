@@ -342,8 +342,9 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
     def get_next_client(self) -> Optional[_ConfigurationClientWrapper]:
         """
         Get the next client to be used for the request. find_active_clients needs be called before this method or None
-        client will be returned. If load_balancing_enabled isn't enabled the first active client will be returned, which is the
-        provided endpoint unless it has failed. If load_balancing_enabled is enabled the next client in the list will be returned.
+        client will be returned. If load_balancing_enabled isn't enabled the first active client will be returned,
+        which is the provided endpoint unless it has failed. If load_balancing_enabled is enabled the next client in 
+        the list will be returned.
 
         :return: The next client to be used for the request.
         """
@@ -371,8 +372,8 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
 
     def find_active_clients(self):
         """
-        Figures out the current active clients, if _load_balancing_enabled is enabled the start of the list will be the one after
-        the last active client used.
+        Figures out the current active clients, if _load_balancing_enabled is enabled the start of the list will be the
+        one after the last active client used.
         """
         active_clients = [client for client in self._replica_clients if client.is_active()]
 
