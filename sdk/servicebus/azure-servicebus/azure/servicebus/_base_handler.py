@@ -5,6 +5,7 @@
 import logging
 import uuid
 import time
+import re
 import threading
 from datetime import timedelta
 from typing import cast, Optional, Tuple, TYPE_CHECKING, Dict, Any, Callable, Union
@@ -49,16 +50,19 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
+# def _is_local_endpoint(endpoint: str) -> bool:
+#     return re.match("^(127\\.[\\d.]+|[0:]+1|localhost)", endpoint.lower()) is not None
 
 def _parse_conn_str(
     conn_str: str, check_case: Optional[bool] = False
-) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]:
+) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int], bool]:
     endpoint = None
     shared_access_key_name = None
     shared_access_key = None
     entity_path: Optional[str] = None
     shared_access_signature: Optional[str] = None
     shared_access_signature_expiry: Optional[int] = None
+    use_emulator: Optional[str] = None
 
     # split connection string into properties
     conn_properties = [s.split("=", 1) for s in conn_str.strip().rstrip(";").split(";")]
@@ -72,6 +76,7 @@ def _parse_conn_str(
         shared_access_key_name = conn_settings.get("SharedAccessKeyName")
         endpoint = conn_settings.get("Endpoint")
         entity_path = conn_settings.get("EntityPath")
+        use_emulator = conn_settings.get("UseDevelopmentEmulator")
 
     # non case sensitive check when parsing connection string for internal use
     for key, value in conn_settings.items():
@@ -101,6 +106,8 @@ def _parse_conn_str(
                 shared_access_key = value
             elif key.lower() == "entitypath":
                 entity_path = value
+            elif key.lower() == "usedevelopmentemulator":
+                use_emulator = value
 
     entity = cast(str, entity_path)
 
@@ -111,6 +118,16 @@ def _parse_conn_str(
     if not parsed.netloc:
         raise ValueError("Invalid Endpoint on the Connection String.")
     host = cast(str, parsed.netloc.strip())
+
+    emulator = use_emulator=="true"
+    # if emulator and not _is_local_endpoint(host):
+    #     raise ValueError(
+    #         "Invalid endpoint on the connection string. "
+    #         "For development connection strings, should be in the format: "
+    #         "Endpoint=sb://localhost;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>;"
+    #         "UseDevelopmentEmulator=true;"
+    #     ) 
+
 
     if any([shared_access_key, shared_access_key_name]) and not all([shared_access_key, shared_access_key_name]):
         raise ValueError("Connection string must have both SharedAccessKeyName and SharedAccessKey.")
@@ -126,6 +143,7 @@ def _parse_conn_str(
         entity,
         str(shared_access_signature) if shared_access_signature else None,
         shared_access_signature_expiry,
+        emulator
     )
 
 
@@ -260,6 +278,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         else:
             self._credential = credential  # type: ignore
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
+        print(kwargs)
         self._config = Configuration(
             hostname=self.fully_qualified_namespace, amqp_transport=self._amqp_transport, **kwargs
         )
@@ -274,7 +293,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
     @classmethod
     def _convert_connection_string_to_kwargs(cls, conn_str: str, **kwargs: Any) -> Dict[str, Any]:
-        host, policy, key, entity_in_conn_str, token, token_expiry = _parse_conn_str(conn_str)
+        host, policy, key, entity_in_conn_str, token, token_expiry, emulator = _parse_conn_str(conn_str)
         queue_name = kwargs.get("queue_name")
         topic_name = kwargs.get("topic_name")
         if not (queue_name or topic_name or entity_in_conn_str):
@@ -295,6 +314,9 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
         kwargs["fully_qualified_namespace"] = host
         kwargs["entity_name"] = entity_in_conn_str or entity_in_kwargs
+        # Check if emulator is in use, unset tls if it is
+        if emulator:
+            kwargs["use_tls"] = False
 
         # Set the type to sync credentials, unless async credentials are passed in.
         token_cred_type = kwargs.pop("token_cred_type", ServiceBusSASTokenCredential)

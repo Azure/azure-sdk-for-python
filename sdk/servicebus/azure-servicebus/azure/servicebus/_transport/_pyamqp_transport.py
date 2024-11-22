@@ -467,6 +467,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
             transport_type=config.transport_type,
             http_proxy=config.http_proxy,
             socket_timeout=config.socket_timeout,
+            use_tls=config.use_tls,
             **kwargs,
         )
 
@@ -596,6 +597,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
             ),
             on_attach=functools.partial(PyamqpTransport.on_attach, receiver),
             socket_timeout=config.socket_timeout,
+            use_tls=config.use_tls,
             **kwargs,
         )
 
