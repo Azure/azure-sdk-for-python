@@ -223,7 +223,7 @@ class AgentsNamedToolChoice(_model_base.Model):
 
     :ivar type: the type of tool. If type is ``function``\\ , the function name must be set.
      Required. Known values are: "function", "code_interpreter", "file_search", "bing_grounding",
-     "microsoft_fabric", "sharepoint_grounding", and "azure_ai_search".
+     "fabric_aiskill", "sharepoint_grounding", and "azure_ai_search".
     :vartype type: str or ~azure.ai.projects.models.AgentsNamedToolChoiceType
     :ivar function: The name of the function to call.
     :vartype function: ~azure.ai.projects.models.FunctionName
@@ -232,7 +232,7 @@ class AgentsNamedToolChoice(_model_base.Model):
     type: Union[str, "_models.AgentsNamedToolChoiceType"] = rest_field()
     """the type of tool. If type is ``function``\ , the function name must be set. Required. Known
      values are: \"function\", \"code_interpreter\", \"file_search\", \"bing_grounding\",
-     \"microsoft_fabric\", \"sharepoint_grounding\", and \"azure_ai_search\"."""
+     \"fabric_aiskill\", \"sharepoint_grounding\", and \"azure_ai_search\"."""
     function: Optional["_models.FunctionName"] = rest_field()
     """The name of the function to call."""
 
@@ -500,7 +500,7 @@ class ToolDefinition(_model_base.Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureAISearchToolDefinition, BingGroundingToolDefinition, CodeInterpreterToolDefinition,
-    FileSearchToolDefinition, FunctionToolDefinition, MicrosoftFabricToolDefinition,
+    MicrosoftFabricToolDefinition, FileSearchToolDefinition, FunctionToolDefinition,
     SharepointToolDefinition
 
 
@@ -631,8 +631,8 @@ class CodeInterpreterToolResource(_model_base.Model):
      be a maximum of 20 files
      associated with the tool.
     :vartype file_ids: list[str]
-    :ivar data_sources: The data sources to be used. This option is mutually exclusive with
-     fileIds.
+    :ivar data_sources: The data sources to be used. This option is mutually exclusive with the
+     ``fileIds`` property.
     :vartype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
     """
 
@@ -641,7 +641,7 @@ class CodeInterpreterToolResource(_model_base.Model):
      20 files
      associated with the tool."""
     data_sources: Optional[List["_models.VectorStoreDataSource"]] = rest_field()
-    """The data sources to be used. This option is mutually exclusive with fileIds."""
+    """The data sources to be used. This option is mutually exclusive with the ``fileIds`` property."""
 
     @overload
     def __init__(
@@ -1173,10 +1173,9 @@ class FileSearchToolResource(_model_base.Model):
      maximum of 1 vector
      store attached to the agent.
     :vartype vector_store_ids: list[str]
-    :ivar vector_stores: The list of vector store configuration objects from Azure. This list is
-     limited to one
-     element. The only element of this list contains
-     the list of azure asset IDs used by the search tool.
+    :ivar vector_stores: The list of vector store configuration objects from Azure.
+     This list is limited to one element.
+     The only element of this list contains the list of azure asset IDs used by the search tool.
     :vartype vector_stores: list[~azure.ai.projects.models.VectorStoreConfigurations]
     """
 
@@ -1184,9 +1183,9 @@ class FileSearchToolResource(_model_base.Model):
     """The ID of the vector store attached to this agent. There can be a maximum of 1 vector
      store attached to the agent."""
     vector_stores: Optional[List["_models.VectorStoreConfigurations"]] = rest_field()
-    """The list of vector store configuration objects from Azure. This list is limited to one
-     element. The only element of this list contains
-     the list of azure asset IDs used by the search tool."""
+    """The list of vector store configuration objects from Azure.
+     This list is limited to one element.
+     The only element of this list contains the list of azure asset IDs used by the search tool."""
 
     @overload
     def __init__(
@@ -2410,28 +2409,28 @@ class MessageTextFilePathDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="microsoft_fabric"):
+class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="fabric_aiskill"):
     """The input definition information for a Microsoft Fabric tool as used to configure an agent.
 
 
-    :ivar type: The object type, which is always 'microsoft_fabric'. Required. Default value is
-     "microsoft_fabric".
+    :ivar type: The object type, which is always 'fabric_aiskill'. Required. Default value is
+     "fabric_aiskill".
     :vartype type: str
-    :ivar microsoft_fabric: The list of connections used by the Microsoft Fabric tool. Required.
-    :vartype microsoft_fabric: ~azure.ai.projects.models.ToolConnectionList
+    :ivar fabric_aiskill: The list of connections used by the Microsoft Fabric tool. Required.
+    :vartype fabric_aiskill: ~azure.ai.projects.models.ToolConnectionList
     """
 
-    type: Literal["microsoft_fabric"] = rest_discriminator(name="type")  # type: ignore
-    """The object type, which is always 'microsoft_fabric'. Required. Default value is
-     \"microsoft_fabric\"."""
-    microsoft_fabric: "_models.ToolConnectionList" = rest_field()
+    type: Literal["fabric_aiskill"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'fabric_aiskill'. Required. Default value is
+     \"fabric_aiskill\"."""
+    fabric_aiskill: "_models.ToolConnectionList" = rest_field()
     """The list of connections used by the Microsoft Fabric tool. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        microsoft_fabric: "_models.ToolConnectionList",
+        fabric_aiskill: "_models.ToolConnectionList",
     ) -> None: ...
 
     @overload
@@ -2442,7 +2441,7 @@ class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="microsoft_fab
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="microsoft_fabric", **kwargs)
+        super().__init__(*args, type="fabric_aiskill", **kwargs)
 
 
 class OpenAIFile(_model_base.Model):
@@ -2963,7 +2962,7 @@ class RequiredAction(_model_base.Model):
 
 
 class RequiredToolCall(_model_base.Model):
-    """An abstract representation a a tool invocation needed by the model to continue a run.
+    """An abstract representation of a tool invocation needed by the model to continue a run.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RequiredFunctionToolCall
@@ -3283,7 +3282,7 @@ class RunStepToolCall(_model_base.Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RunStepAzureAISearchToolCall, RunStepBingGroundingToolCall, RunStepCodeInterpreterToolCall,
-    RunStepFileSearchToolCall, RunStepFunctionToolCall, RunStepMicrosoftFabricToolCall,
+    RunStepMicrosoftFabricToolCall, RunStepFileSearchToolCall, RunStepFunctionToolCall,
     RunStepSharepointToolCall
 
 
@@ -4498,7 +4497,7 @@ class RunStepMessageCreationReference(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="microsoft_fabric"):
+class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_aiskill"):
     """A record of a call to a Microsoft Fabric tool, issued by the model in evaluation of a defined
     tool, that represents
     executed Microsoft Fabric operations.
@@ -4507,17 +4506,17 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="microsoft_f
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
     :vartype id: str
-    :ivar type: The object type, which is always 'microsoft_fabric'. Required. Default value is
-     "microsoft_fabric".
+    :ivar type: The object type, which is always 'fabric_aiskill'. Required. Default value is
+     "fabric_aiskill".
     :vartype type: str
     :ivar microsoft_fabric: Reserved for future use. Required.
     :vartype microsoft_fabric: dict[str, str]
     """
 
-    type: Literal["microsoft_fabric"] = rest_discriminator(name="type")  # type: ignore
-    """The object type, which is always 'microsoft_fabric'. Required. Default value is
-     \"microsoft_fabric\"."""
-    microsoft_fabric: Dict[str, str] = rest_field()
+    type: Literal["fabric_aiskill"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'fabric_aiskill'. Required. Default value is
+     \"fabric_aiskill\"."""
+    microsoft_fabric: Dict[str, str] = rest_field(name="fabric_aiskill")
     """Reserved for future use. Required."""
 
     @overload
@@ -4536,7 +4535,7 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="microsoft_f
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="microsoft_fabric", **kwargs)
+        super().__init__(*args, type="fabric_aiskill", **kwargs)
 
 
 class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint_grounding"):
@@ -5198,7 +5197,7 @@ class ToolConnection(_model_base.Model):
 
 class ToolConnectionList(_model_base.Model):
     """A set of connection resources currently used by either the ``bing_grounding``\\ ,
-    ``microsoft_fabric``\\ , or ``sharepoint_grounding`` tools.
+    ``fabric_aiskill``\\ , or ``sharepoint_grounding`` tools.
 
     :ivar connection_list: The connections attached to this tool. There can be a maximum of 1
      connection
@@ -5271,7 +5270,7 @@ class ToolResources(_model_base.Model):
     ``file_search``
     tool requires a list of vector store IDs.
 
-    :ivar code_interpreter: Resources to be used by the ``code_interpreter tool`` consisting of
+    :ivar code_interpreter: Resources to be used by the ``code_interpreter`` tool consisting of
      file IDs.
     :vartype code_interpreter: ~azure.ai.projects.models.CodeInterpreterToolResource
     :ivar file_search: Resources to be used by the ``file_search`` tool consisting of vector store
@@ -5283,7 +5282,7 @@ class ToolResources(_model_base.Model):
     """
 
     code_interpreter: Optional["_models.CodeInterpreterToolResource"] = rest_field()
-    """Resources to be used by the ``code_interpreter tool`` consisting of file IDs."""
+    """Resources to be used by the ``code_interpreter`` tool consisting of file IDs."""
     file_search: Optional["_models.FileSearchToolResource"] = rest_field()
     """Resources to be used by the ``file_search`` tool consisting of vector store IDs."""
     azure_ai_search: Optional["_models.AzureAISearchResource"] = rest_field()
@@ -6095,7 +6094,7 @@ class VectorStoreFileDeletionStatus(_model_base.Model):
 
 
 class VectorStoreFileError(_model_base.Model):
-    """Details on the error that may have ocurred while processing a file for this vector store.
+    """Details on the error that may have occurred while processing a file for this vector store.
 
 
     :ivar code: One of ``server_error`` or ``rate_limit_exceeded``. Required. Known values are:
