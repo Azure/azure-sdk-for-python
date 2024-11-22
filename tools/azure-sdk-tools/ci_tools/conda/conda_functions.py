@@ -289,15 +289,7 @@ def create_combined_sdist(
 
     create_package(targeted_folder_for_assembly, config_assembled_folder, enable_wheel=False, enable_sdist=True)
 
-    assembled_sdist = next(
-        iter(
-            [
-                os.path.join(config_assembled_folder, a)
-                for a in os.listdir(config_assembled_folder)
-                if os.path.isfile(os.path.join(config_assembled_folder, a)) and conda_build.name in a
-            ]
-        )
-    )
+    assembled_sdist = next(iter([os.path.join(config_assembled_folder, a) for a in os.listdir(config_assembled_folder) if os.path.isfile(os.path.join(config_assembled_folder, a)) and conda_build.name in a]))
 
     return assembled_sdist
 
@@ -579,7 +571,6 @@ def build_conda_packages(
     conda_env_dir = prep_directory(os.path.join(repo_root, "conda", "conda-env")).replace("\\", "/")
 
     prep_and_create_environment(conda_env_dir)
-
     if additional_channel_folders:
         for channel in additional_channel_folders:
             copy_channel_files(conda_output_dir, channel)
@@ -589,11 +580,12 @@ def build_conda_packages(
                 check=True,
             )
     else:
-        subprocess.run(
-            ["conda", "run", "--prefix", conda_env_dir, "python", "-m", "conda_index", conda_output_dir],
-            cwd=repo_root,
-            check=True,
-        )
+        if len(os.listdir(conda_output_dir)) > 1:
+            subprocess.run(
+                ["conda", "run", "--prefix", conda_env_dir, "python", "-m", "conda_index", conda_output_dir],
+                cwd=repo_root,
+                check=True,
+            )
 
     for conda_build in conda_configurations:
         conda_build_folder = os.path.join(conda_sdist_dir, conda_build.name).replace("\\", "/")
