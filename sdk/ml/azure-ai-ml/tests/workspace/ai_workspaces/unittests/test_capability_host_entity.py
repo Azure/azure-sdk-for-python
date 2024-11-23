@@ -12,8 +12,6 @@ import os
 class TestCapabilityHostEntity:
     def test_capability_host_hub_schema(self) -> None:
         capability_host = load_capability_host(source="./tests/test_configs/workspace/ai_workspaces/test_capability_host_hub.yml")
-        print(type(capability_host))
-        print(capability_host)
         assert capability_host is not None
         assert capability_host.name == "test_capability_host_hub"
         assert capability_host.description == "Capability host in hub for unit tests"
@@ -94,14 +92,7 @@ class TestCapabilityHostEntity:
         assert rest_capability_host.properties.vector_store_connections is not None and len(rest_capability_host.properties.vector_store_connections) == 1 and rest_capability_host.properties.vector_store_connections[0] == "vector_store_connection_1"
 
     def test_dump(self) -> None:
-        capability_host = CapabilityHost(
-            name="test_capability_host",
-            description="Capability host for unit tests",
-            capability_host_kind="Agents",
-            ai_services_connections=["aiservice_connection_1"],
-            storage_connections=["storage_connection_1"],
-            vector_store_connections=["vector_store_connection_1"]
-        )
+        capability_host = load_capability_host(source="./tests/test_configs/workspace/ai_workspaces/test_capability_host_project.yml")
         epoch_timestamp = int(datetime.now().timestamp()) # Current Unix timestamp as an integer
         dump_file_name = f"./tests/test_configs/workspace/ai_workspaces/test_capability_host_dump_{epoch_timestamp}.yml"
         CapabilityHost.dump(capability_host, dest=dump_file_name)
@@ -113,19 +104,10 @@ class TestCapabilityHostEntity:
 
         # Assert the file content
         assert "test_capability_host" in file_content
-        assert "Capability host for unit tests" in file_content
+        assert "Capability host in project for unit tests" in file_content
         assert "Agents" in file_content
         assert "aiservice_connection_1" in file_content
         assert "storage_connection_1" in file_content
         assert "vector_store_connection_1" in file_content
 
-    def test_load_for_hub(self) -> None:
-        capability_host = CapabilityHost._load(yaml_path="./tests/test_configs/workspace/ai_workspaces/test_capability_host_hub.yml")
-
-        assert capability_host is not None
-        assert capability_host.name == "test_capability_host_hub"
-        assert capability_host.description == "Capability host in hub for unit tests"
-        assert capability_host.capability_host_kind == "Agents"
-        assert capability_host.ai_services_connections is not None and len(capability_host.ai_services_connections) == 0
-        assert capability_host.storage_connections is not None and len(capability_host.storage_connections) == 0
-        assert capability_host.vector_store_connections is not None and len(capability_host.vector_store_connections) == 0
+    

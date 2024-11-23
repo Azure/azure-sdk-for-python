@@ -4,7 +4,7 @@
 
 import os
 from azure.ai.ml._utils._experimental import experimental
-from typing import List, Optional, Union
+from typing import List, Optional, Union, cast
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.constants._workspace import CapabilityHostKind
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceKind
@@ -46,7 +46,7 @@ class CapabilityHost(Resource):
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     def _to_dict(self) -> Dict:
-        res = CapabilityHostSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = CapabilityHostSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return res
     
     @classmethod
@@ -63,8 +63,10 @@ class CapabilityHost(Resource):
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        res: CapabilityHost = load_from_dict(CapabilityHostSchema, data, context, **kwargs)
-        return res
+        return cls(
+            base_path=cast(Dict, context[BASE_PATH_CONTEXT_KEY]),
+            **load_from_dict(CapabilityHostSchema, data, context, **kwargs),
+        )
     
     @classmethod
     def _from_rest_object(cls, rest_obj: RestCapabilityHost) -> 'CapabilityHost':

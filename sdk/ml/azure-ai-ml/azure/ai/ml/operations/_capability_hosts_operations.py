@@ -75,14 +75,15 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         
         return capability_host
 
-    @monitor_with_activity(ops_logger, "CapabilityHost.BeginCreate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "CapabilityHost.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     @distributed_trace
-    def begin_create(
+    def begin_create_or_update(
             self,
             capability_host: CapabilityHost,
             **kwargs: Any
     ) -> LROPoller[CapabilityHost]:
         """Begin the creation of a capability host in a Hub or Project workspace.
+        Note that currently this method can only accept the `create` operation request and not `update` operation request. 
 
         :param capability_host: The CapabilityHost object containing the details of the capability host to create.
         :type capability_host: ~azure.ai.ml.entities.CapabilityHost
