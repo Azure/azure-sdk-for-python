@@ -217,12 +217,14 @@ class TestMachineLearningClient:
             assert ops_name in str(e.value)
         elif call_times == 1:
             ml_client.create_or_update(*args, **kwargs)
-            ml_client.__getattribute__(ops_name).__getattr__(create_method_name).assert_called_once_with(
-                *args, **kwargs
-            )
+            ml_client.__getattribute__(ops_name).__getattr__(
+                create_method_name
+            ).assert_called_once_with(*args, **kwargs)
         else:
             ml_client.create_or_update(*args, **kwargs)
-            ml_client.__getattribute__(ops_name).__getattr__(create_method_name).assert_called_with(*args, **kwargs)
+            ml_client.__getattribute__(ops_name).__getattr__(create_method_name).assert_called_with(
+                *args, **kwargs
+            )
         # trying to change this whole file to use assertRaises caused half the existing test to fail
         no_second_impl = False
         try:
@@ -271,42 +273,66 @@ class TestMachineLearningClient:
                 "begin_create_or_update",
             ),
             (
-                [load_online_endpoint("tests/test_configs/endpoints/online/online_endpoint_create_k8s.yml")],
+                [
+                    load_online_endpoint(
+                        "tests/test_configs/endpoints/online/online_endpoint_create_k8s.yml"
+                    )
+                ],
                 {},
                 "online_endpoints",
                 1,
                 "begin_create_or_update",
             ),
             (
-                [load_online_deployment("tests/test_configs/deployments/online/online_deployment_blue.yaml")],
+                [
+                    load_online_deployment(
+                        "tests/test_configs/deployments/online/online_deployment_blue.yaml"
+                    )
+                ],
                 {},
                 "online_deployments",
                 1,
                 "begin_create_or_update",
             ),
             (
-                [load_online_deployment("tests/test_configs/deployments/online/online_deployment_blue.yaml")],
+                [
+                    load_online_deployment(
+                        "tests/test_configs/deployments/online/online_deployment_blue.yaml"
+                    )
+                ],
                 {"local": True, "vscode_debug": True, "no_wait": True},
                 "online_deployments",
                 2,
                 "begin_create_or_update",
             ),
             (
-                [load_online_deployment("tests/test_configs/deployments/online/online_deployment_blue.yaml")],
+                [
+                    load_online_deployment(
+                        "tests/test_configs/deployments/online/online_deployment_blue.yaml"
+                    )
+                ],
                 {"local": True, "no_wait": True},
                 "online_deployments",
                 2,
                 "begin_create_or_update",
             ),
             (
-                [load_batch_endpoint("tests/test_configs/endpoints/batch/batch_endpoint_mlflow.yaml")],
+                [
+                    load_batch_endpoint(
+                        "tests/test_configs/endpoints/batch/batch_endpoint_mlflow.yaml"
+                    )
+                ],
                 {},
                 "batch_endpoints",
                 1,
                 "begin_create_or_update",
             ),
             (
-                [load_batch_deployment("tests/test_configs/deployments/batch/batch_deployment_1.yaml")],
+                [
+                    load_batch_deployment(
+                        "tests/test_configs/deployments/batch/batch_deployment_1.yaml"
+                    )
+                ],
                 {},
                 "batch_deployments",
                 1,
@@ -332,12 +358,14 @@ class TestMachineLearningClient:
             assert ops_name in str(e.value)
         elif call_times == 1:
             ml_client.begin_create_or_update(*args, **kwargs)
-            ml_client.__getattribute__(ops_name).__getattr__(create_method_name).assert_called_once_with(
-                *args, **kwargs
-            )
+            ml_client.__getattribute__(ops_name).__getattr__(
+                create_method_name
+            ).assert_called_once_with(*args, **kwargs)
         else:
             ml_client.begin_create_or_update(*args, **kwargs)
-            ml_client.__getattribute__(ops_name).__getattr__(create_method_name).assert_called_with(*args, **kwargs)
+            ml_client.__getattribute__(ops_name).__getattr__(create_method_name).assert_called_with(
+                *args, **kwargs
+            )
         # trying to change this whole file to use assertRaises caused half the existing test to fail
         no_second_impl = False
         try:
@@ -468,7 +496,10 @@ class TestMachineLearningClient:
                 registry_name="testfeed",
             )
         message = exception.value.args[0]
-        assert message == "Both workspace_name and registry_name cannot be used together, for the ml_client."
+        assert (
+            message
+            == "Both workspace_name and registry_name cannot be used together, for the ml_client."
+        )
 
     def test_ml_client_with_cli_config(self, mock_credential):
         # This cloud config should not work and it should NOT overwrite the hardcoded AzureCloud
@@ -548,7 +579,9 @@ class TestMachineLearningClient:
         enable_telemetry = client.jobs._enable_telemetry
 
         # confirm that telemetry is DISABLED when not in jupyter notebook even with enable_telemetry=True
-        with patch("azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=False):
+        with patch(
+            "azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=False
+        ):
             properties = {
                 "subscription_id": subscription_id,
                 "resource_group_name": resource_group_name,
@@ -585,7 +618,9 @@ class TestMachineLearningClient:
         enable_telemetry = client.jobs._enable_telemetry
 
         # confirm that telemetry is DISABLED when not in jupyter notebook and enable_telemetry=False
-        with patch("azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=False):
+        with patch(
+            "azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=False
+        ):
             properties = {
                 "subscription_id": subscription_id,
                 "resource_group_name": resource_group_name,

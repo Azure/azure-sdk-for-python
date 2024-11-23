@@ -3,6 +3,80 @@
 # ---------------------------------------------------------
 
 # pylint: disable=protected-access, too-many-instance-attributes, too-many-statements, too-many-lines
+from ._virtual_cluster_operations import VirtualClusterOperations
+from ._run_operations import RunOperations
+from ._operation_orchestrator import (
+    OperationOrchestrator,
+    _AssetResolver,
+    is_ARM_id_for_resource,
+    is_registry_id_for_resource,
+    is_singularity_full_name_for_resource,
+    is_singularity_id_for_resource,
+    is_singularity_short_name_for_resource,
+)
+from ._model_dataplane_operations import ModelDataplaneOperations
+from ._local_job_invoker import is_local_run, start_run_if_local
+from ._job_ops_helper import (
+    get_git_properties,
+    get_job_output_uris_from_dataplane,
+    stream_logs_until_completion,
+)
+from ._dataset_dataplane_operations import DatasetDataplaneOperations
+from ._compute_operations import ComputeOperations
+from ._component_operations import ComponentOperations
+from ..entities._job.pipeline._io import InputOutputBase, PipelineInput, _GroupAttrDict
+from ..entities._builders.control_flow_node import ControlFlowNode
+from ..constants._component import ComponentSource
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.polling import LROPoller
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.credentials import TokenCredential
+from azure.ai.ml.sweep import SweepJob
+from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
+from azure.ai.ml.exceptions import (
+    ComponentException,
+    ErrorCategory,
+    ErrorTarget,
+    JobException,
+    JobParsingError,
+    MlException,
+    PipelineChildJobError,
+    UserErrorException,
+    ValidationErrorType,
+    ValidationException,
+)
+from azure.ai.ml.entities._validation import PathAwareSchemaValidatableMixin
+from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
+from azure.ai.ml.entities._job.parallel.parallel_job import ParallelJob
+from azure.ai.ml.entities._job.job import _is_pipeline_child_job
+from azure.ai.ml.entities._job.import_job import ImportJob
+from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
+from azure.ai.ml.entities._job.distillation.distillation_job import DistillationJob
+from azure.ai.ml.entities._job.base_job import _BaseJob
+from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
+from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
+from azure.ai.ml.entities._builders import BaseNode, Command, Spark
+from azure.ai.ml.entities._assets._artifacts.code import Code
+from azure.ai.ml.entities import Compute, Job, PipelineJob, ServiceInstance, ValidationResult
+from azure.ai.ml.constants._job.pipeline import PipelineConstants
+from azure.ai.ml.constants._compute import ComputeType
+from azure.ai.ml.constants._common import (
+    AZUREML_RESOURCE_PROVIDER,
+    BATCH_JOB_CHILD_RUN_OUTPUT_NAME,
+    COMMON_RUNTIME_ENV_VAR,
+    DEFAULT_ARTIFACT_STORE_OUTPUT_NAME,
+    GIT_PATH_PREFIX,
+    LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT,
+    LOCAL_COMPUTE_TARGET,
+    SERVERLESS_COMPUTE,
+    SHORT_URI_FORMAT,
+    SWEEP_JOB_BEST_CHILD_RUN_ID_PROPERTY_NAME,
+    TID_FMT,
+    AssetTypes,
+    AzureMLResourceType,
+    WorkspaceDiscoveryUrlKey,
+)
 import json
 import os.path
 from os import PathLike
@@ -33,9 +107,15 @@ from azure.ai.ml._restclient.runhistory import (
     AzureMachineLearningWorkspaces as ServiceClientRunHistory,
 )
 from azure.ai.ml._restclient.runhistory.models import Run
-
-from azure.ai.ml._restclient.v2024_10_01_preview.models import JobBase, ListViewType, UserIdentity
-from azure.ai.ml._restclient.v2024_10_01_preview.models import JobType as RestJobType
+from azure.ai.ml._restclient.v2023_04_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient022023Preview,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, ListViewType, UserIdentity
+from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
+from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_2401
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
+    JobType as RestJobType_20241001Preview,
+)
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -52,81 +132,7 @@ from azure.ai.ml._utils.utils import (
     is_private_preview_enabled,
     is_url,
 )
-from azure.ai.ml.constants._common import (
-    AZUREML_RESOURCE_PROVIDER,
-    BATCH_JOB_CHILD_RUN_OUTPUT_NAME,
-    COMMON_RUNTIME_ENV_VAR,
-    DEFAULT_ARTIFACT_STORE_OUTPUT_NAME,
-    GIT_PATH_PREFIX,
-    LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT,
-    LOCAL_COMPUTE_TARGET,
-    SERVERLESS_COMPUTE,
-    SHORT_URI_FORMAT,
-    SWEEP_JOB_BEST_CHILD_RUN_ID_PROPERTY_NAME,
-    TID_FMT,
-    AssetTypes,
-    AzureMLResourceType,
-    WorkspaceDiscoveryUrlKey,
-)
-from azure.ai.ml.constants._compute import ComputeType
-from azure.ai.ml.constants._job.pipeline import PipelineConstants
-from azure.ai.ml.entities import Compute, Job, PipelineJob, ServiceInstance, ValidationResult
-from azure.ai.ml.entities._assets._artifacts.code import Code
-from azure.ai.ml.entities._builders import BaseNode, Command, Spark
-from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
-from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
-from azure.ai.ml.entities._job.base_job import _BaseJob
-from azure.ai.ml.entities._job.distillation.distillation_job import DistillationJob
-from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
-from azure.ai.ml.entities._job.import_job import ImportJob
-from azure.ai.ml.entities._job.job import _is_pipeline_child_job
-from azure.ai.ml.entities._job.parallel.parallel_job import ParallelJob
-from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
-from azure.ai.ml.entities._validation import PathAwareSchemaValidatableMixin
-from azure.ai.ml.exceptions import (
-    ComponentException,
-    ErrorCategory,
-    ErrorTarget,
-    JobException,
-    JobParsingError,
-    MlException,
-    PipelineChildJobError,
-    UserErrorException,
-    ValidationErrorType,
-    ValidationException,
-)
-from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
-from azure.ai.ml.sweep import SweepJob
-from azure.core.credentials import TokenCredential
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.core.polling import LROPoller
-from azure.core.tracing.decorator import distributed_trace
 
-from ..constants._component import ComponentSource
-from ..entities._builders.control_flow_node import ControlFlowNode
-from ..entities._job.pipeline._io import InputOutputBase, PipelineInput, _GroupAttrDict
-from ._component_operations import ComponentOperations
-from ._compute_operations import ComputeOperations
-from ._dataset_dataplane_operations import DatasetDataplaneOperations
-from ._job_ops_helper import (
-    get_git_properties,
-    get_job_output_uris_from_dataplane,
-    stream_logs_until_completion,
-)
-from ._local_job_invoker import is_local_run, start_run_if_local
-from ._model_dataplane_operations import ModelDataplaneOperations
-from ._operation_orchestrator import (
-    OperationOrchestrator,
-    _AssetResolver,
-    is_ARM_id_for_resource,
-    is_registry_id_for_resource,
-    is_singularity_full_name_for_resource,
-    is_singularity_id_for_resource,
-    is_singularity_short_name_for_resource,
-)
-from ._run_operations import RunOperations
-from ._virtual_cluster_operations import VirtualClusterOperations
 
 try:
     pass
@@ -162,14 +168,16 @@ class JobOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
+        service_client_02_2023_preview: ServiceClient022023Preview,
         all_operations: OperationsContainer,
         credential: TokenCredential,
         **kwargs: Any,
     ) -> None:
         super(JobOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
-        self.service_client_10_2024_preview = kwargs.pop("service_client_10_2024_preview", None)
-        self._operation_2024_10_preview = self.service_client_10_2024_preview.jobs
+
+        self._operation_2023_02_preview = service_client_02_2023_preview.jobs
+        self._service_client = service_client_02_2023_preview
         self._all_operations = all_operations
         self._stream_logs_until_completion = stream_logs_until_completion
         # Dataplane service clients are lazily created as they are needed
@@ -185,6 +193,8 @@ class JobOperations(_ScopeDependentOperations):
             self._all_operations, self._operation_scope, self._operation_config
         )  # pylint: disable=line-too-long
 
+        self.service_client_01_2024_preview = kwargs.pop("service_client_01_2024_preview", None)
+        self.service_client_10_2024_preview = kwargs.pop("service_client_10_2024_preview", None)
         self._kwargs = kwargs
 
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
@@ -434,7 +444,7 @@ class JobOperations(_ScopeDependentOperations):
         tag = kwargs.pop("tag", None)
 
         if not tag:
-            return self._operation_2024_10_preview.begin_cancel(
+            return self._operation_2023_02_preview.begin_cancel(
                 id=name,
                 resource_group_name=self._operation_scope.resource_group_name,
                 workspace_name=self._workspace_name,
@@ -447,7 +457,7 @@ class JobOperations(_ScopeDependentOperations):
         jobs = self.list(tag=tag)
         # TODO: Do we need to show error message when no jobs is returned for the given tag?
         for job in jobs:
-            result = self._operation_2024_10_preview.begin_cancel(
+            result = self._operation_2023_02_preview.begin_cancel(
                 id=job.name,
                 resource_group_name=self._operation_scope.resource_group_name,
                 workspace_name=self._workspace_name,
@@ -708,7 +718,7 @@ class JobOperations(_ScopeDependentOperations):
         # set headers with user aml token if job is a pipeline or has a user identity setting
         if (rest_job_resource.properties.job_type == RestJobType.PIPELINE) or (
             hasattr(rest_job_resource.properties, "identity")
-            and type(rest_job_resource.properties.identity).__name__ == "UserIdentity"
+            and (isinstance(rest_job_resource.properties.identity, UserIdentity))
         ):
             self._set_headers_with_user_aml_token(kwargs)
 
@@ -754,7 +764,16 @@ class JobOperations(_ScopeDependentOperations):
     def _create_or_update_with_different_version_api(  # pylint: disable=name-too-long
         self, rest_job_resource: JobBase, **kwargs: Any
     ) -> JobBase:
-        service_client_operation = self.service_client_10_2024_preview.jobs
+        service_client_operation = self._operation_2023_02_preview
+        if rest_job_resource.properties.job_type == RestJobType_20241001Preview.FINE_TUNING:
+            service_client_operation = self.service_client_10_2024_preview.jobs
+        if rest_job_resource.properties.job_type == RestJobType.PIPELINE:
+            service_client_operation = self.service_client_01_2024_preview.jobs
+        if rest_job_resource.properties.job_type == RestJobType.AUTO_ML:
+            service_client_operation = self.service_client_01_2024_preview.jobs
+        if rest_job_resource.properties.job_type == RestJobType.SWEEP:
+            service_client_operation = self.service_client_01_2024_preview.jobs
+
         result = service_client_operation.create_or_update(
             id=rest_job_resource.name,
             resource_group_name=self._operation_scope.resource_group_name,
@@ -768,7 +787,7 @@ class JobOperations(_ScopeDependentOperations):
     def _create_or_update_with_latest_version_api(  # pylint: disable=name-too-long
         self, rest_job_resource: JobBase, **kwargs: Any
     ) -> JobBase:
-        service_client_operation = self.service_client_10_2024_preview.jobs
+        service_client_operation = self.service_client_01_2024_preview.jobs
         result = service_client_operation.create_or_update(
             id=rest_job_resource.name,
             resource_group_name=self._operation_scope.resource_group_name,
@@ -781,6 +800,8 @@ class JobOperations(_ScopeDependentOperations):
 
     def _archive_or_restore(self, name: str, is_archived: bool) -> None:
         job_object = self._get_job(name)
+        if job_object.properties.job_type == RestJobType.PIPELINE:
+            job_object = self._get_job_2401(name)
         if _is_pipeline_child_job(job_object):
             raise PipelineChildJobError(job_id=job_object.id)
         job_object.properties.is_archived = is_archived
@@ -1077,7 +1098,28 @@ class JobOperations(_ScopeDependentOperations):
         return uri
 
     def _get_job(self, name: str) -> JobBase:
-        return self.service_client_10_2024_preview.jobs.get(
+        job = self.service_client_01_2024_preview.jobs.get(
+            id=name,
+            resource_group_name=self._operation_scope.resource_group_name,
+            workspace_name=self._workspace_name,
+            **self._kwargs,
+        )
+
+        if job.properties.job_type == RestJobType_20241001Preview.FINE_TUNING:
+            return self.service_client_10_2024_preview.jobs.get(
+                id=name,
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                **self._kwargs,
+            )
+
+        return job
+
+    # Upgrade api from 2023-04-01-preview to 2024-01-01-preview for pipeline job
+    # We can remove this function once `_get_job` function has also been upgraded to the same version with pipeline
+    def _get_job_2401(self, name: str) -> JobBase_2401:
+        service_client_operation = self.service_client_01_2024_preview.jobs
+        return service_client_operation.get(
             id=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,

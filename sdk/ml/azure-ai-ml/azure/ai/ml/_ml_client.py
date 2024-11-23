@@ -735,10 +735,12 @@ class MLClient:
         self._jobs = JobOperations(
             self._operation_scope,
             self._operation_config,
+            self._service_client_04_2023_preview,
             self._operation_container,
             self._credential,
             _service_client_kwargs=kwargs,
             requests_pipeline=self._requests_pipeline,
+            service_client_01_2024_preview=self._service_client_01_2024_preview,
             service_client_10_2024_preview=self._service_client_10_2024_preview,
             **ops_kwargs,
         )
