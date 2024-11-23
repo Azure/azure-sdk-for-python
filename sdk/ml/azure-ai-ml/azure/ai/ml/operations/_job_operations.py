@@ -1105,7 +1105,12 @@ class JobOperations(_ScopeDependentOperations):
             **self._kwargs,
         )
 
-        if job.properties.job_type == RestJobType_20241001Preview.FINE_TUNING:
+        if (
+            hasattr(job, "properties")
+            and job.properties
+            and hasattr(job.properties, "job_type")
+            and job.properties.job_type == RestJobType_20241001Preview.FINE_TUNING
+        ):
             return self.service_client_10_2024_preview.jobs.get(
                 id=name,
                 resource_group_name=self._operation_scope.resource_group_name,
