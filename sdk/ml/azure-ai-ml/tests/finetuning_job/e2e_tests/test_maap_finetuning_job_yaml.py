@@ -19,6 +19,7 @@ from test_common_functions import validate_job
 # @pytest.mark.skipif(condition=not is_live(), reason="This test requires a live endpoint")
 class TestFineTuningJob_MaaP_Yaml(AzureRecordedTestCase):
 
+    @pytest.mark.e2etest
     def test_using_instance_types(
         self,
         finetuning_job_instance_types_yaml: Path,
@@ -45,6 +46,7 @@ class TestFineTuningJob_MaaP_Yaml(AzureRecordedTestCase):
             returned_job=returned_job,
         )
 
+    @pytest.mark.e2etest
     def test_using_aml_compute(
         self,
         finetuning_job_compute_yaml: Path,
@@ -70,6 +72,7 @@ class TestFineTuningJob_MaaP_Yaml(AzureRecordedTestCase):
             returned_job=returned_job,
         )
 
+    @pytest.mark.e2etest
     def test_using_queue_settings(
         self,
         finetuning_job_queue_settings_yaml: CustomModelFineTuningJob,
