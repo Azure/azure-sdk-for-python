@@ -31,7 +31,7 @@ def create_finetuning_job(
     if not output_model_name_prefix:
         raise ValueError("output_model_name_prefix is required")
 
-    model = Input(
+    model_input = Input(
         type=AssetTypes.MLFLOW_MODEL,
         path=model,
     )
@@ -39,13 +39,13 @@ def create_finetuning_job(
     outputs = {"registered_model": Output(type="mlflow_model", name=output_model_name_prefix)}
 
     # For image tasks this would be mltable, check how to handle this
-    training_data = Input(
+    training_data_input = Input(
         type=AssetTypes.URI_FILE,
         path=training_data,
     )
 
     if validation_data:
-        validation_data = Input(
+        validation_data_input = Input(
             type=AssetTypes.URI_FILE,
             path=validation_data,
         )
@@ -60,9 +60,9 @@ def create_finetuning_job(
 
     custom_model_finetuning_job = CustomModelFineTuningJob(
         task=task,
-        model=model,
-        training_data=training_data,
-        validation_data=validation_data,
+        model=model_input,
+        training_data=training_data_input,
+        validation_data=validation_data_input,
         hyperparameters=hyperparameters,
         compute=compute,
         resources=job_resources,
