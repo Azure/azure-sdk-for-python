@@ -15,7 +15,14 @@ from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOpt
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
-from .._internal import _scopes_to_resource, resolve_tenant, within_dac, validate_tenant_id, validate_scope
+from .._internal import (
+    _scopes_to_resource,
+    resolve_tenant,
+    within_dac,
+    validate_tenant_id,
+    validate_scope,
+    validate_subscription,
+)
 from .._internal.decorators import log_get_token
 
 
@@ -31,6 +38,8 @@ class AzureCliCredential:
     This requires previously logging in to Azure via "az login", and will use the CLI's currently logged in identity.
 
     :keyword str tenant_id: Optional tenant to include in the token request.
+    :keyword str subscription: The name or ID of a subscription. Set this to acquire tokens for an account other
+        than the Azure CLI's current account.
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
@@ -50,12 +59,17 @@ class AzureCliCredential:
         self,
         *,
         tenant_id: str = "",
+        subscription: Optional[str] = None,
         additionally_allowed_tenants: Optional[List[str]] = None,
         process_timeout: int = 10,
     ) -> None:
         if tenant_id:
             validate_tenant_id(tenant_id)
+        if subscription:
+            validate_subscription(subscription)
+
         self.tenant_id = tenant_id
+        self.subscription = subscription
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._process_timeout = process_timeout
 
@@ -144,6 +158,9 @@ class AzureCliCredential:
         )
         if tenant:
             command += " --tenant " + tenant
+
+        if self.subscription:
+            command += f' --subscription "{self.subscription}"'
         output = _run_command(command, self._process_timeout)
 
         token = parse_token(output)

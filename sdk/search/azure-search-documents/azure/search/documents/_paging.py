@@ -10,7 +10,7 @@ import itertools
 import json
 
 from azure.core.paging import ItemPaged, PageIterator, ReturnType
-from ._generated.models import SearchRequest, SearchDocumentsResult, QueryAnswerResult
+from ._generated.models import SearchRequest, SearchDocumentsResult, QueryAnswerResult, DebugInfo
 from ._api_versions import DEFAULT_VERSION
 
 
@@ -93,6 +93,14 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         """
         return cast(List[QueryAnswerResult], self._first_iterator_instance().get_answers())
 
+    def get_debug_info(self) -> DebugInfo:
+        """Return the debug information for the query.
+
+        :return: the debug information for the query
+        :rtype: ~azure.search.documents.models.DebugInfo
+        """
+        return cast(DebugInfo, self._first_iterator_instance().get_debug_info())
+
 
 # The pylint error silenced below seems spurious, as the inner wrapper does, in
 # fact, become a method of the class when it is applied.
@@ -160,3 +168,9 @@ class SearchPageIterator(PageIterator):
         self.continuation_token = None
         response = cast(SearchDocumentsResult, self._response)
         return response.answers
+
+    @_ensure_response
+    def get_debug_info(self) -> DebugInfo:
+        self.continuation_token = None
+        response = cast(SearchDocumentsResult, self._response)
+        return cast(DebugInfo, response.debug_info)

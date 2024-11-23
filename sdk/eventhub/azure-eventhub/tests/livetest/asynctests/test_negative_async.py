@@ -29,17 +29,12 @@ from azure.eventhub.aio._client_base_async import EventHubSASTokenCredential
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_send_with_invalid_hostname_async(
-    invalid_hostname, uamqp_transport
-):
+async def test_send_with_invalid_hostname_async(invalid_hostname, uamqp_transport):
     if sys.platform.startswith("darwin"):
         pytest.skip(
-            "Skipping on OSX - it keeps reporting 'Unable to set external certificates' "
-            "and blocking other tests"
+            "Skipping on OSX - it keeps reporting 'Unable to set external certificates' " "and blocking other tests"
         )
-    client = EventHubProducerClient.from_connection_string(
-        invalid_hostname, uamqp_transport=uamqp_transport
-    )
+    client = EventHubProducerClient.from_connection_string(invalid_hostname, uamqp_transport=uamqp_transport)
     async with client:
         with pytest.raises(ConnectError):
             batch = EventDataBatch()
@@ -71,14 +66,10 @@ async def test_send_with_invalid_hostname_async(
     assert isinstance(on_error.err, ConnectError)
 
 
-@pytest.mark.parametrize(
-    "invalid_place", ["hostname", "key_name", "access_key", "event_hub", "partition"]
-)
+@pytest.mark.parametrize("invalid_place", ["hostname", "key_name", "access_key", "event_hub", "partition"])
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_receive_with_invalid_param_async(
-    live_eventhub, invalid_place, uamqp_transport
-):
+async def test_receive_with_invalid_param_async(live_eventhub, invalid_place, uamqp_transport):
     eventhub_config = live_eventhub.copy()
     if invalid_place != "partition":
         eventhub_config[invalid_place] = "invalid " + invalid_place
@@ -101,15 +92,9 @@ async def test_receive_with_invalid_param_async(
 
     async with client:
         if invalid_place == "partition":
-            task = asyncio.ensure_future(
-                client.receive(
-                    on_event, partition_id=invalid_place, starting_position="-1"
-                )
-            )
+            task = asyncio.ensure_future(client.receive(on_event, partition_id=invalid_place, starting_position="-1"))
         else:
-            task = asyncio.ensure_future(
-                client.receive(on_event, partition_id="0", starting_position="-1")
-            )
+            task = asyncio.ensure_future(client.receive(on_event, partition_id="0", starting_position="-1"))
         await asyncio.sleep(10)
         assert len(client._event_processors) == 1
     await task
@@ -118,9 +103,7 @@ async def test_receive_with_invalid_param_async(
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_with_invalid_key_async(invalid_key, uamqp_transport):
-    client = EventHubProducerClient.from_connection_string(
-        invalid_key, uamqp_transport=uamqp_transport
-    )
+    client = EventHubProducerClient.from_connection_string(invalid_key, uamqp_transport=uamqp_transport)
     async with client:
         with pytest.raises(ConnectError):
             batch = EventDataBatch()
@@ -131,9 +114,7 @@ async def test_send_with_invalid_key_async(invalid_key, uamqp_transport):
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_with_invalid_policy_async(invalid_policy, uamqp_transport):
-    client = EventHubProducerClient.from_connection_string(
-        invalid_policy, uamqp_transport=uamqp_transport
-    )
+    client = EventHubProducerClient.from_connection_string(invalid_policy, uamqp_transport=uamqp_transport)
     async with client:
         with pytest.raises(ConnectError):
             batch = EventDataBatch()
@@ -222,17 +203,12 @@ async def test_send_null_body_async(auth_credentials_async, uamqp_transport):
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_create_batch_with_invalid_hostname_async(
-    invalid_hostname, uamqp_transport
-):
+async def test_create_batch_with_invalid_hostname_async(invalid_hostname, uamqp_transport):
     if sys.platform.startswith("darwin"):
         pytest.skip(
-            "Skipping on OSX - it keeps reporting 'Unable to set external certificates' "
-            "and blocking other tests"
+            "Skipping on OSX - it keeps reporting 'Unable to set external certificates' " "and blocking other tests"
         )
-    client = EventHubProducerClient.from_connection_string(
-        invalid_hostname, uamqp_transport=uamqp_transport
-    )
+    client = EventHubProducerClient.from_connection_string(invalid_hostname, uamqp_transport=uamqp_transport)
     async with client:
         with pytest.raises(ConnectError):
             await client.create_batch(max_size_in_bytes=300)
@@ -291,7 +267,7 @@ async def test_client_send_timeout(auth_credential_receivers_async, uamqp_transp
         fully_qualified_namespace=fully_qualified_namespace,
         eventhub_name=eventhub_name,
         credential=credential(),
-        uamqp_transport=uamqp_transport
+        uamqp_transport=uamqp_transport,
     )
 
     async with producer:
@@ -359,11 +335,7 @@ async def test_client_invalid_credential_async(live_eventhub, get_credential_asy
 
         on_error.err = None
         async with consumer_client:
-            task = asyncio.ensure_future(
-                consumer_client.receive(
-                    on_event, starting_position="-1", on_error=on_error
-                )
-            )
+            task = asyncio.ensure_future(consumer_client.receive(on_event, starting_position="-1", on_error=on_error))
             await asyncio.sleep(15)
         await task
         assert isinstance(on_error.err, ConnectError)
@@ -390,19 +362,13 @@ async def test_client_invalid_credential_async(live_eventhub, get_credential_asy
 
     on_error.err = None
     async with consumer_client:
-        task = asyncio.ensure_future(
-            consumer_client.receive(on_event, starting_position="-1", on_error=on_error)
-        )
+        task = asyncio.ensure_future(consumer_client.receive(on_event, starting_position="-1", on_error=on_error))
         await asyncio.sleep(15)
     await task
     assert isinstance(on_error.err, AuthenticationError)
 
-    credential = EventHubSharedKeyCredential(
-        live_eventhub["key_name"], live_eventhub["access_key"]
-    )
-    auth_uri = "sb://{}/{}".format(
-        live_eventhub["hostname"], live_eventhub["event_hub"]
-    )
+    credential = EventHubSharedKeyCredential(live_eventhub["key_name"], live_eventhub["access_key"])
+    auth_uri = "sb://{}/{}".format(live_eventhub["hostname"], live_eventhub["event_hub"])
     token = (await credential.get_token(auth_uri)).token
     producer_client = EventHubProducerClient(
         fully_qualified_namespace=live_eventhub["hostname"],
@@ -428,11 +394,7 @@ async def test_client_invalid_credential_async(live_eventhub, get_credential_asy
         )
         on_error.err = None
         async with consumer_client:
-            task = asyncio.ensure_future(
-                consumer_client.receive(
-                    on_event, starting_position="-1", on_error=on_error
-                )
-            )
+            task = asyncio.ensure_future(consumer_client.receive(on_event, starting_position="-1", on_error=on_error))
             await asyncio.sleep(15)
         await task
 
@@ -461,9 +423,7 @@ async def test_client_invalid_credential_async(live_eventhub, get_credential_asy
     )
     on_error.err = None
     async with consumer_client:
-        task = asyncio.ensure_future(
-            consumer_client.receive(on_event, starting_position="-1", on_error=on_error)
-        )
+        task = asyncio.ensure_future(consumer_client.receive(on_event, starting_position="-1", on_error=on_error))
         await asyncio.sleep(15)
     await task
 
@@ -491,9 +451,7 @@ async def test_client_invalid_credential_async(live_eventhub, get_credential_asy
     )
     on_error.err = None
     async with consumer_client:
-        task = asyncio.ensure_future(
-            consumer_client.receive(on_event, starting_position="-1", on_error=on_error)
-        )
+        task = asyncio.ensure_future(consumer_client.receive(on_event, starting_position="-1", on_error=on_error))
         await asyncio.sleep(15)
     await task
 
@@ -522,9 +480,7 @@ async def test_client_invalid_credential_async(live_eventhub, get_credential_asy
         uamqp_transport=uamqp_transport,
     )
     async with consumer_client:
-        task = asyncio.ensure_future(
-            consumer_client.receive(on_event, starting_position="-1", on_error=on_error)
-        )
+        task = asyncio.ensure_future(consumer_client.receive(on_event, starting_position="-1", on_error=on_error))
         await asyncio.sleep(15)
     await task
 
@@ -555,11 +511,7 @@ async def test_client_invalid_credential_async(live_eventhub, get_credential_asy
             uamqp_transport=uamqp_transport,
         )
         async with consumer_client:
-            task = asyncio.ensure_future(
-                consumer_client.receive(
-                    on_event, starting_position="-1", on_error=on_error
-                )
-            )
+            task = asyncio.ensure_future(consumer_client.receive(on_event, starting_position="-1", on_error=on_error))
             await asyncio.sleep(15)
         await task
 

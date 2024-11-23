@@ -29,8 +29,7 @@ def get_route_directions():
     maps_route_client = MapsRouteClient(credential=AzureKeyCredential(subscription_key))
 
     result = maps_route_client.get_route_directions(
-        route_points=[(52.50931, 13.42936), (52.50274, 13.43872)],
-        avoid_vignette=["AUS", "CHE"]
+        route_points=[(52.50931, 13.42936), (52.50274, 13.43872)], avoid_vignette=["AUS", "CHE"]
     )
 
     if result.routes is not None:
@@ -39,5 +38,6 @@ def get_route_directions():
         print(result.routes[0].sections[0])
     # [END get_route_directions]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     get_route_directions()

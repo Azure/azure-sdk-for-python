@@ -29,6 +29,7 @@ def patch_sdk():
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
 
+
 class WeatherOperations(WeatherOperationsGenerated):
     async def get_tropical_storm_search(
         self,
@@ -79,9 +80,5 @@ class WeatherOperations(WeatherOperationsGenerated):
                 }
         """
         return await super().search_tropical_storm(
-            format=format,
-            year=year,
-            basin_id=basin_id,
-            government_storm_id=government_storm_id,
-            **kwargs
+            format=format, year=year, basin_id=basin_id, government_storm_id=government_storm_id, **kwargs
         )

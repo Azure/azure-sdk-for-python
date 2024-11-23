@@ -20,13 +20,13 @@ class ProcessEventsBatchTest(_EventHubProcessorTest):
             if events:
                 if self.args.processing_delay:
                     delay_in_seconds = self.args.processing_delay / 1000
-                    if self.args.processing_delay_strategy == 'sleep':
+                    if self.args.processing_delay_strategy == "sleep":
                         time.sleep(delay_in_seconds)
-                    elif self.args.processing_delay_strategy == 'spin':
+                    elif self.args.processing_delay_strategy == "spin":
                         starttime = time.time()
                         while (time.time() - starttime) < delay_in_seconds:
                             pass
-                
+
                 # Consume properties and body.
                 _ = [(list(e.body), str(e)) for e in events]
 
@@ -45,9 +45,9 @@ class ProcessEventsBatchTest(_EventHubProcessorTest):
             if events:
                 if self.args.processing_delay:
                     delay_in_seconds = self.args.processing_delay / 1000
-                    if self.args.processing_delay_strategy == 'sleep':
+                    if self.args.processing_delay_strategy == "sleep":
                         await asyncio.sleep(delay_in_seconds)
-                    elif self.args.processing_delay_strategy == 'spin':
+                    elif self.args.processing_delay_strategy == "spin":
                         starttime = time.time()
                         while (time.time() - starttime) < delay_in_seconds:
                             pass
@@ -102,4 +102,10 @@ class ProcessEventsBatchTest(_EventHubProcessorTest):
     @staticmethod
     def add_arguments(parser):
         super(ProcessEventsBatchTest, ProcessEventsBatchTest).add_arguments(parser)
-        parser.add_argument('--max-batch-size', nargs='?', type=int, help='Maximum number of events to process in a single batch. Defaults to 100.', default=100)
+        parser.add_argument(
+            "--max-batch-size",
+            nargs="?",
+            type=int,
+            help="Maximum number of events to process in a single batch. Defaults to 100.",
+            default=100,
+        )

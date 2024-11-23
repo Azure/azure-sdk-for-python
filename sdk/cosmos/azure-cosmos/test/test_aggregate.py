@@ -1,8 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
-from __future__ import print_function
-
 import os
 import unittest
 import uuid

@@ -7,7 +7,9 @@ import os
 import re
 import tempfile
 from pathlib import Path
-from typing import Any, Dict, List, NamedTuple, Optional, Tuple, TypedDict, Union
+from typing import Any, Dict, NamedTuple, Optional, Tuple, Union
+import uuid
+import base64
 
 import pandas as pd
 from promptflow.client import PFClient
@@ -19,7 +21,6 @@ from azure.ai.evaluation._constants import (
     EvaluationRunProperties,
     Prefixes,
 )
-from azure.ai.evaluation._evaluate._eval_run import EvalRun
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import AzureAIProject
 
@@ -35,12 +36,6 @@ class AzureMLWorkspace(NamedTuple):
     subscription_id: str
     resource_group_name: str
     workspace_name: str
-
-
-class EvaluateResult(TypedDict):
-    metrics: Dict[str, float]
-    studio_url: Optional[str]
-    rows: List[Dict]
 
 
 def is_none(value) -> bool:
@@ -87,6 +82,51 @@ def _azure_pf_client_and_triad(trace_destination) -> Tuple[PFClient, AzureMLWork
     return azure_pf_client, ws_triad
 
 
+def _store_multimodal_content(messages, tmpdir: str):
+    # verify if images folder exists
+    images_folder_path = os.path.join(tmpdir, "images")
+    os.makedirs(images_folder_path, exist_ok=True)
+
+    # traverse all messages and replace base64 image data with new file name.
+    for message in messages:
+        if isinstance(message.get("content", []), list):
+            for content in message.get("content", []):
+                process_message_content(content, images_folder_path)
+
+
+def process_message_content(content, images_folder_path):
+    if content.get("type", "") == "image_url":
+        image_url = content.get("image_url")
+
+        if not image_url or "url" not in image_url:
+            return None
+
+        url = image_url["url"]
+        if not url.startswith("data:image/"):
+            return None
+
+        match = re.search("data:image/([^;]+);", url)
+        if not match:
+            return None
+
+        ext = match.group(1)
+        # Extract the base64 string
+        base64image = image_url["url"].replace(f"data:image/{ext};base64,", "")
+
+        # Generate a unique filename
+        image_file_name = f"{str(uuid.uuid4())}.{ext}"
+        image_url["url"] = f"images/{image_file_name}"  # Replace the base64 URL with the file path
+
+        # Decode the base64 string to binary image data
+        image_data_binary = base64.b64decode(base64image)
+
+        # Write the binary image data to the file
+        image_file_path = os.path.join(images_folder_path, image_file_name)
+        with open(image_file_path, "wb") as f:
+            f.write(image_data_binary)
+    return None
+
+
 def _log_metrics_and_instance_results(
     metrics: Dict[str, Any],
     instance_results: pd.DataFrame,
@@ -94,6 +134,8 @@ def _log_metrics_and_instance_results(
     run: Run,
     evaluation_name: Optional[str],
 ) -> Optional[str]:
+    from azure.ai.evaluation._evaluate._eval_run import EvalRun
+
     if trace_destination is None:
         LOGGER.debug("Skip uploading evaluation results to AI Studio since no trace destination was provided.")
         return None
@@ -113,9 +155,18 @@ def _log_metrics_and_instance_results(
         ml_client=azure_pf_client.ml_client,
         promptflow_run=run,
     ) as ev_run:
-        artifact_name = EvalRun.EVALUATION_ARTIFACT if run else EvalRun.EVALUATION_ARTIFACT_DUMMY_RUN
+        artifact_name = EvalRun.EVALUATION_ARTIFACT
 
         with tempfile.TemporaryDirectory() as tmpdir:
+            # storing multi_modal images if exists
+            col_name = "inputs.conversation"
+            if col_name in instance_results.columns:
+                for item in instance_results[col_name].items():
+                    value = item[1]
+                    if "messages" in value:
+                        _store_multimodal_content(value["messages"], tmpdir)
+
+            # storing artifact result
             tmp_path = os.path.join(tmpdir, artifact_name)
 
             with open(tmp_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
@@ -131,9 +182,8 @@ def _log_metrics_and_instance_results(
                 ev_run.write_properties_to_run_history(
                     properties={
                         EvaluationRunProperties.RUN_TYPE: "eval_run",
-                        EvaluationRunProperties.EVALUATION_RUN: "azure-ai-generative-parent",
+                        EvaluationRunProperties.EVALUATION_RUN: "promptflow.BatchRun",
                         "_azureml.evaluate_artifacts": json.dumps([{"path": artifact_name, "type": "table"}]),
-                        "isEvaluatorRun": "true",
                     }
                 )
 
@@ -177,6 +227,8 @@ def _write_output(path: Union[str, os.PathLike], data_dict: Any) -> None:
 
     with open(p, "w", encoding=DefaultOpenEncoding.WRITE) as f:
         json.dump(data_dict, f)
+
+    print(f'Evaluation results saved to "{p.resolve()}".\n')
 
 
 def _apply_column_mapping(
