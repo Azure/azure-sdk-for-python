@@ -102,7 +102,35 @@ class FineTuningJob(Job, JobIOMixin):
         if not isinstance(other, FineTuningJob):
             return NotImplemented
 
-        return self.outputs == other.outputs
+        queue_settings_match = not self.queue_settings and not other.queue_settings
+        if self.queue_settings and other.queue_settings:
+            queue_settings_match = (
+                self.queue_settings.job_tier
+                and other.queue_settings.job_tier
+                and self.queue_settings.job_tier.lower() == other.queue_settings.job_tier.lower()
+            )
+
+        outputs_match = not self.outputs and not other.outputs
+        if self.outputs and other.outputs:
+            outputs_match = (
+                self.outputs["registered_model"].name == other.outputs["registered_model"].name
+                and self.outputs["registered_model"].type == other.outputs["registered_model"].type
+            )
+
+        return (
+            outputs_match
+            and self.resources == other.resources
+            and queue_settings_match
+            # add properties from base class
+            and self.name == other.name
+            and self.description == other.description
+            and self.tags == other.tags
+            and self.properties == other.properties
+            and self.compute == other.compute
+            and self.id == other.id
+            and self.experiment_name == other.experiment_name
+            and self.status == other.status
+        )
 
     def __ne__(self, other: object) -> bool:
         """Check inequality between two FineTuningJob objects.

@@ -196,8 +196,6 @@ class FineTuningVertical(FineTuningJob):
             super().__eq__(other)
             and self.task == other.task
             and self.model == other.model
-            and self.resources == other.resources
-            and self.queue_settings == other.queue_settings
             and self.model_provider == other.model_provider
             and self.training_data == other.training_data
             and self.validation_data == other.validation_data

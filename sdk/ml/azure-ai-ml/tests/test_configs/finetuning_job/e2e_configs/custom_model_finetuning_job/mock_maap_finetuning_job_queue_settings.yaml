@@ -1,7 +1,7 @@
 type: finetuning
 
-name: "llama3-8B-with-instance-types"
-experiment_name: "llama3-8B-finetuning-experiment"
+name: "llama-3-8B-with-queue-settings"
+experiment_name: "llama-3-8B-finetuning-experiment"
 display_name: "llama3-8B-display-name"
 task: text_completion
 model_provider: custom
