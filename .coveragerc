@@ -6,6 +6,7 @@ omit =
 	*/test*
 	env*
 	*/_serialization.py
+	sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/*
 
 [paths]
 source =
