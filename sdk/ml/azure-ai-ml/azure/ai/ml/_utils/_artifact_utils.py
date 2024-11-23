@@ -200,7 +200,7 @@ class ArtifactCache:
                 url, headers=header
             )
             if response.status_code == 200:
-                artifacts_tool_path = tempfile.mktemp()  # nosec B306
+                artifacts_tool_path = tempfile.mkdtemp()  # nosec B306
                 artifacts_tool_uri = response.json()["uri"]
                 response = requests_pipeline.get(artifacts_tool_uri)  # pylint: disable=too-many-function-args
                 with zipfile.ZipFile(BytesIO(response.content)) as zip_file:
@@ -339,7 +339,7 @@ class ArtifactCache:
                     os.unlink(check_sum_path)
                 if artifact_package_path.exists():
                     # Remove invalid artifact package to avoid affecting download artifact.
-                    temp_folder = tempfile.mktemp()  # nosec B306
+                    temp_folder = tempfile.mkdtemp()  # nosec B306
                     os.rename(artifact_package_path, temp_folder)
                     shutil.rmtree(temp_folder)
                 # Download artifact
@@ -380,7 +380,7 @@ class ArtifactCache:
         :return artifact_package_path: Cache path of the artifact package
         :rtype: Path
         """
-        tempdir = tempfile.mktemp()  # nosec B306
+        tempdir = tempfile.mkdtemp()  # nosec B306
         download_cmd = [
             shutil.which("az"),
             "artifacts",
