@@ -13,7 +13,7 @@ from test_common_functions import validate_job
 
 
 @pytest.mark.finetuning_job_test
-# @pytest.mark.usefixtures("recorded_test")
+@pytest.mark.usefixtures("recorded_test")
 # @pytest.mark.skipif(condition=not is_live(), reason="This test requires a live endpoint")
 class TestCustomModelFineTuningJob_MaaP(AzureRecordedTestCase):
 
