@@ -17,6 +17,7 @@ from azure.ai.ml.constants._common import WorkspaceKind
 from azure.ai.ml._exception_helper import log_and_raise_error
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.constants._common import DEFAULT_STORAGE_CONNECTION_NAME
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -27,6 +28,20 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
 
     You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it
     for you and attaches it as an attribute.
+
+    :param operation_scope: Scope variables for the operations classes of an MLClient object.
+    :type operation_scope: ~azure.ai.ml._scope_dependent_operations.OperationScope
+    :param operation_config: Common configuration for operations classes of an MLClient object.
+    :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
+    :param service_client_10_2024: Service client to allow end users to operate on Azure Machine Learning Workspace
+        resources (ServiceClient102024Preview).
+    :type service_client_10_2024: ~azure.ai.ml._restclient.v2024_10_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces
+    :param all_operations: All operations classes of an MLClient object.
+    :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
+    :param credentials: Credential to use for authentication.
+    :type credentials: ~azure.core.credentials.TokenCredential
+    :param kwargs: Additional keyword arguments.
+    :type kwargs: Any
     """
 
     def __init__(
@@ -38,6 +53,23 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         credentials: TokenCredential,
         **kwargs: Any,
     ):
+        """Constructor of CapabilityHostsOperations class.
+
+        :param operation_scope: Scope variables for the operations classes of an MLClient object.
+        :type operation_scope: ~azure.ai.ml._scope_dependent_operations.OperationScope
+        :param operation_config: Common configuration for operations classes of an MLClient object.
+        :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
+        :param service_client_10_2024: Service client to allow end users to operate on Azure Machine Learning Workspace
+            resources (ServiceClient102024Preview).
+        :type service_client_10_2024: ~azure.ai.ml._restclient.v2024_10_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces
+        :param all_operations: All operations classes of an MLClient object.
+        :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
+        :param credentials: Credential to use for authentication.
+        :type credentials: ~azure.core.credentials.TokenCredential
+        :param kwargs: Additional keyword arguments.
+        :type kwargs: Any
+        """
+
         super(CapabilityHostsOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._all_operations = all_operations
@@ -49,16 +81,16 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
     @monitor_with_activity(ops_logger, "CapabilityHost.Get", ActivityType.PUBLICAPI)
     @distributed_trace
     def get(self, name: str, **kwargs: Any) -> CapabilityHost:
-        """Retrieve a capability host resource from the specified Azure Machine Learning workspace.
+        """Retrieve a capability host resource.
 
         :param name: The name of the capability host to retrieve.
         :type name: str
-        :param workspace_name: The name of hub or project workspace.
-        :type name: str
         :param kwargs: Additional keyword arguments.
         :type kwargs: Any
-        :return: A CapabilityHost object representing the retrieved capability host resource.
-        :rtype: ~azure.ai.ml.entities.CapabilityHost
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if project name or hub name not provided while creation of MLClient object in workspacename param. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Capabilityhost name is not provided. Details will be provided in the error message.
+        :return: CapabilityHost object.
+        :rtype: ~azure.ai.ml.entities._workspace._ai_workspaces.capability_host.CapabilityHost
         """
 
         self.__validate_workspace_name()
@@ -90,7 +122,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         :param kwargs: Additional keyword arguments.
         :type kwargs: Any
         :return: An LROPoller object that can be used to track the long-running operation that is creation of capability host.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.CapabilityHost]
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities._workspace._ai_workspaces.capability_host.CapabilityHost]
         """
         try:
             self.__validate_workspace_name()
@@ -107,10 +139,10 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
 
             # pylint: disable=unused-argument, docstring-missing-param
             def callback(_: Any, deserialized: Any, args: Any) -> CapabilityHost:
-                """Callback to be called after completion
+                """Callback to be called after completion of begin_create_or_update operation
 
-                :return: Capability host deserialized.
-                :rtype: ~azure.ai.ml.entities.CapabilityHost
+                :return: Deserialized CapabilityHost.
+                :rtype: ~azure.ai.ml.entities._workspace._ai_workspaces.capability_host.CapabilityHost
                 """
             
                 return CapabilityHost._from_rest_object(deserialized)  # pylint: disable=protected-access
@@ -157,8 +189,11 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
     def __validate_capability_host_name(self, capability_host_name: Optional[str]) -> None:
         """Validates that a capability host name exists.
 
-        :param capability_host_name: Name for a capability host resource.
+        :param capability_host_name: Capability host name
         :type capability_host_name: str
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if capability host name is empty or None. Details will be provided in the error message.
+        :return: None, or the result of cls(response)
+        :rtype: None
         """
         if not capability_host_name:
             msg = "Please provide capability host name"
@@ -175,7 +210,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         :return: A list of default storage connections.
         :rtype: List[str]
         """
-        return [f"{self._workspace_name}/workspaceblobstore"]
+        return [f"{self._workspace_name}/{DEFAULT_STORAGE_CONNECTION_NAME}"]
         
     def __validate_properties(self, capability_host: CapabilityHost, workspace_kind: str) -> None:
         """Validate the properties of the capability host based on the workspace kind.
@@ -184,6 +219,10 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         :type capability_host: CapabilityHost
         :param kind: The kind of the workspace, either hub or project only.
         :type kind: str
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if workspace kind is not Hub or Project. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the OpenAI service connection or vector store (AISearch) connection is empty for a Project workspace kind. Details will be provided in the error message.
+        :return: None, or the result of cls(response)
+        :rtype: None
         """
         
         if not self.__is_valid_kind(workspace_kind):
@@ -198,7 +237,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         if workspace_kind == WorkspaceKind.PROJECT:
             if capability_host.ai_services_connections is None or capability_host.vector_store_connections is None:
                 msg = (
-                    "For Project workspace kind, AI services connections and vector store connections are required."
+                    "For Project workspace kind, OpenAI service connections and vector store (AISearch) connections are required."
                 )
                 raise ValidationException(
                     message=msg,
@@ -221,8 +260,9 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
     def __get_workspace(self) -> Workspace:
         """Retrieve the workspace object.
 
-        :return: The current workspace if it exists, otherwise None.
-        :rtype: Optional[~azure.ai.ml.entities._workspace.workspace.Workspace]
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if specified Hub or Project do not exist. Details will be provided in the error message.
+        :return: Hub or Project object if it exists
+        :rtype: ~azure.ai.ml.entities._workspace.workspace.Workspace
         """
         rest_workspace = self._workspace_operations.get(self._resource_group_name, self._workspace_name)
         workspace = Workspace._from_rest_object(rest_workspace)
@@ -237,15 +277,15 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         return workspace
     
     def __validate_workspace_name(self) -> None:
-        """Validates that a hub name or project name set in MLClient.
+        """Validates that a hub name or project name is set in the MLClient's workspace name parameter.
 
-        :return: No Return.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if project name or hub name not provided while creation of MLClient object in workspacename param. Details will be provided in the error message.
+        :return: None, or the result of cls(response)
         :rtype: None
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if MLClient does not have workspace name set.
         """
         workspace_name = self._workspace_name
         if not workspace_name:
-            msg = "Please set hub name or project name in MLClient."
+            msg = "Please set hub name or project name in workspacename parameter while initializing MLClient object."
             raise ValidationException(
                 message=msg,
                 target=ErrorTarget.CAPABILITY_HOST,

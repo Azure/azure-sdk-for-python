@@ -153,6 +153,7 @@ STORAGE_ACCOUNT_URLS = {
     "AzureDataLakeGen2": "https://{}.dfs.{}",
     "AzureFile": "https://{}.file.{}",
 }
+DEFAULT_STORAGE_CONNECTION_NAME = "workspaceblobstore"
 
 DEFAULT_LABEL_NAME = "default"
 DEFAULT_COMPONENT_VERSION = "azureml_default"
