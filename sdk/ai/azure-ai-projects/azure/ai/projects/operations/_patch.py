@@ -97,11 +97,13 @@ class InferenceOperations:
 
         if use_serverless_connection:
             endpoint = connection.endpoint_url
+            credential_scopes = ["https://ml.azure.com/.default"]
         else:
             # Be sure to use the Azure resource name here, not the connection name. Connection name is something that
             # admins can pick when they manually create a new connection (or use bicep). Get the Azure resource name
             # from the end of the connection id.
             endpoint = f"https://{connection.id.split('/')[-1]}.services.ai.azure.com/models"
+            credential_scopes = ["https://cognitiveservices.azure.com/.default"]
 
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
@@ -116,7 +118,7 @@ class InferenceOperations:
                 "[InferenceOperations.get_chat_completions_client] "
                 + "Creating ChatCompletionsClient using Entra ID authentication"
             )
-            client = ChatCompletionsClient(endpoint=endpoint, credential=connection.token_credential)
+            client = ChatCompletionsClient(endpoint=endpoint, credential=connection.token_credential, credential_scopes=credential_scopes)
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] "
@@ -170,11 +172,13 @@ class InferenceOperations:
 
         if use_serverless_connection:
             endpoint = connection.endpoint_url
+            credential_scopes = ["https://ml.azure.com/.default"]
         else:
             # Be sure to use the Azure resource name here, not the connection name. Connection name is something that
             # admins can pick when they manually create a new connection (or use bicep). Get the Azure resource name
             # from the end of the connection id.
             endpoint = f"https://{connection.id.split('/')[-1]}.services.ai.azure.com/models"
+            credential_scopes = ["https://cognitiveservices.azure.com/.default"]
 
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
@@ -187,7 +191,7 @@ class InferenceOperations:
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using Entra ID authentication"
             )
-            client = EmbeddingsClient(endpoint=endpoint, credential=connection.token_credential)
+            client = EmbeddingsClient(endpoint=endpoint, credential=connection.token_credential, credential_scopes=credential_scopes)
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using SAS authentication"
