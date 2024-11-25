@@ -9,7 +9,6 @@ from typing import Callable, Dict, List, Optional, Tuple, Union
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation.simulator._constants import SupportedLanguages
 from azure.ai.evaluation.simulator._helpers._language_suffix_mapping import SUPPORTED_LANGUAGES_MAPPING
-
 from ..._http_utils import AsyncHttpPipeline
 from . import ConversationBot, ConversationTurn
 

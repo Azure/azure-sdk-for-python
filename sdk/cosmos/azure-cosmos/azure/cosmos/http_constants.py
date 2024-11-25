@@ -219,6 +219,11 @@ class HttpHeaders:
     # Change feed
     AIM = "A-IM"
     IncrementalFeedHeaderValue = "Incremental feed"
+    FullFidelityFeedHeaderValue = "Full-Fidelity Feed"
+    ChangeFeedWireFormatVersion = "x-ms-cosmos-changefeed-wire-format-version"
+
+    # Change feed wire format version
+    SeparateMetaWithCrts = "2021-09-15"
 
     # For Using Multiple Write Locations
     AllowTentativeWrites = "x-ms-cosmos-allow-tentative-writes"

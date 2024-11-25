@@ -22,8 +22,12 @@ class TestCallAutomationClientAutomatedLiveTest(CallAutomationRecordedTestCase):
         unique_id, call_connection, _ = self.establish_callconnection_voip(caller, target)
 
         # check returned events
-        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
-        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+        connected_event = self.check_for_event(
+            "CallConnected", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        participant_updated_event = self.check_for_event(
+            "ParticipantsUpdated", call_connection._call_connection_id, timedelta(seconds=15)
+        )
 
         if connected_event is None:
             raise ValueError("Caller CallConnected event is None")
@@ -42,8 +46,12 @@ class TestCallAutomationClientAutomatedLiveTest(CallAutomationRecordedTestCase):
         unique_id, call_connection, _ = self.establish_callconnection_voip(caller, target)
 
         # check returned events
-        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
-        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+        connected_event = self.check_for_event(
+            "CallConnected", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        participant_updated_event = self.check_for_event(
+            "ParticipantsUpdated", call_connection._call_connection_id, timedelta(seconds=15)
+        )
 
         if connected_event is None:
             raise ValueError("Caller CallConnected event is None")
@@ -57,7 +65,9 @@ class TestCallAutomationClientAutomatedLiveTest(CallAutomationRecordedTestCase):
 
         call_connection.cancel_add_participant_operation(add_participant_result.invitation_id)
 
-        cancel_add_participant_succeeded_event = self.check_for_event('CancelAddParticipantSucceeded', call_connection._call_connection_id, timedelta(seconds=15))
+        cancel_add_participant_succeeded_event = self.check_for_event(
+            "CancelAddParticipantSucceeded", call_connection._call_connection_id, timedelta(seconds=15)
+        )
 
         if cancel_add_participant_succeeded_event is None:
             raise ValueError("Caller CancelAddParticipantSucceeded event is None")

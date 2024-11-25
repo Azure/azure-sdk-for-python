@@ -770,10 +770,6 @@ def use_full_text_policy(db):
                 {
                     "path": "/text1",
                     "language": "en-US"
-                },
-                {
-                    "path": "/text2",
-                    "language": "en-US"
                 }
             ]
         }
@@ -791,12 +787,28 @@ def use_full_text_policy(db):
         print_dictionary_items(properties["indexingPolicy"])
         print_dictionary_items(properties["fullTextPolicy"])
 
-        # Create some items to use with full text search
-        for i in range(10):
-            created_container.create_item({"id": "full_text_item" + str(i), "text1": "some-text"})
+        sample_texts = ["Common popular pop music artists include Taylor Swift and The Weekend.",
+                        "The weekend is coming up soon, do you have any plans?",
+                        "Depending on the artist, their music can be very different.",
+                        "Mozart and Beethoven are some of the most recognizable names in classical music.",
+                        "Taylor acts in many movies, and is considered a great artist."]
 
-        # Run full text search queries using ranking
-        query = "select * from c"
+        # Create some items to use with full text search
+        for i in range(5):
+            created_container.create_item({"id": "full_text_item" + str(i), "text1": sample_texts[i],
+                                           "vector": [1, 2, 3]})
+
+        # Run full text search queries using full text score ranking
+        query = "SELECT TOP 3 c.text1 FROM c ORDER BY RANK FullTextScore(c.text1, ['artist']))"
+        query_documents_with_custom_query(created_container, query)
+
+        # Run full text search queries using RRF ranking
+        query = "SELECT TOP 3 c.text1 FROM c ORDER BY RANK RRF(FullTextScore(c.text1, ['music'])))"
+        query_documents_with_custom_query(created_container, query)
+
+        # Run hybrid search queries using RRF ranking wth vector distances
+        query = "SELECT TOP 3 c.text1 FROM c ORDER BY RANK RRF(FullTextScore(c.text1, ['music'])," \
+                " VectorDistance(c.vector, [1, 2, 3]))"
         query_documents_with_custom_query(created_container, query)
 
         # Cleanup
