@@ -36,7 +36,7 @@ _FINISHED = frozenset(["succeeded", "canceled", "failed", "completed"])
 
 
 def _parse_operation_id(operation_location_header):
-    regex = "[^:]+://[^/]+/documentintelligence/.+/([^?/]+)"
+    regex = "[^:]+://.+/documentintelligence/.+/([^?/]+)"
     return re.match(regex, operation_location_header).group(1)
 
 
