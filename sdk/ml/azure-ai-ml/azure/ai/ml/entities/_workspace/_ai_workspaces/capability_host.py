@@ -3,18 +3,26 @@
 # ---------------------------------------------------------
 
 import os
+from os import PathLike
+from typing import (
+    List,
+    Optional,
+    Union,
+    cast,
+    IO,
+    Any,
+    AnyStr,
+    Dict,
+)
+from pathlib import Path
 from azure.ai.ml._utils._experimental import experimental
-from typing import List, Optional, Union, cast
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.constants._workspace import CapabilityHostKind
 from azure.ai.ml.constants._common import (
     BASE_PATH_CONTEXT_KEY,
     PARAMS_OVERRIDE_KEY,
-    WorkspaceKind,
 )
-from os import PathLike
-from pathlib import Path
-from typing import IO, Any, AnyStr, Dict, List, Optional, Union
+
 from azure.ai.ml._schema.workspace.ai_workspaces.capability_host import (
     CapabilityHostSchema,
 )

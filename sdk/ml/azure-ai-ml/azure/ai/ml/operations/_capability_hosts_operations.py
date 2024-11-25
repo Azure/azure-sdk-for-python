@@ -24,9 +24,9 @@ from azure.ai.ml.entities._workspace._ai_workspaces.capability_host import (
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml.constants._common import WorkspaceKind
 from azure.ai.ml._exception_helper import log_and_raise_error
-from marshmallow.exceptions import ValidationError as SchemaValidationError
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml.constants._common import DEFAULT_STORAGE_CONNECTION_NAME
+from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -244,8 +244,8 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
 
         :param capability_host: The capability host to validate.
         :type capability_host: CapabilityHost
-        :param kind: The kind of the workspace, either hub or project only.
-        :type kind: str
+        :param workspace_kind: The kind of the workspace, either hub or project only.
+        :type workspace_kind: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if workspace kind is not Hub or Project. Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the OpenAI service connection or vector store (AISearch) connection is empty for a Project workspace kind. Details will be provided in the error message.
         :return: None, or the result of cls(response)
@@ -277,7 +277,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
     def __is_valid_kind(self, kind: str):
         """Validate if the provided kind is a valid WorkspaceKind.
 
-        :param kind: The kind of workspace to validate, eiher hub or project only.
+        :param kind: The kind of workspace to validate, either hub or project only.
         :type kind: str
         :return: True if the kind is valid, False otherwise.
         :rtype: bool
