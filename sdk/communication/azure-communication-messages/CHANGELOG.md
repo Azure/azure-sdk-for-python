@@ -1,5 +1,14 @@
 # Release History
 
+## 1.2.0 (2024-11-15-preview)
+This is feature addition release.
+
+### Features Added
+- Using `NotificationMessagesClient`
+  - Send Interactive messages
+  - Send Reactions messages
+  - Send Stickers messages
+
 ## 1.1.0 (2024-10-18)
 This is feature addition release.
 
