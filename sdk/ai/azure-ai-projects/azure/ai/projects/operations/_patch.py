@@ -112,12 +112,11 @@ class InferenceOperations:
 
             client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
-            # MaaS models do not yet support EntraID auth
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] "
                 + "Creating ChatCompletionsClient using Entra ID authentication"
             )
-            client = ChatCompletionsClient(endpoint=endpoint, credential=connection.properties.token_credential)
+            client = ChatCompletionsClient(endpoint=endpoint, credential=connection.token_credential)
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] "
@@ -185,11 +184,10 @@ class InferenceOperations:
 
             client = EmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
-            # MaaS models do not yet support EntraID auth
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using Entra ID authentication"
             )
-            client = EmbeddingsClient(endpoint=endpoint, credential=connection.properties.token_credential)
+            client = EmbeddingsClient(endpoint=endpoint, credential=connection.token_credential)
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using SAS authentication"
