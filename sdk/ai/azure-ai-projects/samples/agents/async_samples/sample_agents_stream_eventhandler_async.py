@@ -31,13 +31,13 @@ from azure.ai.projects.models._models import (
     ThreadMessage,
     ThreadRun,
 )
-from azure.ai.projects.models import AsyncAgentEventHandler
+from azure.ai.projects.models import DefaultAsyncAgentEventHandler
 from azure.identity.aio import DefaultAzureCredential
 
 import os
 
 
-class MyEventHandler(AsyncAgentEventHandler):
+class MyEventHandler(DefaultAsyncAgentEventHandler):
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         for content_part in delta.delta.content:
             if isinstance(content_part, MessageDeltaTextContent):
