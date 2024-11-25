@@ -118,7 +118,9 @@ class InferenceOperations:
                 "[InferenceOperations.get_chat_completions_client] "
                 + "Creating ChatCompletionsClient using Entra ID authentication"
             )
-            client = ChatCompletionsClient(endpoint=endpoint, credential=connection.token_credential, credential_scopes=credential_scopes)
+            client = ChatCompletionsClient(
+                endpoint=endpoint, credential=connection.token_credential, credential_scopes=credential_scopes
+            )
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] "
@@ -191,7 +193,9 @@ class InferenceOperations:
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using Entra ID authentication"
             )
-            client = EmbeddingsClient(endpoint=endpoint, credential=connection.token_credential, credential_scopes=credential_scopes)
+            client = EmbeddingsClient(
+                endpoint=endpoint, credential=connection.token_credential, credential_scopes=credential_scopes
+            )
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using SAS authentication"
