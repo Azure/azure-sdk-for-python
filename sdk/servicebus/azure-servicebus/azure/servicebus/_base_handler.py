@@ -5,7 +5,6 @@
 import logging
 import uuid
 import time
-import re
 import threading
 from datetime import timedelta
 from typing import cast, Optional, Tuple, TYPE_CHECKING, Dict, Any, Callable, Union
@@ -50,7 +49,8 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
-def _parse_conn_str(
+
+def _parse_conn_str(  # pylint:disable=too-many-statements
     conn_str: str, check_case: Optional[bool] = False
 ) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int], bool]:
     endpoint = None
@@ -116,7 +116,7 @@ def _parse_conn_str(
         raise ValueError("Invalid Endpoint on the Connection String.")
     host = cast(str, parsed.netloc.strip())
 
-    emulator = use_emulator=="true"
+    emulator = use_emulator == "true"
 
     if any([shared_access_key, shared_access_key_name]) and not all([shared_access_key, shared_access_key_name]):
         raise ValueError("Connection string must have both SharedAccessKeyName and SharedAccessKey.")
@@ -132,7 +132,7 @@ def _parse_conn_str(
         entity,
         str(shared_access_signature) if shared_access_signature else None,
         shared_access_signature_expiry,
-        emulator
+        emulator,
     )
 
 
