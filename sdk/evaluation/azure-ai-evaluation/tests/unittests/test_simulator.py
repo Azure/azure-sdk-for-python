@@ -54,6 +54,8 @@ class TestSimulator:
             AdversarialScenario.ADVERSARIAL_REWRITE,
             AdversarialScenario.ADVERSARIAL_CONTENT_GEN_UNGROUNDED,
             AdversarialScenario.ADVERSARIAL_CONTENT_GEN_GROUNDED,
+            AdversarialScenario.ADVERSARIAL_IMAGE_GEN,
+            AdversarialScenario.ADVERSARIAL_IMAGE_UNDERSTANDING,
         ]
         for scenario in available_scenarios:
             simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)

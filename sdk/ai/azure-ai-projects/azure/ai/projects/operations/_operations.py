@@ -2007,7 +2007,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace
-    def update_agent(  # pylint: disable=too-many-locals
+    def update_agent(
         self,
         assistant_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -3235,7 +3235,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
-        additional_messages: Optional[List[_models.ThreadMessage]] = None,
+        additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
         stream_parameter: Optional[bool] = None,
         temperature: Optional[float] = None,
@@ -3269,7 +3269,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessage]
+        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessageOptions]
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
         :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
@@ -3346,7 +3346,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace
-    def create_run(  # pylint: disable=too-many-locals
+    def create_run(
         self,
         thread_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -3355,7 +3355,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
-        additional_messages: Optional[List[_models.ThreadMessage]] = None,
+        additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
         stream_parameter: Optional[bool] = None,
         temperature: Optional[float] = None,
@@ -3388,7 +3388,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessage]
+        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessageOptions]
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
         :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
@@ -4235,7 +4235,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace
-    def create_thread_and_run(  # pylint: disable=too-many-locals
+    def create_thread_and_run(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,

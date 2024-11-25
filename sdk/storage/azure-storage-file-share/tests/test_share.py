@@ -1320,7 +1320,7 @@ class TestStorageShare(StorageRecordedTestCase):
         share.create_share()
 
         # Act
-        identifiers = dict()
+        identifiers = {}
         expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
         start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow() - timedelta(minutes=1))
         identifiers['testid'] = AccessPolicy(
@@ -1351,7 +1351,7 @@ class TestStorageShare(StorageRecordedTestCase):
         share.create_share()
 
         # Act
-        identifiers = dict()
+        identifiers = {}
         for i in range(0, 6):
             identifiers['id{}'.format(i)] = AccessPolicy()
 

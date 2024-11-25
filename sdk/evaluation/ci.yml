@@ -26,15 +26,11 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: evaluation
-    ValidateFormatting: true
     TestProxy: true
     # This custom matrix config should be dropped once:
     #  * Once azure-ai-ml supports 3.13 (currently crashes due to type annotation)
-    MatrixConfigs:
-      - Name: evaluation_ci_matrix
-        Path: eng/pipelines/templates/stages/platform-matrix-no-313.json
-        Selection: sparse
-        GenerateVMJobs: true
+    MatrixFilters:
+      - PythonVersion=^(?!3\.13)
     Artifacts:
     - name: azure-ai-evaluation
       safeName: azureaievaluation

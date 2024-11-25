@@ -4,8 +4,12 @@
 
 ### Features Added
 
+- Only add OpenTelemetry LoggingHandler if current logger does not have it
+    ([#38549](https://github.com/Azure/azure-sdk-for-python/pull/38549))
 - Distro to automatically configure event logger provider
     ([#38543](https://github.com/Azure/azure-sdk-for-python/pull/38543))
+- Configure live metrics first in pipeline to detect statsbeat usage
+    ([#37694](https://github.com/Azure/azure-sdk-for-python/pull/37694))
 
 ### Breaking Changes
 
