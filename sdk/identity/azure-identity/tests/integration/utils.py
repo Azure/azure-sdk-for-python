@@ -5,6 +5,9 @@
 import subprocess
 import sys
 
+from azure.core import PipelineClient
+from azure.core.pipeline import policies
+
 
 def run_command(command, exit_on_failure=True) -> str:
     try:
@@ -16,3 +19,11 @@ def run_command(command, exit_on_failure=True) -> str:
             print(result)
             sys.exit(1)
         return result
+
+
+def get_pipeline_client(base_url: str) -> PipelineClient:
+    policy_list = [
+        policies.RetryPolicy(),
+        policies.ContentDecodePolicy(),
+    ]
+    return PipelineClient(base_url, policies=policy_list)
