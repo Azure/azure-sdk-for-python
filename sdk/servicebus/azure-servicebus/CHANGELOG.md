@@ -3,6 +3,7 @@
 ## 7.13.1 (Unreleased)
 
 ### Features Added
+- Added emulator support
 
 ### Breaking Changes
 
