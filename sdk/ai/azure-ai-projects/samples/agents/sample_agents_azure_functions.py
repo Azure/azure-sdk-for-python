@@ -24,11 +24,8 @@ USAGE:
 import os
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    AzureFunctionDefinition,
-    AzureFunctionToolDefinition,
     AzureFunctionStorageQueue,
-    AzureStorageQueueBinding,
-    FunctionDefinition,
+    AzureFunctionTool,
 )
 from azure.identity import DefaultAzureCredential
 
@@ -40,40 +37,33 @@ project_client = AIProjectClient.from_connection_string(
 with project_client:
 
     storage_queue_uri = os.environ["STORAGE_QUEUE_URI"]
+
+    azure_function_tool = AzureFunctionTool(
+        name="foo",
+        description="Get answers from the foo bot.",
+        parameters={
+            "type": "object",
+            "properties": {
+                "query": {"type": "string", "description": "The question to ask."},
+                "outputqueueuri": {"type": "string", "description": "The full output queue uri."},
+            },
+        },
+        input_queue=AzureFunctionStorageQueue(
+            queue_name="azure-function-foo-input",
+            storage_queue_uri=storage_queue_uri,
+        ),
+        output_queue=AzureFunctionStorageQueue(
+            queue_name="azure-function-tool-output",
+            storage_queue_uri=storage_queue_uri,
+        ),
+    )
+
     agent = project_client.agents.create_agent(
         model="gpt-4",
         name="azure-function-agent-foo",
         instructions=f"You are a helpful support agent. Use the provided function any time the prompt contains the string 'What would foo say?'. When you invoke the function, ALWAYS specify the output queue uri parameter as '{storage_queue_uri}/azure-function-tool-output'. Always responds with \"Foo says\" and then the response from the tool.",
         headers={"x-ms-enable-preview": "true"},
-        tools=[
-            AzureFunctionToolDefinition(
-                azure_function=AzureFunctionDefinition(
-                    function=FunctionDefinition(
-                        name="foo",
-                        description="Get answers from the foo bot.",
-                        parameters={
-                            "type": "object",
-                            "properties": {
-                                "query": {"type": "string", "description": "The question to ask."},
-                                "outputqueueuri": {"type": "string", "description": "The full output queue uri."},
-                            },
-                        },
-                    ),
-                    input_binding=AzureStorageQueueBinding(
-                        storage_queue=AzureFunctionStorageQueue(
-                            queue_name="azure-function-foo-input",
-                            storage_queue_uri=storage_queue_uri,
-                        )
-                    ),
-                    output_binding=AzureStorageQueueBinding(
-                        storage_queue=AzureFunctionStorageQueue(
-                            queue_name="azure-function-tool-output",
-                            storage_queue_uri=storage_queue_uri,
-                        )
-                    ),
-                )
-            )
-        ],
+        tools=azure_function_tool.definitions,
     )
     print(f"Created agent, agent ID: {agent.id}")
 

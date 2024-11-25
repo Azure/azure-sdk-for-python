@@ -41,6 +41,10 @@ from ._enums import AgentStreamEvent, ConnectionType
 from ._models import (
     AzureAISearchResource,
     AzureAISearchToolDefinition,
+    AzureFunctionDefinition,
+    AzureFunctionStorageQueue,
+    AzureFunctionToolDefinition,
+    AzureStorageQueueBinding,
     BingGroundingToolDefinition,
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
@@ -540,6 +544,61 @@ class AzureAISearchTool(Tool):
         :rtype: ToolResources
         """
         return ToolResources(azure_ai_search=AzureAISearchResource(index_list=self.index_list))
+
+    def execute(self, tool_call: Any) -> Any:
+        pass
+
+
+class AzureFunctionTool(Tool):
+    """
+    A tool that launches the Azure function.
+
+    :param name: The azure function name.
+    :param description: The azure function description.
+    :param parameters: The description of function parameters.
+    :param input_queue: Input queue used, by azure function.
+    :param output_queue: Output queue used, by azure function.
+    """
+
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        parameters: Dict[str, Any],
+        input_queue: AzureFunctionStorageQueue,
+        output_queue: AzureFunctionStorageQueue,
+    ) -> None:
+        self._definitions = [
+            AzureFunctionToolDefinition(
+                azure_function=AzureFunctionDefinition(
+                    function=FunctionDefinition(
+                        name=name,
+                        description=description,
+                        parameters=parameters,
+                    ),
+                    input_binding=AzureStorageQueueBinding(storage_queue=input_queue),
+                    output_binding=AzureStorageQueueBinding(storage_queue=output_queue),
+                )
+            )
+        ]
+
+    @property
+    def definitions(self) -> List[ToolDefinition]:
+        """
+        Get the Azure AI search tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return self._definitions
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the Azure AI search resources.
+
+        :rtype: ToolResources
+        """
+        return ToolResources()
 
     def execute(self, tool_call: Any) -> Any:
         pass
@@ -1425,6 +1484,8 @@ __all__: List[str] = [
     "AsyncAgentRunStream",
     "AsyncFunctionTool",
     "AsyncToolSet",
+    "AzureAISearchTool",
+    "AzureFunctionTool",
     "CodeInterpreterTool",
     "ConnectionProperties",
     "ThreadMessages",
@@ -1432,7 +1493,6 @@ __all__: List[str] = [
     "FunctionTool",
     "BingGroundingTool",
     "SharepointTool",
-    "AzureAISearchTool",
     "SASTokenCredential",
     "Tool",
     "ToolSet",

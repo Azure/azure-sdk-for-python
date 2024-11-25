@@ -17,16 +17,13 @@ from azure.ai.projects.aio import AIProjectClient
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.projects.models import (
-    AzureFunctionDefinition,
-    AzureFunctionToolDefinition,
+    AzureFunctionTool,
     AzureFunctionStorageQueue,
-    AzureStorageQueueBinding,
     CodeInterpreterTool,
     CodeInterpreterToolResource,
     FilePurpose,
     FileSearchTool,
     FileSearchToolResource,
-    FunctionDefinition,
     FunctionTool,
     MessageAttachment,
     RunStatus,
@@ -1611,6 +1608,25 @@ class TestagentClientAsync(AzureRecordedTestCase):
         """Test calling Azure functions."""
         storage_queue = kwargs["azure_ai_projects_storage_queue"]
         async with self.create_client(**kwargs) as client:
+            azure_function_tool = AzureFunctionTool(
+                name="foo",
+                description="Get answers from the foo bot.",
+                parameters={
+                    "type": "object",
+                    "properties": {
+                        "query": {"type": "string", "description": "The question to ask."},
+                        "outputqueueuri": {"type": "string", "description": "The full output queue uri."},
+                    },
+                },
+                input_queue=AzureFunctionStorageQueue(
+                    queue_name="azure-function-foo-input",
+                    storage_queue_uri=storage_queue,
+                ),
+                output_queue=AzureFunctionStorageQueue(
+                    queue_name="azure-function-tool-output",
+                    storage_queue_uri=storage_queue,
+                ),
+            )
             agent = await client.agents.create_agent(
                 model="gpt-4",
                 name="azure-function-agent-foo",
@@ -1622,38 +1638,7 @@ class TestagentClientAsync(AzureRecordedTestCase):
                     '. Always responds with "Foo says" and then the response from the tool.'
                 ),
                 headers={"x-ms-enable-preview": "true"},
-                tools=[
-                    AzureFunctionToolDefinition(
-                        azure_function=AzureFunctionDefinition(
-                            function=FunctionDefinition(
-                                name="foo",
-                                description="Get answers from the foo bot.",
-                                parameters={
-                                    "type": "object",
-                                    "properties": {
-                                        "query": {"type": "string", "description": "The question to ask."},
-                                        "outputqueueuri": {
-                                            "type": "string",
-                                            "description": "The full output queue uri.",
-                                        },
-                                    },
-                                },
-                            ),
-                            input_binding=AzureStorageQueueBinding(
-                                storage_queue=AzureFunctionStorageQueue(
-                                    queue_name="azure-function-foo-input",
-                                    storage_queue_uri=storage_queue,
-                                )
-                            ),
-                            output_binding=AzureStorageQueueBinding(
-                                storage_queue=AzureFunctionStorageQueue(
-                                    queue_name="azure-function-tool-output",
-                                    storage_queue_uri=storage_queue,
-                                )
-                            ),
-                        )
-                    )
-                ],
+                tools=azure_function_tool.definitions,
             )
             assert agent.id, "The agent was not created"
 
