@@ -1,15 +1,55 @@
 # Release History
 
-## 1.0.0b29 (Unreleased)
+## 1.0.0b33 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Detect live metrics usage during runtime in addition to on startup
+  ([#37694](https://github.com/Azure/azure-sdk-for-python/pull/37694))
+- Remove status code `206` from retry code + only count batch level for statsbeat
+  ([#38647](https://github.com/Azure/azure-sdk-for-python/pull/38647))
+
+### Other Changes
+
+## 1.0.0b32 (2024-11-04)
+
+### Breaking Changes
+
+- Serialize complex objects provided as log or event bodies to JSON and
+  fall back to string representation if they are not serializable.
+  ([#37694](https://github.com/Azure/azure-sdk-for-python/pull/37694))
+
+### Other Changes
+
+- Refactor trace mapping logic for target and data into trace utils
+    ([#37897](https://github.com/Azure/azure-sdk-for-python/pull/37897))
+
+## 1.0.0b31 (2024-10-08)
+
+### Features Added
+
+- Allow tracking of whether in a Azure Functions attach scenario
+    ([#37717](https://github.com/Azure/azure-sdk-for-python/pull/37717))
+
+## 1.0.0b30 (2024-09-20)
+
+### Bugs Fixed
+
+- Fix setting custom `TracerProvider` bug
+    ([#37469](https://github.com/Azure/azure-sdk-for-python/pull/37469))
+
+## 1.0.0b29 (2024-09-10)
 
 ### Features Added
 
 - Allow passing in of custom `TracerProvider` for `AzureMonitorTraceExporter`
     ([#36363](https://github.com/Azure/azure-sdk-for-python/pull/36363))
-
-### Breaking Changes
-
-### Bugs Fixed
+- Support AAD Auth for live metrics
+    ([#37258](https://github.com/Azure/azure-sdk-for-python/pull/37258))
 
 ### Other Changes
 
@@ -461,7 +501,7 @@
   ([#78](https://github.com/microsoft/opentelemetry-azure-monitor-python/pull/78))
 - Handle status 439 - Too Many Requests over extended time
   ([#80](https://github.com/microsoft/opentelemetry-azure-monitor-python/pull/80))
-- Fix breaking changes from OT release 0.7b.0 
+- Fix breaking changes from OT release 0.7b.0
   ([#86](https://github.com/microsoft/opentelemetry-azure-monitor-python/pull/86))
 
 ## 0.2b.0 (2020-03-31)

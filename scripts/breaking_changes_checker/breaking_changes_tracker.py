@@ -10,8 +10,7 @@ import re
 from enum import Enum
 from typing import Any, Dict, List, Union
 from copy import deepcopy
-from breaking_changes_allowlist import IGNORE_BREAKING_CHANGES
-from _models import ChangesChecker, Suppression
+from _models import ChangesChecker, Suppression, RegexSuppression
 
 
 class BreakingChangeType(str, Enum):
@@ -92,13 +91,14 @@ class BreakingChangesTracker:
         self.stable = stable
         self.current = current
         self.diff = jsondiff.diff(stable, current)
+        self.features_added = []
         self.breaking_changes = []
         self.package_name = package_name
         self._module_name = None
         self._class_name = None
         self._function_name = None
         self._parameter_name = None
-        self.ignore = kwargs.get("ignore", None)
+        self.ignore = kwargs.get("ignore", {})
         checkers: List[ChangesChecker] = kwargs.get("checkers", [])
         for checker in checkers:
             if not isinstance(checker, ChangesChecker):
@@ -134,8 +134,36 @@ class BreakingChangesTracker:
 
             self.run_class_level_diff_checks(module)
             self.run_function_level_diff_checks(module)
+        # Run custom checkers in the base class, we only need one CodeReporter class in the tool
+        # The changelog reporter class is a result of not having pluggable checks, we're migrating away from it as we add more pluggable checks
         for checker in self.checkers:
-            self.breaking_changes.extend(checker.run_check(self.diff, self.stable, self.current))
+            changes_list = self.breaking_changes
+            if not checker.is_breaking:
+                changes_list = self.features_added
+
+            if checker.node_type == "module":
+                # If we are running a module checker, we need to run it on the entire diff
+                changes_list.extend(checker.run_check(self.diff, self.stable, self.current))
+                continue
+            if checker.node_type == "class":
+                # If we are running a class checker, we need to run it on all classes in each module in the diff
+                for module_name, module_components in self.diff.items():
+                    # If the module_name is a symbol, we'll skip it since we can't run class checks on it
+                    if not isinstance(module_name, jsondiff.Symbol):
+                        changes_list.extend(checker.run_check(module_components.get("class_nodes", {}), self.stable, self.current, module_name=module_name))
+                        continue
+            if checker.node_type == "function_or_method":
+                # If we are running a function or method checker, we need to run it on all functions and class methods in each module in the diff
+                for module_name, module_components in self.diff.items():
+                    # If the module_name is a symbol, we'll skip it since we can't run class checks on it
+                    if not isinstance(module_name, jsondiff.Symbol):
+                        for class_name, class_components in module_components.get("class_nodes", {}).items():
+                            # If the class_name is a symbol, we'll skip it since we can't run method checks on it
+                            if not isinstance(class_name, jsondiff.Symbol):
+                                changes_list.extend(checker.run_check(class_components.get("methods", {}), self.stable, self.current, module_name=module_name, class_name=class_name))
+                                continue
+                        changes_list.extend(checker.run_check(module_components.get("function_nodes", {}), self.stable, self.current, module_name=module_name))
+
 
     def run_class_level_diff_checks(self, module: Dict) -> None:
         for class_name, class_components in module.get("class_nodes", {}).items():
@@ -593,6 +621,11 @@ class BreakingChangesTracker:
         for b, i in zip(bc, ignored):
             if i == "*":
                 continue
+            if isinstance(i, RegexSuppression) and b is not None:
+                if i.match(b):
+                    continue
+                else:
+                    return False
             if b != i:
                 return False
         return True
@@ -625,7 +658,7 @@ class BreakingChangesTracker:
                     break
 
     def report_changes(self) -> None:
-        ignore_changes = self.ignore if self.ignore else IGNORE_BREAKING_CHANGES
+        ignore_changes = self.ignore if self.ignore else {}
         self.get_reportable_changes(ignore_changes, self.breaking_changes)
 
         # If there are no breaking changes after the ignore check, return early

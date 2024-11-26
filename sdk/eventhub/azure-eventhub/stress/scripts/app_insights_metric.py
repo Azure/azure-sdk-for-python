@@ -29,7 +29,9 @@ class AzureMonitorMetric:
         cpu_measure_name = "Cpu " + self.name
         cpu_measure_desc = "Cpu usage percentage for " + self.desc if self.desc else None
         error_measure_name = "Errors " + self.name
-        error_measure_desc = "The number of errors happened while running the test for " + self.desc if self.desc else None
+        error_measure_desc = (
+            "The number of errors happened while running the test for " + self.desc if self.desc else None
+        )
 
         self.events_measure = measure_module.MeasureInt(events_measure_name, events_measure_desc, "events")
         self.memory_measure = measure_module.MeasureFloat(memory_measure_name, memory_measure_desc)
@@ -37,35 +39,19 @@ class AzureMonitorMetric:
         self.error_measure = measure_module.MeasureInt(error_measure_name, error_measure_desc)
 
         self.events_measure_view = view_module.View(
-            events_measure_name,
-            events_measure_desc,
-            [],
-            self.events_measure,
-            aggregation_module.SumAggregation()
+            events_measure_name, events_measure_desc, [], self.events_measure, aggregation_module.SumAggregation()
         )
 
         self.memory_measure_view = view_module.View(
-            memory_measure_name,
-            memory_measure_desc,
-            [],
-            self.memory_measure,
-            aggregation_module.LastValueAggregation()
+            memory_measure_name, memory_measure_desc, [], self.memory_measure, aggregation_module.LastValueAggregation()
         )
 
         self.cpu_measure_view = view_module.View(
-            cpu_measure_name,
-            cpu_measure_desc,
-            [],
-            self.cpu_measure,
-            aggregation_module.LastValueAggregation()
+            cpu_measure_name, cpu_measure_desc, [], self.cpu_measure, aggregation_module.LastValueAggregation()
         )
 
         self.error_measure_view = view_module.View(
-            error_measure_name,
-            error_measure_desc,
-            [],
-            self.error_measure,
-            aggregation_module.CountAggregation()
+            error_measure_name, error_measure_desc, [], self.error_measure, aggregation_module.CountAggregation()
         )
 
         self.view_manager.register_view(self.events_measure_view)
@@ -84,6 +70,4 @@ class AzureMonitorMetric:
     def record_error(self, error, extra=None):
         self.mmap.measure_int_put(self.error_measure, 1)
         self.mmap.record()
-        self.azure_logger.exception(
-            "Error happened when running {}: {}. Extra info: {}".format(self.name, repr(error), extra)
-        )
+        self.azure_logger.exception("Error happened when running %s: %s. Extra info: %s", self.name, repr(error), extra)

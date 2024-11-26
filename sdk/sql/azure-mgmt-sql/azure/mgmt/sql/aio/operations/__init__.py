@@ -116,7 +116,6 @@ from ._usages_operations import UsagesOperations
 from ._long_term_retention_managed_instance_backups_operations import LongTermRetentionManagedInstanceBackupsOperations
 from ._restorable_dropped_managed_databases_operations import RestorableDroppedManagedDatabasesOperations
 from ._server_connection_policies_operations import ServerConnectionPoliciesOperations
-from ._distributed_availability_groups_operations import DistributedAvailabilityGroupsOperations
 from ._server_trust_certificates_operations import ServerTrustCertificatesOperations
 from ._endpoint_certificates_operations import EndpointCertificatesOperations
 from ._managed_database_sensitivity_labels_operations import ManagedDatabaseSensitivityLabelsOperations
@@ -138,7 +137,6 @@ from ._managed_database_advanced_threat_protection_settings_operations import (
 from ._managed_instance_advanced_threat_protection_settings_operations import (
     ManagedInstanceAdvancedThreatProtectionSettingsOperations,
 )
-from ._replication_links_operations import ReplicationLinksOperations
 from ._managed_database_move_operations_operations import ManagedDatabaseMoveOperationsOperations
 from ._managed_instance_dtcs_operations import ManagedInstanceDtcsOperations
 from ._synapse_link_workspaces_operations import SynapseLinkWorkspacesOperations
@@ -186,6 +184,8 @@ from ._long_term_retention_backups_operations import LongTermRetentionBackupsOpe
 from ._long_term_retention_policies_operations import LongTermRetentionPoliciesOperations
 from ._managed_instances_operations import ManagedInstancesOperations
 from ._servers_operations import ServersOperations
+from ._replication_links_operations import ReplicationLinksOperations
+from ._distributed_availability_groups_operations import DistributedAvailabilityGroupsOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -288,7 +288,6 @@ __all__ = [
     "LongTermRetentionManagedInstanceBackupsOperations",
     "RestorableDroppedManagedDatabasesOperations",
     "ServerConnectionPoliciesOperations",
-    "DistributedAvailabilityGroupsOperations",
     "ServerTrustCertificatesOperations",
     "EndpointCertificatesOperations",
     "ManagedDatabaseSensitivityLabelsOperations",
@@ -304,7 +303,6 @@ __all__ = [
     "ManagedServerDnsAliasesOperations",
     "ManagedDatabaseAdvancedThreatProtectionSettingsOperations",
     "ManagedInstanceAdvancedThreatProtectionSettingsOperations",
-    "ReplicationLinksOperations",
     "ManagedDatabaseMoveOperationsOperations",
     "ManagedInstanceDtcsOperations",
     "SynapseLinkWorkspacesOperations",
@@ -342,6 +340,8 @@ __all__ = [
     "LongTermRetentionPoliciesOperations",
     "ManagedInstancesOperations",
     "ServersOperations",
+    "ReplicationLinksOperations",
+    "DistributedAvailabilityGroupsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

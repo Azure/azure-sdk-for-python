@@ -29,6 +29,7 @@ import uuid
 
 from azure.healthinsights.radiologyinsights import models
 
+
 async def radiology_insights_async() -> None:
 
     from azure.identity.aio import DefaultAzureCredential
@@ -40,7 +41,7 @@ async def radiology_insights_async() -> None:
 
     job_id = str(uuid.uuid4())
 
-    radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential = credential)
+    radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=credential)
     # [END create_radiology_insights_client]
     doc_content1 = """
     Exam:  Head CT with Contrast
@@ -112,10 +113,11 @@ async def radiology_insights_async() -> None:
                 resource=patient_data,
             )
             radiology_insights_result = await poller.result()
-        
+
             display_radiology_procedure(radiology_insights_result)
     except Exception as ex:
         raise ex
+
 
 def display_radiology_procedure(radiology_insights_result):
     # [START display_radiology_procedure]
@@ -162,6 +164,7 @@ def display_radiology_procedure(radiology_insights_result):
                         print(
                             f"Radiology Procedure: ORDERED PROCEDURE: Code: {coding.system} {coding.code} {coding.display}"
                         )
+
 
 # [END display_radiology_procedure]
 

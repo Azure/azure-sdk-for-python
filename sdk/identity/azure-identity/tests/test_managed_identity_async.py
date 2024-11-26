@@ -2,11 +2,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from itertools import product
 import os
 import time
 from unittest import mock
 
-from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import CredentialUnavailableError
 from azure.identity.aio import ManagedIdentityCredential
@@ -17,7 +17,7 @@ from azure.identity._internal import within_credential_chain
 
 import pytest
 
-from helpers import build_aad_response, mock_response, Request
+from helpers import build_aad_response, mock_response, Request, GET_TOKEN_METHODS
 from helpers_async import async_validating_transport, AsyncMockTransport
 from test_managed_identity import ALL_ENVIRONMENTS
 
@@ -26,8 +26,8 @@ MANAGED_IDENTITY_ENVIRON = "azure.identity.aio._credentials.managed_identity.os.
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("environ", ALL_ENVIRONMENTS)
-async def test_custom_hooks(environ):
+@pytest.mark.parametrize("environ,get_token_method", product(ALL_ENVIRONMENTS, GET_TOKEN_METHODS))
+async def test_custom_hooks(environ, get_token_method):
     """The credential's pipeline should include azure-core's CustomHookPolicy"""
 
     scope = "scope"
@@ -52,7 +52,7 @@ async def test_custom_hooks(environ):
         credential = ManagedIdentityCredential(
             transport=transport, raw_request_hook=request_hook, raw_response_hook=response_hook
         )
-    await credential.get_token(scope)
+    await getattr(credential, get_token_method)(scope)
 
     assert request_hook.call_count == 1
     assert response_hook.call_count == 1
@@ -62,8 +62,8 @@ async def test_custom_hooks(environ):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("environ", ALL_ENVIRONMENTS)
-async def test_tenant_id(environ):
+@pytest.mark.parametrize("environ,get_token_method", product(ALL_ENVIRONMENTS, GET_TOKEN_METHODS))
+async def test_tenant_id(environ, get_token_method):
     scope = "scope"
     expected_token = "***"
     request_hook = mock.Mock()
@@ -86,7 +86,7 @@ async def test_tenant_id(environ):
         credential = ManagedIdentityCredential(
             transport=transport, raw_request_hook=request_hook, raw_response_hook=response_hook
         )
-    await credential.get_token(scope)
+    await getattr(credential, get_token_method)(scope)
 
     assert request_hook.call_count == 1
     assert response_hook.call_count == 1
@@ -134,12 +134,13 @@ async def test_context_manager_incomplete_configuration():
 
 
 @pytest.mark.asyncio
-async def test_cloud_shell():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_cloud_shell(get_token_method):
     """Cloud Shell environment: only MSI_ENDPOINT set"""
 
     access_token = "****"
     expires_on = 42
-    expected_token = AccessToken(access_token, expires_on)
+    expected_token = access_token
     endpoint = "http://localhost:42/token"
     scope = "scope"
     transport = async_validating_transport(
@@ -166,17 +167,18 @@ async def test_cloud_shell():
     )
 
     with mock.patch("os.environ", {EnvironmentVariables.MSI_ENDPOINT: endpoint}):
-        token = await ManagedIdentityCredential(transport=transport).get_token(scope)
-        assert token == expected_token
+        token = await getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope)
+        assert token.token == expected_token
 
 
 @pytest.mark.asyncio
-async def test_cloud_shell_tenant_id():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_cloud_shell_tenant_id(get_token_method):
     """Cloud Shell environment: only MSI_ENDPOINT set"""
 
     access_token = "****"
     expires_on = 42
-    expected_token = AccessToken(access_token, expires_on)
+    expected_token = access_token
     endpoint = "http://localhost:42/token"
     scope = "scope"
     transport = async_validating_transport(
@@ -203,15 +205,20 @@ async def test_cloud_shell_tenant_id():
     )
 
     with mock.patch("os.environ", {EnvironmentVariables.MSI_ENDPOINT: endpoint}):
-        token = await ManagedIdentityCredential(transport=transport).get_token(scope, tenant_id="tenant_id")
-        assert token == expected_token
+        kwargs = {"tenant_id": "tenant_id"}
+        if get_token_method == "get_token_info":
+            kwargs = {"options": kwargs}
+        token = await getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope, **kwargs)
+        assert token.token == expected_token
 
 
 @pytest.mark.asyncio
-async def test_azure_ml():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_azure_ml(get_token_method):
     """Azure ML: MSI_ENDPOINT, MSI_SECRET set (like App Service 2017-09-01 but with a different response format)"""
 
-    expected_token = AccessToken("****", int(time.time()) + 3600)
+    expected_token = "****"
+    expires_on = int(time.time()) + 3600
     url = "http://localhost:42/token"
     secret = "expected-secret"
     scope = "scope"
@@ -235,9 +242,9 @@ async def test_azure_ml():
         responses=[
             mock_response(
                 json_payload={
-                    "access_token": expected_token.token,
+                    "access_token": expected_token,
                     "expires_in": 3600,
-                    "expires_on": expected_token.expires_on,
+                    "expires_on": expires_on,
                     "resource": scope,
                     "token_type": "Bearer",
                 }
@@ -252,21 +259,23 @@ async def test_azure_ml():
         clear=True,
     ):
         credential = ManagedIdentityCredential(transport=transport)
-        token = await credential.get_token(scope)
-        assert token.token == expected_token.token
-        assert token.expires_on == expected_token.expires_on
+        token = await getattr(credential, get_token_method)(scope)
+        assert token.token == expected_token
+        assert token.expires_on == expires_on
 
         credential = ManagedIdentityCredential(transport=transport, client_id=client_id)
-        token = await credential.get_token(scope)
-        assert token.token == expected_token.token
-        assert token.expires_on == expected_token.expires_on
+        token = await getattr(credential, get_token_method)(scope)
+        assert token.token == expected_token
+        assert token.expires_on == expires_on
 
 
 @pytest.mark.asyncio
-async def test_azure_ml_tenant_id():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_azure_ml_tenant_id(get_token_method):
     """Azure ML: MSI_ENDPOINT, MSI_SECRET set (like App Service 2017-09-01 but with a different response format)"""
 
-    expected_token = AccessToken("****", int(time.time()) + 3600)
+    expected_token = "****"
+    expires_on = int(time.time()) + 3600
     url = "http://localhost:42/token"
     secret = "expected-secret"
     scope = "scope"
@@ -290,9 +299,9 @@ async def test_azure_ml_tenant_id():
         responses=[
             mock_response(
                 json_payload={
-                    "access_token": expected_token.token,
+                    "access_token": expected_token,
                     "expires_in": 3600,
-                    "expires_on": expected_token.expires_on,
+                    "expires_on": expires_on,
                     "resource": scope,
                     "token_type": "Bearer",
                 }
@@ -307,18 +316,21 @@ async def test_azure_ml_tenant_id():
         clear=True,
     ):
         credential = ManagedIdentityCredential(transport=transport)
-        token = await credential.get_token(scope, tenant_id="tenant_id")
-        assert token.token == expected_token.token
-        assert token.expires_on == expected_token.expires_on
+        kwargs = {"tenant_id": "tenant_id"}
+        if get_token_method == "get_token_info":
+            kwargs = {"options": kwargs}
+        token = await getattr(credential, get_token_method)(scope, **kwargs)
+        assert token.token == expected_token
+        assert token.expires_on == expires_on
 
 
 @pytest.mark.asyncio
-async def test_cloud_shell_user_assigned_identity():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_cloud_shell_identity_config(get_token_method):
     """Cloud Shell environment: only MSI_ENDPOINT set"""
 
     expected_token = "****"
     expires_on = 42
-    client_id = "some-guid"
     endpoint = "http://localhost:42/token"
     scope = "scope"
     param_name, param_value = "foo", "bar"
@@ -329,7 +341,7 @@ async def test_cloud_shell_user_assigned_identity():
                 base_url=endpoint,
                 method="POST",
                 required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
-                required_data={"client_id": client_id, "resource": scope},
+                required_data={"resource": scope},
             ),
             Request(
                 base_url=endpoint,
@@ -354,24 +366,25 @@ async def test_cloud_shell_user_assigned_identity():
     )
 
     with mock.patch.dict(MANAGED_IDENTITY_ENVIRON, {EnvironmentVariables.MSI_ENDPOINT: endpoint}, clear=True):
-        credential = ManagedIdentityCredential(client_id=client_id, transport=transport)
-        token = await credential.get_token(scope)
+        credential = ManagedIdentityCredential(transport=transport)
+        token = await getattr(credential, get_token_method)(scope)
         assert token.token == expected_token
         assert token.expires_on == expires_on
 
         credential = ManagedIdentityCredential(transport=transport, identity_config={param_name: param_value})
-        token = await credential.get_token(scope)
+        token = await getattr(credential, get_token_method)(scope)
         assert token.token == expected_token
         assert token.expires_on == expires_on
 
 
 @pytest.mark.asyncio
-async def test_app_service_2017_09_01():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_app_service_2017_09_01(get_token_method):
     """When the environment for 2019-08-01 is not configured, 2017-09-01 should be used."""
 
     access_token = "****"
     expires_on = 42
-    expected_token = AccessToken(access_token, expires_on)
+    expected_token = access_token
     url = "http://localhost:42/token"
     secret = "expected-secret"
     scope = "scope"
@@ -415,18 +428,19 @@ async def test_app_service_2017_09_01():
         clear=True,
     ):
         credential = ManagedIdentityCredential(transport=transport)
-        token = await credential.get_token(scope)
-        assert token == expected_token
+        token = await getattr(credential, get_token_method)(scope)
+        assert token.token == expected_token
         assert token.expires_on == expires_on
 
         credential = ManagedIdentityCredential(transport=transport)
-        token = await credential.get_token(scope)
-        assert token == expected_token
+        token = await getattr(credential, get_token_method)(scope)
+        assert token.token == expected_token
         assert token.expires_on == expires_on
 
 
 @pytest.mark.asyncio
-async def test_app_service_2019_08_01():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_app_service_2019_08_01(get_token_method):
     """App Service 2019-08-01: IDENTITY_ENDPOINT, IDENTITY_HEADER set"""
 
     access_token = "****"
@@ -468,13 +482,14 @@ async def test_app_service_2019_08_01():
         },
         clear=True,
     ):
-        token = await ManagedIdentityCredential(transport=mock.Mock(send=send)).get_token(scope)
+        token = await getattr(ManagedIdentityCredential(transport=mock.Mock(send=send)), get_token_method)(scope)
         assert token.token == access_token
         assert token.expires_on == expires_on
 
 
 @pytest.mark.asyncio
-async def test_app_service_2019_08_01_tenant_id():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_app_service_2019_08_01_tenant_id(get_token_method):
     access_token = "****"
     expires_on = 42
     endpoint = "http://localhost:42/token"
@@ -514,13 +529,19 @@ async def test_app_service_2019_08_01_tenant_id():
         },
         clear=True,
     ):
-        token = await ManagedIdentityCredential(transport=mock.Mock(send=send)).get_token(scope, tenant_id="tenant_id")
+        kwargs = {"tenant_id": "tenant_id"}
+        if get_token_method == "get_token_info":
+            kwargs = {"options": kwargs}
+        token = await getattr(ManagedIdentityCredential(transport=mock.Mock(send=send)), get_token_method)(
+            scope, **kwargs
+        )
         assert token.token == access_token
         assert token.expires_on == expires_on
 
 
 @pytest.mark.asyncio
-async def test_app_service_user_assigned_identity():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_app_service_user_assigned_identity(get_token_method):
     """App Service 2019-08-01: MSI_ENDPOINT, MSI_SECRET set"""
 
     expected_token = "****"
@@ -565,20 +586,21 @@ async def test_app_service_user_assigned_identity():
         clear=True,
     ):
         credential = ManagedIdentityCredential(client_id=client_id, transport=transport)
-        token = await credential.get_token(scope)
+        token = await getattr(credential, get_token_method)(scope)
         assert token.token == expected_token
         assert token.expires_on == expires_on
 
         credential = ManagedIdentityCredential(
             client_id=client_id, transport=transport, identity_config={param_name: param_value}
         )
-        token = await credential.get_token(scope)
+        token = await getattr(credential, get_token_method)(scope)
         assert token.token == expected_token
         assert token.expires_on == expires_on
 
 
 @pytest.mark.asyncio
-async def test_client_id_none():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_client_id_none(get_token_method):
     """the credential should ignore client_id=None"""
 
     expected_access_token = "****"
@@ -597,22 +619,23 @@ async def test_client_id_none():
 
     with mock.patch.dict(MANAGED_IDENTITY_ENVIRON, {}, clear=True):
         credential = ManagedIdentityCredential(client_id=None, transport=mock.Mock(send=send))
-        token = await credential.get_token(scope)
+        token = await getattr(credential, get_token_method)(scope)
     assert token.token == expected_access_token
 
     with mock.patch.dict(
         MANAGED_IDENTITY_ENVIRON, {EnvironmentVariables.MSI_ENDPOINT: "https://localhost"}, clear=True
     ):
         credential = ManagedIdentityCredential(client_id=None, transport=mock.Mock(send=send))
-        token = await credential.get_token(scope)
+        token = await getattr(credential, get_token_method)(scope)
     assert token.token == expected_access_token
 
 
 @pytest.mark.asyncio
-async def test_imds():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_imds(get_token_method):
     access_token = "****"
     expires_on = 42
-    expected_token = AccessToken(access_token, expires_on)
+    expected_token = access_token
     scope = "scope"
     transport = async_validating_transport(
         requests=[
@@ -640,15 +663,16 @@ async def test_imds():
 
     # ensure e.g. $MSI_ENDPOINT isn't set, so we get ImdsCredential
     with mock.patch.dict("os.environ", clear=True):
-        token = await ManagedIdentityCredential(transport=transport).get_token(scope)
-    assert token == expected_token
+        token = await getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope)
+    assert token.token == expected_token
 
 
 @pytest.mark.asyncio
-async def test_imds_tenant_id():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_imds_tenant_id(get_token_method):
     access_token = "****"
     expires_on = 42
-    expected_token = AccessToken(access_token, expires_on)
+    expected_token = access_token
     scope = "scope"
     transport = async_validating_transport(
         requests=[
@@ -676,15 +700,19 @@ async def test_imds_tenant_id():
 
     # ensure e.g. $MSI_ENDPOINT isn't set, so we get ImdsCredential
     with mock.patch.dict("os.environ", clear=True):
-        token = await ManagedIdentityCredential(transport=transport).get_token(scope, tenant_id="tenant_id")
-    assert token == expected_token
+        kwargs = {"tenant_id": "tenant_id"}
+        if get_token_method == "get_token_info":
+            kwargs = {"options": kwargs}
+        token = await getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope, **kwargs)
+    assert token.token == expected_token
 
 
 @pytest.mark.asyncio
-async def test_imds_user_assigned_identity():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_imds_user_assigned_identity(get_token_method):
     access_token = "****"
     expires_on = 42
-    expected_token = AccessToken(access_token, expires_on)
+    expected_token = access_token
     scope = "scope"
     client_id = "some-guid"
     transport = async_validating_transport(
@@ -714,12 +742,15 @@ async def test_imds_user_assigned_identity():
 
     # ensure e.g. $MSI_ENDPOINT isn't set, so we get ImdsCredential
     with mock.patch.dict("os.environ", clear=True):
-        token = await ManagedIdentityCredential(client_id=client_id, transport=transport).get_token(scope)
-    assert token == expected_token
+        token = await getattr(ManagedIdentityCredential(client_id=client_id, transport=transport), get_token_method)(
+            scope
+        )
+    assert token.token == expected_token
 
 
 @pytest.mark.asyncio
-async def test_imds_text_response():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_imds_text_response(get_token_method):
     async def send(request, **kwargs):
         response = mock.Mock(
             text=lambda encoding=None: b"{This is a text response}",
@@ -732,12 +763,13 @@ async def test_imds_text_response():
     within_credential_chain.set(True)
     credential = ManagedIdentityCredential(transport=mock.Mock(send=send))
     with pytest.raises(CredentialUnavailableError):
-        token = await credential.get_token("")
+        token = await getattr(credential, get_token_method)("")
     within_credential_chain.set(False)
 
 
 @pytest.mark.asyncio
-async def test_service_fabric():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_service_fabric(get_token_method):
     """Service Fabric 2019-07-01-preview"""
     access_token = "****"
     expires_on = 42
@@ -773,13 +805,14 @@ async def test_service_fabric():
             EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT: thumbprint,
         },
     ):
-        token = await ManagedIdentityCredential(transport=mock.Mock(send=send)).get_token(scope)
+        token = await getattr(ManagedIdentityCredential(transport=mock.Mock(send=send)), get_token_method)(scope)
         assert token.token == access_token
         assert token.expires_on == expires_on
 
 
 @pytest.mark.asyncio
-async def test_service_fabric_tenant_id():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_service_fabric_tenant_id(get_token_method):
     access_token = "****"
     expires_on = 42
     endpoint = "http://localhost:42/token"
@@ -814,13 +847,19 @@ async def test_service_fabric_tenant_id():
             EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT: thumbprint,
         },
     ):
-        token = await ManagedIdentityCredential(transport=mock.Mock(send=send)).get_token(scope, tenant_id="tenant_id")
+        kwargs = {"tenant_id": "tenant_id"}
+        if get_token_method == "get_token_info":
+            kwargs = {"options": kwargs}
+        token = await getattr(ManagedIdentityCredential(transport=mock.Mock(send=send)), get_token_method)(
+            scope, **kwargs
+        )
         assert token.token == access_token
         assert token.expires_on == expires_on
 
 
 @pytest.mark.asyncio
-async def test_azure_arc(tmpdir):
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_azure_arc(tmpdir, get_token_method):
     """Azure Arc 2020-06-01"""
     access_token = "****"
     api_version = "2020-06-01"
@@ -869,13 +908,14 @@ async def test_azure_arc(tmpdir):
         {EnvironmentVariables.IDENTITY_ENDPOINT: identity_endpoint, EnvironmentVariables.IMDS_ENDPOINT: imds_endpoint},
     ):
         with mock.patch("azure.identity._credentials.azure_arc._validate_key_file", lambda x: None):
-            token = await ManagedIdentityCredential(transport=transport).get_token(scope)
+            token = await getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope)
             assert token.token == access_token
             assert token.expires_on == expires_on
 
 
 @pytest.mark.asyncio
-async def test_azure_arc_tenant_id(tmpdir):
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_azure_arc_tenant_id(tmpdir, get_token_method):
     access_token = "****"
     api_version = "2020-06-01"
     expires_on = 42
@@ -923,13 +963,17 @@ async def test_azure_arc_tenant_id(tmpdir):
         {EnvironmentVariables.IDENTITY_ENDPOINT: identity_endpoint, EnvironmentVariables.IMDS_ENDPOINT: imds_endpoint},
     ):
         with mock.patch("azure.identity._credentials.azure_arc._validate_key_file", lambda x: None):
-            token = await ManagedIdentityCredential(transport=transport).get_token(scope, tenant_id="tenant_id")
+            kwargs = {"tenant_id": "tenant_id"}
+            if get_token_method == "get_token_info":
+                kwargs = {"options": kwargs}
+            token = await getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope, **kwargs)
             assert token.token == access_token
             assert token.expires_on == expires_on
 
 
 @pytest.mark.asyncio
-async def test_azure_arc_client_id():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_azure_arc_client_id(get_token_method):
     """Azure Arc doesn't support user-assigned managed identity"""
     with mock.patch(
         "os.environ",
@@ -941,11 +985,12 @@ async def test_azure_arc_client_id():
         credential = ManagedIdentityCredential(client_id="some-guid")
 
     with pytest.raises(ClientAuthenticationError):
-        await credential.get_token("scope")
+        await getattr(credential, get_token_method)("scope")
 
 
 @pytest.mark.asyncio
-async def test_azure_arc_key_too_large(tmp_path):
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_azure_arc_key_too_large(tmp_path, get_token_method):
     api_version = "2020-06-01"
     identity_endpoint = "http://localhost:42/token"
     imds_endpoint = "http://localhost:42"
@@ -975,12 +1020,13 @@ async def test_azure_arc_key_too_large(tmp_path):
     ):
         with mock.patch("azure.identity._credentials.azure_arc._get_key_file_path", lambda: str(tmp_path)):
             with pytest.raises(ClientAuthenticationError) as ex:
-                await ManagedIdentityCredential(transport=transport).get_token(scope)
+                await getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope)
             assert "file size" in str(ex.value)
 
 
 @pytest.mark.asyncio
-async def test_azure_arc_key_not_exist(tmp_path):
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_azure_arc_key_not_exist(get_token_method):
     api_version = "2020-06-01"
     identity_endpoint = "http://localhost:42/token"
     imds_endpoint = "http://localhost:42"
@@ -1004,12 +1050,13 @@ async def test_azure_arc_key_not_exist(tmp_path):
         {EnvironmentVariables.IDENTITY_ENDPOINT: identity_endpoint, EnvironmentVariables.IMDS_ENDPOINT: imds_endpoint},
     ):
         with pytest.raises(ClientAuthenticationError) as ex:
-            await ManagedIdentityCredential(transport=transport).get_token(scope)
+            await getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope)
         assert "not exist" in str(ex.value)
 
 
 @pytest.mark.asyncio
-async def test_azure_arc_key_invalid(tmp_path):
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_azure_arc_key_invalid(tmp_path, get_token_method):
     api_version = "2020-06-01"
     identity_endpoint = "http://localhost:42/token"
     imds_endpoint = "http://localhost:42"
@@ -1044,17 +1091,18 @@ async def test_azure_arc_key_invalid(tmp_path):
     ):
         with mock.patch("azure.identity._credentials.azure_arc._get_key_file_path", lambda: "/foo"):
             with pytest.raises(ClientAuthenticationError) as ex:
-                await ManagedIdentityCredential(transport=transport).get_token(scope)
+                await getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope)
             assert "Unexpected file path" in str(ex.value)
 
         with mock.patch("azure.identity._credentials.azure_arc._get_key_file_path", lambda: str(tmp_path)):
             with pytest.raises(ClientAuthenticationError) as ex:
-                await ManagedIdentityCredential(transport=transport).get_token(scope)
+                await getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope)
             assert "extension" in str(ex.value)
 
 
 @pytest.mark.asyncio
-async def test_token_exchange(tmpdir):
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_token_exchange(tmpdir, get_token_method):
     exchange_token = "exchange-token"
     token_file = tmpdir.join("token")
     token_file.write(exchange_token)
@@ -1101,7 +1149,7 @@ async def test_token_exchange(tmpdir):
     # credential should default to AZURE_CLIENT_ID
     with mock.patch.dict("os.environ", mock_environ, clear=True):
         credential = ManagedIdentityCredential(transport=transport)
-        token = await credential.get_token(scope)
+        token = await getattr(credential, get_token_method)(scope)
         assert token.token == access_token
 
     # client_id kwarg should override AZURE_CLIENT_ID
@@ -1125,7 +1173,7 @@ async def test_token_exchange(tmpdir):
 
     with mock.patch.dict("os.environ", mock_environ, clear=True):
         credential = ManagedIdentityCredential(client_id=nondefault_client_id, transport=transport)
-        token = await credential.get_token(scope)
+        token = await getattr(credential, get_token_method)(scope)
     assert token.token == access_token
 
     # AZURE_CLIENT_ID may not have a value, in which case client_id is required
@@ -1159,12 +1207,13 @@ async def test_token_exchange(tmpdir):
             ManagedIdentityCredential()
 
         credential = ManagedIdentityCredential(client_id=nondefault_client_id, transport=transport)
-        token = await credential.get_token(scope)
+        token = await getattr(credential, get_token_method)(scope)
     assert token.token == access_token
 
 
 @pytest.mark.asyncio
-async def test_token_exchange_tenant_id(tmpdir):
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_token_exchange_tenant_id(tmpdir, get_token_method):
     exchange_token = "exchange-token"
     token_file = tmpdir.join("token")
     token_file.write(exchange_token)
@@ -1211,7 +1260,10 @@ async def test_token_exchange_tenant_id(tmpdir):
     # credential should default to AZURE_CLIENT_ID
     with mock.patch.dict("os.environ", mock_environ, clear=True):
         credential = ManagedIdentityCredential(transport=transport)
-        token = await credential.get_token(scope, tenant_id="tenant_id")
+        kwargs = {"tenant_id": "tenant_id"}
+        if get_token_method == "get_token_info":
+            kwargs = {"options": kwargs}
+        token = await getattr(credential, get_token_method)(scope, **kwargs)
         assert token.token == access_token
 
 
@@ -1234,3 +1286,18 @@ def test_validate_identity_config():
         ManagedIdentityCredential(identity_config={"object_id": "bar", "resource_id": "foo"})
     with pytest.raises(ValueError):
         ManagedIdentityCredential(identity_config={"object_id": "bar", "client_id": "foo"})
+
+
+def test_validate_cloud_shell_credential():
+    with mock.patch.dict(
+        MANAGED_IDENTITY_ENVIRON, {EnvironmentVariables.MSI_ENDPOINT: "https://localhost"}, clear=True
+    ):
+        ManagedIdentityCredential()
+        with pytest.raises(ValueError):
+            ManagedIdentityCredential(client_id="foo")
+        with pytest.raises(ValueError):
+            ManagedIdentityCredential(identity_config={"client_id": "foo"})
+        with pytest.raises(ValueError):
+            ManagedIdentityCredential(identity_config={"object_id": "foo"})
+        with pytest.raises(ValueError):
+            ManagedIdentityCredential(identity_config={"resource_id": "foo"})

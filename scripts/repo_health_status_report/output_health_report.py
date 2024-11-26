@@ -108,6 +108,7 @@ class TestsPipelineResult(typing.TypedDict, total=False):
     link: str
     result: DEVOPS_BUILD_STATUS
     tests: CheckStatus
+    samples: CheckStatus
 
 
 class CIPipelineResult(typing.TypedDict, total=False):
@@ -152,6 +153,7 @@ class LibraryStatus(typing.TypedDict, total=False):
     sphinx: Status
     sdk_owned: bool
     tests: Status
+    samples: Status
     ci: Status
 
 
@@ -222,6 +224,18 @@ def skip_package(package_name: str) -> bool:
         or package_name not in FILTER_EXCLUSIONS
         and any(identifier in package_name for identifier in IGNORE_FILTER)
     )
+
+
+def samples_enabled(package_path: pathlib.Path) -> bool:
+    tests_yaml = package_path.parent / "tests.yml"
+    if not tests_yaml.exists():
+        return False
+    with open(tests_yaml, "r") as file:
+        parameters = file.read()
+
+    if "TestSamples=.*/true" in parameters:
+        return True
+    return False
 
 
 def get_dataplane(
@@ -302,10 +316,12 @@ def record_test_result(
             pipeline.update({type: CheckStatus(status="succeeded")})
     elif task["result"] == "failed":
         pipeline.update({type: CheckStatus(status="failed")})
-        pipeline[type]["log"] = task["log"]["url"]
+        if task["log"]:
+            pipeline[type]["log"] = task["log"].get("url")
     elif pipeline.get(type, {}).get("status") != "failed":
         pipeline.update({type: CheckStatus(status=task["result"])})
-        pipeline[type]["log"] = task["log"]["url"]
+        if task["log"]:
+            pipeline[type]["log"] = task["log"].get("url")
 
 
 def record_all_pipeline(
@@ -334,6 +350,7 @@ def record_all_pipeline(
                 {
                     "result": status,
                     "tests": CheckStatus(status=status),
+                    "samples": CheckStatus(status=status),
                 }
             )
         )
@@ -365,7 +382,7 @@ def record_all_library(details: LibraryStatus, status: CHECK_STATUS) -> None:
     details["sphinx"] = Status(status=status, link=None)
     details["ci"] = Status(status=status, link=None)
     details["tests"] = Status(status=status, link=None)
-
+    details["samples"] = Status(status=status, link=None)
 
 def get_ci_result(service: str, pipeline_id: int | None, pipelines: dict[ServiceDirectory, PipelineResults]) -> None:
     if not pipeline_id:
@@ -391,6 +408,9 @@ def get_ci_result(service: str, pipeline_id: int | None, pipelines: dict[Service
     pipelines[service]["ci"].update({"result": result["result"]})
     build_id = result["id"]
     timeline_response = httpx.get(get_build_timeline_url(build_id), headers=AUTH_HEADERS)
+    if timeline_response.status_code != 200:
+        record_all_pipeline("tests", pipelines[service], "UNKNOWN")
+        return
     timeline_result = json.loads(timeline_response.text)
 
     for task in timeline_result["records"]:
@@ -430,11 +450,16 @@ def get_tests_result(service: str, pipeline_id: int | None, pipelines: dict[Serv
     pipelines[service]["tests"].update({"result": result["result"]})
     build_id = result["id"]
     timeline_response = httpx.get(get_build_timeline_url(build_id), headers=AUTH_HEADERS)
+    if timeline_response.status_code != 200:
+        record_all_pipeline("tests", pipelines[service], "UNKNOWN")
+        return
     timeline_result = json.loads(timeline_response.text)
 
     for task in timeline_result["records"]:
         if "Run Tests" in task["name"]:
             record_test_result(task, "tests", pipelines[service]["tests"])
+        if "Test Samples" in task["name"]:
+            record_test_result(task, "samples", pipelines[service]["tests"])
 
 
 def get_tests_weekly_result(service: str, pipeline_id: int | None, pipelines: dict[ServiceDirectory, PipelineResults]) -> None:
@@ -457,6 +482,9 @@ def get_tests_weekly_result(service: str, pipeline_id: int | None, pipelines: di
     pipelines[service]["tests_weekly"].update({"result": result["result"]})
     build_id = result["id"]
     timeline_response = httpx.get(get_build_timeline_url(build_id), headers=AUTH_HEADERS)
+    if timeline_response.status_code != 200:
+        record_all_pipeline("tests", pipelines[service], "UNKNOWN")
+        return
     timeline_result = json.loads(timeline_response.text)
 
     for task in timeline_result["records"]:
@@ -502,6 +530,25 @@ def report_test_result(
         library_details[test_type] = Status(status="FAIL", link=pipeline[test_type]["link"])
     else:
         library_details[test_type] = Status(status="UNKNOWN", link=pipeline[test_type].get("link"))
+
+
+def report_samples_result(
+    check: typing.Literal["samples"],
+    pipeline: PipelineResults,
+    library_details: LibraryStatus, 
+) -> None:
+    enabled = samples_enabled(library_details["path"])
+    if not enabled:
+        library_details[check] = Status(status="DISABLED", link=None)
+        return
+
+    ci_check = pipeline["tests"][check]["status"]
+    if ci_check == "succeeded":
+        library_details[check] = Status(status="PASS", link=pipeline["tests"]["link"])
+    elif ci_check == "failed":
+        library_details[check] = Status(status="FAIL", link=pipeline["tests"]["link"])
+    else:
+        library_details[check] = Status(status="UNKNOWN", link=pipeline["tests"].get("link"))
 
 
 def report_check_result(
@@ -556,6 +603,7 @@ def report_status(
             details["type_check_samples"] = (
                 "ENABLED" if is_check_enabled(str(details["path"]), "type_check_samples") else "DISABLED"
             )
+            report_samples_result("samples", pipelines[service_directory], details)
             details["sdk_owned"] = details["path"].name in SDK_TEAM_OWNED
             report_test_result("tests", pipelines[service_directory], details)
             report_test_result("ci", pipelines[service_directory], details)
@@ -685,6 +733,7 @@ def write_to_csv(libraries: dict[ServiceDirectory, dict[LibraryName, LibraryStat
             "Sphinx",
             "Tests - CI",
             "Tests - Live",
+            "Tests - Samples",
             "SLA - Questions",
             "SLA - Bugs",
             "Total customer-reported issues",
@@ -694,6 +743,7 @@ def write_to_csv(libraries: dict[ServiceDirectory, dict[LibraryName, LibraryStat
             "Sphinx_link",
             "Tests - CI_link",
             "Tests - Live_link",
+            "Tests - Samples_link",
             "SLA - Questions_link",
             "SLA - Bugs_link",
             "Total customer-reported issues_link",
@@ -716,6 +766,7 @@ def write_to_csv(libraries: dict[ServiceDirectory, dict[LibraryName, LibraryStat
                         details["sphinx"]["status"],
                         details["ci"]["status"],
                         details["tests"]["status"],
+                        details["samples"]["status"],
                         details.get("sla", {}).get("question", {}).get("num", 0),
                         details.get("sla", {}).get("bug", {}).get("num", 0),
                         details.get("customer_issues", {}).get("num", 0),
@@ -725,6 +776,7 @@ def write_to_csv(libraries: dict[ServiceDirectory, dict[LibraryName, LibraryStat
                         details["sphinx"].get("link", ""),
                         details["ci"].get("link", ""),
                         details["tests"].get("link", ""),
+                        details["samples"].get("link", ""),
                         details.get("sla", {}).get("question", {}).get("link", ""),
                         details.get("sla", {}).get("bug", {}).get("link", ""),
                         details.get("customer_issues", {}).get("link", ""),
@@ -749,6 +801,7 @@ def write_to_markdown(libraries: dict[ServiceDirectory, dict[LibraryName, Librar
         "Sphinx",
         "Tests - CI",
         "Tests - Live",
+        "Tests - Samples",
         "SLA - Questions / Bugs",
         "Total customer-reported issues",
     ]
@@ -793,6 +846,8 @@ def write_to_markdown(libraries: dict[ServiceDirectory, dict[LibraryName, Librar
                 + (f" ([link]({details['ci']['link']}))" if details["ci"]["link"] is not None else ""),
                 details["tests"]["status"]
                 + (f" ([link]({details['tests']['link']}))" if details["tests"]["link"] is not None else ""),
+                details["samples"]["status"]
+                + (f" ([link]({details['samples']['link']}))" if details["samples"]["link"] is not None else ""),
                 sla_str,
                 str(details.get("customer_issues", {}).get("num", 0))
                 + (

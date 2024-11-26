@@ -15,12 +15,17 @@ from .policy import PolicyClient
 from .resources import ResourceManagementClient
 from .subscriptions import SubscriptionClient
 from .deploymentstacks import DeploymentStacksClient
-__all__ = ['ApplicationClient',
-           'DeploymentScriptsClient',
-           'FeatureClient',
-           'PolicyClient',
-           'ManagementLinkClient',
-           'ManagementLockClient',
-           'ResourceManagementClient',
-           'SubscriptionClient',
-           'DeploymentStacksClient']
+from .databoundaries import DataBoundaryMgmtClient
+
+__all__ = [
+    "ApplicationClient",
+    "DeploymentScriptsClient",
+    "FeatureClient",
+    "PolicyClient",
+    "ManagementLinkClient",
+    "ManagementLockClient",
+    "ResourceManagementClient",
+    "SubscriptionClient",
+    "DeploymentStacksClient",
+    "DataBoundaryMgmtClient",
+]

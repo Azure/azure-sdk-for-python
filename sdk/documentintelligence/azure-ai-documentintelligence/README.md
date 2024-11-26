@@ -18,7 +18,7 @@ Azure AI Document Intelligence ([previously known as Form Recognizer][service-re
 
 ## _Disclaimer_
 
-_The API version 2024-02-29-preview is currently only available in some Azure regions, the available regions can be found from [here][python-di-available-regions]._
+_The latest service API is currently only available in some Azure regions, the available regions can be found from [here][python-di-available-regions]._
 
 ## Getting started
 
@@ -195,12 +195,15 @@ Sample code snippets are provided to illustrate using long-running operations [b
 The following section provides several code snippets covering some of the most common Document Intelligence tasks, including:
 
 * [Extract Layout](#extract-layout "Extract Layout")
+* [Extract Figures from Documents](#extract-figures-from-documents "Extract Figures from Documents")
+* [Analyze Documents Result in PDF](#analyze-documents-result-in-pdf "Analyze Documents Result in PDF")
 * [Using the General Document Model](#using-the-general-document-model "Using the General Document Model")
 * [Using Prebuilt Models](#using-prebuilt-models "Using Prebuilt Models")
 * [Build a Custom Model](#build-a-custom-model "Build a custom model")
 * [Analyze Documents Using a Custom Model](#analyze-documents-using-a-custom-model "Analyze Documents Using a Custom Model")
 * [Manage Your Models](#manage-your-models "Manage Your Models")
-* [Add-on capabilities](#add-on-capabilities "Add-on Capabilities")
+* [Add-on Capabilities](#add-on-capabilities "Add-on Capabilities")
+* [Get Raw JSON Result](#get-raw-json-result "Get Raw JSON Result")
 
 ### Extract Layout
 
@@ -299,6 +302,81 @@ if result.tables:
                     )
 
 print("----------------------------------------")
+```
+
+<!-- END SNIPPET -->
+
+### Extract Figures from Documents
+
+Extract figures from the document as cropped images.
+
+<!-- SNIPPET:sample_analyze_result_figures.analyze_result_figures -->
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.documentintelligence import DocumentIntelligenceClient
+from azure.ai.documentintelligence.models import AnalyzeOutputOption, AnalyzeResult
+
+endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
+key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
+
+document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
+with open(path_to_sample_documents, "rb") as f:
+    poller = document_intelligence_client.begin_analyze_document(
+        "prebuilt-layout",
+        analyze_request=f,
+        output=[AnalyzeOutputOption.FIGURES],
+        content_type="application/octet-stream",
+    )
+result: AnalyzeResult = poller.result()
+operation_id = poller.details["operation_id"]
+
+if result.figures:
+    for figure in result.figures:
+        if figure.id:
+            response = document_intelligence_client.get_analyze_result_figure(
+                model_id=result.model_id, result_id=operation_id, figure_id=figure.id
+            )
+            with open(f"{figure.id}.png", "wb") as writer:
+                writer.writelines(response)
+else:
+    print("No figures found.")
+```
+
+<!-- END SNIPPET -->
+
+### Analyze Documents Result in PDF
+
+Convert an analog PDF into a PDF with embedded text. Such text can enable text search within the PDF or allow the PDF to be used in LLM chat scenarios.
+
+_Note: For now, this feature is only supported by `prebuilt-read`. All other models will return error._
+
+<!-- SNIPPET:sample_analyze_result_pdf.analyze_result_pdf -->
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.documentintelligence import DocumentIntelligenceClient
+from azure.ai.documentintelligence.models import AnalyzeOutputOption, AnalyzeResult
+
+endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
+key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
+
+document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
+with open(path_to_sample_documents, "rb") as f:
+    poller = document_intelligence_client.begin_analyze_document(
+        "prebuilt-read",
+        analyze_request=f,
+        output=[AnalyzeOutputOption.PDF],
+        content_type="application/octet-stream",
+    )
+result: AnalyzeResult = poller.result()
+operation_id = poller.details["operation_id"]
+
+response = document_intelligence_client.get_analyze_result_pdf(model_id=result.model_id, result_id=operation_id)
+with open("analyze_result.pdf", "wb") as writer:
+    writer.writelines(response)
 ```
 
 <!-- END SNIPPET -->
@@ -818,6 +896,74 @@ The following add-on capabilities are available in this SDK:
 - [query fields][query_fields_sample]
 
 Note that some add-on capabilities will incur additional charges. See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
+
+### Get Raw JSON Result
+
+Can get the HTTP response by passing parameter `raw_response_hook` to any client method.
+<!-- SNIPPET:sample_get_raw_response.raw_response_hook -->
+
+```python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.documentintelligence import DocumentIntelligenceAdministrationClient
+
+endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
+key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
+
+client = DocumentIntelligenceAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
+responses = {}
+
+def callback(response):
+    responses["status_code"] = response.http_response.status_code
+    responses["response_body"] = response.http_response.json()
+
+client.get_resource_info(raw_response_hook=callback)
+
+print(f"Response status code is: {responses["status_code"]}")
+response_body = responses["response_body"]
+print(
+    f"Our resource has {response_body['customDocumentModels']['count']} custom models, "
+    f"and we can have at most {response_body['customDocumentModels']['limit']} custom models."
+    f"The quota limit for custom neural document models is {response_body['customNeuralDocumentModelBuilds']['quota']} and the resource has"
+    f"used {response_body['customNeuralDocumentModelBuilds']['used']}. The resource quota will reset on {response_body['customNeuralDocumentModelBuilds']['quotaResetDateTime']}"
+)
+```
+
+<!-- END SNIPPET -->
+
+Also, can use the `send_request` method to send custom HTTP requests and get raw JSON result from HTTP responses.
+
+<!-- SNIPPET:sample_send_request.send_request -->
+
+```python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.core.rest import HttpRequest
+from azure.ai.documentintelligence import DocumentIntelligenceAdministrationClient
+
+endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
+key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
+
+client = DocumentIntelligenceAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
+# The `send_request` method can send custom HTTP requests that share the client's existing pipeline,
+# Now let's use the `send_request` method to make a resource details fetching request.
+# The URL of the request should be absolute, and append the API version used for the request.
+request = HttpRequest(method="GET", url=f"{endpoint}/documentintelligence/info?api-version=2024-07-31-preview")
+response = client.send_request(request)
+response.raise_for_status()
+response_body = response.json()
+print(
+    f"Our resource has {response_body['customDocumentModels']['count']} custom models, "
+    f"and we can have at most {response_body['customDocumentModels']['limit']} custom models."
+    f"The quota limit for custom neural document models is {response_body['customNeuralDocumentModelBuilds']['quota']} and the resource has"
+    f"used {response_body['customNeuralDocumentModelBuilds']['used']}. The resource quota will reset on {response_body['customNeuralDocumentModelBuilds']['quotaResetDateTime']}"
+)
+```
+
+<!-- END SNIPPET -->
+
 
 ## Troubleshooting
 

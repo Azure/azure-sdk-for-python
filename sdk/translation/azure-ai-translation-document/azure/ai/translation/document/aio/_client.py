@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING, Union
+from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -19,13 +20,10 @@ from ._configuration import DocumentTranslationClientConfiguration, SingleDocume
 from ._operations import DocumentTranslationClientOperationsMixin, SingleDocumentTranslationClientOperationsMixin
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class DocumentTranslationClient(
-    DocumentTranslationClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class DocumentTranslationClient(DocumentTranslationClientOperationsMixin):
     """DocumentTranslationClient.
 
     :param endpoint: Supported document Translation endpoint, protocol and hostname, for example:
@@ -101,7 +99,7 @@ class DocumentTranslationClient(
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "DocumentTranslationClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 
@@ -109,9 +107,7 @@ class DocumentTranslationClient(
         await self._client.__aexit__(*exc_details)
 
 
-class SingleDocumentTranslationClient(
-    SingleDocumentTranslationClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class SingleDocumentTranslationClient(SingleDocumentTranslationClientOperationsMixin):
     """SingleDocumentTranslationClient.
 
     :param endpoint: Supported document Translation endpoint, protocol and hostname, for example:
@@ -185,7 +181,7 @@ class SingleDocumentTranslationClient(
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "SingleDocumentTranslationClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 

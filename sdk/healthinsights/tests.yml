@@ -9,7 +9,6 @@ trigger: none
 extends:
     template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      UseFederatedAuth: true
       ServiceDirectory: healthinsights
       Location: '${{ parameters.Location }}'
       EnvVars:      

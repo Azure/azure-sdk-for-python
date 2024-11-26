@@ -11,6 +11,7 @@
 # All interaction with Cosmos DB starts with an instance of the CosmosClient
 # [START create_client]
 from azure.cosmos import exceptions, CosmosClient, PartitionKey
+from typing import Dict, Any
 
 import os
 
@@ -256,3 +257,35 @@ for item in container.query_items(
 ):
     container.delete_item(item, partition_key=["GA", "Atlanta", 30363])
 # [END delete_items]
+
+# Get the feed ranges list from container.
+# [START read_feed_ranges]
+feed_ranges = list(container.read_feed_ranges())
+# [END read_feed_ranges]
+
+# Get a feed range from a partition key.
+# [START feed_range_from_partition_key ]
+feed_range_from_pk = container.feed_range_from_partition_key(["GA", "Atlanta", 30363])
+# [END feed_range_from_partition_key]
+
+# Figure out if a feed range is a subset of another feed range.
+# This example sees in which feed range from the container a feed range from a partition key is part of.
+# [START is_feed_range_subset]
+parent_feed_range = {}
+for feed_range in feed_ranges:
+    if container.is_feed_range_subset(feed_range, feed_range_from_pk):
+        parent_feed_range = feed_range
+        break
+# [END is_feed_range_subset]
+
+# Query a sorted list of items that were changed for one feed range
+# [START query_items_change_feed]
+for item in container.query_items_change_feed(feed_range=feed_ranges[0]):
+    print(json.dumps(item, indent=True))
+# [END query_items_change_feed]
+
+# Query a sorted list of items that were changed for one feed range
+# [START query_items_change_feed_from_beginning]
+for item in container.query_items_change_feed(feed_range=feed_ranges[0], start_time="Beginning"):
+    print(json.dumps(item, indent=True))
+# [END query_items_change_feed_from_beginning]

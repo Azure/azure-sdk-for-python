@@ -752,6 +752,8 @@ class Capability(ProxyResource):
     :ivar supported_server_versions: A list of supported server versions.
     :vartype supported_server_versions:
      list[~azure.mgmt.mysqlflexibleservers.models.ServerVersionCapabilityV2]
+    :ivar supported_features: A list of supported features.
+    :vartype supported_features: list[~azure.mgmt.mysqlflexibleservers.models.FeatureProperty]
     """
 
     _validation = {
@@ -762,6 +764,7 @@ class Capability(ProxyResource):
         "supported_geo_backup_regions": {"readonly": True},
         "supported_flexible_server_editions": {"readonly": True},
         "supported_server_versions": {"readonly": True},
+        "supported_features": {"readonly": True},
     }
 
     _attribute_map = {
@@ -778,6 +781,7 @@ class Capability(ProxyResource):
             "key": "properties.supportedServerVersions",
             "type": "[ServerVersionCapabilityV2]",
         },
+        "supported_features": {"key": "properties.supportedFeatures", "type": "[FeatureProperty]"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -786,6 +790,7 @@ class Capability(ProxyResource):
         self.supported_geo_backup_regions = None
         self.supported_flexible_server_editions = None
         self.supported_server_versions = None
+        self.supported_features = None
 
 
 class CapabilityProperties(_serialization.Model):
@@ -1296,6 +1301,34 @@ class ErrorDetail(_serialization.Model):
         self.target = None
         self.details = None
         self.additional_info = None
+
+
+class FeatureProperty(_serialization.Model):
+    """Server version capabilities.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar feature_name: feature name.
+    :vartype feature_name: str
+    :ivar feature_value: feature value.
+    :vartype feature_value: str
+    """
+
+    _validation = {
+        "feature_name": {"readonly": True},
+        "feature_value": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "feature_name": {"key": "featureName", "type": "str"},
+        "feature_value": {"key": "featureValue", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.feature_name = None
+        self.feature_value = None
 
 
 class FirewallRule(ProxyResource):
@@ -1838,6 +1871,28 @@ class MaintenanceListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
+
+
+class MaintenancePolicy(_serialization.Model):
+    """Maintenance policy of a server.
+
+    :ivar patch_strategy: The patch strategy of this server. Known values are: "Regular" and
+     "VirtualCanary".
+    :vartype patch_strategy: str or ~azure.mgmt.mysqlflexibleservers.models.PatchStrategy
+    """
+
+    _attribute_map = {
+        "patch_strategy": {"key": "patchStrategy", "type": "str"},
+    }
+
+    def __init__(self, *, patch_strategy: Optional[Union[str, "_models.PatchStrategy"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword patch_strategy: The patch strategy of this server. Known values are: "Regular" and
+         "VirtualCanary".
+        :paramtype patch_strategy: str or ~azure.mgmt.mysqlflexibleservers.models.PatchStrategy
+        """
+        super().__init__(**kwargs)
+        self.patch_strategy = patch_strategy
 
 
 class MaintenanceUpdate(_serialization.Model):
@@ -2779,8 +2834,11 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :ivar administrator_login_password: The password of the administrator login (required for
      server creation).
     :vartype administrator_login_password: str
-    :ivar version: Server version. Known values are: "5.7" and "8.0.21".
+    :ivar version: Major version of MySQL. 8.0.21 stands for MySQL 8.0, 5.7.44 stands for MySQL
+     5.7. Known values are: "5.7" and "8.0.21".
     :vartype version: str or ~azure.mgmt.mysqlflexibleservers.models.ServerVersion
+    :ivar full_version: Major version and actual engine version.
+    :vartype full_version: str
     :ivar availability_zone: availability Zone information of the server.
     :vartype availability_zone: str
     :ivar create_mode: The mode to create a new MySQL server. Known values are: "Default",
@@ -2803,6 +2861,9 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype state: str or ~azure.mgmt.mysqlflexibleservers.models.ServerState
     :ivar fully_qualified_domain_name: The fully qualified domain name of a server.
     :vartype fully_qualified_domain_name: str
+    :ivar database_port: The server database port. Can only be specified when the server is being
+     created.
+    :vartype database_port: int
     :ivar storage: Storage related properties of a server.
     :vartype storage: ~azure.mgmt.mysqlflexibleservers.models.Storage
     :ivar backup: Backup related properties of a server.
@@ -2814,7 +2875,11 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :ivar private_endpoint_connections: PrivateEndpointConnections related properties of a server.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.mysqlflexibleservers.models.PrivateEndpointConnection]
-    :ivar maintenance_window: Maintenance window of a server.
+    :ivar maintenance_policy: Maintenance policy of a server.
+    :vartype maintenance_policy: ~azure.mgmt.mysqlflexibleservers.models.MaintenancePolicy
+    :ivar maintenance_window: Maintenance window of a server. Known issue: cannot be set during
+     server creation or updated with other properties during server update; must be updated
+     separately.
     :vartype maintenance_window: ~azure.mgmt.mysqlflexibleservers.models.MaintenanceWindow
     :ivar import_source_properties: Source properties for import from storage.
     :vartype import_source_properties:
@@ -2845,6 +2910,7 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "administrator_login": {"key": "properties.administratorLogin", "type": "str"},
         "administrator_login_password": {"key": "properties.administratorLoginPassword", "type": "str"},
         "version": {"key": "properties.version", "type": "str"},
+        "full_version": {"key": "properties.fullVersion", "type": "str"},
         "availability_zone": {"key": "properties.availabilityZone", "type": "str"},
         "create_mode": {"key": "properties.createMode", "type": "str"},
         "source_server_resource_id": {"key": "properties.sourceServerResourceId", "type": "str"},
@@ -2854,6 +2920,7 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "data_encryption": {"key": "properties.dataEncryption", "type": "DataEncryption"},
         "state": {"key": "properties.state", "type": "str"},
         "fully_qualified_domain_name": {"key": "properties.fullyQualifiedDomainName", "type": "str"},
+        "database_port": {"key": "properties.databasePort", "type": "int"},
         "storage": {"key": "properties.storage", "type": "Storage"},
         "backup": {"key": "properties.backup", "type": "Backup"},
         "high_availability": {"key": "properties.highAvailability", "type": "HighAvailability"},
@@ -2862,6 +2929,7 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
             "key": "properties.privateEndpointConnections",
             "type": "[PrivateEndpointConnection]",
         },
+        "maintenance_policy": {"key": "properties.maintenancePolicy", "type": "MaintenancePolicy"},
         "maintenance_window": {"key": "properties.maintenanceWindow", "type": "MaintenanceWindow"},
         "import_source_properties": {"key": "properties.importSourceProperties", "type": "ImportSourceProperties"},
     }
@@ -2876,16 +2944,19 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         administrator_login: Optional[str] = None,
         administrator_login_password: Optional[str] = None,
         version: Optional[Union[str, "_models.ServerVersion"]] = None,
+        full_version: Optional[str] = None,
         availability_zone: Optional[str] = None,
         create_mode: Optional[Union[str, "_models.CreateMode"]] = None,
         source_server_resource_id: Optional[str] = None,
         restore_point_in_time: Optional[datetime.datetime] = None,
         replication_role: Optional[Union[str, "_models.ReplicationRole"]] = None,
         data_encryption: Optional["_models.DataEncryption"] = None,
+        database_port: Optional[int] = None,
         storage: Optional["_models.Storage"] = None,
         backup: Optional["_models.Backup"] = None,
         high_availability: Optional["_models.HighAvailability"] = None,
         network: Optional["_models.Network"] = None,
+        maintenance_policy: Optional["_models.MaintenancePolicy"] = None,
         maintenance_window: Optional["_models.MaintenanceWindow"] = None,
         import_source_properties: Optional["_models.ImportSourceProperties"] = None,
         **kwargs: Any
@@ -2905,8 +2976,11 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :keyword administrator_login_password: The password of the administrator login (required for
          server creation).
         :paramtype administrator_login_password: str
-        :keyword version: Server version. Known values are: "5.7" and "8.0.21".
+        :keyword version: Major version of MySQL. 8.0.21 stands for MySQL 8.0, 5.7.44 stands for MySQL
+         5.7. Known values are: "5.7" and "8.0.21".
         :paramtype version: str or ~azure.mgmt.mysqlflexibleservers.models.ServerVersion
+        :keyword full_version: Major version and actual engine version.
+        :paramtype full_version: str
         :keyword availability_zone: availability Zone information of the server.
         :paramtype availability_zone: str
         :keyword create_mode: The mode to create a new MySQL server. Known values are: "Default",
@@ -2922,6 +2996,9 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :paramtype replication_role: str or ~azure.mgmt.mysqlflexibleservers.models.ReplicationRole
         :keyword data_encryption: The Data Encryption for CMK.
         :paramtype data_encryption: ~azure.mgmt.mysqlflexibleservers.models.DataEncryption
+        :keyword database_port: The server database port. Can only be specified when the server is
+         being created.
+        :paramtype database_port: int
         :keyword storage: Storage related properties of a server.
         :paramtype storage: ~azure.mgmt.mysqlflexibleservers.models.Storage
         :keyword backup: Backup related properties of a server.
@@ -2930,7 +3007,11 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :paramtype high_availability: ~azure.mgmt.mysqlflexibleservers.models.HighAvailability
         :keyword network: Network related properties of a server.
         :paramtype network: ~azure.mgmt.mysqlflexibleservers.models.Network
-        :keyword maintenance_window: Maintenance window of a server.
+        :keyword maintenance_policy: Maintenance policy of a server.
+        :paramtype maintenance_policy: ~azure.mgmt.mysqlflexibleservers.models.MaintenancePolicy
+        :keyword maintenance_window: Maintenance window of a server. Known issue: cannot be set during
+         server creation or updated with other properties during server update; must be updated
+         separately.
         :paramtype maintenance_window: ~azure.mgmt.mysqlflexibleservers.models.MaintenanceWindow
         :keyword import_source_properties: Source properties for import from storage.
         :paramtype import_source_properties:
@@ -2942,6 +3023,7 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         self.administrator_login = administrator_login
         self.administrator_login_password = administrator_login_password
         self.version = version
+        self.full_version = full_version
         self.availability_zone = availability_zone
         self.create_mode = create_mode
         self.source_server_resource_id = source_server_resource_id
@@ -2951,11 +3033,13 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         self.data_encryption = data_encryption
         self.state = None
         self.fully_qualified_domain_name = None
+        self.database_port = database_port
         self.storage = storage
         self.backup = backup
         self.high_availability = high_availability
         self.network = network
         self.private_endpoint_connections = None
+        self.maintenance_policy = maintenance_policy
         self.maintenance_window = maintenance_window
         self.import_source_properties = import_source_properties
 
@@ -3280,6 +3364,8 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
     :vartype backup: ~azure.mgmt.mysqlflexibleservers.models.Backup
     :ivar high_availability: High availability related properties of a server.
     :vartype high_availability: ~azure.mgmt.mysqlflexibleservers.models.HighAvailability
+    :ivar maintenance_policy: Maintenance policy of a server.
+    :vartype maintenance_policy: ~azure.mgmt.mysqlflexibleservers.models.MaintenancePolicy
     :ivar maintenance_window: Maintenance window of a server.
     :vartype maintenance_window: ~azure.mgmt.mysqlflexibleservers.models.MaintenanceWindow
     :ivar replication_role: The replication role of the server. Known values are: "None", "Source",
@@ -3300,6 +3386,7 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
         "storage": {"key": "properties.storage", "type": "Storage"},
         "backup": {"key": "properties.backup", "type": "Backup"},
         "high_availability": {"key": "properties.highAvailability", "type": "HighAvailability"},
+        "maintenance_policy": {"key": "properties.maintenancePolicy", "type": "MaintenancePolicy"},
         "maintenance_window": {"key": "properties.maintenanceWindow", "type": "MaintenanceWindow"},
         "replication_role": {"key": "properties.replicationRole", "type": "str"},
         "data_encryption": {"key": "properties.dataEncryption", "type": "DataEncryption"},
@@ -3317,6 +3404,7 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
         storage: Optional["_models.Storage"] = None,
         backup: Optional["_models.Backup"] = None,
         high_availability: Optional["_models.HighAvailability"] = None,
+        maintenance_policy: Optional["_models.MaintenancePolicy"] = None,
         maintenance_window: Optional["_models.MaintenanceWindow"] = None,
         replication_role: Optional[Union[str, "_models.ReplicationRole"]] = None,
         data_encryption: Optional["_models.DataEncryption"] = None,
@@ -3340,6 +3428,8 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
         :paramtype backup: ~azure.mgmt.mysqlflexibleservers.models.Backup
         :keyword high_availability: High availability related properties of a server.
         :paramtype high_availability: ~azure.mgmt.mysqlflexibleservers.models.HighAvailability
+        :keyword maintenance_policy: Maintenance policy of a server.
+        :paramtype maintenance_policy: ~azure.mgmt.mysqlflexibleservers.models.MaintenancePolicy
         :keyword maintenance_window: Maintenance window of a server.
         :paramtype maintenance_window: ~azure.mgmt.mysqlflexibleservers.models.MaintenanceWindow
         :keyword replication_role: The replication role of the server. Known values are: "None",
@@ -3359,6 +3449,7 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
         self.storage = storage
         self.backup = backup
         self.high_availability = high_availability
+        self.maintenance_policy = maintenance_policy
         self.maintenance_window = maintenance_window
         self.replication_role = replication_role
         self.data_encryption = data_encryption

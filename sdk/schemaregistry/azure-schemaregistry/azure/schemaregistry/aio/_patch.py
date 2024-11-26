@@ -143,10 +143,62 @@ class SchemaRegistryClient:
         return SchemaProperties(**properties)
 
     @overload
-    async def get_schema(self, schema_id: str, **kwargs: Any) -> Schema: ...
+    async def get_schema(self, schema_id: str, **kwargs: Any) -> Schema:
+        """Gets a registered schema.
+
+        To get a registered schema by its unique ID, pass the `schema_id` parameter and any optional
+        keyword arguments. Azure Schema Registry guarantees that ID is unique within a namespace.
+
+        WARNING: If retrieving a schema format that is unsupported by this client version, upgrade to a client
+         version that supports the schema format. Otherwise, the content MIME type string will be returned as
+         the `format` value in the `properties` of the returned Schema.
+
+        :param str schema_id: References specific schema in registry namespace. Required if `group_name`,
+         `name`, and `version` are not provided.
+        :return: The schema stored in the registry associated with the provided arguments.
+        :rtype: ~azure.schemaregistry.Schema
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_schemaregistry_async.py
+                :start-after: [START get_schema_async]
+                :end-before: [END get_schema_async]
+                :language: python
+                :dedent: 4
+                :caption: Get schema by id.
+
+        """
+        ...
 
     @overload
-    async def get_schema(self, *, group_name: str, name: str, version: int, **kwargs: Any) -> Schema: ...
+    async def get_schema(self, *, group_name: str, name: str, version: int, **kwargs: Any) -> Schema:
+        """Gets a registered schema.
+
+        To get a specific version of a schema within the specified schema group, pass in the required
+        keyword arguments `group_name`, `name`, and `version` and any optional keyword arguments.
+
+        WARNING: If retrieving a schema format that is unsupported by this client version, upgrade to a client
+         version that supports the schema format. Otherwise, the content MIME type string will be returned as
+         the `format` value in the `properties` of the returned Schema.
+
+        :keyword str group_name: Name of schema group that contains the registered schema.
+        :keyword str name: Name of schema which should be retrieved.
+        :keyword int version: Version of schema which should be retrieved.
+        :return: The schema stored in the registry associated with the provided arguments.
+        :rtype: ~azure.schemaregistry.Schema
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_schemaregistry_async.py
+                :start-after: [START get_schema_by_version_async]
+                :end-before: [END get_schema_by_version_async]
+                :language: python
+                :dedent: 4
+                :caption: Get schema by version.
+        """
+        ...
 
     @distributed_trace_async
     async def get_schema(  # pylint: disable=docstring-missing-param,docstring-should-be-keyword
@@ -159,6 +211,10 @@ class SchemaRegistryClient:
 
         2) To get a specific version of a schema within the specified schema group, pass in the required
         keyword arguments `group_name`, `name`, and `version` and any optional keyword arguments.
+
+        WARNING: If retrieving a schema format that is unsupported by this client version, upgrade to a client
+         version that supports the schema format. Otherwise, the content MIME type string will be returned as
+         the `format` value in the `properties` of the returned Schema.
 
         :param str schema_id: References specific schema in registry namespace. Required if `group_name`,
          `name`, and `version` are not provided.
@@ -204,8 +260,8 @@ class SchemaRegistryClient:
                 id=schema_id,
                 cls=prepare_schema_result,
                 headers={  # TODO: remove when multiple content types are supported
-                    "Accept": """application/json; serialization=Avro, application/json; \
-                        serialization=json, text/plain; charset=utf-8"""
+                    "Accept": """application/json; serialization=Avro, application/json; """
+                        """serialization=json, text/plain; charset=utf-8"""
                 },
                 stream=True,
                 **http_request_kwargs,
@@ -229,8 +285,8 @@ class SchemaRegistryClient:
                 schema_version=version,
                 cls=prepare_schema_result,
                 headers={  # TODO: remove when multiple content types are supported
-                    "Accept": """application/json; serialization=Avro, application/json; \
-                        serialization=json, text/plain; charset=utf-8"""
+                    "Accept": """application/json; serialization=Avro, application/json; """
+                        """serialization=json, text/plain; charset=utf-8"""
                 },
                 stream=True,
                 **http_request_kwargs,

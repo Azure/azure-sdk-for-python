@@ -28,6 +28,7 @@ from .._eventprocessor.common import LoadBalancingStrategy
 
 
 if TYPE_CHECKING:
+    from ssl import SSLContext
     from ._client_base_async import CredentialTypes
     from ._eventprocessor.partition_context import PartitionContext
     from ._eventprocessor.checkpoint_store import CheckpointStore
@@ -37,9 +38,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class EventHubConsumerClient(
-    ClientBaseAsync
-):  # pylint: disable=client-accepts-api-version-keyword
+class EventHubConsumerClient(ClientBaseAsync):  # pylint: disable=client-accepts-api-version-keyword
     """The EventHubConsumerClient class defines a high level interface for
     receiving events from the Azure Event Hubs service.
 
@@ -129,6 +128,7 @@ class EventHubConsumerClient(
     :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
      the Event Hubs service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
+     Unless specified otherwise, default transport type is TransportType.AmqpOverWebsockets.
      The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
      If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
     :paramtype custom_endpoint_address: Optional[str]
@@ -136,6 +136,9 @@ class EventHubConsumerClient(
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
     :paramtype connection_verify: Optional[str]
+    :keyword ssl_context: The SSLContext object to use in the underlying Pure Python AMQP transport. If specified,
+     connection_verify will be ignored.
+    :paramtype ssl_context: ssl.SSLContext or None
     :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
      False and the Pure Python AMQP library will be used as the underlying transport.
     :paramtype uamqp_transport: bool
@@ -161,26 +164,18 @@ class EventHubConsumerClient(
         eventhub_name: str,
         consumer_group: str,
         credential: "CredentialTypes",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)
         self._load_balancing_interval = kwargs.pop("load_balancing_interval", None)
         if self._load_balancing_interval is None:
             self._load_balancing_interval = 30
-        self._partition_ownership_expiration_interval = kwargs.pop(
-            "partition_ownership_expiration_interval", None
-        )
+        self._partition_ownership_expiration_interval = kwargs.pop("partition_ownership_expiration_interval", None)
         if self._partition_ownership_expiration_interval is None:
-            self._partition_ownership_expiration_interval = (
-                6 * self._load_balancing_interval
-            )
-        load_balancing_strategy = (
-            kwargs.pop("load_balancing_strategy", None) or LoadBalancingStrategy.GREEDY
-        )
+            self._partition_ownership_expiration_interval = 6 * self._load_balancing_interval
+        load_balancing_strategy = kwargs.pop("load_balancing_strategy", None) or LoadBalancingStrategy.GREEDY
         self._load_balancing_strategy = (
-            LoadBalancingStrategy(load_balancing_strategy)
-            if load_balancing_strategy
-            else LoadBalancingStrategy.GREEDY
+            LoadBalancingStrategy(load_balancing_strategy) if load_balancing_strategy else LoadBalancingStrategy.GREEDY
         )
         self._consumer_group = consumer_group
         network_tracing = kwargs.pop("logging_enable", False)
@@ -208,19 +203,17 @@ class EventHubConsumerClient(
         partition_id: str,
         event_position: Union[str, int, datetime.datetime],
         on_event_received: Callable[["PartitionContext", "EventData"], Awaitable[None]],
-        **kwargs
+        **kwargs,
     ) -> EventHubConsumer:
         owner_level = kwargs.get("owner_level")
         prefetch = kwargs.get("prefetch") or self._config.prefetch
-        track_last_enqueued_event_properties = kwargs.get(
-            "track_last_enqueued_event_properties", False
-        )
+        track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
         event_position_inclusive = kwargs.get("event_position_inclusive", False)
 
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self._address.hostname, self._address.path, consumer_group, partition_id
         )
-        handler = EventHubConsumer( # type: ignore
+        handler = EventHubConsumer(  # type: ignore
             self,
             source_url,
             on_event_received=on_event_received,
@@ -258,8 +251,9 @@ class EventHubConsumerClient(
         load_balancing_strategy: Union[str, LoadBalancingStrategy] = LoadBalancingStrategy.GREEDY,
         custom_endpoint_address: Optional[str] = None,
         connection_verify: Optional[str] = None,
+        ssl_context: Optional["SSLContext"] = None,
         uamqp_transport: bool = False,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> "EventHubConsumerClient":
         """Create an EventHubConsumerClient from a connection string.
 
@@ -326,6 +320,7 @@ class EventHubConsumerClient(
         :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
          the Event Hubs service, allowing network requests to be routed through any application gateways or
          other paths needed for the host environment. Default is None.
+         Unless specified otherwise, default transport type is TransportType.AmqpOverWebsockets.
          The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
          If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
         :paramtype custom_endpoint_address: Optional[str]
@@ -333,6 +328,9 @@ class EventHubConsumerClient(
          authenticate the identity of the connection endpoint.
          Default is None in which case `certifi.where()` will be used.
         :paramtype connection_verify: Optional[str]
+        :keyword ssl_context: The SSLContext object to use in the underlying Pure Python AMQP transport. If specified,
+         connection_verify will be ignored.
+        :paramtype ssl_context: ssl.SSLContext or None
         :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
          False and the Pure Python AMQP library will be used as the underlying transport.
         :paramtype uamqp_transport: bool
@@ -369,6 +367,7 @@ class EventHubConsumerClient(
             load_balancing_strategy=load_balancing_strategy,
             custom_endpoint_address=custom_endpoint_address,
             connection_verify=connection_verify,
+            ssl_context=ssl_context,
             uamqp_transport=uamqp_transport,
             **kwargs,
         )
@@ -385,42 +384,27 @@ class EventHubConsumerClient(
         owner_level: Optional[int] = None,
         prefetch: int = 300,
         track_last_enqueued_event_properties: bool = False,
-        starting_position: Optional[
-            Union[str, int, datetime.datetime, Dict[str, Any]]
-        ] = None,
+        starting_position: Optional[Union[str, int, datetime.datetime, Dict[str, Any]]] = None,
         starting_position_inclusive: Union[bool, Dict[str, bool]] = False,
-        on_error: Optional[
-            Callable[["PartitionContext", Exception], Awaitable[None]]
-        ] = None,
-        on_partition_initialize: Optional[
-            Callable[["PartitionContext"], Awaitable[None]]
-        ] = None,
-        on_partition_close: Optional[
-            Callable[["PartitionContext", "CloseReason"], Awaitable[None]]
-        ] = None
+        on_error: Optional[Callable[["PartitionContext", Exception], Awaitable[None]]] = None,
+        on_partition_initialize: Optional[Callable[["PartitionContext"], Awaitable[None]]] = None,
+        on_partition_close: Optional[Callable[["PartitionContext", "CloseReason"], Awaitable[None]]] = None,
     ):
         async with self._lock:
             error = None
             if (self._consumer_group, ALL_PARTITIONS) in self._event_processors:
                 error = (
                     "This consumer client is already receiving events "
-                    "from all partitions for consumer group {}. ".format(
-                        self._consumer_group
-                    )
+                    "from all partitions for consumer group {}. ".format(self._consumer_group)
                 )
-            elif partition_id is None and any(
-                x[0] == self._consumer_group for x in self._event_processors
-            ):
-                error = (
-                    "This consumer client is already receiving events "
-                    "for consumer group {}. ".format(self._consumer_group)
+            elif partition_id is None and any(x[0] == self._consumer_group for x in self._event_processors):
+                error = "This consumer client is already receiving events " "for consumer group {}. ".format(
+                    self._consumer_group
                 )
             elif (self._consumer_group, partition_id) in self._event_processors:
                 error = (
                     "This consumer client is already receiving events "
-                    "from partition {} for consumer group {}. ".format(
-                        partition_id, self._consumer_group
-                    )
+                    "from partition {} for consumer group {}. ".format(partition_id, self._consumer_group)
                 )
             if error:
                 _LOGGER.warning(error)
@@ -441,54 +425,38 @@ class EventHubConsumerClient(
                 load_balancing_interval=self._load_balancing_interval,
                 load_balancing_strategy=self._load_balancing_strategy,
                 partition_ownership_expiration_interval=self._partition_ownership_expiration_interval,
-                initial_event_position=starting_position
-                if starting_position is not None
-                else "@latest",
+                initial_event_position=starting_position if starting_position is not None else "@latest",
                 initial_event_position_inclusive=starting_position_inclusive or False,
                 owner_level=owner_level,
                 prefetch=prefetch,
                 track_last_enqueued_event_properties=track_last_enqueued_event_properties,
                 **self._internal_kwargs,
             )
-            self._event_processors[
-                (self._consumer_group, partition_id or ALL_PARTITIONS)
-            ] = event_processor
+            self._event_processors[(self._consumer_group, partition_id or ALL_PARTITIONS)] = event_processor
         try:
             await event_processor.start()
         finally:
             await event_processor.stop()
             async with self._lock:
                 try:
-                    del self._event_processors[
-                        (self._consumer_group, partition_id or ALL_PARTITIONS)
-                    ]
+                    del self._event_processors[(self._consumer_group, partition_id or ALL_PARTITIONS)]
                 except KeyError:
                     pass
 
     async def receive(
         self,
-        on_event: Callable[
-            ["PartitionContext", Optional["EventData"]], Awaitable[None]
-        ],
+        on_event: Callable[["PartitionContext", Optional["EventData"]], Awaitable[None]],
         *,
         max_wait_time: Optional[float] = None,
         partition_id: Optional[str] = None,
         owner_level: Optional[int] = None,
         prefetch: int = 300,
         track_last_enqueued_event_properties: bool = False,
-        starting_position: Optional[
-            Union[str, int, datetime.datetime, Dict[str, Any]]
-        ] = None,
+        starting_position: Optional[Union[str, int, datetime.datetime, Dict[str, Any]]] = None,
         starting_position_inclusive: Union[bool, Dict[str, bool]] = False,
-        on_error: Optional[
-            Callable[["PartitionContext", Exception], Awaitable[None]]
-        ] = None,
-        on_partition_initialize: Optional[
-            Callable[["PartitionContext"], Awaitable[None]]
-        ] = None,
-        on_partition_close: Optional[
-            Callable[["PartitionContext", "CloseReason"], Awaitable[None]]
-        ] = None
+        on_error: Optional[Callable[["PartitionContext", Exception], Awaitable[None]]] = None,
+        on_partition_initialize: Optional[Callable[["PartitionContext"], Awaitable[None]]] = None,
+        on_partition_close: Optional[Callable[["PartitionContext", "CloseReason"], Awaitable[None]]] = None,
     ) -> None:
         """Receive events from partition(s), with optional load-balancing and checkpointing.
 
@@ -578,9 +546,7 @@ class EventHubConsumerClient(
 
     async def receive_batch(
         self,
-        on_event_batch: Callable[
-            ["PartitionContext", List["EventData"]], Awaitable[None]
-        ],
+        on_event_batch: Callable[["PartitionContext", List["EventData"]], Awaitable[None]],
         *,
         max_batch_size: int = 300,
         max_wait_time: Optional[float] = None,
@@ -588,19 +554,11 @@ class EventHubConsumerClient(
         owner_level: Optional[int] = None,
         prefetch: int = 300,
         track_last_enqueued_event_properties: bool = False,
-        starting_position: Optional[
-            Union[str, int, datetime.datetime, Dict[str, Any]]
-        ] = None,
+        starting_position: Optional[Union[str, int, datetime.datetime, Dict[str, Any]]] = None,
         starting_position_inclusive: Union[bool, Dict[str, bool]] = False,
-        on_error: Optional[
-            Callable[["PartitionContext", Exception], Awaitable[None]]
-        ] = None,
-        on_partition_initialize: Optional[
-            Callable[["PartitionContext"], Awaitable[None]]
-        ] = None,
-        on_partition_close: Optional[
-            Callable[["PartitionContext", "CloseReason"], Awaitable[None]]
-        ] = None
+        on_error: Optional[Callable[["PartitionContext", Exception], Awaitable[None]]] = None,
+        on_partition_initialize: Optional[Callable[["PartitionContext"], Awaitable[None]]] = None,
+        on_partition_close: Optional[Callable[["PartitionContext", "CloseReason"], Awaitable[None]]] = None,
     ) -> None:
         """Receive events from partition(s) in batches, with optional load-balancing and checkpointing.
 
@@ -709,9 +667,7 @@ class EventHubConsumerClient(
         :rtype: dict
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
-        return await super(
-            EventHubConsumerClient, self
-        )._get_eventhub_properties_async()
+        return await super(EventHubConsumerClient, self)._get_eventhub_properties_async()
 
     async def get_partition_ids(self) -> List[str]:
         """Get partition IDs of the Event Hub.
@@ -741,9 +697,7 @@ class EventHubConsumerClient(
         :rtype: dict
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
-        return await super(
-            EventHubConsumerClient, self
-        )._get_partition_properties_async(partition_id)
+        return await super(EventHubConsumerClient, self)._get_partition_properties_async(partition_id)
 
     async def close(self) -> None:
         """Stop retrieving events from the Event Hub and close the underlying AMQP connection and links.

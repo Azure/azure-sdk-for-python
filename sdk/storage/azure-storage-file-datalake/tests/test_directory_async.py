@@ -522,7 +522,7 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         num_file_per_sub_dir = 5
         await self._create_sub_directory_and_files(directory_client, num_sub_dirs, num_file_per_sub_dir)
 
-        response_list = list()
+        response_list = []
 
         def callback(response):
             response_list.append(response)
@@ -1556,6 +1556,32 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge
         await directory_client.exists()
         await directory_client.create_sub_directory('testsubdir')
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_directory_get_paths(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        directory_name = self._get_directory_reference()
+        directory_client1 = self.dsc.get_directory_client(self.file_system_name, directory_name + '1')
+        await directory_client1.get_file_client('file0').create_file()
+        await directory_client1.get_file_client('file1').create_file()
+        directory_client2 = self.dsc.get_directory_client(self.file_system_name, directory_name + '2')
+        directory_client2.get_file_client('file2').create_file()
+
+        # Act
+        path_response = []
+        async for path in directory_client1.get_paths():
+            path_response.append(path)
+
+        # Assert
+        assert len(path_response) == 2
+        assert path_response[0]['name'] == directory_name + '1' + '/' + 'file0'
+        assert path_response[1]['name'] == directory_name + '1' + '/' + 'file1'
+
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

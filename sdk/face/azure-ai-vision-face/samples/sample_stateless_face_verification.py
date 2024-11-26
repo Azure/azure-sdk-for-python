@@ -36,12 +36,8 @@ from shared.helpers import beautify_json, get_logger
 class StatelessFaceVerification:
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.endpoint = os.getenv(
-            CONFIGURATION_NAME_FACE_API_ENDPOINT, DEFAULT_FACE_API_ENDPOINT
-        )
-        self.key = os.getenv(
-            CONFIGURATION_NAME_FACE_API_ACCOUNT_KEY, DEFAULT_FACE_API_ACCOUNT_KEY
-        )
+        self.endpoint = os.getenv(CONFIGURATION_NAME_FACE_API_ENDPOINT, DEFAULT_FACE_API_ENDPOINT)
+        self.key = os.getenv(CONFIGURATION_NAME_FACE_API_ACCOUNT_KEY, DEFAULT_FACE_API_ACCOUNT_KEY)
         self.logger = get_logger("sample_stateless_face_verification")
 
     def verify_face_to_face(self):
@@ -49,39 +45,31 @@ class StatelessFaceVerification:
         from azure.ai.vision.face import FaceClient
         from azure.ai.vision.face.models import FaceDetectionModel, FaceRecognitionModel
 
-        with FaceClient(
-            endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
-        ) as face_client:
+        with FaceClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key)) as face_client:
             dad_picture1 = helpers.get_image_path(TestImages.IMAGE_FAMILY_1_DAD_1)
             detect_result1 = face_client.detect(
                 helpers.read_file_content(dad_picture1),
-                detection_model=FaceDetectionModel.DETECTION_03,
-                recognition_model=FaceRecognitionModel.RECOGNITION_04,
+                detection_model=FaceDetectionModel.DETECTION03,
+                recognition_model=FaceRecognitionModel.RECOGNITION04,
                 return_face_id=True,
             )
             assert len(detect_result1) == 1
             dad_face_id1 = str(detect_result1[0].face_id)
-            self.logger.info(
-                f"Detect 1 face from the file '{dad_picture1}': {dad_face_id1}"
-            )
+            self.logger.info(f"Detect 1 face from the file '{dad_picture1}': {dad_face_id1}")
 
             dad_picture2 = helpers.get_image_path(TestImages.IMAGE_FAMILY_1_DAD_2)
             detect_result2 = face_client.detect(
                 helpers.read_file_content(dad_picture2),
-                detection_model=FaceDetectionModel.DETECTION_03,
-                recognition_model=FaceRecognitionModel.RECOGNITION_04,
+                detection_model=FaceDetectionModel.DETECTION03,
+                recognition_model=FaceRecognitionModel.RECOGNITION04,
                 return_face_id=True,
             )
             assert len(detect_result2) == 1
             dad_face_id2 = str(detect_result2[0].face_id)
-            self.logger.info(
-                f"Detect 1 face from the file '{dad_picture2}': {dad_face_id2}"
-            )
+            self.logger.info(f"Detect 1 face from the file '{dad_picture2}': {dad_face_id2}")
 
             # Call Verify to check if dad_face_id1 and dad_face_id2 belong to the same person.
-            verify_result1 = face_client.verify_face_to_face(
-                face_id1=dad_face_id1, face_id2=dad_face_id2
-            )
+            verify_result1 = face_client.verify_face_to_face(face_id1=dad_face_id1, face_id2=dad_face_id2)
             self.logger.info(
                 f"Verify if the faces in '{TestImages.IMAGE_FAMILY_1_DAD_1}' and '{TestImages.IMAGE_FAMILY_1_DAD_2}'"
                 f" belongs to the same person."
@@ -91,20 +79,16 @@ class StatelessFaceVerification:
             man_picture = helpers.get_image_path(TestImages.IMAGE_FAMILY_3_Man_1)
             detect_result3 = face_client.detect(
                 helpers.read_file_content(man_picture),
-                detection_model=FaceDetectionModel.DETECTION_03,
-                recognition_model=FaceRecognitionModel.RECOGNITION_04,
+                detection_model=FaceDetectionModel.DETECTION03,
+                recognition_model=FaceRecognitionModel.RECOGNITION04,
                 return_face_id=True,
             )
             assert len(detect_result3) == 1
             man_face_id = str(detect_result3[0].face_id)
-            self.logger.info(
-                f"Detect 1 face from the file '{man_picture}': {man_face_id}"
-            )
+            self.logger.info(f"Detect 1 face from the file '{man_picture}': {man_face_id}")
 
             # Call Verify to check if dad_face_id1 and man_face_id belong to the same person.
-            verify_result2 = face_client.verify_face_to_face(
-                face_id1=dad_face_id1, face_id2=man_face_id
-            )
+            verify_result2 = face_client.verify_face_to_face(face_id1=dad_face_id1, face_id2=man_face_id)
             self.logger.info(
                 f"Verify if the faces in '{TestImages.IMAGE_FAMILY_1_DAD_1}' and '{TestImages.IMAGE_FAMILY_3_Man_1}'"
                 f" belongs to the same person."

@@ -21,7 +21,7 @@ import subprocess
 from enum import Enum
 from typing import Dict, Union, Type, Callable, Optional
 from packaging_tools.venvtools import create_venv_with_package
-from breaking_changes_allowlist import RUN_BREAKING_CHANGES_PACKAGES
+from breaking_changes_allowlist import RUN_BREAKING_CHANGES_PACKAGES, IGNORE_BREAKING_CHANGES
 from breaking_changes_tracker import BreakingChangesTracker
 from changelog_tracker import ChangelogTracker
 from pathlib import Path
@@ -169,6 +169,8 @@ def check_base_classes(cls_node: ast.ClassDef) -> bool:
                                 should_look = True
     else:
         should_look = True  # no init node so it is using init from base class
+    if cls_node.bases:
+        should_look = True
     return should_look
 
 
@@ -187,7 +189,7 @@ def get_properties(cls: Type) -> Dict:
     analyzer = ClassTreeAnalyzer(cls.__name__)
     analyzer.visit(module)
     cls_node = analyzer.cls_node
-    extract_base_classes = check_base_classes(cls_node)
+    extract_base_classes = True if hasattr(cls_node, "bases") else False
 
     if extract_base_classes:
         base_classes = inspect.getmro(cls)  # includes cls itself
@@ -258,12 +260,16 @@ def get_parameter_type(annotation) -> str:
     if isinstance(annotation, ast.Attribute):
         return annotation.attr
     if isinstance(annotation, ast.Constant):
+        if annotation.value is None:
+            return "None"
         return annotation.value
     if isinstance(annotation, ast.Subscript):
         if isinstance(annotation.slice, tuple):
             # TODO handle multiple types in the subscript
             return get_parameter_type(annotation.value)
         return f"{get_parameter_type(annotation.value)}[{get_parameter_type(annotation.slice)}]"
+    if isinstance(annotation, ast.Tuple):
+        return ", ".join([get_parameter_type(el) for el in annotation.elts])
     return annotation
 
 
@@ -392,6 +398,7 @@ def create_class_report(cls: Type) -> Dict:
             m = getattr(cls, method)
         except AttributeError:
             _LOGGER.info(f"Skipping method check for {method} on {cls}.")
+            continue
     
         if inspect.isfunction(m) or inspect.ismethod(m):
             if inspect.iscoroutinefunction(m):
@@ -445,9 +452,15 @@ def test_compare_reports(pkg_dir: str, changelog: bool, source_report: str = "st
         stable = report_azure_mgmt_versioned_module(stable)
         current = report_azure_mgmt_versioned_module(current)
 
-    checker = BreakingChangesTracker(stable, current, package_name, checkers = CHECKERS)
+    checker = BreakingChangesTracker(
+        stable,
+        current,
+        package_name,
+        checkers = CHECKERS,
+        ignore = IGNORE_BREAKING_CHANGES
+    )
     if changelog:
-        checker = ChangelogTracker(stable, current, package_name, checkers = CHECKERS)
+        checker = ChangelogTracker(stable, current, package_name, checkers = CHECKERS, ignore = IGNORE_BREAKING_CHANGES)
     checker.run_checks()
 
     remove_json_files(pkg_dir)

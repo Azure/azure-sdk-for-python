@@ -33,6 +33,7 @@ from ._models_py3 import DelegatedSubnetUsage
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
+from ._models_py3 import FeatureProperty
 from ._models_py3 import FirewallRule
 from ._models_py3 import FirewallRuleListResult
 from ._models_py3 import FullBackupStoreDetails
@@ -45,6 +46,7 @@ from ._models_py3 import LogFile
 from ._models_py3 import LogFileListResult
 from ._models_py3 import Maintenance
 from ._models_py3 import MaintenanceListResult
+from ._models_py3 import MaintenancePolicy
 from ._models_py3 import MaintenanceUpdate
 from ._models_py3 import MaintenanceWindow
 from ._models_py3 import MySQLServerIdentity
@@ -114,6 +116,7 @@ from ._my_sql_management_client_enums import MaintenanceType
 from ._my_sql_management_client_enums import ManagedServiceIdentityType
 from ._my_sql_management_client_enums import ObjectType
 from ._my_sql_management_client_enums import OperationStatus
+from ._my_sql_management_client_enums import PatchStrategy
 from ._my_sql_management_client_enums import PrivateEndpointConnectionProvisioningState
 from ._my_sql_management_client_enums import PrivateEndpointServiceConnectionStatus
 from ._my_sql_management_client_enums import ProvisioningState
@@ -155,6 +158,7 @@ __all__ = [
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
+    "FeatureProperty",
     "FirewallRule",
     "FirewallRuleListResult",
     "FullBackupStoreDetails",
@@ -167,6 +171,7 @@ __all__ = [
     "LogFileListResult",
     "Maintenance",
     "MaintenanceListResult",
+    "MaintenancePolicy",
     "MaintenanceUpdate",
     "MaintenanceWindow",
     "MySQLServerIdentity",
@@ -235,6 +240,7 @@ __all__ = [
     "ManagedServiceIdentityType",
     "ObjectType",
     "OperationStatus",
+    "PatchStrategy",
     "PrivateEndpointConnectionProvisioningState",
     "PrivateEndpointServiceConnectionStatus",
     "ProvisioningState",

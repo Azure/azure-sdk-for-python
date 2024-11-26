@@ -29,17 +29,7 @@ extends:
     ServiceDirectory: cognitiveservices
     TestTimeoutInMinutes: 150
     Artifacts:
-    - name: azure-cognitiveservices-language-spellcheck
-      safeName: azurecognitiveserviceslanguagespellcheck
     - name: azure-cognitiveservices-personalizer
       safeName: azurecognitiveservicespersonalizer
-    - name: azure-cognitiveservices-vision-computervision
-      safeName: azurecognitiveservicesvisioncomputervision
-    - name: azure-cognitiveservices-vision-contentmoderator
-      safeName: azurecognitiveservicesvisioncontentmoderator
-    - name: azure-cognitiveservices-vision-customvision
-      safeName: azurecognitiveservicesvisioncustomvision
-    - name: azure-cognitiveservices-vision-face
-      safeName: azurecognitiveservicesvisionface
     - name: azure-mgmt-cognitiveservices
       safeName: azuremgmtcognitiveservices

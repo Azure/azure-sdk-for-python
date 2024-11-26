@@ -1,12 +1,12 @@
 {
-  "commit": "0f21c214f0f5b4180ec71655b36b8fbd40fd1ceb",
+  "commit": "34424077cae09522361ea641761dc37941603383",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.13.16",
+    "@autorest/python@6.19.0",
     "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/resources/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.13.16 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "autorest_command": "autorest specification/resources/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.19.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
   "readme": "specification/resources/resource-manager/readme.md",
   "package-privatelinks-2020-05": "2022-03-18 16:14:07 -0700 2c68b6f0c9566d97d9d590a31b0d46997622eef7 Microsoft.Authorization/stable/2020-05-01/privateLinks.json",
   "package-features-2021-07": "2022-03-06 17:36:42 -0800 6a57e9cedc87cafd2dc9e4f3e8af62b5725e3d22 Microsoft.Features/stable/2021-07-01/features.json",
@@ -61,5 +61,7 @@
   "package-templatespecs-2019-06-preview": "2020-10-19 17:06:28 -0700 86d04dae5f34cbe19217e546cbc14d67664c7124 Microsoft.Resources/preview/2019-06-01-preview/templateSpecs.json",
   "package-deploymentstacks-2024-03": "2024-05-02 13:16:57 -0400 88cc082d66e2b481ed99a17d44edffaeb6254eec Microsoft.Resources/stable/2024-03-01/deploymentStacks.json",
   "package-deploymentstacks-2022-08-preview": "2024-05-02 13:16:57 -0400 88cc082d66e2b481ed99a17d44edffaeb6254eec Microsoft.Resources/preview/2022-08-01-preview/deploymentStacks.json",
-  "package-changes-2022-05": "2022-04-24 21:43:30 -0700 91b36e26db23dffc149d968333c29f9a2f131702 Microsoft.Resources/stable/2022-05-01/changes.json"
+  "package-changes-2022-05": "2022-04-24 21:43:30 -0700 91b36e26db23dffc149d968333c29f9a2f131702 Microsoft.Resources/stable/2022-05-01/changes.json",
+  "package-policy-2023-04-only": "2024-06-12 20:54:26 -0700 412364b282e52b50eadc3cd88d56d283b6c8712a Microsoft.Authorization/stable/2023-04-01/policySetDefinitions.json",
+  "package-databoundaries-2024-08": "2024-08-22 09:22:07 -0700 a6074b7654c388dec49c9969d0136cfeb03575c9 Microsoft.Resources/stable/2024-08-01/dataBoundaries.json"
 }

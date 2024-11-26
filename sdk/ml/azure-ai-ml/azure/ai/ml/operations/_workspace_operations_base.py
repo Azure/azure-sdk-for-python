@@ -11,8 +11,8 @@ from typing import Any, Callable, Dict, MutableMapping, Optional, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._restclient.v2024_07_01_preview import AzureMachineLearningWorkspaces as ServiceClient072024Preview
-from azure.ai.ml._restclient.v2024_07_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102024Preview
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
     WorkspaceUpdateParameters,
@@ -29,16 +29,17 @@ from azure.ai.ml._utils._workspace_utils import (
     get_name_for_dependent_resource,
     get_resource_and_group_name,
     get_resource_group_location,
+    get_sub_id_resource_and_group_name,
 )
 from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_min_sec
 from azure.ai.ml._version import VERSION
 from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.constants._common import (
+    WORKSPACE_PATCH_REJECTED_KEYS,
     ArmConstants,
     LROConfigurations,
     WorkspaceKind,
     WorkspaceResourceConstants,
-    WORKSPACE_PATCH_REJECTED_KEYS,
 )
 from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory
 from azure.ai.ml.entities import Hub, Project, Workspace
@@ -59,7 +60,7 @@ class WorkspaceOperationsBase(ABC):
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient072024Preview,
+        service_client: ServiceClient102024Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
@@ -85,11 +86,30 @@ class WorkspaceOperationsBase(ABC):
         workspace_name = self._check_workspace_name(workspace_name)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         obj = self._operation.get(resource_group, workspace_name)
+        v2_service_context = {}
+
+        v2_service_context["subscription_id"] = self._subscription_id
+        v2_service_context["workspace_name"] = workspace_name
+        v2_service_context["resource_group_name"] = resource_group
+        v2_service_context["auth"] = self._credentials  # type: ignore
+
+        from urllib.parse import urlparse
+
+        if obj is not None and obj.ml_flow_tracking_uri:
+            parsed_url = urlparse(obj.ml_flow_tracking_uri)
+            host_url = "https://{}".format(parsed_url.netloc)
+            v2_service_context["host_url"] = host_url
+        else:
+            v2_service_context["host_url"] = ""
+
+        # host_url=service_context._get_mlflow_url(),
+        # cloud=_get_cloud_or_default(
+        #     service_context.get_auth()._cloud_type.name
         if obj is not None and obj.kind is not None and obj.kind.lower() == WorkspaceKind.HUB:
-            return Hub._from_rest_object(obj)
+            return Hub._from_rest_object(obj, v2_service_context)
         if obj is not None and obj.kind is not None and obj.kind.lower() == WorkspaceKind.PROJECT:
-            return Project._from_rest_object(obj)
-        return Workspace._from_rest_object(obj)
+            return Project._from_rest_object(obj, v2_service_context)
+        return Workspace._from_rest_object(obj, v2_service_context)
 
     def begin_create(
         self,
@@ -582,16 +602,21 @@ class WorkspaceOperationsBase(ABC):
             )
 
         if workspace.storage_account:
-            resource_name, group_name = get_resource_and_group_name(workspace.storage_account)
+            subscription_id, resource_name, group_name = get_sub_id_resource_and_group_name(workspace.storage_account)
             _set_val(param["storageAccountName"], resource_name)
             _set_val(param["storageAccountOption"], "existing")
             _set_val(param["storageAccountResourceGroupName"], group_name)
+            _set_val(param["storageAccountSubscriptionId"], subscription_id)
         else:
             storage = _generate_storage(workspace.name, resources_being_deployed)
             _set_val(param["storageAccountName"], storage)
             _set_val(
                 param["storageAccountResourceGroupName"],
                 workspace.resource_group,
+            )
+            _set_val(
+                param["storageAccountSubscriptionId"],
+                self._subscription_id,
             )
 
         if workspace.application_insights:
@@ -755,6 +780,9 @@ class WorkspaceOperationsBase(ABC):
 
             if not kwargs.get("grant_materialization_permissions", None):
                 _set_val(param["grant_materialization_permissions"], "false")
+
+        if workspace.provision_network_now:
+            _set_val(param["provisionNetworkNow"], "true")
 
         managed_network = None
         if workspace.managed_network:

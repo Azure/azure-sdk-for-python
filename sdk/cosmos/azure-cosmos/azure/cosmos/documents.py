@@ -324,6 +324,8 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         Retry Configuration to be used for connection retries.
     :vartype ConnectionRetryConfiguration:
         int or ~azure.cosmos.ConnectionRetryPolicy
+    :ivar boolean ResponsePayloadOnWriteDisabled:
+        Indicates whether service should be instructed to skip sending response payloads
     """
 
     __defaultRequestTimeout: int = 60  # seconds
@@ -339,6 +341,7 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         self.DisableSSLVerification: bool = False
         self.UseMultipleWriteLocations: bool = False
         self.ConnectionRetryConfiguration: Optional["ConnectionRetryPolicy"] = None
+        self.ResponsePayloadOnWriteDisabled: bool = False
 
 
 class _OperationType:
@@ -370,6 +373,7 @@ class _OperationType:
             _OperationType.Replace,
             _OperationType.Upsert,
             _OperationType.Update,
+            _OperationType.Batch
         )
 
     @staticmethod
@@ -408,6 +412,8 @@ class _QueryFeature:
     OrderBy: Literal["OrderBy"] = "OrderBy"
     Top: Literal["Top"] = "Top"
     NonStreamingOrderBy: Literal["NonStreamingOrderBy"] = "NonStreamingOrderBy"
+    HybridSearch: Literal["HybridSearch"] = "HybridSearch"
+    CountIf: Literal["CountIf"] = "CountIf"
 
 
 class _DistinctType:

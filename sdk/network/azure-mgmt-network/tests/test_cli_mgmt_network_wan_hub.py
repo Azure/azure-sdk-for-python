@@ -1,10 +1,10 @@
 # coding: utf-8
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 
 # TEST SCENARIO COVERAGE
@@ -35,19 +35,23 @@ import unittest
 
 import azure.mgmt.network
 from azure.core.exceptions import ResourceExistsError
-from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import (
+    AzureMgmtRecordedTestCase,
+    ResourceGroupPreparer,
+    RandomNameResourceGroupPreparer,
+    recorded_by_proxy,
+)
 import pytest
 
-AZURE_LOCATION = 'eastus'
+AZURE_LOCATION = "eastus"
 
 
+@pytest.mark.live_test_only
 class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
-        self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.network.NetworkManagementClient
-        )
-    
+        self.mgmt_client = self.create_mgmt_client(azure.mgmt.network.NetworkManagementClient)
+
     @pytest.mark.skip(reason="fix later")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
@@ -67,61 +71,52 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         SECURITY_PARTNER_PROVIDER_NAME = self.get_resource_name("mySecurityPartnerProvider")
 
         # VirtualWANCreate[put]
-        BODY = {
-          "location": "West US",
-          "tags": {
-            "key1": "value1"
-          },
-          "disable_vpn_encryption": False,
-          "type": "Basic"
-        }
+        BODY = {"location": "West US", "tags": {"key1": "value1"}, "disable_vpn_encryption": False, "type": "Basic"}
         result = self.mgmt_client.virtual_wans.begin_create_or_update(resource_group.name, VIRTUAL_WAN_NAME, BODY)
         result = result.result()
 
         # VpnSiteCreate[put]
         BODY = {
-          "tags": {
-            "key1": "value1"
-          },
-          "location": "West US",
-          "virtual_wan": {
-            "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualWans/" + VIRTUAL_WAN_NAME + ""
-          },
-          "address_space": {
-            "address_prefixes": [
-              "10.0.0.0/16"
-            ]
-          },
-          "is_security_site": False,
-          "vpn_site_links": [
-            {
-              "name": "vpnSiteLink1",
-              "ip_address": "50.50.50.56",
-              "link_properties": {
-                "link_provider_name": "vendor1",
-                "link_speed_in_mbps": "0"
-              },
-              "bgp_properties": {
-                "bgp_peering_address": "192.168.0.0",
-                "asn": "1234"
-              }
-            }
-          ]
+            "tags": {"key1": "value1"},
+            "location": "West US",
+            "virtual_wan": {
+                "id": "/subscriptions/"
+                + SUBSCRIPTION_ID
+                + "/resourceGroups/"
+                + RESOURCE_GROUP
+                + "/providers/Microsoft.Network/virtualWans/"
+                + VIRTUAL_WAN_NAME
+                + ""
+            },
+            "address_space": {"address_prefixes": ["10.0.0.0/16"]},
+            "is_security_site": False,
+            "vpn_site_links": [
+                {
+                    "name": "vpnSiteLink1",
+                    "ip_address": "50.50.50.56",
+                    "link_properties": {"link_provider_name": "vendor1", "link_speed_in_mbps": "0"},
+                    "bgp_properties": {"bgp_peering_address": "192.168.0.0", "asn": "1234"},
+                }
+            ],
         }
         result = self.mgmt_client.vpn_sites.begin_create_or_update(resource_group.name, VPN_SITE_NAME, BODY)
         result = result.result()
 
         # VirtualHubPut[put]
         BODY = {
-          "location": "West US",
-          "tags": {
-            "key1": "value1"
-          },
-          "virtual_wan": {
-            "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualWans/" + VIRTUAL_WAN_NAME + ""
-          },
-          "address_prefix": "10.168.0.0/24",
-          "sku": "Basic"
+            "location": "West US",
+            "tags": {"key1": "value1"},
+            "virtual_wan": {
+                "id": "/subscriptions/"
+                + SUBSCRIPTION_ID
+                + "/resourceGroups/"
+                + RESOURCE_GROUP
+                + "/providers/Microsoft.Network/virtualWans/"
+                + VIRTUAL_WAN_NAME
+                + ""
+            },
+            "address_prefix": "10.168.0.0/24",
+            "sku": "Basic",
         }
         result = self.mgmt_client.virtual_hubs.begin_create_or_update(resource_group.name, VIRTUAL_HUB_NAME, BODY)
         result = result.result()
@@ -131,52 +126,74 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
         # VpnGatewayPut[put]
         BODY = {
-          "location": "West US",
-          "tags": {
-            "key1": "value1"
-          },
-          "virtual_hub": {
-            "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualHubs/" + VIRTUAL_HUB_NAME + ""
-          },
-          "connections": [
-            {
-              "name": "vpnConnection1",
-              "remote_vpn_site": {
-                "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/vpnSites/" + VPN_SITE_NAME + ""
-              },
-              "vpn_link_connections": [
+            "location": "West US",
+            "tags": {"key1": "value1"},
+            "virtual_hub": {
+                "id": "/subscriptions/"
+                + SUBSCRIPTION_ID
+                + "/resourceGroups/"
+                + RESOURCE_GROUP
+                + "/providers/Microsoft.Network/virtualHubs/"
+                + VIRTUAL_HUB_NAME
+                + ""
+            },
+            "connections": [
                 {
-                  "name": "Connection-Link1",
-                  "vpn_site_link": {
-                    "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/vpnSites/" + VPN_SITE_NAME + "/vpnSiteLinks/" + VPN_SITE_LINK_NAME + ""
-                  },
-                  "connection_bandwidth": "200",
-                  "vpn_connection_protocol_type": "IKEv2",
-                  "shared_key": "key"
+                    "name": "vpnConnection1",
+                    "remote_vpn_site": {
+                        "id": "/subscriptions/"
+                        + SUBSCRIPTION_ID
+                        + "/resourceGroups/"
+                        + RESOURCE_GROUP
+                        + "/providers/Microsoft.Network/vpnSites/"
+                        + VPN_SITE_NAME
+                        + ""
+                    },
+                    "vpn_link_connections": [
+                        {
+                            "name": "Connection-Link1",
+                            "vpn_site_link": {
+                                "id": "/subscriptions/"
+                                + SUBSCRIPTION_ID
+                                + "/resourceGroups/"
+                                + RESOURCE_GROUP
+                                + "/providers/Microsoft.Network/vpnSites/"
+                                + VPN_SITE_NAME
+                                + "/vpnSiteLinks/"
+                                + VPN_SITE_LINK_NAME
+                                + ""
+                            },
+                            "connection_bandwidth": "200",
+                            "vpn_connection_protocol_type": "IKEv2",
+                            "shared_key": "key",
+                        }
+                    ],
                 }
-              ]
-            }
-          ],
-          "bgp_settings": {
-            "asn": "65515",
-            "peer_weight": "0"
-          }
+            ],
+            "bgp_settings": {"asn": "65515", "peer_weight": "0"},
         }
         result = self.mgmt_client.vpn_gateways.begin_create_or_update(resource_group.name, VPN_GATEWAY_NAME, BODY)
         result = result.result()
 
         # /SecurityPartnerProviders/put/Create Security Partner Provider[put]
         BODY = {
-          "tags": {
-            "key1": "value1"
-          },
-          "location": "West US",
-          "security_provider_name": "ZScaler",
-          "virtual_hub": {
-            "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualHubs/" + VIRTUAL_HUB_NAME
-          }
+            "tags": {"key1": "value1"},
+            "location": "West US",
+            "security_provider_name": "ZScaler",
+            "virtual_hub": {
+                "id": "/subscriptions/"
+                + SUBSCRIPTION_ID
+                + "/resourceGroups/"
+                + RESOURCE_GROUP
+                + "/providers/Microsoft.Network/virtualHubs/"
+                + VIRTUAL_HUB_NAME
+            },
         }
-        result = self.mgmt_client.security_partner_providers.begin_create_or_update(resource_group_name=RESOURCE_GROUP, security_partner_provider_name=SECURITY_PARTNER_PROVIDER_NAME, parameters=BODY)
+        result = self.mgmt_client.security_partner_providers.begin_create_or_update(
+            resource_group_name=RESOURCE_GROUP,
+            security_partner_provider_name=SECURITY_PARTNER_PROVIDER_NAME,
+            parameters=BODY,
+        )
         result = result.result()
 
         # TODO: need fix cert
@@ -320,7 +337,9 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         # result = self.mgmt_client.hub_virtual_network_connections.get(resource_group.name, VIRTUAL_HUB_NAME, HUB_VIRTUAL_NETWORK_CONNECTION_NAME)
 
         # VpnSiteLinkConnectionList[get]
-        result = self.mgmt_client.vpn_link_connections.list_by_vpn_connection(resource_group.name, VPN_GATEWAY_NAME, VPN_CONNECTION_NAME)
+        result = self.mgmt_client.vpn_link_connections.list_by_vpn_connection(
+            resource_group.name, VPN_GATEWAY_NAME, VPN_CONNECTION_NAME
+        )
 
         # VpnConnectionGet[get]
         # result = self.mgmt_client.vpn_connections.get(resource_group.name, VPN_GATEWAY_NAME, VPN_CONNECTION_NAME)
@@ -365,7 +384,9 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         # result = self.mgmt_client.p2s_vpn_gateways.list_by_resource_group(resource_group.name)
 
         # /SecurityPartnerProviders/get/Get Security Partner Provider[get]
-        result = self.mgmt_client.security_partner_providers.get(resource_group_name=RESOURCE_GROUP, security_partner_provider_name=SECURITY_PARTNER_PROVIDER_NAME)
+        result = self.mgmt_client.security_partner_providers.get(
+            resource_group_name=RESOURCE_GROUP, security_partner_provider_name=SECURITY_PARTNER_PROVIDER_NAME
+        )
 
         # /SecurityPartnerProviders/get/List all Security Partner Providers for a given resource group[get]
         result = self.mgmt_client.security_partner_providers.list_by_resource_group(resource_group_name=RESOURCE_GROUP)
@@ -480,50 +501,29 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         # result = self.mgmt_client.p2s_vpn_gateways.update_tags(resource_group.name, P2SVPN_GATEWAY_NAME, BODY)
 
         # VirtualHubUpdate[patch]
-        BODY = {
-          "tags": {
-            "key1": "value1",
-            "key2": "value2"
-          }
-        }
+        BODY = {"tags": {"key1": "value1", "key2": "value2"}}
         result = self.mgmt_client.virtual_hubs.update_tags(resource_group.name, VIRTUAL_HUB_NAME, BODY)
 
         # VirtualWANUpdate[patch]
-        BODY = {
-          "tags": {
-            "key1": "value1",
-            "key2": "value2"
-          }
-        }
+        BODY = {"tags": {"key1": "value1", "key2": "value2"}}
         result = self.mgmt_client.virtual_wans.update_tags(resource_group.name, VIRTUAL_WAN_NAME, BODY)
 
         # VpnGatewayUpdate[patch]
-        BODY = {
-          "tags": {
-            "tag1": "value1",
-            "tag2": "value2"
-          }
-        }
+        BODY = {"tags": {"tag1": "value1", "tag2": "value2"}}
         # result = self.mgmt_client.vpn_gateways.begin_update_tags(resource_group.name, VPN_GATEWAY_NAME, BODY)
         # result = result.result()
 
         # VpnSiteUpdate[patch]
-        BODY = {
-          "tags": {
-            "key1": "value1",
-            "key2": "value2"
-          }
-        }
+        BODY = {"tags": {"key1": "value1", "key2": "value2"}}
         result = self.mgmt_client.vpn_sites.update_tags(resource_group.name, VPN_SITE_NAME, BODY)
 
         # /SecurityPartnerProviders/patch/Update Security Partner Provider Tags[patch]
-        BODY = {
-          "tags": {
-            "tag1": "value1",
-            "tag2": "value2"
-          }
-        }
-        result = self.mgmt_client.security_partner_providers.update_tags(resource_group_name=RESOURCE_GROUP, security_partner_provider_name=SECURITY_PARTNER_PROVIDER_NAME, parameters=BODY)
+        BODY = {"tags": {"tag1": "value1", "tag2": "value2"}}
+        result = self.mgmt_client.security_partner_providers.update_tags(
+            resource_group_name=RESOURCE_GROUP,
+            security_partner_provider_name=SECURITY_PARTNER_PROVIDER_NAME,
+            parameters=BODY,
+        )
 
         # # VpnConnectionDelete[delete]
         # result = self.mgmt_client.vpn_connections.begin_delete(resource_group.name, VPN_GATEWAY_NAME, VPN_CONNECTION_NAME)
@@ -542,7 +542,9 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         # result = result.result()
 
         # /SecurityPartnerProviders/delete/Delete Security Partner Provider[delete]
-        result = self.mgmt_client.security_partner_providers.begin_delete(resource_group_name=RESOURCE_GROUP, security_partner_provider_name=SECURITY_PARTNER_PROVIDER_NAME)
+        result = self.mgmt_client.security_partner_providers.begin_delete(
+            resource_group_name=RESOURCE_GROUP, security_partner_provider_name=SECURITY_PARTNER_PROVIDER_NAME
+        )
         result = result.result()
 
         # VpnGatewayDelete[delete]
@@ -566,6 +568,6 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         result = result.result()
 
 
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
+# ------------------------------------------------------------------------------
+if __name__ == "__main__":
     unittest.main()

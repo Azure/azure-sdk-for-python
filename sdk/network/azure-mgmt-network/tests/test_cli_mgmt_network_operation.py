@@ -1,10 +1,10 @@
 # coding: utf-8
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 
 # TEST SCENARIO COVERAGE
@@ -25,16 +25,15 @@ import azure.mgmt.network
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 import pytest
 
-AZURE_LOCATION = 'eastus'
+AZURE_LOCATION = "eastus"
 
 
+@pytest.mark.live_test_only
 class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
-        self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.network.NetworkManagementClient
-        )
-    
+        self.mgmt_client = self.create_mgmt_client(azure.mgmt.network.NetworkManagementClient)
+
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_network(self, resource_group):
@@ -53,6 +52,6 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         result = self.mgmt_client.usages.list(location=LOCATION)
 
 
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
+# ------------------------------------------------------------------------------
+if __name__ == "__main__":
     unittest.main()

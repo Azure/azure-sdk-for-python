@@ -1,5 +1,11 @@
 # Release History
 
+## 3.1.1 (2024-11-01)
+
+### Other Changes
+
+- This package has been deprecated and will no longer be maintained after 11-01-2024. This package will only receive security fixes until 11-01-2024.
+
 ## 3.1.0 (2020-11-10)
 
 *Training 3.4-preview*

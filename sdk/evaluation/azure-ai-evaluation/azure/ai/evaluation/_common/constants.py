@@ -3,6 +3,11 @@
 # ---------------------------------------------------------
 from enum import Enum
 
+from azure.core import CaseInsensitiveEnumMeta
+
+
+PROMPT_BASED_REASON_EVALUATORS = ["coherence", "relevance", "retrieval", "groundedness", "fluency"]
+
 
 class CommonConstants:
     """Define common constants."""
@@ -32,6 +37,8 @@ class Tasks:
 
     CONTENT_HARM = "content harm"
     PROTECTED_MATERIAL = "protected material"
+    XPIA = "xpia"
+    GROUNDEDNESS = "groundedness"
 
 
 class _InternalAnnotationTasks:
@@ -42,7 +49,7 @@ class _InternalAnnotationTasks:
     ECI = "eci"
 
 
-class EvaluationMetrics:
+class EvaluationMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Evaluation metrics to aid the RAI service in determining what
     metrics to request, and how to present them back to the user."""
 
@@ -52,9 +59,11 @@ class EvaluationMetrics:
     SELF_HARM = "self_harm"
     SEXUAL = "sexual"
     PROTECTED_MATERIAL = "protected_material"
+    XPIA = "xpia"
+    GROUNDEDNESS = "generic_groundedness"
 
 
-class _InternalEvaluationMetrics:
+class _InternalEvaluationMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Evaluation metrics that are not publicly supported.
     These metrics are experimental and subject to potential change or migration to the main
     enum over time.

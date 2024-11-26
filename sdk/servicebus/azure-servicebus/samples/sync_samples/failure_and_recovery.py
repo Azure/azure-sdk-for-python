@@ -24,12 +24,13 @@ from azure.servicebus.exceptions import (
     ServiceBusCommunicationError,
     MessageAlreadySettled,
     MessageLockLostError,
-    MessageNotFoundError
+    MessageNotFoundError,
 )
 from azure.identity import DefaultAzureCredential
 
-FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
+FULLY_QUALIFIED_NAMESPACE = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
 QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
+
 
 def send_batch_messages(sender):
     batch_message = sender.create_message_batch()
@@ -47,7 +48,7 @@ def send_batch_messages(sender):
             # This must be handled at the application layer, by breaking up or condensing.
             continue
     last_error = None
-    for _ in range(3): # Send retries
+    for _ in range(3):  # Send retries
         try:
             sender.send_messages(batch_message)
             return
@@ -66,6 +67,7 @@ def send_batch_messages(sender):
     if last_error:
         raise last_error
 
+
 def receive_messages(receiver):
     should_retry = True
     while should_retry:
@@ -77,8 +79,8 @@ def receive_messages(receiver):
                     should_complete = True
                 except Exception as e:
                     should_complete = False
-                
-                for _ in range(3): # Settlement retry
+
+                for _ in range(3):  # Settlement retry
                     try:
                         if should_complete:
                             receiver.complete_message(msg)
@@ -112,12 +114,11 @@ def receive_messages(receiver):
             continue
 
 
-
 def send_and_receive_defensively():
     credential = DefaultAzureCredential()
     servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential, logging_enable=True)
 
-    for _ in range(3): # Connection retries.
+    for _ in range(3):  # Connection retries.
         try:
             print("Opening")
             with servicebus_client:
@@ -157,6 +158,7 @@ def send_and_receive_defensively():
             # Unable to communicate with the specified servicebus.  Ensure that the FQDN is correct,
             # and that there is no firewall or network issue preventing connectivity.
             raise
+
 
 send_and_receive_defensively()
 print("Send and Receive is done.")

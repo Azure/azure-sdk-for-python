@@ -25,7 +25,18 @@
 # --------------------------------------------------------------------------
 from __future__ import annotations
 from types import TracebackType
-from typing import Any, Union, Generic, TypeVar, List, Dict, Optional, Iterable, Type, AsyncContextManager
+from typing import (
+    Any,
+    Union,
+    Generic,
+    TypeVar,
+    List,
+    Dict,
+    Optional,
+    Iterable,
+    Type,
+    AsyncContextManager,
+)
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
@@ -37,9 +48,7 @@ AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 
 
-class _SansIOAsyncHTTPPolicyRunner(
-    AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
-):  # pylint: disable=unsubscriptable-object
+class _SansIOAsyncHTTPPolicyRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]):
     """Async implementation of the SansIO policy.
 
     Modifies the request and sends to the next policy in the chain.
@@ -66,16 +75,14 @@ class _SansIOAsyncHTTPPolicyRunner(
         response: PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]
         try:
             response = await self.next.send(request)
-        except Exception:  # pylint: disable=broad-except
+        except Exception:
             await _await_result(self._policy.on_exception, request)
             raise
         await _await_result(self._policy.on_response, request, response)
         return response
 
 
-class _AsyncTransportRunner(
-    AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
-):  # pylint: disable=unsubscriptable-object
+class _AsyncTransportRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]):
     """Async Transport runner.
 
     Uses specified HTTP transport type to send request and returns response.
@@ -106,7 +113,10 @@ class _AsyncTransportRunner(
         )
 
 
-class AsyncPipeline(AsyncContextManager["AsyncPipeline"], Generic[HTTPRequestType, AsyncHTTPResponseType]):
+class AsyncPipeline(
+    AsyncContextManager["AsyncPipeline"],
+    Generic[HTTPRequestType, AsyncHTTPResponseType],
+):
     """Async pipeline implementation.
 
     This is implemented as a context manager, that will activate the context
@@ -126,7 +136,7 @@ class AsyncPipeline(AsyncContextManager["AsyncPipeline"], Generic[HTTPRequestTyp
             :caption: Builds the async pipeline for asynchronous transport.
     """
 
-    def __init__(  # pylint: disable=super-init-not-called
+    def __init__(
         self,
         transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType],
         policies: Optional[

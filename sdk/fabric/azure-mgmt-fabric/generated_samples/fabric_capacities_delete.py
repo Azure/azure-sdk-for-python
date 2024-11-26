@@ -36,5 +36,6 @@ def main():
     ).result()
 
 
+# x-ms-original-file: 2023-11-01/FabricCapacities_Delete.json
 if __name__ == "__main__":
     main()
