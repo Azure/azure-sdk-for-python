@@ -8,6 +8,7 @@ extends:
       TestTimeoutInMinutes: 200
       MatrixReplace:
         - TestSamples=.*/true
+      SupportedClouds: 'Public,UsGov,China'
       Clouds: 'Prod'
       # This is a specific request from the formrecognizer service team
       # their claim is that the full matrix ends up stress-testing their service.
@@ -16,6 +17,13 @@ extends:
         Prod:
           ServiceConnection: azure-sdk-tests
           Location: 'centraluseuap'
+        Public:
+          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+          Location: 'westus2'
+        UsGov:
+          SubscriptionConfiguration: $(sub-config-gov-test-resources)
+        China:
+          SubscriptionConfiguration: $(sub-config-cn-test-resources)
       EnvVars:
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_SKIP_LIVE_RECORDING: 'True'

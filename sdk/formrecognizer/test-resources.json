@@ -397,6 +397,10 @@
         "CONTAINER_SAS_URL_DYNAMIC_V2": {
             "type": "string",
             "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('labelTablesVariableRowsContainer'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('labelTablesVariableRowsSasProperties')).serviceSasToken)]"
+        },
+        "FORMRECOGNIZER_ENDPOINT_SUFFIX": {
+            "type": "string",
+            "value": "[parameters('formRecognizerEndpointSuffix')]"
         }
     }
 }
