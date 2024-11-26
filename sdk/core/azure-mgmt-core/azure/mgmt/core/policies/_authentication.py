@@ -50,6 +50,7 @@ class ARMChallengeAuthenticationPolicy(BearerTokenCredentialPolicy):
     it will return the 401 (unauthorized) response from ARM.
     """
 
+
 # pylint:disable=too-few-public-methods
 class _AuxiliaryAuthenticationPolicyBase(Generic[TokenCredentialType]):
     """Adds auxiliary authorization token header to requests.

@@ -46,6 +46,7 @@ CLAIM_NBF = base64.b64encode(b'{"access_token":{"nbf":{"essential":true, "value"
 ip_claim = b'{"access_token":{"nbf":{"essential":true,"value":"1610563006"},"xms_rp_ipaddr":{"value":"1.2.3.4"}}}'
 CLAIM_IP = base64.b64encode(ip_claim).decode()[:-2]  # Trim off padding = characters
 
+
 def test_auxiliary_authentication_policy():
     """The auxiliary authentication policy should add a header containing a token from its credential"""
     first_token = AccessToken("first", int(time.time()) + 3600)
@@ -147,8 +148,12 @@ def test_multiple_claims_challenges():
 
     expected_header = ",".join(
         (
-            'Bearer realm="", authorization_uri="https://localhost", client_id="00", error="insufficient_claims", claims="{}"'.format(claims),
-            'Bearer authorization_uri="https://login.windows-ppe.net/", error="invalid_token", error_description="User session has been revoked", claims="{}"'.format(claims),
+            'Bearer realm="", authorization_uri="https://localhost", client_id="00", error="insufficient_claims", claims="{}"'.format(
+                claims
+            ),
+            'Bearer authorization_uri="https://login.windows-ppe.net/", error="invalid_token", error_description="User session has been revoked", claims="{}"'.format(
+                claims
+            ),
         )
     )
 
