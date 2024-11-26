@@ -3,21 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import abc
-from typing import Any, Mapping, Union, Generic, Dict, Optional
+from typing import Any, Optional, Tuple, Mapping, Union, TypeVar, Dict, Type, Callable
 from datetime import datetime, timezone
 from urllib.parse import quote
 from uuid import UUID
 
 from ._common_conversion import _decode_base64_to_bytes
-from ._encoder import T
 from ._entity import EntityProperty, EdmType, TableEntity, EntityMetadata
-
-
-def deserialize_iso(value):
-    if not value:
-        return value
-    return _from_entity_datetime(value)
 
 
 class TablesEntityDatetime(datetime):
@@ -29,75 +21,48 @@ class TablesEntityDatetime(datetime):
             return ""
 
 
-def _from_entity_datetime(value):
-    # Cosmos returns this with a decimal point that throws an error on deserialization
-    # .NET has more decimal places than Python supports in datetime objects, this truncates
-    # values after 6 decimal places.
-    value_list = value.split(".")
-    if len(value_list) == 2:
-        ms = value_list[-1].replace("Z", "")
-        if len(ms) > 6:
-            ms = ms[:6]
-        ms = ms + "Z"
-        cleaned_value = ".".join([value_list[0], ms])
-    else:
-        cleaned_value = value_list[0]
+class TableEntityDecoder():
+    def __init__(
+        self,
+        convert_map: Optional[Dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Any]]]],
+        flatten_result_entity: bool
+    ) -> None:
+        self.convert_map = convert_map
+        self.flatten_result_entity = flatten_result_entity
 
-    try:
-        dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
-    except ValueError:
-        dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
-    dt_obj._service_value = value  # pylint:disable=protected-access,assigning-non-slot
-    return dt_obj
-
-
-class TableEntityDecoderABC(abc.ABC, Generic[T]):
-    @abc.abstractmethod
-    def decode_entity(self, entity_json: Dict[str, Union[str, int, float, bool]]) -> T:
-        """Decode the entity in response in JSON format to a custom entity type.
-
-        :param entity: A table entity.
-        :type entity: Custom entity type
-        :return: An entity with property's metadata in JSON format.
-        :rtype: dict
-        """
-
-
-class TableEntityDecoder(TableEntityDecoderABC[Union[TableEntity, Mapping[str, Any]]]):
-    def decode_entity(
-        self, entity_json: Dict[str, Union[str, int, float, bool]]
-    ) -> Union[TableEntity, Mapping[str, Any]]:
-        """Decode the entity in response in JSON format to TableEntity type.
+    def __call__(self, entry_element: Union[TableEntity, Mapping[str, Any]]) -> Dict[str, Union[str, int, float, bool]]:
+        """Convert json response to entity.
         The entity format is:
+        {
+        "Address":"Mountain View",
+        "Age":23,
+        "AmountDue":200.23,
+        "CustomerCode@odata.type":"Edm.Guid",
+        "CustomerCode":"c9da6455-213d-42c9-9a79-3e9149a57833",
+        "CustomerSince@odata.type":"Edm.DateTime",
+        "CustomerSince":"2008-07-10T00:00:00",
+        "IsActive":true,
+        "NumberOfOrders@odata.type":"Edm.Int64",
+        "NumberOfOrders":"255",
+        "PartitionKey":"my_partition_key",
+        "RowKey":"my_row_key"
+        }
 
-        .. code-block:: json
-            {
-                "Address":"Mountain View",
-                "Age":23,
-                "AmountDue":200.23,
-                "CustomerCode@odata.type":"Edm.Guid",
-                "CustomerCode":"c9da6455-213d-42c9-9a79-3e9149a57833",
-                "CustomerSince@odata.type":"Edm.DateTime",
-                "CustomerSince":"2008-07-10T00:00:00",
-                "IsActive":true,
-                "NumberOfOrders@odata.type":"Edm.Int64",
-                "NumberOfOrders":"255",
-                "PartitionKey":"my_partition_key",
-                "RowKey":"my_row_key"
-            }
-
-        :param entity_json: An entity with property's metadata in JSON format.
-        :type entity_json: dict
-        :return: A table entity.
-        :rtype: ~azure.data.tables.TableEntity
+        :param entry_element: The entity in response.
+        :type entry_element: Mapping[str, Any]
+        :return: An entity dict with additional metadata.
+        :rtype: dict[str, Any]
         """
-        decoded = TableEntity()
+        if self.flatten_result_entity:
+            entity = {}
+        else:
+            entity = TableEntity()
 
         properties = {}
         edmtypes = {}
         odata = {}
 
-        for name, value in entity_json.items():
+        for name, value in entry_element.items():
             if name.startswith("odata."):
                 odata[name[6:]] = value
             elif name.endswith("@odata.type"):
@@ -105,48 +70,142 @@ class TableEntityDecoder(TableEntityDecoderABC[Union[TableEntity, Mapping[str, A
             else:
                 properties[name] = value
 
-        # prepare metadata
-        raw_timestamp: Optional[str] = properties.pop("Timestamp", None)  # type: ignore[assignment]
-        raw_etag: Optional[str] = odata.pop("etag", None)  # type: ignore[assignment]
-        timestamp = raw_timestamp
-        etag = raw_etag
-        if raw_timestamp:
-            if not raw_etag:
-                etag = f"W/\"datetime'{quote(raw_timestamp)}'\""
-            timestamp = _from_entity_datetime(raw_timestamp)
-        metadata: EntityMetadata = {"etag": etag, "timestamp": timestamp}
-        odata.pop("metadata", None)
-        id = odata.pop("id", None)
-        if id:
-            metadata["id"] = id
-        type = odata.pop("type", None)
-        if type:
-            metadata["type"] = type
-        editLink = odata.pop("editLink", None)
-        if editLink:
-            metadata["editLink"] = editLink
-        decoded._metadata = metadata  # pylint: disable=protected-access
+        # TODO: investigate whether we can entirely remove lines 160-168
+        # Partition key is a known property
+        partition_key = properties.pop("PartitionKey", None)
+        if partition_key is not None:
+            entity["PartitionKey"] = partition_key
+
+        # Row key is a known property
+        row_key = properties.pop("RowKey", None)
+        if row_key is not None:
+            entity["RowKey"] = row_key
+
+        # Timestamp is a known property
+        timestamp = properties.pop("Timestamp", None)
 
         for name, value in properties.items():
-            if name in ["PartitionKey", "RowKey"]:
-                decoded[name] = value
-                continue
+            mtype = edmtypes.get(name)
 
-            edm_type = edmtypes.get(name)
+            # Add type for Int32/64
+            if isinstance(value, int) and mtype is None:
+                mtype = EdmType.INT32
 
-            if not edm_type:
-                decoded[name] = value  # no type info, property should parse automatically
-            elif edm_type == EdmType.BINARY:
-                decoded[name] = _decode_base64_to_bytes(value)
-            elif edm_type == EdmType.DOUBLE:
-                decoded[name] = float(value)
-            elif edm_type == EdmType.INT64:
-                decoded[name] = EntityProperty(int(value), edm_type)
-            elif edm_type == EdmType.DATETIME:
-                decoded[name] = _from_entity_datetime(value)
-            elif edm_type == EdmType.GUID:
-                decoded[name] = UUID(value)  # type: ignore[arg-type]
-            else:
-                decoded[name] = EntityProperty(value, edm_type)  # type: ignore[arg-type]
+                if value >= 2**31 or value < (-(2**31)):
+                    mtype = EdmType.INT64
 
-        return decoded
+            # Add type for String
+            if isinstance(value, str) and mtype is None:
+                mtype = EdmType.STRING
+
+            # no type info, property should parse automatically
+            if not mtype:
+                entity[name] = value
+            elif mtype in [EdmType.STRING, EdmType.INT32]:
+                entity[name] = value
+            else:  # need an object to hold the property
+                convert = None
+                if self.convert_map:
+                    convert = self.convert_map.get(mtype)
+                if convert:
+                    new_property = convert(value)
+                else:
+                    convert = _ENTITY_TO_PYTHON_CONVERSIONS.get(mtype)
+                    if convert:
+                        new_property = convert(self, value)
+                    else:
+                        new_property = EntityProperty(mtype, value)
+                entity[name] = new_property
+
+        # extract etag from entry
+        etag = odata.pop("etag", None)
+        odata.pop("metadata", None)
+        if timestamp:
+            if not etag:
+                etag = "W/\"datetime'" + quote(timestamp) + "'\""
+            timestamp = self._from_entity_datetime(timestamp)
+        odata.update({"etag": etag, "timestamp": timestamp})
+        if self.flatten_result_entity:
+            for name, value in odata.items():
+                entity[name] = value
+        else:
+            entity._metadata = odata  # pylint: disable=protected-access
+        return entity
+
+
+    def get_enum_value(self, value):
+        if value is None or value in ["None", ""]:
+            return None
+        try:
+            return value.value
+        except AttributeError:
+            return value
+
+
+    def _from_entity_binary(self, value: str) -> bytes:
+        return _decode_base64_to_bytes(value)
+
+
+    def _from_entity_int32(self, value: str) -> int:
+        return int(value)
+
+
+    def _from_entity_int64(self, value: str) -> EntityProperty:
+        return EntityProperty(int(value), EdmType.INT64)
+
+
+    def _from_entity_datetime(self, value):
+        # Cosmos returns this with a decimal point that throws an error on deserialization
+        cleaned_value = self.clean_up_dotnet_timestamps(value)
+        try:
+            dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
+        except ValueError:
+            dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+        dt_obj._service_value = value  # pylint:disable=protected-access,assigning-non-slot
+        return dt_obj
+
+
+    def clean_up_dotnet_timestamps(self, value):
+        # .NET has more decimal places than Python supports in datetime objects, this truncates
+        # values after 6 decimal places.
+        value = value.split(".")
+        ms = ""
+        if len(value) == 2:
+            ms = value[-1].replace("Z", "")
+            if len(ms) > 6:
+                ms = ms[:6]
+            ms = ms + "Z"
+            return ".".join([value[0], ms])
+
+        return value[0]
+
+
+    def deserialize_iso(self, value):
+        if not value:
+            return value
+        return self._from_entity_datetime(value)
+
+
+    def _from_entity_guid(self, value):
+        return UUID(value)
+
+
+    def _from_entity_str(self, value: Union[str, bytes]) -> str:
+        if isinstance(value, bytes):
+            return value.decode("utf-8")
+        return value
+
+_ENTITY_TO_PYTHON_CONVERSIONS = {
+    EdmType.BINARY: TableEntityDecoder._from_entity_binary,
+    EdmType.INT32: TableEntityDecoder._from_entity_int32,
+    EdmType.INT64: TableEntityDecoder._from_entity_int64,
+    EdmType.DOUBLE: lambda _, v: float(v),
+    EdmType.DATETIME: TableEntityDecoder._from_entity_datetime,
+    EdmType.GUID: TableEntityDecoder._from_entity_guid,
+    EdmType.STRING: TableEntityDecoder._from_entity_str,
+}
+
+def deserialize_iso(value):
+    if not value:
+        return value
+    return TableEntityDecoder()._from_entity_datetime(value)

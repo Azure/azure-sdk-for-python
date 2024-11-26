@@ -11,8 +11,8 @@ from azure.core.rest import HttpRequest
 from ._common_conversion import _transform_patch_to_cosmos_post, _prepare_key
 from ._models import UpdateMode, TransactionOperation
 from ._serialize import _get_match_condition
+from ._encoder import TableEntityEncoder
 from ._entity import TableEntity
-from ._encoder import TableEntityEncoderABC
 from ._generated.operations._operations import (
     build_table_insert_entity_request,
     build_table_merge_entity_request,
@@ -57,7 +57,7 @@ class TableBatchOperations(object):
         config: Union[AzureTableConfiguration, AsyncAzureTableConfiguration],
         endpoint: str,
         table_name: str,
-        encoder: TableEntityEncoderABC[Union[EntityType, T]],
+        encoder: TableEntityEncoder,
         is_cosmos_endpoint: bool = False,
     ) -> None:
         """Create TableClient from a Credential.
@@ -69,7 +69,7 @@ class TableBatchOperations(object):
         :param table_name: The name of the Table to perform operations on.
         :type table_name: str
         :param encoder: The encoder used to serialize the outgoing Tables entities.
-        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
+        :type encoder: ~azure.data.Tables.TableEntityEncoder
         :param is_cosmos_endpoint: True if the client endpoint is for Tables Cosmos. False if not. Default is False.
         :type is_cosmos_endpoint: bool
         """
@@ -112,7 +112,7 @@ class TableBatchOperations(object):
         except AttributeError as exc:
             raise ValueError(f"Unrecognized operation: {operation_type}") from exc
 
-    def create(self, entity: Union[EntityType, T], **kwargs) -> None:
+    def create(self, entity: EntityType, **kwargs) -> None:
         """Adds an insert operation to the current batch.
 
         :param entity: The properties for the table entity.
@@ -129,7 +129,7 @@ class TableBatchOperations(object):
                 :dedent: 8
                 :caption: Creating and adding an entity to a Table
         """
-        entity_json = self._encoder.encode_entity(entity)
+        entity_json = self._encoder(entity)
         self._verify_partition_key(entity_json)
         request = build_table_insert_entity_request(
             table=self.table_name, json=entity_json, version=self._config.version, **kwargs
@@ -174,7 +174,7 @@ class TableBatchOperations(object):
         match_condition = _get_match_condition(
             etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
-        entity_json = self._encoder.encode_entity(entity)
+        entity_json = self._encoder(entity)
         self._verify_partition_key(entity_json)
         partition_key = entity_json.get("PartitionKey")
         row_key = entity_json.get("RowKey")
@@ -238,7 +238,7 @@ class TableBatchOperations(object):
         """
         if match_condition and not etag and isinstance(entity, TableEntity):
             etag = entity.metadata.get("etag")
-        entity_json = self._encoder.encode_entity(entity)
+        entity_json = self._encoder(entity)
         self._verify_partition_key(entity_json)
         partition_key = entity_json.get("PartitionKey")
         row_key = entity_json.get("RowKey")
@@ -275,7 +275,7 @@ class TableBatchOperations(object):
                 :dedent: 8
                 :caption: Creating and adding an entity to a Table
         """
-        entity_json = self._encoder.encode_entity(entity)
+        entity_json = self._encoder(entity)
         self._verify_partition_key(entity_json)
         partition_key = entity_json.get("PartitionKey")
         row_key = entity_json.get("RowKey")

@@ -8,7 +8,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.async_paging import AsyncPageIterator
 
 from .._models import TableItem, _extract_continuation_token, _return_context_and_deserialized
-from .._decoder import TableEntityDecoderABC
+from .._decoder import TableEntityDecoder
 from .._error import _process_table_error
 from .._constants import NEXT_PARTITION_KEY, NEXT_TABLE_NAME, NEXT_ROW_KEY
 
@@ -67,7 +67,7 @@ class TableEntityPropertiesPaged(AsyncPageIterator):
     """The select filter to apply to results."""
     continuation_token: Optional[str]
     """The continuation token needed by get_next()."""
-    decoder: TableEntityDecoderABC
+    decoder: TableEntityDecoder
     """The decoder used to deserialize the incoming Tables entities."""
 
     def __init__(self, command, table, *, decoder, **kwargs):
@@ -104,7 +104,7 @@ class TableEntityPropertiesPaged(AsyncPageIterator):
 
     async def _extract_data_cb(self, get_next_return):
         self._location_mode, self._response, self._headers = get_next_return
-        props_list = [self.decoder.decode_entity(t) for t in self._response.value]
+        props_list = [self.decoder(t) for t in self._response.value]
         next_entity = {}
         if self._headers[NEXT_PARTITION_KEY] or self._headers[NEXT_ROW_KEY]:
             next_entity = {

@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import AsyncIterable, List, Union, Any, Optional, Mapping, Iterable, Dict, overload, cast, Tuple, TypeVar
+from typing import AsyncIterable, Optional, Any, Union, List, Dict, Mapping, Iterable, overload, cast, Tuple, TypeVar, Type, Callable
 from urllib.parse import urlparse, unquote
 
 from azure.core import MatchConditions
@@ -18,9 +18,9 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._common_conversion import _prepare_key
 from .._base_client import parse_connection_str
-from .._encoder import TableEntityEncoderABC
-from .._entity import TableEntity
-from .._decoder import TableEntityDecoderABC, deserialize_iso
+from .._encoder import TableEntityEncoder
+from .._entity import TableEntity, EdmType
+from .._decoder import TableEntityDecoder, deserialize_iso
 from .._generated.models import SignedIdentifier, TableProperties
 from .._models import TableAccessPolicy, TableItem, UpdateMode
 from .._serialize import (
@@ -38,17 +38,12 @@ from .._error import (
 from .._table_client import (
     EntityType,
     TransactionOperationType,
-    CustomEntityTransactionOperationType,
-    DEFAULT_ENCODER,
-    DEFAULT_DECODER,
     _return_headers_and_deserialized,
     _trim_service_metadata,
 )
 from ._base_client_async import AsyncTablesBaseClient
 from ._models import TableEntityPropertiesPaged
 from .._table_batch import TableBatchOperations
-
-T = TypeVar("T")
 
 
 class TableClient(AsyncTablesBaseClient):
@@ -67,6 +62,15 @@ class TableClient(AsyncTablesBaseClient):
         ~azure.core.credentials.AzureNamedKeyCredential or
         ~azure.core.credentials.AzureSasCredential or
         ~azure.core.credentials_async.AsyncTokenCredential or None
+    :ivar encoder_map: A dictionary maps the type and the convertion function of this type used in encoding.
+    :vartype encoder_map: 
+        dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
+    :ivar decoder_map: A dictionary maps the type and the convertion function of this type used in decoding.
+    :vartype decoder_map:
+        dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
+    :ivar flatten_result_entity: Whether to flatten entity metadata in deserialization. Default is False,
+        which means the metadata would be deserialized to property metadata in TableEntity.
+    :vartype flatten_result_entity: bool
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
@@ -76,6 +80,9 @@ class TableClient(AsyncTablesBaseClient):
         *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]] = None,
         api_version: Optional[str] = None,
+        encoder_map: Dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] = None,
+        decoder_map: Dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] = None,
+        flatten_result_entity: bool = False,
         **kwargs: Any,
     ) -> None:
         """Creates TableClient from a Credential.
@@ -93,11 +100,24 @@ class TableClient(AsyncTablesBaseClient):
         :keyword api_version: Specifies the version of the operation to use for this request. Default value
             is "2019-02-02".
         :paramtype api_version: str or None
+        :keyword encoder_map:
+            A dictionary maps the type and the convertion function of this type used in encoding.
+        :paramtype encoder_map:
+            dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
+        :keyword decoder_map:
+            A dictionary maps the type and the convertion function of this type used in decoding.
+        :paramtype decoder_map:
+            dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
+        :paramtype bool flatten_result_entity:
+            Whether to flatten entity metadata in deserialization. Default is False,
+            which means the metadata would be deserialized to property metadata in TableEntity.
         :returns: None
         """
         if not table_name:
             raise ValueError("Please specify a table name.")
         self.table_name: str = table_name
+        self.encoder = TableEntityEncoder(encoder_map)
+        self.decoder = TableEntityDecoder(decoder_map, flatten_result_entity)
         super(TableClient, self).__init__(endpoint, credential=credential, api_version=api_version, **kwargs)
 
     @classmethod
@@ -320,7 +340,6 @@ class TableClient(AsyncTablesBaseClient):
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
-        encoder: TableEntityEncoderABC[EntityType] = DEFAULT_ENCODER,
         **kwargs: Any,
     ) -> None:
         """Deletes the specified entity in a table. No error will be raised if
@@ -333,9 +352,6 @@ class TableClient(AsyncTablesBaseClient):
         :keyword match_condition: The condition under which to perform the operation.
             Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
         :paramtype match_condition: ~azure.core.MatchConditions or None
-        :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
-            `azure.data.tables.TableEntityEncoder` will be used.
-        :paramtype encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -349,40 +365,13 @@ class TableClient(AsyncTablesBaseClient):
                 :caption: Deleting an entity to a Table
         """
 
-    @overload
-    async def delete_entity(
-        self,
-        entity: T,
-        *,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        encoder: TableEntityEncoderABC[T],
-        **kwargs: Any,
-    ) -> None:
-        """Deletes the specified entity in a table. No error will be raised if
-        the entity or PartitionKey-RowKey pairing is not found.
-
-        :param entity: The entity to delete.
-        :type entity: Custom entity type
-        :keyword etag: Etag of the entity.
-        :paramtype etag: str or None
-        :keyword match_condition: The condition under which to perform the operation.
-            Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword encoder: The encoder used to serialize the outgoing Tables entities.
-        :paramtype encoder: ~azure.data.Tables.TableEntityEncoderABC
-        :return: None
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
-        """
-
     @distributed_trace_async
-    async def delete_entity(self, *args: Union[EntityType, str, T], **kwargs: Any) -> None:
+    async def delete_entity(self, *args: Union[EntityType, str], **kwargs: Any) -> None:
         entity = kwargs.pop("entity", None)
-        encoder = kwargs.pop("encoder", DEFAULT_ENCODER)
         try:
             if not entity:
                 entity = args[0]
-            entity_json = encoder.encode_entity(entity)
+            entity_json = self.encoder(entity)
             partition_key = entity_json.get("PartitionKey")
             row_key = entity_json.get("RowKey")
         except (TypeError, IndexError, AttributeError):
@@ -415,17 +404,12 @@ class TableClient(AsyncTablesBaseClient):
                 return
             _process_table_error(error, table_name=self.table_name)
 
-    @overload
-    async def create_entity(
-        self, entity: EntityType, *, encoder: TableEntityEncoderABC[EntityType] = DEFAULT_ENCODER, **kwargs
-    ) -> Dict[str, Any]:
+    @distributed_trace_async
+    async def create_entity(self, entity: EntityType, **kwargs) -> Dict[str, Any]:
         """Inserts an entity in a table.
 
         :param entity: The properties for the table entity.
         :type entity: ~azure.data.tables.TableEntity or Mapping
-        :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
-            `azure.data.tables.TableEntityEncoder` will be used.
-        :paramtype encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: Dictionary mapping operation metadata returned from the service.
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.ResourceExistsError` If the entity already exists
@@ -440,26 +424,7 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 12
                 :caption: Creating and adding an entity to a Table
         """
-
-    @overload
-    async def create_entity(self, entity: T, *, encoder: TableEntityEncoderABC[T], **kwargs) -> Dict[str, Any]:
-        """Inserts an entity in a table.
-        :param entity: The properties for the table entity.
-        :type entity: Custom entity type
-        :keyword encoder: The encoder used to serialize the outgoing Tables entities.
-        :paramtype encoder: ~azure.data.Tables.TableEntityEncoderABC
-        :return: Dictionary mapping operation metadata returned from the service.
-        :rtype: dict[str, Any]
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
-        """
-
-    @distributed_trace_async
-    async def create_entity(self, *args: Union[EntityType, T], **kwargs: Any) -> Dict[str, Any]:
-        entity = kwargs.pop("entity", None)
-        if not entity:
-            entity = args[0]
-        encoder = kwargs.pop("encoder", DEFAULT_ENCODER)
-        entity_json = encoder.encode_entity(entity)
+        entity_json = self.encoder(entity)
         try:
             metadata, content = cast(
                 Tuple[Dict[str, str], Optional[Dict[str, Any]]],
@@ -478,7 +443,7 @@ class TableClient(AsyncTablesBaseClient):
             raise error
         return _trim_service_metadata(metadata, content=content)
 
-    @overload
+    @distributed_trace_async
     async def update_entity(
         self,
         entity: EntityType,
@@ -486,7 +451,6 @@ class TableClient(AsyncTablesBaseClient):
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
-        encoder: TableEntityEncoderABC[EntityType] = DEFAULT_ENCODER,
         **kwargs,
     ) -> Dict[str, Any]:
         """Updates an already existing entity in a table.
@@ -500,9 +464,6 @@ class TableClient(AsyncTablesBaseClient):
         :keyword match_condition: The condition under which to perform the operation.
             Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
         :paramtype match_condition: ~azure.core.MatchConditions or None
-        :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
-            `azure.data.tables.TableEntityEncoder` will be used.
-        :paramtype encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: Dictionary of operation metadata returned from service.
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -516,48 +477,6 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 16
                 :caption: Updating an already existing entity in a Table
         """
-
-    @overload
-    async def update_entity(
-        self,
-        entity: T,
-        mode: Union[str, UpdateMode] = UpdateMode.MERGE,
-        *,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        encoder: TableEntityEncoderABC[T],
-        **kwargs,
-    ) -> Dict[str, Any]:
-        """Updates an already existing entity in a table.
-
-        :param entity: The properties for the table entity.
-        :type entity: Custom entity type
-        :param mode: Merge or Replace entity.
-        :type mode: ~azure.data.tables.UpdateMode or str
-        :keyword etag: Etag of the entity.
-        :paramtype etag: str or None
-        :keyword match_condition: The condition under which to perform the operation.
-            Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
-        :paramtype match_condition: ~azure.core.MatchConditions or None
-        :keyword encoder: The encoder used to serialize the outgoing Tables entities.
-        :paramtype encoder: ~azure.data.Tables.TableEntityEncoderABC
-        :return: Dictionary mapping operation metadata returned from the service.
-        :rtype: dict[str, Any]
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
-        """
-
-    @distributed_trace_async
-    async def update_entity(self, *args: Union[EntityType, T], **kwargs: Any) -> Dict[str, Any]:
-        entity = kwargs.pop("entity", None)
-        if not entity:
-            entity = args[0]
-        mode = kwargs.pop("mode", None)
-        if not mode:
-            try:
-                mode = args[1]
-            except IndexError:
-                mode = UpdateMode.MERGE
-        encoder = kwargs.pop("encoder", DEFAULT_ENCODER)
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
         if match_condition and not etag and isinstance(entity, TableEntity):
@@ -565,7 +484,7 @@ class TableClient(AsyncTablesBaseClient):
         match_condition = _get_match_condition(
             etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
-        entity_json = encoder.encode_entity(entity)
+        entity_json = self.encoder(entity)
         partition_key = entity_json.get("PartitionKey")
         row_key = entity_json.get("RowKey")
 
@@ -604,13 +523,12 @@ class TableClient(AsyncTablesBaseClient):
             _process_table_error(error, table_name=self.table_name)
         return _trim_service_metadata(metadata, content=content)
 
-    @overload
+    @distributed_trace
     def list_entities(
         self,
         *,
         results_per_page: Optional[int] = None,
         select: Optional[Union[str, List[str]]] = None,
-        decoder: TableEntityDecoderABC = DEFAULT_DECODER,
         **kwargs,
     ) -> AsyncItemPaged[TableEntity]:
         """Lists entities in a table.
@@ -619,9 +537,6 @@ class TableClient(AsyncTablesBaseClient):
         :paramtype results_per_page: int or None
         :keyword select: Specify desired properties of an entity to return.
         :paramtype select: str or list[str] or None
-        :keyword decoder: The decoder used to deserialize the incoming Tables entities. By default, the built-in
-            `azure.data.tables.TableEntityDecoder` will be used.
-        :paramtype decoder: ~azure.data.Tables.TableEntityDecoderABC
         :return: An async iterator of :class:`~azure.data.tables.TableEntity`
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.data.tables.TableEntity]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -635,33 +550,7 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 16
                 :caption: Listing all entities held within a table
         """
-
-    @overload
-    def list_entities(
-        self,
-        *,
-        results_per_page: Optional[int] = None,
-        select: Optional[Union[str, List[str]]] = None,
-        decoder: TableEntityDecoderABC[T],
-        **kwargs,
-    ) -> AsyncItemPaged[T]:
-        """Lists entities in a table.
-
-        :keyword results_per_page: Number of entities returned per service request.
-        :paramtype results_per_page: int or None
-        :keyword select: Specify desired properties of an entity to return.
-        :paramtype select: str or list[str] or None
-        :keyword decoder: The decoder used to deserialize the incoming Tables entities.
-        :paramtype decoder: ~azure.data.Tables.TableEntityDecoderABC
-        :return: An async iterator of :class:`~azure.data.tables.TableEntity`
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.data.tables.TableEntity]
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
-        """
-
-    @distributed_trace
-    def list_entities(self, **kwargs) -> Union[AsyncItemPaged[EntityType], AsyncItemPaged[T]]:
         results_per_page = kwargs.pop("results_per_page", None)
-        decoder = kwargs.pop("decoder", DEFAULT_DECODER)
         select = kwargs.pop("select", None)
         if select and not isinstance(select, str):
             select = ",".join(select)
@@ -672,11 +561,11 @@ class TableClient(AsyncTablesBaseClient):
             table=self.table_name,
             results_per_page=results_per_page,
             select=select,
-            decoder=decoder,
+            decoder=self.decoder,
             page_iterator_class=TableEntityPropertiesPaged,
         )
 
-    @overload
+    @distributed_trace
     def query_entities(
         self,
         query_filter: str,
@@ -684,7 +573,6 @@ class TableClient(AsyncTablesBaseClient):
         results_per_page: Optional[int] = None,
         select: Optional[Union[str, List[str]]] = None,
         parameters: Optional[Dict[str, Any]] = None,
-        decoder: TableEntityDecoderABC = DEFAULT_DECODER,
         **kwargs,
     ) -> AsyncItemPaged[TableEntity]:
         # pylint: disable=line-too-long
@@ -698,9 +586,6 @@ class TableClient(AsyncTablesBaseClient):
         :paramtype select: str or list[str] or None
         :keyword parameters: Dictionary for formatting query with additional, user defined parameters
         :paramtype parameters: dict[str, Any] or None
-        :keyword decoder: The decoder used to deserialize the incoming Tables entities. By default, the built-in
-            `azure.data.tables.TableEntityDecoder` will be used.
-        :paramtype decoder: ~azure.data.Tables.TableEntityDecoderABC
         :return: An async iterator of :class:`~azure.data.tables.TableEntity`
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.data.tables.TableEntity]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -714,46 +599,6 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 8
                 :caption: Querying entities held within a table
         """
-
-    @overload
-    def query_entities(
-        self,
-        query_filter: str,
-        *,
-        results_per_page: Optional[int] = None,
-        select: Optional[Union[str, List[str]]] = None,
-        parameters: Optional[Dict[str, Any]] = None,
-        decoder: TableEntityDecoderABC[T],
-        **kwargs,
-    ) -> AsyncItemPaged[T]:
-        # pylint: disable=line-too-long
-        """Queries entities in a table.
-
-        :param str query_filter: Specify a filter to return certain entities.  For more information
-         on filter formatting, see the `samples documentation <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples#writing-filters>`_.
-        :keyword results_per_page: Number of entities returned per service request.
-        :paramtype results_per_page: int or None
-        :keyword select: Specify desired properties of an entity to return.
-        :paramtype select: str or list[str] or None
-        :keyword parameters: Dictionary for formatting query with additional, user defined parameters
-        :paramtype parameters: dict[str, Any] or None
-        :keyword decoder: The decoder used to deserialize the incoming Tables entities.
-        :paramtype decoder: ~azure.data.Tables.TableEntityDecoderABC
-        :return: An async iterator of :class:`~azure.data.tables.TableEntity`
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.data.tables.TableEntity]
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
-        """
-
-    @distributed_trace
-    def query_entities(self, *args: str, **kwargs: Any) -> Union[AsyncItemPaged[EntityType], AsyncItemPaged[T]]:
-        query_filter = kwargs.pop("query_filter", None)
-        if query_filter is None:
-            query_filter = args[0]
-        results_per_page = kwargs.pop("results_per_page", None)
-        select = kwargs.pop("select", None)
-        parameters = kwargs.pop("parameters", None)
-        decoder = kwargs.pop("decoder", DEFAULT_DECODER)
-
         query_filter = _parameter_filter_substitution(parameters, query_filter)
         if select and not isinstance(select, str):
             select = ",".join(select)
@@ -765,18 +610,17 @@ class TableClient(AsyncTablesBaseClient):
             results_per_page=results_per_page,
             filter=query_filter,
             select=select,
-            decoder=decoder,
+            decoder=self.decoder,
             page_iterator_class=TableEntityPropertiesPaged,
         )
 
-    @overload
+    @distributed_trace_async
     async def get_entity(
         self,
         partition_key: str,
         row_key: str,
         *,
         select: Optional[Union[str, List[str]]] = None,
-        decoder: TableEntityDecoderABC = DEFAULT_DECODER,
         **kwargs,
     ) -> TableEntity:
         """Gets a single entity in a table.
@@ -787,9 +631,6 @@ class TableClient(AsyncTablesBaseClient):
         :type row_key: str
         :keyword select: Specify desired properties of an entity to return.
         :paramtype select: str or list[str] or None
-        :keyword decoder: The decoder used to deserialize the incoming Tables entities. By default, the built-in
-            `azure.data.tables.TableEntityDecoder` will be used.
-        :paramtype decoder: ~azure.data.Tables.TableEntityDecoderABC
         :return: Dictionary mapping operation metadata returned from the service.
         :rtype: ~azure.data.tables.TableEntity
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -803,43 +644,6 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 16
                 :caption: Getting an entity with PartitionKey and RowKey from a table
         """
-
-    @overload
-    async def get_entity(
-        self,
-        partition_key: str,
-        row_key: str,
-        *,
-        select: Optional[Union[str, List[str]]] = None,
-        decoder: TableEntityDecoderABC[T],
-        **kwargs,
-    ) -> T:
-        """Gets a single entity in a table.
-
-        :param partition_key: The partition key of the entity.
-        :type partition_key: str
-        :param row_key: The row key of the entity.
-        :type row_key: str
-        :keyword select: Specify desired properties of an entity to return.
-        :paramtype select: str or list[str] or None
-        :keyword decoder: The decoder used to deserialize the incoming Tables entities.
-        :paramtype decoder: ~azure.data.Tables.TableEntityDecoderABC
-        :return: Dictionary mapping operation metadata returned from the service.
-        :rtype: ~azure.data.tables.TableEntity
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
-        """
-
-    @distributed_trace_async
-    async def get_entity(self, *args: str, **kwargs: Any) -> Union[EntityType, T]:
-        partition_key = kwargs.pop("partition_key", None)
-        if partition_key is None:
-            partition_key = args[0]
-        row_key = kwargs.pop("row_key", None)
-        if row_key is None:
-            row_key = args[1]
-        select = kwargs.pop("select", None)
-        decoder = kwargs.pop("decoder", DEFAULT_DECODER)
-
         user_select = None
         if select and not isinstance(select, str):
             user_select = ",".join(select)
@@ -855,15 +659,13 @@ class TableClient(AsyncTablesBaseClient):
             )
         except HttpResponseError as error:
             _process_table_error(error, table_name=self.table_name)
-        return decoder.decode_entity(entity_json)
+        return self.decoder(entity_json)
 
-    @overload
+    @distributed_trace_async
     async def upsert_entity(
         self,
         entity: EntityType,
         mode: Union[str, UpdateMode] = UpdateMode.MERGE,
-        *,
-        encoder: TableEntityEncoderABC[EntityType] = DEFAULT_ENCODER,
         **kwargs,
     ) -> Dict[str, Any]:
         """Updates (merge or replace) or inserts an entity into a table.
@@ -874,7 +676,7 @@ class TableClient(AsyncTablesBaseClient):
         :type mode: ~azure.data.tables.UpdateMode or str
         :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
             `azure.data.tables.TableEntityEncoder` will be used.
-        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
+        :type encoder: ~azure.data.Tables.TableEntityEncoder
         :return: Dictionary mapping operation metadata returned from the service.
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -888,37 +690,7 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 16
                 :caption: Replacing/Merging or Inserting an entity into a table
         """
-
-    @overload
-    async def upsert_entity(
-        self, entity: T, mode: Union[str, UpdateMode] = UpdateMode.MERGE, *, encoder: TableEntityEncoderABC[T], **kwargs
-    ) -> Dict[str, Any]:
-        """Updates (merge or replace) or inserts an entity into a table.
-
-        :param entity: The properties for the table entity.
-        :type entity: Custom entity type
-        :param mode: Merge or Replace entity.
-        :type mode: ~azure.data.tables.UpdateMode or str
-        :keyword encoder: The encoder used to serialize the outgoing Tables entities.
-        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
-        :return: Dictionary mapping operation metadata returned from the service.
-        :rtype: dict[str, Any]
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
-        """
-
-    @distributed_trace_async
-    async def upsert_entity(self, *args: Union[EntityType, T], **kwargs: Any) -> Dict[str, Any]:
-        entity = kwargs.pop("entity", None)
-        if not entity:
-            entity = args[0]
-        mode = kwargs.pop("mode", None)
-        if not mode:
-            try:
-                mode = args[1]
-            except IndexError:
-                mode = UpdateMode.MERGE
-        encoder = kwargs.pop("encoder", DEFAULT_ENCODER)
-        entity_json = encoder.encode_entity(entity)
+        entity_json = self.encoder(entity)
         partition_key = entity_json.get("PartitionKey")
         row_key = entity_json.get("RowKey")
 
@@ -955,12 +727,10 @@ class TableClient(AsyncTablesBaseClient):
             _process_table_error(error, table_name=self.table_name)
         return _trim_service_metadata(metadata, content=content)
 
-    @overload
+    @distributed_trace_async
     async def submit_transaction(
         self,
         operations: Iterable[TransactionOperationType],
-        *,
-        encoder: TableEntityEncoderABC[EntityType] = DEFAULT_ENCODER,
         **kwargs,
     ) -> List[Mapping[str, Any]]:
         """Commits a list of operations as a single transaction.
@@ -976,9 +746,6 @@ class TableClient(AsyncTablesBaseClient):
 
         :type operations:
             Union[Iterable[Tuple[str, Entity, Mapping[str, Any]]],AsyncIterable[Tuple[str, Entity, Mapping[str, Any]]]]
-        :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
-            `azure.data.tables.TableEntityEncoder` will be used.
-        :paramtype encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: A list of mappings with response metadata for each operation in the transaction.
         :rtype: list[Mapping[str, Any]]
         :raises: :class:` ~azure.data.tables.TableTransactionError`
@@ -992,55 +759,12 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 8
                 :caption: Using transactions to send multiple requests at once
         """
-
-    @overload
-    async def submit_transaction(
-        self,
-        operations: Iterable[CustomEntityTransactionOperationType],
-        *,
-        encoder: TableEntityEncoderABC[T],
-        **kwargs,
-    ) -> List[Mapping[str, Any]]:
-        """Commits a list of operations as a single transaction.
-
-        If any one of these operations fails, the entire transaction will be rejected.
-
-        :param operations: The list of operations to commit in a transaction. This should be an iterable of
-         tuples containing an operation name, the entity on which to operate, and optionally, a dict of additional
-         kwargs for that operation. For example::
-
-            - ('upsert', {'PartitionKey': 'A', 'RowKey': 'B'})
-            - ('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}, {'mode': UpdateMode.REPLACE})
-
-        :type operations: Iterable[Tuple[str, T, Mapping[str, Any]]]
-        :keyword encoder: The encoder used to serialize the outgoing Tables entities.
-        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
-        :return: A list of mappings with response metadata for each operation in the transaction.
-        :rtype: list[Mapping[str, Any]]
-        :raises: :class:`~azure.data.tables.TableTransactionError`
-        """
-
-    @distributed_trace_async
-    async def submit_transaction(
-        self,
-        *args: Union[
-            Iterable[TransactionOperationType],
-            AsyncIterable[TransactionOperationType],
-            Iterable[TransactionOperationType],
-            AsyncIterable[TransactionOperationType],
-        ],
-        **kwargs,
-    ) -> List[Mapping[str, Any]]:
-        operations = kwargs.pop("operations", None)
-        if not operations:
-            operations = args[0]
-        encoder = kwargs.pop("encoder", DEFAULT_ENCODER)
         batched_requests = TableBatchOperations(
             config=self._client._config,  # pylint: disable=protected-access
             endpoint=f"{self.scheme}://{self._primary_hostname}",
             table_name=self.table_name,
             is_cosmos_endpoint=self._cosmos_endpoint,
-            encoder=encoder,
+            encoder=self.encoder,
         )
         if isinstance(operations, AsyncIterable):
             async for operation in operations:
