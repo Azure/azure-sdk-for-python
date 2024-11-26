@@ -47,13 +47,8 @@ async def process_content(data: Any, start_offset: int, end_offset: int, encrypt
     if data is None:
         raise ValueError("Response cannot be None.")
 
-    # Start
-    try:
-        content = b"".join([d async for d in data])
-    except (ServiceRequestError): # This happens when the connection is already closed (like in the case it was fully consumed in content-validation). Will improve by looking for "Connection closed" regex etc.
-        await data.response.load_body()  # Load the body in memory and close the socket
-        content = cast(bytes, data.response.content)
-    # End
+    await data.response.load_body()  # Load the body in memory and close the socket
+    content = cast(bytes, data.response.content)
 
     if encryption.get('key') is not None or encryption.get('resolver') is not None:
         try:
