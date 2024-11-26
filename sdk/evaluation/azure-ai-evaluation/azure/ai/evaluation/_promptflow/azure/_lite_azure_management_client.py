@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from dataclasses import dataclass
 from logging import Logger
 from typing import Dict, Final, Optional, Set, Union, cast
 from threading import Lock
@@ -14,8 +13,7 @@ from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarg
 from azure.ai.evaluation._http_utils import HttpPipeline, get_http_client
 from azure.ai.evaluation._promptflow.azure._token_manager import AzureManagementAPITokenManager
 from azure.ai.evaluation.simulator._model_tools._identity_manager import TokenScope
-from ._models import BlobStoreInfo, WorkspaceInfo
-from ._serialization_helpers import deserialize_json
+from ._models import BlobStoreInfo, Workspace
 
 
 QUERY_KEY_API_VERSION: Final[str] = "api-version"
@@ -114,7 +112,7 @@ class LiteAzureManagementClient:
         
         return BlobStoreInfo(name, account_name, endpoint, container_name, blob_store_credential)
     
-    def workspace_get_info(self, workspace_name: str) -> WorkspaceInfo:
+    def workspace_get_info(self, workspace_name: str) -> Workspace:
         # https://learn.microsoft.com/rest/api/azureml/workspaces/get?view=rest-azureml-2024-10-01
         workspace_response = self._http_client.request(
             "GET",
@@ -126,7 +124,8 @@ class LiteAzureManagementClient:
         )
         
         self.__throw_on_http_error(workspace_response, f"get '{workspace_name}' workspace")
-        return deserialize_json(workspace_response.json(), WorkspaceInfo)
+        workspace = Workspace.deserialize(workspace_response)
+        return workspace
 
     def __get_token_manager(self) -> AzureManagementAPITokenManager:
         # Lazy init since getting credentials in the constructor can take a long time in some situations
