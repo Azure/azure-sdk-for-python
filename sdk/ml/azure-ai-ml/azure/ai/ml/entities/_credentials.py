@@ -23,6 +23,7 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import UserAssignedIdent
 from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     UsernamePassword as RestWorkspaceConnectionUsernamePassword,
 )
+from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity as RestManagedServiceIdentityConfiguration
 from azure.ai.ml._restclient.v2022_05_01.models import UserAssignedIdentity as RestUserAssignedIdentityConfiguration
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     AccountKeyDatastoreCredentials as RestAccountKeyDatastoreCredentials,
@@ -71,9 +72,6 @@ from azure.ai.ml._restclient.v2024_04_01_preview.models import (
     SASAuthTypeWorkspaceConnectionProperties,
     ServicePrincipalAuthTypeWorkspaceConnectionProperties,
     UsernamePasswordAuthTypeWorkspaceConnectionProperties,
-)
-from azure.ai.ml._restclient.v2024_10_01_preview.models import (
-    ManagedServiceIdentity as RestManagedServiceIdentityConfiguration,
 )
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake, snake_to_pascal
