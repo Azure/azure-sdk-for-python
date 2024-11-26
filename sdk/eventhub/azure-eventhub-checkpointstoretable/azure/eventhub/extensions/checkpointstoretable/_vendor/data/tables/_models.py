@@ -100,7 +100,7 @@ class TableAnalyticsLogging(GeneratedLogging):
 
     def __init__(self, **kwargs):  # pylint: disable=super-init-not-called
         # type: (Any)-> None
-        self.version = kwargs.get("version", u"1.0")
+        self.version = kwargs.get("version", "1.0")
         self.delete = kwargs.get("delete", False)
         self.read = kwargs.get("read", False)
         self.write = kwargs.get("write", False)

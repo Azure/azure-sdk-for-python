@@ -7,6 +7,7 @@ from __future__ import annotations
 import time
 from typing import TYPE_CHECKING, Optional, TypeVar, MutableMapping, Any
 
+from ...credentials import TokenRequestOptions
 from ...rest import HttpResponse, HttpRequest
 from . import HTTPPolicy, SansIOHTTPPolicy
 from ...exceptions import ServiceRequestError
@@ -14,7 +15,7 @@ from ...exceptions import ServiceRequestError
 if TYPE_CHECKING:
 
     from ...credentials import (
-        AccessToken,
+        AccessTokenInfo,
         TokenCredential,
         ServiceKeyCredential,
     )
@@ -39,7 +40,7 @@ class _BearerTokenCredentialPolicyBase:
         super(_BearerTokenCredentialPolicyBase, self).__init__()
         self._scopes = scopes
         self._credential = credential
-        self._token: Optional["AccessToken"] = None
+        self._token: Optional["AccessTokenInfo"] = None
 
     @staticmethod
     def _enforce_https(request: PipelineRequest[HTTPRequestType]) -> None:
@@ -68,7 +69,12 @@ class _BearerTokenCredentialPolicyBase:
 
     @property
     def _need_new_token(self) -> bool:
-        return not self._token or self._token.expires_on - time.time() < 300
+        now = time.time()
+        return (
+            not self._token
+            or (self._token.refresh_on is not None and self._token.refresh_on <= now)
+            or (self._token.expires_on - now < 300)
+        )
 
 
 class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]):
@@ -90,7 +96,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         self._enforce_https(request)
 
         if self._token is None or self._need_new_token:
-            self._token = self._credential.get_token(*self._scopes)
+            self._token = self._credential.get_token_info(*self._scopes)
         self._update_headers(request.http_request.headers, self._token.token)
 
     def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs: Any) -> None:
@@ -102,7 +108,12 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         :param ~corehttp.runtime.pipeline.PipelineRequest request: the request
         :param str scopes: required scopes of authentication
         """
-        self._token = self._credential.get_token(*scopes, **kwargs)
+        options: TokenRequestOptions = {}
+        # Loop through all the keyword arguments and check if they are part of the TokenRequestOptions.
+        for key in list(kwargs.keys()):
+            if key in TokenRequestOptions.__annotations__:  # pylint:disable=no-member
+                options[key] = kwargs.pop(key)  # type: ignore[literal-required]
+        self._token = self._credential.get_token_info(*scopes, options=options)
         self._update_headers(request.http_request.headers, self._token.token)
 
     def send(self, request: PipelineRequest[HTTPRequestType]) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:

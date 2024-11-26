@@ -173,6 +173,8 @@ class DatabaseProxy(object):
         match_condition: Optional[MatchConditions] = None,
         analytical_storage_ttl: Optional[int] = None,
         vector_embedding_policy: Optional[Dict[str, Any]] = None,
+        change_feed_policy: Optional[Dict[str, Any]] = None,
+        full_text_policy: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Create a new container with the given ID (name).
@@ -206,6 +208,11 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] vector_embedding_policy: The vector embedding policy for the container. Each vector
             embedding possesses a predetermined number of dimensions, is associated with an underlying data type, and
             is generated for a particular distance function.
+        :keyword Dict[str, Any] change_feed_policy: The change feed policy to apply 'retentionDuration' to
+            the container.
+        :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
+            Used to denote the default language to be used for all full text indexes, or to individually
+            assign a language to each full text index path.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :returns: A `ContainerProxy` instance representing the new container.
         :rtype: ~azure.cosmos.aio.ContainerProxy
@@ -251,6 +258,10 @@ class DatabaseProxy(object):
             definition["computedProperties"] = computed_properties
         if vector_embedding_policy is not None:
             definition["vectorEmbeddingPolicy"] = vector_embedding_policy
+        if change_feed_policy is not None:
+            definition["changeFeedPolicy"] = change_feed_policy
+        if full_text_policy is not None:
+            definition["fullTextPolicy"] = full_text_policy
 
         if session_token is not None:
             kwargs['session_token'] = session_token
@@ -285,6 +296,8 @@ class DatabaseProxy(object):
         match_condition: Optional[MatchConditions] = None,
         analytical_storage_ttl: Optional[int] = None,
         vector_embedding_policy: Optional[Dict[str, Any]] = None,
+        change_feed_policy: Optional[Dict[str, Any]] = None,
+        full_text_policy: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Create a container if it does not exist already.
@@ -320,6 +333,11 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] vector_embedding_policy: **provisional** The vector embedding policy for the container.
             Each vector embedding possesses a predetermined number of dimensions, is associated with an underlying
             data type, and is generated for a particular distance function.
+        :keyword Dict[str, Any] change_feed_policy: The change feed policy to apply 'retentionDuration' to
+            the container.
+        :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
+            Used to denote the default language to be used for all full text indexes, or to individually
+            assign a language to each full text index path.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :returns: A `ContainerProxy` instance representing the new container.
         :rtype: ~azure.cosmos.aio.ContainerProxy
@@ -349,6 +367,8 @@ class DatabaseProxy(object):
                 session_token=session_token,
                 initial_headers=initial_headers,
                 vector_embedding_policy=vector_embedding_policy,
+                change_feed_policy=change_feed_policy,
+                full_text_policy=full_text_policy,
                 **kwargs
             )
 
@@ -482,6 +502,7 @@ class DatabaseProxy(object):
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         analytical_storage_ttl: Optional[int] = None,
+        full_text_policy: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Reset the properties of the container.
@@ -509,6 +530,9 @@ class DatabaseProxy(object):
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
+            Used to denote the default language to be used for all full text indexes, or to individually
+            assign a language to each full text index path.
         :returns: A `ContainerProxy` instance representing the container after replace completed.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
             This includes if the container with given id does not exist.
@@ -545,6 +569,7 @@ class DatabaseProxy(object):
                 "defaultTtl": default_ttl,
                 "conflictResolutionPolicy": conflict_resolution_policy,
                 "analyticalStorageTtl": analytical_storage_ttl,
+                "fullTextPolicy": full_text_policy
             }.items()
             if value is not None
         }

@@ -7,6 +7,7 @@
 from typing import Any, Optional, Union, cast
 
 from azure.ai.ml._restclient.v2023_04_01_preview import models
+from azure.ai.ml._restclient.v2024_07_01_preview import models as models2024
 from azure.ai.ml.entities._credentials import (
     AccountKeyConfiguration,
     CertificateConfiguration,
@@ -28,13 +29,22 @@ def from_rest_datastore_credentials(
 ]:
     config_class: Any = NoneCredentialConfiguration
 
-    if isinstance(rest_credentials, models.AccountKeyDatastoreCredentials):
-        config_class = AccountKeyConfiguration
-    elif isinstance(rest_credentials, models.SasDatastoreCredentials):
+    if isinstance(rest_credentials, (models.AccountKeyDatastoreCredentials, models2024.AccountKeyDatastoreCredentials)):
+        # we are no more using key for key base account.
+        # https://github.com/Azure/azure-sdk-for-python/pull/35716
+        if isinstance(rest_credentials.secrets, models2024.SasDatastoreSecrets):
+            config_class = SasTokenConfiguration
+        else:
+            config_class = AccountKeyConfiguration
+    elif isinstance(rest_credentials, (models.SasDatastoreCredentials, models2024.SasDatastoreCredentials)):
         config_class = SasTokenConfiguration
-    elif isinstance(rest_credentials, models.ServicePrincipalDatastoreCredentials):
+    elif isinstance(
+        rest_credentials, (models.ServicePrincipalDatastoreCredentials, models2024.ServicePrincipalDatastoreCredentials)
+    ):
         config_class = ServicePrincipalConfiguration
-    elif isinstance(rest_credentials, models.CertificateDatastoreCredentials):
+    elif isinstance(
+        rest_credentials, (models.CertificateDatastoreCredentials, models2024.CertificateDatastoreCredentials)
+    ):
         config_class = CertificateConfiguration
 
     return cast(

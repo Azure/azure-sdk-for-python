@@ -21,9 +21,9 @@ class TestWebSiteManagementRecommendationsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_recommendations_list(self, resource_group):
         response = self.client.recommendations.list(
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -31,9 +31,9 @@ class TestWebSiteManagementRecommendationsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_reset_all_filters(self, resource_group):
+    async def test_recommendations_reset_all_filters(self, resource_group):
         response = await self.client.recommendations.reset_all_filters(
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -41,10 +41,10 @@ class TestWebSiteManagementRecommendationsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_disable_recommendation_for_subscription(self, resource_group):
+    async def test_recommendations_disable_recommendation_for_subscription(self, resource_group):
         response = await self.client.recommendations.disable_recommendation_for_subscription(
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -52,11 +52,11 @@ class TestWebSiteManagementRecommendationsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_history_for_hosting_environment(self, resource_group):
+    async def test_recommendations_list_history_for_hosting_environment(self, resource_group):
         response = self.client.recommendations.list_history_for_hosting_environment(
             resource_group_name=resource_group.name,
             hosting_environment_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -64,11 +64,11 @@ class TestWebSiteManagementRecommendationsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_recommended_rules_for_hosting_environment(self, resource_group):
+    async def test_recommendations_list_recommended_rules_for_hosting_environment(self, resource_group):
         response = self.client.recommendations.list_recommended_rules_for_hosting_environment(
             resource_group_name=resource_group.name,
             hosting_environment_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -76,12 +76,12 @@ class TestWebSiteManagementRecommendationsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_disable_all_for_hosting_environment(self, resource_group):
+    async def test_recommendations_disable_all_for_hosting_environment(self, resource_group):
         response = await self.client.recommendations.disable_all_for_hosting_environment(
             resource_group_name=resource_group.name,
             environment_name="str",
             hosting_environment_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -89,12 +89,12 @@ class TestWebSiteManagementRecommendationsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_reset_all_filters_for_hosting_environment(self, resource_group):
+    async def test_recommendations_reset_all_filters_for_hosting_environment(self, resource_group):
         response = await self.client.recommendations.reset_all_filters_for_hosting_environment(
             resource_group_name=resource_group.name,
             environment_name="str",
             hosting_environment_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -102,12 +102,12 @@ class TestWebSiteManagementRecommendationsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_rule_details_by_hosting_environment(self, resource_group):
+    async def test_recommendations_get_rule_details_by_hosting_environment(self, resource_group):
         response = await self.client.recommendations.get_rule_details_by_hosting_environment(
             resource_group_name=resource_group.name,
             hosting_environment_name="str",
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -115,13 +115,13 @@ class TestWebSiteManagementRecommendationsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_disable_recommendation_for_hosting_environment(self, resource_group):
+    async def test_recommendations_disable_recommendation_for_hosting_environment(self, resource_group):
         response = await self.client.recommendations.disable_recommendation_for_hosting_environment(
             resource_group_name=resource_group.name,
             environment_name="str",
             name="str",
             hosting_environment_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -129,11 +129,11 @@ class TestWebSiteManagementRecommendationsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_history_for_web_app(self, resource_group):
+    async def test_recommendations_list_history_for_web_app(self, resource_group):
         response = self.client.recommendations.list_history_for_web_app(
             resource_group_name=resource_group.name,
             site_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -141,11 +141,11 @@ class TestWebSiteManagementRecommendationsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_recommended_rules_for_web_app(self, resource_group):
+    async def test_recommendations_list_recommended_rules_for_web_app(self, resource_group):
         response = self.client.recommendations.list_recommended_rules_for_web_app(
             resource_group_name=resource_group.name,
             site_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -153,11 +153,11 @@ class TestWebSiteManagementRecommendationsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_disable_all_for_web_app(self, resource_group):
+    async def test_recommendations_disable_all_for_web_app(self, resource_group):
         response = await self.client.recommendations.disable_all_for_web_app(
             resource_group_name=resource_group.name,
             site_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -165,11 +165,11 @@ class TestWebSiteManagementRecommendationsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_reset_all_filters_for_web_app(self, resource_group):
+    async def test_recommendations_reset_all_filters_for_web_app(self, resource_group):
         response = await self.client.recommendations.reset_all_filters_for_web_app(
             resource_group_name=resource_group.name,
             site_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -177,12 +177,12 @@ class TestWebSiteManagementRecommendationsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_rule_details_by_web_app(self, resource_group):
+    async def test_recommendations_get_rule_details_by_web_app(self, resource_group):
         response = await self.client.recommendations.get_rule_details_by_web_app(
             resource_group_name=resource_group.name,
             site_name="str",
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -190,12 +190,12 @@ class TestWebSiteManagementRecommendationsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_disable_recommendation_for_site(self, resource_group):
+    async def test_recommendations_disable_recommendation_for_site(self, resource_group):
         response = await self.client.recommendations.disable_recommendation_for_site(
             resource_group_name=resource_group.name,
             site_name="str",
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself

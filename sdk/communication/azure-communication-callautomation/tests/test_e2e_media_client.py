@@ -9,13 +9,10 @@ import time
 import unittest
 
 from devtools_testutils import recorded_by_proxy
-from azure.communication.callautomation import (
-    FileSource,
-    DtmfTone,
-    PhoneNumberIdentifier
-)
+from azure.communication.callautomation import FileSource, DtmfTone, PhoneNumberIdentifier
 from callautomation_test_case import CallAutomationRecordedTestCase
 from azure.communication.callautomation._shared.models import identifier_from_raw_id
+
 
 class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
 
@@ -27,8 +24,12 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         unique_id, call_connection, _ = self.establish_callconnection_voip(caller, target)
 
         # check returned events
-        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
-        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+        connected_event = self.check_for_event(
+            "CallConnected", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        participant_updated_event = self.check_for_event(
+            "ParticipantsUpdated", call_connection._call_connection_id, timedelta(seconds=15)
+        )
 
         if connected_event is None:
             raise ValueError("Caller CallConnected event is None")
@@ -42,7 +43,9 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         )
 
         # check for PlayCompleted event
-        play_completed_event = self.check_for_event('PlayCompleted', call_connection._call_connection_id, timedelta(seconds=30))
+        play_completed_event = self.check_for_event(
+            "PlayCompleted", call_connection._call_connection_id, timedelta(seconds=30)
+        )
         if play_completed_event is None:
             raise ValueError("PlayCompleted event is None")
 
@@ -88,7 +91,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
     #     self.terminate_call(unique_id)
     #     return
 
-    @recorded_by_proxy    
+    @recorded_by_proxy
     def test_add_and_mute_participant_in_a_call(self):
 
         # try to establish the call
@@ -98,15 +101,19 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         unique_id, call_connection, _ = self.establish_callconnection_voip(caller, target)
 
         # check returned events
-        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
-        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+        connected_event = self.check_for_event(
+            "CallConnected", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        participant_updated_event = self.check_for_event(
+            "ParticipantsUpdated", call_connection._call_connection_id, timedelta(seconds=15)
+        )
 
         if connected_event is None:
             raise ValueError("Caller CallConnected event is None")
         if participant_updated_event is None:
             raise ValueError("Caller ParticipantsUpdated event is None")
 
-        #Add dummy participant
+        # Add dummy participant
         add_participant_result = call_connection.add_participant(participant_to_add)
         if add_participant_result is None:
             raise ValueError("Invalid add_participant_result")
@@ -114,7 +121,9 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         time.sleep(3)
 
         # Mute participant
-        mute_participant_result = call_connection.mute_participant(target, operation_context="muting_add_target_participant")
+        mute_participant_result = call_connection.mute_participant(
+            target, operation_context="muting_add_target_participant"
+        )
         if mute_participant_result is None:
             raise ValueError("Invalid mute_participant_result")
 
@@ -128,8 +137,8 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
 
         self.terminate_call(unique_id)
         return
-    
-    @recorded_by_proxy    
+
+    @recorded_by_proxy
     def test_add_and_hold_unhold_participant_in_a_call(self):
 
         # try to establish the call
@@ -139,15 +148,19 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         unique_id, call_connection, _ = self.establish_callconnection_voip(caller, target)
 
         # check returned events
-        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
-        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+        connected_event = self.check_for_event(
+            "CallConnected", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        participant_updated_event = self.check_for_event(
+            "ParticipantsUpdated", call_connection._call_connection_id, timedelta(seconds=15)
+        )
 
         if connected_event is None:
             raise ValueError("Caller CallConnected event is None")
         if participant_updated_event is None:
             raise ValueError("Caller ParticipantsUpdated event is None")
 
-        #Add dummy participant
+        # Add dummy participant
         add_participant_result = call_connection.add_participant(participant_to_add)
         if add_participant_result is None:
             raise ValueError("Invalid add_participant_result")
@@ -170,12 +183,12 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
 
         time.sleep(2)
         get_participant_result = call_connection.get_participant(target)
-        
+
         if get_participant_result is None:
             raise ValueError("Invalid get_participant_result")
 
         if get_participant_result.is_on_hold is True:
             raise ValueError("Failed to unhold participant")
-        
+
         self.terminate_call(unique_id)
         return

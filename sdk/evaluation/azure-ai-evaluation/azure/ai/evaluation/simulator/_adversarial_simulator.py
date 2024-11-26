@@ -16,13 +16,19 @@ from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import get_async_http_client
 from azure.ai.evaluation._model_configurations import AzureAIProject
-from azure.ai.evaluation.simulator import AdversarialScenario
+from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialScenarioJailbreak
 from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
 
 from ._constants import SupportedLanguages
-from ._conversation import CallbackConversationBot, ConversationBot, ConversationRole, ConversationTurn
+from ._conversation import (
+    CallbackConversationBot,
+    MultiModalConversationBot,
+    ConversationBot,
+    ConversationRole,
+    ConversationTurn,
+)
 from ._conversation._conversation import simulate_conversation
 from ._model_tools import (
     AdversarialTemplateHandler,
@@ -47,6 +53,16 @@ class AdversarialSimulator:
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     :param credential: The credential for connecting to Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/evaluation_samples_simulate.py
+            :start-after: [START adversarial_scenario]
+            :end-before: [END adversarial_scenario]
+            :language: python
+            :dedent: 8
+            :caption: Run the AdversarialSimulator with an AdversarialConversation scenario to produce 2 results with
+                2 conversation turns each (4 messages per result).
     """
 
     def __init__(self, *, azure_ai_project: AzureAIProject, credential: TokenCredential):
@@ -151,28 +167,6 @@ class AdversarialSimulator:
 
          The 'content' for 'assistant' role messages may includes the messages that your callback returned.
         :rtype: List[Dict[str, Any]]
-
-        **Output format**
-
-        .. code-block:: python
-
-            return_value = [
-                {
-                    'template_parameters': {},
-                    'messages': [
-                        {
-                            'content': '<jailbreak prompt> <adversarial query>',
-                            'role': 'user'
-                        },
-                        {
-                            'content': "<response from endpoint>",
-                            'role': 'assistant',
-                            'context': None
-                        }
-                    ],
-                    '$schema': 'http://azureml/sdk-2-0/ChatConversation.json'
-                }
-            ]
         """
 
         # validate the inputs
@@ -243,6 +237,7 @@ class AdversarialSimulator:
                             api_call_delay_sec=api_call_delay_sec,
                             language=language,
                             semaphore=semaphore,
+                            scenario=scenario,
                         )
                     )
                 )
@@ -304,10 +299,13 @@ class AdversarialSimulator:
         api_call_delay_sec: int,
         language: SupportedLanguages,
         semaphore: asyncio.Semaphore,
+        scenario: Union[AdversarialScenario, AdversarialScenarioJailbreak],
     ) -> List[Dict]:
-        user_bot = self._setup_bot(role=ConversationRole.USER, template=template, parameters=parameters)
+        user_bot = self._setup_bot(
+            role=ConversationRole.USER, template=template, parameters=parameters, scenario=scenario
+        )
         system_bot = self._setup_bot(
-            target=target, role=ConversationRole.ASSISTANT, template=template, parameters=parameters
+            target=target, role=ConversationRole.ASSISTANT, template=template, parameters=parameters, scenario=scenario
         )
         bots = [user_bot, system_bot]
         session = get_async_http_client().with_policies(
@@ -353,6 +351,7 @@ class AdversarialSimulator:
         template: AdversarialTemplate,
         parameters: TemplateParameters,
         target: Optional[Callable] = None,
+        scenario: Union[AdversarialScenario, AdversarialScenarioJailbreak],
     ) -> ConversationBot:
         if role is ConversationRole.USER:
             model = self._get_user_proxy_completion_model(
@@ -383,6 +382,21 @@ class AdversarialSimulator:
 
                 def __call__(self) -> None:
                     pass
+
+            if scenario in [
+                AdversarialScenario.ADVERSARIAL_IMAGE_GEN,
+                AdversarialScenario.ADVERSARIAL_IMAGE_UNDERSTANDING,
+            ]:
+                return MultiModalConversationBot(
+                    callback=target,
+                    role=role,
+                    model=DummyModel(),
+                    user_template=str(template),
+                    user_template_parameters=parameters,
+                    rai_client=self.rai_client,
+                    conversation_template="",
+                    instantiation_parameters={},
+                )
 
             return CallbackConversationBot(
                 callback=target,
