@@ -173,6 +173,7 @@ class DatabaseProxy(object):
         match_condition: Optional[MatchConditions] = None,
         analytical_storage_ttl: Optional[int] = None,
         vector_embedding_policy: Optional[Dict[str, Any]] = None,
+        change_feed_policy: Optional[Dict[str, Any]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> ContainerProxy:
@@ -207,6 +208,8 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] vector_embedding_policy: The vector embedding policy for the container. Each vector
             embedding possesses a predetermined number of dimensions, is associated with an underlying data type, and
             is generated for a particular distance function.
+        :keyword Dict[str, Any] change_feed_policy: The change feed policy to apply 'retentionDuration' to
+            the container.
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
@@ -255,6 +258,8 @@ class DatabaseProxy(object):
             definition["computedProperties"] = computed_properties
         if vector_embedding_policy is not None:
             definition["vectorEmbeddingPolicy"] = vector_embedding_policy
+        if change_feed_policy is not None:
+            definition["changeFeedPolicy"] = change_feed_policy
         if full_text_policy is not None:
             definition["fullTextPolicy"] = full_text_policy
 
@@ -291,6 +296,7 @@ class DatabaseProxy(object):
         match_condition: Optional[MatchConditions] = None,
         analytical_storage_ttl: Optional[int] = None,
         vector_embedding_policy: Optional[Dict[str, Any]] = None,
+        change_feed_policy: Optional[Dict[str, Any]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> ContainerProxy:
@@ -327,6 +333,8 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] vector_embedding_policy: **provisional** The vector embedding policy for the container.
             Each vector embedding possesses a predetermined number of dimensions, is associated with an underlying
             data type, and is generated for a particular distance function.
+        :keyword Dict[str, Any] change_feed_policy: The change feed policy to apply 'retentionDuration' to
+            the container.
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
@@ -359,6 +367,7 @@ class DatabaseProxy(object):
                 session_token=session_token,
                 initial_headers=initial_headers,
                 vector_embedding_policy=vector_embedding_policy,
+                change_feed_policy=change_feed_policy,
                 full_text_policy=full_text_policy,
                 **kwargs
             )
