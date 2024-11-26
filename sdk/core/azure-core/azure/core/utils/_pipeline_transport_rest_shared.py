@@ -4,7 +4,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from __future__ import absolute_import
 from collections.abc import Mapping
 
 from io import BytesIO
