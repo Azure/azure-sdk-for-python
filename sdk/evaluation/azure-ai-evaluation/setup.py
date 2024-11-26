@@ -71,11 +71,11 @@ setup(
         # pickle support for credentials was added to this release
         "azure-identity>=1.16.0",
         "azure-core>=1.30.2",
+        "azure-storage-blob>=12.10.0",
         "nltk>=3.9.1",
     ],
     extras_require={
         "remote": [
-            "azure-storage-blob>=12.10.0",
         ],
     },
     project_urls={

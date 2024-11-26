@@ -4,6 +4,8 @@ from . import __pf_service_isolation  # isort: split  # noqa: F401
 import json
 import multiprocessing
 import time
+import jwt
+from logging import Logger
 from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, Optional
@@ -24,20 +26,23 @@ from pytest_mock import MockerFixture
 
 from azure.ai.evaluation import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from azure.ai.evaluation._common.utils import ensure_nltk_data_downloaded
+from azure.ai.evaluation._promptflow.azure._lite_azure_management_client import LiteAzureManagementClient
 from azure.core.credentials import TokenCredential
-
-# Import of optional packages
-AZURE_INSTALLED = True
-try:
-    import jwt
-
-    from azure.ai.ml._ml_client import MLClient
-except ImportError:
-    AZURE_INSTALLED = False
 
 PROMPTFLOW_ROOT = Path(__file__, "..", "..", "..").resolve()
 CONNECTION_FILE = (PROMPTFLOW_ROOT / "azure-ai-evaluation" / "connections.json").resolve()
 RECORDINGS_TEST_CONFIGS_ROOT = Path(PROMPTFLOW_ROOT / "azure-ai-evaluation/tests/test_configs").resolve()
+
+
+def pytest_configure(config):
+    # register Azure test markers to reduce spurious warnings on test runs
+    config.addinivalue_line("markers", "azuretest: mark test as an Azure test.")
+    config.addinivalue_line("markers", "localtest: mark test as a local test.")
+    config.addinivalue_line("markers", "unittest: mark test as a unit test.")
+    config.addinivalue_line("markers", "performance_test: mark test as a performance test.")
+
+    # suppress deprecation warnings for now
+    config.addinivalue_line("filterwarnings", "ignore::DeprecationWarning")
 
 
 class SanitizedValues:
@@ -369,20 +374,14 @@ def mock_validate_trace_destination():
     with patch("promptflow._sdk._tracing.TraceDestinationConfig.validate", return_value=None):
         yield
 
-
 @pytest.fixture
-def azure_ml_client(project_scope: Dict):
-    """The fixture, returning MLClient"""
-    if AZURE_INSTALLED:
-        return MLClient(
-            subscription_id=project_scope["subscription_id"],
-            resource_group_name=project_scope["resource_group_name"],
-            workspace_name=project_scope["project_name"],
-            credential=get_cred(),
-        )
-    else:
-        return None
-
+def azure_management_client(project_scope: dict):
+    """Get an Azure management client."""
+    return LiteAzureManagementClient(
+        subscription_id = project_scope["subscription_id"],
+        resource_group_name = project_scope["resource_group_name"],
+        logger = Logger("azure_management_client")
+    )
 
 @pytest.fixture
 def pf_client() -> PFClient:
@@ -472,8 +471,6 @@ def azure_cred() -> TokenCredential:
 
 @pytest.fixture(scope=package_scope_in_live_mode())
 def user_object_id() -> str:
-    if not AZURE_INSTALLED:
-        return ""
     if not is_live():
         return SanitizedValues.USER_OBJECT_ID
     credential = get_cred()
@@ -484,8 +481,6 @@ def user_object_id() -> str:
 
 @pytest.fixture(scope=package_scope_in_live_mode())
 def tenant_id() -> str:
-    if not AZURE_INSTALLED:
-        return ""
     if not is_live():
         return SanitizedValues.TENANT_ID
     credential = get_cred()
