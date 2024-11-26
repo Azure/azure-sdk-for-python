@@ -2,10 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from dataclasses import dataclass
-from enum import Enum
-from typing import NamedTuple, Sequence, Union
-
+from typing import Dict, List, NamedTuple, Optional, Union
+from msrest.serialization import Model
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 
 
@@ -17,94 +15,206 @@ class BlobStoreInfo(NamedTuple):
     credential: Union[AzureSasCredential, AzureNamedKeyCredential, None]
 
 
-@dataclass(frozen=True)
-class Sku:
-    capacity: int # If the SKU supports scale out/in then the capacity integer should be included. If scale out/in is not possible for the resource this may be omitted.
-    family: str # If the service has different generations of hardware, for the same SKU, then that can be captured here.
-    name: str # The name of the SKU. Ex - P3. It is typically a letter+number code
-    size: str # The SKU size. When the name field is the combination of tier and some other value, this would be the standalone code.
-    #tier: SkuTier # This field is required to be implemented by the Resource Provider if the service has more than one tier, but is not required on a PUT.
+class WorkspaceHubConfig(Model):
+    """WorkspaceHub's configuration object."""
+
+    _attribute_map = {
+        'additional_workspace_storage_accounts': {'key': 'additionalWorkspaceStorageAccounts', 'type': '[str]'},
+        'default_workspace_resource_group': {'key': 'defaultWorkspaceResourceGroup', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        additional_workspace_storage_accounts: Optional[List[str]] = None,
+        default_workspace_resource_group: Optional[str] = None,
+        **kwargs
+    ):
+        super(WorkspaceHubConfig, self).__init__(**kwargs)
+        self.additional_workspace_storage_accounts = additional_workspace_storage_accounts
+        self.default_workspace_resource_group = default_workspace_resource_group
 
 
-class CreatedByType(Enum):
-    # start with capital letters to match the API response
-    APPLICATION = "Application"
-    KEY = "Key"
-    MANAGED_IDENTITY = "ManagedIdentity"
-    USER = "User"
+class Workspace(Model):
+    """An object that represents a machine learning workspace.
 
+    Variables are only populated by the server, and will be ignored when sending a request."""
 
-class ProvisioningState(Enum):
-    # start with capital letters to match the API response
-    UNKNOWN = "Unknown"
-    CANCELED = "Canceled"
-    CREATING = "Creating"
-    DELETING = "Deleting"
-    FAILED = "Failed"
-    SUCCEEDED = "Succeeded"
-    UPDATING = "Updating"
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        #'system_data': {'readonly': True},
+        'agents_endpoint_uri': {'readonly': True},
+        'ml_flow_tracking_uri': {'readonly': True},
+        #'notebook_info': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
+        #'private_link_count': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'service_provisioned_resource_group': {'readonly': True},
+        'storage_hns_enabled': {'readonly': True},
+        'tenant_id': {'readonly': True},
+        'workspace_id': {'readonly': True},
+    }
 
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        #'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        #'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        #'sku': {'key': 'sku', 'type': 'Sku'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'agents_endpoint_uri': {'key': 'properties.agentsEndpointUri', 'type': 'str'},
+        'allow_public_access_when_behind_vnet': {'key': 'properties.allowPublicAccessWhenBehindVnet', 'type': 'bool'},
+        'allow_role_assignment_on_rg': {'key': 'properties.allowRoleAssignmentOnRG', 'type': 'bool'},
+        'application_insights': {'key': 'properties.applicationInsights', 'type': 'str'},
+        'associated_workspaces': {'key': 'properties.associatedWorkspaces', 'type': '[str]'},
+        'container_registries': {'key': 'properties.containerRegistries', 'type': '[str]'},
+        'container_registry': {'key': 'properties.containerRegistry', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'discovery_url': {'key': 'properties.discoveryUrl', 'type': 'str'},
+        'enable_data_isolation': {'key': 'properties.enableDataIsolation', 'type': 'bool'},
+        'enable_service_side_cmk_encryption': {'key': 'properties.enableServiceSideCMKEncryption', 'type': 'bool'},
+        'enable_simplified_cmk': {'key': 'properties.enableSimplifiedCmk', 'type': 'bool'},
+        'enable_software_bill_of_materials': {'key': 'properties.enableSoftwareBillOfMaterials', 'type': 'bool'},
+        #'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperty'},
+        'existing_workspaces': {'key': 'properties.existingWorkspaces', 'type': '[str]'},
+        #'feature_store_settings': {'key': 'properties.featureStoreSettings', 'type': 'FeatureStoreSettings'},
+        'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
+        'hbi_workspace': {'key': 'properties.hbiWorkspace', 'type': 'bool'},
+        'hub_resource_id': {'key': 'properties.hubResourceId', 'type': 'str'},
+        'image_build_compute': {'key': 'properties.imageBuildCompute', 'type': 'str'},
+        'ip_allowlist': {'key': 'properties.ipAllowlist', 'type': '[str]'},
+        'key_vault': {'key': 'properties.keyVault', 'type': 'str'},
+        'key_vaults': {'key': 'properties.keyVaults', 'type': '[str]'},
+        #'managed_network': {'key': 'properties.managedNetwork', 'type': 'ManagedNetworkSettings'},
+        'ml_flow_tracking_uri': {'key': 'properties.mlFlowTrackingUri', 'type': 'str'},
+        #'network_acls': {'key': 'properties.networkAcls', 'type': 'NetworkAcls'},
+        #'notebook_info': {'key': 'properties.notebookInfo', 'type': 'NotebookResourceInfo'},
+        'primary_user_assigned_identity': {'key': 'properties.primaryUserAssignedIdentity', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        'private_link_count': {'key': 'properties.privateLinkCount', 'type': 'int'},
+        'provision_network_now': {'key': 'properties.provisionNetworkNow', 'type': 'bool'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        #'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        #'serverless_compute_settings': {'key': 'properties.serverlessComputeSettings', 'type': 'ServerlessComputeSettings'},
+        #'service_managed_resources_settings': {'key': 'properties.serviceManagedResourcesSettings', 'type': 'ServiceManagedResourcesSettings'},
+        'service_provisioned_resource_group': {'key': 'properties.serviceProvisionedResourceGroup', 'type': 'str'},
+        #'shared_private_link_resources': {'key': 'properties.sharedPrivateLinkResources', 'type': '[SharedPrivateLinkResource]'},
+        'soft_delete_retention_in_days': {'key': 'properties.softDeleteRetentionInDays', 'type': 'int'},
+        'storage_account': {'key': 'properties.storageAccount', 'type': 'str'},
+        'storage_accounts': {'key': 'properties.storageAccounts', 'type': '[str]'},
+        'storage_hns_enabled': {'key': 'properties.storageHnsEnabled', 'type': 'bool'},
+        #'system_datastores_auth_mode': {'key': 'properties.systemDatastoresAuthMode', 'type': 'str'},
+        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
+        'v1_legacy_mode': {'key': 'properties.v1LegacyMode', 'type': 'bool'},
+        'workspace_hub_config': {'key': 'properties.workspaceHubConfig', 'type': 'WorkspaceHubConfig'},
+        'workspace_id': {'key': 'properties.workspaceId', 'type': 'str'},
+    }
 
-@dataclass(frozen=True)
-class systemData:
-    created_at: str                         # The timestamp of resource creation (UTC).
-    created_by: str                         # The identity that created the resource.
-    created_by_type: CreatedByType          # The type of identity that created the resource.
-    last_modified_at: str                   # The timestamp of resource last modification (UTC)
-    last_modified_by: str                   # The identity that last modified the resource.
-    last_modified_by_type: CreatedByType    # The type of identity that last modified the resource.
-
-
-@dataclass(frozen=True)
-class WorkspaceHubConfig:
-    additional_workspace_storage_accounts: Sequence[str]
-    default_workspace_resource_group: str
-
-
-@dataclass(frozen=True)
-class WorkspaceInfo:
-    @dataclass(frozen=True)
-    class Properties:
-        application_insights: str                          # ARM id of the application insights associated with this workspace.
-        associated_workspaces: Sequence[str]
-        container_registry: str                            # ARM id of the container registry associated with this workspace.
-        description: str                                   # The description of this workspace.
-        discovery_url: str                                 # Url for the discovery service to identify regional endpoints for machine learning experimentation services
-        enable_data_isolation: bool
-        #encryption: EncryptionProperty                    # The encryption settings of Azure ML workspace.
-        #feature_store_settings: FeatureStoreSettings      # Settings for feature store type workspace.
-        friendly_name: str                                 # The friendly name for this workspace. This name in mutable
-        hub_resource_id: str
-        image_build_compute: str                           # The compute name for image build
-        key_vault: str                                     # ARM id of the key vault associated with this workspace. This cannot be changed once the workspace has been created
-        #managed_network: ManagedNetworkSettings           # Managed Network settings for a machine learning workspace.
-        ml_flow_tracking_uri: str                          # The URI associated with this workspace that machine learning flow must point at to set up tracking.
-        #notebook_info: NotebookResourceInfo               # The notebook info of Azure ML workspace.
-        primary_user_assigned_identity: str                # The user assigned identity resource id that represents the workspace identity.
-        #private_endpoint_connections: PrivateEndpointConnection[] # The list of private endpoint connections in the workspace.
-        private_link_count: int                            # Count of private connections in the workspace
-        provisioning_state: ProvisioningState              # The current deployment state of workspace resource. The provisioningState is to indicate states for resource provisioning.
-        #public_network_access: PublicNetworkAccess        # Whether requests from Public Network are allowed.
-        #serverless_compute_settings: ServerlessComputeSettings # Settings for serverless compute created in the workspace
-        #service_managed_resources_settings: ServiceManagedResourcesSettings # The service managed resource settings.
-        service_provisioned_resource_group: str            # The name of the managed resource group created by workspace RP in customer subscription if the workspace is CMK workspace
-        #shared_private_link_resources: SharedPrivateLinkResource[] # The list of shared private link resources in this workspace.
-        storage_account: str                               # ARM id of the storage account associated with this workspace. This cannot be changed once the workspace has been created
-        storage_hns_enabled: bool                          # If the storage associated with the workspace has hierarchical namespace(HNS) enabled.
-        tenant_id: str                                     # The tenant id associated with this workspace.
-        workspace_hub_config: WorkspaceHubConfig           # WorkspaceHub's configuration object.
-        workspace_id: str                                  # The immutable id associated with this workspace.
-        v1_legacy_mode: bool = False                       # Enabling v1_legacy_mode may prevent you from using features provided by the v2 API.
-        allow_public_access_when_behind_vnet: bool = False # The flag to indicate whether to allow public access when behind VNet.
-        hbi_workspace: bool = False                        # The flag to signal HBI data in the workspace and reduce diagnostic data collected by the service
-
-    id: str                             # Fully qualified resource ID for the resource. Ex - /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
-    #identity: ManagedServiceIdentity   # The identity of the resource.
-    kind: str
-    location: str                       # Specifies the location of the resource.
-    name: str                           # The name of the resource
-    properties: Properties
-    sku: Sku                            # The sku of the workspace.
-    system_data: systemData             # Azure Resource Manager metadata containing createdBy and modifiedBy information.
-    #tags: Dict[str, Any]               # Contains resource tags defined as key/value pairs.
-    type: str                           # The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
+    def __init__(
+        self,
+        *,
+        #system_data: Optional[SystemData] = None,
+        #identity: Optional["ManagedServiceIdentity"] = None,
+        kind: Optional[str] = None,
+        location: Optional[str] = None,
+        #sku: Optional["Sku"] = None,
+        tags: Optional[Dict[str, str]] = None,
+        allow_public_access_when_behind_vnet: Optional[bool] = None,
+        allow_role_assignment_on_rg: Optional[bool] = None,
+        application_insights: Optional[str] = None,
+        associated_workspaces: Optional[List[str]] = None,
+        container_registries: Optional[List[str]] = None,
+        container_registry: Optional[str] = None,
+        description: Optional[str] = None,
+        discovery_url: Optional[str] = None,
+        enable_data_isolation: Optional[bool] = None,
+        enable_service_side_cmk_encryption: Optional[bool] = None,
+        enable_simplified_cmk: Optional[bool] = None,
+        enable_software_bill_of_materials: Optional[bool] = None,
+        #encryption: Optional["EncryptionProperty"] = None,
+        existing_workspaces: Optional[List[str]] = None,
+        #feature_store_settings: Optional["FeatureStoreSettings"] = None,
+        friendly_name: Optional[str] = None,
+        hbi_workspace: Optional[bool] = None,
+        hub_resource_id: Optional[str] = None,
+        image_build_compute: Optional[str] = None,
+        ip_allowlist: Optional[List[str]] = None,
+        key_vault: Optional[str] = None,
+        key_vaults: Optional[List[str]] = None,
+        #managed_network: Optional["ManagedNetworkSettings"] = None,
+        #network_acls: Optional["NetworkAcls"] = None,
+        primary_user_assigned_identity: Optional[str] = None,
+        provision_network_now: Optional[bool] = None,
+        #public_network_access: Optional[Union[str, "PublicNetworkAccessType"]] = None,
+        #serverless_compute_settings: Optional["ServerlessComputeSettings"] = None,
+        #service_managed_resources_settings: Optional["ServiceManagedResourcesSettings"] = None,
+        #shared_private_link_resources: Optional[List["SharedPrivateLinkResource"]] = None,
+        soft_delete_retention_in_days: Optional[int] = None,
+        storage_account: Optional[str] = None,
+        storage_accounts: Optional[List[str]] = None,
+        #system_datastores_auth_mode: Optional[Union[str, "SystemDatastoresAuthMode"]] = None,
+        v1_legacy_mode: Optional[bool] = None,
+        workspace_hub_config: Optional["WorkspaceHubConfig"] = None,
+        **kwargs
+    ):
+        super(Workspace, self).__init__(**kwargs)
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        #self.system_data = system_data
+        #self.identity = identity
+        self.kind = kind
+        self.location = location
+        #self.sku = sku
+        self.tags = tags
+        self.agents_endpoint_uri = None
+        self.allow_public_access_when_behind_vnet = allow_public_access_when_behind_vnet
+        self.allow_role_assignment_on_rg = allow_role_assignment_on_rg
+        self.application_insights = application_insights
+        self.associated_workspaces = associated_workspaces
+        self.container_registries = container_registries
+        self.container_registry = container_registry
+        self.description = description
+        self.discovery_url = discovery_url
+        self.enable_data_isolation = enable_data_isolation
+        self.enable_service_side_cmk_encryption = enable_service_side_cmk_encryption
+        self.enable_simplified_cmk = enable_simplified_cmk
+        self.enable_software_bill_of_materials = enable_software_bill_of_materials
+        #self.encryption = encryption
+        self.existing_workspaces = existing_workspaces
+        #self.feature_store_settings = feature_store_settings
+        self.friendly_name = friendly_name
+        self.hbi_workspace = hbi_workspace
+        self.hub_resource_id = hub_resource_id
+        self.image_build_compute = image_build_compute
+        self.ip_allowlist = ip_allowlist
+        self.key_vault = key_vault
+        self.key_vaults = key_vaults
+        #self.managed_network = managed_network
+        self.ml_flow_tracking_uri = None
+        #self.network_acls = network_acls
+        #self.notebook_info = None
+        self.primary_user_assigned_identity = primary_user_assigned_identity
+        self.private_endpoint_connections = None
+        self.private_link_count = None
+        self.provision_network_now = provision_network_now
+        self.provisioning_state = None
+        #self.public_network_access = public_network_access
+        #self.serverless_compute_settings = serverless_compute_settings
+        #self.service_managed_resources_settings = service_managed_resources_settings
+        self.service_provisioned_resource_group = None
+        #self.shared_private_link_resources = shared_private_link_resources
+        self.soft_delete_retention_in_days = soft_delete_retention_in_days
+        self.storage_account = storage_account
+        self.storage_accounts = storage_accounts
+        self.storage_hns_enabled = None
+        #self.system_datastores_auth_mode = system_datastores_auth_mode
+        self.tenant_id = None
+        self.v1_legacy_mode = v1_legacy_mode
+        self.workspace_hub_config = workspace_hub_config
+        self.workspace_id = None
