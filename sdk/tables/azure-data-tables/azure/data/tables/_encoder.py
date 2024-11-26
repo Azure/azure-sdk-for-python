@@ -11,15 +11,17 @@ from math import isnan
 
 from ._entity import EdmType, TableEntity, EntityProperty
 from ._common_conversion import _encode_base64, _to_utc_datetime
-from ._constants import MAX_INT32, MIN_INT32, MAX_INT64, MIN_INT64, _ERROR_VALUE_TOO_LARGE
+from ._constants import MAX_INT64, MIN_INT64, _ERROR_VALUE_TOO_LARGE
 
 _ODATA_SUFFIX = "@odata.type"
+EncoderMapType = Dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]]
 
 
 class TableEntityEncoder():
     def __init__(
         self,
-        convert_map: Optional[Dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]]]
+        *,
+        convert_map: Optional[EncoderMapType] = None
     ) -> None:
         self.convert_map = convert_map
 
@@ -61,11 +63,11 @@ class TableEntityEncoder():
                     try:
                         convert = self.convert_map[type(value)]
                     except KeyError:
-                        for obj_type in self.convert_map.keys():
+                        for obj_type, _ in self.convert_map.items():
                             # The key of convert map may not be a type,
                             # ignore the TypeError from isinstalce() for this case
                             try:
-                                if isinstance(value, obj_type):
+                                if isinstance(value, obj_type):  # mypy: disable-error-code="arg-type"
                                     convert = self.convert_map.get(obj_type)
                                     break
                             except TypeError:
@@ -76,17 +78,17 @@ class TableEntityEncoder():
                     try:
                         convert = _PYTHON_TO_ENTITY_CONVERSIONS[type(value)]
                     except KeyError:
-                        for obj_type in _PYTHON_TO_ENTITY_CONVERSIONS.keys():
+                        for obj_type, _ in _PYTHON_TO_ENTITY_CONVERSIONS.items():
                             # The key of the default convert map may not be a type,
                             # ignore the TypeError from isinstalce() for this case
                             try:
-                                if isinstance(value, obj_type):
+                                if isinstance(value, obj_type):  # mypy: disable-error-code="arg-type"
                                     convert = _PYTHON_TO_ENTITY_CONVERSIONS.get(obj_type)
                                     break
                             except TypeError:
                                 pass
                     if convert:
-                        edm_type, value = convert(self, value)
+                        edm_type, value = convert(self, value)  # mypy: ignore[call-arg]
                     else:
                         raise TypeError(f"Don't find a converter to encode value {value}")
             try:
@@ -104,13 +106,13 @@ class TableEntityEncoder():
             encoded[key] = value
         return encoded
 
-    def _to_entity_binary(self, value):
+    def to_entity_binary(self, value):
         return EdmType.BINARY, _encode_base64(value)
 
-    def _to_entity_bool(self, value):
+    def to_entity_bool(self, value):
         return None, value
 
-    def _to_entity_datetime(self, value):
+    def to_entity_datetime(self, value):
         if isinstance(value, str):
             # Pass a serialized datetime straight through
             return EdmType.DATETIME, value
@@ -123,7 +125,7 @@ class TableEntityEncoder():
             pass
         return EdmType.DATETIME, _to_utc_datetime(value)
 
-    def _to_entity_float(self, value):
+    def to_entity_float(self, value):
         if isinstance(value, str):
             # Pass a serialized value straight through
             return EdmType.DOUBLE, value
@@ -135,33 +137,32 @@ class TableEntityEncoder():
             return EdmType.DOUBLE, "-Infinity"
         return EdmType.DOUBLE, value
 
-    def _to_entity_guid(self, value):
+    def to_entity_guid(self, value):
         return EdmType.GUID, str(value)
 
-    def _to_entity_int32(self, value):
+    def to_entity_int32(self, value):
         int_value = int(value)
         if int_value >= MAX_INT64 or int_value < MIN_INT64:
             raise TypeError(_ERROR_VALUE_TOO_LARGE.format(str(value), EdmType.INT32))
         return None, int_value
 
-    def _to_entity_int64(self, value):
+    def to_entity_int64(self, value):
         return EdmType.INT64, str(value)
 
-    def _to_entity_str(self, value):
+    def to_entity_str(self, value):
         return None, str(value)
 
-    def _to_entity_enum(self, value):
+    def to_entity_enum(self, value):
         try:
             if self.convert_map:
                 convert = self.convert_map[type(value.value)]
                 return convert(value.value)
-            else:
-                convert = _PYTHON_TO_ENTITY_CONVERSIONS[type(value.value)]
-                return convert(self, value.value)
+            convert = _PYTHON_TO_ENTITY_CONVERSIONS[type(value.value)]
+            return convert(self, value.value)
         except KeyError as e:
-            raise TypeError("Unsupported enum type")
+            raise TypeError("Unsupported enum type") from e
 
-    def _to_entity_tuple(self, value):
+    def to_entity_tuple(self, value):
         if len(value) == 2:
             unencoded_value = value[0]
             edm_type = EdmType(value[1]) # should raise error for unknown edmtypes
@@ -173,39 +174,37 @@ class TableEntityEncoder():
             if self.convert_map:
                 convert = self.convert_map[edm_type]
                 return convert(unencoded_value)
-            else:
-                convert = _PYTHON_TO_ENTITY_CONVERSIONS[edm_type]
-                return convert(self, unencoded_value)
+            convert = _PYTHON_TO_ENTITY_CONVERSIONS[edm_type]
+            return convert(self, unencoded_value)
         except KeyError as e:
-            raise TypeError("Unsupported tuple type")
+            raise TypeError("Unsupported tuple type") from e
 
 # Conversion from Python type to a function which returns a tuple of the
 # type string and content string.
-# 
-# Conversion from Edm type to a function which returns a tuple of the
+# And conversion from Edm type to a function which returns a tuple of the
 # type string and content string. These conversions are only used when the
 # full EdmProperty tuple is specified. As a result, in this case we ALWAYS add
 # the Odata type tag, even for field types where it's not necessary. This is why
 # boolean and int32 have special processing below, as we would not normally add the
 # Odata type tags for these to keep payload size minimal.
 # This is also necessary for CLI compatibility.
-_PYTHON_TO_ENTITY_CONVERSIONS: Dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Any]]] = {
-    int: TableEntityEncoder._to_entity_int32,
-    bool: TableEntityEncoder._to_entity_bool,
-    datetime: TableEntityEncoder._to_entity_datetime,
-    float: TableEntityEncoder._to_entity_float,
-    UUID: TableEntityEncoder._to_entity_guid,
-    Enum: TableEntityEncoder._to_entity_enum,
-    str: TableEntityEncoder._to_entity_str,
-    bytes: TableEntityEncoder._to_entity_binary,
-    tuple: TableEntityEncoder._to_entity_tuple,
-    EntityProperty: TableEntityEncoder._to_entity_tuple,
-    EdmType.BINARY: TableEntityEncoder._to_entity_binary,
+_PYTHON_TO_ENTITY_CONVERSIONS = {
+    int: TableEntityEncoder.to_entity_int32,
+    bool: TableEntityEncoder.to_entity_bool,
+    datetime: TableEntityEncoder.to_entity_datetime,
+    float: TableEntityEncoder.to_entity_float,
+    UUID: TableEntityEncoder.to_entity_guid,
+    Enum: TableEntityEncoder.to_entity_enum,
+    str: TableEntityEncoder.to_entity_str,
+    bytes: TableEntityEncoder.to_entity_binary,
+    tuple: TableEntityEncoder.to_entity_tuple,
+    EntityProperty: TableEntityEncoder.to_entity_tuple,
+    EdmType.BINARY: TableEntityEncoder.to_entity_binary,
     EdmType.BOOLEAN: lambda _, v: (EdmType.BOOLEAN, v),
-    EdmType.DATETIME: TableEntityEncoder._to_entity_datetime,
-    EdmType.DOUBLE: TableEntityEncoder._to_entity_float,
-    EdmType.GUID: TableEntityEncoder._to_entity_guid,
-    EdmType.INT32: lambda _, v: (EdmType.INT32, TableEntityEncoder._to_entity_int32(_, int(v))[1]),
-    EdmType.INT64: TableEntityEncoder._to_entity_int64,
+    EdmType.DATETIME: TableEntityEncoder.to_entity_datetime,
+    EdmType.DOUBLE: TableEntityEncoder.to_entity_float,
+    EdmType.GUID: TableEntityEncoder.to_entity_guid,
+    EdmType.INT32: lambda _, v: (EdmType.INT32, TableEntityEncoder.to_entity_int32(_, int(v))[1]),
+    EdmType.INT64: TableEntityEncoder.to_entity_int64,
     EdmType.STRING: lambda _, v: (EdmType.STRING, str(v)),
 }

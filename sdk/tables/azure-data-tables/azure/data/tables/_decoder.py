@@ -3,13 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Optional, Tuple, Mapping, Union, TypeVar, Dict, Type, Callable
+from typing import Any, Optional, Tuple, Mapping, Union, Dict, Callable
 from datetime import datetime, timezone
 from urllib.parse import quote
 from uuid import UUID
 
 from ._common_conversion import _decode_base64_to_bytes
-from ._entity import EntityProperty, EdmType, TableEntity, EntityMetadata
+from ._entity import EntityProperty, EdmType, TableEntity
+
+DecoderMapType = Dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]]
 
 
 class TablesEntityDatetime(datetime):
@@ -24,13 +26,17 @@ class TablesEntityDatetime(datetime):
 class TableEntityDecoder():
     def __init__(
         self,
-        convert_map: Optional[Dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Any]]]],
-        flatten_result_entity: bool
+        *,
+        flatten_result_entity: bool = False,
+        convert_map: Optional[DecoderMapType] = None,
     ) -> None:
         self.convert_map = convert_map
         self.flatten_result_entity = flatten_result_entity
 
-    def __call__(self, entry_element: Union[TableEntity, Mapping[str, Any]]) -> Dict[str, Union[str, int, float, bool]]:
+    def __call__(  # pylint: disable=too-many-branches, too-many-statements
+            self,
+            entry_element: Union[TableEntity, Mapping[str, Any]]
+        ) -> Dict[str, Union[str, int, float, bool]]:
         """Convert json response to entity.
         The entity format is:
         {
@@ -123,7 +129,7 @@ class TableEntityDecoder():
         if timestamp:
             if not etag:
                 etag = "W/\"datetime'" + quote(timestamp) + "'\""
-            timestamp = self._from_entity_datetime(timestamp)
+            timestamp = self.from_entity_datetime(timestamp)
         odata.update({"etag": etag, "timestamp": timestamp})
         if self.flatten_result_entity:
             for name, value in odata.items():
@@ -142,19 +148,19 @@ class TableEntityDecoder():
             return value
 
 
-    def _from_entity_binary(self, value: str) -> bytes:
+    def from_entity_binary(self, value: str) -> bytes:
         return _decode_base64_to_bytes(value)
 
 
-    def _from_entity_int32(self, value: str) -> int:
+    def from_entity_int32(self, value: str) -> int:
         return int(value)
 
 
-    def _from_entity_int64(self, value: str) -> EntityProperty:
+    def from_entity_int64(self, value: str) -> EntityProperty:
         return EntityProperty(int(value), EdmType.INT64)
 
 
-    def _from_entity_datetime(self, value):
+    def from_entity_datetime(self, value):
         # Cosmos returns this with a decimal point that throws an error on deserialization
         cleaned_value = self.clean_up_dotnet_timestamps(value)
         try:
@@ -180,32 +186,26 @@ class TableEntityDecoder():
         return value[0]
 
 
-    def deserialize_iso(self, value):
-        if not value:
-            return value
-        return self._from_entity_datetime(value)
-
-
-    def _from_entity_guid(self, value):
+    def from_entity_guid(self, value):
         return UUID(value)
 
 
-    def _from_entity_str(self, value: Union[str, bytes]) -> str:
+    def from_entity_str(self, value: Union[str, bytes]) -> str:
         if isinstance(value, bytes):
             return value.decode("utf-8")
         return value
 
 _ENTITY_TO_PYTHON_CONVERSIONS = {
-    EdmType.BINARY: TableEntityDecoder._from_entity_binary,
-    EdmType.INT32: TableEntityDecoder._from_entity_int32,
-    EdmType.INT64: TableEntityDecoder._from_entity_int64,
+    EdmType.BINARY: TableEntityDecoder.from_entity_binary,
+    EdmType.INT32: TableEntityDecoder.from_entity_int32,
+    EdmType.INT64: TableEntityDecoder.from_entity_int64,
     EdmType.DOUBLE: lambda _, v: float(v),
-    EdmType.DATETIME: TableEntityDecoder._from_entity_datetime,
-    EdmType.GUID: TableEntityDecoder._from_entity_guid,
-    EdmType.STRING: TableEntityDecoder._from_entity_str,
+    EdmType.DATETIME: TableEntityDecoder.from_entity_datetime,
+    EdmType.GUID: TableEntityDecoder.from_entity_guid,
+    EdmType.STRING: TableEntityDecoder.from_entity_str,
 }
 
 def deserialize_iso(value):
     if not value:
         return value
-    return TableEntityDecoder()._from_entity_datetime(value)
+    return TableEntityDecoder().from_entity_datetime(value)

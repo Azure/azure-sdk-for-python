@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from enum import Enum
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Callable, Union, Tuple, TypeVar
+from typing import Any, Dict, List, Optional, Callable, Union
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.exceptions import HttpResponseError
@@ -21,10 +21,7 @@ from ._generated.models import (
 )
 from ._decoder import TableEntityDecoder
 from ._error import _process_table_error
-from ._entity import EdmType
 from ._constants import NEXT_PARTITION_KEY, NEXT_ROW_KEY, NEXT_TABLE_NAME
-
-T = TypeVar("T")
 
 
 def _return_context_and_deserialized(response, deserialized, response_headers):
