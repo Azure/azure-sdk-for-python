@@ -17,10 +17,16 @@ from azure.ai.ml._restclient.runhistory.models import Run
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, JobService
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_2401
-from azure.ai.ml._restclient.v2024_01_01_preview.models import JobType as RestJobType_20240101Preview
+from azure.ai.ml._restclient.v2024_01_01_preview.models import (
+    JobType as RestJobType_20240101Preview,
+)
 from azure.ai.ml._utils._html_utils import make_link, to_html
 from azure.ai.ml._utils.utils import dump_yaml_to_file
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    PARAMS_OVERRIDE_KEY,
+    CommonYamlFields,
+)
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.constants._job.job import JobServices, JobType
 from azure.ai.ml.entities._mixins import TelemetryMixin
@@ -191,7 +197,10 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         if self.studio_url:
             info.update(
                 [
-                    ("Details Page", make_link(self.studio_url, "Link to Azure Machine Learning studio")),
+                    (
+                        "Details Page",
+                        make_link(self.studio_url, "Link to Azure Machine Learning studio"),
+                    ),
                 ]
             )
         res: str = to_html(info)
@@ -202,7 +211,9 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         pass
 
     @classmethod
-    def _resolve_cls_and_type(cls, data: Dict, params_override: Optional[List[Dict]] = None) -> Tuple:
+    def _resolve_cls_and_type(
+        cls, data: Dict, params_override: Optional[List[Dict]] = None
+    ) -> Tuple:
         from azure.ai.ml.entities._builders.command import Command
         from azure.ai.ml.entities._builders.spark import Spark
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
@@ -214,7 +225,9 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
 
         job_type: Optional[Type["Job"]] = None
         type_in_override = find_type_in_override(params_override)
-        type_str = type_in_override or data.get(CommonYamlFields.TYPE, JobType.COMMAND)  # override takes the priority
+        type_str = type_in_override or data.get(
+            CommonYamlFields.TYPE, JobType.COMMAND
+        )  # override takes the priority
         if type_str == JobType.COMMAND:
             job_type = Command
         elif type_str == JobType.SPARK:
@@ -306,7 +319,9 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
             if obj.properties.job_type == RestJobType.COMMAND:
                 # PrP only until new import job type is ready on MFE in PuP
                 # compute type 'DataFactory' is reserved compute name for 'clusterless' ADF jobs
-                if obj.properties.compute_id and obj.properties.compute_id.endswith("/" + ComputeType.ADF):
+                if obj.properties.compute_id and obj.properties.compute_id.endswith(
+                    "/" + ComputeType.ADF
+                ):
                     return ImportJob._load_from_rest(obj)
 
                 res_command: Job = Command._load_from_rest_job(obj)
@@ -334,7 +349,10 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         except Exception as ex:
             error_message = json.dumps(obj.as_dict(), indent=2) if obj else None
             module_logger.info(
-                "Exception: %s.\n%s\nUnable to parse the job resource: %s.\n", ex, traceback.format_exc(), error_message
+                "Exception: %s.\n%s\nUnable to parse the job resource: %s.\n",
+                ex,
+                traceback.format_exc(),
+                error_message,
             )
             raise JobParsingError(
                 message=str(ex),
@@ -355,5 +373,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
 
     @classmethod
     @abstractmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "Job":
+    def _load_from_dict(
+        cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any
+    ) -> "Job":
         pass
