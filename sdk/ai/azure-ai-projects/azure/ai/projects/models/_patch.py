@@ -589,7 +589,7 @@ class AzureFunctionTool(Tool):
 
         :rtype: List[ToolDefinition]
         """
-        return self._definitions
+        return cast(List[ToolDefinition], self._definitions)
 
     @property
     def resources(self) -> ToolResources:

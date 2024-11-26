@@ -220,8 +220,6 @@ class BaseExporter:
                     for error in track_response.errors:
                         if _is_retryable_code(error.status_code):
                             resend_envelopes.append(envelopes[error.index])  # type: ignore
-                            if self._should_collect_stats():
-                                _update_requests_map(_REQ_RETRY_NAME[1], value=error.status_code)
                         else:
                             if not self._is_stats_exporter():
                                 logger.error(
