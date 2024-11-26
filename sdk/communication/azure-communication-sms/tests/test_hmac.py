@@ -7,6 +7,7 @@
 
 from azure.communication.sms._shared.policy import HMACCredentialsPolicy
 
+
 class TestHMAC:
 
     def test_correct_hmac(self):
@@ -18,6 +19,6 @@ class TestHMAC:
     def test_correct_utf16_hmac(self):
         auth_policy = HMACCredentialsPolicy("contoso.communicationservices.azure.com", "pw==")
 
-        sha_val = auth_policy._compute_hmac(u"😀")
+        sha_val = auth_policy._compute_hmac("😀")
 
         assert sha_val == "1rudJKjn2Zi+3hRrBG29wIF6pD6YyAeQR1ZcFtXoKAU="

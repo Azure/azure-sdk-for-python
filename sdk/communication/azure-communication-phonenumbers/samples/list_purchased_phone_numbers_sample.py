@@ -18,19 +18,18 @@ USAGE:
 """
 
 import os
-from azure.communication.phonenumbers import (
-    PhoneNumbersClient
-)
+from azure.communication.phonenumbers import PhoneNumbersClient
 
-connection_str = os.getenv('COMMUNICATION_SAMPLES_CONNECTION_STRING')
+connection_str = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
 phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
+
 
 def list_purchased_phone_numbers():
     purchased_phone_numbers = phone_numbers_client.list_purchased_phone_numbers()
-    print('Purchased phone numbers:')
+    print("Purchased phone numbers:")
     for acquired_phone_number in purchased_phone_numbers:
         print(acquired_phone_number.phone_number)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     list_purchased_phone_numbers()
