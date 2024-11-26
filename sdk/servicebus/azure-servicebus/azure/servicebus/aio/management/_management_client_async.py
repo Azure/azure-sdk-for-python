@@ -251,7 +251,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         (endpoint, shared_access_key_name, shared_access_key, _, token, token_expiry, emulator) = _parse_conn_str(
             conn_str
         )
-        kwargs["use_tls"] = not emulator
         if token and token_expiry:
             credential = ServiceBusSASTokenCredential(token, token_expiry)
         elif shared_access_key_name and shared_access_key:
