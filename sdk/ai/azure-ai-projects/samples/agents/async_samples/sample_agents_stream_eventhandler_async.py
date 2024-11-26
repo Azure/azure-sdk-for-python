@@ -38,11 +38,12 @@ import os
 
 
 class MyEventHandler(DefaultAsyncAgentEventHandler):
+    async def on_message_delta_text_content(self, message_text_content: "MessageDeltaTextContent") -> None:
+        text_value = message_text_content.text.value if message_text_content.text else "No text"
+        print(f"Text content received: {text_value}")
+
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
-        for content_part in delta.delta.content:
-            if isinstance(content_part, MessageDeltaTextContent):
-                text_value = content_part.text.value if content_part.text else "No text"
-                print(f"Text delta received: {text_value}")
+        print(f"MessageDeltaChunk received")
 
     async def on_thread_message(self, message: "ThreadMessage") -> None:
         print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")

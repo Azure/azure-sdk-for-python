@@ -83,7 +83,7 @@ class ThreadError(_model_base.Model):
     def __init__(self, error: str):
         self.error = error
 
-StreamEventData = Union[MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep, ThreadError, str, None]
+StreamEventData = Union[MessageDeltaChunk, MessageDeltaTextContent, ThreadMessage, ThreadRun, RunStep, ThreadError, str, None]
 
 
 def _filter_parameters(model_class: Type, parameters: Dict[str, Any]) -> Dict[str, Any]:
@@ -974,6 +974,89 @@ class AgentEventHandler:
         :param str event_type: The event type.
         :param Any event_data: The event's data.
         """
+        
+class ProcessAgentDataEventterator(Iterator[Tuple[str, StreamEventData]]):
+    def __init__(self, event_data_str: str):
+        self.index = 0
+        self.iterator_items = self._init_iterator_items(event_data_str)
+
+    def __next__(self) -> Tuple[str, StreamEventData]:
+        if self.index >= len(self.iterator_items):
+            raise StopIteration
+        value = self.iterator_items[self.index]
+        self.index += 1
+        return value 
+       
+    def _init_iterator_items(self, event_data_str: str) -> List[Tuple[str, StreamEventData]]:
+        event_lines = event_data_str.strip().split("\n")
+        event_type: Optional[str] = None
+        event_data = ""
+        iterator_items: List[Tuple[str, StreamEventData]] = []
+        for line in event_lines:
+            if line.startswith("event:"):
+                event_type = line.split(":", 1)[1].strip()
+            elif line.startswith("data:"):
+                event_data = line.split(":", 1)[1].strip()
+
+        if not event_type:
+            raise ValueError("Event type not specified in the event data.")
+
+        try:
+            parsed_data: Union[str, Dict[str, StreamEventData]] = cast(
+                Dict[str, StreamEventData], json.loads(event_data)
+            )
+        except json.JSONDecodeError:
+            parsed_data = event_data
+
+        # Workaround for service bug: Rename 'expires_at' to 'expired_at'
+        if event_type.startswith("thread.run.step") and isinstance(parsed_data, dict) and "expires_at" in parsed_data:
+            parsed_data["expired_at"] = parsed_data.pop("expires_at")
+
+        # Map to the appropriate class instance
+        if event_type in {
+            AgentStreamEvent.THREAD_RUN_CREATED.value,
+            AgentStreamEvent.THREAD_RUN_QUEUED.value,
+            AgentStreamEvent.THREAD_RUN_IN_PROGRESS.value,
+            AgentStreamEvent.THREAD_RUN_REQUIRES_ACTION.value,
+            AgentStreamEvent.THREAD_RUN_COMPLETED.value,
+            AgentStreamEvent.THREAD_RUN_FAILED.value,
+            AgentStreamEvent.THREAD_RUN_CANCELLING.value,
+            AgentStreamEvent.THREAD_RUN_CANCELLED.value,
+            AgentStreamEvent.THREAD_RUN_EXPIRED.value,
+        }:
+            iterator_items.append((event_type, _safe_instantiate(ThreadRun, parsed_data)))
+        elif event_type in {
+            AgentStreamEvent.THREAD_RUN_STEP_CREATED.value,
+            AgentStreamEvent.THREAD_RUN_STEP_IN_PROGRESS.value,
+            AgentStreamEvent.THREAD_RUN_STEP_COMPLETED.value,
+            AgentStreamEvent.THREAD_RUN_STEP_FAILED.value,
+            AgentStreamEvent.THREAD_RUN_STEP_CANCELLED.value,
+            AgentStreamEvent.THREAD_RUN_STEP_EXPIRED.value,
+        }:
+            iterator_items.append((event_type, _safe_instantiate(RunStep, parsed_data)))
+        elif event_type in {
+            AgentStreamEvent.THREAD_MESSAGE_CREATED.value,
+            AgentStreamEvent.THREAD_MESSAGE_IN_PROGRESS.value,
+            AgentStreamEvent.THREAD_MESSAGE_COMPLETED.value,
+            AgentStreamEvent.THREAD_MESSAGE_INCOMPLETE.value,
+        }:
+            iterator_items.append((event_type, _safe_instantiate(ThreadMessage, parsed_data)))
+        elif event_type == AgentStreamEvent.THREAD_MESSAGE_DELTA.value:
+            message_delta_chunks = _safe_instantiate(MessageDeltaChunk, parsed_data)
+            iterator_items.append((event_type,  message_delta_chunks))
+            for content_part in cast(MessageDeltaChunk, message_delta_chunks).delta.content:
+                if isinstance(content_part, MessageDeltaTextContent):
+                    iterator_items.append((event_type,  content_part))
+            
+        elif event_type == AgentStreamEvent.THREAD_RUN_STEP_DELTA.value:
+            iterator_items.append((event_type, _safe_instantiate(RunStepDeltaChunk, parsed_data)))
+        elif event_type == AgentStreamEvent.DONE.value:
+            iterator_items.append((event_type, None))
+        else:
+            iterator_items.append((event_type, ThreadError(error=str(parsed_data))))
+        return iterator_items
+        
+        
     
 class BaseAsyncAgentEventHandler(AsyncIterator[Tuple[str, T]], Generic[T]):
     def __init__(
@@ -1040,108 +1123,53 @@ class BaseAsyncAgentEventHandler(AsyncIterator[Tuple[str, T]], Generic[T]):
     
 class DefaultAsyncAgentEventHandler(BaseAsyncAgentEventHandler[StreamEventData]):
     
-    def _parse_event_data(self, event_data_str: str) -> Tuple[str, StreamEventData]:
-        event_lines = event_data_str.strip().split("\n")
-        event_type: Optional[str] = None
-        event_data = ""
-
-        for line in event_lines:
-            if line.startswith("event:"):
-                event_type = line.split(":", 1)[1].strip()
-            elif line.startswith("data:"):
-                event_data = line.split(":", 1)[1].strip()
-
-        if not event_type:
-            raise ValueError("Event type not specified in the event data.")
-
-        try:
-            parsed_data: Union[str, Dict[str, StreamEventData]] = cast(
-                Dict[str, StreamEventData], json.loads(event_data)
-            )
-        except json.JSONDecodeError:
-            parsed_data = event_data
-
-        # Workaround for service bug: Rename 'expires_at' to 'expired_at'
-        if event_type.startswith("thread.run.step") and isinstance(parsed_data, dict) and "expires_at" in parsed_data:
-            parsed_data["expired_at"] = parsed_data.pop("expires_at")
-
-        # Map to the appropriate class instance
-        if event_type in {
-            AgentStreamEvent.THREAD_RUN_CREATED.value,
-            AgentStreamEvent.THREAD_RUN_QUEUED.value,
-            AgentStreamEvent.THREAD_RUN_IN_PROGRESS.value,
-            AgentStreamEvent.THREAD_RUN_REQUIRES_ACTION.value,
-            AgentStreamEvent.THREAD_RUN_COMPLETED.value,
-            AgentStreamEvent.THREAD_RUN_FAILED.value,
-            AgentStreamEvent.THREAD_RUN_CANCELLING.value,
-            AgentStreamEvent.THREAD_RUN_CANCELLED.value,
-            AgentStreamEvent.THREAD_RUN_EXPIRED.value,
-        }:
-            event_data_obj = _safe_instantiate(ThreadRun, parsed_data)
-        elif event_type in {
-            AgentStreamEvent.THREAD_RUN_STEP_CREATED.value,
-            AgentStreamEvent.THREAD_RUN_STEP_IN_PROGRESS.value,
-            AgentStreamEvent.THREAD_RUN_STEP_COMPLETED.value,
-            AgentStreamEvent.THREAD_RUN_STEP_FAILED.value,
-            AgentStreamEvent.THREAD_RUN_STEP_CANCELLED.value,
-            AgentStreamEvent.THREAD_RUN_STEP_EXPIRED.value,
-        }:
-            event_data_obj = _safe_instantiate(RunStep, parsed_data)
-        elif event_type in {
-            AgentStreamEvent.THREAD_MESSAGE_CREATED.value,
-            AgentStreamEvent.THREAD_MESSAGE_IN_PROGRESS.value,
-            AgentStreamEvent.THREAD_MESSAGE_COMPLETED.value,
-            AgentStreamEvent.THREAD_MESSAGE_INCOMPLETE.value,
-        }:
-            event_data_obj = _safe_instantiate(ThreadMessage, parsed_data)
-        elif event_type == AgentStreamEvent.THREAD_MESSAGE_DELTA.value:
-            event_data_obj = _safe_instantiate(MessageDeltaChunk, parsed_data)
-        elif event_type == AgentStreamEvent.THREAD_RUN_STEP_DELTA.value:
-            event_data_obj = _safe_instantiate(RunStepDeltaChunk, parsed_data)
-        else:
-            event_data_obj = ThreadError(error=str(parsed_data))
-
-        return event_type, event_data_obj
-
     async def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData]:
-        event_type, event_data_obj = self._parse_event_data(event_data_str)
+        iterator = ProcessAgentDataEventterator(event_data_str)
+        for event_type, event_data_obj in iterator:
+            if (
+                isinstance(event_data_obj, ThreadRun)
+                and event_data_obj.status == "requires_action"
+                and isinstance(event_data_obj.required_action, SubmitToolOutputsAction)
+            ):
+                await self.submit_tool_outputs(event_data_obj, self)
+                
+            try:
+                if isinstance(event_data_obj, MessageDeltaTextContent):
+                    await self.on_message_delta_text_content(event_data_obj)
+                elif isinstance(event_data_obj, MessageDeltaChunk):
+                    await self.on_message_delta(event_data_obj)
+                elif isinstance(event_data_obj, ThreadMessage):
+                    await self.on_thread_message(event_data_obj)
+                elif isinstance(event_data_obj, ThreadRun):
+                    await self.on_thread_run(event_data_obj)
+                elif isinstance(event_data_obj, RunStep):
+                    await self.on_run_step(event_data_obj)
+                elif isinstance(event_data_obj, RunStepDeltaChunk):
+                    await self.on_run_step_delta(event_data_obj)
+                elif isinstance(event_data_obj, ThreadError):
+                    await self.on_error(event_data_obj.error)
+                elif event_type == AgentStreamEvent.DONE:
+                    await self.on_done()
+                    self.done = True  # Mark the stream as done
+                else:
+                    await self.on_unhandled_event(event_type, event_data_obj)
+            except Exception as e:  # pylint: disable=broad-exception-caught
+                logging.error("Error in event handler for event '%s': %s", event_type, e)            
 
-        if (
-            isinstance(event_data_obj, ThreadRun)
-            and event_data_obj.status == "requires_action"
-            and isinstance(event_data_obj.required_action, SubmitToolOutputsAction)
-        ):
-            await self.submit_tool_outputs(event_data_obj, self)
-            
-        try:
-            if isinstance(event_data_obj, MessageDeltaChunk):
-                await self.on_message_delta(event_data_obj)
-            elif isinstance(event_data_obj, ThreadMessage):
-                await self.on_thread_message(event_data_obj)
-            elif isinstance(event_data_obj, ThreadRun):
-                await self.on_thread_run(event_data_obj)
-            elif isinstance(event_data_obj, RunStep):
-                await self.on_run_step(event_data_obj)
-            elif isinstance(event_data_obj, RunStepDeltaChunk):
-                await self.on_run_step_delta(event_data_obj)
-            elif isinstance(event_data_obj, ThreadError):
-                await self.on_error(event_data_obj.error)
-            elif event_type == AgentStreamEvent.DONE:
-                await self.on_done()
-                self.done = True  # Mark the stream as done
-            else:
-                await self.on_unhandled_event(event_type, event_data_obj)
-        except Exception as e:  # pylint: disable=broad-exception-caught
-            logging.error("Error in event handler for event '%s': %s", event_type, e)            
-
-        return event_type, event_data_obj
+        iterator.index = 0
+        return iterator.__next__()
     
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         """Handle message delta events.
 
         :param MessageDeltaChunk delta: The message delta.
         """
+    async def on_message_delta_text_content(self, message_text_content: "MessageDeltaTextContent") -> None:
+        """Handle delta text content from message delta events.
 
+        :param MessageDeltaTextContent message_text_content: The message text content.
+        """
+        
     async def on_thread_message(self, message: "ThreadMessage") -> None:
         """Handle thread message events.
 
