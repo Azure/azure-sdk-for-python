@@ -368,9 +368,9 @@ def _validate_filter_field_name(filter: FilterInfo, telemetry_type: TelemetryTyp
     name = filter.field_name
     if not name:
         return False
-    if name.startswith("CustomMetrics"):
+    if name.startswith("CustomMetrics."):
         return False
-    if name.startswith("CustomDimensions") or name == "*":
+    if name.startswith("CustomDimensions.") or name == "*":
         return True
     name = name.lower()
     if telemetry_type == TelemetryType.DEPENDENCY:

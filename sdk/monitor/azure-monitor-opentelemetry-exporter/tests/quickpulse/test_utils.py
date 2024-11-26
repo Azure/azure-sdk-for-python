@@ -458,9 +458,9 @@ class TestUtils(unittest.TestCase):
         )
 
     def test_validate_info_invalid_telemetry_type(self):
-        valid_metric_info = mock.Mock(telemetry_type="Request", projection=None, filter_groups=[])
-        valid_metric_info.telemetry_type = "INVALID_TYPE"
-        self.assertFalse(_validate_derived_metric_info(valid_metric_info))
+        invalid_metric_info = mock.Mock(telemetry_type="Request", projection=None, filter_groups=[])
+        invalid_metric_info.telemetry_type = "INVALID_TYPE"
+        self.assertFalse(_validate_derived_metric_info(invalid_metric_info))
 
     def test_validate_info_custom_metric_projection(self):
         valid_metric_info = mock.Mock(telemetry_type="Request", projection=None, filter_groups=[])
