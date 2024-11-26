@@ -185,12 +185,19 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
         other_template_kwargs: Any = {},
         logger: Any = None,
     ) -> Any:
+        token = self.token_manager.get_token()
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json",
+            "User-Agent": USER_AGENT,
+        }
+        # TODO: change URL
         json_payload = {
             "url": self.simulation_submit_endpoint,
             "headers": {
                 "Content-Type": "application/json",
             },
-            "json": '{"messages": [{"role": "system", "content": "{{ch_template_placeholder}}"}], "temperature": 0.0, "max_tokens": 4096, "n": 1, "frequency_penalty": 0, "presence_penalty": 0, "stop": ["<|im_end|>", "<|endoftext|>"]}',
+            "json": '{"messages": [{"role": "system", "content": "{{ch_template_placeholder}}"}], "temperature": 0.7, "max_tokens": 4096, "n": 1, "frequency_penalty": 0, "presence_penalty": 0, "stop": ["<|im_end|>", "<|endoftext|>"]}',
             "params": {"api-version": "2023-07-01-preview"},
             "templatekey": str(template_key),
             "templateParameters": {
