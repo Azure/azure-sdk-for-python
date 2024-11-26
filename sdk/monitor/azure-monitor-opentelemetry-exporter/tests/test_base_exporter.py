@@ -641,8 +641,9 @@ class TestBaseExporter(unittest.TestCase):
             )
             result = exporter._transmit(custom_envelopes_to_export)
         stats_mock.assert_called_once()
-        self.assertEqual(len(_REQUESTS_MAP), 3)
-        self.assertEqual(_REQUESTS_MAP[_REQ_RETRY_NAME[1]][500], 1)
+        # We do not record any network statsbeat for 206 status code
+        self.assertEqual(len(_REQUESTS_MAP), 2)
+        self.assertIsNone(_REQUESTS_MAP.get('retry'))
         self.assertEqual(_REQUESTS_MAP["count"], 1)
         self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)

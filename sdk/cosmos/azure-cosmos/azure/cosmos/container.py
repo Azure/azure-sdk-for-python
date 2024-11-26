@@ -29,6 +29,7 @@ from typing_extensions import Literal
 from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
+from azure.cosmos._change_feed.change_feed_utils import add_args_to_kwargs, validate_kwargs
 
 from ._base import (
     build_options,
@@ -328,6 +329,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             partition_key: PartitionKeyType,
             priority: Optional[Literal["High", "Low"]] = None,
+            mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -338,14 +340,21 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
             ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
             By default, it is start from current ("Now")
-        :type start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
+        :paramtype start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
         :keyword partition_key: The partition key that is used to define the scope
             (logical partition or a subset of a container)
-        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
+        :paramtype partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :paramtype priority: Literal["High", "Low"]
+        :keyword mode: The modes to query change feed. If `continuation` was passed, 'mode' argument will be ignored.
+            LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
+            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
+            or 'continuation' token.
+        :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
+        :keyword response_hook: A callable invoked with the response metadata.
+        :type response_hook: Callable[[Mapping[str, Any], Mapping[str, Any]], None]
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
@@ -359,6 +368,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             max_item_count: Optional[int] = None,
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
+            mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
 
@@ -371,11 +381,18 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
             ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
             By default, it is start from current ("Now")
-        :type start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
+        :paramtype start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :paramtype priority: Literal["High", "Low"]
+        :keyword mode: The modes to query change feed. If `continuation` was passed, 'mode' argument will be ignored.
+            LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
+            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
+            or 'continuation' token.
+        :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, Any], Mapping[str, Any]], None]
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
@@ -392,12 +409,15 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     ) -> ItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
-        :keyword str continuation: The continuation token retrieved from previous response.
+        :keyword str continuation: The continuation token retrieved from previous response. It contains chang feed mode.
+        :paramtype continuation: str
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :paramtype priority: Literal["High", "Low"]
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, Any], Mapping[str, Any]], None]
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
@@ -410,6 +430,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             max_item_count: Optional[int] = None,
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
+            mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed in the entire container,
@@ -421,11 +442,18 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
             ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
             By default, it is start from current ("Now")
-        :type start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
+        :paramtype start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :paramtype priority: Literal["High", "Low"]
+        :keyword mode: The modes to query change feed. If `continuation` was passed, 'mode' argument will be ignored.
+            LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
+            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
+            or 'continuation' token.
+        :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, Any], Mapping[str, Any]], None]
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
@@ -440,106 +468,68 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
-        :keyword str continuation: The continuation token retrieved from previous response.
+        :keyword str continuation: The continuation token retrieved from previous response. It contains chang feed mode.
         :keyword Dict[str, Any] feed_range: The feed range that is used to define the scope.
         :keyword partition_key: The partition key that is used to define the scope
             (logical partition or a subset of a container)
-        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
+        :paramtype partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword start_time: The start time to start processing chang feed items.
             Beginning: Processing the change feed items from the beginning of the change feed.
             Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
             ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
             By default, it is start from current ("Now")
-        :type start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
+        :paramtype start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword mode: The modes to query change feed. If `continuation` was passed, 'mode' argument will be ignored.
+            LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
+            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
+            or 'continuation' token.
+        :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, Any], Mapping[str, Any]], None]
         :param Any args: args
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
 
         # pylint: disable=too-many-statements
-        if kwargs.get("priority") is not None:
-            kwargs['priority'] = kwargs['priority']
+        add_args_to_kwargs(args, kwargs)
+        validate_kwargs(kwargs)
         feed_options = build_options(kwargs)
 
         change_feed_state_context = {}
-        # Back compatibility with deprecation warnings for partition_key_range_id
-        if (args and args[0] is not None) or kwargs.get("partition_key_range_id") is not None:
-            warnings.warn(
-                "partition_key_range_id is deprecated. Please pass in feed_range instead.",
-                DeprecationWarning
-            )
-
-            try:
-                change_feed_state_context["partitionKeyRangeId"] = kwargs.pop('partition_key_range_id')
-            except KeyError:
-                change_feed_state_context['partitionKeyRangeId'] = args[0]
-
-        # Back compatibility with deprecation warnings for is_start_from_beginning
-        if (len(args) >= 2 and args[1] is not None) or kwargs.get("is_start_from_beginning") is not None:
-            warnings.warn(
-                "is_start_from_beginning is deprecated. Please pass in start_time instead.",
-                DeprecationWarning
-            )
-
-            if kwargs.get("start_time") is not None:
-                raise ValueError("is_start_from_beginning and start_time are exclusive, please only set one of them")
-
-            try:
-                is_start_from_beginning = kwargs.pop('is_start_from_beginning')
-            except KeyError:
-                is_start_from_beginning = args[1]
-
-            if is_start_from_beginning is True:
-                change_feed_state_context["startTime"] = "Beginning"
-
-        # parse start_time
-        if kwargs.get("start_time") is not None:
-
-            start_time = kwargs.pop('start_time')
-            if not isinstance(start_time, (datetime, str)):
-                raise TypeError(
-                    "'start_time' must be either a datetime object, or either the values 'Now' or 'Beginning'.")
-            change_feed_state_context["startTime"] = start_time
-
-        # parse continuation token
-        if len(args) >= 3 and args[2] is not None or feed_options.get("continuation") is not None:
-            try:
-                continuation = feed_options.pop('continuation')
-            except KeyError:
-                continuation = args[2]
-            change_feed_state_context["continuation"] = continuation
-
-        if len(args) >= 4 and args[3] is not None or kwargs.get("max_item_count") is not None:
-            try:
-                feed_options["maxItemCount"] = kwargs.pop('max_item_count')
-            except KeyError:
-                feed_options["maxItemCount"] = args[3]
-
-        if kwargs.get("partition_key") is not None:
-            change_feed_state_context["partitionKey"] =\
-                self._set_partition_key(cast(PartitionKeyType, kwargs.get('partition_key')))
-            change_feed_state_context["partitionKeyFeedRange"] =\
-                self._get_epk_range_for_partition_key(kwargs.pop('partition_key'))
-
-        if kwargs.get("feed_range") is not None:
+        if "mode" in kwargs:
+            change_feed_state_context["mode"] = kwargs.pop("mode")
+        if "partition_key_range_id" in kwargs:
+            change_feed_state_context["partitionKeyRangeId"] = kwargs.pop("partition_key_range_id")
+        if "is_start_from_beginning" in kwargs and kwargs.pop('is_start_from_beginning') is True:
+            change_feed_state_context["startTime"] = "Beginning"
+        elif "start_time" in kwargs:
+            change_feed_state_context["startTime"] = kwargs.pop("start_time")
+        if "partition_key" in kwargs:
+            partition_key = kwargs.pop("partition_key")
+            change_feed_state_context["partitionKey"] = self._set_partition_key(cast(PartitionKeyType, partition_key))
+            change_feed_state_context["partitionKeyFeedRange"] = self._get_epk_range_for_partition_key(partition_key)
+        if "feed_range" in kwargs:
             change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
+        if "continuation" in feed_options:
+            change_feed_state_context["continuation"] = feed_options.pop("continuation")
 
         container_properties = self._get_properties()
         feed_options["changeFeedStateContext"] = change_feed_state_context
         feed_options["containerRID"] = container_properties["_rid"]
 
-        response_hook = kwargs.pop('response_hook', None)
+        response_hook = kwargs.pop("response_hook", None)
         if hasattr(response_hook, "clear"):
             response_hook.clear()
 
         result = self.client_connection.QueryItemsChangeFeed(
             self.container_link, options=feed_options, response_hook=response_hook, **kwargs
         )
+
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result

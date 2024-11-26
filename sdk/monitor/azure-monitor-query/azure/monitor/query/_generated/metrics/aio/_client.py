@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, Awaitable
+from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
@@ -18,7 +19,7 @@ from ._configuration import MonitorMetricsClientConfiguration
 from .operations import MetricDefinitionsOperations, MetricNamespacesOperations, MetricsOperations
 
 
-class MonitorMetricsClient:  # pylint: disable=client-accepts-api-version-keyword
+class MonitorMetricsClient:
     """Azure Monitor Metrics Python Client.
 
     :ivar metric_definitions: MetricDefinitionsOperations operations
@@ -95,7 +96,7 @@ class MonitorMetricsClient:  # pylint: disable=client-accepts-api-version-keywor
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "MonitorMetricsClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 
