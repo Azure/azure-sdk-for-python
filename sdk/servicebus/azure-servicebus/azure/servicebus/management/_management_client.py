@@ -244,6 +244,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :returns: Returns a ServiceBusAdministrationClient.
         :rtype: ~azure.servicebus.management.ServiceBusAdministrationClient
         """
+        # pylint: disable=unused-variable
         (endpoint, shared_access_key_name, shared_access_key, _, token, token_expiry, emulator) = _parse_conn_str(
             conn_str
         )
