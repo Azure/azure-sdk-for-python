@@ -962,4 +962,3 @@ class ApiKeyConfiguration(RestTranslatableMixin, DictMixin):
 
     def _get_rest_properties_class(self):
         return ApiKeyAuthWorkspaceConnectionProperties
-        
