@@ -23,6 +23,7 @@ from azure.ai.evaluation import (
 )
 from azure.ai.evaluation._common.math import list_mean_nan_safe
 import azure.ai.evaluation._evaluate._utils as ev_utils
+from azure.ai.evaluation._promptflow.azure._lite_azure_management_client import LiteAzureManagementClient
 
 
 @pytest.fixture
@@ -87,7 +88,7 @@ def question_evaluator(query):
     return {"length": len(query)}
 
 
-def _get_run_from_run_history(flow_run_id, ml_client, project_scope):
+def _get_run_from_run_history(flow_run_id, management_client: LiteAzureManagementClient, project_scope):
     """Get run info from run history"""
     from azure.identity import DefaultAzureCredential
 
@@ -96,8 +97,8 @@ def _get_run_from_run_history(flow_run_id, ml_client, project_scope):
         "Authorization": token,
         "Content-Type": "application/json",
     }
-    workspace = ml_client.workspaces.get(project_scope["project_name"])
-    endpoint = workspace.discovery_url.split("discovery")[0]
+    workspace = management_client.workspace_get_info(project_scope["project_name"])
+    endpoint = workspace.properties.discovery_url.split("discovery")[0]
     pattern = (
         f"/subscriptions/{project_scope['subscription_id']}"
         f"/resourceGroups/{project_scope['resource_group_name']}"
@@ -641,7 +642,7 @@ class TestEvaluate:
     def test_evaluate_track_in_cloud(
         self,
         questions_file,
-        azure_ml_client,
+        azure_management_client,
         mock_trace_destination_to_cloud,
         project_scope,
     ):
@@ -674,7 +675,7 @@ class TestEvaluate:
 
         # get remote run and validate if it exists
         run_id = result["studio_url"].split("?")[0].split("/")[5]
-        remote_run = _get_run_from_run_history(run_id, azure_ml_client, project_scope)
+        remote_run = _get_run_from_run_history(run_id, azure_management_client, project_scope)
 
         assert remote_run is not None
         assert remote_run["runMetadata"]["properties"]["runType"] == "eval_run"
@@ -686,7 +687,7 @@ class TestEvaluate:
     def test_evaluate_track_in_cloud_no_target(
         self,
         data_file,
-        azure_ml_client,
+        azure_management_client,
         mock_trace_destination_to_cloud,
         project_scope,
     ):
@@ -719,7 +720,7 @@ class TestEvaluate:
 
         # get remote run and validate if it exists
         run_id = result["studio_url"].split("?")[0].split("/")[5]
-        remote_run = _get_run_from_run_history(run_id, azure_ml_client, project_scope)
+        remote_run = _get_run_from_run_history(run_id, azure_management_client, project_scope)
 
         assert remote_run is not None
         assert remote_run["runMetadata"]["properties"]["runType"] == "eval_run"
