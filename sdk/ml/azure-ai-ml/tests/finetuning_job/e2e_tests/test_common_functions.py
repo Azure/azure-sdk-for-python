@@ -18,7 +18,7 @@ def validate_job(
     assert (
         input_job.experiment_name == created_job.experiment_name == returned_job.experiment_name
     ), "Expected experiment name to be {input_job.experiment_name}"
-    # assert created_job.status == JobStatus.RUNNING
+    assert created_job.status == JobStatus.RUNNING
 
     if input_job.resources:
         assert (
