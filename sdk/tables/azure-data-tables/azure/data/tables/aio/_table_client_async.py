@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import AsyncIterable, Optional, Any, Union, List, Dict, Mapping, Iterable, overload, cast, Tuple, TypeVar, Type, Callable
+from typing import AsyncIterable, Optional, Any, Union, List, Dict, Mapping, Iterable, overload, cast, Tuple
 from urllib.parse import urlparse, unquote
 
 from azure.core import MatchConditions
@@ -18,9 +18,9 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._common_conversion import _prepare_key
 from .._base_client import parse_connection_str
-from .._encoder import TableEntityEncoder
-from .._entity import TableEntity, EdmType
-from .._decoder import TableEntityDecoder, deserialize_iso
+from .._encoder import TableEntityEncoder, EncoderMapType
+from .._entity import TableEntity
+from .._decoder import TableEntityDecoder, deserialize_iso, DecoderMapType
 from .._generated.models import SignedIdentifier, TableProperties
 from .._models import TableAccessPolicy, TableItem, UpdateMode
 from .._serialize import (
@@ -80,8 +80,8 @@ class TableClient(AsyncTablesBaseClient):
         *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]] = None,
         api_version: Optional[str] = None,
-        encoder_map: Dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] = None,
-        decoder_map: Dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] = None,
+        encoder_map: Optional[EncoderMapType] = None,
+        decoder_map: Optional[DecoderMapType] = None,
         flatten_result_entity: bool = False,
         **kwargs: Any,
     ) -> None:
@@ -116,8 +116,8 @@ class TableClient(AsyncTablesBaseClient):
         if not table_name:
             raise ValueError("Please specify a table name.")
         self.table_name: str = table_name
-        self.encoder = TableEntityEncoder(encoder_map)
-        self.decoder = TableEntityDecoder(decoder_map, flatten_result_entity)
+        self.encoder = TableEntityEncoder(convert_map=encoder_map)
+        self.decoder = TableEntityDecoder(convert_map=decoder_map, flatten_result_entity=flatten_result_entity)
         super(TableClient, self).__init__(endpoint, credential=credential, api_version=api_version, **kwargs)
 
     @classmethod
@@ -477,8 +477,6 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 16
                 :caption: Updating an already existing entity in a Table
         """
-        match_condition = kwargs.pop("match_condition", None)
-        etag = kwargs.pop("etag", None)
         if match_condition and not etag and isinstance(entity, TableEntity):
             etag = entity.metadata.get("etag")
         match_condition = _get_match_condition(
@@ -550,8 +548,6 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 16
                 :caption: Listing all entities held within a table
         """
-        results_per_page = kwargs.pop("results_per_page", None)
-        select = kwargs.pop("select", None)
         if select and not isinstance(select, str):
             select = ",".join(select)
 

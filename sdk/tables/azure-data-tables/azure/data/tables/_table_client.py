@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Optional, Any, Union, List, Dict, Mapping, Iterable, overload, cast, Tuple, TypeVar, Type, Callable
+from typing import Optional, Any, Union, List, Dict, Mapping, Iterable, overload, cast, Tuple
 from urllib.parse import urlparse, unquote
 
 from azure.core import MatchConditions
@@ -15,10 +15,10 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
 from ._common_conversion import _prepare_key
-from ._encoder import TableEntityEncoder
-from ._decoder import TableEntityDecoder, deserialize_iso
+from ._encoder import TableEntityEncoder, EncoderMapType
+from ._decoder import TableEntityDecoder, deserialize_iso, DecoderMapType
 from ._base_client import parse_connection_str, TablesBaseClient
-from ._entity import TableEntity, EdmType
+from ._entity import TableEntity
 from ._error import (
     _decode_error,
     _process_table_error,
@@ -109,8 +109,8 @@ class TableClient(TablesBaseClient):
         *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, TokenCredential]] = None,
         api_version: Optional[str] = None,
-        encoder_map: Dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] = None,
-        decoder_map: Dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] = None,
+        encoder_map: Optional[EncoderMapType] = None,
+        decoder_map: Optional[DecoderMapType] = None,
         flatten_result_entity: bool = False,
         **kwargs: Any,
     ) -> None:
@@ -145,8 +145,8 @@ class TableClient(TablesBaseClient):
         if not table_name:
             raise ValueError("Please specify a table name.")
         self.table_name: str = table_name
-        self.encoder = TableEntityEncoder(encoder_map)
-        self.decoder = TableEntityDecoder(decoder_map, flatten_result_entity)
+        self.encoder = TableEntityEncoder(convert_map=encoder_map)
+        self.decoder = TableEntityDecoder(convert_map=decoder_map, flatten_result_entity=flatten_result_entity)
         super(TableClient, self).__init__(endpoint, credential=credential, api_version=api_version, **kwargs)
 
     @classmethod
@@ -494,8 +494,6 @@ class TableClient(TablesBaseClient):
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        match_condition = kwargs.pop("match_condition", None)
-        etag = kwargs.pop("etag", None)
         if match_condition and not etag and isinstance(entity, TableEntity):
             etag = entity.metadata.get("etag")
         match_condition = _get_match_condition(
@@ -558,8 +556,6 @@ class TableClient(TablesBaseClient):
         :rtype: An iterator of custom entity type.
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        results_per_page = kwargs.pop("results_per_page", None)
-        select = kwargs.pop("select", None)
         if select and not isinstance(select, str):
             select = ",".join(select)
 
