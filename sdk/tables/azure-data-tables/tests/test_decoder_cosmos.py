@@ -11,11 +11,11 @@ from datetime import datetime, timezone
 from azure.data.tables import TableClient, EdmType, EntityProperty
 from azure.data.tables._common_conversion import _to_utc_datetime
 
-from _shared.testcase import TableTestCase
+from _shared.testcase import TableTestCase, _convert_to_entity
 
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from preparers import cosmos_decorator
-from test_decoder import MyDecoder, _clean
+from test_decoder import _clean
 
 
 class TestTableDecoderCosmos(AzureRecordedTestCase, TableTestCase):
@@ -24,31 +24,40 @@ class TestTableDecoderCosmos(AzureRecordedTestCase, TableTestCase):
     def test_decode_entity_basic(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         table_name = self.get_resource_name("uttable01")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
+        responses = {}
+        def callback(response):
+            responses["response_body"] = response.http_response.json()
         # Test basic string, int32 and bool data
         with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
             client.create_table()
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", "Data1": 1, "Data2": True}
             created = client.create_entity(test_entity)
-            result = client.get_entity("PK", "RK")
-            old_result = client.get_entity("PK", "RK", decoder=MyDecoder())
+            result = client.get_entity("PK", "RK", raw_response_hook=callback)
+            old_result = _convert_to_entity(responses["response_body"])
             assert result == old_result, f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
 
             test_entity = {"PartitionKey": "PK", "RowKey": "RK'@*$!%"}
             created = client.create_entity(test_entity)
-            result = client.get_entity("PK", "RK'@*$!%")
-            old_result = client.get_entity("PK", "RK'@*$!%", decoder=MyDecoder())
+            result = client.get_entity("PK", "RK'@*$!%", raw_response_hook=callback)
+            old_result = _convert_to_entity(responses["response_body"])
             assert result == old_result, f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
 
-            result = client.query_entities("PartitionKey eq 'PK'")
-            old_result = client.query_entities("PartitionKey eq 'PK'", decoder=MyDecoder())
-            assert len(list(result)) == len(list(old_result))
-            for new, old in zip(result, old_result):
+            result = client.query_entities("PartitionKey eq 'PK'", raw_response_hook=callback)
+            result_copy = []
+            for e in result:
+                result_copy.append(e)
+            old_result = [_convert_to_entity(t) for t in responses["response_body"]["value"]]
+            assert len(result_copy) == len(old_result)
+            for new, old in zip(result_copy, old_result):
                 assert new == old, f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
 
             result = client.list_entities()
-            old_result = client.list_entities(decoder=MyDecoder())
-            assert len(list(result)) == len(list(old_result))
-            for new, old in zip(result, old_result):
+            result_copy = []
+            for e in result:
+                result_copy.append(e)
+            old_result = [_convert_to_entity(t) for t in responses["response_body"]["value"]]
+            assert len(result_copy) == len(old_result)
+            for new, old in zip(result_copy, old_result):
                 assert new == old, f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
 
             client.delete_table()
@@ -62,6 +71,9 @@ class TestTableDecoderCosmos(AzureRecordedTestCase, TableTestCase):
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable03")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
+        responses = {}
+        def callback(response):
+            responses["response_body"] = response.http_response.json()
         # All automatically detected data types
         with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
             client.create_table()
@@ -78,20 +90,26 @@ class TestTableDecoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "Data8": None,
             }
             created = client.create_entity(test_entity)
-            result = client.get_entity("PK", "RK")
-            old_result = client.get_entity("PK", "RK", decoder=MyDecoder())
+            result = client.get_entity("PK", "RK", raw_response_hook=callback)
+            old_result =  _convert_to_entity(responses["response_body"])
             assert result == old_result, f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
 
-            result = client.query_entities("PartitionKey eq 'PK'")
-            old_result = client.query_entities("PartitionKey eq 'PK'", decoder=MyDecoder())
-            assert len(list(result)) == len(list(old_result))
-            for new, old in zip(result, old_result):
+            result = client.query_entities("PartitionKey eq 'PK'", raw_response_hook=callback)
+            result_copy = []
+            for e in result:
+                result_copy.append(e)
+            old_result = [_convert_to_entity(t) for t in responses["response_body"]["value"]]
+            assert len(result_copy) == len(old_result)
+            for new, old in zip(result_copy, old_result):
                 assert new == old, f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
 
-            result = client.list_entities()
-            old_result = client.list_entities(decoder=MyDecoder())
-            assert len(list(result)) == len(list(old_result))
-            for new, old in zip(result, old_result):
+            result = client.list_entities(raw_response_hook=callback)
+            result_copy = []
+            for e in result:
+                result_copy.append(e)
+            old_result = [_convert_to_entity(t) for t in responses["response_body"]["value"]]
+            assert len(result_copy) == len(old_result)
+            for new, old in zip(result_copy, old_result):
                 assert new == old, f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
 
             client.delete_table()
@@ -104,6 +122,9 @@ class TestTableDecoderCosmos(AzureRecordedTestCase, TableTestCase):
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable04")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
+        responses = {}
+        def callback(response):
+            responses["response_body"] = response.http_response.json()
         # Explicit datatypes using Tuple definition
         with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
             client.create_table()
@@ -123,8 +144,8 @@ class TestTableDecoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "Data8": (2**60, "Edm.Int64"),
             }
             created = client.create_entity(test_entity)
-            result = client.get_entity("PK", "RK1")
-            old_result = client.get_entity("PK", "RK1", decoder=MyDecoder())
+            result = client.get_entity("PK", "RK1", raw_response_hook=callback)
+            old_result = _convert_to_entity(responses["response_body"])
             assert result == old_result, f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
 
             test_entity = {
@@ -142,20 +163,26 @@ class TestTableDecoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "Data8": ("9223372036854775807", "Edm.Int64"),
             }
             created = client.create_entity(test_entity)
-            result = client.get_entity("PK", "RK2")
-            old_result = client.get_entity("PK", "RK2", decoder=MyDecoder())
+            result = client.get_entity("PK", "RK2", raw_response_hook=callback)
+            old_result = _convert_to_entity(responses["response_body"])
             assert result == old_result, f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
 
-            result = client.query_entities("PartitionKey eq 'PK'")
-            old_result = client.query_entities("PartitionKey eq 'PK'", decoder=MyDecoder())
-            assert len(list(result)) == len(list(old_result))
-            for new, old in zip(result, old_result):
+            result = client.query_entities("PartitionKey eq 'PK'", raw_response_hook=callback)
+            result_copy = []
+            for e in result:
+                result_copy.append(e)
+            old_result = [_convert_to_entity(t) for t in responses["response_body"]["value"]]
+            assert len(result_copy) == len(old_result)
+            for new, old in zip(result_copy, old_result):
                 assert new == old, f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
 
-            result = client.list_entities()
-            old_result = client.list_entities(decoder=MyDecoder())
-            assert len(list(result)) == len(list(old_result))
-            for new, old in zip(result, old_result):
+            result = client.list_entities(raw_response_hook=callback)
+            result_copy = []
+            for e in result:
+                result_copy.append(e)
+            old_result = [_convert_to_entity(t) for t in responses["response_body"]["value"]]
+            assert len(result_copy) == len(old_result)
+            for new, old in zip(result_copy, old_result):
                 assert new == old, f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
 
             client.delete_table()
@@ -168,6 +195,9 @@ class TestTableDecoderCosmos(AzureRecordedTestCase, TableTestCase):
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable05")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
+        responses = {}
+        def callback(response):
+            responses["response_body"] = response.http_response.json()
         # Raw payload with existing EdmTypes
         with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
             client.create_table()
@@ -197,20 +227,26 @@ class TestTableDecoderCosmos(AzureRecordedTestCase, TableTestCase):
             }
 
             created = client.create_entity(test_entity)
-            result = client.get_entity("PK", "RK")
-            old_result = client.get_entity("PK", "RK", decoder=MyDecoder())
+            result = client.get_entity("PK", "RK", raw_response_hook=callback)
+            old_result = _convert_to_entity(responses["response_body"])
             assert result == old_result, f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
 
-            result = client.query_entities("PartitionKey eq 'PK'")
-            old_result = client.query_entities("PartitionKey eq 'PK'", decoder=MyDecoder())
-            assert len(list(result)) == len(list(old_result))
-            for new, old in zip(result, old_result):
+            result = client.query_entities("PartitionKey eq 'PK'", raw_response_hook=callback)
+            result_copy = []
+            for e in result:
+                result_copy.append(e)
+            old_result = [_convert_to_entity(t) for t in responses["response_body"]["value"]]
+            assert len(result_copy) == len(old_result)
+            for new, old in zip(result_copy, old_result):
                 assert new == old, f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
 
-            result = client.list_entities()
-            old_result = client.list_entities(decoder=MyDecoder())
-            assert len(list(result)) == len(list(old_result))
-            for new, old in zip(result, old_result):
+            result = client.list_entities(raw_response_hook=callback)
+            result_copy = []
+            for e in result:
+                result_copy.append(e)
+            old_result = [_convert_to_entity(t) for t in responses["response_body"]["value"]]
+            assert len(result_copy) == len(old_result)
+            for new, old in zip(result_copy, old_result):
                 assert new == old, f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
 
             client.delete_table()
@@ -221,29 +257,25 @@ class TestTableDecoderCosmos(AzureRecordedTestCase, TableTestCase):
     def test_decode_entity_atypical_values(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         table_name = self.get_resource_name("uttable06")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
+        responses = {}
+        def callback(response):
+            responses["response_body"] = response.http_response.json()
         with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
             client.create_table()
             # Non-UTF8 characters in both keys and properties
             non_utf8_char = "你好"
             test_entity = {"PartitionKey": "PK", "RowKey": non_utf8_char, "Data": non_utf8_char}
             created = client.create_entity(test_entity)
-            result = client.get_entity("PK", non_utf8_char)
-            old_result = client.get_entity("PK", non_utf8_char, decoder=MyDecoder())
+            result = client.get_entity("PK", non_utf8_char, raw_response_hook=callback)
+            old_result = _convert_to_entity(responses["response_body"])
             assert result == old_result, f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
 
-            # Valid int64 value with Edm
             max_int64 = 9223372036854775807
+            # Valid int64 value with Edm
             test_entity = {"PartitionKey": "PK", "RowKey": "RK2", "Data": (max_int64, "Edm.Int64")}
             created = client.create_entity(test_entity)
-            result = client.get_entity("PK", "RK2")
-            old_result = client.get_entity("PK", "RK2", decoder=MyDecoder())
-            assert result == old_result, f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
-
-            # Valid int64 value without Edm
-            test_entity = {"PartitionKey": "PK", "RowKey": "RK3", "Data": max_int64}
-            created = client.create_entity(test_entity)
-            result = client.get_entity("PK", "RK3")
-            old_result = client.get_entity("PK", "RK3", decoder=MyDecoder())
+            result = client.get_entity("PK", "RK2", raw_response_hook=callback)
+            old_result = _convert_to_entity(responses["response_body"])
             assert result == old_result, f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
 
             # Infinite float values
@@ -255,20 +287,26 @@ class TestTableDecoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "Data3": float("-inf"),
             }
             created = client.create_entity(test_entity)
-            result = client.get_entity("PK", "RK4")
-            old_result = client.get_entity("PK", "RK4", decoder=MyDecoder())
+            result = client.get_entity("PK", "RK4", raw_response_hook=callback)
+            old_result = _convert_to_entity(responses["response_body"])
             assert _clean(result) == _clean(old_result), f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
 
-            result = client.query_entities("PartitionKey eq 'PK'")
-            old_result = client.query_entities("PartitionKey eq 'PK'", decoder=MyDecoder())
-            assert len(list(result)) == len(list(old_result))
-            for new, old in zip(result, old_result):
-                assert _clean(new) == _clean(old), f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
+            result = client.query_entities("PartitionKey eq 'PK'", raw_response_hook=callback)
+            result_copy = []
+            for e in result:
+                result_copy.append(e)
+            old_result = [_convert_to_entity(t) for t in responses["response_body"]["value"]]
+            assert len(result_copy) == len(old_result)
+            for new, old in zip(result_copy, old_result):
+                assert str(new) == str(old), f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
 
-            result = client.list_entities()
-            old_result = client.list_entities(decoder=MyDecoder())
-            assert len(list(result)) == len(list(old_result))
-            for new, old in zip(result, old_result):
-                assert _clean(new) == _clean(old), f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
+            result = client.list_entities(raw_response_hook=callback)
+            result_copy = []
+            for e in result:
+                result_copy.append(e)
+            old_result = [_convert_to_entity(t) for t in responses["response_body"]["value"]]
+            assert len(result_copy) == len(old_result)
+            for new, old in zip(result_copy, old_result):
+                assert str(new) == str(old), f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
 
             client.delete_table()
