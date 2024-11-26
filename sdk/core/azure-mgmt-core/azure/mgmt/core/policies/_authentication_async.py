@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import cast, Awaitable, Optional, List, Union, Any
+from typing import Awaitable, Optional, List, Union, Any
 import inspect
 
 from azure.core.pipeline.policies import (
