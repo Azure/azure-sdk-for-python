@@ -374,7 +374,7 @@ def azure_management_client(project_scope: dict):
     """Get an Azure management client."""
     return LiteAzureManagementClient(
         subscription_id = project_scope["subscription_id"],
-        resource_group_name = project_scope["resource_group_name"],
+        resource_group = project_scope["resource_group_name"],
         logger = Logger("azure_management_client")
     )
 
