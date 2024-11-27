@@ -235,11 +235,6 @@ test:
     - azure.mgmt.containerservice.v2023_08_01.operations
     - azure.mgmt.containerservicefleet
     - azure.mgmt.containerservicefleet.aio
-    - azure.mgmt.containerservicefleet.v2023_10_15
-    - azure.mgmt.containerservicefleet.v2023_10_15.aio
-    - azure.mgmt.containerservicefleet.v2023_10_15.aio.operations
-    - azure.mgmt.containerservicefleet.v2023_10_15.models
-    - azure.mgmt.containerservicefleet.v2023_10_15.operations
     - azure.mgmt.cosmosdb
     - azure.mgmt.cosmosdb.aio
     - azure.mgmt.cosmosdb.aio.operations
@@ -1047,13 +1042,13 @@ about:
   home: "https://github.com/Azure/azure-sdk-for-python/"
   license: MIT
   license_family: MIT
-  license_file: 
+  license_file:
   summary: "Microsoft Azure Management Client Library for Python"
   description: |
     This package is the Microsoft Azure Resource Management bundle.
     Please see https://aka.ms/azsdk/conda/releases/mgmt for version details.
-  doc_url: 
-  dev_url: 
+  doc_url:
+  dev_url:
 
 extra:
   recipe-maintainers:
