@@ -12,7 +12,10 @@ from azure.ai.ml._restclient.v2024_01_01_preview.models import (
     FineTuningJob as RestFineTuningJob,
     JobBase as RestJobBase,
 )
-from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
+from azure.ai.ml.entities._job._input_output_helpers import (
+    from_rest_data_outputs,
+    to_rest_data_outputs,
+)
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._job.finetuning.finetuning_vertical import FineTuningVertical
@@ -101,7 +104,9 @@ class CustomModelFineTuningJob(FineTuningVertical):
         :return: dictionary representation of the object.
         :rtype: typing.Dict
         """
-        from azure.ai.ml._schema._finetuning.custom_model_finetuning import CustomModelFineTuningSchema
+        from azure.ai.ml._schema._finetuning.custom_model_finetuning import (
+            CustomModelFineTuningSchema,
+        )
 
         schema_dict: dict = {}
         # TODO: Combeback to this later for FineTuningJob in pipeline
@@ -196,7 +201,9 @@ class CustomModelFineTuningJob(FineTuningVertical):
         :return: CustomModelFineTuningJob object.
         :rtype: CustomModelFineTuningJob
         """
-        from azure.ai.ml._schema._finetuning.custom_model_finetuning import CustomModelFineTuningSchema
+        from azure.ai.ml._schema._finetuning.custom_model_finetuning import (
+            CustomModelFineTuningSchema,
+        )
 
         # TODO: Combeback to this later - Pipeline part.
         # from azure.ai.ml._schema.pipeline.automl_node import AutoMLClassificationNodeSchema
