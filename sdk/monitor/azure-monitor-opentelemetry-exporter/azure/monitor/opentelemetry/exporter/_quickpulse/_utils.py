@@ -268,25 +268,24 @@ def _check_filters(filters: List[FilterInfo], data: _TelemetryData) -> bool:
         elif name in ("ResultCode", "ResponseCode", "Duration"):
             try:
                 val = int(val)
-            except Exception:  # pylint: disable=broad-excepttion-caught,invalid-name
+            except Exception:  # pylint: disable=broad-exception-caught,invalid-name
                 return False
             numerical_val = _filter_time_stamp_to_ms(comparand) if name == "Duration" else int(comparand)
             if numerical_val is None:
                 return False
             if predicate == PredicateType.EQUAL:
                 return val == numerical_val
-            elif predicate == PredicateType.NOT_EQUAL:
+            if predicate == PredicateType.NOT_EQUAL:
                 return val != numerical_val
-            elif predicate == PredicateType.GREATER_THAN:
+            if predicate == PredicateType.GREATER_THAN:
                 return val > numerical_val
-            elif predicate == PredicateType.GREATER_THAN_OR_EQUAL:
+            if predicate == PredicateType.GREATER_THAN_OR_EQUAL:
                 return val >= numerical_val
-            elif predicate == PredicateType.LESS_THAN:
+            if predicate == PredicateType.LESS_THAN:
                 return val < numerical_val
-            elif predicate == PredicateType.LESS_THAN_OR_EQUAL:
+            if predicate == PredicateType.LESS_THAN_OR_EQUAL:
                 return val <= numerical_val
-            else:
-                return False
+            return False
         else:
             # string fields
             return _field_string_compare(str(val), comparand, predicate)
@@ -522,12 +521,11 @@ def _calculate_aggregation(aggregation: AggregationType, id: str, value: float) 
         prev_count = projection[2]
         if aggregation == AggregationType.SUM:
             return (prev_value + value, prev_count + 1)
-        elif aggregation == AggregationType.MIN:
+        if aggregation == AggregationType.MIN:
             return (min(prev_value, value), prev_count + 1)
-        elif aggregation == AggregationType.MAX:
+        if aggregation == AggregationType.MAX:
             return (max(prev_value, value), prev_count + 1)
-        else:
-            return (prev_value + value, prev_count + 1)
+        return (prev_value + value, prev_count + 1)
     return None
 
 
