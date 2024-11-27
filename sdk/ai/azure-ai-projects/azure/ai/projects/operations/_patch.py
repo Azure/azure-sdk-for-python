@@ -2104,7 +2104,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         elif tool_outputs is not _Unset:
             response = super().submit_tool_outputs_to_run(
-                thread_id, run_id, tool_outputs=tool_outputs, stream_parameter=False, stream=False, **kwargs
+                thread_id, run_id, tool_outputs=tool_outputs, stream_parameter=True, stream=True, **kwargs
             )
 
         elif isinstance(body, io.IOBase):
