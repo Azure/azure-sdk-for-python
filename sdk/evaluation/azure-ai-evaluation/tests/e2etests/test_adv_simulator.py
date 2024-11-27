@@ -625,8 +625,8 @@ class TestAdvSimulator:
             )
         )
         # Make sure that outputs 1 and 2 are identical, but not identical to 3
-        assert outputs1[0]["messages"][0] == outputs2[0]["messages"][0]
-        assert outputs1[0]["messages"][0] != outputs3[0]["messages"][0]
+        assert outputs1[0]["template_parameters"] == outputs2[0]["template_parameters"]
+        assert outputs1[0]["template_parameters"]!= outputs3[0]["template_parameters"]
 
     @pytest.mark.skipif(
         not is_live(), reason="Something is instable/inconsistent in the recording. Fails in playback mode."
@@ -702,8 +702,8 @@ class TestAdvSimulator:
             )
         )
         # Make sure that outputs 1 and 2 are identical, but not identical to 3
-        assert outputs1[0]["messages"][0] == outputs2[0]["messages"][0]
-        assert outputs1[0]["messages"][0] != outputs3[0]["messages"][0]
+        assert outputs1[0]["template_parameters"] == outputs2[0]["template_parameters"]
+        assert outputs1[0]["template_parameters"]!= outputs3[0]["template_parameters"]
 
     @pytest.mark.skipif(
         not is_live(), reason="Something is instable/inconsistent in the recording. Fails in playback mode."

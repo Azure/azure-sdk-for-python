@@ -211,7 +211,18 @@ class AdversarialSimulator:
             ncols=100,
             unit="simulations",
         )
-
+        # The template parameter lists are persistent across sim runs within a session,
+        # So randomize a the selection instead of the parameter list directly,
+        # or a potentially large deep copy.
+        # if randomization_seed is not None:
+        #     random.seed(randomization_seed)
+        # parameter_lists = [
+        #     random.sample(t.template_parameters, len(t.template_parameters)) if randomize_order else t.template_parameters
+        #     for t in templates
+        # ]
+        # zipped_parameters = list(zip_longest(*parameter_lists))
+        # for param_group in zipped_parameters:
+        #     for template, parameter in zip(templates, param_group):
         if randomize_order:
             # The template parameter lists are persistent across sim runs within a session,
             # So randomize a the selection instead of the parameter list directly,
