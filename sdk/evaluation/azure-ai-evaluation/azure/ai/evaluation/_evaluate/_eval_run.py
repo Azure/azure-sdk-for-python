@@ -27,22 +27,6 @@ from azure.ai.evaluation._promptflow.azure._lite_azure_management_client import 
 LOGGER = logging.getLogger(__name__)
 
 
-# Handle optional import. The azure libraries are only present if
-# promptflow-azure is installed.
-try:
-    from azure.storage.blob import BlobServiceClient
-except (ModuleNotFoundError, ImportError):
-    raise EvaluationException(  # pylint: disable=raise-missing-from
-        message=(
-            "The required packages for remote tracking are missing.\n"
-            'To resolve this, please install them by running "pip install azure-ai-evaluation[remote]".'
-        ),
-        target=ErrorTarget.EVALUATE,
-        category=ErrorCategory.MISSING_PACKAGE,
-        blame=ErrorBlame.USER_ERROR,
-    )
-
-
 @dataclasses.dataclass
 class RunInfo:
     """
