@@ -10,7 +10,7 @@ from azure.servicebus.aio import ServiceBusClient as AsyncServiceBusClient
 from azure.servicebus.aio.management import ServiceBusAdministrationClient
 
 
-class _ReceiveTest:
+class _ReceiveTest():
 
     def setup_servicebus_clients(self, transport_type, peeklock, num_messages, max_wait_time, uamqp_tranport) -> None:
         self.connection_string = self.get_from_env("AZURE_SERVICEBUS_CONNECTION_STRING")
