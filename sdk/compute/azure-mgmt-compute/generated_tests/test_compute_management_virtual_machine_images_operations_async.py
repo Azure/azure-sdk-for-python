@@ -21,7 +21,7 @@ class TestComputeManagementVirtualMachineImagesOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_virtual_machine_images_get(self, resource_group):
         response = await self.client.virtual_machine_images.get(
             location="str",
             publisher_name="str",
@@ -36,7 +36,7 @@ class TestComputeManagementVirtualMachineImagesOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_virtual_machine_images_list(self, resource_group):
         response = await self.client.virtual_machine_images.list(
             location="str",
             publisher_name="str",
@@ -50,7 +50,7 @@ class TestComputeManagementVirtualMachineImagesOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_offers(self, resource_group):
+    async def test_virtual_machine_images_list_offers(self, resource_group):
         response = await self.client.virtual_machine_images.list_offers(
             location="str",
             publisher_name="str",
@@ -62,7 +62,7 @@ class TestComputeManagementVirtualMachineImagesOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_publishers(self, resource_group):
+    async def test_virtual_machine_images_list_publishers(self, resource_group):
         response = await self.client.virtual_machine_images.list_publishers(
             location="str",
             api_version="2024-07-01",
@@ -73,7 +73,7 @@ class TestComputeManagementVirtualMachineImagesOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_skus(self, resource_group):
+    async def test_virtual_machine_images_list_skus(self, resource_group):
         response = await self.client.virtual_machine_images.list_skus(
             location="str",
             publisher_name="str",
@@ -86,7 +86,7 @@ class TestComputeManagementVirtualMachineImagesOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_edge_zone(self, resource_group):
+    async def test_virtual_machine_images_list_by_edge_zone(self, resource_group):
         response = await self.client.virtual_machine_images.list_by_edge_zone(
             location="str",
             edge_zone="str",

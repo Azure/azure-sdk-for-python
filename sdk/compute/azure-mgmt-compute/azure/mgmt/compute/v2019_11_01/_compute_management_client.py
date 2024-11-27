@@ -21,11 +21,10 @@ from ._configuration import ComputeManagementClientConfiguration
 from .operations import DiskEncryptionSetsOperations, DisksOperations, SnapshotsOperations
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-keyword
+class ComputeManagementClient:
     """Compute Client.
 
     :ivar disks: DisksOperations operations

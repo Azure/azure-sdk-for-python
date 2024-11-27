@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13,7 +13,6 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from ... import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -363,7 +362,7 @@ class Resource(_serialization.Model):
         self.tags = tags
 
 
-class Disk(Resource):  # pylint: disable=too-many-instance-attributes
+class Disk(Resource):
     """Disk resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -993,7 +992,7 @@ class ProxyOnlyResource(_serialization.Model):
         self.type = None
 
 
-class DiskRestorePoint(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class DiskRestorePoint(ProxyOnlyResource):
     """Properties of disk restore point.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1145,7 +1144,7 @@ class DiskSku(_serialization.Model):
         self.tier = None
 
 
-class DiskUpdate(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class DiskUpdate(_serialization.Model):
     """Disk update resource.
 
     :ivar tags: Resource tags.
@@ -1641,7 +1640,7 @@ class Gallery(Resource):
         self.sharing_profile = sharing_profile
 
 
-class GalleryApplication(Resource):  # pylint: disable=too-many-instance-attributes
+class GalleryApplication(Resource):
     """Specifies information about the gallery Application Definition that you want to create or
     update.
 
@@ -2454,7 +2453,7 @@ class GalleryIdentifier(_serialization.Model):
         self.unique_name = None
 
 
-class GalleryImage(Resource):  # pylint: disable=too-many-instance-attributes
+class GalleryImage(Resource):
     """Specifies information about the gallery image definition that you want to create or update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2722,7 +2721,7 @@ class GalleryImageList(_serialization.Model):
         self.next_link = next_link
 
 
-class GalleryImageUpdate(UpdateResourceDefinition):  # pylint: disable=too-many-instance-attributes
+class GalleryImageUpdate(UpdateResourceDefinition):
     """Specifies information about the gallery image definition that you want to update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4064,7 +4063,7 @@ class SharedGallery(PirSharedGalleryResource):
     """
 
 
-class SharedGalleryImage(PirSharedGalleryResource):  # pylint: disable=too-many-instance-attributes
+class SharedGalleryImage(PirSharedGalleryResource):
     """Specifies information about the gallery image definition that you want to create or update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4486,7 +4485,7 @@ class SharingUpdate(_serialization.Model):
         self.groups = groups
 
 
-class Snapshot(Resource):  # pylint: disable=too-many-instance-attributes
+class Snapshot(Resource):
     """Snapshot resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.

@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -16,10 +16,9 @@ from ... import _serialization
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
@@ -1924,7 +1923,7 @@ class VirtualHardDisk(_serialization.Model):
         self.uri = uri
 
 
-class VirtualMachine(Resource):  # pylint: disable=too-many-instance-attributes
+class VirtualMachine(Resource):
     """Describes a Virtual Machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2203,7 +2202,7 @@ class VirtualMachineCaptureResult(SubResource):
         self.output = output
 
 
-class VirtualMachineExtension(Resource):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineExtension(Resource):
     """Describes a Virtual Machine Extension.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3666,7 +3665,7 @@ class VirtualMachineScaleSetStorageProfile(_serialization.Model):
         self.os_disk = os_disk
 
 
-class VirtualMachineScaleSetVM(Resource):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineScaleSetVM(Resource):
     """Describes a virtual machine scale set virtual machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.

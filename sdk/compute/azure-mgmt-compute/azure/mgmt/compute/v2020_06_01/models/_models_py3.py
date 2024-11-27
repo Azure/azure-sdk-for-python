@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -16,10 +16,9 @@ from ... import _serialization
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
@@ -376,7 +375,7 @@ class Resource(_serialization.Model):
         self.tags = tags
 
 
-class AvailabilitySet(Resource):  # pylint: disable=too-many-instance-attributes
+class AvailabilitySet(Resource):
     """Specifies information about the availability set that the virtual machine should be assigned
     to. Virtual machines specified in the same availability set are allocated to different nodes to
     maximize availability. For more information about availability sets, see `Manage the
@@ -868,7 +867,7 @@ class ComputeOperationValue(_serialization.Model):
         self.provider = None
 
 
-class DataDisk(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class DataDisk(_serialization.Model):
     """Describes a data disk.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1039,7 +1038,7 @@ class DataDiskImage(_serialization.Model):
         self.lun = None
 
 
-class DedicatedHost(Resource):  # pylint: disable=too-many-instance-attributes
+class DedicatedHost(Resource):
     """Specifies information about the Dedicated host.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2756,7 +2755,7 @@ class KeyVaultSecretReference(_serialization.Model):
         self.source_vault = source_vault
 
 
-class LastPatchInstallationSummary(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class LastPatchInstallationSummary(_serialization.Model):
     """Describes the properties of the last installed patch summary.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3323,7 +3322,7 @@ class OrchestrationServiceSummary(_serialization.Model):
         self.service_state = None
 
 
-class OSDisk(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class OSDisk(_serialization.Model):
     """Specifies information about the operating system disk used by the virtual machine.
     :code:`<br>`:code:`<br>` For more information about disks, see `About disks and VHDs for Azure
     virtual machines
@@ -5619,7 +5618,7 @@ class VirtualHardDisk(_serialization.Model):
         self.uri = uri
 
 
-class VirtualMachine(Resource):  # pylint: disable=too-many-instance-attributes
+class VirtualMachine(Resource):
     """Describes a Virtual Machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6128,7 +6127,7 @@ class VirtualMachineCaptureResult(SubResource):
         self.resources = None
 
 
-class VirtualMachineExtension(Resource):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineExtension(Resource):
     """Describes a Virtual Machine Extension.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6801,7 +6800,7 @@ class VirtualMachineImage(VirtualMachineImageResource):
         self.disallowed = disallowed
 
 
-class VirtualMachineInstanceView(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineInstanceView(_serialization.Model):
     """The instance view of a virtual machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7049,7 +7048,7 @@ class VirtualMachineReimageParameters(_serialization.Model):
         self.temp_disk = temp_disk
 
 
-class VirtualMachineRunCommand(Resource):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineRunCommand(Resource):
     """Describes a Virtual Machine run command.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7332,7 +7331,7 @@ class VirtualMachineRunCommandsListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class VirtualMachineRunCommandUpdate(UpdateResource):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineRunCommandUpdate(UpdateResource):
     """Describes a Virtual Machine run command.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7445,7 +7444,7 @@ class VirtualMachineRunCommandUpdate(UpdateResource):  # pylint: disable=too-man
         self.instance_view = None
 
 
-class VirtualMachineScaleSet(Resource):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineScaleSet(Resource):
     """Describes a Virtual Machine Scale Set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7779,7 +7778,7 @@ class VirtualMachineScaleSetDataDisk(_serialization.Model):
         self.disk_m_bps_read_write = disk_m_bps_read_write
 
 
-class VirtualMachineScaleSetExtension(SubResourceReadOnly):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineScaleSetExtension(SubResourceReadOnly):
     """Describes a Virtual Machine Scale Set Extension.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7976,7 +7975,7 @@ class VirtualMachineScaleSetExtensionProfile(_serialization.Model):
         self.extensions_time_budget = extensions_time_budget
 
 
-class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
     """Describes a Virtual Machine Scale Set Extension.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9322,7 +9321,7 @@ class VirtualMachineScaleSetStorageProfile(_serialization.Model):
         self.data_disks = data_disks
 
 
-class VirtualMachineScaleSetUpdate(UpdateResource):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineScaleSetUpdate(UpdateResource):
     """Describes a Virtual Machine Scale Set.
 
     :ivar tags: Resource tags.
@@ -10014,7 +10013,7 @@ class VirtualMachineScaleSetUpdateVMProfile(_serialization.Model):
         self.scheduled_events_profile = scheduled_events_profile
 
 
-class VirtualMachineScaleSetVM(Resource):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineScaleSetVM(Resource):
     """Describes a virtual machine scale set virtual machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10258,7 +10257,7 @@ class VirtualMachineScaleSetVM(Resource):  # pylint: disable=too-many-instance-a
         self.protection_policy = protection_policy
 
 
-class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
     """Describes a VMSS VM Extension.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10429,7 +10428,7 @@ class VirtualMachineScaleSetVMExtensionsSummary(_serialization.Model):  # pylint
         self.statuses_summary = None
 
 
-class VirtualMachineScaleSetVMExtensionUpdate(SubResourceReadOnly):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineScaleSetVMExtensionUpdate(SubResourceReadOnly):
     """Describes a VMSS VM Extension.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10584,7 +10583,7 @@ class VirtualMachineScaleSetVMInstanceRequiredIDs(_serialization.Model):  # pyli
         self.instance_ids = instance_ids
 
 
-class VirtualMachineScaleSetVMInstanceView(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineScaleSetVMInstanceView(_serialization.Model):
     """The instance view of a virtual machine scale set VM.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10768,7 +10767,7 @@ class VirtualMachineScaleSetVMNetworkProfileConfiguration(_serialization.Model):
         self.network_interface_configurations = network_interface_configurations
 
 
-class VirtualMachineScaleSetVMProfile(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineScaleSetVMProfile(_serialization.Model):
     """Describes a virtual machine scale set virtual machine profile.
 
     :ivar os_profile: Specifies the operating system settings for the virtual machines in the scale
@@ -11137,7 +11136,7 @@ class VirtualMachineStatusCodeCount(_serialization.Model):
         self.count = None
 
 
-class VirtualMachineUpdate(UpdateResource):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineUpdate(UpdateResource):
     """Describes a Virtual Machine Update.
 
     Variables are only populated by the server, and will be ignored when sending a request.

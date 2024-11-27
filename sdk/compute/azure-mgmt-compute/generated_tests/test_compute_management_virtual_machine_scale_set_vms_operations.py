@@ -20,7 +20,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_reimage(self, resource_group):
+    def test_virtual_machine_scale_set_vms_begin_reimage(self, resource_group):
         response = self.client.virtual_machine_scale_set_vms.begin_reimage(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
@@ -33,7 +33,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_reimage_all(self, resource_group):
+    def test_virtual_machine_scale_set_vms_begin_reimage_all(self, resource_group):
         response = self.client.virtual_machine_scale_set_vms.begin_reimage_all(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
@@ -46,7 +46,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_approve_rolling_upgrade(self, resource_group):
+    def test_virtual_machine_scale_set_vms_begin_approve_rolling_upgrade(self, resource_group):
         response = self.client.virtual_machine_scale_set_vms.begin_approve_rolling_upgrade(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
@@ -59,7 +59,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_deallocate(self, resource_group):
+    def test_virtual_machine_scale_set_vms_begin_deallocate(self, resource_group):
         response = self.client.virtual_machine_scale_set_vms.begin_deallocate(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
@@ -72,7 +72,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_virtual_machine_scale_set_vms_begin_update(self, resource_group):
         response = self.client.virtual_machine_scale_set_vms.begin_update(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
@@ -481,7 +481,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_virtual_machine_scale_set_vms_begin_delete(self, resource_group):
         response = self.client.virtual_machine_scale_set_vms.begin_delete(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
@@ -494,7 +494,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_virtual_machine_scale_set_vms_get(self, resource_group):
         response = self.client.virtual_machine_scale_set_vms.get(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
@@ -507,7 +507,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_instance_view(self, resource_group):
+    def test_virtual_machine_scale_set_vms_get_instance_view(self, resource_group):
         response = self.client.virtual_machine_scale_set_vms.get_instance_view(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
@@ -520,7 +520,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_virtual_machine_scale_set_vms_list(self, resource_group):
         response = self.client.virtual_machine_scale_set_vms.list(
             resource_group_name=resource_group.name,
             virtual_machine_scale_set_name="str",
@@ -532,7 +532,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_power_off(self, resource_group):
+    def test_virtual_machine_scale_set_vms_begin_power_off(self, resource_group):
         response = self.client.virtual_machine_scale_set_vms.begin_power_off(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
@@ -545,7 +545,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_restart(self, resource_group):
+    def test_virtual_machine_scale_set_vms_begin_restart(self, resource_group):
         response = self.client.virtual_machine_scale_set_vms.begin_restart(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
@@ -558,7 +558,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_start(self, resource_group):
+    def test_virtual_machine_scale_set_vms_begin_start(self, resource_group):
         response = self.client.virtual_machine_scale_set_vms.begin_start(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
@@ -571,7 +571,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_redeploy(self, resource_group):
+    def test_virtual_machine_scale_set_vms_begin_redeploy(self, resource_group):
         response = self.client.virtual_machine_scale_set_vms.begin_redeploy(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
@@ -584,7 +584,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_retrieve_boot_diagnostics_data(self, resource_group):
+    def test_virtual_machine_scale_set_vms_retrieve_boot_diagnostics_data(self, resource_group):
         response = self.client.virtual_machine_scale_set_vms.retrieve_boot_diagnostics_data(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
@@ -597,7 +597,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_perform_maintenance(self, resource_group):
+    def test_virtual_machine_scale_set_vms_begin_perform_maintenance(self, resource_group):
         response = self.client.virtual_machine_scale_set_vms.begin_perform_maintenance(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
@@ -610,7 +610,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_simulate_eviction(self, resource_group):
+    def test_virtual_machine_scale_set_vms_simulate_eviction(self, resource_group):
         response = self.client.virtual_machine_scale_set_vms.simulate_eviction(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
@@ -623,7 +623,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_attach_detach_data_disks(self, resource_group):
+    def test_virtual_machine_scale_set_vms_begin_attach_detach_data_disks(self, resource_group):
         response = self.client.virtual_machine_scale_set_vms.begin_attach_detach_data_disks(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
@@ -649,7 +649,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_run_command(self, resource_group):
+    def test_virtual_machine_scale_set_vms_begin_run_command(self, resource_group):
         response = self.client.virtual_machine_scale_set_vms.begin_run_command(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",

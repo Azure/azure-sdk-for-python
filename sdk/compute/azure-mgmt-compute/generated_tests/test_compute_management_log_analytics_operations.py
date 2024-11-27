@@ -20,7 +20,7 @@ class TestComputeManagementLogAnalyticsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_export_request_rate_by_interval(self, resource_group):
+    def test_log_analytics_begin_export_request_rate_by_interval(self, resource_group):
         response = self.client.log_analytics.begin_export_request_rate_by_interval(
             location="str",
             parameters={
@@ -42,7 +42,7 @@ class TestComputeManagementLogAnalyticsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_export_throttled_requests(self, resource_group):
+    def test_log_analytics_begin_export_throttled_requests(self, resource_group):
         response = self.client.log_analytics.begin_export_throttled_requests(
             location="str",
             parameters={

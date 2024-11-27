@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -16,10 +16,9 @@ from ... import _serialization
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
@@ -706,7 +705,7 @@ class DiagnosticsProfile(_serialization.Model):
         self.boot_diagnostics = boot_diagnostics
 
 
-class Disk(Resource):  # pylint: disable=too-many-instance-attributes
+class Disk(Resource):
     """Disk resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2588,7 +2587,7 @@ class PurchasePlan(_serialization.Model):
         self.product = product
 
 
-class ResourceSku(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ResourceSku(_serialization.Model):
     """Describes an available Compute SKU.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3446,7 +3445,7 @@ class Sku(_serialization.Model):
         self.capacity = capacity
 
 
-class Snapshot(Resource):  # pylint: disable=too-many-instance-attributes
+class Snapshot(Resource):
     """Snapshot resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4058,7 +4057,7 @@ class VirtualHardDisk(_serialization.Model):
         self.uri = uri
 
 
-class VirtualMachine(Resource):  # pylint: disable=too-many-instance-attributes
+class VirtualMachine(Resource):
     """Describes a Virtual Machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4357,7 +4356,7 @@ class VirtualMachineCaptureResult(SubResource):
         self.output = output
 
 
-class VirtualMachineExtension(Resource):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineExtension(Resource):
     """Describes a Virtual Machine Extension.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5085,7 +5084,7 @@ class VirtualMachineListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class VirtualMachineScaleSet(Resource):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineScaleSet(Resource):
     """Describes a Virtual Machine Scale Set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6973,7 +6972,7 @@ class VirtualMachineScaleSetUpdateVMProfile(_serialization.Model):
         self.license_type = license_type
 
 
-class VirtualMachineScaleSetVM(Resource):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineScaleSetVM(Resource):
     """Describes a virtual machine scale set virtual machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.

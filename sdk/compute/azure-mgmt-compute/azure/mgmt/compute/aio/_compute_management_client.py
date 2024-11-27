@@ -66,24 +66,27 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             'cloud_service_roles': '2022-09-04',
             'cloud_services': '2022-09-04',
             'cloud_services_update_domain': '2022-09-04',
-            'community_galleries': '2023-07-03',
-            'community_gallery_image_versions': '2023-07-03',
-            'community_gallery_images': '2023-07-03',
+            'community_galleries': '2024-03-03',
+            'community_gallery_image_versions': '2024-03-03',
+            'community_gallery_images': '2024-03-03',
             'disk_accesses': '2024-03-02',
             'disk_encryption_sets': '2024-03-02',
             'disk_restore_point': '2024-03-02',
             'disks': '2024-03-02',
-            'galleries': '2023-07-03',
-            'gallery_application_versions': '2023-07-03',
-            'gallery_applications': '2023-07-03',
-            'gallery_image_versions': '2023-07-03',
-            'gallery_images': '2023-07-03',
-            'gallery_sharing_profile': '2023-07-03',
+            'galleries': '2024-03-03',
+            'gallery_application_versions': '2024-03-03',
+            'gallery_applications': '2024-03-03',
+            'gallery_image_versions': '2024-03-03',
+            'gallery_images': '2024-03-03',
+            'gallery_in_vm_access_control_profile_versions': '2024-03-03',
+            'gallery_in_vm_access_control_profiles': '2024-03-03',
+            'gallery_sharing_profile': '2024-03-03',
             'resource_skus': '2021-07-01',
-            'shared_galleries': '2023-07-03',
-            'shared_gallery_image_versions': '2023-07-03',
-            'shared_gallery_images': '2023-07-03',
+            'shared_galleries': '2024-03-03',
+            'shared_gallery_image_versions': '2024-03-03',
+            'shared_gallery_images': '2024-03-03',
             'snapshots': '2024-03-02',
+            'soft_deleted_resource': '2024-03-03',
         }},
         _PROFILE_TAG + " latest"
     )
@@ -179,6 +182,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2023-10-02: :mod:`v2023_10_02.models<azure.mgmt.compute.v2023_10_02.models>`
            * 2024-03-01: :mod:`v2024_03_01.models<azure.mgmt.compute.v2024_03_01.models>`
            * 2024-03-02: :mod:`v2024_03_02.models<azure.mgmt.compute.v2024_03_02.models>`
+           * 2024-03-03: :mod:`v2024_03_03.models<azure.mgmt.compute.v2024_03_03.models>`
            * 2024-07-01: :mod:`v2024_07_01.models<azure.mgmt.compute.v2024_07_01.models>`
         """
         if api_version == '2015-06-15':
@@ -321,6 +325,9 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             return models
         elif api_version == '2024-03-02':
             from ..v2024_03_02 import models
+            return models
+        elif api_version == '2024-03-03':
+            from ..v2024_03_03 import models
             return models
         elif api_version == '2024-07-01':
             from ..v2024_07_01 import models
@@ -622,6 +629,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2022-03-03: :class:`CommunityGalleriesOperations<azure.mgmt.compute.v2022_03_03.aio.operations.CommunityGalleriesOperations>`
            * 2022-08-03: :class:`CommunityGalleriesOperations<azure.mgmt.compute.v2022_08_03.aio.operations.CommunityGalleriesOperations>`
            * 2023-07-03: :class:`CommunityGalleriesOperations<azure.mgmt.compute.v2023_07_03.aio.operations.CommunityGalleriesOperations>`
+           * 2024-03-03: :class:`CommunityGalleriesOperations<azure.mgmt.compute.v2024_03_03.aio.operations.CommunityGalleriesOperations>`
         """
         api_version = self._get_api_version('community_galleries')
         if api_version == '2021-07-01':
@@ -634,6 +642,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_08_03.aio.operations import CommunityGalleriesOperations as OperationClass
         elif api_version == '2023-07-03':
             from ..v2023_07_03.aio.operations import CommunityGalleriesOperations as OperationClass
+        elif api_version == '2024-03-03':
+            from ..v2024_03_03.aio.operations import CommunityGalleriesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'community_galleries'".format(api_version))
         self._config.api_version = api_version
@@ -648,6 +658,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2022-03-03: :class:`CommunityGalleryImageVersionsOperations<azure.mgmt.compute.v2022_03_03.aio.operations.CommunityGalleryImageVersionsOperations>`
            * 2022-08-03: :class:`CommunityGalleryImageVersionsOperations<azure.mgmt.compute.v2022_08_03.aio.operations.CommunityGalleryImageVersionsOperations>`
            * 2023-07-03: :class:`CommunityGalleryImageVersionsOperations<azure.mgmt.compute.v2023_07_03.aio.operations.CommunityGalleryImageVersionsOperations>`
+           * 2024-03-03: :class:`CommunityGalleryImageVersionsOperations<azure.mgmt.compute.v2024_03_03.aio.operations.CommunityGalleryImageVersionsOperations>`
         """
         api_version = self._get_api_version('community_gallery_image_versions')
         if api_version == '2021-07-01':
@@ -660,6 +671,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_08_03.aio.operations import CommunityGalleryImageVersionsOperations as OperationClass
         elif api_version == '2023-07-03':
             from ..v2023_07_03.aio.operations import CommunityGalleryImageVersionsOperations as OperationClass
+        elif api_version == '2024-03-03':
+            from ..v2024_03_03.aio.operations import CommunityGalleryImageVersionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'community_gallery_image_versions'".format(api_version))
         self._config.api_version = api_version
@@ -674,6 +687,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2022-03-03: :class:`CommunityGalleryImagesOperations<azure.mgmt.compute.v2022_03_03.aio.operations.CommunityGalleryImagesOperations>`
            * 2022-08-03: :class:`CommunityGalleryImagesOperations<azure.mgmt.compute.v2022_08_03.aio.operations.CommunityGalleryImagesOperations>`
            * 2023-07-03: :class:`CommunityGalleryImagesOperations<azure.mgmt.compute.v2023_07_03.aio.operations.CommunityGalleryImagesOperations>`
+           * 2024-03-03: :class:`CommunityGalleryImagesOperations<azure.mgmt.compute.v2024_03_03.aio.operations.CommunityGalleryImagesOperations>`
         """
         api_version = self._get_api_version('community_gallery_images')
         if api_version == '2021-07-01':
@@ -686,6 +700,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_08_03.aio.operations import CommunityGalleryImagesOperations as OperationClass
         elif api_version == '2023-07-03':
             from ..v2023_07_03.aio.operations import CommunityGalleryImagesOperations as OperationClass
+        elif api_version == '2024-03-03':
+            from ..v2024_03_03.aio.operations import CommunityGalleryImagesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'community_gallery_images'".format(api_version))
         self._config.api_version = api_version
@@ -1054,6 +1070,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2022-03-03: :class:`GalleriesOperations<azure.mgmt.compute.v2022_03_03.aio.operations.GalleriesOperations>`
            * 2022-08-03: :class:`GalleriesOperations<azure.mgmt.compute.v2022_08_03.aio.operations.GalleriesOperations>`
            * 2023-07-03: :class:`GalleriesOperations<azure.mgmt.compute.v2023_07_03.aio.operations.GalleriesOperations>`
+           * 2024-03-03: :class:`GalleriesOperations<azure.mgmt.compute.v2024_03_03.aio.operations.GalleriesOperations>`
         """
         api_version = self._get_api_version('galleries')
         if api_version == '2018-06-01':
@@ -1078,6 +1095,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_08_03.aio.operations import GalleriesOperations as OperationClass
         elif api_version == '2023-07-03':
             from ..v2023_07_03.aio.operations import GalleriesOperations as OperationClass
+        elif api_version == '2024-03-03':
+            from ..v2024_03_03.aio.operations import GalleriesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'galleries'".format(api_version))
         self._config.api_version = api_version
@@ -1097,6 +1116,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2022-03-03: :class:`GalleryApplicationVersionsOperations<azure.mgmt.compute.v2022_03_03.aio.operations.GalleryApplicationVersionsOperations>`
            * 2022-08-03: :class:`GalleryApplicationVersionsOperations<azure.mgmt.compute.v2022_08_03.aio.operations.GalleryApplicationVersionsOperations>`
            * 2023-07-03: :class:`GalleryApplicationVersionsOperations<azure.mgmt.compute.v2023_07_03.aio.operations.GalleryApplicationVersionsOperations>`
+           * 2024-03-03: :class:`GalleryApplicationVersionsOperations<azure.mgmt.compute.v2024_03_03.aio.operations.GalleryApplicationVersionsOperations>`
         """
         api_version = self._get_api_version('gallery_application_versions')
         if api_version == '2019-03-01':
@@ -1119,6 +1139,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_08_03.aio.operations import GalleryApplicationVersionsOperations as OperationClass
         elif api_version == '2023-07-03':
             from ..v2023_07_03.aio.operations import GalleryApplicationVersionsOperations as OperationClass
+        elif api_version == '2024-03-03':
+            from ..v2024_03_03.aio.operations import GalleryApplicationVersionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'gallery_application_versions'".format(api_version))
         self._config.api_version = api_version
@@ -1138,6 +1160,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2022-03-03: :class:`GalleryApplicationsOperations<azure.mgmt.compute.v2022_03_03.aio.operations.GalleryApplicationsOperations>`
            * 2022-08-03: :class:`GalleryApplicationsOperations<azure.mgmt.compute.v2022_08_03.aio.operations.GalleryApplicationsOperations>`
            * 2023-07-03: :class:`GalleryApplicationsOperations<azure.mgmt.compute.v2023_07_03.aio.operations.GalleryApplicationsOperations>`
+           * 2024-03-03: :class:`GalleryApplicationsOperations<azure.mgmt.compute.v2024_03_03.aio.operations.GalleryApplicationsOperations>`
         """
         api_version = self._get_api_version('gallery_applications')
         if api_version == '2019-03-01':
@@ -1160,6 +1183,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_08_03.aio.operations import GalleryApplicationsOperations as OperationClass
         elif api_version == '2023-07-03':
             from ..v2023_07_03.aio.operations import GalleryApplicationsOperations as OperationClass
+        elif api_version == '2024-03-03':
+            from ..v2024_03_03.aio.operations import GalleryApplicationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'gallery_applications'".format(api_version))
         self._config.api_version = api_version
@@ -1180,6 +1205,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2022-03-03: :class:`GalleryImageVersionsOperations<azure.mgmt.compute.v2022_03_03.aio.operations.GalleryImageVersionsOperations>`
            * 2022-08-03: :class:`GalleryImageVersionsOperations<azure.mgmt.compute.v2022_08_03.aio.operations.GalleryImageVersionsOperations>`
            * 2023-07-03: :class:`GalleryImageVersionsOperations<azure.mgmt.compute.v2023_07_03.aio.operations.GalleryImageVersionsOperations>`
+           * 2024-03-03: :class:`GalleryImageVersionsOperations<azure.mgmt.compute.v2024_03_03.aio.operations.GalleryImageVersionsOperations>`
         """
         api_version = self._get_api_version('gallery_image_versions')
         if api_version == '2018-06-01':
@@ -1204,6 +1230,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_08_03.aio.operations import GalleryImageVersionsOperations as OperationClass
         elif api_version == '2023-07-03':
             from ..v2023_07_03.aio.operations import GalleryImageVersionsOperations as OperationClass
+        elif api_version == '2024-03-03':
+            from ..v2024_03_03.aio.operations import GalleryImageVersionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'gallery_image_versions'".format(api_version))
         self._config.api_version = api_version
@@ -1224,6 +1252,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2022-03-03: :class:`GalleryImagesOperations<azure.mgmt.compute.v2022_03_03.aio.operations.GalleryImagesOperations>`
            * 2022-08-03: :class:`GalleryImagesOperations<azure.mgmt.compute.v2022_08_03.aio.operations.GalleryImagesOperations>`
            * 2023-07-03: :class:`GalleryImagesOperations<azure.mgmt.compute.v2023_07_03.aio.operations.GalleryImagesOperations>`
+           * 2024-03-03: :class:`GalleryImagesOperations<azure.mgmt.compute.v2024_03_03.aio.operations.GalleryImagesOperations>`
         """
         api_version = self._get_api_version('gallery_images')
         if api_version == '2018-06-01':
@@ -1248,8 +1277,38 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_08_03.aio.operations import GalleryImagesOperations as OperationClass
         elif api_version == '2023-07-03':
             from ..v2023_07_03.aio.operations import GalleryImagesOperations as OperationClass
+        elif api_version == '2024-03-03':
+            from ..v2024_03_03.aio.operations import GalleryImagesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'gallery_images'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
+
+    @property
+    def gallery_in_vm_access_control_profile_versions(self):
+        """Instance depends on the API version:
+
+           * 2024-03-03: :class:`GalleryInVMAccessControlProfileVersionsOperations<azure.mgmt.compute.v2024_03_03.aio.operations.GalleryInVMAccessControlProfileVersionsOperations>`
+        """
+        api_version = self._get_api_version('gallery_in_vm_access_control_profile_versions')
+        if api_version == '2024-03-03':
+            from ..v2024_03_03.aio.operations import GalleryInVMAccessControlProfileVersionsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'gallery_in_vm_access_control_profile_versions'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
+
+    @property
+    def gallery_in_vm_access_control_profiles(self):
+        """Instance depends on the API version:
+
+           * 2024-03-03: :class:`GalleryInVMAccessControlProfilesOperations<azure.mgmt.compute.v2024_03_03.aio.operations.GalleryInVMAccessControlProfilesOperations>`
+        """
+        api_version = self._get_api_version('gallery_in_vm_access_control_profiles')
+        if api_version == '2024-03-03':
+            from ..v2024_03_03.aio.operations import GalleryInVMAccessControlProfilesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'gallery_in_vm_access_control_profiles'".format(api_version))
         self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
@@ -1264,6 +1323,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2022-03-03: :class:`GallerySharingProfileOperations<azure.mgmt.compute.v2022_03_03.aio.operations.GallerySharingProfileOperations>`
            * 2022-08-03: :class:`GallerySharingProfileOperations<azure.mgmt.compute.v2022_08_03.aio.operations.GallerySharingProfileOperations>`
            * 2023-07-03: :class:`GallerySharingProfileOperations<azure.mgmt.compute.v2023_07_03.aio.operations.GallerySharingProfileOperations>`
+           * 2024-03-03: :class:`GallerySharingProfileOperations<azure.mgmt.compute.v2024_03_03.aio.operations.GallerySharingProfileOperations>`
         """
         api_version = self._get_api_version('gallery_sharing_profile')
         if api_version == '2020-09-30':
@@ -1280,6 +1340,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_08_03.aio.operations import GallerySharingProfileOperations as OperationClass
         elif api_version == '2023-07-03':
             from ..v2023_07_03.aio.operations import GallerySharingProfileOperations as OperationClass
+        elif api_version == '2024-03-03':
+            from ..v2024_03_03.aio.operations import GallerySharingProfileOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'gallery_sharing_profile'".format(api_version))
         self._config.api_version = api_version
@@ -1711,6 +1773,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2022-03-03: :class:`SharedGalleriesOperations<azure.mgmt.compute.v2022_03_03.aio.operations.SharedGalleriesOperations>`
            * 2022-08-03: :class:`SharedGalleriesOperations<azure.mgmt.compute.v2022_08_03.aio.operations.SharedGalleriesOperations>`
            * 2023-07-03: :class:`SharedGalleriesOperations<azure.mgmt.compute.v2023_07_03.aio.operations.SharedGalleriesOperations>`
+           * 2024-03-03: :class:`SharedGalleriesOperations<azure.mgmt.compute.v2024_03_03.aio.operations.SharedGalleriesOperations>`
         """
         api_version = self._get_api_version('shared_galleries')
         if api_version == '2020-09-30':
@@ -1725,6 +1788,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_08_03.aio.operations import SharedGalleriesOperations as OperationClass
         elif api_version == '2023-07-03':
             from ..v2023_07_03.aio.operations import SharedGalleriesOperations as OperationClass
+        elif api_version == '2024-03-03':
+            from ..v2024_03_03.aio.operations import SharedGalleriesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'shared_galleries'".format(api_version))
         self._config.api_version = api_version
@@ -1740,6 +1805,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2022-03-03: :class:`SharedGalleryImageVersionsOperations<azure.mgmt.compute.v2022_03_03.aio.operations.SharedGalleryImageVersionsOperations>`
            * 2022-08-03: :class:`SharedGalleryImageVersionsOperations<azure.mgmt.compute.v2022_08_03.aio.operations.SharedGalleryImageVersionsOperations>`
            * 2023-07-03: :class:`SharedGalleryImageVersionsOperations<azure.mgmt.compute.v2023_07_03.aio.operations.SharedGalleryImageVersionsOperations>`
+           * 2024-03-03: :class:`SharedGalleryImageVersionsOperations<azure.mgmt.compute.v2024_03_03.aio.operations.SharedGalleryImageVersionsOperations>`
         """
         api_version = self._get_api_version('shared_gallery_image_versions')
         if api_version == '2020-09-30':
@@ -1754,6 +1820,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_08_03.aio.operations import SharedGalleryImageVersionsOperations as OperationClass
         elif api_version == '2023-07-03':
             from ..v2023_07_03.aio.operations import SharedGalleryImageVersionsOperations as OperationClass
+        elif api_version == '2024-03-03':
+            from ..v2024_03_03.aio.operations import SharedGalleryImageVersionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'shared_gallery_image_versions'".format(api_version))
         self._config.api_version = api_version
@@ -1769,6 +1837,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
            * 2022-03-03: :class:`SharedGalleryImagesOperations<azure.mgmt.compute.v2022_03_03.aio.operations.SharedGalleryImagesOperations>`
            * 2022-08-03: :class:`SharedGalleryImagesOperations<azure.mgmt.compute.v2022_08_03.aio.operations.SharedGalleryImagesOperations>`
            * 2023-07-03: :class:`SharedGalleryImagesOperations<azure.mgmt.compute.v2023_07_03.aio.operations.SharedGalleryImagesOperations>`
+           * 2024-03-03: :class:`SharedGalleryImagesOperations<azure.mgmt.compute.v2024_03_03.aio.operations.SharedGalleryImagesOperations>`
         """
         api_version = self._get_api_version('shared_gallery_images')
         if api_version == '2020-09-30':
@@ -1783,6 +1852,8 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_08_03.aio.operations import SharedGalleryImagesOperations as OperationClass
         elif api_version == '2023-07-03':
             from ..v2023_07_03.aio.operations import SharedGalleryImagesOperations as OperationClass
+        elif api_version == '2024-03-03':
+            from ..v2024_03_03.aio.operations import SharedGalleryImagesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'shared_gallery_images'".format(api_version))
         self._config.api_version = api_version
@@ -1859,6 +1930,20 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2024_03_02.aio.operations import SnapshotsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'snapshots'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
+
+    @property
+    def soft_deleted_resource(self):
+        """Instance depends on the API version:
+
+           * 2024-03-03: :class:`SoftDeletedResourceOperations<azure.mgmt.compute.v2024_03_03.aio.operations.SoftDeletedResourceOperations>`
+        """
+        api_version = self._get_api_version('soft_deleted_resource')
+        if api_version == '2024-03-03':
+            from ..v2024_03_03.aio.operations import SoftDeletedResourceOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'soft_deleted_resource'".format(api_version))
         self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 

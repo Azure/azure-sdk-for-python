@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, Literal, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Iterator, Literal, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -36,7 +36,7 @@ from ..._serialization import Serializer
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -909,7 +909,7 @@ class CloudServiceRoleInstancesOperations:
     def _delete_initial(
         self, role_instance_name: str, resource_group_name: str, cloud_service_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1043,7 +1043,7 @@ class CloudServiceRoleInstancesOperations:
         :rtype: ~azure.mgmt.compute.v2020_10_01_preview.models.RoleInstance
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1105,7 +1105,7 @@ class CloudServiceRoleInstancesOperations:
         :rtype: ~azure.mgmt.compute.v2020_10_01_preview.models.RoleInstanceView
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1183,7 +1183,7 @@ class CloudServiceRoleInstancesOperations:
         )
         cls: ClsType[_models.RoleInstanceListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1249,7 +1249,7 @@ class CloudServiceRoleInstancesOperations:
     def _restart_initial(
         self, role_instance_name: str, resource_group_name: str, cloud_service_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1362,7 +1362,7 @@ class CloudServiceRoleInstancesOperations:
     def _reimage_initial(
         self, role_instance_name: str, resource_group_name: str, cloud_service_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1475,7 +1475,7 @@ class CloudServiceRoleInstancesOperations:
     def _rebuild_initial(
         self, role_instance_name: str, resource_group_name: str, cloud_service_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1602,7 +1602,7 @@ class CloudServiceRoleInstancesOperations:
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1689,7 +1689,7 @@ class CloudServiceRolesOperations:
         :rtype: ~azure.mgmt.compute.v2020_10_01_preview.models.CloudServiceRole
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1758,7 +1758,7 @@ class CloudServiceRolesOperations:
         )
         cls: ClsType[_models.CloudServiceRoleListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1848,7 +1848,7 @@ class CloudServicesOperations:  # pylint: disable=too-many-public-methods
         parameters: Optional[Union[_models.CloudService, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2050,7 +2050,7 @@ class CloudServicesOperations:  # pylint: disable=too-many-public-methods
         parameters: Optional[Union[_models.CloudServiceUpdate, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2244,7 +2244,7 @@ class CloudServicesOperations:  # pylint: disable=too-many-public-methods
         )
 
     def _delete_initial(self, resource_group_name: str, cloud_service_name: str, **kwargs: Any) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2359,7 +2359,7 @@ class CloudServicesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.compute.v2020_10_01_preview.models.CloudService
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2417,7 +2417,7 @@ class CloudServicesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.compute.v2020_10_01_preview.models.CloudServiceInstanceView
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2480,7 +2480,7 @@ class CloudServicesOperations:  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[_models.CloudServiceListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2561,7 +2561,7 @@ class CloudServicesOperations:  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[_models.CloudServiceListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2623,7 +2623,7 @@ class CloudServicesOperations:  # pylint: disable=too-many-public-methods
         return ItemPaged(get_next, extract_data)
 
     def _start_initial(self, resource_group_name: str, cloud_service_name: str, **kwargs: Any) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2727,7 +2727,7 @@ class CloudServicesOperations:  # pylint: disable=too-many-public-methods
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _power_off_initial(self, resource_group_name: str, cloud_service_name: str, **kwargs: Any) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2838,7 +2838,7 @@ class CloudServicesOperations:  # pylint: disable=too-many-public-methods
         parameters: Optional[Union[_models.RoleInstances, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3027,7 +3027,7 @@ class CloudServicesOperations:  # pylint: disable=too-many-public-methods
         parameters: Optional[Union[_models.RoleInstances, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3219,7 +3219,7 @@ class CloudServicesOperations:  # pylint: disable=too-many-public-methods
         parameters: Optional[Union[_models.RoleInstances, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3414,7 +3414,7 @@ class CloudServicesOperations:  # pylint: disable=too-many-public-methods
         parameters: Optional[Union[_models.RoleInstances, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3625,7 +3625,7 @@ class CloudServicesUpdateDomainOperations:
         parameters: Optional[Union[_models.UpdateDomain, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3844,7 +3844,7 @@ class CloudServicesUpdateDomainOperations:
         :rtype: ~azure.mgmt.compute.v2020_10_01_preview.models.UpdateDomain
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3912,7 +3912,7 @@ class CloudServicesUpdateDomainOperations:
         )
         cls: ClsType[_models.UpdateDomainListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

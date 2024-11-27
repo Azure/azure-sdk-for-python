@@ -20,7 +20,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_restore_point_collections_create_or_update(self, resource_group):
         response = self.client.restore_point_collections.create_or_update(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
@@ -203,7 +203,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_restore_point_collections_update(self, resource_group):
         response = self.client.restore_point_collections.update(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
@@ -382,7 +382,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_restore_point_collections_begin_delete(self, resource_group):
         response = self.client.restore_point_collections.begin_delete(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
@@ -394,7 +394,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_restore_point_collections_get(self, resource_group):
         response = self.client.restore_point_collections.get(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
@@ -406,7 +406,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_restore_point_collections_list(self, resource_group):
         response = self.client.restore_point_collections.list(
             resource_group_name=resource_group.name,
             api_version="2024-07-01",
@@ -417,7 +417,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_all(self, resource_group):
+    def test_restore_point_collections_list_all(self, resource_group):
         response = self.client.restore_point_collections.list_all(
             api_version="2024-07-01",
         )

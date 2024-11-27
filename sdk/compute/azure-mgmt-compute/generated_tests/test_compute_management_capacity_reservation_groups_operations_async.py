@@ -21,7 +21,7 @@ class TestComputeManagementCapacityReservationGroupsOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_capacity_reservation_groups_create_or_update(self, resource_group):
         response = await self.client.capacity_reservation_groups.create_or_update(
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
@@ -62,7 +62,7 @@ class TestComputeManagementCapacityReservationGroupsOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_capacity_reservation_groups_update(self, resource_group):
         response = await self.client.capacity_reservation_groups.update(
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
@@ -98,7 +98,7 @@ class TestComputeManagementCapacityReservationGroupsOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_capacity_reservation_groups_delete(self, resource_group):
         response = await self.client.capacity_reservation_groups.delete(
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
@@ -110,7 +110,7 @@ class TestComputeManagementCapacityReservationGroupsOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_capacity_reservation_groups_get(self, resource_group):
         response = await self.client.capacity_reservation_groups.get(
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
@@ -122,7 +122,7 @@ class TestComputeManagementCapacityReservationGroupsOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_capacity_reservation_groups_list_by_resource_group(self, resource_group):
         response = self.client.capacity_reservation_groups.list_by_resource_group(
             resource_group_name=resource_group.name,
             api_version="2024-07-01",
@@ -133,7 +133,7 @@ class TestComputeManagementCapacityReservationGroupsOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_subscription(self, resource_group):
+    async def test_capacity_reservation_groups_list_by_subscription(self, resource_group):
         response = self.client.capacity_reservation_groups.list_by_subscription(
             api_version="2024-07-01",
         )
