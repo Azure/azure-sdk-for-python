@@ -250,8 +250,8 @@ class InferenceOperations:
                 api_key=connection.key, azure_endpoint=connection.endpoint_url, api_version=api_version
             )
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
-            logger.debug("[InferenceOperations.get_azure_openai_client] "
-                + "Creating AzureOpenAI using Entra ID authentication"
+            logger.debug(
+                "[InferenceOperations.get_azure_openai_client] " + "Creating AzureOpenAI using Entra ID authentication"
             )
             try:
                 from azure.identity import get_bearer_token_provider
@@ -269,8 +269,7 @@ class InferenceOperations:
             )
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(
-                "[InferenceOperations.get_azure_openai_client] "
-                + "Creating AzureOpenAI using SAS authentication"
+                "[InferenceOperations.get_azure_openai_client] " + "Creating AzureOpenAI using SAS authentication"
             )
             raise ValueError(
                 "Getting chat completions client from a connection with SAS authentication is not yet supported"
