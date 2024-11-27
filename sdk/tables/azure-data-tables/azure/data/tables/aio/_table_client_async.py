@@ -665,9 +665,6 @@ class TableClient(AsyncTablesBaseClient):
         :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :param mode: Merge or Replace entity.
         :type mode: ~azure.data.tables.UpdateMode or str
-        :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
-            `azure.data.tables.TableEntityEncoder` will be used.
-        :type encoder: ~azure.data.Tables.TableEntityEncoder
         :return: Dictionary mapping operation metadata returned from the service.
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -723,7 +720,7 @@ class TableClient(AsyncTablesBaseClient):
         self,
         operations: Iterable[TransactionOperationType],
         **kwargs,
-    ) -> List[Mapping[str, Any]]:
+    ) -> List[EntityType]:
         """Commits a list of operations as a single transaction.
 
         If any one of these operations fails, the entire transaction will be rejected.

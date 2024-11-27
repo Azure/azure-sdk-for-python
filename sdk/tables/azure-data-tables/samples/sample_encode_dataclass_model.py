@@ -69,7 +69,10 @@ def decode_string(value):
     try:
         return int(value)
     except ValueError:
-        return value
+        try:
+            return Color(value)
+        except ValueError:
+            return value
 
 decoder_map = {
     EdmType.STRING: decode_string,

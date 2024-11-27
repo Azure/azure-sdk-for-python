@@ -416,7 +416,6 @@ class TableClient(TablesBaseClient):
                 :caption: Creating and adding an entity to a Table
         """
         entity_json = self.encoder(entity)
-        # breakpoint()
         try:
             metadata, content = cast(
                 Tuple[Dict[str, str], Optional[Dict[str, Any]]],
@@ -511,7 +510,7 @@ class TableClient(TablesBaseClient):
         results_per_page: Optional[int] = None,
         select: Optional[Union[str, List[str]]] = None,
         **kwargs,
-    ) -> ItemPaged[EntityType]:
+    ) -> ItemPaged[TableEntity]:
         """Lists entities in a table.
 
         :keyword results_per_page: Number of entities returned per service request.
@@ -699,7 +698,7 @@ class TableClient(TablesBaseClient):
         self,
         operations: Iterable[TransactionOperationType],
         **kwargs,
-    ) -> List[Mapping[str, Any]]:
+    ) -> List[EntityType]:
         """Commits a list of operations as a single transaction.
 
         If any one of these operations fails, the entire transaction will be rejected.

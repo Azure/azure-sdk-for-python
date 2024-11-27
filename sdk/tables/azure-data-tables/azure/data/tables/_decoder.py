@@ -43,7 +43,7 @@ class TableEntityDecoder():
     def __call__(  # pylint: disable=too-many-branches, too-many-statements
             self,
             response_data: Mapping[str, Any]
-        ) -> Dict[str, Union[str, int, float, bool]]:
+        ) -> TableEntity:
         """Convert json response to entity.
         The entity format is:
         {
@@ -66,15 +66,11 @@ class TableEntityDecoder():
         :return: An entity dict with additional metadata.
         :rtype: dict[str, Any]
         """
-        if self.flatten_result_entity:
-            entity = {}
-        else:
-            entity = TableEntity()
+        entity = TableEntity()
 
         properties = {}
         edmtypes = {}
         odata = {}
-        # breakpoint()
 
         for name, value in response_data.items():
             if name.startswith("odata."):
@@ -133,8 +129,7 @@ class TableEntityDecoder():
         if self.flatten_result_entity:
             for name, value in odata.items():
                 entity[name] = value
-        else:
-            entity._metadata = odata  # pylint: disable=protected-access
+        entity._metadata = odata  # pylint: disable=protected-access
         return entity
 
 
@@ -150,30 +145,8 @@ class TableEntityDecoder():
         return EntityProperty(int(value), EdmType.INT64)
 
 
-    def from_entity_datetime(self, value):
-        # Cosmos returns this with a decimal point that throws an error on deserialization
-        cleaned_value = self._clean_up_dotnet_timestamps(value)
-        try:
-            dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
-        except ValueError:
-            dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
-        dt_obj._service_value = value  # pylint:disable=protected-access,assigning-non-slot
-        return dt_obj
-
-
-    def _clean_up_dotnet_timestamps(self, value):
-        # .NET has more decimal places than Python supports in datetime objects, this truncates
-        # values after 6 decimal places.
-        value = value.split(".")
-        ms = ""
-        if len(value) == 2:
-            ms = value[-1].replace("Z", "")
-            if len(ms) > 6:
-                ms = ms[:6]
-            ms = ms + "Z"
-            return ".".join([value[0], ms])
-
-        return value[0]
+    def from_entity_datetime(self, value: str) -> TablesEntityDatetime:
+        return deserialize_iso(value)
 
 
     def from_entity_guid(self, value):
@@ -196,7 +169,25 @@ _ENTITY_TO_PYTHON_CONVERSIONS = {
     EdmType.BOOLEAN: lambda _, v: v,
 }
 
-def deserialize_iso(value):
-    if not value:
-        return value
-    return TableEntityDecoder().from_entity_datetime(value)
+def deserialize_iso(value: str) -> TablesEntityDatetime:
+    # Cosmos returns this with a decimal point that throws an error on deserialization
+    cleaned_value = _clean_up_dotnet_timestamps(value)
+    try:
+        dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
+    except ValueError:
+        dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+    dt_obj._service_value = value  # pylint:disable=protected-access,assigning-non-slot
+    return dt_obj
+
+def _clean_up_dotnet_timestamps(value):
+    # .NET has more decimal places than Python supports in datetime objects, this truncates
+    # values after 6 decimal places.
+    value = value.split(".")
+    ms = ""
+    if len(value) == 2:
+        ms = value[-1].replace("Z", "")
+        if len(ms) > 6:
+            ms = ms[:6]
+        ms = ms + "Z"
+        return ".".join([value[0], ms])
+    return value[0]

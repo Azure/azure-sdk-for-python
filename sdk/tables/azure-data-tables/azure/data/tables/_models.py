@@ -19,7 +19,6 @@ from ._generated.models import (
     RetentionPolicy as GeneratedRetentionPolicy,
     CorsRule as GeneratedCorsRule,
 )
-from ._decoder import TableEntityDecoder
 from ._error import _process_table_error
 from ._constants import NEXT_PARTITION_KEY, NEXT_ROW_KEY, NEXT_TABLE_NAME
 
@@ -344,15 +343,11 @@ class TableEntityPropertiesPaged(PageIterator):
     """The select filter to apply to results."""
     continuation_token: Optional[str]
     """The continuation token needed by get_next()."""
-    decoder: TableEntityDecoder
-    """The decoder used to deserialize the incoming Tables entities."""
 
     def __init__(
         self,
         command: Callable,
         table: str,
-        *,
-        decoder: TableEntityDecoder,
         **kwargs: Any,
     ) -> None:
         super(TableEntityPropertiesPaged, self).__init__(
@@ -368,7 +363,7 @@ class TableEntityPropertiesPaged(PageIterator):
         self.results_per_page = kwargs.get("results_per_page")
         self.filter = kwargs.get("filter")
         self.select = kwargs.get("select")
-        self.decoder = decoder
+        self.decoder = kwargs.get("decoder")
 
     def _get_next_cb(self, continuation_token, **kwargs):  # pylint: disable=inconsistent-return-statements
         next_partition_key, next_row_key = _extract_continuation_token(continuation_token)
