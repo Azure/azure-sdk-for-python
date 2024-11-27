@@ -1,6 +1,5 @@
 import os
 import pytest
-
 try:
     import uamqp
     from azure.servicebus._transport._uamqp_transport import UamqpTransport
@@ -13,14 +12,19 @@ from azure.servicebus import (
     ServiceBusReceivedMessage,
     ServiceBusMessageState,
     ServiceBusReceiveMode,
-    ServiceBusMessageBatch,
+    ServiceBusMessageBatch
 )
 from azure.servicebus._common.constants import (
     _X_OPT_PARTITION_KEY,
     _X_OPT_VIA_PARTITION_KEY,
-    _X_OPT_SCHEDULED_ENQUEUE_TIME,
+    _X_OPT_SCHEDULED_ENQUEUE_TIME
 )
-from azure.servicebus.amqp import AmqpAnnotatedMessage, AmqpMessageBodyType, AmqpMessageProperties, AmqpMessageHeader
+from azure.servicebus.amqp import (
+    AmqpAnnotatedMessage,
+    AmqpMessageBodyType,
+    AmqpMessageProperties,
+    AmqpMessageHeader
+)
 from azure.servicebus._pyamqp.message import Message
 from azure.servicebus._pyamqp._message_backcompat import LegacyBatchMessage
 from azure.servicebus._transport._pyamqp_transport import PyamqpTransport
@@ -29,27 +33,22 @@ from devtools_testutils import AzureMgmtRecordedTestCase
 from servicebus_preparer import (
     CachedServiceBusNamespacePreparer,
     ServiceBusQueuePreparer,
-    CachedServiceBusResourceGroupPreparer,
+    CachedServiceBusResourceGroupPreparer
 )
 
 from utilities import uamqp_transport as get_uamqp_transport, ArgPasser
-
 uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
-
 
 def test_servicebus_message_repr():
     message = ServiceBusMessage("hello")
     assert "application_properties=None, session_id=None," in message.__repr__()
-    assert (
-        "content_type=None, correlation_id=None, to=None, reply_to=None, reply_to_session_id=None, subject=None, time_to_live=None, partition_key=None, scheduled_enqueue_time_utc"
-        in message.__repr__()
-    )
+    assert "content_type=None, correlation_id=None, to=None, reply_to=None, reply_to_session_id=None, subject=None, time_to_live=None, partition_key=None, scheduled_enqueue_time_utc" in message.__repr__()
 
 
 def test_servicebus_message_repr_with_props():
     message = ServiceBusMessage(
         body="hello",
-        application_properties={"prop": "test"},
+        application_properties={'prop': 'test'},
         session_id="id_session",
         message_id="id_message",
         scheduled_enqueue_time_utc=datetime.now(),
@@ -60,100 +59,131 @@ def test_servicebus_message_repr_with_props():
         partition_key="id_session",
         to="forward to",
         reply_to="reply to",
-        reply_to_session_id="reply to session",
-    )
+        reply_to_session_id="reply to session"
+        )
     assert "application_properties={'prop': 'test'}, session_id=id_session," in message.__repr__()
-    assert (
-        "content_type=content type, correlation_id=correlation, to=forward to, reply_to=reply to, reply_to_session_id=reply to session, subject=github, time_to_live=0:00:30, partition_key=id_session, scheduled_enqueue_time_utc"
-        in message.__repr__()
-    )
-
+    assert "content_type=content type, correlation_id=correlation, to=forward to, reply_to=reply to, reply_to_session_id=reply to session, subject=github, time_to_live=0:00:30, partition_key=id_session, scheduled_enqueue_time_utc" in message.__repr__()
 
 @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
 def test_servicebus_received_message_repr(uamqp_transport):
-    my_frame = [0, 0, 0]
+    my_frame = [0,0,0]
     if uamqp_transport:
         received_message = uamqp.message.Message(
-            body=[b"data"],
+            body=[b'data'],
             annotations={
-                _X_OPT_PARTITION_KEY: b"r_key",
-                _X_OPT_VIA_PARTITION_KEY: b"r_via_key",
+                _X_OPT_PARTITION_KEY: b'r_key',
+                _X_OPT_VIA_PARTITION_KEY: b'r_via_key',
                 _X_OPT_SCHEDULED_ENQUEUE_TIME: 123424566,
             },
-            properties={},
+            properties={}
         )
     else:
         received_message = Message(
-            data=[b"data"],
-            message_annotations={
-                _X_OPT_PARTITION_KEY: b"r_key",
-                _X_OPT_VIA_PARTITION_KEY: b"r_via_key",
-                _X_OPT_SCHEDULED_ENQUEUE_TIME: 123424566,
-            },
-            properties={},
-        )
+        data=[b'data'],
+        message_annotations={
+            _X_OPT_PARTITION_KEY: b'r_key',
+            _X_OPT_VIA_PARTITION_KEY: b'r_via_key',
+            _X_OPT_SCHEDULED_ENQUEUE_TIME: 123424566,
+        },
+        properties={}
+    )
     received_message = ServiceBusReceivedMessage(received_message, receiver=None, frame=my_frame)
     repr_str = received_message.__repr__()
     assert "application_properties=None, session_id=None" in repr_str
-    assert (
-        "content_type=None, correlation_id=None, to=None, reply_to=None, reply_to_session_id=None, subject=None,"
-        in repr_str
-    )
+    assert "content_type=None, correlation_id=None, to=None, reply_to=None, reply_to_session_id=None, subject=None," in repr_str
     assert "partition_key=r_key, scheduled_enqueue_time_utc" in repr_str
-
 
 @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
 def test_servicebus_received_state(uamqp_transport):
-    my_frame = [0, 0, 0]
+    my_frame = [0,0,0]
     if uamqp_transport:
         amqp_received_message = uamqp.message.Message(
-            body=[b"data"],
-            annotations={b"x-opt-message-state": 3},
+            body=[b'data'],
+            annotations={
+                b"x-opt-message-state": 3
+            },
         )
     else:
         amqp_received_message = Message(
-            data=[b"data"],
-            message_annotations={b"x-opt-message-state": 3},
+            data=[b'data'],
+            message_annotations={
+                b"x-opt-message-state": 3
+            },
         )
     received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None, frame=my_frame)
     assert received_message.state == 3
 
     if uamqp_transport:
         amqp_received_message = uamqp.message.Message(
-            body=[b"data"], annotations={b"x-opt-message-state": 1}, properties={}
+            body=[b'data'],
+            annotations={
+                b"x-opt-message-state": 1
+            },
+            properties={}
         )
     else:
-        amqp_received_message = Message(data=[b"data"], message_annotations={b"x-opt-message-state": 1}, properties={})
+        amqp_received_message = Message(
+            data=[b'data'],
+            message_annotations={
+                b"x-opt-message-state": 1
+            },
+            properties={}
+        )
     received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None)
     assert received_message.state == ServiceBusMessageState.DEFERRED
 
     if uamqp_transport:
-        amqp_received_message = uamqp.message.Message(body=[b"data"], annotations={}, properties={})
+        amqp_received_message = uamqp.message.Message(
+            body=[b'data'],
+            annotations={
+            },
+            properties={}
+        )
     else:
-        amqp_received_message = Message(data=[b"data"], message_annotations={}, properties={})
-    received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None)
-    assert received_message.state == ServiceBusMessageState.ACTIVE
-
-    if uamqp_transport:
-        amqp_received_message = uamqp.message.Message(body=[b"data"], properties={})
-    else:
-        amqp_received_message = Message(data=[b"data"], properties={})
+        amqp_received_message = Message(
+            data=[b'data'],
+            message_annotations={
+            },
+            properties={}
+        )
     received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None)
     assert received_message.state == ServiceBusMessageState.ACTIVE
 
     if uamqp_transport:
         amqp_received_message = uamqp.message.Message(
-            body=[b"data"], annotations={b"x-opt-message-state": 0}, properties={}
+            body=[b'data'],
+            properties={}
         )
     else:
-        amqp_received_message = Message(data=[b"data"], message_annotations={b"x-opt-message-state": 0}, properties={})
+        amqp_received_message = Message(
+            data=[b'data'],
+            properties={}
+        )
     received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None)
     assert received_message.state == ServiceBusMessageState.ACTIVE
 
+    if uamqp_transport:
+        amqp_received_message = uamqp.message.Message(
+            body=[b'data'],
+            annotations={
+                b"x-opt-message-state": 0
+            },
+            properties={}
+        )
+    else:
+        amqp_received_message = Message(
+            data=[b'data'],
+            message_annotations={
+                b"x-opt-message-state": 0
+            },
+            properties={}
+        )
+    received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None)
+    assert received_message.state == ServiceBusMessageState.ACTIVE
 
 @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
 def test_servicebus_received_message_repr_with_props(uamqp_transport):
-    my_frame = [0, 0, 0]
+    my_frame = [0,0,0]
     properties = AmqpMessageProperties(
         message_id="id_message",
         absolute_expiry_time=100,
@@ -162,33 +192,41 @@ def test_servicebus_received_message_repr_with_props(uamqp_transport):
         subject="github",
         group_id="id_session",
         reply_to="reply to",
-        reply_to_group_id="reply to group",
+        reply_to_group_id="reply to group"
     )
     message_annotations = {
-        _X_OPT_PARTITION_KEY: b"r_key",
-        _X_OPT_VIA_PARTITION_KEY: b"r_via_key",
+        _X_OPT_PARTITION_KEY: b'r_key',
+        _X_OPT_VIA_PARTITION_KEY: b'r_via_key',
         _X_OPT_SCHEDULED_ENQUEUE_TIME: 123424566,
     }
-    data = [b"data"]
+    data = [b'data']
     if uamqp_transport:
-        amqp_received_message = uamqp.message.Message(body=data, annotations=message_annotations, properties=properties)
+        amqp_received_message = uamqp.message.Message(
+            body=data,
+            annotations= message_annotations,
+            properties=properties
+        )
     else:
-        amqp_received_message = Message(data=data, message_annotations=message_annotations, properties=properties)
-    received_message = ServiceBusReceivedMessage(message=amqp_received_message, receiver=None, frame=my_frame)
+        amqp_received_message = Message(
+            data=data,
+            message_annotations= message_annotations,
+            properties=properties
+        )
+    received_message = ServiceBusReceivedMessage(
+        message=amqp_received_message,
+        receiver=None,
+        frame=my_frame
+        )
     assert "application_properties=None, session_id=id_session" in received_message.__repr__()
-    assert (
-        "content_type=content type, correlation_id=correlation, to=None, reply_to=reply to, reply_to_session_id=reply to group, subject=github"
-        in received_message.__repr__()
-    )
+    assert "content_type=content type, correlation_id=correlation, to=None, reply_to=reply to, reply_to_session_id=reply to group, subject=github" in received_message.__repr__()
     assert "partition_key=r_key, scheduled_enqueue_time_utc" in received_message.__repr__()
-
 
 @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
 def test_servicebus_message_batch(uamqp_transport):
     if uamqp_transport:
-        amqp_transport = UamqpTransport
+        amqp_transport=UamqpTransport
     else:
-        amqp_transport = PyamqpTransport
+        amqp_transport=PyamqpTransport
 
     batch = ServiceBusMessageBatch(max_size_in_bytes=240, partition_key="par", amqp_transport=amqp_transport)
     batch.add_message(
@@ -205,7 +243,7 @@ def test_servicebus_message_batch(uamqp_transport):
             partition_key="session_id",
             to="to",
             reply_to="reply_to",
-            reply_to_session_id="reply_to_session_id",
+            reply_to_session_id="reply_to_session_id"
         )
     )
     assert str(batch) == "ServiceBusMessageBatch(max_size_in_bytes=240, message_count=1)"
@@ -217,7 +255,6 @@ def test_servicebus_message_batch(uamqp_transport):
         batch.add_message(ServiceBusMessage("A"))
 
     assert batch.message
-
 
 def test_amqp_message():
     sb_message = ServiceBusMessage(body=None)
@@ -243,24 +280,11 @@ def test_amqp_message():
     amqp_annotated_message = AmqpAnnotatedMessage(
         value_body=None,
         header=AmqpMessageHeader(priority=1, delivery_count=1, time_to_live=1, first_acquirer=True, durable=True),
-        properties=AmqpMessageProperties(
-            message_id="id",
-            user_id="id",
-            to="to",
-            subject="sub",
-            correlation_id="cid",
-            content_type="ctype",
-            content_encoding="cencoding",
-            creation_time=1,
-            absolute_expiry_time=1,
-            group_id="id",
-            group_sequence=1,
-            reply_to_group_id="id",
-        ),
+        properties=AmqpMessageProperties(message_id='id', user_id='id', to='to', subject='sub', correlation_id='cid', content_type='ctype', content_encoding='cencoding', creation_time=1, absolute_expiry_time=1, group_id='id', group_sequence=1, reply_to_group_id='id'),
         footer={"key": "value"},
         delivery_annotations={"key": "value"},
         annotations={"key": "value"},
-        application_properties={"key": "value"},
+        application_properties={"key": "value"}
     )
 
     assert amqp_annotated_message.body_type == AmqpMessageBodyType.VALUE
@@ -275,18 +299,18 @@ def test_amqp_message():
     assert amqp_annotated_message.annotations == {"key": "value"}
     assert amqp_annotated_message.application_properties == {"key": "value"}
 
-    assert amqp_annotated_message.properties.message_id == "id"
-    assert amqp_annotated_message.properties.user_id == "id"
-    assert amqp_annotated_message.properties.to == "to"
-    assert amqp_annotated_message.properties.subject == "sub"
-    assert amqp_annotated_message.properties.correlation_id == "cid"
-    assert amqp_annotated_message.properties.content_type == "ctype"
-    assert amqp_annotated_message.properties.content_encoding == "cencoding"
+    assert amqp_annotated_message.properties.message_id == 'id'
+    assert amqp_annotated_message.properties.user_id == 'id'
+    assert amqp_annotated_message.properties.to == 'to'
+    assert amqp_annotated_message.properties.subject == 'sub'
+    assert amqp_annotated_message.properties.correlation_id == 'cid'
+    assert amqp_annotated_message.properties.content_type == 'ctype'
+    assert amqp_annotated_message.properties.content_encoding == 'cencoding'
     assert amqp_annotated_message.properties.creation_time == 1
     assert amqp_annotated_message.properties.absolute_expiry_time == 1
-    assert amqp_annotated_message.properties.group_id == "id"
+    assert amqp_annotated_message.properties.group_id == 'id'
     assert amqp_annotated_message.properties.group_sequence == 1
-    assert amqp_annotated_message.properties.reply_to_group_id == "id"
+    assert amqp_annotated_message.properties.reply_to_group_id == 'id'
 
     amqp_annotated_message = AmqpAnnotatedMessage(
         value_body=None,
@@ -303,12 +327,12 @@ def test_amqp_message():
             "absolute_expiry_time": 1,
             "group_id": "id",
             "group_sequence": 1,
-            "reply_to_group_id": "id",
+            "reply_to_group_id": "id"
         },
         footer={"key": "value"},
         delivery_annotations={"key": "value"},
         annotations={"key": "value"},
-        application_properties={"key": "value"},
+        application_properties={"key": "value"}
     )
 
     assert amqp_annotated_message.body_type == AmqpMessageBodyType.VALUE
@@ -323,18 +347,18 @@ def test_amqp_message():
     assert amqp_annotated_message.annotations == {"key": "value"}
     assert amqp_annotated_message.application_properties == {"key": "value"}
 
-    assert amqp_annotated_message.properties.message_id == "id"
-    assert amqp_annotated_message.properties.user_id == "id"
-    assert amqp_annotated_message.properties.to == "to"
-    assert amqp_annotated_message.properties.subject == "sub"
-    assert amqp_annotated_message.properties.correlation_id == "cid"
-    assert amqp_annotated_message.properties.content_type == "ctype"
-    assert amqp_annotated_message.properties.content_encoding == "cencoding"
+    assert amqp_annotated_message.properties.message_id == 'id'
+    assert amqp_annotated_message.properties.user_id == 'id'
+    assert amqp_annotated_message.properties.to == 'to'
+    assert amqp_annotated_message.properties.subject == 'sub'
+    assert amqp_annotated_message.properties.correlation_id == 'cid'
+    assert amqp_annotated_message.properties.content_type == 'ctype'
+    assert amqp_annotated_message.properties.content_encoding == 'cencoding'
     assert amqp_annotated_message.properties.creation_time == 1
     assert amqp_annotated_message.properties.absolute_expiry_time == 1
-    assert amqp_annotated_message.properties.group_id == "id"
+    assert amqp_annotated_message.properties.group_id == 'id'
     assert amqp_annotated_message.properties.group_sequence == 1
-    assert amqp_annotated_message.properties.reply_to_group_id == "id"
+    assert amqp_annotated_message.properties.reply_to_group_id == 'id'
 
 
 def test_servicebus_message_time_to_live():
@@ -345,22 +369,21 @@ def test_servicebus_message_time_to_live():
     assert message.time_to_live == timedelta(days=1)
 
 
+
 class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
-    @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
-    @ServiceBusQueuePreparer(name_prefix="servicebustest", dead_lettering_on_message_expiration=True)
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
-    def test_message_backcompat_receive_and_delete_databody(
-        self, uamqp_transport, *, servicebus_namespace_connection_string, servicebus_queue, **kwargs
-    ):
+    def test_message_backcompat_receive_and_delete_databody(self, uamqp_transport, *, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         queue_name = servicebus_queue.name
         outgoing_message = ServiceBusMessage(
             body="hello",
-            application_properties={"prop": "test"},
+            application_properties={'prop': 'test'},
             session_id="id_session",
             message_id="id_message",
             time_to_live=timedelta(seconds=30),
@@ -370,12 +393,11 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
             partition_key="id_session",
             to="forward to",
             reply_to="reply to",
-            reply_to_session_id="reply to session",
+            reply_to_session_id="reply to session"
         )
 
         sb_client = ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=True, uamqp_transport=uamqp_transport
-        )
+        servicebus_namespace_connection_string, logging_enable=True, uamqp_transport=uamqp_transport)
         with sb_client.get_queue_sender(queue_name) as sender:
             sender.send_messages(outgoing_message)
 
@@ -407,33 +429,31 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
             outgoing_message.message.gather()
         assert isinstance(outgoing_message.message.encode_message(), bytes)
         assert outgoing_message.message.get_message_encoded_size() == 208
-        assert list(outgoing_message.message.get_data()) == [b"hello"]
-        assert outgoing_message.message.application_properties == {"prop": "test"}
+        assert list(outgoing_message.message.get_data()) == [b'hello']
+        assert outgoing_message.message.application_properties == {'prop': 'test'}
         assert outgoing_message.message.get_message()  # C instance.
         assert len(outgoing_message.message.annotations) == 1
-        assert list(outgoing_message.message.annotations.values())[0] == "id_session"
-        assert str(outgoing_message.message.header) == str(
-            {"delivery_count": 0, "time_to_live": 30000, "first_acquirer": None, "durable": None, "priority": None}
-        )
+        assert list(outgoing_message.message.annotations.values())[0] == 'id_session'
+        assert str(outgoing_message.message.header) == str({'delivery_count': 0, 'time_to_live': 30000, 'first_acquirer': None, 'durable': None, 'priority': None})
         assert outgoing_message.message.header.get_header_obj().delivery_count == 0
-        assert outgoing_message.message.properties.message_id == b"id_message"
+        assert outgoing_message.message.properties.message_id == b'id_message'
         assert outgoing_message.message.properties.user_id is None
-        assert outgoing_message.message.properties.to == b"forward to"
-        assert outgoing_message.message.properties.subject == b"github"
-        assert outgoing_message.message.properties.reply_to == b"reply to"
-        assert outgoing_message.message.properties.correlation_id == b"correlation"
-        assert outgoing_message.message.properties.content_type == b"content type"
+        assert outgoing_message.message.properties.to == b'forward to'
+        assert outgoing_message.message.properties.subject == b'github'
+        assert outgoing_message.message.properties.reply_to == b'reply to'
+        assert outgoing_message.message.properties.correlation_id == b'correlation'
+        assert outgoing_message.message.properties.content_type == b'content type'
         assert outgoing_message.message.properties.content_encoding is None
         assert outgoing_message.message.properties.absolute_expiry_time
         assert outgoing_message.message.properties.creation_time
-        assert outgoing_message.message.properties.group_id == b"id_session"
+        assert outgoing_message.message.properties.group_id == b'id_session'
         assert outgoing_message.message.properties.group_sequence is None
-        assert outgoing_message.message.properties.reply_to_group_id == b"reply to session"
+        assert outgoing_message.message.properties.reply_to_group_id == b'reply to session'
         assert outgoing_message.message.properties.get_properties_obj().message_id
-
-        with sb_client.get_queue_receiver(
-            queue_name, receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE, max_wait_time=10
-        ) as receiver:
+    
+        with sb_client.get_queue_receiver(queue_name,
+                                            receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE,
+                                            max_wait_time=10) as receiver:
             batch = receiver.receive_messages()
             incoming_message = batch[0]
             assert incoming_message.message
@@ -461,13 +481,13 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
             else:
                 encoded_size = 263
             assert incoming_message.message.get_message_encoded_size() == encoded_size
-            assert list(incoming_message.message.get_data()) == [b"hello"]
-            assert incoming_message.message.application_properties == {b"prop": b"test"}
+            assert list(incoming_message.message.get_data()) == [b'hello']
+            assert incoming_message.message.application_properties == {b'prop': b'test'}
             assert incoming_message.message.get_message()  # C instance.
             assert len(incoming_message.message.annotations) == 3
-            assert incoming_message.message.annotations[b"x-opt-enqueued-time"] > 0
-            assert incoming_message.message.annotations[b"x-opt-sequence-number"] > 0
-            assert incoming_message.message.annotations[b"x-opt-partition-key"] == b"id_session"
+            assert incoming_message.message.annotations[b'x-opt-enqueued-time'] > 0
+            assert incoming_message.message.annotations[b'x-opt-sequence-number'] > 0
+            assert incoming_message.message.annotations[b'x-opt-partition-key'] == b'id_session'
             if uamqp_transport:
                 # uamqp bugs:
                 # 1) in uamqp.get_header_obj():
@@ -477,22 +497,20 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
                 assert ", 'time_to_live': 30000" in str(incoming_message.message.header)
             else:
                 assert incoming_message.message.header.get_header_obj().delivery_count == 0
-                assert ", 'time_to_live': 30000, 'first_acquirer': None, 'durable': None, 'priority': None}" in str(
-                    incoming_message.message.header
-                )
-            assert incoming_message.message.properties.message_id == b"id_message"
+                assert ", 'time_to_live': 30000, 'first_acquirer': None, 'durable': None, 'priority': None}" in str(incoming_message.message.header)
+            assert incoming_message.message.properties.message_id == b'id_message'
             assert incoming_message.message.properties.user_id is None
-            assert incoming_message.message.properties.to == b"forward to"
-            assert incoming_message.message.properties.subject == b"github"
-            assert incoming_message.message.properties.reply_to == b"reply to"
-            assert incoming_message.message.properties.correlation_id == b"correlation"
-            assert incoming_message.message.properties.content_type == b"content type"
+            assert incoming_message.message.properties.to == b'forward to'
+            assert incoming_message.message.properties.subject == b'github'
+            assert incoming_message.message.properties.reply_to == b'reply to'
+            assert incoming_message.message.properties.correlation_id == b'correlation'
+            assert incoming_message.message.properties.content_type == b'content type'
             assert incoming_message.message.properties.content_encoding is None
             assert incoming_message.message.properties.absolute_expiry_time
             assert incoming_message.message.properties.creation_time
-            assert incoming_message.message.properties.group_id == b"id_session"
+            assert incoming_message.message.properties.group_id == b'id_session'
             assert incoming_message.message.properties.group_sequence is None
-            assert incoming_message.message.properties.reply_to_group_id == b"reply to session"
+            assert incoming_message.message.properties.reply_to_group_id == b'reply to session'
             assert incoming_message.message.properties.get_properties_obj().message_id
             assert not incoming_message.message.accept()
             assert not incoming_message.message.release()
@@ -501,18 +519,16 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
-    @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
-    @ServiceBusQueuePreparer(name_prefix="servicebustest", dead_lettering_on_message_expiration=True)
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
-    def test_message_backcompat_peek_lock_databody(
-        self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs
-    ):
+    def test_message_backcompat_peek_lock_databody(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
         queue_name = servicebus_queue.name
         outgoing_message = ServiceBusMessage(
             body="hello",
-            application_properties={"prop": "test"},
+            application_properties={'prop': 'test'},
             session_id="id_session",
             message_id="id_message",
             time_to_live=timedelta(seconds=30),
@@ -522,12 +538,11 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
             partition_key="id_session",
             to="forward to",
             reply_to="reply to",
-            reply_to_session_id="reply to session",
+            reply_to_session_id="reply to session"
         )
 
         sb_client = ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=True, uamqp_transport=uamqp_transport
-        )
+        servicebus_namespace_connection_string, logging_enable=True, uamqp_transport=uamqp_transport)
         with sb_client.get_queue_sender(queue_name) as sender:
             sender.send_messages(outgoing_message)
 
@@ -556,34 +571,32 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
             outgoing_message.message.gather()
         assert isinstance(outgoing_message.message.encode_message(), bytes)
         assert outgoing_message.message.get_message_encoded_size() == 208
-        assert list(outgoing_message.message.get_data()) == [b"hello"]
-        assert outgoing_message.message.application_properties == {"prop": "test"}
+        assert list(outgoing_message.message.get_data()) == [b'hello']
+        assert outgoing_message.message.application_properties == {'prop': 'test'}
         assert outgoing_message.message.get_message()  # C instance.
         assert len(outgoing_message.message.annotations) == 1
-        assert list(outgoing_message.message.annotations.values())[0] == "id_session"
-        assert str(outgoing_message.message.header) == str(
-            {"delivery_count": 0, "time_to_live": 30000, "first_acquirer": None, "durable": None, "priority": None}
-        )
+        assert list(outgoing_message.message.annotations.values())[0] == 'id_session'
+        assert str(outgoing_message.message.header) == str({'delivery_count': 0, 'time_to_live': 30000, 'first_acquirer': None, 'durable': None, 'priority': None})
         assert outgoing_message.message.header.get_header_obj().delivery_count == 0
-        assert outgoing_message.message.properties.message_id == b"id_message"
+        assert outgoing_message.message.properties.message_id == b'id_message'
         assert outgoing_message.message.properties.user_id is None
-        assert outgoing_message.message.properties.to == b"forward to"
-        assert outgoing_message.message.properties.subject == b"github"
-        assert outgoing_message.message.properties.reply_to == b"reply to"
-        assert outgoing_message.message.properties.correlation_id == b"correlation"
-        assert outgoing_message.message.properties.content_type == b"content type"
+        assert outgoing_message.message.properties.to == b'forward to'
+        assert outgoing_message.message.properties.subject == b'github'
+        assert outgoing_message.message.properties.reply_to == b'reply to'
+        assert outgoing_message.message.properties.correlation_id == b'correlation'
+        assert outgoing_message.message.properties.content_type == b'content type'
         assert outgoing_message.message.properties.content_encoding is None
         assert outgoing_message.message.properties.absolute_expiry_time
         assert outgoing_message.message.properties.creation_time
-        assert outgoing_message.message.properties.group_id == b"id_session"
+        assert outgoing_message.message.properties.group_id == b'id_session'
         assert outgoing_message.message.properties.group_sequence is None
-        assert outgoing_message.message.properties.reply_to_group_id == b"reply to session"
+        assert outgoing_message.message.properties.reply_to_group_id == b'reply to session'
         assert outgoing_message.message.properties.get_properties_obj().message_id
-
-        with sb_client.get_queue_receiver(
-            queue_name, receive_mode=ServiceBusReceiveMode.PEEK_LOCK, max_wait_time=10
-        ) as receiver:
-            batch = receiver.receive_messages()
+    
+        with sb_client.get_queue_receiver(queue_name,
+                                            receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
+                                            max_wait_time=10) as receiver:
+            batch = receiver.receive_messages()       
             incoming_message = batch[0]
             assert incoming_message.message
             try:
@@ -591,7 +604,7 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
             except AttributeError:  # uamqp not installed
                 pass
             assert not incoming_message.message.settled
-            assert incoming_message.message.delivery_annotations[b"x-opt-lock-token"]
+            assert incoming_message.message.delivery_annotations[b'x-opt-lock-token']
             assert incoming_message.message.delivery_no >= 1
             assert incoming_message.message.delivery_tag
             assert incoming_message.message.on_send_complete is None
@@ -609,14 +622,14 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
                 # pyamqp = 339 if durable/first_acquirer set
                 encoded_size = 333
             assert incoming_message.message.get_message_encoded_size() == encoded_size
-            assert list(incoming_message.message.get_data()) == [b"hello"]
-            assert incoming_message.message.application_properties == {b"prop": b"test"}
+            assert list(incoming_message.message.get_data()) == [b'hello']
+            assert incoming_message.message.application_properties == {b'prop': b'test'}
             assert incoming_message.message.get_message()  # C instance.
             assert len(incoming_message.message.annotations) == 4
-            assert incoming_message.message.annotations[b"x-opt-enqueued-time"] > 0
-            assert incoming_message.message.annotations[b"x-opt-sequence-number"] > 0
-            assert incoming_message.message.annotations[b"x-opt-partition-key"] == b"id_session"
-            assert incoming_message.message.annotations[b"x-opt-locked-until"]
+            assert incoming_message.message.annotations[b'x-opt-enqueued-time'] > 0
+            assert incoming_message.message.annotations[b'x-opt-sequence-number'] > 0
+            assert incoming_message.message.annotations[b'x-opt-partition-key'] == b'id_session'
+            assert incoming_message.message.annotations[b'x-opt-locked-until']
             if uamqp_transport:
                 # uamqp bugs:
                 # 1) in uamqp.get_header_obj():
@@ -626,28 +639,20 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
                 assert ", 'time_to_live': 30000" in str(incoming_message.message.header)
             else:
                 assert incoming_message.message.header.get_header_obj().delivery_count == 0
-                assert str(incoming_message.message.header) == str(
-                    {
-                        "delivery_count": 0,
-                        "time_to_live": 30000,
-                        "first_acquirer": None,
-                        "durable": None,
-                        "priority": None,
-                    }
-                )
-            assert incoming_message.message.properties.message_id == b"id_message"
+                assert str(incoming_message.message.header) == str({'delivery_count': 0, 'time_to_live': 30000, 'first_acquirer': None, 'durable': None, 'priority': None})
+            assert incoming_message.message.properties.message_id == b'id_message'
             assert incoming_message.message.properties.user_id is None
-            assert incoming_message.message.properties.to == b"forward to"
-            assert incoming_message.message.properties.subject == b"github"
-            assert incoming_message.message.properties.reply_to == b"reply to"
-            assert incoming_message.message.properties.correlation_id == b"correlation"
-            assert incoming_message.message.properties.content_type == b"content type"
+            assert incoming_message.message.properties.to == b'forward to'
+            assert incoming_message.message.properties.subject == b'github'
+            assert incoming_message.message.properties.reply_to == b'reply to'
+            assert incoming_message.message.properties.correlation_id == b'correlation'
+            assert incoming_message.message.properties.content_type == b'content type'
             assert incoming_message.message.properties.content_encoding is None
             assert incoming_message.message.properties.absolute_expiry_time
             assert incoming_message.message.properties.creation_time
-            assert incoming_message.message.properties.group_id == b"id_session"
+            assert incoming_message.message.properties.group_id == b'id_session'
             assert incoming_message.message.properties.group_sequence is None
-            assert incoming_message.message.properties.reply_to_group_id == b"reply to session"
+            assert incoming_message.message.properties.reply_to_group_id == b'reply to session'
             assert incoming_message.message.properties.get_properties_obj().message_id
             assert incoming_message.message.accept()
             # TODO: State isn't updated if settled correctly via the receiver.
@@ -662,14 +667,12 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
-    @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
-    @ServiceBusQueuePreparer(name_prefix="servicebustest", dead_lettering_on_message_expiration=True)
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
-    def test_message_backcompat_receive_and_delete_valuebody(
-        self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs
-    ):
+    def test_message_backcompat_receive_and_delete_valuebody(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
         queue_name = servicebus_queue.name
         outgoing_message = AmqpAnnotatedMessage(value_body={b"key": b"value"})
 
@@ -677,17 +680,16 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
             outgoing_message.message
 
         sb_client = ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport
-        )
+        servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport)
         with sb_client.get_queue_sender(queue_name) as sender:
             sender.send_messages(outgoing_message)
 
         with pytest.raises(AttributeError):
             outgoing_message.message
 
-        with sb_client.get_queue_receiver(
-            queue_name, receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE, max_wait_time=10
-        ) as receiver:
+        with sb_client.get_queue_receiver(queue_name,
+                                            receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE,
+                                            max_wait_time=10) as receiver:
             batch = receiver.receive_messages()
             incoming_message = batch[0]
             assert incoming_message.message
@@ -706,14 +708,12 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
-    @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
-    @ServiceBusQueuePreparer(name_prefix="servicebustest", dead_lettering_on_message_expiration=True)
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
-    def test_message_backcompat_peek_lock_valuebody(
-        self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs
-    ):
+    def test_message_backcompat_peek_lock_valuebody(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
         queue_name = servicebus_queue.name
         outgoing_message = AmqpAnnotatedMessage(value_body={b"key": b"value"})
 
@@ -721,23 +721,22 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
             outgoing_message.message
 
         sb_client = ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport
-        )
+        servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport)
         with sb_client.get_queue_sender(queue_name) as sender:
             sender.send_messages(outgoing_message)
 
         with pytest.raises(AttributeError):
             outgoing_message.message
 
-        with sb_client.get_queue_receiver(
-            queue_name, receive_mode=ServiceBusReceiveMode.PEEK_LOCK, max_wait_time=10
-        ) as receiver:
-            batch = receiver.receive_messages()
+        with sb_client.get_queue_receiver(queue_name,
+                                            receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
+                                            max_wait_time=10) as receiver:
+            batch = receiver.receive_messages()       
             incoming_message = batch[0]
             assert incoming_message.message
             # assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedUnsettled
             assert not incoming_message.message.settled
-            assert incoming_message.message.delivery_annotations[b"x-opt-lock-token"]
+            assert incoming_message.message.delivery_annotations[b'x-opt-lock-token']
             assert incoming_message.message.delivery_no >= 1
             assert incoming_message.message.delivery_tag
             with pytest.raises(Exception):
@@ -752,14 +751,12 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
-    @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
-    @ServiceBusQueuePreparer(name_prefix="servicebustest", dead_lettering_on_message_expiration=True)
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
-    def test_message_backcompat_receive_and_delete_sequencebody(
-        self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs
-    ):
+    def test_message_backcompat_receive_and_delete_sequencebody(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
         queue_name = servicebus_queue.name
         outgoing_message = AmqpAnnotatedMessage(sequence_body=[1, 2, 3])
 
@@ -767,17 +764,16 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
             outgoing_message.message
 
         sb_client = ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport
-        )
+        servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport)
         with sb_client.get_queue_sender(queue_name) as sender:
             sender.send_messages(outgoing_message)
 
         with pytest.raises(AttributeError):
             outgoing_message.message
 
-        with sb_client.get_queue_receiver(
-            queue_name, receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE, max_wait_time=10
-        ) as receiver:
+        with sb_client.get_queue_receiver(queue_name,
+                                            receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE,
+                                            max_wait_time=10) as receiver:
             batch = receiver.receive_messages()
             incoming_message = batch[0]
             assert incoming_message.message
@@ -796,14 +792,12 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
-    @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
-    @ServiceBusQueuePreparer(name_prefix="servicebustest", dead_lettering_on_message_expiration=True)
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
-    def test_message_batch_backcompat(
-        self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs
-    ):
+    def test_message_batch_backcompat(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
         queue_name = servicebus_queue.name
         outgoing_message = AmqpAnnotatedMessage(sequence_body=[1, 2, 3])
 
@@ -811,18 +805,17 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
             outgoing_message.message
 
         sb_client = ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport
-        )
+        servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport)
         with sb_client.get_queue_sender(queue_name) as sender:
             sender.send_messages(outgoing_message)
 
         with pytest.raises(AttributeError):
             outgoing_message.message
 
-        with sb_client.get_queue_receiver(
-            queue_name, receive_mode=ServiceBusReceiveMode.PEEK_LOCK, max_wait_time=10
-        ) as receiver:
-            batch = receiver.receive_messages()
+        with sb_client.get_queue_receiver(queue_name,
+                                            receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
+                                            max_wait_time=10) as receiver:
+            batch = receiver.receive_messages()       
             incoming_message = batch[0]
             assert incoming_message.message
             try:
@@ -830,7 +823,7 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
             except AttributeError:  # uamqp not installed
                 pass
             assert not incoming_message.message.settled
-            assert incoming_message.message.delivery_annotations[b"x-opt-lock-token"]
+            assert incoming_message.message.delivery_annotations[b'x-opt-lock-token']
             assert incoming_message.message.delivery_no >= 1
             assert incoming_message.message.delivery_tag
             with pytest.raises(Exception):
