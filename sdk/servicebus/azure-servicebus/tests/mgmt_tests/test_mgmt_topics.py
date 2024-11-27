@@ -1,8 +1,8 @@
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 import logging
 import pytest
 import datetime
@@ -12,10 +12,8 @@ from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 from tests.utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
-from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer, recorded_by_proxy
-from tests.sb_env_loader import (
-    ServiceBusPreparer
-)
+from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer, recorded_by_proxy, get_credential
+from tests.sb_env_loader import ServiceBusPreparer
 
 from mgmt_test_utilities import clear_topics
 
@@ -25,8 +23,11 @@ _logger = get_logger(logging.DEBUG)
 class TestServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_topic_create_by_name(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_topic_create_by_name(self, servicebus_fully_qualified_namespace, **kwargs):
+        credential = get_credential()
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
+        )
         clear_topics(mgmt_service)
         topic_name = "topic_testaddf"
 
@@ -34,15 +35,18 @@ class TestServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
             mgmt_service.create_topic(topic_name)
             topic = mgmt_service.get_topic(topic_name)
             assert topic.name == topic_name
-            assert topic.availability_status == 'Available'
-            assert topic.status == 'Active'
+            assert topic.availability_status == "Available"
+            assert topic.status == "Active"
         finally:
             mgmt_service.delete_topic(topic_name)
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_topic_create_with_topic_description(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_topic_create_with_topic_description(self, servicebus_fully_qualified_namespace, **kwargs):
+        credential = get_credential()
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
+        )
         clear_topics(mgmt_service)
         topic_name = "iweidk"
         topic_name_2 = "djsadq"
@@ -57,7 +61,7 @@ class TestServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
                 enable_batched_operations=True,
                 enable_express=True,
                 enable_partitioning=True,
-                max_size_in_megabytes=3072
+                max_size_in_megabytes=3072,
             )
             topic = mgmt_service.get_topic(topic_name)
             assert topic.name == topic_name
@@ -77,7 +81,7 @@ class TestServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
                 enable_batched_operations=True,
                 enable_express=True,
                 enable_partitioning=True,
-                max_size_in_megabytes=3072
+                max_size_in_megabytes=3072,
             )
             topic_2 = mgmt_service.get_topic(topic_name_2)
             assert topic_2.name == topic_name_2
@@ -91,8 +95,7 @@ class TestServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
 
             with pytest.raises(HttpResponseError):
                 mgmt_service.create_topic(
-                    topic_name_3,
-                    max_message_size_in_kilobytes=1024  # basic/standard ties does not support
+                    topic_name_3, max_message_size_in_kilobytes=1024  # basic/standard ties does not support
                 )
 
         finally:
@@ -102,8 +105,11 @@ class TestServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
     @pytest.mark.skip("unblock after resolving Cannot upgrade to premium namespace.")
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_topic_premium_create_with_topic_description(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_topic_premium_create_with_topic_description(self, servicebus_fully_qualified_namespace, **kwargs):
+        credential = get_credential()
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
+        )
         clear_topics(mgmt_service)
         topic_name = "iweidk"
         topic_name_2 = "cdasmc"
@@ -115,10 +121,10 @@ class TestServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
                 default_message_time_to_live=datetime.timedelta(minutes=11),
                 duplicate_detection_history_time_window=datetime.timedelta(minutes=12),
                 enable_batched_operations=True,
-                #enable_express=True,
-                #enable_partitioning=True,
+                # enable_express=True,
+                # enable_partitioning=True,
                 max_size_in_megabytes=3072,
-                max_message_size_in_kilobytes=12345
+                max_message_size_in_kilobytes=12345,
             )
             topic = mgmt_service.get_topic(topic_name)
             assert topic.name == topic_name
@@ -141,7 +147,7 @@ class TestServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
                 default_message_time_to_live="PT11M",
                 duplicate_detection_history_time_window="PT12M",
                 enable_batched_operations=True,
-                max_size_in_megabytes=3072
+                max_size_in_megabytes=3072,
             )
             topic_2 = mgmt_service.get_topic(topic_name_2)
             assert topic_2.name == topic_name_2
@@ -158,16 +164,10 @@ class TestServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
             assert topic_2_new.max_message_size_in_kilobytes == 54321
 
             with pytest.raises(HttpResponseError):
-                mgmt_service.create_topic(
-                    topic_name=topic_name_3,
-                    max_message_size_in_kilobytes=1023
-                )
+                mgmt_service.create_topic(topic_name=topic_name_3, max_message_size_in_kilobytes=1023)
 
             with pytest.raises(HttpResponseError):
-                mgmt_service.create_topic(
-                    topic_name=topic_name_3,
-                    max_message_size_in_kilobytes=102401
-                )
+                mgmt_service.create_topic(topic_name=topic_name_3, max_message_size_in_kilobytes=102401)
 
         finally:
             mgmt_service.delete_topic(topic_name)
@@ -175,8 +175,11 @@ class TestServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_topic_create_duplicate(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_topic_create_duplicate(self, servicebus_fully_qualified_namespace, **kwargs):
+        credential = get_credential()
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
+        )
         clear_topics(mgmt_service)
         topic_name = "dqkodq"
         try:
@@ -188,8 +191,11 @@ class TestServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_topic_update_success(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_topic_update_success(self, servicebus_fully_qualified_namespace, **kwargs):
+        credential = get_credential()
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
+        )
         clear_topics(mgmt_service)
         topic_name = "fjrui"
 
@@ -236,7 +242,9 @@ class TestServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
 
             assert topic_description.auto_delete_on_idle == datetime.timedelta(minutes=10, seconds=1)
             assert topic_description.default_message_time_to_live == datetime.timedelta(minutes=11, seconds=2)
-            assert topic_description.duplicate_detection_history_time_window == datetime.timedelta(minutes=12, seconds=3)
+            assert topic_description.duplicate_detection_history_time_window == datetime.timedelta(
+                minutes=12, seconds=3
+            )
 
             # updating all settings with keyword arguments.
             mgmt_service.update_topic(
@@ -247,7 +255,7 @@ class TestServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
                 enable_batched_operations=False,
                 enable_express=False,
                 max_size_in_megabytes=2048,
-                support_ordering=False
+                support_ordering=False,
             )
             topic_description = mgmt_service.get_topic(topic_name)
 
@@ -267,8 +275,11 @@ class TestServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_topic_update_invalid(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_topic_update_invalid(self, servicebus_fully_qualified_namespace, **kwargs):
+        credential = get_credential()
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
+        )
         clear_topics(mgmt_service)
         topic_name = "dfjfj"
         try:
@@ -289,7 +300,7 @@ class TestServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
             topic_description.name = topic_name
 
             # change the name to a topic with an invalid name exist; should fail.
-            topic_description.name = ''
+            topic_description.name = ""
             with pytest.raises(HttpResponseError):
                 mgmt_service.update_topic(topic_description)
             topic_description.name = topic_name
@@ -304,24 +315,27 @@ class TestServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_topic_delete(self, servicebus_connection_str):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_topic_delete(self, servicebus_fully_qualified_namespace):
+        credential = get_credential()
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
+        )
         clear_topics(mgmt_service)
-        mgmt_service.create_topic('test_topic')
+        mgmt_service.create_topic("test_topic")
         topics = list(mgmt_service.list_topics())
         assert len(topics) == 1
 
-        mgmt_service.create_topic('txt/.-_123')
+        mgmt_service.create_topic("txt/.-_123")
         topics = list(mgmt_service.list_topics())
         assert len(topics) == 2
 
-        description = mgmt_service.get_topic('test_topic')
+        description = mgmt_service.get_topic("test_topic")
         mgmt_service.delete_topic(description.name)
 
         topics = list(mgmt_service.list_topics())
-        assert len(topics) == 1 and topics[0].name == 'txt/.-_123'
+        assert len(topics) == 1 and topics[0].name == "txt/.-_123"
 
-        description = mgmt_service.get_topic('txt/.-_123')
+        description = mgmt_service.get_topic("txt/.-_123")
         mgmt_service.delete_topic(description.name)
 
         topics = list(mgmt_service.list_topics())
@@ -329,8 +343,11 @@ class TestServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_topic_list(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_topic_list(self, servicebus_fully_qualified_namespace, **kwargs):
+        credential = get_credential()
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
+        )
         clear_topics(mgmt_service)
         topics = list(mgmt_service.list_topics())
         assert len(topics) == 0
@@ -347,8 +364,11 @@ class TestServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_topic_list_runtime_properties(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_topic_list_runtime_properties(self, servicebus_fully_qualified_namespace, **kwargs):
+        credential = get_credential()
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
+        )
         clear_topics(mgmt_service)
         topics = list(mgmt_service.list_topics())
         topics_infos = list(mgmt_service.list_topics_runtime_properties())
@@ -379,8 +399,11 @@ class TestServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_topic_get_runtime_properties_basic(self, servicebus_connection_str):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_topic_get_runtime_properties_basic(self, servicebus_fully_qualified_namespace):
+        credential = get_credential()
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
+        )
         clear_topics(mgmt_service)
         mgmt_service.create_topic("test_topic")
         topic_runtime_properties = mgmt_service.get_topic_runtime_properties("test_topic")
@@ -401,8 +424,11 @@ class TestServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_topic_update_dict_success(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_topic_update_dict_success(self, servicebus_fully_qualified_namespace, **kwargs):
+        credential = get_credential()
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
+        )
         clear_topics(mgmt_service)
         topic_name = "fjruid"
 
@@ -452,7 +478,7 @@ class TestServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
                 enable_batched_operations=False,
                 enable_express=False,
                 max_size_in_megabytes=2048,
-                support_ordering=False
+                support_ordering=False,
             )
             topic_description = mgmt_service.get_topic(topic_name)
 
@@ -473,8 +499,11 @@ class TestServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_topic_update_dict_error(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_topic_update_dict_error(self, servicebus_fully_qualified_namespace, **kwargs):
+        credential = get_credential()
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace, credential=credential
+        )
         clear_topics(mgmt_service)
         topic_name = "dfjdfj"
         try:
@@ -488,9 +517,15 @@ class TestServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_topic_basic_v2017_04(self, servicebus_connection_str, servicebus_fully_qualified_namespace,
-                                    servicebus_sas_policy, servicebus_sas_key):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str, api_version=ApiVersion.V2017_04)
+    def test_mgmt_topic_basic_v2017_04(
+        self, servicebus_connection_str, servicebus_fully_qualified_namespace, servicebus_sas_policy, servicebus_sas_key
+    ):
+        credential = get_credential()
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential,
+            api_version=ApiVersion.V2017_04,
+        )
         clear_topics(mgmt_service)
 
         mgmt_service.create_topic("test_topic")
