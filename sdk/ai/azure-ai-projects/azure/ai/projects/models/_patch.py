@@ -918,7 +918,7 @@ class AsyncToolSet(BaseToolSet):
 
 
 T = TypeVar("T")
-R = TypeVar("R")
+BaseAsyncAgentEventHandlerT = TypeVar("BaseAsyncAgentEventHandlerT", bound="BaseAsyncAgentEventHandler")
         
 class AgentEventHandler:
 
@@ -1047,17 +1047,16 @@ class ProcessAgentDataEventIterator(Iterator[Tuple[str, StreamEventData]]):
             iterator_items.append((event_type, str(parsed_data)))
         return iterator_items
         
-        
-    
-class BaseAsyncAgentEventHandler(AsyncIterator[T], Generic[T]):
+            
+class BaseAsyncAgentEventHandler(AsyncIterator[T]):
     done = False
     buffer = ""
     
     def _init(
         self,
         response_iterator: AsyncIterator[bytes],
-        submit_tool_outputs: Callable[[ThreadRun, "BaseAsyncAgentEventHandler"], Awaitable[None]],
-        event_handler: Optional["BaseAsyncAgentEventHandler"] = None,
+        submit_tool_outputs: Callable[[ThreadRun, "BaseAsyncAgentEventHandler[T]"], Awaitable[None]],
+        event_handler: Optional["BaseAsyncAgentEventHandler[T]"] = None,
     ):
         self.response_iterator = response_iterator
         self.event_handler = event_handler
@@ -1072,15 +1071,21 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T], Generic[T]):
                 if self.buffer:
                     event_data_str, self.buffer = self.buffer, ""
                     if event_data_str:
-                        return await self._process_event(event_data_str)
+                        event = await self._process_event(event_data_str)
+                        if event:
+                            return event
+                        else:
+                            continue
                 raise
 
             while "\n\n" in self.buffer:
                 event_data_str, self.buffer = self.buffer.split("\n\n", 1)
-                return await self._process_event(event_data_str)
+                event = await self._process_event(event_data_str)
+                if event:
+                    return event
             
     
-    async def _process_event(self, event_data_str: str) -> T:
+    async def _process_event(self, event_data_str: str) -> Optional[T]:
         raise NotImplementedError("This method needs to be implemented.")
     
     async def until_done(self) -> None:
@@ -1200,19 +1205,19 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
     
 
             
-class AsyncAgentRunStream(Generic[T]):
+class AsyncAgentRunStream(Generic[BaseAsyncAgentEventHandlerT]):
     def __init__(
         self,
         response_iterator: AsyncIterator[bytes],
-        submit_tool_outputs: Callable[[ThreadRun, BaseAsyncAgentEventHandler[T]], Awaitable[None]],
-        event_handler: BaseAsyncAgentEventHandler[T],
+        submit_tool_outputs: Callable[[ThreadRun, BaseAsyncAgentEventHandlerT], Awaitable[None]],
+        event_handler: BaseAsyncAgentEventHandlerT,
     ):
         self.response_iterator = response_iterator
         self.event_handler = event_handler
         self.done = False
         self.buffer = ""
         self.submit_tool_outputs = submit_tool_outputs
-        self.event_handler._init(self.response_iterator, self.submit_tool_outputs, self.event_handler)
+        self.event_handler._init(self.response_iterator, cast(Callable[[ThreadRun, BaseAsyncAgentEventHandler], Awaitable[None]], submit_tool_outputs), self.event_handler)
 
     async def __aenter__(self):
         return self.event_handler

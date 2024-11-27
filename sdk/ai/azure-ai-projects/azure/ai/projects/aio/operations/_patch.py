@@ -1392,7 +1392,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         return run
     
-    T = TypeVar("T")
+    BaseAsyncAgentEventHandlerT = TypeVar("BaseAsyncAgentEventHandlerT", bound=_models.BaseAsyncAgentEventHandler)
     _defaultAgentEventHandler: _models.BaseAsyncAgentEventHandler[Tuple[str, _models.StreamEventData]] = _models.AsyncAgentEventHandler()
 
     @overload
@@ -1415,9 +1415,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        event_handler: _models.BaseAsyncAgentEventHandler[T] = _defaultAgentEventHandler,
+        event_handler: BaseAsyncAgentEventHandlerT = _defaultAgentEventHandler,
         **kwargs: Any,
-    ) -> _models.AsyncAgentRunStream[T]:
+    ) -> _models.AsyncAgentRunStream[BaseAsyncAgentEventHandlerT]:
         """Creates a new stream for an agent thread.
 
         :param thread_id: Required.
@@ -1498,7 +1498,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     @overload
     async def create_stream(
         self, thread_id: str, body: Union[JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AsyncAgentRunStream[_models.StreamEventData]:
+    ) -> _models.AsyncAgentRunStream[_models.AsyncAgentEventHandler]:
         """Creates a new run for an agent thread.
 
         Terminating when the Run enters a terminal state with a `data: [DONE]` message.
@@ -1535,9 +1535,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        event_handler: _models.BaseAsyncAgentEventHandler[T] = _defaultAgentEventHandler,
+        event_handler: BaseAsyncAgentEventHandlerT = _defaultAgentEventHandler,
         **kwargs: Any,
-    ) -> _models.AsyncAgentRunStream[T]:
+    ) -> _models.AsyncAgentRunStream[BaseAsyncAgentEventHandlerT]:
         """Creates a new run for an agent thread.
 
         Terminating when the Run enters a terminal state with a `data: [DONE]` message.
@@ -1777,7 +1777,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     @overload
     async def submit_tool_outputs_to_stream(
         self, thread_id: str, run_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AsyncAgentRunStream[_models.StreamEventData]:
+    ) -> _models.AsyncAgentRunStream[_models.AsyncAgentEventHandler]:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
@@ -1804,9 +1804,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         *,
         tool_outputs: List[_models.ToolOutput],
         content_type: str = "application/json",
-        event_handler: _models.BaseAsyncAgentEventHandler[T] = _defaultAgentEventHandler,
+        event_handler: BaseAsyncAgentEventHandlerT = _defaultAgentEventHandler,
         **kwargs: Any,
-    ) -> _models.AsyncAgentRunStream[T]:
+    ) -> _models.AsyncAgentRunStream[BaseAsyncAgentEventHandlerT]:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
@@ -1831,7 +1831,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     @overload
     async def submit_tool_outputs_to_stream(
         self, thread_id: str, run_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AsyncAgentRunStream[_models.StreamEventData]:
+    ) -> _models.AsyncAgentRunStream[_models.AsyncAgentEventHandler]:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.
@@ -1858,9 +1858,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         tool_outputs: List[_models.ToolOutput] = _Unset,
-        event_handler: _models.BaseAsyncAgentEventHandler[T] = _defaultAgentEventHandler,
+        event_handler: BaseAsyncAgentEventHandlerT = _defaultAgentEventHandler,
         **kwargs: Any,
-    ) -> _models.AsyncAgentRunStream[T]:
+    ) -> _models.AsyncAgentRunStream[BaseAsyncAgentEventHandlerT]:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
