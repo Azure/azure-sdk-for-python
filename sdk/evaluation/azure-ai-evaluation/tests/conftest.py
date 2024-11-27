@@ -14,7 +14,7 @@ from unittest.mock import patch
 
 import pytest
 from ci_tools.variables import in_ci
-from devtools_testutils import add_body_key_sanitizer, add_general_regex_sanitizer, add_header_regex_sanitizer, is_live, remove_batch_sanitizers
+from devtools_testutils import add_body_key_sanitizer, add_general_regex_sanitizer, add_header_regex_sanitizer, is_live, remove_batch_sanitizers, add_batch_sanitizers, Sanitizer
 from devtools_testutils.config import PROXY_URL
 from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.helpers import get_recording_id
@@ -177,12 +177,15 @@ def add_sanitizers(
         # register request in the eval run
         add_body_key_sanitizer(json_path="$.dataPath.dataStoreName", value="Sanitized")
 
-        # Finally in the run history, sanitize additional values such as the upn (which contains the user's email)
+        # In the eval run history, sanitize additional values such as the upn (which contains the user's email)
         add_body_key_sanitizer(json_path="$..userObjectId", value=ZERO_GUID)
         add_body_key_sanitizer(json_path="$..userPuId", value="0000000000000000")
         add_body_key_sanitizer(json_path="$..userIss", value="https://sts.windows.net/" + ZERO_GUID)
         add_body_key_sanitizer(json_path="$..userTenantId", value=ZERO_GUID)
         add_body_key_sanitizer(json_path="$..upn", value="Sanitized")
+
+        # remove the stainless retry header since it is causing some unnecessary mismatches in recordings
+        add_batch_sanitizers({Sanitizer.REMOVE_HEADER: [{"headers": "x-stainless-retry-count"}] })
 
     azure_workspace_triad_sanitizer()
     azureopenai_connection_sanitizer()

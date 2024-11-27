@@ -501,10 +501,8 @@ def get_pip_list_output(python_executable: Optional[str] = None):
         # this should be compatible with py27 https://docs.python.org/2.7/library/stdtypes.html#str.decode
         for line in stdout.decode("utf-8").split(os.linesep)[2:]:
             if line:
-                parts = re.split("==", line)
-                if (len(parts) == 2):
-                    package, version = parts
-                    collected_output[package] = version
+                package, version = re.split("==", line)
+                collected_output[package] = version
     else:
         raise Exception(stderr)
 
