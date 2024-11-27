@@ -217,9 +217,7 @@ class CustomModelFineTuningJob(FineTuningVertical):
         #        **kwargs,
         #    )
         # else:
-        loaded_data = load_from_dict(
-            CustomModelFineTuningSchema, data, context, additional_message, **kwargs
-        )
+        loaded_data = load_from_dict(CustomModelFineTuningSchema, data, context, additional_message, **kwargs)
 
         training_data = loaded_data.get("training_data", None)
         if isinstance(training_data, str):

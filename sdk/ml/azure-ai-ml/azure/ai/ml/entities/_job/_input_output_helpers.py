@@ -162,9 +162,7 @@ def build_input_output(
     return item
 
 
-def _validate_inputs_for(
-    input_consumer_name: str, input_consumer: str, inputs: Optional[Dict]
-) -> None:
+def _validate_inputs_for(input_consumer_name: str, input_consumer: str, inputs: Optional[Dict]) -> None:
     implicit_inputs = re.findall(r"\${{inputs\.([\w\.-]+)}}", input_consumer)
     # optional inputs no need to validate whether they're in inputs
     optional_inputs = re.findall(r"\[[\w\.\s-]*\${{inputs\.([\w\.-]+)}}]", input_consumer)
@@ -262,11 +260,7 @@ def to_rest_dataset_literal_inputs(
                     if input_value.type in target_cls_dict:
                         input_data = target_cls_dict[input_value.type](
                             uri=input_value.path,
-                            mode=(
-                                INPUT_MOUNT_MAPPING_TO_REST[input_value.mode.lower()]
-                                if input_value.mode
-                                else None
-                            ),
+                            mode=(INPUT_MOUNT_MAPPING_TO_REST[input_value.mode.lower()] if input_value.mode else None),
                         )
 
                     else:
@@ -329,11 +323,7 @@ def from_rest_inputs_to_dataset_literal(inputs: Dict[str, RestJobInput]) -> Dict
                 input_data = Input(
                     type=type_transfer_dict[input_value.job_input_type],
                     path=path,
-                    mode=(
-                        INPUT_MOUNT_MAPPING_FROM_REST[input_value.mode]
-                        if input_value.mode
-                        else None
-                    ),
+                    mode=(INPUT_MOUNT_MAPPING_FROM_REST[input_value.mode] if input_value.mode else None),
                     path_on_compute=sourcePathOnCompute,
                 )
         elif input_value.job_input_type in (JobInputType.LITERAL, JobInputType.LITERAL):
@@ -372,19 +362,13 @@ def to_rest_data_outputs(outputs: Optional[Dict]) -> Dict[str, RestJobOutput]:
             else:
                 target_cls_dict = get_output_rest_cls_dict()
 
-                output_value_type = (
-                    output_value.type if output_value.type else AssetTypes.URI_FOLDER
-                )
+                output_value_type = output_value.type if output_value.type else AssetTypes.URI_FOLDER
                 if output_value_type in target_cls_dict:
                     output = target_cls_dict[output_value_type](
                         asset_name=output_value.name,
                         asset_version=output_value.version,
                         uri=output_value.path,
-                        mode=(
-                            OUTPUT_MOUNT_MAPPING_TO_REST[output_value.mode.lower()]
-                            if output_value.mode
-                            else None
-                        ),
+                        mode=(OUTPUT_MOUNT_MAPPING_TO_REST[output_value.mode.lower()] if output_value.mode else None),
                         pathOnCompute=getattr(output_value, "path_on_compute", None),
                         description=output_value.description,
                     )
@@ -427,9 +411,7 @@ def from_rest_data_outputs(outputs: Dict[str, RestJobOutput]) -> Dict[str, Outpu
             from_rest_outputs[output_name] = Output(
                 type=output_type_mapping[output_value.job_output_type],
                 path=output_value.uri,
-                mode=(
-                    OUTPUT_MOUNT_MAPPING_FROM_REST[output_value.mode] if output_value.mode else None
-                ),
+                mode=(OUTPUT_MOUNT_MAPPING_FROM_REST[output_value.mode] if output_value.mode else None),
                 path_on_compute=sourcePathOnCompute,
                 description=output_value.description,
                 name=output_value.asset_name,

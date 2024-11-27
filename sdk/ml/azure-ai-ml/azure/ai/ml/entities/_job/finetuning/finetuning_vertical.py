@@ -170,9 +170,7 @@ class FineTuningVertical(FineTuningJob):
                 type=AssetTypes.URI_FILE, path=self.validation_data.uri  # pylint: disable=no-member
             )
         if isinstance(self.model, MLFlowModelJobInput):
-            self.model = Input(
-                type=AssetTypes.MLFLOW_MODEL, path=self.model.uri
-            )  # pylint: disable=no-member
+            self.model = Input(type=AssetTypes.MLFLOW_MODEL, path=self.model.uri)  # pylint: disable=no-member
 
     def __eq__(self, other: object) -> bool:
         """Returns True if both instances have the same values.

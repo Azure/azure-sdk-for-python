@@ -228,9 +228,7 @@ class JobOperations(_ScopeDependentOperations):
     def _datastore_operations(self) -> "DatastoreOperations":
         from azure.ai.ml.operations import DatastoreOperations
 
-        return cast(
-            DatastoreOperations, self._all_operations.all_operations[AzureMLResourceType.DATASTORE]
-        )
+        return cast(DatastoreOperations, self._all_operations.all_operations[AzureMLResourceType.DATASTORE])
 
     @property
     def _runs_operations(self) -> RunOperations:
@@ -375,9 +373,7 @@ class JobOperations(_ScopeDependentOperations):
         else:
             # Child jobs are no longer available through MFE, fetch
             # through run history instead
-            job = self._runs_operations._translate_from_rest_object(
-                self._runs_operations.get_run(name)
-            )
+            job = self._runs_operations._translate_from_rest_object(self._runs_operations.get_run(name))
 
         return job
 
@@ -414,8 +410,7 @@ class JobOperations(_ScopeDependentOperations):
             return None
 
         return {
-            k: ServiceInstance._from_rest_object(v, node_index)
-            for k, v in service_instances_dict.instances.items()
+            k: ServiceInstance._from_rest_object(v, node_index) for k, v in service_instances_dict.instances.items()
         }
 
     @distributed_trace
@@ -463,9 +458,7 @@ class JobOperations(_ScopeDependentOperations):
             results.append(result)
         return results
 
-    def _try_get_compute_arm_id(
-        self, compute: Union[Compute, str]
-    ) -> Optional[Union[Compute, str]]:
+    def _try_get_compute_arm_id(self, compute: Union[Compute, str]) -> Optional[Union[Compute, str]]:
         # pylint: disable=too-many-return-statements
         # TODO: Remove in PuP with native import job/component type support in MFE/Designer
         # DataFactory 'clusterless' job
@@ -512,9 +505,7 @@ class JobOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "Job.Validate", ActivityType.PUBLICAPI)
-    def validate(
-        self, job: Job, *, raise_on_failure: bool = False, **kwargs: Any
-    ) -> ValidationResult:
+    def validate(self, job: Job, *, raise_on_failure: bool = False, **kwargs: Any) -> ValidationResult:
         """Validates a Job object before submitting to the service. Anonymous assets may be created if there are inline
         defined entities such as Component, Environment, and Code. Only pipeline jobs are supported for validation
         currently.
@@ -559,9 +550,7 @@ class JobOperations(_ScopeDependentOperations):
         :return: The validation result
         :rtype: ValidationResult
         """
-        git_code_validation_result = (
-            PathAwareSchemaValidatableMixin._create_empty_validation_result()
-        )
+        git_code_validation_result = PathAwareSchemaValidatableMixin._create_empty_validation_result()
         # TODO: move this check to Job._validate after validation is supported for all job types
         # If private features are enable and job has code value of type str we need to check
         # that it is a valid git path case. Otherwise we should throw a ValidationException
@@ -609,14 +598,10 @@ class JobOperations(_ScopeDependentOperations):
                     if not isinstance(node, ControlFlowNode):
                         node.compute = self._try_get_compute_arm_id(node.compute)
                 except Exception as e:  # pylint: disable=W0718
-                    validation_result.append_error(
-                        yaml_path=f"jobs.{node_name}.compute", message=str(e)
-                    )
+                    validation_result.append_error(yaml_path=f"jobs.{node_name}.compute", message=str(e))
 
         validation_result.resolve_location_for_diagnostics(str(job._source_path))
-        return job._try_raise(
-            validation_result, raise_error=raise_on_failure
-        )  # pylint: disable=protected-access
+        return job._try_raise(validation_result, raise_error=raise_on_failure)  # pylint: disable=protected-access
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "Job.CreateOrUpdate", ActivityType.PUBLICAPI)
@@ -720,9 +705,7 @@ class JobOperations(_ScopeDependentOperations):
         ):
             self._set_headers_with_user_aml_token(kwargs)
 
-        result = self._create_or_update_with_different_version_api(
-            rest_job_resource=rest_job_resource, **kwargs
-        )
+        result = self._create_or_update_with_different_version_api(rest_job_resource=rest_job_resource, **kwargs)
 
         if is_local_run(result):
             ws_base_url = self._all_operations.all_operations[
@@ -753,9 +736,7 @@ class JobOperations(_ScopeDependentOperations):
             if snapshot_id is not None:
                 job_object.properties.properties["ContentSnapshotId"] = snapshot_id
 
-            result = self._create_or_update_with_latest_version_api(
-                rest_job_resource=job_object, **kwargs
-            )
+            result = self._create_or_update_with_latest_version_api(rest_job_resource=job_object, **kwargs)
 
         return self._resolve_azureml_id(Job._from_rest_object(result))
 
@@ -915,8 +896,7 @@ class JobOperations(_ScopeDependentOperations):
         job_details = self.get(name)
         # job is reused, get reused job to download
         if (
-            job_details.properties.get(PipelineConstants.REUSED_FLAG_FIELD)
-            == PipelineConstants.REUSED_FLAG_TRUE
+            job_details.properties.get(PipelineConstants.REUSED_FLAG_FIELD) == PipelineConstants.REUSED_FLAG_TRUE
             and PipelineConstants.REUSED_JOB_ID in job_details.properties
         ):
             reused_job_name = job_details.properties[PipelineConstants.REUSED_JOB_ID]
@@ -957,9 +937,7 @@ class JobOperations(_ScopeDependentOperations):
             )
 
         if isinstance(job_details, SweepJob):
-            best_child_run_id = job_details.properties.get(
-                SWEEP_JOB_BEST_CHILD_RUN_ID_PROPERTY_NAME, None
-            )
+            best_child_run_id = job_details.properties.get(SWEEP_JOB_BEST_CHILD_RUN_ID_PROPERTY_NAME, None)
             if best_child_run_id:
                 self.download(
                     best_child_run_id,
@@ -1231,9 +1209,7 @@ class JobOperations(_ScopeDependentOperations):
                 # Compute target can be either workspace-scoped compute type,
                 # or AML scoped VC. In the case of VC, resource name will be of form
                 # azureml:virtualClusters/<name> to disambiguate from azureml:name (which is always compute)
-                modified_target_name = modified_target_name[
-                    len(AzureMLResourceType.VIRTUALCLUSTER) + 1 :
-                ]
+                modified_target_name = modified_target_name[len(AzureMLResourceType.VIRTUALCLUSTER) + 1 :]
                 modified_target_name = LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT.format(
                     self._operation_scope.subscription_id,
                     self._operation_scope.resource_group_name,
@@ -1249,9 +1225,7 @@ class JobOperations(_ScopeDependentOperations):
         except Exception:  # pylint: disable=W0718
             return resolver(target, azureml_type=AzureMLResourceType.COMPUTE)
 
-    def _resolve_job_inputs(
-        self, entries: Iterable[Union[Input, str, bool, int, float]], base_path: str
-    ) -> None:
+    def _resolve_job_inputs(self, entries: Iterable[Union[Input, str, bool, int, float]], base_path: str) -> None:
         """resolve job inputs as ARM id or remote url.
 
         :param entries: An iterable of job inputs
@@ -1288,9 +1262,7 @@ class JobOperations(_ScopeDependentOperations):
                     input_values.append(item._data)  # type: ignore
         return input_values
 
-    def _resolve_job_input(
-        self, entry: Union[Input, str, bool, int, float], base_path: str
-    ) -> None:
+    def _resolve_job_input(self, entry: Union[Input, str, bool, int, float], base_path: str) -> None:
         """resolve job input as ARM id or remote url.
 
         :param entry: The job input
@@ -1319,9 +1291,7 @@ class JobOperations(_ScopeDependentOperations):
             return
         try:
             datastore_name = (
-                entry.datastore
-                if hasattr(entry, "datastore") and entry.datastore
-                else WORKSPACE_BLOB_STORE
+                entry.datastore if hasattr(entry, "datastore") and entry.datastore else WORKSPACE_BLOB_STORE
             )
 
             # absolute local path, upload, transform to remote url
@@ -1351,11 +1321,7 @@ class JobOperations(_ScopeDependentOperations):
                     show_progress=self._show_progress,
                 )
                 # TODO : Move this part to a common place
-                if (
-                    entry.type == AssetTypes.URI_FOLDER
-                    and entry.path
-                    and not entry.path.endswith("/")
-                ):
+                if entry.type == AssetTypes.URI_FOLDER and entry.path and not entry.path.endswith("/"):
                     entry.path = entry.path + "/"
             # Check for AzureML id, is there a better way?
             elif ":" in entry.path or "@" in entry.path:  # type: ignore
@@ -1379,11 +1345,7 @@ class JobOperations(_ScopeDependentOperations):
                     show_progress=self._show_progress,
                 )
                 # TODO : Move this part to a common place
-                if (
-                    entry.type == AssetTypes.URI_FOLDER
-                    and entry.path
-                    and not entry.path.endswith("/")
-                ):
+                if entry.type == AssetTypes.URI_FOLDER and entry.path and not entry.path.endswith("/"):
                     entry.path = entry.path + "/"
         except (MlException, HttpResponseError) as e:
             raise e
@@ -1393,8 +1355,7 @@ class JobOperations(_ScopeDependentOperations):
                 f"Met {type(e)}:\n{e}",
                 target=ErrorTarget.JOB,
                 no_personal_data_message=(
-                    "Supported input path value are ARM id, AzureML id, "
-                    "remote uri or local path."
+                    "Supported input path value are ARM id, AzureML id, " "remote uri or local path."
                 ),
                 error=e,
                 error_category=ErrorCategory.USER_ERROR,
@@ -1408,9 +1369,7 @@ class JobOperations(_ScopeDependentOperations):
                 if isinstance(entry, InputOutputBase):
                     # extract original input form input builder.
                     entry = entry._data
-                if not isinstance(entry, Input) or is_url(
-                    entry.path
-                ):  # Literal value or remote url
+                if not isinstance(entry, Input) or is_url(entry.path):  # Literal value or remote url
                     continue
                 # ARM id
                 entry.path = self._orchestrators.resolve_azureml_id(entry.path)
@@ -1419,9 +1378,7 @@ class JobOperations(_ScopeDependentOperations):
             # If the job object doesn't have "inputs" attribute, we don't need to resolve. E.g. AutoML jobs
             pass
 
-    def _resolve_arm_id_or_azureml_id(
-        self, job: Job, resolver: Union[Callable, _AssetResolver]
-    ) -> Job:
+    def _resolve_arm_id_or_azureml_id(self, job: Job, resolver: Union[Callable, _AssetResolver]) -> Job:
         """Resolve arm_id for a given job.
 
 
@@ -1542,9 +1499,7 @@ class JobOperations(_ScopeDependentOperations):
         job.compute = self._resolve_compute_id(resolver, ComputeType.ADF)
         return job
 
-    def _resolve_arm_id_for_parallel_job(
-        self, job: ParallelJob, resolver: _AssetResolver
-    ) -> ParallelJob:
+    def _resolve_arm_id_for_parallel_job(self, job: ParallelJob, resolver: _AssetResolver) -> ParallelJob:
         """Resolve arm_id for ParallelJob.
 
         :param job: The Parallel job
@@ -1615,9 +1570,7 @@ class JobOperations(_ScopeDependentOperations):
         job.compute = resolver(job.compute, azureml_type=AzureMLResourceType.COMPUTE)
         return job
 
-    def _resolve_arm_id_for_pipeline_job(
-        self, pipeline_job: PipelineJob, resolver: _AssetResolver
-    ) -> PipelineJob:
+    def _resolve_arm_id_for_pipeline_job(self, pipeline_job: PipelineJob, resolver: _AssetResolver) -> PipelineJob:
         """Resolve arm_id for pipeline_job.
 
         :param pipeline_job: The pipeline job
