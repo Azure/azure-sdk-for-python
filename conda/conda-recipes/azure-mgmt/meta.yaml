@@ -881,8 +881,6 @@ test:
     - azure.mgmt.serialconsole.models
     - azure.mgmt.serialconsole.operations
     - azure.mgmt.servermanager
-    - azure.mgmt.servermanager.aio
-    - azure.mgmt.servermanager.aio.operations
     - azure.mgmt.servermanager.models
     - azure.mgmt.servermanager.operations
     - azure.mgmt.servicefabric
