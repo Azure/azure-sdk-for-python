@@ -9,9 +9,10 @@ from urllib.parse import quote
 from uuid import UUID
 
 from ._common_conversion import _decode_base64_to_bytes
+from ._constants import MAX_INT32, MIN_INT32
 from ._entity import EntityProperty, EdmType, TableEntity
 
-DecoderMapType = Dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]]
+DecoderMapType = Dict[EdmType, Callable[[Union[str, bool, int]], Any]]
 
 
 class TablesEntityDatetime(datetime):
@@ -21,6 +22,13 @@ class TablesEntityDatetime(datetime):
             return self._service_value
         except AttributeError:
             return ""
+
+NO_ODATA = {
+    int: EdmType.INT32,
+    str: EdmType.STRING,
+    bool: EdmType.BOOLEAN,
+    float: EdmType.DOUBLE,
+}
 
 
 class TableEntityDecoder():
@@ -35,7 +43,7 @@ class TableEntityDecoder():
 
     def __call__(  # pylint: disable=too-many-branches, too-many-statements
             self,
-            entry_element: Union[TableEntity, Mapping[str, Any]]
+            response_data: Mapping[str, Any]
         ) -> Dict[str, Union[str, int, float, bool]]:
         """Convert json response to entity.
         The entity format is:
@@ -54,8 +62,8 @@ class TableEntityDecoder():
         "RowKey":"my_row_key"
         }
 
-        :param entry_element: The entity in response.
-        :type entry_element: Mapping[str, Any]
+        :param response_data: The entity in response.
+        :type response_data: Mapping[str, Any]
         :return: An entity dict with additional metadata.
         :rtype: dict[str, Any]
         """
@@ -67,8 +75,9 @@ class TableEntityDecoder():
         properties = {}
         edmtypes = {}
         odata = {}
+        # breakpoint()
 
-        for name, value in entry_element.items():
+        for name, value in response_data.items():
             if name.startswith("odata."):
                 odata[name[6:]] = value
             elif name.endswith("@odata.type"):
@@ -76,13 +85,12 @@ class TableEntityDecoder():
             else:
                 properties[name] = value
 
-        # TODO: investigate whether we can entirely remove lines 160-168
-        # Partition key is a known property
+        # Partitionkey is a known property
         partition_key = properties.pop("PartitionKey", None)
         if partition_key is not None:
             entity["PartitionKey"] = partition_key
 
-        # Row key is a known property
+        # Rowkey is a known property
         row_key = properties.pop("RowKey", None)
         if row_key is not None:
             entity["RowKey"] = row_key
@@ -93,35 +101,27 @@ class TableEntityDecoder():
         for name, value in properties.items():
             mtype = edmtypes.get(name)
 
-            # Add type for Int32/64
-            if isinstance(value, int) and mtype is None:
-                mtype = EdmType.INT32
-
-                if value >= 2**31 or value < (-(2**31)):
-                    mtype = EdmType.INT64
-
-            # Add type for String
-            if isinstance(value, str) and mtype is None:
-                mtype = EdmType.STRING
-
-            # no type info, property should parse automatically
             if not mtype:
-                entity[name] = value
-            elif mtype in [EdmType.STRING, EdmType.INT32]:
-                entity[name] = value
-            else:  # need an object to hold the property
-                convert = None
-                if self.convert_map:
-                    convert = self.convert_map.get(mtype)
+                mtype = NO_ODATA[type(value)]
+
+            convert = None
+            if self.convert_map:
+                try:
+                    convert = self.convert_map[mtype]
+                except KeyError:
+                    pass
+            if convert:
+                new_property = convert(value)
+            else:
+                try:
+                    convert = _ENTITY_TO_PYTHON_CONVERSIONS[mtype]
+                except KeyError as e:
+                    raise TypeError(f"Unsupported edm type: {mtype}")
                 if convert:
-                    new_property = convert(value)
+                    new_property = convert(self, value)
                 else:
-                    convert = _ENTITY_TO_PYTHON_CONVERSIONS.get(mtype)
-                    if convert:
-                        new_property = convert(self, value)
-                    else:
-                        new_property = EntityProperty(mtype, value)
-                entity[name] = new_property
+                    new_property = EntityProperty(mtype, value)
+            entity[name] = new_property
 
         # extract etag from entry
         etag = odata.pop("etag", None)
@@ -139,20 +139,11 @@ class TableEntityDecoder():
         return entity
 
 
-    def get_enum_value(self, value):
-        if value is None or value in ["None", ""]:
-            return None
-        try:
-            return value.value
-        except AttributeError:
-            return value
-
-
     def from_entity_binary(self, value: str) -> bytes:
         return _decode_base64_to_bytes(value)
 
 
-    def from_entity_int32(self, value: str) -> int:
+    def from_entity_int32(self, value: Union[int, str]) -> int:
         return int(value)
 
 
@@ -162,7 +153,7 @@ class TableEntityDecoder():
 
     def from_entity_datetime(self, value):
         # Cosmos returns this with a decimal point that throws an error on deserialization
-        cleaned_value = self.clean_up_dotnet_timestamps(value)
+        cleaned_value = self._clean_up_dotnet_timestamps(value)
         try:
             dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
         except ValueError:
@@ -171,7 +162,7 @@ class TableEntityDecoder():
         return dt_obj
 
 
-    def clean_up_dotnet_timestamps(self, value):
+    def _clean_up_dotnet_timestamps(self, value):
         # .NET has more decimal places than Python supports in datetime objects, this truncates
         # values after 6 decimal places.
         value = value.split(".")
@@ -203,6 +194,7 @@ _ENTITY_TO_PYTHON_CONVERSIONS = {
     EdmType.DATETIME: TableEntityDecoder.from_entity_datetime,
     EdmType.GUID: TableEntityDecoder.from_entity_guid,
     EdmType.STRING: TableEntityDecoder.from_entity_str,
+    EdmType.BOOLEAN: lambda _, v: v,
 }
 
 def deserialize_iso(value):

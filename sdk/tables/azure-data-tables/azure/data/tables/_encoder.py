@@ -53,6 +53,7 @@ class TableEntityEncoder():
         """
         encoded = {}
         for key, value in entity.items():
+            # breakpoint()
             if value is None:
                 edm_type = None
             else:
@@ -63,34 +64,20 @@ class TableEntityEncoder():
                     try:
                         convert = self.convert_map[type(value)]
                     except KeyError:
-                        for obj_type, _ in self.convert_map.items():
-                            # The key of convert map may not be a type,
-                            # ignore the TypeError from isinstalce() for this case
-                            try:
-                                if isinstance(value, obj_type):  # mypy: disable-error-code="arg-type"
-                                    convert = self.convert_map.get(obj_type)
-                                    break
-                            except TypeError:
-                                pass
+                        if isinstance(value, Enum) and self.convert_map.get(Enum):
+                            convert = self.convert_map[Enum]
                 if convert:
                     edm_type, value = convert(value)
                 else:
                     try:
                         convert = _PYTHON_TO_ENTITY_CONVERSIONS[type(value)]
                     except KeyError:
-                        for obj_type, _ in _PYTHON_TO_ENTITY_CONVERSIONS.items():
-                            # The key of the default convert map may not be a type,
-                            # ignore the TypeError from isinstalce() for this case
-                            try:
-                                if isinstance(value, obj_type):  # mypy: disable-error-code="arg-type"
-                                    convert = _PYTHON_TO_ENTITY_CONVERSIONS.get(obj_type)
-                                    break
-                            except TypeError:
-                                pass
+                        if isinstance(value, Enum) and _PYTHON_TO_ENTITY_CONVERSIONS.get(Enum):
+                            convert = _PYTHON_TO_ENTITY_CONVERSIONS[Enum]
                     if convert:
                         edm_type, value = convert(self, value)  # mypy: ignore[call-arg]
                     else:
-                        raise TypeError(f"Don't find a converter to encode value {value}")
+                        raise TypeError(f"No encoder found for value '{value}' of type '{type(value)}'.")
             try:
                 odata = f"{key}{_ODATA_SUFFIX}"
                 if _ODATA_SUFFIX in key or odata in entity:
@@ -153,10 +140,13 @@ class TableEntityEncoder():
         return None, str(value)
 
     def to_entity_enum(self, value):
-        try:
-            if self.convert_map:
+        if self.convert_map:
+            try:
                 convert = self.convert_map[type(value.value)]
                 return convert(value.value)
+            except KeyError as e:
+                pass
+        try:
             convert = _PYTHON_TO_ENTITY_CONVERSIONS[type(value.value)]
             return convert(self, value.value)
         except KeyError as e:
@@ -170,10 +160,13 @@ class TableEntityEncoder():
             raise ValueError("Tuple should have 2 items")
         if unencoded_value is None:
             return edm_type, unencoded_value
-        try:
-            if self.convert_map:
+        if self.convert_map:
+            try:
                 convert = self.convert_map[edm_type]
                 return convert(unencoded_value)
+            except KeyError as e:
+                pass
+        try:
             convert = _PYTHON_TO_ENTITY_CONVERSIONS[edm_type]
             return convert(self, unencoded_value)
         except KeyError as e:

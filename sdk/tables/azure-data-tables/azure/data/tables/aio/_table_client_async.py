@@ -16,7 +16,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from .._common_conversion import _prepare_key
+from .._common_conversion import _prepare_key, _return_headers_and_deserialized, _trim_service_metadata
 from .._base_client import parse_connection_str
 from .._encoder import TableEntityEncoder, EncoderMapType
 from .._entity import TableEntity
@@ -35,12 +35,7 @@ from .._error import (
     _validate_tablename_error,
     _validate_key_values,
 )
-from .._table_client import (
-    EntityType,
-    TransactionOperationType,
-    _return_headers_and_deserialized,
-    _trim_service_metadata,
-)
+from .._table_client import EntityType, TransactionOperationType
 from ._base_client_async import AsyncTablesBaseClient
 from ._models import TableEntityPropertiesPaged
 from .._table_batch import TableBatchOperations

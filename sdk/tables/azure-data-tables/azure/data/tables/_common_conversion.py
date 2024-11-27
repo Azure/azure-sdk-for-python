@@ -8,7 +8,7 @@ import hashlib
 import hmac
 from datetime import timezone
 from urllib.parse import ParseResult
-from typing import Optional, Tuple, List
+from typing import Optional, Tuple, List, Dict, Any
 
 
 def _to_str(value):
@@ -98,3 +98,38 @@ def _prepare_key(key: str) -> str:
         return key.replace("'", "''")
     except (AttributeError, TypeError) as exc:
         raise TypeError("PartitionKey or RowKey must be of type string.") from exc
+
+
+def _get_enum_value(value):
+    if value is None or value in ["None", ""]:
+        return None
+    try:
+        return value.value
+    except AttributeError:
+        return value
+
+
+def _normalize_headers(headers):
+    normalized = {}
+    for key, value in headers.items():
+        if key.startswith("x-ms-"):
+            key = key[5:]
+        normalized[key.lower().replace("-", "_")] = _get_enum_value(value)
+    return normalized
+
+
+def _return_headers_and_deserialized(_, deserialized, response_headers):
+    return _normalize_headers(response_headers), deserialized
+
+
+def _trim_service_metadata(metadata: Dict[str, str], content: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    result: Dict[str, Any] = {
+        "date": metadata.pop("date", None),
+        "etag": metadata.pop("etag", None),
+        "version": metadata.pop("version", None),
+    }
+    preference = metadata.pop("preference_applied", None)
+    if preference:
+        result["preference_applied"] = preference
+        result["content"] = content
+    return result

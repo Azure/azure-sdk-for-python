@@ -14,7 +14,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
-from ._common_conversion import _prepare_key
+from ._common_conversion import _prepare_key, _return_headers_and_deserialized, _trim_service_metadata
 from ._encoder import TableEntityEncoder, EncoderMapType
 from ._decoder import TableEntityDecoder, deserialize_iso, DecoderMapType
 from ._base_client import parse_connection_str, TablesBaseClient
@@ -38,41 +38,6 @@ from ._table_batch import (
     TransactionOperationType,
 )
 from ._models import TableEntityPropertiesPaged, UpdateMode, TableAccessPolicy, TableItem
-
-
-def _get_enum_value(value):
-    if value is None or value in ["None", ""]:
-        return None
-    try:
-        return value.value
-    except AttributeError:
-        return value
-
-
-def _normalize_headers(headers):
-    normalized = {}
-    for key, value in headers.items():
-        if key.startswith("x-ms-"):
-            key = key[5:]
-        normalized[key.lower().replace("-", "_")] = _get_enum_value(value)
-    return normalized
-
-
-def _return_headers_and_deserialized(_, deserialized, response_headers):
-    return _normalize_headers(response_headers), deserialized
-
-
-def _trim_service_metadata(metadata: Dict[str, str], content: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-    result: Dict[str, Any] = {
-        "date": metadata.pop("date", None),
-        "etag": metadata.pop("etag", None),
-        "version": metadata.pop("version", None),
-    }
-    preference = metadata.pop("preference_applied", None)
-    if preference:
-        result["preference_applied"] = preference
-        result["content"] = content
-    return result
 
 
 class TableClient(TablesBaseClient):
@@ -451,6 +416,7 @@ class TableClient(TablesBaseClient):
                 :caption: Creating and adding an entity to a Table
         """
         entity_json = self.encoder(entity)
+        # breakpoint()
         try:
             metadata, content = cast(
                 Tuple[Dict[str, str], Optional[Dict[str, Any]]],
