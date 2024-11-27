@@ -4,16 +4,17 @@ from . import __pf_service_isolation  # isort: split  # noqa: F401
 import json
 import multiprocessing
 import time
+from datetime import datetime, timedelta
 import jwt
 from logging import Logger
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Final, Optional
 from unittest.mock import patch
 
 import pytest
 from ci_tools.variables import in_ci
-from devtools_testutils import add_body_key_sanitizer, add_general_regex_sanitizer, add_header_regex_sanitizer, is_live
+from devtools_testutils import add_body_key_sanitizer, add_general_regex_sanitizer, add_header_regex_sanitizer, is_live, remove_batch_sanitizers
 from devtools_testutils.config import PROXY_URL
 from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.helpers import get_recording_id
@@ -32,6 +33,7 @@ from azure.core.credentials import TokenCredential
 PROMPTFLOW_ROOT = Path(__file__, "..", "..", "..").resolve()
 CONNECTION_FILE = (PROMPTFLOW_ROOT / "azure-ai-evaluation" / "connections.json").resolve()
 RECORDINGS_TEST_CONFIGS_ROOT = Path(PROMPTFLOW_ROOT / "azure-ai-evaluation/tests/test_configs").resolve()
+ZERO_GUID: Final[str] = "00000000-0000-0000-0000-000000000000"
 
 
 def pytest_configure(config):
@@ -46,11 +48,11 @@ def pytest_configure(config):
 
 
 class SanitizedValues:
-    SUBSCRIPTION_ID = "00000000-0000-0000-0000-000000000000"
+    SUBSCRIPTION_ID = ZERO_GUID
     RESOURCE_GROUP_NAME = "00000"
     WORKSPACE_NAME = "00000"
-    TENANT_ID = "00000000-0000-0000-0000-000000000000"
-    USER_OBJECT_ID = "00000000-0000-0000-0000-000000000000"
+    TENANT_ID = ZERO_GUID
+    USER_OBJECT_ID = ZERO_GUID
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -128,8 +130,8 @@ def add_sanitizers(
 
     def azure_ai_generative_sanitizer():
         """Sanitize header values from azure-ai-generative"""
-        add_header_regex_sanitizer(key="X-CV", regex="^.*$", value="00000000-0000-0000-0000-000000000000")
-        add_body_key_sanitizer(json_path="$.headers.X-CV", value="00000000-0000-0000-0000-000000000000")
+        add_header_regex_sanitizer(key="X-CV", regex="^.*$", value=ZERO_GUID)
+        add_body_key_sanitizer(json_path="$.headers.X-CV", value=ZERO_GUID)
 
     def live_connection_file_values():
         """Sanitize the live values from connections.json"""
@@ -155,12 +157,40 @@ def add_sanitizers(
             replacement='"root_run_id": "azure_ai_evaluation_evaluators_common_base_eval_asyncevaluatorbase_SANITIZED"',
         )
 
+    def evalutation_run_sanitizer() -> None:
+        # By default, the test proxy will sanitize all "key" values in a JSON body to "Sanitized". Unfortunately,
+        # when retrieving the datastore secrets, the key that comes back needs to be a valid Base64 encoded string.
+        # So we disable this default rule, and add a replacement rule to santize to MA== (which is "0")
+        remove_batch_sanitizers(["AZSDK3447"])
+        add_body_key_sanitizer(json_path="$.key", value="MA==")
+
+        # Sanitize the start_time, timestamp, and end_time to a fixed value in recordings
+        convert = lambda dt: str(int(dt.timestamp() * 1000))
+        start = datetime(2024, 11, 1, 0, 0, 0)
+        mid = start + timedelta(seconds=10)
+        end = start + timedelta(minutes=1)
+        add_body_key_sanitizer(json_path="$..start_time", value=convert(start))
+        add_body_key_sanitizer(json_path="$..timestamp", value=convert(mid))
+        add_body_key_sanitizer(json_path="$..end_time", value=convert(end))
+
+        # Since we use a santizied configuration when in playback mode, force the dataPath.dataStoreName in the
+        # register request in the eval run
+        add_body_key_sanitizer(json_path="$.dataPath.dataStoreName", value="Sanitized")
+
+        # Finally in the run history, sanitize additional values such as the upn (which contains the user's email)
+        add_body_key_sanitizer(json_path="$..userObjectId", value=ZERO_GUID)
+        add_body_key_sanitizer(json_path="$..userPuId", value="0000000000000000")
+        add_body_key_sanitizer(json_path="$..userIss", value="https://sts.windows.net/" + ZERO_GUID)
+        add_body_key_sanitizer(json_path="$..userTenantId", value=ZERO_GUID)
+        add_body_key_sanitizer(json_path="$..upn", value="Sanitized")
+
     azure_workspace_triad_sanitizer()
     azureopenai_connection_sanitizer()
     openai_stainless_default_headers()
     azure_ai_generative_sanitizer()
     live_connection_file_values()
     promptflow_root_run_id_sanitizer()
+    evalutation_run_sanitizer()
 
 
 @pytest.fixture
@@ -370,12 +400,13 @@ def mock_validate_trace_destination():
         yield
 
 @pytest.fixture
-def azure_management_client(project_scope: dict):
+def azure_management_client(project_scope: dict, azure_cred: TokenCredential) -> LiteAzureManagementClient:
     """Get an Azure management client."""
     return LiteAzureManagementClient(
         subscription_id = project_scope["subscription_id"],
         resource_group = project_scope["resource_group_name"],
-        logger = Logger("azure_management_client")
+        logger = Logger("azure_management_client"),
+        credential=azure_cred
     )
 
 @pytest.fixture
