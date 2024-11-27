@@ -29,10 +29,11 @@ fqdn = os.getenv("COMMUNICATION_SAMPLES_TRUNK_FQDN")
 signaling_port = os.getenv("COMMUNICATION_SAMPLES_SIGNALING_PORT")
 TRUNKS = [SipTrunk(fqdn=fqdn, sip_signaling_port=signaling_port)]
 
+
 async def set_sip_trunks_sample():
     async with client:
         await client.set_trunks(TRUNKS)
 
+
 if __name__ == "__main__":
     asyncio.run(set_sip_trunks_sample())
-

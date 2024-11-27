@@ -89,13 +89,9 @@ class CommunicationIdentityClient(object):
         :return: CommunicationUserIdentifier
         :rtype: ~azure.communication.identity.CommunicationUserIdentifier
         """
-        identity_access_token = (
-            self._identity_service_client.communication_identity.create(**kwargs)
-        )
+        identity_access_token = self._identity_service_client.communication_identity.create(**kwargs)
 
-        return CommunicationUserIdentifier(
-            identity_access_token.identity.id, raw_id=identity_access_token.identity.id
-        )
+        return CommunicationUserIdentifier(identity_access_token.identity.id, raw_id=identity_access_token.identity.id)
 
     @distributed_trace
     def create_user_and_token(
@@ -148,9 +144,7 @@ class CommunicationIdentityClient(object):
         :return: None
         :rtype: None
         """
-        self._identity_service_client.communication_identity.delete(
-            user.properties["id"], **kwargs
-        )
+        self._identity_service_client.communication_identity.delete(user.properties["id"], **kwargs)
 
     @distributed_trace
     def get_token(

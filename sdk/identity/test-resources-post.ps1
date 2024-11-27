@@ -131,6 +131,9 @@ Write-Host "Deploying Azure Container Instance"
 az container create -g $($DeploymentOutputs['IDENTITY_RESOURCE_GROUP']) -n $($DeploymentOutputs['IDENTITY_CONTAINER_INSTANCE_NAME']) --image $image `
   --acr-identity $($DeploymentOutputs['IDENTITY_USER_DEFINED_IDENTITY']) `
   --assign-identity [system] $($DeploymentOutputs['IDENTITY_USER_DEFINED_IDENTITY']) `
+  --cpu 1 `
+  --memory 1.0 `
+  --os-type Linux `
   --role "Storage Blob Data Reader" `
   --scope $($DeploymentOutputs['IDENTITY_STORAGE_ID_1']) `
   -e IDENTITY_STORAGE_NAME=$($DeploymentOutputs['IDENTITY_STORAGE_NAME_1']) `

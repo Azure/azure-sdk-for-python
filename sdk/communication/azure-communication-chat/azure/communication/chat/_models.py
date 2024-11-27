@@ -54,15 +54,16 @@ class ChatParticipant:
         return cls(
             identifier=deserialize_identifier(chat_thread_participant.communication_identifier),
             display_name=chat_thread_participant.display_name,
-            share_history_time=chat_thread_participant.share_history_time
+            share_history_time=chat_thread_participant.share_history_time,
         )
 
     def _to_generated(self):
         return ChatParticipantAutorest(
             communication_identifier=serialize_identifier(self.identifier),
             display_name=self.display_name,
-            share_history_time=self.share_history_time
+            share_history_time=self.share_history_time,
         )
+
 
 class ChatAttachment:
     """An attachment in a chat message.
@@ -81,15 +82,12 @@ class ChatAttachment:
     :vartype preview_url: str or None
     """
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
-        self.id = kwargs['id']
-        self.attachment_type = kwargs['attachment_type']
-        self.name = kwargs.get('name', None)
-        self.url = kwargs.get('url', None)
-        self.preview_url = kwargs.get('preview_url', None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.id = kwargs["id"]
+        self.attachment_type = kwargs["attachment_type"]
+        self.name = kwargs.get("name", None)
+        self.url = kwargs.get("url", None)
+        self.preview_url = kwargs.get("preview_url", None)
 
     @classmethod
     def _from_generated(cls, chat_attachment):
@@ -98,11 +96,11 @@ class ChatAttachment:
             attachment_type=chat_attachment.attachment_type,
             name=chat_attachment.name,
             url=chat_attachment.url,
-            preview_url=chat_attachment.preview_url
+            preview_url=chat_attachment.preview_url,
         )
 
 
-class ChatMessage: # pylint: disable=too-many-instance-attributes
+class ChatMessage:  # pylint: disable=too-many-instance-attributes
     """Chat message.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -133,21 +131,18 @@ class ChatMessage: # pylint: disable=too-many-instance-attributes
     :vartype metadata: dict[str, str] or None
     """
 
-    def __init__(
-            self,
-            **kwargs: Any
-    ) -> None:
-        self.id = kwargs['id']
-        self.type = kwargs['type']
-        self.sequence_id = kwargs['sequence_id']
-        self.version = kwargs['version']
-        self.content = kwargs['content']
-        self.sender_display_name = kwargs['sender_display_name']
-        self.created_on = kwargs['created_on']
-        self.sender = kwargs['sender']
-        self.deleted_on = kwargs['deleted_on']
-        self.edited_on = kwargs['edited_on']
-        self.metadata = kwargs.get('metadata')
+    def __init__(self, **kwargs: Any) -> None:
+        self.id = kwargs["id"]
+        self.type = kwargs["type"]
+        self.sequence_id = kwargs["sequence_id"]
+        self.version = kwargs["version"]
+        self.content = kwargs["content"]
+        self.sender_display_name = kwargs["sender_display_name"]
+        self.created_on = kwargs["created_on"]
+        self.sender = kwargs["sender"]
+        self.deleted_on = kwargs["deleted_on"]
+        self.edited_on = kwargs["edited_on"]
+        self.metadata = kwargs.get("metadata")
 
     @classmethod
     def _from_generated(cls, chat_message):
@@ -159,7 +154,11 @@ class ChatMessage: # pylint: disable=too-many-instance-attributes
             message_type = ChatMessageType(chat_message.type)
         except ValueError:
             message_type = chat_message.type
-        content = ChatMessageContent._from_generated(chat_message.content) if chat_message.content else None  # pylint:disable=protected-access
+        content = (
+            ChatMessageContent._from_generated(chat_message.content)  # pylint:disable=protected-access
+            if chat_message.content
+            else None
+        )
         return cls(
             id=chat_message.id,
             type=message_type,
@@ -171,7 +170,7 @@ class ChatMessage: # pylint: disable=too-many-instance-attributes
             sender=sender_communication_identifier,
             deleted_on=chat_message.deleted_on,
             edited_on=chat_message.edited_on,
-            metadata=chat_message.metadata
+            metadata=chat_message.metadata,
         )
 
 
@@ -192,23 +191,20 @@ class ChatMessageContent:
     :vartype attachments: List[~azure.communication.chat.ChatAttachment]
     """
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
-        self.message = kwargs.get('message', None)
-        self.topic = kwargs.get('topic', None)
-        self.participants = kwargs.get('participants', None)
-        self.initiator = kwargs.get('initiator', None)
-        self.attachments = kwargs.get('attachments', None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.message = kwargs.get("message", None)
+        self.topic = kwargs.get("topic", None)
+        self.participants = kwargs.get("participants", None)
+        self.initiator = kwargs.get("initiator", None)
+        self.attachments = kwargs.get("attachments", None)
 
     @classmethod
     def _from_generated(cls, chat_message_content):
         participants_list = chat_message_content.participants
         if participants_list:
             participants = [
-                ChatParticipant._from_generated(participant) for participant in  # pylint:disable=protected-access
-                participants_list
+                ChatParticipant._from_generated(participant)  # pylint:disable=protected-access
+                for participant in participants_list
             ]
         else:
             participants = []
@@ -216,8 +212,8 @@ class ChatMessageContent:
         attachments_list = chat_message_content.attachments
         if attachments_list:
             attachments = [
-                ChatAttachment._from_generated(attachment) for attachment in  # pylint:disable=protected-access
-                attachments_list
+                ChatAttachment._from_generated(attachment)  # pylint:disable=protected-access
+                for attachment in attachments_list
             ]
         else:
             attachments = []
@@ -232,7 +228,7 @@ class ChatMessageContent:
             topic=chat_message_content.topic,
             participants=participants,
             initiator=initiator,
-            attachments=attachments
+            attachments=attachments,
         )
 
 
@@ -253,14 +249,11 @@ class ChatThreadProperties:
 
     # pylint:disable=protected-access
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
-        self.id = kwargs['id']
-        self.topic = kwargs.get('topic', None)
-        self.created_on = kwargs['created_on']
-        self.created_by = kwargs['created_by']
+    def __init__(self, **kwargs: Any) -> None:
+        self.id = kwargs["id"]
+        self.topic = kwargs.get("topic", None)
+        self.created_on = kwargs["created_on"]
+        self.created_by = kwargs["created_by"]
 
     @classmethod
     def _from_generated(cls, chat_thread):
@@ -269,12 +262,7 @@ class ChatThreadProperties:
         if created_by is not None:
             created_by = deserialize_identifier(chat_thread.created_by_communication_identifier)
 
-        return cls(
-            id=chat_thread.id,
-            topic=chat_thread.topic,
-            created_on=chat_thread.created_on,
-            created_by=created_by
-        )
+        return cls(id=chat_thread.id, topic=chat_thread.topic, created_on=chat_thread.created_on, created_by=created_by)
 
 
 class ChatMessageReadReceipt:
@@ -291,13 +279,10 @@ class ChatMessageReadReceipt:
     :vartype read_on: ~datetime.datetime
     """
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
-        self.sender = kwargs['sender']
-        self.chat_message_id = kwargs['chat_message_id']
-        self.read_on = kwargs['read_on']
+    def __init__(self, **kwargs: Any) -> None:
+        self.sender = kwargs["sender"]
+        self.chat_message_id = kwargs["chat_message_id"]
+        self.read_on = kwargs["read_on"]
 
     @classmethod
     def _from_generated(cls, read_receipt):
@@ -305,11 +290,8 @@ class ChatMessageReadReceipt:
         if sender is not None:
             sender = deserialize_identifier(read_receipt.sender_communication_identifier)
 
-        return cls(
-            sender=sender,
-            chat_message_id=read_receipt.chat_message_id,
-            read_on=read_receipt.read_on
-        )
+        return cls(sender=sender, chat_message_id=read_receipt.chat_message_id, read_on=read_receipt.read_on)
+
 
 class CreateChatThreadResult:
     """Result of the create chat thread operation.
@@ -320,9 +302,6 @@ class CreateChatThreadResult:
     :vartype errors: List[Tuple[~azure.communication.chat.ChatParticipant, ~azure.communication.chat.ChatError]] or None
     """
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
-        self.chat_thread = kwargs['chat_thread']
-        self.errors = kwargs.get('errors', None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.chat_thread = kwargs["chat_thread"]
+        self.errors = kwargs.get("errors", None)
