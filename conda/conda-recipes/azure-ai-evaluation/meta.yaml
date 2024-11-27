@@ -23,6 +23,7 @@ requirements:
     - requests-oauthlib >=0.5.0
     - aiohttp
     - isodate
+    - pandas
   run:
     - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
@@ -32,6 +33,7 @@ requirements:
     - requests-oauthlib >=0.5.0
     - aiohttp
     - isodate
+    - pandas
 
 test:
   imports:
@@ -42,7 +44,7 @@ about:
   home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/evaluation/azure-ai-evaluation"
   license: MIT
   license_family: MIT
-  license_file: 
+  license_file:
   summary: "Microsoft Azure AI Evaluation client library for Python"
   description: |
     Use Azure AI Evaluation SDK to assess the performance of your generative AI applications.
@@ -51,8 +53,8 @@ about:
     Built-in or custom evaluators can provide comprehensive insights into the application's
     capabilities and limitations.
     Please see https://aka.ms/azsdk/conda/releases/evaluation for version details.
-  doc_url: 
-  dev_url: 
+  doc_url:
+  dev_url:
 
 extra:
   recipe-maintainers:
