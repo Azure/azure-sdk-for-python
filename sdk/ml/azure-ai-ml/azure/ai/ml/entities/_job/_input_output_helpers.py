@@ -206,7 +206,10 @@ def validate_pipeline_input_key_characters(key: str) -> None:
     # Note: ([a-zA-Z_]+[a-zA-Z0-9_]*) is a valid single key,
     # so a valid pipeline key is: ^{single_key}([.]{single_key})*$
     if re.match(IOConstants.VALID_KEY_PATTERN, key) is None:
-        msg = "Pipeline input key name {} must be composed letters, numbers, and underscores with optional split by dots."
+        msg = (
+            "Pipeline input key name {} must be composed letters, numbers, and underscores with optional "
+            "split by dots."
+        )
         raise ValidationException(
             message=msg.format(key),
             no_personal_data_message=msg.format("[key]"),
