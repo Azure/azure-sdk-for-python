@@ -87,6 +87,7 @@ class InferenceOperations:
             connection = self._outer_instance.connections.get_default(
                 connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
             )
+        logger.debug("[InferenceOperations.get_chat_completions_client] connection = " + str(connection))
 
         try:
             from azure.ai.inference import ChatCompletionsClient
@@ -164,6 +165,7 @@ class InferenceOperations:
             connection = self._outer_instance.connections.get_default(
                 connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
             )
+        logger.debug("[InferenceOperations.get_embeddings_client] connection = " + str(connection))
 
         try:
             from azure.ai.inference import EmbeddingsClient
@@ -231,6 +233,7 @@ class InferenceOperations:
         connection = self._outer_instance.connections.get_default(
             connection_type=ConnectionType.AZURE_OPEN_AI, include_credentials=True, **kwargs
         )
+        logger.debug("[InferenceOperations.get_azure_openai_client] connection = " + str(connection))
 
         try:
             from openai import AzureOpenAI
@@ -246,18 +249,16 @@ class InferenceOperations:
             client = AzureOpenAI(
                 api_key=connection.key, azure_endpoint=connection.endpoint_url, api_version=api_version
             )
-        elif connection.authentication_type == {AuthenticationType.ENTRA_ID, AuthenticationType.SAS}:
+        elif connection.authentication_type == AuthenticationType.ENTRA_ID:
+            logger.debug("[InferenceOperations.get_azure_openai_client] "
+                + "Creating AzureOpenAI using Entra ID authentication"
+            )
             try:
                 from azure.identity import get_bearer_token_provider
             except ModuleNotFoundError as e:
                 raise ModuleNotFoundError(
                     "azure.identity package not installed. Please install it using 'pip install azure.identity'"
                 ) from e
-            if connection.authentication_type == AuthenticationType.ENTRA_ID:
-                auth = "Creating AzureOpenAI using Entra ID authentication"
-            else:
-                auth = "Creating AzureOpenAI using SAS authentication"
-            logger.debug("[InferenceOperations.get_azure_openai_client] %s", auth)
             client = AzureOpenAI(
                 # See https://learn.microsoft.com/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider # pylint: disable=line-too-long
                 azure_ad_token_provider=get_bearer_token_provider(
@@ -265,6 +266,14 @@ class InferenceOperations:
                 ),
                 azure_endpoint=connection.endpoint_url,
                 api_version=api_version,
+            )
+        elif connection.authentication_type == AuthenticationType.SAS:
+            logger.debug(
+                "[InferenceOperations.get_azure_openai_client] "
+                + "Creating AzureOpenAI using SAS authentication"
+            )
+            raise ValueError(
+                "Getting chat completions client from a connection with SAS authentication is not yet supported"
             )
         else:
             raise ValueError("Unknown authentication type")
@@ -296,16 +305,17 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         if not connection_type:
             raise ValueError("You must specify an connection type")
         # Since there is no notion of default connection at the moment, list all connections in the category
-        # and return the first one
+        # and return the first one (index 0), unless overridden by the environment variable DEFAULT_CONNECTION_INDEX.
         connection_properties_list = self.list(connection_type=connection_type, **kwargs)
         if len(connection_properties_list) > 0:
+            default_connection_index = int(os.getenv("DEFAULT_CONNECTION_INDEX", "0"))
             if include_credentials:
                 return self.get(
-                    connection_name=connection_properties_list[0].name,
+                    connection_name=connection_properties_list[default_connection_index].name,
                     include_credentials=include_credentials,
                     **kwargs,
                 )
-            return connection_properties_list[0]
+            return connection_properties_list[default_connection_index]
         raise ResourceNotFoundError(f"No connection of type {connection_type} found")
 
     @distributed_trace
