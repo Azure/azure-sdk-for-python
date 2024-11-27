@@ -71,13 +71,10 @@ setup(
         # pickle support for credentials was added to this release
         "azure-identity>=1.16.0",
         "azure-core>=1.30.2",
-        "azure-storage-blob>=12.10.0",
         "nltk>=3.9.1",
+        "azure-storage-blob>=12.10.0",
+        "azure-ai-inference>=1.0.0b4"
     ],
-    extras_require={
-        "remote": [
-        ],
-    },
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
         "Source": "https://github.com/Azure/azure-sdk-for-python",
