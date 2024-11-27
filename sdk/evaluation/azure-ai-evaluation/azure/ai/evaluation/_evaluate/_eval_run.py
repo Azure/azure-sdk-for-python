@@ -309,8 +309,8 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         """
         return f"https://{self._url_base}" "/mlflow/v2.0" f"{self._get_scope()}" f"/api/2.0/mlflow/runs/log-metric"
 
-    def _get_token(self):
-        self._management_client.get_token()
+    def _get_token(self) -> str:
+        return self._management_client.get_token()
 
     def request_with_retry(
         self, url: str, method: str, json_dict: Dict[str, Any], headers: Optional[Dict[str, str]] = None

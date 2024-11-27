@@ -32,9 +32,8 @@ def questions_file():
     return os.path.join(data_path, "questions.jsonl")
 
 
-@pytest.fixture
-def tracking_uri(azure_management_client: LiteAzureManagementClient, project_scope):
-    return azure_management_client.workspace_get_info(project_scope["project_name"]).properties.ml_flow_tracking_uri
+def _get_tracking_uri(azure_management_client: LiteAzureManagementClient, project_scope: dict) -> str:
+    return azure_management_client.workspace_get_info(project_scope["project_name"]).ml_flow_tracking_uri or ""
 
 
 @pytest.mark.usefixtures("model_config", "recording_injection", "project_scope", "recorded_test")
@@ -53,8 +52,7 @@ class TestMetricsUpload(object):
             assert not error_messages, "\n".join(error_messages)
 
     @pytest.mark.azuretest
-    @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
-    def test_writing_to_run_history(self, caplog, project_scope, azure_management_client: LiteAzureManagementClient, tracking_uri):
+    def test_writing_to_run_history(self, caplog, project_scope, azure_management_client: LiteAzureManagementClient):
         """Test logging data to RunHistory service."""
         logger = logging.getLogger(EvalRun.__module__)
         # All loggers, having promptflow. prefix will have "promptflow" logger
@@ -66,7 +64,7 @@ class TestMetricsUpload(object):
         mock_response.status_code = 418
         with EvalRun(
             run_name="test",
-            tracking_uri=tracking_uri,
+            tracking_uri=_get_tracking_uri(azure_management_client, project_scope),
             subscription_id=project_scope["subscription_id"],
             group_name=project_scope["resource_group_name"],
             workspace_name=project_scope["project_name"],
@@ -84,8 +82,7 @@ class TestMetricsUpload(object):
         self._assert_no_errors_for_module(caplog.records, [EvalRun.__module__])
 
     @pytest.mark.azuretest
-    @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
-    def test_logging_metrics(self, caplog, project_scope, azure_management_client, tracking_uri):
+    def test_logging_metrics(self, caplog, project_scope, azure_management_client):
         """Test logging metrics."""
         logger = logging.getLogger(EvalRun.__module__)
         # All loggers, having promptflow. prefix will have "promptflow" logger
@@ -94,7 +91,7 @@ class TestMetricsUpload(object):
         logger.parent = logging.root
         with EvalRun(
             run_name="test",
-            tracking_uri=tracking_uri,
+            tracking_uri=_get_tracking_uri(azure_management_client, project_scope),
             subscription_id=project_scope["subscription_id"],
             group_name=project_scope["resource_group_name"],
             workspace_name=project_scope["project_name"],
@@ -114,8 +111,7 @@ class TestMetricsUpload(object):
         self._assert_no_errors_for_module(caplog.records, EvalRun.__module__)
 
     @pytest.mark.azuretest
-    @pytest.mark.skipif(not is_live(), reason="This test fails in CI and needs to be investigate. See bug: 3415807")
-    def test_log_artifact(self, project_scope, azure_management_client, tracking_uri, caplog, tmp_path):
+    def test_log_artifact(self, project_scope, azure_management_client, caplog, tmp_path):
         """Test uploading artifact to the service."""
         logger = logging.getLogger(EvalRun.__module__)
         # All loggers, having promptflow. prefix will have "promptflow" logger
@@ -124,7 +120,7 @@ class TestMetricsUpload(object):
         logger.parent = logging.root
         with EvalRun(
             run_name="test",
-            tracking_uri=tracking_uri,
+            tracking_uri=_get_tracking_uri(azure_management_client, project_scope),
             subscription_id=project_scope["subscription_id"],
             group_name=project_scope["resource_group_name"],
             workspace_name=project_scope["project_name"],
@@ -149,7 +145,6 @@ class TestMetricsUpload(object):
         self._assert_no_errors_for_module(caplog.records, EvalRun.__module__)
 
     @pytest.mark.performance_test
-    @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
     def test_e2e_run_target_fn(self, caplog, project_scope, questions_answers_file, monkeypatch):
         """Test evaluation run logging."""
         # Afer re-recording this test, please make sure, that the cassette contains the POST
@@ -182,7 +177,6 @@ class TestMetricsUpload(object):
         self._assert_no_errors_for_module(caplog.records, (ev_utils.__name__, EvalRun.__module__))
 
     @pytest.mark.performance_test
-    @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
     def test_e2e_run(self, caplog, project_scope, questions_answers_file, monkeypatch):
         """Test evaluation run logging."""
         # Afer re-recording this test, please make sure, that the cassette contains the POST
