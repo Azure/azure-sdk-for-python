@@ -4186,10 +4186,6 @@
                 "format": "int32",
                 "maximum": 600,
                 "minimum": 10
-              },
-              "Azure-AsyncOperation": {
-                "description": "URI to poll for asynchronous operation status.",
-                "type": "string"
               }
             }
           },
