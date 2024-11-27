@@ -23,7 +23,7 @@ def get_imports_from_recipe(recipe_file: str) -> List[str]:
 
     store_lines = False
     for line in content:
-        if store_lines == True and not line.strip():
+        if store_lines == True and not line.strip() or "requires" in line:
             store_lines = False
 
         if "imports" in line:
@@ -72,7 +72,7 @@ if __name__ == "__main__":
 
         imports = get_imports_from_recipe(recipe_file)
 
-        install_result = subprocess.run(["conda", "install", "-n", conda_env_name, "-c", conda_channel, recipe_name, "-y"], check=False, capture_output=True)
+        install_result = subprocess.run(["conda", "install", "-n", conda_env_name, "-c", conda_channel, "-c", "conda-forge", recipe_name, "-y"], check=False, capture_output=True)
         if install_result.returncode != 0:
             print(f"Failed to install package {recipe_name}")
             print(install_result.stdout.decode("utf-8"))
