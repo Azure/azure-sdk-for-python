@@ -698,7 +698,7 @@ class TableClient(TablesBaseClient):
         self,
         operations: Iterable[TransactionOperationType],
         **kwargs,
-    ) -> List[EntityType]:
+    ) -> List[Mapping[str, Any]]:
         """Commits a list of operations as a single transaction.
 
         If any one of these operations fails, the entire transaction will be rejected.

@@ -3,11 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Optional
+from typing import Optional, Callable, Any
 from azure.core.exceptions import HttpResponseError
 from azure.core.async_paging import AsyncPageIterator
 
 from .._models import TableItem, _extract_continuation_token, _return_context_and_deserialized
+from .._decoder import TableEntityDecoder
 from .._error import _process_table_error
 from .._constants import NEXT_PARTITION_KEY, NEXT_TABLE_NAME, NEXT_ROW_KEY
 
@@ -67,7 +68,14 @@ class TableEntityPropertiesPaged(AsyncPageIterator):
     continuation_token: Optional[str]
     """The continuation token needed by get_next()."""
 
-    def __init__(self, command, table, *, decoder, **kwargs):
+    def __init__(
+        self,
+        command: Callable,
+        table: str,
+        *,
+        decoder: TableEntityDecoder,
+        **kwargs: Any,
+    ) -> None:
         super(TableEntityPropertiesPaged, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,
@@ -81,7 +89,7 @@ class TableEntityPropertiesPaged(AsyncPageIterator):
         self.results_per_page = kwargs.get("results_per_page")
         self.filter = kwargs.get("filter")
         self.select = kwargs.get("select")
-        self.decoder = kwargs.get("decoder")
+        self._decoder = decoder
 
     async def _get_next_cb(self, continuation_token, **kwargs):
         next_partition_key, next_row_key = _extract_continuation_token(continuation_token)
@@ -101,7 +109,7 @@ class TableEntityPropertiesPaged(AsyncPageIterator):
 
     async def _extract_data_cb(self, get_next_return):
         self._location_mode, self._response, self._headers = get_next_return
-        props_list = [self.decoder(t) for t in self._response.value]
+        props_list = [self._decoder(t) for t in self._response.value]
         next_entity = {}
         if self._headers[NEXT_PARTITION_KEY] or self._headers[NEXT_ROW_KEY]:
             next_entity = {

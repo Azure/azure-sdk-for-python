@@ -149,7 +149,7 @@ class TableEntityDecoder():
         return deserialize_iso(value)
 
 
-    def from_entity_guid(self, value):
+    def from_entity_guid(self, value: str) -> UUID:
         return UUID(value)
 
 

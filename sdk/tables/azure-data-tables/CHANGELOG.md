@@ -3,7 +3,7 @@
 ## 12.7.0b1 (Unreleased)
 
 ### Features Added
-* Added to support custom type encoding in entity CRUD operations.
+* Added to support customized encoding and decoding in entity CRUD operations.
 * Added to support Entity property in Tuple and Enum types.
 * Added to support flatten Entity metadata in entity deserialization by passing kwarg `flatten_result_entity` when creating clients.
 
