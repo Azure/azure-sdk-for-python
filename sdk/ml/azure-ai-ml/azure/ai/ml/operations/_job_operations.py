@@ -543,7 +543,8 @@ class JobOperations(_ScopeDependentOperations):
         job: Job,
         *,
         raise_on_failure: bool = False,
-        **kwargs: Any,  # pylint:disable=unused-argument
+        # pylint:disable=unused-argument
+        **kwargs: Any,
     ) -> ValidationResult:
         """Implementation of validate.
 
