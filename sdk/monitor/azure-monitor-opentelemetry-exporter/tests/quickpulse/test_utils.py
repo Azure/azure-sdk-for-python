@@ -9,6 +9,7 @@ from opentelemetry.sdk.metrics.export import HistogramDataPoint, NumberDataPoint
 from opentelemetry.semconv.trace import SpanAttributes
 from opentelemetry.trace import SpanKind
 
+
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _COMMITTED_BYTES_NAME,
     _QUICKPULSE_PROJECTION_MAX_VALUE,
