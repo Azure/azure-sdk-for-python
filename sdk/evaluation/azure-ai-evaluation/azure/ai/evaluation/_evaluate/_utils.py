@@ -7,7 +7,7 @@ import os
 import re
 import tempfile
 from pathlib import Path
-from typing import Any, Dict, NamedTuple, Optional, Tuple, Union
+from typing import Any, Dict, NamedTuple, Optional, Union, cast
 import uuid
 import base64
 
@@ -60,7 +60,7 @@ def extract_workspace_triad_from_trace_provider(  # pylint: disable=name-too-lon
             category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.UNKNOWN,
         )
-    
+
     subscription_id = match.group(1)
     resource_group_name = match.group(3)
     workspace_name = match.group(5)
@@ -146,14 +146,14 @@ def _log_metrics_and_instance_results(
         logger=LOGGER,
         # let the client automatically determine the credentials to use
     )
-    tracking_uri = management_client.workspace_get_flow_tracking_url(ws_triad.workspace_name)
+    tracking_uri = management_client.workspace_get_info(ws_triad.workspace_name).ml_flow_tracking_uri
 
     # Adding line_number as index column this is needed by UI to form link to individual instance run
     instance_results["line_number"] = instance_results.index.values
 
     with EvalRun(
         run_name=run.name if run is not None else evaluation_name,
-        tracking_uri=tracking_uri,
+        tracking_uri=cast(str, tracking_uri),
         subscription_id=ws_triad.subscription_id,
         group_name=ws_triad.resource_group_name,
         workspace_name=ws_triad.workspace_name,

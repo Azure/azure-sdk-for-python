@@ -92,7 +92,8 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
     :param workspace_name: The name of workspace/project used to track run.
     :type workspace_name: str
     :param management_client: The trace destination string to parse the AI ML workspace blob store from.
-    :type management_client: ~azure.ai.evaluation._promptflow.azure._lite_azure_management_client.LiteAzureManagementClient
+    :type management_client: 
+        ~azure.ai.evaluation._promptflow.azure._lite_azure_management_client.LiteAzureManagementClient
     :param promptflow_run: The promptflow run used by the
     :type promptflow_run: Optional[promptflow._sdk.entities.Run]
     """

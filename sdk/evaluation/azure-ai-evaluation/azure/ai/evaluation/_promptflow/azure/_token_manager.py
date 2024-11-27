@@ -8,8 +8,7 @@ import inspect
 from typing import cast, Optional, Union
 
 from azure.core.credentials import TokenCredential, AccessToken
-from azure.identity import (
-    AzureCliCredential, 
+from azure.identity import (AzureCliCredential,
     DefaultAzureCredential,
     ManagedIdentityCredential
 )
@@ -38,7 +37,11 @@ class AzureManagementAPITokenManager(APITokenManager):
         self.token_expiry_time: Optional[int] = None
 
     def get_aad_credential(self) -> Union[DefaultAzureCredential, ManagedIdentityCredential]:
-        """Get the Azure credentials to use for the management APIs."""
+        """Get the Azure credentials to use for the management APIs.
+
+        :return: Azure credentials
+        :rtype: DefaultAzureCredential or ManagedIdentityCredential
+        """
         # Adds some of the additional types credentials that the previous Azure AI ML code used
         # These may or may not be needed but kept here for backwards compatibility
 
@@ -98,7 +101,7 @@ class AzureManagementAPITokenManager(APITokenManager):
             self._update_token(access_token)
 
         return cast(str, self.token) # check for none is hidden in the _token_needs_update method
-    
+
     def _token_needs_update(self) -> bool:
         current_time = time.time()
         return (
@@ -114,4 +117,3 @@ class AzureManagementAPITokenManager(APITokenManager):
         self.token_expiry_time = access_token.expires_on
         self.last_refresh_time = time.time()
         self.logger.info("Refreshed Azure management token.")
-
