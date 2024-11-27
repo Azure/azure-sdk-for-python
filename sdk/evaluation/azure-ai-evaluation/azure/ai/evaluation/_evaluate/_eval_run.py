@@ -22,6 +22,7 @@ from azure.ai.evaluation._version import VERSION
 from azure.core.pipeline.policies import RetryPolicy
 from azure.core.rest import HttpResponse
 from azure.core.exceptions import HttpResponseError
+from azure.storage.blob import BlobServiceClient
 from azure.ai.evaluation._promptflow.azure._lite_azure_management_client import LiteAzureManagementClient
 
 LOGGER = logging.getLogger(__name__)
