@@ -22,6 +22,8 @@ from devtools_testutils import (
     EnvironmentVariableLoader,
     recorded_by_proxy,
 )
+from azure.ai.projects._configuration import AIProjectClientConfiguration
+from azure.ai.projects.operations._patch import AgentsOperations
 from azure.ai.projects.models import (
     CodeInterpreterTool,
     CodeInterpreterToolResource,
@@ -928,6 +930,89 @@ class TestagentClient(AzureRecordedTestCase):
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
         client.close()
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_create_parallel_tool_thread_true(self, **kwargs):
+        """Test creation of parallel runs."""
+        self._do_test_create_parallel_thread_runs(True, True, **kwargs)
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_create_parallel_tool_thread_false(self, **kwargs):
+        """Test creation of parallel runs."""
+        self._do_test_create_parallel_thread_runs(False, True, **kwargs)
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_create_parallel_tool_run_true(self, **kwargs):
+        """Test creation of parallel runs."""
+        self._do_test_create_parallel_thread_runs(True, False, **kwargs)
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_create_parallel_tool_run_false(self, **kwargs):
+        """Test creation of parallel runs."""
+        self._do_test_create_parallel_thread_runs(False, False, **kwargs)
+
+    def _wait_for_run(self, client, run, timeout=1):
+        """Wait while run will get to terminal state."""
+        while run.status in [RunStatus.QUEUED, RunStatus.IN_PROGRESS, RunStatus.REQUIRES_ACTION]:
+            time.sleep(timeout)
+            run = client.agents.get_run(thread_id=run.thread_id, run_id=run.id)
+        return run
+
+    def _do_test_create_parallel_thread_runs(self, use_parallel_runs, create_thread_run, **kwargs):
+        """Test creation of parallel runs."""
+        
+        # create client
+        client = self.create_client(
+            **kwargs,
+        ) 
+        assert isinstance(client, AIProjectClient)
+
+        # Initialize agent tools
+        functions = FunctionTool(functions=user_functions)
+        code_interpreter = CodeInterpreterTool()
+
+        toolset = ToolSet()
+        toolset.add(functions)
+        toolset.add(code_interpreter)
+        agent = client.agents.create_agent(
+            model="gpt-4",
+            name="my-agent",
+            instructions="You are helpful agent",
+            toolset=toolset,
+        )
+        assert agent.id
+        
+        message = ThreadMessageOptions(
+            role="user",
+            content="Hello, what time is it?",
+        )
+        
+        if create_thread_run:
+            run = client.agents.create_thread_and_run(
+                assistant_id=agent.id,
+                parallel_tool_calls=use_parallel_runs,
+            )
+            run = self._wait_for_run(client, run)
+        else:
+            thread = client.agents.create_thread(messages=[message])
+            assert thread.id
+    
+            run = client.agents.create_and_process_run(
+                thread_id=thread.id, assistant_id=agent.id,
+                parallel_tool_calls=use_parallel_runs,
+            )
+        assert run.id
+        assert run.status == RunStatus.COMPLETED, run.last_error.message
+        assert run.parallel_tool_calls == use_parallel_runs
+
+        assert client.agents.delete_agent(agent.id).deleted, "The agent was not deleted"
+        messages = client.agents.list_messages(thread_id=run.thread_id)
+        assert len(messages.data), "The data from the agent was not received."
+        
 
     """
     # DISABLED: rewrite to ensure run is not complete when cancel_run is called

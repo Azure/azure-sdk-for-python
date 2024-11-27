@@ -20,6 +20,8 @@ if not load_dotenv(find_dotenv(filename="azure_ai_projects_tests.env"), override
 
 
 def pytest_collection_modifyitems(items):
+    if os.environ.get('AZURE_TEST_RUN_LIVE') == 'true':
+        return
     for item in items:
         if "tests\\agents" in item.fspath.strpath or "tests/agents" in item.fspath.strpath:
             item.add_marker(
