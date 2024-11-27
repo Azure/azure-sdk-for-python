@@ -207,6 +207,8 @@ def validate_pipeline_input_key_characters(key: str) -> None:
     # so a valid pipeline key is: ^{single_key}([.]{single_key})*$
     if re.match(IOConstants.VALID_KEY_PATTERN, key) is None:
         msg = "Pipeline input key name {} must be composed letters, numbers, and underscores with optional split by dots."
+            "Pipeline input key name {} must be composed letters, numbers, and underscores with optional "
+            "split by dots."
         raise ValidationException(
             message=msg.format(key),
             no_personal_data_message=msg.format("[key]"),
@@ -259,7 +261,7 @@ def to_rest_dataset_literal_inputs(
                     if input_value.type in target_cls_dict:
                         input_data = target_cls_dict[input_value.type](
                             uri=input_value.path,
-                            mode=(
+                            mode=(INPUT_MOUNT_MAPPING_TO_REST[input_value.mode.lower()] if input_value.mode else None),
                                 INPUT_MOUNT_MAPPING_TO_REST[input_value.mode.lower()]
                                 if input_value.mode
                                 else None
@@ -326,7 +328,7 @@ def from_rest_inputs_to_dataset_literal(inputs: Dict[str, RestJobInput]) -> Dict
                 input_data = Input(
                     type=type_transfer_dict[input_value.job_input_type],
                     path=path,
-                    mode=(
+                    mode=(INPUT_MOUNT_MAPPING_FROM_REST[input_value.mode] if input_value.mode else None),
                         INPUT_MOUNT_MAPPING_FROM_REST[input_value.mode]
                         if input_value.mode
                         else None
@@ -377,7 +379,7 @@ def to_rest_data_outputs(outputs: Optional[Dict]) -> Dict[str, RestJobOutput]:
                         asset_name=output_value.name,
                         asset_version=output_value.version,
                         uri=output_value.path,
-                        mode=(
+                        mode=(OUTPUT_MOUNT_MAPPING_TO_REST[output_value.mode.lower()] if output_value.mode else None),
                             OUTPUT_MOUNT_MAPPING_TO_REST[output_value.mode.lower()]
                             if output_value.mode
                             else None
@@ -424,7 +426,7 @@ def from_rest_data_outputs(outputs: Dict[str, RestJobOutput]) -> Dict[str, Outpu
             from_rest_outputs[output_name] = Output(
                 type=output_type_mapping[output_value.job_output_type],
                 path=output_value.uri,
-                mode=(
+                mode=(OUTPUT_MOUNT_MAPPING_FROM_REST[output_value.mode] if output_value.mode else None),
                     OUTPUT_MOUNT_MAPPING_FROM_REST[output_value.mode] if output_value.mode else None
                 ),
                 path_on_compute=sourcePathOnCompute,

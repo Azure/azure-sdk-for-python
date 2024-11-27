@@ -6,14 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models import (
-    RoomParticipant,
-    ParticipantRole,
-    CommunicationRoom
-)
+from ._models import RoomParticipant, ParticipantRole, CommunicationRoom
 
-__all__ = [
-    "RoomParticipant",
-    "ParticipantRole",
-    "CommunicationRoom"
-]
+__all__ = ["RoomParticipant", "ParticipantRole", "CommunicationRoom"]

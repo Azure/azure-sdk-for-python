@@ -633,7 +633,7 @@ class MLClient:
         self._code = CodeOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
             self._operation_config,
-            (
+            (self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023),
                 self._service_client_10_2021_dataplanepreview
                 if registry_name
                 else self._service_client_04_2023
@@ -645,7 +645,7 @@ class MLClient:
         self._environments = EnvironmentOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
             self._operation_config,
-            (
+            (self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview),
                 self._service_client_10_2021_dataplanepreview
                 if registry_name
                 else self._service_client_04_2023_preview
@@ -707,7 +707,7 @@ class MLClient:
         self._data = DataOperations(
             self._operation_scope,
             self._operation_config,
-            (
+            (self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview),
                 self._service_client_10_2021_dataplanepreview
                 if registry_name
                 else self._service_client_04_2023_preview
@@ -722,7 +722,7 @@ class MLClient:
         self._components = ComponentOperations(
             self._operation_scope,
             self._operation_config,
-            (
+            (self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_01_2024_preview),
                 self._service_client_10_2021_dataplanepreview
                 if registry_name
                 else self._service_client_01_2024_preview

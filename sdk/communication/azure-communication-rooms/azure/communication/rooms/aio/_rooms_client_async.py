@@ -12,10 +12,7 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
-from azure.communication.rooms._models import (
-    RoomParticipant,
-    CommunicationRoom
-)
+from azure.communication.rooms._models import RoomParticipant, CommunicationRoom
 from azure.communication.rooms._shared.models import CommunicationIdentifier
 from .._generated.aio._client import AzureCommunicationRoomsService
 from .._generated._serialization import Serializer
@@ -39,21 +36,16 @@ class RoomsClient(object):
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
-    def __init__(
-            self,
-            endpoint: str,
-            credential: Union[AsyncTokenCredential, AzureKeyCredential],
-            **kwargs
-    ) -> None:
+
+    def __init__(self, endpoint: str, credential: Union[AsyncTokenCredential, AzureKeyCredential], **kwargs) -> None:
         try:
-            if not endpoint.lower().startswith('http'):
+            if not endpoint.lower().startswith("http"):
                 endpoint = "https://" + endpoint
         except AttributeError as exc:
             raise ValueError("Account URL must be a string.") from exc
 
         if not credential:
-            raise ValueError(
-                "invalid credential from connection string.")
+            raise ValueError("invalid credential from connection string.")
 
         if endpoint.endswith("/"):
             endpoint = endpoint[:-1]
@@ -66,12 +58,11 @@ class RoomsClient(object):
             api_version=self._api_version,
             authentication_policy=self._authentication_policy,
             sdk_moniker=SDK_MONIKER,
-            **kwargs)
+            **kwargs
+        )
 
     @classmethod
-    def from_connection_string(cls, conn_str: str,
-        **kwargs
-    ) -> 'RoomsClient':
+    def from_connection_string(cls, conn_str: str, **kwargs) -> "RoomsClient":
         """Create RoomsClient from a Connection String.
 
         :param str conn_str:
@@ -99,7 +90,7 @@ class RoomsClient(object):
         valid_from: Optional[datetime] = None,
         valid_until: Optional[datetime] = None,
         pstn_dial_out_enabled: bool = False,
-        participants:Optional[List[RoomParticipant]] = None,
+        participants: Optional[List[RoomParticipant]] = None,
         **kwargs
     ) -> CommunicationRoom:
         """Create a new room.
@@ -124,28 +115,22 @@ class RoomsClient(object):
             }
         _SERIALIZER = Serializer()
 
-        repeatability_request_id =  str(uuid.uuid1())
+        repeatability_request_id = str(uuid.uuid1())
         repeatability_first_sent = Serializer().serialize_data(datetime.utcnow(), "rfc-1123")
 
         request_headers = kwargs.pop("headers", {})
-        request_headers.update({
-            "Repeatability-Request-Id": repeatability_request_id,
-            "Repeatability-First-Sent": repeatability_first_sent
-        })
+        request_headers.update(
+            {"Repeatability-Request-Id": repeatability_request_id, "Repeatability-First-Sent": repeatability_first_sent}
+        )
 
         create_room_response = await self._rooms_service_client.rooms.create(
-            create_room_request=create_room_request,
-            headers = request_headers,
-            **kwargs)
+            create_room_request=create_room_request, headers=request_headers, **kwargs
+        )
 
         return CommunicationRoom(create_room_response)
 
     @distributed_trace_async
-    async def delete_room(
-        self,
-        room_id: str,
-        **kwargs
-    ) -> None:
+    async def delete_room(self, room_id: str, **kwargs) -> None:
         """Delete room.
 
         :param room_id: Required. Id of room to be deleted
@@ -181,18 +166,15 @@ class RoomsClient(object):
         update_room_request = {
             "validFrom": valid_from,
             "validUntil": valid_until,
-             "pstnDialOutEnabled": pstn_dial_out_enabled
+            "pstnDialOutEnabled": pstn_dial_out_enabled,
         }
         update_room_response = await self._rooms_service_client.rooms.update(
-            room_id=room_id, update_room_request=update_room_request, **kwargs)
+            room_id=room_id, update_room_request=update_room_request, **kwargs
+        )
         return CommunicationRoom(update_room_response)
 
     @distributed_trace_async
-    async def get_room(
-        self,
-        room_id: str,
-        **kwargs
-    ) -> CommunicationRoom:
+    async def get_room(self, room_id: str, **kwargs) -> CommunicationRoom:
         """Get a valid room
 
         :param room_id: Required. Id of room to be fetched
@@ -205,30 +187,17 @@ class RoomsClient(object):
         return CommunicationRoom(get_room_response)
 
     @distributed_trace
-    def list_rooms(
-        self,
-        **kwargs
-    ) -> AsyncItemPaged[CommunicationRoom]:
+    def list_rooms(self, **kwargs) -> AsyncItemPaged[CommunicationRoom]:
         """List all rooms
 
         :returns: An iterator like instance of CommunicationRoom.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.rooms.CommunicationRoom]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        return self._rooms_service_client.rooms.list(
-            cls=lambda rooms: [CommunicationRoom(r) for r in rooms],
-            **kwargs
-        )
-
+        return self._rooms_service_client.rooms.list(cls=lambda rooms: [CommunicationRoom(r) for r in rooms], **kwargs)
 
     @distributed_trace_async
-    async def add_or_update_participants(
-        self,
-        *,
-        room_id: str,
-        participants: List[RoomParticipant],
-        **kwargs
-    ) -> None:
+    async def add_or_update_participants(self, *, room_id: str, participants: List[RoomParticipant], **kwargs) -> None:
         """Update participants to a room. It looks for the room participants based on their
         communication identifier and replace those participants with the value passed in
         this API.
@@ -244,15 +213,12 @@ class RoomsClient(object):
             "participants": {p.communication_identifier.raw_id: {"role": p.role} for p in participants}
         }
         await self._rooms_service_client.participants.update(
-            room_id=room_id, update_participants_request=update_participants_request, **kwargs)
+            room_id=room_id, update_participants_request=update_participants_request, **kwargs
+        )
 
     @distributed_trace_async
     async def remove_participants(
-        self,
-        *,
-        room_id: str,
-        participants: List[Union[RoomParticipant, CommunicationIdentifier]],
-        **kwargs
+        self, *, room_id: str, participants: List[Union[RoomParticipant, CommunicationIdentifier]], **kwargs
     ) -> None:
         """Remove participants from a room
 
@@ -263,23 +229,18 @@ class RoomsClient(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
-        remove_participants_request = {
-            "participants": {}
-        }
+        remove_participants_request = {"participants": {}}
         for participant in participants:
             try:
                 remove_participants_request["participants"][participant.communication_identifier.raw_id] = None
             except AttributeError:
                 remove_participants_request["participants"][participant.raw_id] = None
         await self._rooms_service_client.participants.update(
-            room_id=room_id, update_participants_request=remove_participants_request, **kwargs)
+            room_id=room_id, update_participants_request=remove_participants_request, **kwargs
+        )
 
     @distributed_trace
-    def list_participants(
-        self,
-        room_id: str,
-        **kwargs
-    ) -> AsyncItemPaged[RoomParticipant]:
+    def list_participants(self, room_id: str, **kwargs) -> AsyncItemPaged[RoomParticipant]:
         """Get participants of a room
 
         :param room_id: Required. Id of room whose participants to be fetched.
@@ -289,9 +250,7 @@ class RoomsClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._rooms_service_client.participants.list(
-            room_id=room_id,
-            cls=lambda objs: [RoomParticipant(x) for x in objs],
-            **kwargs
+            room_id=room_id, cls=lambda objs: [RoomParticipant(x) for x in objs], **kwargs
         )
 
     async def __aenter__(self) -> "RoomsClient":

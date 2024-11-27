@@ -5,10 +5,10 @@
 
 from typing import Any, Dict, Optional
 
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._schema.workspace import ProjectSchema
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import WorkspaceKind
-from azure.ai.ml.entities import Workspace
+from azure.ai.ml.entities._workspace.workspace import Workspace
 
 
 # Effectively a lightweight wrapper around a v2 SDK workspace

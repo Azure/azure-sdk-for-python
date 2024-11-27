@@ -27,6 +27,7 @@ import pytest
 
 from devtools_testutils import add_body_key_sanitizer
 
+
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     # Two sanitizers for chatMessageId because it can be either top-level or nested in bodies

@@ -133,6 +133,11 @@ from azure.ai.ml._utils.utils import (
     is_url,
 )
 
+from ._job_ops_helper import (
+    get_git_properties,
+    get_job_output_uris_from_dataplane,
+    stream_logs_until_completion,
+)
 
 try:
     pass
@@ -546,7 +551,8 @@ class JobOperations(_ScopeDependentOperations):
         job: Job,
         *,
         raise_on_failure: bool = False,
-        **kwargs: Any,  # pylint:disable=unused-argument
+        # pylint:disable=unused-argument
+        **kwargs: Any,
     ) -> ValidationResult:
         """Implementation of validate.
 

@@ -77,6 +77,50 @@ async def read_change_feed_with_start_time(container, start_time):
 
     print('\nFinished reading all the change feed from start time of {}\n'.format(time))
 
+async def read_change_feed_with_continuation(container, continuation):
+    print('\nReading change feed from continuation\n')
+
+    # You can read change feed from a specific continuation token.
+    # You must pass in a valid continuation token.
+    response = container.query_items_change_feed(continuation=continuation)
+    async for doc in response:
+        print(doc)
+
+    print('\nFinished reading all the change feed from continuation\n')
+
+async def delete_all_items(container):
+    print('\nDeleting all item\n')
+
+    async for item in container.query_items(query='SELECT * FROM c'):
+        # Deleting the current item
+        await container.delete_item(item, partition_key=item['address']['state'])
+
+    print('Deleted all items')
+
+async def read_change_feed_with_all_versions_and_delete_mode(container):
+    change_feed_mode = "AllVersionsAndDeletes"
+    print("\nReading change feed with 'AllVersionsAndDeletes' mode.\n")
+
+    # You can read change feed with a specific change feed mode.
+    # You must pass in a valid change feed mode: ["LatestVersion", "AllVersionsAndDeletes"].
+    response = container.query_items_change_feed(mode=change_feed_mode)
+    async for doc in response:
+        print(doc)
+
+    print("\nFinished reading all the change feed with 'AllVersionsAndDeletes' mode.\n")
+
+async def read_change_feed_with_all_versions_and_delete_mode_from_continuation(container, continuation):
+    change_feed_mode = "AllVersionsAndDeletes"
+    print("\nReading change feed with 'AllVersionsAndDeletes' mode.\n")
+
+    # You can read change feed with a specific change feed mode from a specific continuation token.
+    # You must pass in a valid change feed mode: ["LatestVersion", "AllVersionsAndDeletes"].
+    # You must pass in a valid continuation token.
+    response = container.query_items_change_feed(mode=change_feed_mode, continuation=continuation)
+    async for doc in response:
+        print(doc)
+
+    print("\nFinished reading all the change feed with 'AllVersionsAndDeletes' mode.\n")
 
 async def run_sample():
     async with CosmosClient(HOST, MASTER_KEY) as client:
@@ -108,6 +152,17 @@ async def run_sample():
             await read_change_feed(container)
             # Read Change Feed from timestamp
             await read_change_feed_with_start_time(container, timestamp)
+            # Delete all items from container
+            await delete_all_items(container)
+            # Read change feed with 'AllVersionsAndDeletes' mode
+            await read_change_feed_with_all_versions_and_delete_mode(container)
+            continuation_token = container.client_connection.last_response_headers['etag']
+            # Read change feed with 'AllVersionsAndDeletes' mode after create item
+            await create_items(container, 10)
+            await read_change_feed_with_all_versions_and_delete_mode_from_continuation(container, continuation_token)
+            # Read change feed with 'AllVersionsAndDeletes' mode after create/delete item
+            await delete_all_items(container)
+            await read_change_feed_with_all_versions_and_delete_mode_from_continuation(container, continuation_token)
 
             # cleanup database after sample
             try:

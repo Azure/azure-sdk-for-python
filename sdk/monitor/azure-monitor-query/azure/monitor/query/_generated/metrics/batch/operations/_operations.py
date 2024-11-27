@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +8,7 @@
 import datetime
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -29,7 +28,7 @@ from .._serialization import Serializer
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -133,7 +132,6 @@ class MetricsBatchOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
-        # pylint: disable=line-too-long
         """Lists the metric values for multiple resources.
 
         :param subscription_id: The subscription identifier for the resources in this batch. Required.
@@ -171,13 +169,13 @@ class MetricsBatchOperations:
         :paramtype orderby: str
         :keyword filter: The filter is used to reduce the set of metric data
          returned.:code:`<br>`Example::code:`<br>`Metric contains metadata A, B and C.:code:`<br>`-
-         Return all time series of C where A = a1 and B = b1 or b2:code:`<br>`\ **filter=A eq ‘a1’ and B
-         eq ‘b1’ or B eq ‘b2’ and C eq ‘*’**\ :code:`<br>`- Invalid variant::code:`<br>`\ **filter=A eq
-         ‘a1’ and B eq ‘b1’ and C eq ‘*’ or B = ‘b2’**\ :code:`<br>`This is invalid because the logical
-         or operator cannot separate two different metadata names.:code:`<br>`- Return all time series
-         where A = a1, B = b1 and C = c1::code:`<br>`\ **filter=A eq ‘a1’ and B eq ‘b1’ and C eq ‘c1’**\
-         :code:`<br>`- Return all time series where A = a1:code:`<br>`\ **filter=A eq ‘a1’ and B eq ‘\
-         *’ and C eq ‘*\ ’**. Default value is None.
+         Return all time series of C where A = a1 and B = b1 or b2:code:`<br>`\\ **filter=A eq ‘a1’ and
+         B eq ‘b1’ or B eq ‘b2’ and C eq ‘*’**\\ :code:`<br>`- Invalid variant::code:`<br>`\\ **filter=A
+         eq ‘a1’ and B eq ‘b1’ and C eq ‘*’ or B = ‘b2’**\\ :code:`<br>`This is invalid because the
+         logical or operator cannot separate two different metadata names.:code:`<br>`- Return all time
+         series where A = a1, B = b1 and C = c1::code:`<br>`\\ **filter=A eq ‘a1’ and B eq ‘b1’ and C eq
+         ‘c1’**\\ :code:`<br>`- Return all time series where A = a1:code:`<br>`\\ **filter=A eq ‘a1’ and
+         B eq ‘\\ *’ and C eq ‘*\\ ’**. Default value is None.
         :paramtype filter: str
         :keyword rollupby: Dimension name(s) to rollup results by. For example if you only want to see
          metric values with a filter like 'City eq Seattle or City eq Tacoma' but don't want to see
@@ -197,7 +195,7 @@ class MetricsBatchOperations:
                 # JSON input template you can fill out and use as your body input.
                 batch_request = {
                     "resourceids": [
-                        "str"  # Optional. The list of resource IDs to query metrics for.
+                        "str"
                     ]
                 }
 
@@ -205,85 +203,54 @@ class MetricsBatchOperations:
                 response == {
                     "values": [
                         {
-                            "endtime": "str",  # The end time, in datetime format, for
-                              which the data was retrieved. Required.
-                            "starttime": "str",  # The start time, in datetime format,
-                              for which the data was retrieved. Required.
+                            "endtime": "str",
+                            "starttime": "str",
                             "value": [
                                 {
-                                    "id": "str",  # The metric Id. Required.
+                                    "id": "str",
                                     "name": {
-                                        "value": "str",  # The invariant
-                                          value. Required.
-                                        "localizedValue": "str"  # Optional.
-                                          The display name.
+                                        "value": "str",
+                                        "localizedValue": "str"
                                     },
                                     "timeseries": [
                                         {
                                             "data": [
                                                 {
                                                     "timeStamp":
-                                                      "2020-02-20 00:00:00",  # The timestamp for the
-                                                      metric value in ISO 8601 format. Required.
+                                                      "2020-02-20 00:00:00",
                                                     "average":
-                                                      0.0,  # Optional. The average value in the time
-                                                      range.
+                                                      0.0,
                                                     "count": 0.0,
-                                                      # Optional. The number of samples in the time
-                                                      range. Can be used to determine the number of
-                                                      values that contributed to the average value.
                                                     "maximum":
-                                                      0.0,  # Optional. The greatest value in the time
-                                                      range.
+                                                      0.0,
                                                     "minimum":
-                                                      0.0,  # Optional. The least value in the time
-                                                      range.
+                                                      0.0,
                                                     "total": 0.0
-                                                      # Optional. The sum of all of the values in the
-                                                      time range.
                                                 }
                                             ],
                                             "metadatavalues": [
                                                 {
                                                     "name": {
-                "value": "str",  # The invariant value.
-                                                          Required.
-                "localizedValue": "str"  # Optional. The
-                                                          display name.
+                "value": "str",
+                "localizedValue": "str"
                                                     },
                                                     "value":
-                                                      "str"  # Optional. The value of the metadata.
+                                                      "str"
                                                 }
                                             ]
                                         }
                                     ],
-                                    "type": "str",  # The resource type of the
-                                      metric resource. Required.
-                                    "unit": "str",  # The unit of the metric.
-                                      Required. Known values are: "Count", "Bytes", "Seconds",
-                                      "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds",
-                                      "ByteSeconds", "Unspecified", "Cores", "MilliCores", "NanoCores",
-                                      and "BitsPerSecond".
-                                    "displayDescription": "str",  # Optional.
-                                      Detailed description of this metric.
-                                    "errorCode": "str",  # Optional. 'Success' or
-                                      the error details on query failures for this metric.
-                                    "errorMessage": "str"  # Optional. Error
-                                      message encountered querying this specific metric.
+                                    "type": "str",
+                                    "unit": "str",
+                                    "displayDescription": "str",
+                                    "errorCode": "str",
+                                    "errorMessage": "str"
                                 }
                             ],
-                            "interval": "str",  # Optional. The interval (window size)
-                              for which the metric data was returned in ISO 8601 duration format with a
-                              special case for 'FULL' value that returns single datapoint for entire
-                              time span requested ("" *Examples: PT15M, PT1H, P1D, FULL*"" ).  This may
-                              be adjusted and different from what was originally requested if
-                              AutoAdjustTimegrain=true is specified.
-                            "namespace": "str",  # Optional. The namespace of the metrics
-                              been queried.
-                            "resourceid": "str",  # Optional. The resource that has been
-                              queried for metrics.
-                            "resourceregion": "str"  # Optional. The region of the
-                              resource been queried for metrics.
+                            "interval": "str",
+                            "namespace": "str",
+                            "resourceid": "str",
+                            "resourceregion": "str"
                         }
                     ]
                 }
@@ -308,7 +275,6 @@ class MetricsBatchOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
-        # pylint: disable=line-too-long
         """Lists the metric values for multiple resources.
 
         :param subscription_id: The subscription identifier for the resources in this batch. Required.
@@ -346,13 +312,13 @@ class MetricsBatchOperations:
         :paramtype orderby: str
         :keyword filter: The filter is used to reduce the set of metric data
          returned.:code:`<br>`Example::code:`<br>`Metric contains metadata A, B and C.:code:`<br>`-
-         Return all time series of C where A = a1 and B = b1 or b2:code:`<br>`\ **filter=A eq ‘a1’ and B
-         eq ‘b1’ or B eq ‘b2’ and C eq ‘*’**\ :code:`<br>`- Invalid variant::code:`<br>`\ **filter=A eq
-         ‘a1’ and B eq ‘b1’ and C eq ‘*’ or B = ‘b2’**\ :code:`<br>`This is invalid because the logical
-         or operator cannot separate two different metadata names.:code:`<br>`- Return all time series
-         where A = a1, B = b1 and C = c1::code:`<br>`\ **filter=A eq ‘a1’ and B eq ‘b1’ and C eq ‘c1’**\
-         :code:`<br>`- Return all time series where A = a1:code:`<br>`\ **filter=A eq ‘a1’ and B eq ‘\
-         *’ and C eq ‘*\ ’**. Default value is None.
+         Return all time series of C where A = a1 and B = b1 or b2:code:`<br>`\\ **filter=A eq ‘a1’ and
+         B eq ‘b1’ or B eq ‘b2’ and C eq ‘*’**\\ :code:`<br>`- Invalid variant::code:`<br>`\\ **filter=A
+         eq ‘a1’ and B eq ‘b1’ and C eq ‘*’ or B = ‘b2’**\\ :code:`<br>`This is invalid because the
+         logical or operator cannot separate two different metadata names.:code:`<br>`- Return all time
+         series where A = a1, B = b1 and C = c1::code:`<br>`\\ **filter=A eq ‘a1’ and B eq ‘b1’ and C eq
+         ‘c1’**\\ :code:`<br>`- Return all time series where A = a1:code:`<br>`\\ **filter=A eq ‘a1’ and
+         B eq ‘\\ *’ and C eq ‘*\\ ’**. Default value is None.
         :paramtype filter: str
         :keyword rollupby: Dimension name(s) to rollup results by. For example if you only want to see
          metric values with a filter like 'City eq Seattle or City eq Tacoma' but don't want to see
@@ -373,85 +339,54 @@ class MetricsBatchOperations:
                 response == {
                     "values": [
                         {
-                            "endtime": "str",  # The end time, in datetime format, for
-                              which the data was retrieved. Required.
-                            "starttime": "str",  # The start time, in datetime format,
-                              for which the data was retrieved. Required.
+                            "endtime": "str",
+                            "starttime": "str",
                             "value": [
                                 {
-                                    "id": "str",  # The metric Id. Required.
+                                    "id": "str",
                                     "name": {
-                                        "value": "str",  # The invariant
-                                          value. Required.
-                                        "localizedValue": "str"  # Optional.
-                                          The display name.
+                                        "value": "str",
+                                        "localizedValue": "str"
                                     },
                                     "timeseries": [
                                         {
                                             "data": [
                                                 {
                                                     "timeStamp":
-                                                      "2020-02-20 00:00:00",  # The timestamp for the
-                                                      metric value in ISO 8601 format. Required.
+                                                      "2020-02-20 00:00:00",
                                                     "average":
-                                                      0.0,  # Optional. The average value in the time
-                                                      range.
+                                                      0.0,
                                                     "count": 0.0,
-                                                      # Optional. The number of samples in the time
-                                                      range. Can be used to determine the number of
-                                                      values that contributed to the average value.
                                                     "maximum":
-                                                      0.0,  # Optional. The greatest value in the time
-                                                      range.
+                                                      0.0,
                                                     "minimum":
-                                                      0.0,  # Optional. The least value in the time
-                                                      range.
+                                                      0.0,
                                                     "total": 0.0
-                                                      # Optional. The sum of all of the values in the
-                                                      time range.
                                                 }
                                             ],
                                             "metadatavalues": [
                                                 {
                                                     "name": {
-                "value": "str",  # The invariant value.
-                                                          Required.
-                "localizedValue": "str"  # Optional. The
-                                                          display name.
+                "value": "str",
+                "localizedValue": "str"
                                                     },
                                                     "value":
-                                                      "str"  # Optional. The value of the metadata.
+                                                      "str"
                                                 }
                                             ]
                                         }
                                     ],
-                                    "type": "str",  # The resource type of the
-                                      metric resource. Required.
-                                    "unit": "str",  # The unit of the metric.
-                                      Required. Known values are: "Count", "Bytes", "Seconds",
-                                      "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds",
-                                      "ByteSeconds", "Unspecified", "Cores", "MilliCores", "NanoCores",
-                                      and "BitsPerSecond".
-                                    "displayDescription": "str",  # Optional.
-                                      Detailed description of this metric.
-                                    "errorCode": "str",  # Optional. 'Success' or
-                                      the error details on query failures for this metric.
-                                    "errorMessage": "str"  # Optional. Error
-                                      message encountered querying this specific metric.
+                                    "type": "str",
+                                    "unit": "str",
+                                    "displayDescription": "str",
+                                    "errorCode": "str",
+                                    "errorMessage": "str"
                                 }
                             ],
-                            "interval": "str",  # Optional. The interval (window size)
-                              for which the metric data was returned in ISO 8601 duration format with a
-                              special case for 'FULL' value that returns single datapoint for entire
-                              time span requested ("" *Examples: PT15M, PT1H, P1D, FULL*"" ).  This may
-                              be adjusted and different from what was originally requested if
-                              AutoAdjustTimegrain=true is specified.
-                            "namespace": "str",  # Optional. The namespace of the metrics
-                              been queried.
-                            "resourceid": "str",  # Optional. The resource that has been
-                              queried for metrics.
-                            "resourceregion": "str"  # Optional. The region of the
-                              resource been queried for metrics.
+                            "interval": "str",
+                            "namespace": "str",
+                            "resourceid": "str",
+                            "resourceregion": "str"
                         }
                     ]
                 }
@@ -475,7 +410,6 @@ class MetricsBatchOperations:
         rollupby: Optional[str] = None,
         **kwargs: Any
     ) -> JSON:
-        # pylint: disable=line-too-long
         """Lists the metric values for multiple resources.
 
         :param subscription_id: The subscription identifier for the resources in this batch. Required.
@@ -514,13 +448,13 @@ class MetricsBatchOperations:
         :paramtype orderby: str
         :keyword filter: The filter is used to reduce the set of metric data
          returned.:code:`<br>`Example::code:`<br>`Metric contains metadata A, B and C.:code:`<br>`-
-         Return all time series of C where A = a1 and B = b1 or b2:code:`<br>`\ **filter=A eq ‘a1’ and B
-         eq ‘b1’ or B eq ‘b2’ and C eq ‘*’**\ :code:`<br>`- Invalid variant::code:`<br>`\ **filter=A eq
-         ‘a1’ and B eq ‘b1’ and C eq ‘*’ or B = ‘b2’**\ :code:`<br>`This is invalid because the logical
-         or operator cannot separate two different metadata names.:code:`<br>`- Return all time series
-         where A = a1, B = b1 and C = c1::code:`<br>`\ **filter=A eq ‘a1’ and B eq ‘b1’ and C eq ‘c1’**\
-         :code:`<br>`- Return all time series where A = a1:code:`<br>`\ **filter=A eq ‘a1’ and B eq ‘\
-         *’ and C eq ‘*\ ’**. Default value is None.
+         Return all time series of C where A = a1 and B = b1 or b2:code:`<br>`\\ **filter=A eq ‘a1’ and
+         B eq ‘b1’ or B eq ‘b2’ and C eq ‘*’**\\ :code:`<br>`- Invalid variant::code:`<br>`\\ **filter=A
+         eq ‘a1’ and B eq ‘b1’ and C eq ‘*’ or B = ‘b2’**\\ :code:`<br>`This is invalid because the
+         logical or operator cannot separate two different metadata names.:code:`<br>`- Return all time
+         series where A = a1, B = b1 and C = c1::code:`<br>`\\ **filter=A eq ‘a1’ and B eq ‘b1’ and C eq
+         ‘c1’**\\ :code:`<br>`- Return all time series where A = a1:code:`<br>`\\ **filter=A eq ‘a1’ and
+         B eq ‘\\ *’ and C eq ‘*\\ ’**. Default value is None.
         :paramtype filter: str
         :keyword rollupby: Dimension name(s) to rollup results by. For example if you only want to see
          metric values with a filter like 'City eq Seattle or City eq Tacoma' but don't want to see
@@ -537,7 +471,7 @@ class MetricsBatchOperations:
                 # JSON input template you can fill out and use as your body input.
                 batch_request = {
                     "resourceids": [
-                        "str"  # Optional. The list of resource IDs to query metrics for.
+                        "str"
                     ]
                 }
 
@@ -545,90 +479,59 @@ class MetricsBatchOperations:
                 response == {
                     "values": [
                         {
-                            "endtime": "str",  # The end time, in datetime format, for
-                              which the data was retrieved. Required.
-                            "starttime": "str",  # The start time, in datetime format,
-                              for which the data was retrieved. Required.
+                            "endtime": "str",
+                            "starttime": "str",
                             "value": [
                                 {
-                                    "id": "str",  # The metric Id. Required.
+                                    "id": "str",
                                     "name": {
-                                        "value": "str",  # The invariant
-                                          value. Required.
-                                        "localizedValue": "str"  # Optional.
-                                          The display name.
+                                        "value": "str",
+                                        "localizedValue": "str"
                                     },
                                     "timeseries": [
                                         {
                                             "data": [
                                                 {
                                                     "timeStamp":
-                                                      "2020-02-20 00:00:00",  # The timestamp for the
-                                                      metric value in ISO 8601 format. Required.
+                                                      "2020-02-20 00:00:00",
                                                     "average":
-                                                      0.0,  # Optional. The average value in the time
-                                                      range.
+                                                      0.0,
                                                     "count": 0.0,
-                                                      # Optional. The number of samples in the time
-                                                      range. Can be used to determine the number of
-                                                      values that contributed to the average value.
                                                     "maximum":
-                                                      0.0,  # Optional. The greatest value in the time
-                                                      range.
+                                                      0.0,
                                                     "minimum":
-                                                      0.0,  # Optional. The least value in the time
-                                                      range.
+                                                      0.0,
                                                     "total": 0.0
-                                                      # Optional. The sum of all of the values in the
-                                                      time range.
                                                 }
                                             ],
                                             "metadatavalues": [
                                                 {
                                                     "name": {
-                "value": "str",  # The invariant value.
-                                                          Required.
-                "localizedValue": "str"  # Optional. The
-                                                          display name.
+                "value": "str",
+                "localizedValue": "str"
                                                     },
                                                     "value":
-                                                      "str"  # Optional. The value of the metadata.
+                                                      "str"
                                                 }
                                             ]
                                         }
                                     ],
-                                    "type": "str",  # The resource type of the
-                                      metric resource. Required.
-                                    "unit": "str",  # The unit of the metric.
-                                      Required. Known values are: "Count", "Bytes", "Seconds",
-                                      "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds",
-                                      "ByteSeconds", "Unspecified", "Cores", "MilliCores", "NanoCores",
-                                      and "BitsPerSecond".
-                                    "displayDescription": "str",  # Optional.
-                                      Detailed description of this metric.
-                                    "errorCode": "str",  # Optional. 'Success' or
-                                      the error details on query failures for this metric.
-                                    "errorMessage": "str"  # Optional. Error
-                                      message encountered querying this specific metric.
+                                    "type": "str",
+                                    "unit": "str",
+                                    "displayDescription": "str",
+                                    "errorCode": "str",
+                                    "errorMessage": "str"
                                 }
                             ],
-                            "interval": "str",  # Optional. The interval (window size)
-                              for which the metric data was returned in ISO 8601 duration format with a
-                              special case for 'FULL' value that returns single datapoint for entire
-                              time span requested ("" *Examples: PT15M, PT1H, P1D, FULL*"" ).  This may
-                              be adjusted and different from what was originally requested if
-                              AutoAdjustTimegrain=true is specified.
-                            "namespace": "str",  # Optional. The namespace of the metrics
-                              been queried.
-                            "resourceid": "str",  # Optional. The resource that has been
-                              queried for metrics.
-                            "resourceregion": "str"  # Optional. The region of the
-                              resource been queried for metrics.
+                            "interval": "str",
+                            "namespace": "str",
+                            "resourceid": "str",
+                            "resourceregion": "str"
                         }
                     ]
                 }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -682,8 +585,6 @@ class MetricsBatchOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
