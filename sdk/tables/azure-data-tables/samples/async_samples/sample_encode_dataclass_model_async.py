@@ -86,7 +86,7 @@ class InsertUpdateDeleteEntity(object):
         self.account_name = os.environ["TABLES_COSMOS_ACCOUNT_NAME"]
         self.endpoint = f"{self.account_name}.table.{self.endpoint_suffix}"
         self.connection_string = f"DefaultEndpointsProtocol=https;AccountName={self.account_name};AccountKey={self.access_key};EndpointSuffix={self.endpoint_suffix}"
-        self.table_name = "CustomEncoderDataClassAsync"
+        self.table_name = "CustomEncoderDataclassModelAsync"
 
     async def create_delete_entity(self):
         table_client = TableClient.from_connection_string(

@@ -3,13 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Optional, Tuple, Mapping, Union, Dict, Callable
+from typing import Any, Optional, Mapping, Union, Dict, Callable
 from datetime import datetime, timezone
 from urllib.parse import quote
 from uuid import UUID
 
 from ._common_conversion import _decode_base64_to_bytes
-from ._constants import MAX_INT32, MIN_INT32
 from ._entity import EntityProperty, EdmType, TableEntity
 
 DecoderMapType = Dict[EdmType, Callable[[Union[str, bool, int]], Any]]
@@ -116,7 +115,7 @@ class TableEntityDecoder():
                 try:
                     convert = _ENTITY_TO_PYTHON_CONVERSIONS[mtype]
                 except KeyError as e:
-                    raise TypeError(f"Unsupported edm type: {mtype}")
+                    raise TypeError(f"Unsupported edm type: {mtype}") from e
                 if convert:
                     new_property = convert(self, value)
                 else:

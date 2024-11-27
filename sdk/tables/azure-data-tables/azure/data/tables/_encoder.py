@@ -53,7 +53,6 @@ class TableEntityEncoder():
         """
         encoded = {}
         for key, value in entity.items():
-            # breakpoint()
             if value is None:
                 edm_type = None
             else:
@@ -66,14 +65,18 @@ class TableEntityEncoder():
                     except KeyError:
                         if isinstance(value, Enum) and self.convert_map.get(Enum):
                             convert = self.convert_map[Enum]
+                        if isinstance(value, datetime) and self.convert_map.get(datetime):
+                            convert = self.convert_map[datetime]
                 if convert:
                     edm_type, value = convert(value)
                 else:
                     try:
                         convert = _PYTHON_TO_ENTITY_CONVERSIONS[type(value)]
                     except KeyError:
-                        if isinstance(value, Enum) and _PYTHON_TO_ENTITY_CONVERSIONS.get(Enum):
+                        if isinstance(value, Enum):
                             convert = _PYTHON_TO_ENTITY_CONVERSIONS[Enum]
+                        if isinstance(value, datetime):
+                            convert = _PYTHON_TO_ENTITY_CONVERSIONS[datetime]
                     if convert:
                         edm_type, value = convert(self, value)  # mypy: ignore[call-arg]
                     else:
@@ -144,7 +147,7 @@ class TableEntityEncoder():
             try:
                 convert = self.convert_map[type(value.value)]
                 return convert(value.value)
-            except KeyError as e:
+            except KeyError:
                 pass
         try:
             convert = _PYTHON_TO_ENTITY_CONVERSIONS[type(value.value)]
@@ -164,7 +167,7 @@ class TableEntityEncoder():
             try:
                 convert = self.convert_map[edm_type]
                 return convert(unencoded_value)
-            except KeyError as e:
+            except KeyError:
                 pass
         try:
             convert = _PYTHON_TO_ENTITY_CONVERSIONS[edm_type]
