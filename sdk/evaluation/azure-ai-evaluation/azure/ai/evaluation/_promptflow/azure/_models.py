@@ -2,6 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-locals
+# pylint: disable=line-too-long
+
 from typing import Dict, List, NamedTuple, Optional, Union
 from msrest.serialization import Model
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
