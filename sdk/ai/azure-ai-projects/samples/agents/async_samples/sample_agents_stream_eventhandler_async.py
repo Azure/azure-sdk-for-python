@@ -31,13 +31,13 @@ from azure.ai.projects.models._models import (
     ThreadMessage,
     ThreadRun,
 )
-from azure.ai.projects.models import DefaultAsyncAgentEventHandler
+from azure.ai.projects.models import AsyncAgentEventHandler
 from azure.identity.aio import DefaultAzureCredential
 
 import os
 
 
-class MyEventHandler(DefaultAsyncAgentEventHandler):
+class MyEventHandler(AsyncAgentEventHandler):
     async def on_message_delta_text_content(self, message_text_content: "MessageDeltaTextContent") -> None:
         text_value = message_text_content.text.value if message_text_content.text else "No text"
         print(f"Text content received: {text_value}")
@@ -60,7 +60,7 @@ class MyEventHandler(DefaultAsyncAgentEventHandler):
     async def on_done(self) -> None:
         print("Stream completed.")
 
-    async def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
+    async def on_unhandled_event(self, event_type: str, event_data: str) -> None:
         print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
 

@@ -41,7 +41,6 @@ from typing import (
 from azure.core.credentials import AccessToken, TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
-from .. import _model_base
 from ._enums import AgentStreamEvent, ConnectionType
 from ._models import (
     AzureAISearchResource,
@@ -77,13 +76,7 @@ from ._models import (
 
 logger = logging.getLogger(__name__)
 
-
-class ThreadError(_model_base.Model):
-    error = ""
-    def __init__(self, error: str):
-        self.error = error
-
-StreamEventData = Union[MessageDeltaChunk, MessageDeltaTextContent, ThreadMessage, ThreadRun, RunStep, ThreadError, str, None]
+StreamEventData = Union[MessageDeltaChunk, MessageDeltaTextContent, ThreadMessage, ThreadRun, RunStep, str]
 
 
 def _filter_parameters(model_class: Type, parameters: Dict[str, Any]) -> Dict[str, Any]:
@@ -975,7 +968,7 @@ class AgentEventHandler:
         :param Any event_data: The event's data.
         """
         
-class ProcessAgentDataEventterator(Iterator[Tuple[str, StreamEventData]]):
+class ProcessAgentDataEventIterator(Iterator[Tuple[str, StreamEventData]]):
     def __init__(self, event_data_str: str):
         self.index = 0
         self.iterator_items = self._init_iterator_items(event_data_str)
@@ -1050,21 +1043,16 @@ class ProcessAgentDataEventterator(Iterator[Tuple[str, StreamEventData]]):
             
         elif event_type == AgentStreamEvent.THREAD_RUN_STEP_DELTA.value:
             iterator_items.append((event_type, _safe_instantiate(RunStepDeltaChunk, parsed_data)))
-        elif event_type == AgentStreamEvent.DONE.value:
-            iterator_items.append((event_type, None))
         else:
-            iterator_items.append((event_type, ThreadError(error=str(parsed_data))))
+            iterator_items.append((event_type, str(parsed_data)))
         return iterator_items
         
         
     
-class BaseAsyncAgentEventHandler(AsyncIterator[Tuple[str, T]], Generic[T]):
-    def __init__(
-        self
-    ):
-        self.done = False
-        self.buffer = ""
-
+class BaseAsyncAgentEventHandler(AsyncIterator[T], Generic[T]):
+    done = False
+    buffer = ""
+    
     def _init(
         self,
         response_iterator: AsyncIterator[bytes],
@@ -1075,7 +1063,7 @@ class BaseAsyncAgentEventHandler(AsyncIterator[Tuple[str, T]], Generic[T]):
         self.event_handler = event_handler
         self.submit_tool_outputs = submit_tool_outputs
             
-    async def __anext__(self) -> Tuple[str, T]:
+    async def __anext__(self) -> T:
         while True:
             try:
                 chunk = await self.response_iterator.__anext__()
@@ -1092,7 +1080,7 @@ class BaseAsyncAgentEventHandler(AsyncIterator[Tuple[str, T]], Generic[T]):
                 return await self._process_event(event_data_str)
             
     
-    async def _process_event(self, event_data_str: str) -> Tuple[str, T]:
+    async def _process_event(self, event_data_str: str) -> T:
         raise NotImplementedError("This method needs to be implemented.")
     
     async def until_done(self) -> None:
@@ -1101,30 +1089,17 @@ class BaseAsyncAgentEventHandler(AsyncIterator[Tuple[str, T]], Generic[T]):
         Calls the provided callback function with each event data.
         """
         try:
-            async for _, _ in self:
+            async for _ in self:
                 pass
         except StopAsyncIteration:
             pass
 
-    
-    async def yield_until_done(self, yield_callback: Callable[[str, T], Awaitable[Optional[R]]], **kwargs) -> AsyncGenerator[R, None]:
-        """
-        Iterates through all events until the stream is marked as done.
-        Calls the provided callback function with each event data.
-        """
-        try:
-            async for event_type, event_obj in self:
-                to_be_yield = await yield_callback(event_type, event_obj, **kwargs)
-                if to_be_yield:
-                    yield to_be_yield
-        except StopAsyncIteration:
-            pass
 
     
-class DefaultAsyncAgentEventHandler(BaseAsyncAgentEventHandler[StreamEventData]):
+class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventData]]):
     
     async def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData]:
-        iterator = ProcessAgentDataEventterator(event_data_str)
+        iterator = ProcessAgentDataEventIterator(event_data_str)
         for event_type, event_data_obj in iterator:
             if (
                 isinstance(event_data_obj, ThreadRun)
@@ -1132,7 +1107,7 @@ class DefaultAsyncAgentEventHandler(BaseAsyncAgentEventHandler[StreamEventData])
                 and isinstance(event_data_obj.required_action, SubmitToolOutputsAction)
             ):
                 await self.submit_tool_outputs(event_data_obj, self)
-                
+            
             try:
                 if isinstance(event_data_obj, MessageDeltaTextContent):
                     await self.on_message_delta_text_content(event_data_obj)
@@ -1146,8 +1121,8 @@ class DefaultAsyncAgentEventHandler(BaseAsyncAgentEventHandler[StreamEventData])
                     await self.on_run_step(event_data_obj)
                 elif isinstance(event_data_obj, RunStepDeltaChunk):
                     await self.on_run_step_delta(event_data_obj)
-                elif isinstance(event_data_obj, ThreadError):
-                    await self.on_error(event_data_obj.error)
+                elif event_type == AgentStreamEvent.ERROR:
+                    await self.on_error(event_data_obj)
                 elif event_type == AgentStreamEvent.DONE:
                     await self.on_done()
                     self.done = True  # Mark the stream as done
@@ -1158,6 +1133,19 @@ class DefaultAsyncAgentEventHandler(BaseAsyncAgentEventHandler[StreamEventData])
 
         iterator.index = 0
         return iterator.__next__()
+    
+    async def yield_until_done(self, yield_callback: Callable[[str, StreamEventData], Awaitable[Optional[T]]], **kwargs) -> AsyncGenerator[T, None]:
+        """
+        Iterates through all events until the stream is marked as done.
+        Calls the provided callback function with each event data.
+        """
+        try:
+            async for event_type, event_obj in self:
+                to_be_yield = await yield_callback(event_type, event_obj, **kwargs)
+                if to_be_yield:
+                    yield to_be_yield
+        except StopAsyncIteration:
+            pass    
     
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         """Handle message delta events.
@@ -1203,7 +1191,7 @@ class DefaultAsyncAgentEventHandler(BaseAsyncAgentEventHandler[StreamEventData])
     async def on_done(self) -> None:
         """Handle the completion of the stream."""
 
-    async def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
+    async def on_unhandled_event(self, event_type: str, event_data: str) -> None:
         """Handle any unhandled event types.
 
         :param str event_type: The event type.
@@ -1506,7 +1494,7 @@ __all__: List[str] = [
     "BaseAsyncAgentEventHandler",
     "CodeInterpreterTool",
     "ConnectionProperties",
-    "DefaultAsyncAgentEventHandler",
+    "AsyncAgentEventHandler",
     "ThreadMessages",
     "FileSearchTool",
     "FunctionTool",
@@ -1515,7 +1503,6 @@ __all__: List[str] = [
     "SharepointTool",
     "AzureAISearchTool",
     "SASTokenCredential",
-    "ThreadError",
     "Tool",
     "ToolSet",
 ]  # Add all objects you want publicly available to users at this package level
