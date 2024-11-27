@@ -964,11 +964,11 @@ class TestagentClient(AzureRecordedTestCase):
 
     def _do_test_create_parallel_thread_runs(self, use_parallel_runs, create_thread_run, **kwargs):
         """Test creation of parallel runs."""
-        
+
         # create client
         client = self.create_client(
             **kwargs,
-        ) 
+        )
         assert isinstance(client, AIProjectClient)
 
         # Initialize agent tools
@@ -985,12 +985,12 @@ class TestagentClient(AzureRecordedTestCase):
             toolset=toolset,
         )
         assert agent.id
-        
+
         message = ThreadMessageOptions(
             role="user",
             content="Hello, what time is it?",
         )
-        
+
         if create_thread_run:
             run = client.agents.create_thread_and_run(
                 assistant_id=agent.id,
@@ -1000,9 +1000,10 @@ class TestagentClient(AzureRecordedTestCase):
         else:
             thread = client.agents.create_thread(messages=[message])
             assert thread.id
-    
+
             run = client.agents.create_and_process_run(
-                thread_id=thread.id, assistant_id=agent.id,
+                thread_id=thread.id,
+                assistant_id=agent.id,
                 parallel_tool_calls=use_parallel_runs,
             )
         assert run.id
@@ -1012,7 +1013,6 @@ class TestagentClient(AzureRecordedTestCase):
         assert client.agents.delete_agent(agent.id).deleted, "The agent was not deleted"
         messages = client.agents.list_messages(thread_id=run.thread_id)
         assert len(messages.data), "The data from the agent was not received."
-        
 
     """
     # DISABLED: rewrite to ensure run is not complete when cancel_run is called

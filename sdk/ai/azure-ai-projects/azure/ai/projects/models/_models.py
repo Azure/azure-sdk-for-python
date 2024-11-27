@@ -5151,7 +5151,7 @@ class ThreadRun(_model_base.Model):
     tool_resources: Optional["_models.UpdateToolResourcesOptions"] = rest_field()
     """Override the tools the agent can use for this run. This is useful for modifying the behavior on
      a per-run basis."""
-    parallel_tool_calls: Optional[bool] = rest_field()
+    parallel_tool_calls: Optional[bool] = rest_field(name="parallelToolCalls")
     """Determines if tools can be executed in parallel within the run."""
 
     @overload

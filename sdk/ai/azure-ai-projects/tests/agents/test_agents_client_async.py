@@ -933,11 +933,11 @@ class TestagentClientAsync(AzureRecordedTestCase):
 
     async def _do_test_create_parallel_thread_runs(self, use_parallel_runs, create_thread_run, **kwargs):
         """Test creation of parallel runs."""
-        
+
         # create client
         client = self.create_client(
             **kwargs,
-        ) 
+        )
         assert isinstance(client, AIProjectClient)
 
         # Initialize agent tools
@@ -954,12 +954,12 @@ class TestagentClientAsync(AzureRecordedTestCase):
             toolset=toolset,
         )
         assert agent.id
-        
+
         message = ThreadMessageOptions(
             role="user",
             content="Hello, what time is it?",
         )
-        
+
         if create_thread_run:
             run = await client.agents.create_thread_and_run(
                 assistant_id=agent.id,
@@ -969,9 +969,10 @@ class TestagentClientAsync(AzureRecordedTestCase):
         else:
             thread = await client.agents.create_thread(messages=[message])
             assert thread.id
-    
+
             run = await client.agents.create_and_process_run(
-                thread_id=thread.id, assistant_id=agent.id,
+                thread_id=thread.id,
+                assistant_id=agent.id,
                 parallel_tool_calls=use_parallel_runs,
             )
         assert run.id
