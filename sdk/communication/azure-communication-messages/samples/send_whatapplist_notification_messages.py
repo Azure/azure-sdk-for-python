@@ -36,35 +36,43 @@ class SendWhatsAppMessageSample(object):
     def send_whatsapplist_message(self):
 
         from azure.communication.messages import NotificationMessagesClient
-        from azure.communication.messages.models import ActionSetContent, ActionSet, ActionSetItem, InteractiveMessage, TextMessageContent, WhatsAppListActionBindings, InteractiveNotificationContent
+        from azure.communication.messages.models import (
+            ActionSetContent,
+            ActionSet,
+            ActionSetItem,
+            InteractiveMessage,
+            TextMessageContent,
+            WhatsAppListActionBindings,
+            InteractiveNotificationContent,
+        )
 
         messaging_client = NotificationMessagesClient.from_connection_string(self.connection_string)
 
         action_item_list1 = [
-            ActionSetItem( id = "priority_express", title = "Priority Mail Express", description = "Next Day to 2 Days" ),
-            ActionSetItem( id = "priority_mail", title = "Priority Mail", description = "1–3 Days" ),
+            ActionSetItem(id="priority_express", title="Priority Mail Express", description="Next Day to 2 Days"),
+            ActionSetItem(id="priority_mail", title="Priority Mail", description="1–3 Days"),
         ]
         action_item_list2 = [
-            ActionSetItem( id = "usps_ground_advantage", title = "USPS Ground Advantage", description = "2-5 Days" ),
-            ActionSetItem( id = "media_mail", title = "Media Mail", description = "2-8 Days" ),
+            ActionSetItem(id="usps_ground_advantage", title="USPS Ground Advantage", description="2-5 Days"),
+            ActionSetItem(id="media_mail", title="Media Mail", description="2-8 Days"),
         ]
         action_set = [
-            ActionSet( title = "I want it ASAP!", items_property = action_item_list1),
-            ActionSet( title = "I can wait a bit", items_property = action_item_list2),
+            ActionSet(title="I want it ASAP!", items_property=action_item_list1),
+            ActionSet(title="I can wait a bit", items_property=action_item_list2),
         ]
 
-        action_set_content = ActionSetContent( title = "Shipping Options", action_set = action_set)
-        
+        action_set_content = ActionSetContent(title="Shipping Options", action_set=action_set)
+
         interactionMessage = InteractiveMessage(
-            body = TextMessageContent( text= "Test Body" ),
-            footer = TextMessageContent( text= "Test Footer" ),
-            header = TextMessageContent ( text= "Test Header" ),
-            action_bindings = WhatsAppListActionBindings(action_set_content),
+            body=TextMessageContent(text="Test Body"),
+            footer=TextMessageContent(text="Test Footer"),
+            header=TextMessageContent(text="Test Header"),
+            action_bindings=WhatsAppListActionBindings(action=action_set_content),
         )
         interactiveMessageContent = InteractiveNotificationContent(
             channel_registration_id=self.channel_id,
             to=[self.phone_number],
-            interactive_message= interactionMessage,
+            interactive_message=interactionMessage,
         )
 
         # calling send() with whatsapp message details

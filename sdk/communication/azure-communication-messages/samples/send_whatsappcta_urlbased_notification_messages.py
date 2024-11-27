@@ -36,24 +36,30 @@ class SendWhatsAppMessageSample(object):
     def send_whatappcta_message(self):
 
         from azure.communication.messages import NotificationMessagesClient
-        from azure.communication.messages.models import UrlContent, InteractiveMessage, TextMessageContent, WhatsAppUrlActionBindings, InteractiveNotificationContent
+        from azure.communication.messages.models import (
+            UrlContent,
+            InteractiveMessage,
+            TextMessageContent,
+            WhatsAppUrlActionBindings,
+            InteractiveNotificationContent,
+        )
 
         messaging_client = NotificationMessagesClient.from_connection_string(self.connection_string)
 
         urlAction = UrlContent(
-            title = "Test Url",
-            url = "https://example.com/audio.mp3",
+            title="Test Url",
+            url="https://example.com/audio.mp3",
         )
         interactionMessage = InteractiveMessage(
-            body = TextMessageContent( text= "Test Body" ),
-            footer = TextMessageContent( text= "Test Footer" ),
-            header = TextMessageContent ( text= "Test Header" ),
-            action_bindings = WhatsAppUrlActionBindings(urlAction),
+            body=TextMessageContent(text="Test Body"),
+            footer=TextMessageContent(text="Test Footer"),
+            header=TextMessageContent(text="Test Header"),
+            action_bindings=WhatsAppUrlActionBindings(action=urlAction),
         )
         interactiveMessageContent = InteractiveNotificationContent(
             channel_registration_id=self.channel_id,
             to=[self.phone_number],
-            interactive_message= interactionMessage,
+            interactive_message=interactionMessage,
         )
 
         # calling send() with whatsapp message details

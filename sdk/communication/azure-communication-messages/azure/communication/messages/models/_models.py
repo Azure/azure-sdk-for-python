@@ -1533,7 +1533,7 @@ class WhatsAppButtonActionBindings(ActionBindings, discriminator="whatsAppButton
      WhatsApp Button action binding kind.
     :vartype action_binding_kind: str or
      ~azure.communication.messages.models.WHATS_APP_BUTTON_ACTION
-    :ivar action: Action content of Button based Interactive message. Required.
+    :ivar action: Action content of Interactive message. Required.
     :vartype action: ~azure.communication.messages.models.ButtonSetContent
     """
 
@@ -1541,7 +1541,7 @@ class WhatsAppButtonActionBindings(ActionBindings, discriminator="whatsAppButton
     """Message action binding type is WhatsAppButtonAction. Required. The WhatsApp Button action
      binding kind."""
     action: "_models.ButtonSetContent" = rest_field()
-    """Action content of Button based Interactive message. Required."""
+    """Action content of Interactive message. Required."""
 
     @overload
     def __init__(
@@ -1772,7 +1772,7 @@ class WhatsAppUrlActionBindings(ActionBindings, discriminator="whatsAppUrlAction
     :ivar action_binding_kind: Message action binding type is WhatsAppUrlAction. Required. The
      WhatsApp Url action binding kind.
     :vartype action_binding_kind: str or ~azure.communication.messages.models.WHATS_APP_URL_ACTION
-    :ivar action: Action content of Quick action Interactive message. Required.
+    :ivar action: Action content of Interactive message. Required.
     :vartype action: ~azure.communication.messages.models.UrlContent
     """
 
@@ -1780,7 +1780,7 @@ class WhatsAppUrlActionBindings(ActionBindings, discriminator="whatsAppUrlAction
     """Message action binding type is WhatsAppUrlAction. Required. The WhatsApp Url action binding
      kind."""
     action: "_models.UrlContent" = rest_field()
-    """Action content of Quick action Interactive message. Required."""
+    """Action content of Interactive message. Required."""
 
     @overload
     def __init__(

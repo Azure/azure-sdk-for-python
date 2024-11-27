@@ -44,7 +44,7 @@ class SendWhatsAppMessageSample(object):
             channel_registration_id=self.channel_id,
             to=[self.phone_number],
             emoji="\uD83D\uDE00",
-            message_id="<<ReplyMessageId>>",
+            message_id="368677c5-fd20-4a8b-b807-3117263f3c9e",
         )
 
         # calling send() with whatsapp message details

@@ -36,25 +36,32 @@ class SendWhatsAppMessageSample(object):
     def send_whatsappreplybutton_message(self):
 
         from azure.communication.messages import NotificationMessagesClient
-        from azure.communication.messages.models import ButtonSetContent, ButtonContent, InteractiveMessage, TextMessageContent, WhatsAppButtonActionBindings, InteractiveNotificationContent
+        from azure.communication.messages.models import (
+            ButtonSetContent,
+            ButtonContent,
+            InteractiveMessage,
+            TextMessageContent,
+            WhatsAppButtonActionBindings,
+            InteractiveNotificationContent,
+        )
 
         messaging_client = NotificationMessagesClient.from_connection_string(self.connection_string)
 
         reply_button_action_list = [
-            ButtonContent(title = "Cancel", id = "cancel"),
-            ButtonContent(title = "Agree", id = "agree"),
+            ButtonContent(title="Cancel", id="cancel"),
+            ButtonContent(title="Agree", id="agree"),
         ]
-        button_set = ButtonSetContent( buttons=reply_button_action_list)
+        button_set = ButtonSetContent(buttons=reply_button_action_list)
         interactionMessage = InteractiveMessage(
-            body = TextMessageContent( text= "Test Body" ),
-            footer = TextMessageContent( text= "Test Footer" ),
-            header = TextMessageContent ( text= "Test Header" ),
-            action_bindings = WhatsAppButtonActionBindings(button_set),
+            body=TextMessageContent(text="Test Body"),
+            footer=TextMessageContent(text="Test Footer"),
+            header=TextMessageContent(text="Test Header"),
+            action_bindings=WhatsAppButtonActionBindings(action=button_set),
         )
         interactiveMessageContent = InteractiveNotificationContent(
             channel_registration_id=self.channel_id,
             to=[self.phone_number],
-            interactive_message= interactionMessage,
+            interactive_message=interactionMessage,
         )
 
         # calling send() with whatsapp message details
