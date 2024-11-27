@@ -59,9 +59,7 @@ def maas_finetuning_job() -> CustomModelFineTuningJob:
 @pytest.fixture
 def maap_finetuning_job_compute(finetuning_job_compute_yaml) -> RestFineTuningJob:
     job = load_job(finetuning_job_compute_yaml)
-    rest_object = CustomModelFineTuningJob._from_rest_object(
-        CustomModelFineTuningJob._to_rest_object(job)
-    )
+    rest_object = CustomModelFineTuningJob._from_rest_object(CustomModelFineTuningJob._to_rest_object(job))
     return rest_object
 
 
@@ -70,9 +68,7 @@ def maap_finetuning_job_instance_types(
     finetuning_job_instance_types_yaml,
 ) -> RestFineTuningJob:
     job = load_job(finetuning_job_instance_types_yaml)
-    rest_object = CustomModelFineTuningJob._from_rest_object(
-        CustomModelFineTuningJob._to_rest_object(job)
-    )
+    rest_object = CustomModelFineTuningJob._from_rest_object(CustomModelFineTuningJob._to_rest_object(job))
     return rest_object
 
 
@@ -81,9 +77,7 @@ def maap_finetuning_job_queue_settings(
     finetuning_job_queue_settings_yaml,
 ) -> RestFineTuningJob:
     job = load_job(finetuning_job_queue_settings_yaml)
-    rest_object = CustomModelFineTuningJob._from_rest_object(
-        CustomModelFineTuningJob._to_rest_object(job)
-    )
+    rest_object = CustomModelFineTuningJob._from_rest_object(CustomModelFineTuningJob._to_rest_object(job))
     return rest_object
 
 
@@ -166,9 +160,7 @@ def finetuning_job(
 
 
 @pytest.fixture
-def finetuning_job_with_name_updated(
-    finetuning_job: CustomModelFineTuningJob, output_model_name_prefix
-):
+def finetuning_job_with_name_updated(finetuning_job: CustomModelFineTuningJob, output_model_name_prefix):
     guid = uuid.uuid4()
     short_guid = str(guid)[:8]
     display_name = f"llama-3-8B-display-name-{short_guid}"
@@ -219,9 +211,7 @@ def expected_maap_finetuning_job_compute(finetuning_job) -> CustomModelFineTunin
 @pytest.fixture
 def expected_maap_finetuning_job_instance_types(finetuning_job) -> CustomModelFineTuningJob:
     finetuning_job.name = "llama-3-8B-with-instance-types"
-    finetuning_job.resources = JobResources(
-        instance_types=["Standard_NC96ads_A100_v4", "Standard_E4s_v3"]
-    )
+    finetuning_job.resources = JobResources(instance_types=["Standard_NC96ads_A100_v4", "Standard_E4s_v3"])
     return finetuning_job
 
 

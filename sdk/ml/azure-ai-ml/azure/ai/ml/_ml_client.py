@@ -216,9 +216,7 @@ class MLClient:
         self._ws_sub: Any = None
         show_progress = kwargs.pop("show_progress", True)
         enable_telemetry = kwargs.pop("enable_telemetry", True)
-        self._operation_config = OperationConfig(
-            show_progress=show_progress, enable_telemetry=enable_telemetry
-        )
+        self._operation_config = OperationConfig(show_progress=show_progress, enable_telemetry=enable_telemetry)
 
         if "cloud" in kwargs:
             cloud_name = kwargs["cloud"]
@@ -263,9 +261,7 @@ class MLClient:
             workspace_reference = kwargs.pop("workspace_reference", None)
             if workspace_reference or registry_reference:
                 ws_ops = WorkspaceOperations(
-                    OperationScope(
-                        str(subscription_id), str(resource_group_name), workspace_reference
-                    ),
+                    OperationScope(str(subscription_id), str(resource_group_name), workspace_reference),
                     ServiceClient042023Preview(
                         credential=self._credential,
                         subscription_id=subscription_id,
@@ -275,9 +271,7 @@ class MLClient:
                 )
                 self._ws_rg = resource_group_name
                 self._ws_sub = subscription_id
-                workspace_details = ws_ops.get(
-                    workspace_reference if workspace_reference else workspace_name
-                )
+                workspace_details = ws_ops.get(workspace_reference if workspace_reference else workspace_name)
                 workspace_location, workspace_id = (
                     workspace_details.location,
                     workspace_details._workspace_id,
@@ -325,9 +319,7 @@ class MLClient:
             **{"properties": properties},
             enable_telemetry=self._operation_config.enable_telemetry,
         )
-        app_insights_handler_kwargs: Dict[str, Tuple] = {
-            "app_insights_handler": app_insights_handler
-        }
+        app_insights_handler_kwargs: Dict[str, Tuple] = {"app_insights_handler": app_insights_handler}
 
         base_url = _get_base_url_from_metadata(cloud_name=cloud_name, is_local_mfe=True)
         self._base_url = base_url
@@ -540,9 +532,7 @@ class MLClient:
             dataplane_client=self._service_client_workspace_dataplane,
             **app_insights_handler_kwargs,
         )
-        self._operation_container.add(
-            AzureMLResourceType.WORKSPACE, self._workspaces
-        )  # type: ignore[arg-type]
+        self._operation_container.add(AzureMLResourceType.WORKSPACE, self._workspaces)  # type: ignore[arg-type]
 
         self._workspace_outbound_rules = WorkspaceOutboundRuleOperations(
             self._operation_scope,
@@ -560,9 +550,7 @@ class MLClient:
             self._credential,
             **app_insights_handler_kwargs,  # type: ignore[arg-type]
         )
-        self._operation_container.add(
-            AzureMLResourceType.REGISTRY, self._registries
-        )  # type: ignore[arg-type]
+        self._operation_container.add(AzureMLResourceType.REGISTRY, self._registries)  # type: ignore[arg-type]
 
         self._connections = WorkspaceConnectionsOperations(
             self._operation_scope,
@@ -633,11 +621,7 @@ class MLClient:
         self._code = CodeOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
             self._operation_config,
-            (
-                self._service_client_10_2021_dataplanepreview
-                if registry_name
-                else self._service_client_04_2023
-            ),
+            (self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023),
             self._datastores,
             **ops_kwargs,  # type: ignore[arg-type]
         )
@@ -645,18 +629,12 @@ class MLClient:
         self._environments = EnvironmentOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
             self._operation_config,
-            (
-                self._service_client_10_2021_dataplanepreview
-                if registry_name
-                else self._service_client_04_2023_preview
-            ),
+            (self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview),
             self._operation_container,
             **ops_kwargs,  # type: ignore[arg-type]
         )
         self._operation_container.add(AzureMLResourceType.ENVIRONMENT, self._environments)
-        self._local_endpoint_helper = _LocalEndpointHelper(
-            requests_pipeline=self._requests_pipeline
-        )
+        self._local_endpoint_helper = _LocalEndpointHelper(requests_pipeline=self._requests_pipeline)
         self._local_deployment_helper = _LocalDeploymentHelper(self._operation_container)
         self._online_endpoints = OnlineEndpointOperations(
             self._operation_scope,
@@ -700,18 +678,12 @@ class MLClient:
             service_client_02_2023_preview=self._service_client_02_2023_preview,
             **ops_kwargs,
         )
-        self._operation_container.add(
-            AzureMLResourceType.ONLINE_DEPLOYMENT, self._online_deployments
-        )
+        self._operation_container.add(AzureMLResourceType.ONLINE_DEPLOYMENT, self._online_deployments)
         self._operation_container.add(AzureMLResourceType.BATCH_DEPLOYMENT, self._batch_deployments)
         self._data = DataOperations(
             self._operation_scope,
             self._operation_config,
-            (
-                self._service_client_10_2021_dataplanepreview
-                if registry_name
-                else self._service_client_04_2023_preview
-            ),
+            (self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview),
             self._service_client_01_2024_preview,
             self._datastores,
             requests_pipeline=self._requests_pipeline,
@@ -722,11 +694,7 @@ class MLClient:
         self._components = ComponentOperations(
             self._operation_scope,
             self._operation_config,
-            (
-                self._service_client_10_2021_dataplanepreview
-                if registry_name
-                else self._service_client_01_2024_preview
-            ),
+            (self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_01_2024_preview),
             self._operation_container,
             self._preflight,
             **ops_kwargs,  # type: ignore[arg-type]
@@ -784,9 +752,7 @@ class MLClient:
                 self._virtual_clusters,
             )
         except Exception as ex:  # pylint: disable=broad-except
-            module_logger.debug(
-                "Virtual Cluster operations could not be initialized due to %s ", ex
-            )
+            module_logger.debug("Virtual Cluster operations could not be initialized due to %s ", ex)
 
         self._featurestores = FeatureStoreOperations(
             self._operation_scope,
@@ -829,19 +795,11 @@ class MLClient:
             self._operation_config,
             self._service_client_01_2024_preview,
         )
-        self._operation_container.add(
-            AzureMLResourceType.FEATURE_STORE, self._featurestores
-        )  # type: ignore[arg-type]
+        self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)  # type: ignore[arg-type]
         self._operation_container.add(AzureMLResourceType.FEATURE_SET, self._featuresets)
-        self._operation_container.add(
-            AzureMLResourceType.FEATURE_STORE_ENTITY, self._featurestoreentities
-        )
-        self._operation_container.add(
-            AzureMLResourceType.SERVERLESS_ENDPOINT, self._serverless_endpoints
-        )
-        self._operation_container.add(
-            AzureMLResourceType.MARKETPLACE_SUBSCRIPTION, self._marketplace_subscriptions
-        )
+        self._operation_container.add(AzureMLResourceType.FEATURE_STORE_ENTITY, self._featurestoreentities)
+        self._operation_container.add(AzureMLResourceType.SERVERLESS_ENDPOINT, self._serverless_endpoints)
+        self._operation_container.add(AzureMLResourceType.MARKETPLACE_SUBSCRIPTION, self._marketplace_subscriptions)
 
     @classmethod
     def from_config(  # pylint: disable=C4758
@@ -953,9 +911,7 @@ class MLClient:
                     error_category=ErrorCategory.USER_ERROR,
                 )
 
-        subscription_id, resource_group, workspace_name = MLClient._get_workspace_info(
-            str(found_path)
-        )
+        subscription_id, resource_group, workspace_name = MLClient._get_workspace_info(str(found_path))
 
         module_logger.info("Found the config file in: %s", found_path)
         return MLClient(
@@ -967,9 +923,7 @@ class MLClient:
         )
 
     @classmethod
-    def _ml_client_cli(
-        cls, credentials: TokenCredential, subscription_id: Optional[str], **kwargs
-    ) -> "MLClient":
+    def _ml_client_cli(cls, credentials: TokenCredential, subscription_id: Optional[str], **kwargs) -> "MLClient":
         """This method provides a way to create MLClient object for cli to leverage cli context for authentication.
 
         With this we do not have to use AzureCliCredentials from azure-identity package (not meant for heavy usage). The
@@ -1260,9 +1214,7 @@ class MLClient:
         # Checking the keys in the config.json file to check for required parameters.
         scope = config.get("Scope")
         if not scope:
-            if not all(
-                k in config.keys() for k in ("subscription_id", "resource_group", "workspace_name")
-            ):
+            if not all(k in config.keys() for k in ("subscription_id", "resource_group", "workspace_name")):
                 msg = (
                     "The config file found in: {} does not seem to contain the required "
                     "parameters. Please make sure it contains your subscription_id, "
@@ -1462,9 +1414,7 @@ def _(entity: BatchEndpoint, operations, *args, **kwargs):
 @_begin_create_or_update.register(OnlineDeployment)
 def _(entity: OnlineDeployment, operations, *args, **kwargs):
     module_logger.debug("Creating or updating online_deployments")
-    return operations[AzureMLResourceType.ONLINE_DEPLOYMENT].begin_create_or_update(
-        entity, **kwargs
-    )
+    return operations[AzureMLResourceType.ONLINE_DEPLOYMENT].begin_create_or_update(entity, **kwargs)
 
 
 @_begin_create_or_update.register(BatchDeployment)
@@ -1494,14 +1444,10 @@ def _(entity: Schedule, operations, *args, **kwargs):
 @_begin_create_or_update.register(ServerlessEndpoint)
 def _(entity: ServerlessEndpoint, operations, *args, **kwargs):
     module_logger.debug("Creating or updating serverless endpoints")
-    return operations[AzureMLResourceType.SERVERLESS_ENDPOINT].begin_create_or_update(
-        entity, **kwargs
-    )
+    return operations[AzureMLResourceType.SERVERLESS_ENDPOINT].begin_create_or_update(entity, **kwargs)
 
 
 @_begin_create_or_update.register(MarketplaceSubscription)
 def _(entity: MarketplaceSubscription, operations, *args, **kwargs):
     module_logger.debug("Creating or updating marketplace subscriptions")
-    return operations[AzureMLResourceType.MARKETPLACE_SUBSCRIPTION].begin_create_or_update(
-        entity, **kwargs
-    )
+    return operations[AzureMLResourceType.MARKETPLACE_SUBSCRIPTION].begin_create_or_update(entity, **kwargs)

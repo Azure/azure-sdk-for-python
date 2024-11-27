@@ -180,9 +180,7 @@ class CustomModelFineTuningJob(FineTuningVertical):
         if properties.resources:
             job_args_dict["resources"] = JobResources._from_rest_object(properties.resources)
         if properties.queue_settings:
-            job_args_dict["queue_settings"] = QueueSettings._from_rest_object(
-                properties.queue_settings
-            )
+            job_args_dict["queue_settings"] = QueueSettings._from_rest_object(properties.queue_settings)
 
         custom_model_finetuning_job = cls(
             task=finetuning_details.task_type,
@@ -232,9 +230,7 @@ class CustomModelFineTuningJob(FineTuningVertical):
         #        **kwargs,
         #    )
         # else:
-        loaded_data = load_from_dict(
-            CustomModelFineTuningSchema, data, context, additional_message, **kwargs
-        )
+        loaded_data = load_from_dict(CustomModelFineTuningSchema, data, context, additional_message, **kwargs)
 
         training_data = loaded_data.get("training_data", None)
         if isinstance(training_data, str):

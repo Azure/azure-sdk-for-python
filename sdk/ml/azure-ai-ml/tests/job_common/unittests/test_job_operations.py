@@ -127,18 +127,10 @@ def mock_job_operation(
     mock_environment_operation: Mock,
     mock_runs_operation: Mock,
 ) -> JobOperations:
-    mock_machinelearning_client._operation_container.add(
-        AzureMLResourceType.CODE, mock_code_operation
-    )
-    mock_machinelearning_client._operation_container.add(
-        AzureMLResourceType.ENVIRONMENT, mock_environment_operation
-    )
-    mock_machinelearning_client._operation_container.add(
-        AzureMLResourceType.WORKSPACE, mock_workspace_operation
-    )
-    mock_machinelearning_client._operation_container.add(
-        AzureMLResourceType.DATASTORE, mock_datastore_operation
-    )
+    mock_machinelearning_client._operation_container.add(AzureMLResourceType.CODE, mock_code_operation)
+    mock_machinelearning_client._operation_container.add(AzureMLResourceType.ENVIRONMENT, mock_environment_operation)
+    mock_machinelearning_client._operation_container.add(AzureMLResourceType.WORKSPACE, mock_workspace_operation)
+    mock_machinelearning_client._operation_container.add(AzureMLResourceType.DATASTORE, mock_datastore_operation)
     mock_machinelearning_client._operation_container.add("run", mock_runs_operation)
     yield JobOperations(
         operation_scope=mock_workspace_scope,
@@ -180,12 +172,8 @@ class TestJobOperations:
     def test_get_job(self, mock_method, mock_job_operation: JobOperations) -> None:
         from azure.ai.ml import Input, dsl, load_component
 
-        component = load_component(
-            source="./tests/test_configs/components/helloworld_component.yml"
-        )
-        component_input = Input(
-            type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
-        )
+        component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
+        component_input = Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")
 
         @dsl.pipeline()
         def sub_pipeline():
@@ -208,9 +196,7 @@ class TestJobOperations:
 
     @patch.object(Job, "_from_rest_object")
     @patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"})
-    def test_get_private_preview_flag_returns_latest(
-        self, mock_method, mock_job_operation: JobOperations
-    ) -> None:
+    def test_get_private_preview_flag_returns_latest(self, mock_method, mock_job_operation: JobOperations) -> None:
         mock_method.return_value = Command(component=None)
         mock_job_operation.get("random_name")
         mock_job_operation.service_client_01_2024_preview.jobs.get.assert_called_once()
@@ -227,10 +213,7 @@ class TestJobOperations:
         mock_job_operation.service_client_01_2024_preview.jobs.get.assert_called_once()
         mock_job_operation._get_workspace_url.assert_called_once()
         mock_job_operation._stream_logs_until_completion.assert_called_once()
-        assert (
-            mock_job_operation._runs_operations_client._operation._client._base_url
-            == "TheWorkSpaceUrl"
-        )
+        assert mock_job_operation._runs_operations_client._operation._client._base_url == "TheWorkSpaceUrl"
 
     @pytest.mark.skip(reason="Mock Job missing properties to complete full test in Feb API")
     @patch.object(Job, "_from_rest_object")
@@ -241,14 +224,10 @@ class TestJobOperations:
         git_props = get_git_properties()
         assert git_props.items() <= job.properties.items()
         mock_job_operation._operation_2023_02_preview.create_or_update.assert_called_once()
-        mock_job_operation._credential.get_token.assert_called_once_with(
-            "https://ml.azure.com/.default"
-        )
+        mock_job_operation._credential.get_token.assert_called_once_with("https://ml.azure.com/.default")
 
     @patch.object(Job, "_from_rest_object")
-    def test_user_identity_get_aml_token(
-        self, mock_method, mock_job_operation: JobOperations
-    ) -> None:
+    def test_user_identity_get_aml_token(self, mock_method, mock_job_operation: JobOperations) -> None:
         mock_method.return_value = Command(component=None)
         job = load_job(source="./tests/test_configs/command_job/command_job_test_user_identity.yml")
 
@@ -272,17 +251,13 @@ class TestJobOperations:
                 mock_job_operation.create_or_update(job=job)
 
     @pytest.mark.skip(reason="Function under test no longer returns Job as output")
-    def test_command_job_resolver_with_virtual_cluster(
-        self, mock_job_operation: JobOperations
-    ) -> None:
+    def test_command_job_resolver_with_virtual_cluster(self, mock_job_operation: JobOperations) -> None:
         expected = "/subscriptions/test_subscription/resourceGroups/test_resource_group/providers/Microsoft.MachineLearningServices/virtualclusters/testvcinmaster"
         job = load_job(source="tests/test_configs/command_job/command_job_with_virtualcluster.yaml")
         mock_job_operation._resolve_arm_id_or_upload_dependencies(job)
         assert job.compute == expected
 
-        job = load_job(
-            source="tests/test_configs/command_job/command_job_with_virtualcluster_2.yaml"
-        )
+        job = load_job(source="tests/test_configs/command_job/command_job_with_virtualcluster_2.yaml")
         mock_job_operation._resolve_arm_id_or_upload_dependencies(job)
         assert job.compute == expected
 
@@ -315,9 +290,7 @@ class TestJobOperations:
             Job._from_rest_object(resource)
 
     @patch.object(Job, "_from_rest_object")
-    def test_job_create_skip_validation(
-        self, mock_method, mock_job_operation: JobOperations
-    ) -> None:
+    def test_job_create_skip_validation(self, mock_method, mock_job_operation: JobOperations) -> None:
         mock_method.return_value = Command(component=None)
         job = load_job("./tests/test_configs/command_job/simple_train_test.yml")
         with patch.object(JobOperations, "_validate") as mock_thing, patch.object(

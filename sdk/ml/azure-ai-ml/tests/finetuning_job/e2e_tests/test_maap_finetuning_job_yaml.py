@@ -31,9 +31,7 @@ class TestFineTuningJob_MaaP_Yaml(AzureRecordedTestCase):
         short_guid = str(guid)[:4]
         finetuning_job_instance_types = load_job(finetuning_job_instance_types_yaml)
         finetuning_job_instance_types.name = finetuning_job_instance_types.name + f"-{short_guid}"
-        finetuning_job_instance_types.display_name = (
-            finetuning_job_instance_types.display_name + f"-{short_guid}"
-        )
+        finetuning_job_instance_types.display_name = finetuning_job_instance_types.display_name + f"-{short_guid}"
 
         # Act
         created_job = client.jobs.create_or_update(finetuning_job_instance_types)
@@ -57,9 +55,7 @@ class TestFineTuningJob_MaaP_Yaml(AzureRecordedTestCase):
         short_guid = str(guid)[:4]
         finetuning_job_amlcompute = load_job(finetuning_job_compute_yaml)
         finetuning_job_amlcompute.name = finetuning_job_amlcompute.name + f"-{short_guid}"
-        finetuning_job_amlcompute.display_name = (
-            finetuning_job_amlcompute.display_name + f"-{short_guid}"
-        )
+        finetuning_job_amlcompute.display_name = finetuning_job_amlcompute.display_name + f"-{short_guid}"
 
         # Act
         created_job = client.jobs.create_or_update(finetuning_job_amlcompute)
@@ -83,9 +79,7 @@ class TestFineTuningJob_MaaP_Yaml(AzureRecordedTestCase):
         short_guid = str(guid)[:4]
         finetuning_job_queue_settings = load_job(finetuning_job_queue_settings_yaml)
         finetuning_job_queue_settings.name = finetuning_job_queue_settings.name + f"-{short_guid}"
-        finetuning_job_queue_settings.display_name = (
-            finetuning_job_queue_settings.display_name + f"-{short_guid}"
-        )
+        finetuning_job_queue_settings.display_name = finetuning_job_queue_settings.display_name + f"-{short_guid}"
 
         # Act
         created_job = client.jobs.create_or_update(finetuning_job_queue_settings)
