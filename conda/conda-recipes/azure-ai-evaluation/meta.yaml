@@ -24,6 +24,7 @@ requirements:
     - aiohttp
     - isodate
     - pandas
+    - promptflow
   run:
     - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
@@ -34,6 +35,7 @@ requirements:
     - aiohttp
     - isodate
     - pandas
+    - promptflow
 
 test:
   imports:
