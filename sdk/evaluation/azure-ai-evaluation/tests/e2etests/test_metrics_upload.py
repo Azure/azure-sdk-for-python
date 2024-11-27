@@ -6,6 +6,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from devtools_testutils import is_live
+from promptflow.tracing import _start_trace
 
 from azure.ai.evaluation import F1ScoreEvaluator
 from azure.ai.evaluation._evaluate import _utils as ev_utils
@@ -161,6 +162,10 @@ class TestMetricsUpload(object):
         # folder. By keeping function in separate file we guarantee, it will be loaded
         # from there.
         logger = logging.getLogger(EvalRun.__module__)
+        # Switch off tracing as it is running in the second thread, wile
+        # thread pool executor is not compatible with VCR.py.
+        if not is_live():
+            monkeypatch.setattr(_start_trace, "_is_devkit_installed", lambda: False)
         # All loggers, having promptflow. prefix will have "promptflow" logger
         # as a parent. This logger does not propagate the logs and cannot be
         # captured by caplog. Here we will skip this logger to capture logs.
@@ -187,11 +192,14 @@ class TestMetricsUpload(object):
         # make sure to enable coverage, check that .coverage.sanitized-suffix is present
         # in the cassette.
         logger = logging.getLogger(EvalRun.__module__)
-        
         # All loggers, having promptflow. prefix will have "promptflow" logger
         # as a parent. This logger does not propagate the logs and cannot be
         # captured by caplog. Here we will skip this logger to capture logs.
         logger.parent = logging.root
+        # Switch off tracing as it is running in the second thread, wile
+        # thread pool executor is not compatible with VCR.py.
+        if not is_live():
+            monkeypatch.setattr(_start_trace, "_is_devkit_installed", lambda: False)
         f1_score_eval = F1ScoreEvaluator()
         evaluate(
             data=questions_answers_file,
