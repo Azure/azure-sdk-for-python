@@ -44,9 +44,7 @@ project_client = AIProjectClient.from_connection_string(
 with project_client:
 
     # Get the properties of a connection by its connection name:
-    connection = project_client.connections.get(
-        connection_name=connection_name, include_credentials=True
-    )
+    connection = project_client.connections.get(connection_name=connection_name, include_credentials=True)
     print("====> Get connection by name (credentials printout redacted)):")
     print(connection)
 
@@ -109,7 +107,9 @@ elif connection.connection_type == ConnectionType.AZURE_AI_SERVICES:
         # MaaS models do not yet support EntraID auth
         print("====> Creating ChatCompletionsClient using Entra ID authentication")
         inference_client = ChatCompletionsClient(
-            endpoint=f"{connection.endpoint_url}/models", credential=cast(TokenCredential, connection.token_credential)
+            endpoint=f"{connection.endpoint_url}/models",
+            credential=cast(TokenCredential, connection.token_credential),
+            credential_scopes=["https://cognitiveservices.azure.com/.default"],
         )
     else:
         raise ValueError(f"Authentication type {connection.authentication_type} not supported.")

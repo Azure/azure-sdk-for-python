@@ -33,6 +33,7 @@ from azure.ai.projects.models import ConnectionType, AuthenticationType
 from azure.identity.aio import DefaultAzureCredential
 from typing import cast
 
+
 async def sample_inference_client_from_connection() -> None:
 
     project_connection_string = os.environ["PROJECT_CONNECTION_STRING"]
@@ -47,12 +48,9 @@ async def sample_inference_client_from_connection() -> None:
     async with project_client:
 
         # Get the properties of a connection by its connection name:
-        connection = await project_client.connections.get(
-            connection_name=connection_name, include_credentials=True
-        )
+        connection = await project_client.connections.get(connection_name=connection_name, include_credentials=True)
         print("====> Get connection by name (credentials printout redacted)):")
         print(connection)
-
 
     # Examples of how you would create an inference client
     if connection.connection_type == ConnectionType.AZURE_OPEN_AI:
@@ -74,7 +72,8 @@ async def sample_inference_client_from_connection() -> None:
             aoai_client = AsyncAzureOpenAI(
                 # See https://learn.microsoft.com/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
                 azure_ad_token_provider=get_bearer_token_provider(
-                    cast(AsyncTokenCredential, connection.token_credential), "https://cognitiveservices.azure.com/.default"
+                    cast(AsyncTokenCredential, connection.token_credential),
+                    "https://cognitiveservices.azure.com/.default",
                 ),
                 azure_endpoint=connection.endpoint_url,
                 api_version="2024-06-01",  # See "Data plane - inference" row in table https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs
@@ -112,7 +111,8 @@ async def sample_inference_client_from_connection() -> None:
             # MaaS models do not yet support EntraID auth
             print("====> Creating ChatCompletionsClient using Entra ID authentication")
             inference_client = ChatCompletionsClient(
-                endpoint=f"{connection.endpoint_url}/models", credential=cast(AsyncTokenCredential, connection.token_credential)
+                endpoint=f"{connection.endpoint_url}/models",
+                credential=cast(AsyncTokenCredential, connection.token_credential),
             )
         else:
             raise ValueError(f"Authentication type {connection.authentication_type} not supported.")

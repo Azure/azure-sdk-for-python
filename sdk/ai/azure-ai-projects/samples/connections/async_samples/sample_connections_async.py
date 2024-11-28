@@ -28,6 +28,7 @@ from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import ConnectionType
 from azure.identity.aio import DefaultAzureCredential
 
+
 async def sample_connections_async() -> None:
 
     project_connection_string = os.environ["PROJECT_CONNECTION_STRING"]
