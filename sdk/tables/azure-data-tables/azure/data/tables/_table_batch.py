@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Union, Any, Mapping, Optional, List, Tuple, TypeVar, Dict
+from typing import Union, Any, Mapping, Optional, List, Tuple, Dict
 
 from azure.core import MatchConditions
 from azure.core.rest import HttpRequest

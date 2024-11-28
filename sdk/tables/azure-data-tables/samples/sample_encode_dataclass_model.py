@@ -24,7 +24,7 @@ USAGE:
 import os
 from datetime import datetime, timezone
 from uuid import uuid4, UUID
-from enum import StrEnum
+from enum import Enum
 from dotenv import find_dotenv, load_dotenv
 from dataclasses import dataclass, asdict
 from typing import Optional
@@ -48,7 +48,7 @@ class Car:
     is_second_hand: Optional[bool] = None
 
 
-class Color(StrEnum):
+class Color(str, Enum):
     WHITE = "white"
     GRAY = "gray"
     BLACK = "black"

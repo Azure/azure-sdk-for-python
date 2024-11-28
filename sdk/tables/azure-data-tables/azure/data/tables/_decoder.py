@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Optional, Mapping, Union, Dict, Callable
+from typing import Any, Optional, Mapping, Union, Dict, Callable, cast
 from datetime import datetime, timezone
 from urllib.parse import quote
 from uuid import UUID
@@ -72,7 +72,7 @@ class TableEntityDecoder:
 
         properties = {}
         edmtypes = {}
-        odata = EntityMetadata()
+        odata = {}
 
         for name, value in response_data.items():
             if name.startswith("odata."):
@@ -97,6 +97,7 @@ class TableEntityDecoder:
                 mtype = NO_ODATA[type(value)]
 
             convert = None
+            default_convert = None
             if self.convert_map:
                 try:
                     convert = self.convert_map[mtype]
@@ -106,11 +107,11 @@ class TableEntityDecoder:
                 new_property = convert(value)
             else:
                 try:
-                    convert = _ENTITY_TO_PYTHON_CONVERSIONS[mtype]
+                    default_convert = _ENTITY_TO_PYTHON_CONVERSIONS[mtype]
                 except KeyError as e:
                     raise TypeError(f"Unsupported edm type: {mtype}") from e
-                if convert:
-                    new_property = convert(self, value)
+                if default_convert is not None:
+                    new_property = default_convert(self, value)
                 else:
                     new_property = EntityProperty(mtype, value)
             entity[name] = new_property
@@ -126,7 +127,7 @@ class TableEntityDecoder:
         if self.flatten_result_entity:
             for name, value in odata.items():
                 entity[name] = value
-        entity._metadata = odata  # pylint: disable=protected-access
+        entity._metadata = cast(EntityMetadata, odata)  # pylint: disable=protected-access
         return entity
 
     def from_entity_binary(self, value: str) -> bytes:
@@ -150,7 +151,7 @@ class TableEntityDecoder:
         return value
 
 
-_ENTITY_TO_PYTHON_CONVERSIONS: DecoderMapType = {
+_ENTITY_TO_PYTHON_CONVERSIONS = {
     EdmType.BINARY: TableEntityDecoder.from_entity_binary,
     EdmType.INT32: TableEntityDecoder.from_entity_int32,
     EdmType.INT64: TableEntityDecoder.from_entity_int64,

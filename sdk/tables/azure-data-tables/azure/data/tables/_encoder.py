@@ -57,6 +57,7 @@ class TableEntityEncoder:
                 # Find the converter function from customer provided convert_map first,
                 # if not find, try with the default convert_map _PYTHON_TO_ENTITY_CONVERSIONS
                 convert = None
+                default_convert = None
                 if self.convert_map:
                     try:
                         convert = self.convert_map[type(value)]
@@ -69,14 +70,14 @@ class TableEntityEncoder:
                     edm_type, value = convert(value)
                 else:
                     try:
-                        convert = _PYTHON_TO_ENTITY_CONVERSIONS[type(value)]
+                        default_convert = _PYTHON_TO_ENTITY_CONVERSIONS[type(value)]
                     except KeyError:
                         if isinstance(value, Enum):
-                            convert = _PYTHON_TO_ENTITY_CONVERSIONS[Enum]
+                            default_convert = _PYTHON_TO_ENTITY_CONVERSIONS[Enum]
                         if isinstance(value, datetime):
-                            convert = _PYTHON_TO_ENTITY_CONVERSIONS[datetime]
-                    if convert:
-                        edm_type, value = convert(self, value)  # mypy: ignore[call-arg]
+                            default_convert = _PYTHON_TO_ENTITY_CONVERSIONS[datetime]
+                    if default_convert:
+                        edm_type, value = default_convert(self, value)  # mypy: ignore[call-arg]
                     else:
                         raise TypeError(f"No encoder found for value '{value}' of type '{type(value)}'.")
             try:
@@ -183,7 +184,7 @@ class TableEntityEncoder:
 # boolean and int32 have special processing below, as we would not normally add the
 # Odata type tags for these to keep payload size minimal.
 # This is also necessary for CLI compatibility.
-_PYTHON_TO_ENTITY_CONVERSIONS: EncoderMapType = {
+_PYTHON_TO_ENTITY_CONVERSIONS = {
     int: TableEntityEncoder.to_entity_int32,
     bool: TableEntityEncoder.to_entity_bool,
     datetime: TableEntityEncoder.to_entity_datetime,

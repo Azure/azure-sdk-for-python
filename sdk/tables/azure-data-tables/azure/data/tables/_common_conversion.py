@@ -8,7 +8,7 @@ import hashlib
 import hmac
 from datetime import timezone
 from urllib.parse import ParseResult
-from typing import Optional, Tuple, List, Dict, Any, Union
+from typing import Optional, Tuple, List, Dict, Any, Union, cast
 
 
 def _to_str(value):
@@ -95,7 +95,7 @@ def _prepare_key(key: Union[str, int, float, None]) -> str:
     :rtype: str
     """
     try:
-        return key.replace("'", "''")
+        return cast(str, key).replace("'", "''")
     except (AttributeError, TypeError) as exc:
         raise TypeError("PartitionKey or RowKey must be of type string.") from exc
 
