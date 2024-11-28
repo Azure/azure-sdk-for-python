@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_batch_documents.py
+FILE: sample_analyze_batch_documents_async.py
 
 DESCRIPTION:
     This sample demonstrates how to analyze documents in a batch.
@@ -31,19 +31,20 @@ DESCRIPTION:
     See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
 
 USAGE:
-    python sample_analyze_batch_documents.py
+    python sample_analyze_batch_documents_async.py
 
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
     2) DOCUMENTINTELLIGENCE_API_KEY - your Document Intelligence API key.
 """
 
+import asyncio
 import os
 
 
-def analyze_batch_docs():
+async def analyze_batch_docs():
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.documentintelligence import DocumentIntelligenceClient
+    from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import (
         AnalyzeBatchDocumentsRequest,
         AzureBlobContentSource,
@@ -56,25 +57,30 @@ def analyze_batch_docs():
 
     document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-    request = AnalyzeBatchDocumentsRequest(
-        result_container_url=result_container_sas_url,
-        azure_blob_source=AzureBlobContentSource(
-            container_url=batch_training_data_container_sas_url,
-        ),
-    )
-    poller = document_intelligence_client.begin_analyze_batch_documents(
-        model_id="prebuilt-layout",
-        analyze_batch_request=request,
-    )
-    contination_token = poller.continuation_token()  # a continuation token that allows to restart the poller later.
-    poller2 = document_intelligence_client.get_analyze_batch_result(contination_token)
-    if poller2.done():
-        final_result = poller2.result()
-        print(f"Succeeded count: {final_result.succeeded_count}")
-        print(f"Failed count: {final_result.failed_count}")
-        print(f"Skipped count: {final_result.skipped_count}")
-    else:
-        print("The batch analyze is still in process...")
+    async with document_intelligence_client:
+        request = AnalyzeBatchDocumentsRequest(
+            result_container_url=result_container_sas_url,
+            azure_blob_source=AzureBlobContentSource(
+                container_url=batch_training_data_container_sas_url,
+            ),
+        )
+        poller = await document_intelligence_client.begin_analyze_batch_documents(
+            model_id="prebuilt-layout",
+            analyze_batch_request=request,
+        )
+        contination_token = poller.continuation_token()  # a continuation token that allows to restart the poller later.
+        poller2 = await document_intelligence_client.get_analyze_batch_result(contination_token)
+        if poller2.done():
+            final_result = await poller2.result()
+            print(f"Succeeded count: {final_result.succeeded_count}")
+            print(f"Failed count: {final_result.failed_count}")
+            print(f"Skipped count: {final_result.skipped_count}")
+        else:
+            print("The batch analyze is still in process...")
+
+
+async def main():
+    await analyze_batch_docs()
 
 
 if __name__ == "__main__":
@@ -83,7 +89,7 @@ if __name__ == "__main__":
 
     try:
         load_dotenv(find_dotenv())
-        analyze_batch_docs()
+        asyncio.run(main())
     except HttpResponseError as error:
         # Examples of how to check an HttpResponseError
         # Check by error code:
