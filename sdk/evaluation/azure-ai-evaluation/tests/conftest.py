@@ -14,7 +14,15 @@ from unittest.mock import patch
 
 import pytest
 from ci_tools.variables import in_ci
-from devtools_testutils import add_body_key_sanitizer, add_general_regex_sanitizer, add_header_regex_sanitizer, is_live, remove_batch_sanitizers, add_batch_sanitizers, Sanitizer
+from devtools_testutils import (
+    add_body_key_sanitizer,
+    add_general_regex_sanitizer,
+    add_header_regex_sanitizer,
+    is_live,
+    remove_batch_sanitizers,
+    add_batch_sanitizers,
+    Sanitizer,
+)
 from devtools_testutils.config import PROXY_URL
 from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.helpers import get_recording_id
@@ -189,7 +197,7 @@ def add_sanitizers(
         add_body_key_sanitizer(json_path="$..upn", value="Sanitized")
 
         # remove the stainless retry header since it is causing some unnecessary mismatches in recordings
-        add_batch_sanitizers({Sanitizer.REMOVE_HEADER: [{"headers": "x-stainless-retry-count"}] })
+        add_batch_sanitizers({Sanitizer.REMOVE_HEADER: [{"headers": "x-stainless-retry-count"}]})
 
     azure_workspace_triad_sanitizer()
     azureopenai_connection_sanitizer()
@@ -407,15 +415,17 @@ def mock_validate_trace_destination():
     with patch("promptflow._sdk._tracing.TraceDestinationConfig.validate", return_value=None):
         yield
 
+
 @pytest.fixture
 def azure_ml_client(project_scope: dict, azure_cred: TokenCredential) -> LiteMLClient:
     """The fixture, returning LiteMLClient."""
     return LiteMLClient(
-        subscription_id = project_scope["subscription_id"],
-        resource_group = project_scope["resource_group_name"],
-        logger = Logger("azure_ml_client"),
-        credential=azure_cred
+        subscription_id=project_scope["subscription_id"],
+        resource_group=project_scope["resource_group_name"],
+        logger=Logger("azure_ml_client"),
+        credential=azure_cred,
     )
+
 
 @pytest.fixture
 def pf_client() -> PFClient:

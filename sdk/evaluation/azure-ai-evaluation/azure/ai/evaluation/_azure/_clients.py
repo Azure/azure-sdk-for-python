@@ -24,7 +24,7 @@ PATH_ML_WORKSPACES = ("providers", "Microsoft.MachineLearningServices", "workspa
 
 class LiteMLClient:
     """A lightweight Azure ML API client.
-    
+
     :param subscription_id: Azure subscription ID
     :type subscription_id: str
     :param resource_group: Azure resource group name
@@ -44,13 +44,14 @@ class LiteMLClient:
         resource_group: str,
         logger: Logger,
         credential: Optional[TokenCredential] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
-        subscription_id = quote(subscription_id, safe='')
-        resource_group = quote(resource_group, safe='')
+        subscription_id = quote(subscription_id, safe="")
+        resource_group = quote(resource_group, safe="")
 
-        self._base_url: Final[str] = \
+        self._base_url: Final[str] = (
             f"https://management.azure.com/subscriptions/{subscription_id}/resourceGroups/{resource_group}"
+        )
         self._logger: Final[Logger] = logger
         self._api_version: Final[str] = kwargs.get("api_version", API_VERSION)
         self._http_client: Final[HttpPipeline] = get_http_client(**kwargs)
@@ -72,19 +73,17 @@ class LiteMLClient:
         # 1. Get the default blob store
         # REST API documentation:
         # https://learn.microsoft.com/rest/api/azureml/datastores/list?view=rest-azureml-2024-10-01
-        url = self._generate_path(*PATH_ML_WORKSPACES, workspace_name, "datastores") #pylint: disable=specify-parameter-names-in-call
+        url = self._generate_path(
+            *PATH_ML_WORKSPACES, workspace_name, "datastores"
+        )  # pylint: disable=specify-parameter-names-in-call
         headers = self._get_headers()
 
         stores_response = self._http_client.request(
             method="GET",
             url=url,
-            params={
-                QUERY_KEY_API_VERSION: self._api_version,
-                "isDefault": True,
-                "count": 1,
-                "orderByAsc": "false"
-            },
-            headers=headers)
+            params={QUERY_KEY_API_VERSION: self._api_version, "isDefault": True, "count": 1, "orderByAsc": "false"},
+            headers=headers,
+        )
         self._throw_on_http_error(stores_response, "list default workspace datastore")
 
         json = stores_response.json()["value"][0]
@@ -100,18 +99,15 @@ class LiteMLClient:
         blob_store_credential: Union[AzureNamedKeyCredential, AzureSasCredential, None] = None
         if include_credentials:
             url = self._generate_path(
-                *PATH_ML_WORKSPACES,
-                workspace_name,
-                "datastores",
-                "workspaceblobstore",
-                "listSecrets")
+                *PATH_ML_WORKSPACES, workspace_name, "datastores", "workspaceblobstore", "listSecrets"
+            )
             secrets_response = self._http_client.request(
                 method="POST",
                 url=url,
                 params={
                     QUERY_KEY_API_VERSION: self._api_version,
                 },
-                headers=headers
+                headers=headers,
             )
             self._throw_on_http_error(secrets_response, "workspace datastore secrets")
 
@@ -131,7 +127,7 @@ class LiteMLClient:
                     internal_message=f"The credential type is '{secrets_type}'",
                     target=ErrorTarget.EVALUATE,
                     category=ErrorCategory.INVALID_VALUE,
-                    blame=ErrorBlame.SYSTEM_ERROR
+                    blame=ErrorBlame.SYSTEM_ERROR,
                 )
 
         return BlobStoreInfo(name, account_name, endpoint, container_name, blob_store_credential)
@@ -141,10 +137,8 @@ class LiteMLClient:
         workspace_response = self._http_client.request(
             "GET",
             self._generate_path(*PATH_ML_WORKSPACES, workspace_name),
-            params={
-                QUERY_KEY_API_VERSION: self._api_version
-            },
-            headers=self._get_headers()
+            params={QUERY_KEY_API_VERSION: self._api_version},
+            headers=self._get_headers(),
         )
 
         self._throw_on_http_error(workspace_response, f"get '{workspace_name}' workspace")
@@ -157,20 +151,17 @@ class LiteMLClient:
             with self._lock:
                 if self._token_manager is None:
                     self._token_manager = AzureMLTokenManager(
-                        TokenScope.DEFAULT_AZURE_MANAGEMENT.value, self._logger, credential=self._credential)
+                        TokenScope.DEFAULT_AZURE_MANAGEMENT.value, self._logger, credential=self._credential
+                    )
                     self._credential = self._token_manager.credential
 
         return self._token_manager
 
     @staticmethod
-    def _throw_on_http_error(
-        response: HttpResponse,
-        description: str,
-        valid_status: Optional[Set[int]] = None
-    ) -> None:
-        if (valid_status and (response.status_code in valid_status)):
+    def _throw_on_http_error(response: HttpResponse, description: str, valid_status: Optional[Set[int]] = None) -> None:
+        if valid_status and (response.status_code in valid_status):
             return
-        if (response.status_code >= 200 and response.status_code < 300):
+        if response.status_code >= 200 and response.status_code < 300:
             # nothing to see here, move along
             return
 
@@ -186,16 +177,13 @@ class LiteMLClient:
             target=ErrorTarget.EVALUATE,
             category=ErrorCategory.FAILED_EXECUTION,
             blame=ErrorBlame.SYSTEM_ERROR,
-            internal_message=additional_info
+            internal_message=additional_info,
         )
 
     def _generate_path(self, *paths: str) -> str:
-        sanitized_paths = [quote(path, safe='') for path in paths]
-        url = self._base_url + "/" + str.join('/', sanitized_paths)
+        sanitized_paths = [quote(path, safe="") for path in paths]
+        url = self._base_url + "/" + str.join("/", sanitized_paths)
         return url
 
     def _get_headers(self) -> Dict[str, str]:
-        return {
-            "Authorization": f"Bearer {self.get_token()}",
-            "Content-Type": "application/json"
-        }
+        return {"Authorization": f"Bearer {self.get_token()}", "Content-Type": "application/json"}

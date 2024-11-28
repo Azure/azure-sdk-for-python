@@ -8,17 +8,14 @@ import inspect
 from typing import cast, Optional, Union
 
 from azure.core.credentials import TokenCredential, AccessToken
-from azure.identity import (AzureCliCredential,
-    DefaultAzureCredential,
-    ManagedIdentityCredential
-)
+from azure.identity import AzureCliCredential, DefaultAzureCredential, ManagedIdentityCredential
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from ..simulator._model_tools._identity_manager import APITokenManager, AZURE_TOKEN_REFRESH_INTERVAL
 
 
 class AzureMLTokenManager(APITokenManager):
     """API Token manager for Azure Management API.
-    
+
     :param token_scope: Token scopes for Azure endpoint
     :type token_scope: str
     :param logger: Logger object
@@ -26,6 +23,7 @@ class AzureMLTokenManager(APITokenManager):
     :keyword kwargs: Additional keyword arguments
     :paramtype kwargs: Dict
     """
+
     def __init__(
         self,
         token_scope: str,
@@ -49,8 +47,9 @@ class AzureMLTokenManager(APITokenManager):
             # using Azure on behalf of credentials requires the use of the azure-ai-ml package
             try:
                 from azure.ai.ml.identity import AzureMLOnBehalfOfCredential
+
                 self.logger.debug("User identity is configured, use OBO credential.")
-                return AzureMLOnBehalfOfCredential() # type: ignore
+                return AzureMLOnBehalfOfCredential()  # type: ignore
             except (ModuleNotFoundError, ImportError):
                 raise EvaluationException(  # pylint: disable=raise-missing-from
                     message=(
@@ -63,11 +62,11 @@ class AzureMLTokenManager(APITokenManager):
                 )
         elif os.environ.get("PF_USE_AZURE_CLI_CREDENTIAL", "false").lower() == "true":
             self.logger.debug("Use azure cli credential since specified in environment variable.")
-            return AzureCliCredential() # type: ignore
+            return AzureCliCredential()  # type: ignore
         elif os.environ.get("IS_IN_CI_PIPELINE", "false").lower() == "true":
             # use managed identity when executing in CI pipeline.
             self.logger.debug("Use azure cli credential since in CI pipeline.")
-            return AzureCliCredential() # type: ignore
+            return AzureCliCredential()  # type: ignore
         else:
             # Fall back to using the parent implementation
             return super().get_aad_credential()
@@ -83,7 +82,7 @@ class AzureMLTokenManager(APITokenManager):
             access_token = credential.get_token(self.token_scope)
             self._update_token(access_token)
 
-        return cast(str, self.token) # check for none is hidden in the _token_needs_update method
+        return cast(str, self.token)  # check for none is hidden in the _token_needs_update method
 
     async def get_token_async(self) -> str:
         """Get the API token asynchronously. If the token is not available or has expired, refresh it.
@@ -100,7 +99,7 @@ class AzureMLTokenManager(APITokenManager):
                 access_token = get_token_method
             self._update_token(access_token)
 
-        return cast(str, self.token) # check for none is hidden in the _token_needs_update method
+        return cast(str, self.token)  # check for none is hidden in the _token_needs_update method
 
     def _token_needs_update(self) -> bool:
         current_time = time.time()

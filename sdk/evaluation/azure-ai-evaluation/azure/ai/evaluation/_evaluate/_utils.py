@@ -67,7 +67,7 @@ def extract_workspace_triad_from_trace_provider(  # pylint: disable=name-too-lon
 
     # In theory this if statement should never evaluate to True, but we'll keep it here just in case
     # for backwards compatibility with what the original code that depended on promptflow-azure did
-    if not(subscription_id and resource_group_name and workspace_name):
+    if not (subscription_id and resource_group_name and workspace_name):
         local = get_workspace_triad_from_local()
         subscription_id = subscription_id or local.subscription_id or os.getenv("AZUREML_ARM_SUBSCRIPTION")
         resource_group_name = resource_group_name or local.resource_group_name or os.getenv("AZUREML_ARM_RESOURCEGROUP")
