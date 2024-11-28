@@ -124,6 +124,7 @@ from azure.ai.ml.operations import (
     RegistryOperations,
     ServerlessEndpointOperations,
     WorkspaceConnectionsOperations,
+    WorkspaceOperations
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._feature_set_operations import FeatureSetOperations
