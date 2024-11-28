@@ -2,6 +2,7 @@
 ## 1.23.0 (unreleased)
 
 ### Features Added
+  - Added support for IP-based access control to default and hub workspaces. 
   - Add support for additional include in spark component.
   - Adding enterprise agent feature for AI Hub or AI Project. Adding Create and Get operations.
 
