@@ -66,8 +66,8 @@ def analyze_batch_docs():
         model_id="prebuilt-layout",
         analyze_batch_request=request,
     )
-    contination_token = poller.continuation_token()  # a continuation token that allows to restart the poller later.
-    poller2 = document_intelligence_client.get_analyze_batch_result(contination_token)
+    continuation_token = poller.continuation_token()  # a continuation token that allows to restart the poller later.
+    poller2 = document_intelligence_client.get_analyze_batch_result(continuation_token)
     if poller2.done():
         final_result = poller2.result()
         print(f"Succeeded count: {final_result.succeeded_count}")
