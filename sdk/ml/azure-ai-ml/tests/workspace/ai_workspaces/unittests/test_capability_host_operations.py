@@ -55,6 +55,7 @@ class TestCapabilityHostOperation:
     def test_begin_create_or_update(
         self, mock_capability_hosts_operation: CapabilityHostsOperations
     ) -> None:
+        """Test create or update capability host."""
         capability_host = load_capability_host(
             source="./tests/test_configs/workspace/ai_workspaces/test_capability_host_hub.yml"
         )
@@ -66,6 +67,7 @@ class TestCapabilityHostOperation:
     def test_get(
         self, mock_capability_hosts_operation: CapabilityHostsOperations
     ) -> None:
+        """Test get capability host."""
         mock_capability_hosts_operation.get(name="test_capability_host")
         mock_capability_hosts_operation._capability_hosts_operations.get.assert_called_once_with(
             name="test_capability_host",
@@ -76,6 +78,7 @@ class TestCapabilityHostOperation:
     def test_delete(
         self, mock_capability_hosts_operation: CapabilityHostsOperations
     ) -> None:
+        """Test delete capability host."""
         mock_capability_hosts_operation.begin_delete(name="test_capability_host")
         mock_capability_hosts_operation._capability_hosts_operations.begin_delete.assert_called_once_with(
             name="test_capability_host",
@@ -84,9 +87,10 @@ class TestCapabilityHostOperation:
             polling=True,
         )
 
-    def test_begin_create_or_update_failure(
+    def test_begin_create_or_update_failure_for_invalid_wsname(
         self, mock_invalid_capability_hosts_operation: CapabilityHostsOperations
     ) -> None:
+        """Test exception if workspace name is empty or invalid."""
         capability_host = load_capability_host(
             source="./tests/test_configs/workspace/ai_workspaces/test_capability_host_hub.yml"
         )
@@ -94,4 +98,4 @@ class TestCapabilityHostOperation:
             mock_invalid_capability_hosts_operation.begin_create_or_update(
                 capability_host=capability_host
             )
-        assert "Please set hub name or project name in MLClient." in ve.value.args[0]
+        assert "Please set hub name or project name in workspacename parameter while initializing MLClient object." in ve.value.args[0]
