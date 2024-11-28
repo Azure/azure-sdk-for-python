@@ -108,11 +108,11 @@ async def sample_inference_client_from_connection() -> None:
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             from azure.core.credentials_async import AsyncTokenCredential
 
-            # MaaS models do not yet support EntraID auth
             print("====> Creating ChatCompletionsClient using Entra ID authentication")
             inference_client = ChatCompletionsClient(
                 endpoint=f"{connection.endpoint_url}/models",
                 credential=cast(AsyncTokenCredential, connection.token_credential),
+                credential_scopes=["https://cognitiveservices.azure.com/.default"],
             )
         else:
             raise ValueError(f"Authentication type {connection.authentication_type} not supported.")

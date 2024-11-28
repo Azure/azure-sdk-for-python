@@ -104,7 +104,6 @@ elif connection.connection_type == ConnectionType.AZURE_AI_SERVICES:
     elif connection.authentication_type == AuthenticationType.ENTRA_ID:
         from azure.core.credentials import TokenCredential
 
-        # MaaS models do not yet support EntraID auth
         print("====> Creating ChatCompletionsClient using Entra ID authentication")
         inference_client = ChatCompletionsClient(
             endpoint=f"{connection.endpoint_url}/models",
