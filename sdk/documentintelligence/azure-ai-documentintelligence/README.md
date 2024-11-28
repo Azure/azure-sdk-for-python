@@ -826,10 +826,10 @@ if model.doc_types:
 
 <!-- END SNIPPET -->
 
-<!-- SNIPPET:sample_manage_models.get_resource_info -->
+<!-- SNIPPET:sample_manage_models.get_resource_details -->
 
 ```python
-account_details = document_intelligence_admin_client.get_resource_info()
+account_details = document_intelligence_admin_client.get_resource_details()
 print(
     f"Our resource has {account_details.custom_document_models.count} custom models, "
     f"and we can have at most {account_details.custom_document_models.limit} custom models"
@@ -917,7 +917,7 @@ def callback(response):
     responses["status_code"] = response.http_response.status_code
     responses["response_body"] = response.http_response.json()
 
-client.get_resource_info(raw_response_hook=callback)
+client.get_resource_details(raw_response_hook=callback)
 
 print(f"Response status code is: {responses["status_code"]}")
 response_body = responses["response_body"]

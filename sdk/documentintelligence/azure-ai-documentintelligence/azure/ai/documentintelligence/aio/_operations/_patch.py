@@ -583,9 +583,9 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         return AsyncAnalyzeDocumentLROPoller[_models.AnalyzeResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
-    
+
     @distributed_trace_async
-    async def begin_classify_document(
+    async def begin_classify_document(  # type: ignore[override]
         self,
         classifier_id: str,
         classify_request: Union[_models.ClassifyDocumentRequest, JSON, IO[bytes]],
@@ -619,10 +619,10 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         content_type = None
         if isinstance(classify_request, io.BytesIO):
             content_type="application/octet-stream"
-        return await super().begin_classify_document(
+        return await super().begin_classify_document(  # type: ignore[arg-type, misc]
             classifier_id=classifier_id,
-            classify_request=classify_request,
-            content_type=content_type,
+            classify_request=classify_request,  # type: ignore[arg-type]
+            content_type=content_type,  # type: ignore[arg-type]
             string_index_type=string_index_type,
             split=split,
             pages=pages,
@@ -630,20 +630,21 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         )
 
     @distributed_trace_async
-    async def get_analyze_batch_result(
+    async def get_analyze_batch_result(  # type: ignore[override]
         self, continuation_token: str
     ) -> AsyncLROPoller[_models.AnalyzeBatchResult]:
         """Gets the result of batch document analysis.
 
-        :param continuation_token: An opaque continuation token. Required.
-        :type model_id: str
+        :param str continuation_token: An opaque continuation token. Required.
         :return: An instance of AsyncLROPoller that returns AnalyzeBatchResult. The AnalyzeBatchResult
          is compatible with MutableMapping
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.AnalyzeBatchResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return await self.begin_analyze_batch_documents(None, None, continuation_token=continuation_token)
+        return await self.begin_analyze_batch_documents(  # type: ignore[call-overload]
+            None, None, continuation_token=continuation_token
+        )
 
 
 __all__: List[str] = [
