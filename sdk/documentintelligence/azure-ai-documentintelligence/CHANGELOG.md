@@ -3,8 +3,29 @@
 ## 1.0.0 (Unreleased)
 
 ### Features Added
+- Added support for the Analyze Batch Documents API:
+    - Added operations `delete_analyze_batch_result()`, `get_analyze_batch_result()` and `list_analyze_batch_results()` to `DocumentIntelligenceClient`.
+- Added support for the Analyze Documents API:
+    - Added operations `delete_analyze_result()` to `DocumentIntelligenceClient`.
 
 ### Breaking Changes
+- Renamed operation `get_resource_info()` to `get_resource_details()`.
+- Renamed model `ContentFormat` to `DocumentContentFormat`.
+- Renamed model `AnalyzeBatchResultOperation` to `AnalyzeBatchOperation`.
+- Renamed model `AnalyzeResultOperation` to `AnalyzeOperation`.
+- Renamed model `CopyAuthorization` to `ModelCopyAuthorization`.
+- Renamed model `Document` to `AnalyzeDocument`.
+- Renamed model `Error` to `DocumentIntelligenceError`.
+- Renamed model `ErrorResponse` to `DocumentIntelligenceErrorResponse`.
+- Renamed model `InnerError` to `DocumentIntelligenceInnerError`.
+- Renamed model `OperationDetails` to `DocumentIntelligenceOperationDetails`.
+- Renamed model `OperationStatus` to `DocumentIntelligenceOperationStatus`.
+- Renamed model `ResourceDetails` to `DocumentIntelligenceResourceDetails`.
+- Renamed model `Warning` to `DocumentIntelligenceWarning`.
+- Renamed property `items_property` in model `DocumentFieldSchema` to `items_schema`.
+- Renamed enum `FontStyle` to `DocumentFontStyle`.
+- Renamed enum `FontWeight` to `DocumentFontWeight`.
+- Removed `GENERATIVE ` in enum `DocumentBuildMode`.
 
 ### Bugs Fixed
 
