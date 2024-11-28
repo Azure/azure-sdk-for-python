@@ -12,7 +12,7 @@ from azure.core.credentials import TokenCredential, AzureNamedKeyCredential, Azu
 from azure.core.rest import HttpResponse
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import HttpPipeline, get_http_client
-from azure.ai.evaluation._promptflow.azure._token_manager import AzureManagementAPITokenManager
+from azure.ai.evaluation._azure._token_manager import AzureMLTokenManager
 from azure.ai.evaluation.simulator._model_tools._identity_manager import TokenScope
 from ._models import BlobStoreInfo, Workspace
 
@@ -22,8 +22,8 @@ QUERY_KEY_API_VERSION: Final[str] = "api-version"
 PATH_ML_WORKSPACES = ("providers", "Microsoft.MachineLearningServices", "workspaces")
 
 
-class LiteAzureManagementClient:
-    """A lightweight Azure Management API client.
+class LiteMLClient:
+    """A lightweight Azure ML API client.
     
     :param subscription_id: Azure subscription ID
     :type subscription_id: str
@@ -57,7 +57,7 @@ class LiteAzureManagementClient:
         self._lock: Final[Lock] = Lock()
 
         # things that can change under lock
-        self._token_manager: Optional[AzureManagementAPITokenManager] = None
+        self._token_manager: Optional[AzureMLTokenManager] = None
         self._credential: Optional[TokenCredential] = credential
 
     def get_token(self) -> str:
@@ -151,12 +151,12 @@ class LiteAzureManagementClient:
         workspace = Workspace.deserialize(workspace_response)
         return workspace
 
-    def _get_token_manager(self) -> AzureManagementAPITokenManager:
+    def _get_token_manager(self) -> AzureMLTokenManager:
         # Lazy init since getting credentials in the constructor can take a long time in some situations
         if self._token_manager is None:
             with self._lock:
                 if self._token_manager is None:
-                    self._token_manager = AzureManagementAPITokenManager(
+                    self._token_manager = AzureMLTokenManager(
                         TokenScope.DEFAULT_AZURE_MANAGEMENT.value, self._logger, credential=self._credential)
                     self._credential = self._token_manager.credential
 

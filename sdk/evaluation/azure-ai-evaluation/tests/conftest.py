@@ -27,7 +27,7 @@ from pytest_mock import MockerFixture
 
 from azure.ai.evaluation import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from azure.ai.evaluation._common.utils import ensure_nltk_data_downloaded
-from azure.ai.evaluation._promptflow.azure._lite_azure_management_client import LiteAzureManagementClient
+from azure.ai.evaluation._azure._clients import LiteMLClient
 from azure.core.credentials import TokenCredential
 
 PROMPTFLOW_ROOT = Path(__file__, "..", "..", "..").resolve()
@@ -408,12 +408,12 @@ def mock_validate_trace_destination():
         yield
 
 @pytest.fixture
-def azure_management_client(project_scope: dict, azure_cred: TokenCredential) -> LiteAzureManagementClient:
-    """Get an Azure management client."""
-    return LiteAzureManagementClient(
+def azure_ml_client(project_scope: dict, azure_cred: TokenCredential) -> LiteMLClient:
+    """The fixture, returning LiteMLClient."""
+    return LiteMLClient(
         subscription_id = project_scope["subscription_id"],
         resource_group = project_scope["resource_group_name"],
-        logger = Logger("azure_management_client"),
+        logger = Logger("azure_ml_client"),
         credential=azure_cred
     )
 

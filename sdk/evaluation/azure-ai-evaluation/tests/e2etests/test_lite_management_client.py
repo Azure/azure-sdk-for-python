@@ -1,7 +1,7 @@
 import pytest
 import logging
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-from azure.ai.evaluation._promptflow.azure._lite_azure_management_client import LiteAzureManagementClient
+from azure.ai.evaluation._azure._clients import LiteMLClient
 
 
 @pytest.mark.usefixtures("model_config", "project_scope", "recording_injection", "recorded_test")
@@ -10,7 +10,7 @@ class TestLiteAzureManagementClient(object):
 
     @pytest.mark.azuretest
     def test_get_credential(self, project_scope, azure_cred):
-        client = LiteAzureManagementClient(
+        client = LiteMLClient(
             subscription_id=project_scope["subscription_id"],
             resource_group=project_scope["resource_group_name"],
             credentials=azure_cred,
@@ -22,7 +22,7 @@ class TestLiteAzureManagementClient(object):
 
     @pytest.mark.azuretest
     def test_get_token(self, project_scope, azure_cred):
-        client = LiteAzureManagementClient(
+        client = LiteMLClient(
             subscription_id=project_scope["subscription_id"],
             resource_group=project_scope["resource_group_name"],
             credentials=azure_cred,
@@ -35,7 +35,7 @@ class TestLiteAzureManagementClient(object):
     @pytest.mark.azuretest
     @pytest.mark.parametrize("include_credentials", [ False, True ])
     def test_workspace_get_default_store(self, project_scope, azure_cred, include_credentials: bool):
-        client = LiteAzureManagementClient(
+        client = LiteMLClient(
             subscription_id=project_scope["subscription_id"],
             resource_group=project_scope["resource_group_name"],
             credentials=azure_cred,
@@ -59,7 +59,7 @@ class TestLiteAzureManagementClient(object):
 
     @pytest.mark.azuretest
     def test_workspace_get_info(self, project_scope, azure_cred):
-        client = LiteAzureManagementClient(
+        client = LiteMLClient(
             subscription_id=project_scope["subscription_id"],
             resource_group=project_scope["resource_group_name"],
             credentials=azure_cred,

@@ -13,10 +13,10 @@ from azure.identity import (AzureCliCredential,
     ManagedIdentityCredential
 )
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from ...simulator._model_tools._identity_manager import APITokenManager, AZURE_TOKEN_REFRESH_INTERVAL
+from ..simulator._model_tools._identity_manager import APITokenManager, AZURE_TOKEN_REFRESH_INTERVAL
 
 
-class AzureManagementAPITokenManager(APITokenManager):
+class AzureMLTokenManager(APITokenManager):
     """API Token manager for Azure Management API.
     
     :param token_scope: Token scopes for Azure endpoint

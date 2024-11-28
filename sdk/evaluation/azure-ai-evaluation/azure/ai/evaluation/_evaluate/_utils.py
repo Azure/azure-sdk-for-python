@@ -22,7 +22,7 @@ from azure.ai.evaluation._constants import (
 )
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import AzureAIProject
-from azure.ai.evaluation._promptflow.azure._lite_azure_management_client import LiteAzureManagementClient
+from azure.ai.evaluation._azure._clients import LiteMLClient
 
 LOGGER = logging.getLogger(__name__)
 
@@ -140,7 +140,7 @@ def _log_metrics_and_instance_results(
         return None
 
     ws_triad = extract_workspace_triad_from_trace_provider(trace_destination)
-    management_client = LiteAzureManagementClient(
+    management_client = LiteMLClient(
         subscription_id=ws_triad.subscription_id,
         resource_group=ws_triad.resource_group_name,
         logger=LOGGER,

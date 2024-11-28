@@ -23,7 +23,7 @@ from azure.core.pipeline.policies import RetryPolicy
 from azure.core.rest import HttpResponse
 from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import BlobServiceClient
-from azure.ai.evaluation._promptflow.azure._lite_azure_management_client import LiteAzureManagementClient
+from azure.ai.evaluation._azure._clients import LiteMLClient
 
 LOGGER = logging.getLogger(__name__)
 
@@ -78,7 +78,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
     :type workspace_name: str
     :param management_client: The trace destination string to parse the AI ML workspace blob store from.
     :type management_client: 
-        ~azure.ai.evaluation._promptflow.azure._lite_azure_management_client.LiteAzureManagementClient
+        ~azure.ai.evaluation._promptflow.azure._lite_azure_management_client.LiteMLClient
     :param promptflow_run: The promptflow run used by the
     :type promptflow_run: Optional[promptflow._sdk.entities.Run]
     """
@@ -96,14 +96,14 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         subscription_id: str,
         group_name: str,
         workspace_name: str,
-        management_client: LiteAzureManagementClient,
+        management_client: LiteMLClient,
         promptflow_run: Optional[Run] = None,
     ) -> None:
         self._tracking_uri: str = tracking_uri
         self._subscription_id: str = subscription_id
         self._resource_group_name: str = group_name
         self._workspace_name: str = workspace_name
-        self._management_client: LiteAzureManagementClient = management_client
+        self._management_client: LiteMLClient = management_client
         self._is_promptflow_run: bool = promptflow_run is not None
         self._run_name = run_name
         self._promptflow_run = promptflow_run

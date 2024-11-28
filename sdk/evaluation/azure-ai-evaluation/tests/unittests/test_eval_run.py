@@ -9,7 +9,7 @@ import jwt
 import pandas as pd
 import pathlib
 import pytest
-from azure.ai.evaluation._promptflow.azure._token_manager import AzureManagementAPITokenManager
+from azure.ai.evaluation._azure._token_manager import AzureMLTokenManager
 
 import azure.ai.evaluation._evaluate._utils as ev_utils
 from azure.ai.evaluation._evaluate._eval_run import EvalRun, RunStatus
@@ -22,7 +22,7 @@ def generate_mock_token():
 
 
 @pytest.mark.unittest
-@patch.object(AzureManagementAPITokenManager, "get_token", return_value=generate_mock_token())
+@patch.object(AzureMLTokenManager, "get_token", return_value=generate_mock_token())
 class TestEvalRun:
     """Unit tests for the eval-run object."""
 

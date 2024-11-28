@@ -12,7 +12,7 @@ from azure.ai.evaluation import F1ScoreEvaluator
 from azure.ai.evaluation._evaluate import _utils as ev_utils
 from azure.ai.evaluation._evaluate._eval_run import EvalRun
 from azure.ai.evaluation._evaluate._evaluate import evaluate
-from azure.ai.evaluation._promptflow.azure._lite_azure_management_client import LiteAzureManagementClient
+from azure.ai.evaluation._azure._clients import LiteMLClient
 
 
 @pytest.fixture
@@ -33,8 +33,8 @@ def questions_file():
     return os.path.join(data_path, "questions.jsonl")
 
 
-def _get_tracking_uri(azure_management_client: LiteAzureManagementClient, project_scope: dict) -> str:
-    return azure_management_client.workspace_get_info(project_scope["project_name"]).ml_flow_tracking_uri or ""
+def _get_tracking_uri(azure_ml_client: LiteMLClient, project_scope: dict) -> str:
+    return azure_ml_client.workspace_get_info(project_scope["project_name"]).ml_flow_tracking_uri or ""
 
 
 @pytest.mark.usefixtures("model_config", "recording_injection", "project_scope", "recorded_test")
@@ -53,7 +53,7 @@ class TestMetricsUpload(object):
             assert not error_messages, "\n".join(error_messages)
 
     @pytest.mark.azuretest
-    def test_writing_to_run_history(self, caplog, project_scope, azure_management_client: LiteAzureManagementClient):
+    def test_writing_to_run_history(self, caplog, project_scope, azure_ml_client: LiteMLClient):
         """Test logging data to RunHistory service."""
         logger = logging.getLogger(EvalRun.__module__)
         # All loggers, having promptflow. prefix will have "promptflow" logger
@@ -65,11 +65,11 @@ class TestMetricsUpload(object):
         mock_response.status_code = 418
         with EvalRun(
             run_name="test",
-            tracking_uri=_get_tracking_uri(azure_management_client, project_scope),
+            tracking_uri=_get_tracking_uri(azure_ml_client, project_scope),
             subscription_id=project_scope["subscription_id"],
             group_name=project_scope["resource_group_name"],
             workspace_name=project_scope["project_name"],
-            management_client=azure_management_client,
+            management_client=azure_ml_client,
         ) as ev_run:
             with patch(
                 "azure.ai.evaluation._evaluate._eval_run.EvalRun.request_with_retry", return_value=mock_response
@@ -83,7 +83,7 @@ class TestMetricsUpload(object):
         self._assert_no_errors_for_module(caplog.records, [EvalRun.__module__])
 
     @pytest.mark.azuretest
-    def test_logging_metrics(self, caplog, project_scope, azure_management_client):
+    def test_logging_metrics(self, caplog, project_scope, azure_ml_client):
         """Test logging metrics."""
         logger = logging.getLogger(EvalRun.__module__)
         # All loggers, having promptflow. prefix will have "promptflow" logger
@@ -92,11 +92,11 @@ class TestMetricsUpload(object):
         logger.parent = logging.root
         with EvalRun(
             run_name="test",
-            tracking_uri=_get_tracking_uri(azure_management_client, project_scope),
+            tracking_uri=_get_tracking_uri(azure_ml_client, project_scope),
             subscription_id=project_scope["subscription_id"],
             group_name=project_scope["resource_group_name"],
             workspace_name=project_scope["project_name"],
-            management_client=azure_management_client,
+            management_client=azure_ml_client,
         ) as ev_run:
             mock_response = MagicMock()
             mock_response.status_code = 418
@@ -112,7 +112,7 @@ class TestMetricsUpload(object):
         self._assert_no_errors_for_module(caplog.records, EvalRun.__module__)
 
     @pytest.mark.azuretest
-    def test_log_artifact(self, project_scope, azure_management_client, caplog, tmp_path):
+    def test_log_artifact(self, project_scope, azure_ml_client, caplog, tmp_path):
         """Test uploading artifact to the service."""
         logger = logging.getLogger(EvalRun.__module__)
         # All loggers, having promptflow. prefix will have "promptflow" logger
@@ -121,11 +121,11 @@ class TestMetricsUpload(object):
         logger.parent = logging.root
         with EvalRun(
             run_name="test",
-            tracking_uri=_get_tracking_uri(azure_management_client, project_scope),
+            tracking_uri=_get_tracking_uri(azure_ml_client, project_scope),
             subscription_id=project_scope["subscription_id"],
             group_name=project_scope["resource_group_name"],
             workspace_name=project_scope["project_name"],
-            management_client=azure_management_client,
+            management_client=azure_ml_client,
         ) as ev_run:
             mock_response = MagicMock()
             mock_response.status_code = 418
