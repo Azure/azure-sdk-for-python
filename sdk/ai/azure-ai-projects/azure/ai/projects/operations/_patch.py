@@ -100,10 +100,7 @@ class InferenceOperations:
             endpoint = connection.endpoint_url
             credential_scopes = ["https://ml.azure.com/.default"]
         else:
-            # Be sure to use the Azure resource name here, not the connection name. Connection name is something that
-            # admins can pick when they manually create a new connection (or use bicep). Get the Azure resource name
-            # from the end of the connection id.
-            endpoint = f"https://{connection.id.split('/')[-1]}.services.ai.azure.com/models"
+            endpoint = f"{connection.endpoint_url}/models"
             credential_scopes = ["https://cognitiveservices.azure.com/.default"]
 
         if connection.authentication_type == AuthenticationType.API_KEY:
@@ -178,10 +175,7 @@ class InferenceOperations:
             endpoint = connection.endpoint_url
             credential_scopes = ["https://ml.azure.com/.default"]
         else:
-            # Be sure to use the Azure resource name here, not the connection name. Connection name is something that
-            # admins can pick when they manually create a new connection (or use bicep). Get the Azure resource name
-            # from the end of the connection id.
-            endpoint = f"https://{connection.id.split('/')[-1]}.services.ai.azure.com/models"
+            endpoint = f"{connection.endpoint_url}/models"
             credential_scopes = ["https://cognitiveservices.azure.com/.default"]
 
         if connection.authentication_type == AuthenticationType.API_KEY:
