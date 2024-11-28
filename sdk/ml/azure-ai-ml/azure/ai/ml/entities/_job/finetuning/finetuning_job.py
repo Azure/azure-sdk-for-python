@@ -102,13 +102,13 @@ class FineTuningJob(Job, JobIOMixin):
         if not isinstance(other, FineTuningJob):
             return NotImplemented
 
-        queue_settings_match = not self.queue_settings and not other.queue_settings
-        if self.queue_settings and other.queue_settings:
-            queue_settings_match = (
-                self.queue_settings.job_tier
-                and other.queue_settings.job_tier
-                and self.queue_settings.job_tier.lower() == other.queue_settings.job_tier.lower()
-            )
+        queue_settings_match = (not self.queue_settings and not other.queue_settings) or (
+            self.queue_settings is not None
+            and other.queue_settings is not None
+            and self.queue_settings.job_tier is not None
+            and other.queue_settings.job_tier is not None
+            and self.queue_settings.job_tier.lower() == other.queue_settings.job_tier.lower()
+        )
 
         outputs_match = not self.outputs and not other.outputs
         if self.outputs and other.outputs:

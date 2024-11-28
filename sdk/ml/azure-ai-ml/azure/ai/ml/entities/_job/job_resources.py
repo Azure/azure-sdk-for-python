@@ -1,3 +1,9 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
 from typing import Any, List
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml._restclient.v2024_10_01_preview.models import JobResources as RestJobResources
@@ -16,8 +22,8 @@ class JobResources(RestTranslatableMixin):
         return RestJobResources(instance_types=self.instance_types)
 
     @classmethod
-    def _from_rest_object(cls, rest_object: RestJobResources) -> "JobResources":
-        job_resources = cls(instance_types=rest_object.instance_types)
+    def _from_rest_object(cls, obj: RestJobResources) -> "JobResources":
+        job_resources = cls(instance_types=obj.instance_types)
         return job_resources
 
     def __eq__(self, other: object) -> bool:

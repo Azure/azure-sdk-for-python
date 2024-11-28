@@ -747,9 +747,8 @@ class MLClient:
                 **ops_kwargs,  # type: ignore[arg-type]
             )
             self._operation_container.add(
-                # type: ignore[arg-type]
                 AzureMLResourceType.VIRTUALCLUSTER,
-                self._virtual_clusters,
+                self._virtual_clusters,  # type: ignore[arg-type]
             )
         except Exception as ex:  # pylint: disable=broad-except
             module_logger.debug("Virtual Cluster operations could not be initialized due to %s ", ex)

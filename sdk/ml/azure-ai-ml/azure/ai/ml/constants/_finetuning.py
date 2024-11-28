@@ -1,3 +1,8 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
+
 class FineTuningTaskType:
     CHAT_COMPLETION = "ChatCompletion"
     TEXT_COMPLETION = "TextCompletion"

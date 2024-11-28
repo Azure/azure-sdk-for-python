@@ -83,9 +83,7 @@ class FineTuningVertical(FineTuningJob):
         :type value: Input
         :raises ValidationException: Expected a mlflow model input.
         """
-        if isinstance(value, Input) and (
-            cast(Input, value).type == "mlflow_model" or cast(Input, value).type == "custom_model"
-        ):
+        if isinstance(value, Input) and (cast(Input, value).type in ("mlflow_model", "custom_model")):
             self._model = value
         else:
             msg = "Expected a mlflow model input or custom model input."
