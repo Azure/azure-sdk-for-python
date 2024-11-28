@@ -85,11 +85,6 @@ class TableEntityDecoder():
         if partition_key is not None:
             entity["PartitionKey"] = partition_key
 
-        # Rowkey is a known property
-        row_key = properties.pop("RowKey", None)
-        if row_key is not None:
-            entity["RowKey"] = row_key
-
         # Timestamp is a known property
         timestamp = properties.pop("Timestamp", None)
 
