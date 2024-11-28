@@ -29,7 +29,7 @@ from typing import (
     Union,
     cast,
     overload,
-    Generic
+    Generic,
 )
 
 from azure.core.exceptions import ResourceNotFoundError
@@ -1391,9 +1391,11 @@ class AgentsOperations(AgentsOperationsGenerated):
             logging.info("Current run status: %s", run.status)
 
         return run
-    
+
     BaseAsyncAgentEventHandlerT = TypeVar("BaseAsyncAgentEventHandlerT", bound=_models.BaseAsyncAgentEventHandler)
-    _defaultAgentEventHandler: _models.BaseAsyncAgentEventHandler[Tuple[str, _models.StreamEventData]] = _models.AsyncAgentEventHandler()
+    _defaultAgentEventHandler: _models.BaseAsyncAgentEventHandler[Tuple[str, _models.StreamEventData]] = (
+        _models.AsyncAgentEventHandler()
+    )
 
     @overload
     async def create_stream(
@@ -1897,7 +1899,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         # Cast the response to Iterator[bytes] for type correctness
         response_iterator: AsyncIterator[bytes] = cast(AsyncIterator[bytes], await response)
-        
+
         return _models.AsyncAgentRunStream(response_iterator, self._handle_submit_tool_outputs, event_handler)
 
     async def _handle_submit_tool_outputs(

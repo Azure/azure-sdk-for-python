@@ -35,7 +35,7 @@ import os
 
 
 class MyEventHandler(BaseAsyncAgentEventHandler[str]):
-    
+
     async def _process_event(self, event_data_str: str) -> Optional[str]:
         event_lines = event_data_str.strip().split("\n")
         event_type: Optional[str] = None
@@ -48,7 +48,7 @@ class MyEventHandler(BaseAsyncAgentEventHandler[str]):
 
         if not event_type:
             raise ValueError("Event type not specified in the event data.")
-        
+
         if event_type == AgentStreamEvent.THREAD_MESSAGE_DELTA.value:
 
             event_obj: MessageDeltaChunk = MessageDeltaChunk(**json.loads(event_data))
@@ -57,11 +57,11 @@ class MyEventHandler(BaseAsyncAgentEventHandler[str]):
                 if isinstance(content_part, MessageDeltaTextContent):
                     if content_part.text is not None:
                         return content_part.text.value
-    
+
     async def get_stream_chunks(self) -> AsyncGenerator[str, None]:
         async for chunk in self:
             yield chunk
-    
+
 
 async def main() -> None:
     # Create an Azure AI Client from a connection string, copied from your AI Studio project.

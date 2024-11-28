@@ -54,11 +54,11 @@ class MyEventHandler(AsyncAgentEventHandler):
 
     def __init__(self, functions: AsyncFunctionTool) -> None:
         self.functions = functions
-        
+
     async def on_message_delta_text_content(self, message_text_content: "MessageDeltaTextContent") -> None:
         text_value = message_text_content.text.value if message_text_content.text else "No text"
         print(f"Text content received: {text_value}")
-        
+
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         print(f"Text delta received.")
 
@@ -107,6 +107,7 @@ class MyEventHandler(AsyncAgentEventHandler):
     async def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
         print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
+
 async def main() -> None:
     async with project_client:
 
@@ -142,6 +143,7 @@ async def main() -> None:
 
         messages = await project_client.agents.list_messages(thread_id=thread.id)
         print(f"Messages: {messages}")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

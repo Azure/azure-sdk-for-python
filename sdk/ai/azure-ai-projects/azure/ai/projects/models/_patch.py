@@ -920,8 +920,18 @@ class AsyncToolSet(BaseToolSet):
 T = TypeVar("T")
 BaseAsyncAgentEventHandlerT = TypeVar("BaseAsyncAgentEventHandlerT", bound="BaseAsyncAgentEventHandler")
 BaseAgentEventHandlerT = TypeVar("BaseAgentEventHandlerT", bound="BaseAgentEventHandler")
-        
+
+
 class ProcessAgentDataEventIterator(Iterator[Tuple[str, StreamEventData]]):
+    """
+    This iterator accept one event data string and return a tuple of event type and event data.
+    In all events, this iterator only has one entry except for the THREAD_MESSAGE_DELTA event.
+    That event has multiple entries for each content part of the message delta.
+
+    Args:
+        Iterator (BaseAsyncAgentEventHandlerT): a event handler inherited from BaseAgentEventHandler
+    """
+
     def __init__(self, event_data_str: str):
         self.index = 0
         self.iterator_items = self._init_iterator_items(event_data_str)
@@ -931,8 +941,8 @@ class ProcessAgentDataEventIterator(Iterator[Tuple[str, StreamEventData]]):
             raise StopIteration
         value = self.iterator_items[self.index]
         self.index += 1
-        return value 
-       
+        return value
+
     def _init_iterator_items(self, event_data_str: str) -> List[Tuple[str, StreamEventData]]:
         event_lines = event_data_str.strip().split("\n")
         event_type: Optional[str] = None
@@ -989,22 +999,22 @@ class ProcessAgentDataEventIterator(Iterator[Tuple[str, StreamEventData]]):
             iterator_items.append((event_type, _safe_instantiate(ThreadMessage, parsed_data)))
         elif event_type == AgentStreamEvent.THREAD_MESSAGE_DELTA.value:
             message_delta_chunks = _safe_instantiate(MessageDeltaChunk, parsed_data)
-            iterator_items.append((event_type,  message_delta_chunks))
+            iterator_items.append((event_type, message_delta_chunks))
             for content_part in cast(MessageDeltaChunk, message_delta_chunks).delta.content:
                 if isinstance(content_part, MessageDeltaTextContent):
-                    iterator_items.append((event_type,  content_part))
-            
+                    iterator_items.append((event_type, content_part))
+
         elif event_type == AgentStreamEvent.THREAD_RUN_STEP_DELTA.value:
             iterator_items.append((event_type, _safe_instantiate(RunStepDeltaChunk, parsed_data)))
         else:
             iterator_items.append((event_type, str(parsed_data)))
         return iterator_items
-        
-            
+
+
 class BaseAsyncAgentEventHandler(AsyncIterator[T]):
     done = False
     buffer = ""
-    
+
     def _init(
         self,
         response_iterator: AsyncIterator[bytes],
@@ -1014,7 +1024,7 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
         self.response_iterator = response_iterator
         self.event_handler = event_handler
         self.submit_tool_outputs = submit_tool_outputs
-            
+
     async def __anext__(self) -> T:
         while True:
             try:
@@ -1036,11 +1046,10 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
                 event = await self._process_event(event_data_str)
                 if event:
                     return event
-            
-    
+
     async def _process_event(self, event_data_str: str) -> Optional[T]:
         raise NotImplementedError("This method needs to be implemented.")
-    
+
     async def until_done(self) -> None:
         """
         Iterates through all events until the stream is marked as done.
@@ -1056,7 +1065,7 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
 class BaseAgentEventHandler(Iterator[T]):
     done = False
     buffer = ""
-    
+
     def _init(
         self,
         response_iterator: Iterator[bytes],
@@ -1066,7 +1075,7 @@ class BaseAgentEventHandler(Iterator[T]):
         self.response_iterator = response_iterator
         self.event_handler = event_handler
         self.submit_tool_outputs = submit_tool_outputs
-            
+
     def __next__(self) -> T:
         while True:
             try:
@@ -1089,11 +1098,9 @@ class BaseAgentEventHandler(Iterator[T]):
                 if event:
                     return event
 
-            
-    
     def _process_event(self, event_data_str: str) -> Optional[T]:
         raise NotImplementedError("This method needs to be implemented.")
-    
+
     def until_done(self) -> None:
         """
         Iterates through all events until the stream is marked as done.
@@ -1105,10 +1112,17 @@ class BaseAgentEventHandler(Iterator[T]):
         except StopAsyncIteration:
             pass
 
-    
+
 class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventData]]):
-    
+
     async def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData]:
+        """
+        For each http response from API, this method processes the event_data_str from http response.
+        And for each event_data_str, we generate one Tuple except for THREAD_MESSAGE_DELTA event.
+        For THREAD_MESSAGE_DELTA event, we generate multiple Tuple for each content part of the message delta.
+        Returns:
+            Tuple[str, StreamEventData]: event type and event data
+        """
         iterator = ProcessAgentDataEventIterator(event_data_str)
         for event_type, event_data_obj in iterator:
             if (
@@ -1117,7 +1131,7 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
                 and isinstance(event_data_obj.required_action, SubmitToolOutputsAction)
             ):
                 await self.submit_tool_outputs(event_data_obj, self)
-            
+
             try:
                 if isinstance(event_data_obj, MessageDeltaTextContent):
                     await self.on_message_delta_text_content(event_data_obj)
@@ -1139,12 +1153,14 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
                 else:
                     await self.on_unhandled_event(event_type, event_data_obj)
             except Exception as e:  # pylint: disable=broad-exception-caught
-                logging.error("Error in event handler for event '%s': %s", event_type, e)            
+                logging.error("Error in event handler for event '%s': %s", event_type, e)
 
         iterator.index = 0
         return iterator.__next__()
-    
-    async def yield_until_done(self, yield_callback: Callable[[str, StreamEventData], Awaitable[Optional[T]]], **kwargs) -> AsyncGenerator[T, None]:
+
+    async def yield_until_done(
+        self, yield_callback: Callable[[str, StreamEventData], Awaitable[Optional[T]]], **kwargs
+    ) -> AsyncGenerator[T, None]:
         """
         Iterates through all events until the stream is marked as done.
         Calls the provided callback function with each event data.
@@ -1155,19 +1171,20 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
                 if to_be_yield:
                     yield to_be_yield
         except StopAsyncIteration:
-            pass    
-    
+            pass
+
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         """Handle message delta events.
 
         :param MessageDeltaChunk delta: The message delta.
         """
+
     async def on_message_delta_text_content(self, message_text_content: "MessageDeltaTextContent") -> None:
         """Handle delta text content from message delta events.
 
         :param MessageDeltaTextContent message_text_content: The message text content.
         """
-        
+
     async def on_thread_message(self, message: "ThreadMessage") -> None:
         """Handle thread message events.
 
@@ -1207,10 +1224,19 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
         :param str event_type: The event type.
         :param Any event_data: The event's data.
         """
-    
+
+
 class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData]]):
-    
+
     def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData]:
+        """
+        For each http response from API, this method processes the event_data_str from http response.
+        And for each event_data_str, we generate one Tuple except for THREAD_MESSAGE_DELTA event.
+        For THREAD_MESSAGE_DELTA event, we generate multiple Tuple for each content part of the message delta.
+        Returns:
+            Tuple[str, StreamEventData]: event type and event data
+        """
+
         iterator = ProcessAgentDataEventIterator(event_data_str)
         for event_type, event_data_obj in iterator:
             if (
@@ -1219,7 +1245,7 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData]]):
                 and isinstance(event_data_obj.required_action, SubmitToolOutputsAction)
             ):
                 self.submit_tool_outputs(event_data_obj, self)
-            
+
             try:
                 if isinstance(event_data_obj, MessageDeltaTextContent):
                     self.on_message_delta_text_content(event_data_obj)
@@ -1241,12 +1267,14 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData]]):
                 else:
                     self.on_unhandled_event(event_type, event_data_obj)
             except Exception as e:  # pylint: disable=broad-exception-caught
-                logging.error("Error in event handler for event '%s': %s", event_type, e)            
+                logging.error("Error in event handler for event '%s': %s", event_type, e)
 
         iterator.index = 0
         return iterator.__next__()
-    
-    def yield_until_done(self, yield_callback: Callable[[str, StreamEventData], Optional[T]], **kwargs) -> Generator[T, None, None]:
+
+    def yield_until_done(
+        self, yield_callback: Callable[[str, StreamEventData], Optional[T]], **kwargs
+    ) -> Generator[T, None, None]:
         """
         Iterates through all events until the stream is marked as done.
         Calls the provided callback function with each event data.
@@ -1257,19 +1285,20 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData]]):
                 if to_be_yield:
                     yield to_be_yield
         except StopIteration:
-            pass    
-    
+            pass
+
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         """Handle message delta events.
 
         :param MessageDeltaChunk delta: The message delta.
         """
+
     def on_message_delta_text_content(self, message_text_content: "MessageDeltaTextContent") -> None:
         """Handle delta text content from message delta events.
 
         :param MessageDeltaTextContent message_text_content: The message text content.
         """
-        
+
     def on_thread_message(self, message: "ThreadMessage") -> None:
         """Handle thread message events.
 
@@ -1310,7 +1339,7 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData]]):
         :param Any event_data: The event's data.
         """
 
-            
+
 class AsyncAgentRunStream(Generic[BaseAsyncAgentEventHandlerT]):
     def __init__(
         self,
@@ -1323,7 +1352,11 @@ class AsyncAgentRunStream(Generic[BaseAsyncAgentEventHandlerT]):
         self.done = False
         self.buffer = ""
         self.submit_tool_outputs = submit_tool_outputs
-        self.event_handler._init(self.response_iterator, cast(Callable[[ThreadRun, BaseAsyncAgentEventHandler], Awaitable[None]], submit_tool_outputs), self.event_handler)
+        self.event_handler._init(
+            self.response_iterator,
+            cast(Callable[[ThreadRun, BaseAsyncAgentEventHandler], Awaitable[None]], submit_tool_outputs),
+            self.event_handler,
+        )
 
     async def __aenter__(self):
         return self.event_handler
@@ -1338,6 +1371,7 @@ class AsyncAgentRunStream(Generic[BaseAsyncAgentEventHandlerT]):
     def __aiter__(self):
         return self
 
+
 class AgentRunStream(Generic[BaseAgentEventHandlerT]):
     def __init__(
         self,
@@ -1350,7 +1384,11 @@ class AgentRunStream(Generic[BaseAgentEventHandlerT]):
         self.done = False
         self.buffer = ""
         self.submit_tool_outputs = submit_tool_outputs
-        self.event_handler._init(self.response_iterator, cast(Callable[[ThreadRun, BaseAgentEventHandler], Awaitable[None]], submit_tool_outputs), self.event_handler)
+        self.event_handler._init(
+            self.response_iterator,
+            cast(Callable[[ThreadRun, BaseAgentEventHandler], Awaitable[None]], submit_tool_outputs),
+            self.event_handler,
+        )
 
     def __enter__(self):
         return self.event_handler
@@ -1362,6 +1400,7 @@ class AgentRunStream(Generic[BaseAgentEventHandlerT]):
 
     def __iter__(self):
         return self
+
 
 class ThreadMessages:
     """

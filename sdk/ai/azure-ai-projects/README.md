@@ -19,52 +19,53 @@ For example, get the inference endpoint URL and credentials associated with your
 
 ## Table of contents
 
-- [Getting started](#getting-started)
-  - [Prerequisite](#prerequisite)
-  - [Install the package](#install-the-package)
-- [Key concepts](#key-concepts)
-  - [Create and authenticate the client](#create-and-authenticate-the-client)
-- [Examples](#examples)
-  - [Enumerate connections](#enumerate-connections)
-    - [Get properties of all connections](#get-properties-of-all-connections)
-    - [Get properties of all connections of a particular type](#get-properties-of-all-connections-of-a-particular-type)
-    - [Get properties of a default connection](#get-properties-of-a-default-connection)
-    - [Get properties of a connection by its connection name](#get-properties-of-a-connection-by-its-connection-name)
-  - [Get an authenticated ChatCompletionsClient](#get-an-authenticated-chatcompletionsclient)
-  - [Get an authenticated AzureOpenAI client](#get-an-authenticated-azureopenai-client)
-  - [Agents (Private Preview)](#agents-private-preview)
-    - [Create an Agent](#create-agent) with:
-      - [File Search](#create-agent-with-file-search)
-      - [Code interpreter](#create-agent-with-code-interpreter)
-      - [Bing grounding](#create-agent-with-bing-grounding)
-      - [Azure AI Search](#create-agent-with-azure-ai-search)
-      - [Function call](#create-agent-with-function-call)
-    - [Create thread](#create-thread) with
-      - [Tool resource](#create-thread-with-tool-resource)
-    - [Create message](#create-message) with:
-      - [File search attachment](#create-message-with-file-search-attachment)
-      - [Code interpreter attachment](#create-message-with-code-interpreter-attachment)
-    - [Execute Run, Run_and_Process, or Stream](#create-run-run_and_process-or-stream)
-    - [Retrieve message](#retrieve-message)
-    - [Retrieve file](#retrieve-file)
-    - [Tear down by deleting resource](#teardown)
-    - [Tracing](#tracing)
-  - [Evaluation](#evaluation)
-    - [Evaluator](#evaluator)
-    - [Run Evaluation in the cloud](#run-evaluation-in-the-cloud)
-      - [Evaluators](#evaluators)
-      - [Data to be evaluated](#data-to-be-evaluated)
-        - [[Optional] Azure OpenAI Model](#optional-azure-openai-model)
+- [Azure AI Projects client library for Python](#azure-ai-projects-client-library-for-python)
+  - [Table of contents](#table-of-contents)
+  - [Getting started](#getting-started)
+    - [Prerequisite](#prerequisite)
+    - [Install the package](#install-the-package)
+  - [Key concepts](#key-concepts)
+    - [Create and authenticate the client](#create-and-authenticate-the-client)
+  - [Examples](#examples)
+    - [Enumerate connections](#enumerate-connections)
+      - [Get properties of all connections](#get-properties-of-all-connections)
+      - [Get properties of all connections of a particular type](#get-properties-of-all-connections-of-a-particular-type)
+      - [Get properties of a default connection](#get-properties-of-a-default-connection)
+      - [Get properties of a connection by its connection name](#get-properties-of-a-connection-by-its-connection-name)
+    - [Get an authenticated ChatCompletionsClient](#get-an-authenticated-chatcompletionsclient)
+    - [Get an authenticated AzureOpenAI client](#get-an-authenticated-azureopenai-client)
+    - [Agents (Private Preview)](#agents-private-preview)
+      - [Create Agent](#create-agent)
+      - [Create Agent with File Search](#create-agent-with-file-search)
+      - [Create Agent with Code Interpreter](#create-agent-with-code-interpreter)
+      - [Create Agent with Bing Grounding](#create-agent-with-bing-grounding)
+      - [Create Agent with Azure AI Search](#create-agent-with-azure-ai-search)
+      - [Create Agent with Function Call](#create-agent-with-function-call)
+      - [Create Thread](#create-thread)
+      - [Create Thread with Tool Resource](#create-thread-with-tool-resource)
+      - [Create Message](#create-message)
+      - [Create Message with File Search Attachment](#create-message-with-file-search-attachment)
+      - [Create Message with Code Interpreter Attachment](#create-message-with-code-interpreter-attachment)
+      - [Create Run, Run\_and\_Process, or Stream](#create-run-run_and_process-or-stream)
+      - [Retrieve Message](#retrieve-message)
+    - [Retrieve File](#retrieve-file)
+      - [Teardown](#teardown)
+    - [Evaluation](#evaluation)
+      - [Evaluator](#evaluator)
+      - [Run Evaluation in the cloud](#run-evaluation-in-the-cloud)
+        - [Evaluators](#evaluators)
+        - [Data to be evaluated](#data-to-be-evaluated)
+        - [\[Optional\] Azure OpenAI Model](#optional-azure-openai-model)
         - [Example Remote Evaluation](#example-remote-evaluation)
-  - [Tracing](#tracing)
-    - [Installation](#installation)
-    - [Tracing example](#tracing-example)
-- [Troubleshooting](#troubleshooting)
-  - [Exceptions](#exceptions)
-  - [Logging](#logging)
-  - [Reporting issues](#reporting-issues)
-- [Next steps](#next-steps)
-- [Contributing](#contributing)
+    - [Tracing](#tracing)
+      - [Installation](#installation)
+      - [Tracing example](#tracing-example)
+  - [Troubleshooting](#troubleshooting)
+    - [Exceptions](#exceptions)
+    - [Logging](#logging)
+    - [Reporting issues](#reporting-issues)
+  - [Next steps](#next-steps)
+  - [Contributing](#contributing)
 
 ## Getting started
 
@@ -618,7 +619,7 @@ with project_client.agents.create_stream(
 
 <!-- END SNIPPET -->
 
-The event handler is optional. Here is an example:
+The event handler is optional.  If you don't provide one, the SDK will use the default `AgentEventHandler` or `AsyncAgentEventHandler`. Here is an example:
 
 <!-- SNIPPET:sample_agents_stream_eventhandler.stream_event_handler -->
 
@@ -650,6 +651,45 @@ class MyEventHandler(AgentEventHandler):
 ```
 
 <!-- END SNIPPET -->
+
+Within `AgentEventHandler` or `AsyncAgentEventHandler`, the stream content from the HTTP response is parsed into event types and data that are iterable as follows:
+
+<!-- SNIPPET:sample_agents_stream_iteration.iterate_stream -->
+
+```python
+with project_client.agents.create_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
+
+    for event_type, event_data in stream:
+
+        if isinstance(event_data, MessageDeltaChunk):
+            for content_part in event_data.delta.content:
+                if isinstance(content_part, MessageDeltaTextContent):
+                    text_value = content_part.text.value if content_part.text else "No text"
+                    print(f"Text delta received: {text_value}")
+
+        elif isinstance(event_data, ThreadMessage):
+            print(f"ThreadMessage created. ID: {event_data.id}, Status: {event_data.status}")
+
+        elif isinstance(event_data, ThreadRun):
+            print(f"ThreadRun status: {event_data.status}")
+
+        elif isinstance(event_data, RunStep):
+            print(f"RunStep type: {event_data.type}, Status: {event_data.status}")
+
+        elif event_type == AgentStreamEvent.ERROR:
+            print(f"An error occurred. Data: {event_data}")
+
+        elif event_type == AgentStreamEvent.DONE:
+            print("Stream completed.")
+            break
+
+        else:
+            print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
+```
+
+<!-- END SNIPPET -->
+
+If your use case requires a different parsing or iteration experience, refer to [override base event handler](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_stream_with_base_override_eventhandler.py)
 
 #### Retrieve Message
 

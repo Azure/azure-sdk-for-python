@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b3 (Unreleased)
+
+### Features Added
+
+* Redesigned streaming and event handlers for agents 
+
 ## 1.0.0b2 (Unreleased)
 
 ### Bugs Fixed

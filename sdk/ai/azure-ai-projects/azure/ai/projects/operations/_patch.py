@@ -13,7 +13,22 @@ import os
 import sys
 import time
 from pathlib import Path
-from typing import IO, TYPE_CHECKING, Any, Dict, Iterator, List, Optional, Sequence, TextIO, Tuple, TypeVar, Union, cast, overload
+from typing import (
+    IO,
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterator,
+    List,
+    Optional,
+    Sequence,
+    TextIO,
+    Tuple,
+    TypeVar,
+    Union,
+    cast,
+    overload,
+)
 
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
@@ -1566,8 +1581,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         return run
 
     BaseAgentEventHandlerT = TypeVar("BaseAgentEventHandlerT", bound="_models.BaseAgentEventHandler")
-    _defaultAgentEventHandler: _models.BaseAgentEventHandler[Tuple[str, _models.StreamEventData]] = _models.AgentEventHandler()
-
+    _defaultAgentEventHandler: _models.BaseAgentEventHandler[Tuple[str, _models.StreamEventData]] = (
+        _models.AgentEventHandler()
+    )
 
     @overload
     def create_stream(
