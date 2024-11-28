@@ -5084,6 +5084,7 @@ class ThreadRun(_model_base.Model):
      modifying the behavior on a per-run basis.
     :vartype tool_resources: ~azure.ai.projects.models.UpdateToolResourcesOptions
     :ivar parallel_tool_calls: Determines if tools can be executed in parallel within the run.
+     Required.
     :vartype parallel_tool_calls: bool
     """
 
@@ -5151,8 +5152,8 @@ class ThreadRun(_model_base.Model):
     tool_resources: Optional["_models.UpdateToolResourcesOptions"] = rest_field()
     """Override the tools the agent can use for this run. This is useful for modifying the behavior on
      a per-run basis."""
-    parallel_tool_calls: Optional[bool] = rest_field(name="parallelToolCalls")
-    """Determines if tools can be executed in parallel within the run."""
+    parallel_tool_calls: bool = rest_field()
+    """Determines if tools can be executed in parallel within the run. Required."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -5180,11 +5181,11 @@ class ThreadRun(_model_base.Model):
         tool_choice: "_types.AgentsApiToolChoiceOption",
         response_format: "_types.AgentsApiResponseFormatOption",
         metadata: Dict[str, str],
+        parallel_tool_calls: bool,
         required_action: Optional["_models.RequiredAction"] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         tool_resources: Optional["_models.UpdateToolResourcesOptions"] = None,
-        parallel_tool_calls: Optional[bool] = None,
     ) -> None: ...
 
     @overload
