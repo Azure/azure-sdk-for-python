@@ -1705,8 +1705,8 @@ class DocumentFieldSchema(_model_base.Model):
     :vartype description: str
     :ivar example: Example field content.
     :vartype example: str
-    :ivar items_property: Field type schema of each array element.
-    :vartype items_property: ~azure.ai.documentintelligence.models.DocumentFieldSchema
+    :ivar items_schema: Field type schema of each array element.
+    :vartype items_schema: ~azure.ai.documentintelligence.models.DocumentFieldSchema
     :ivar properties: Named sub-fields of the object field.
     :vartype properties: dict[str, ~azure.ai.documentintelligence.models.DocumentFieldSchema]
     """
@@ -1720,7 +1720,7 @@ class DocumentFieldSchema(_model_base.Model):
     """Field description."""
     example: Optional[str] = rest_field()
     """Example field content."""
-    items_property: Optional["_models.DocumentFieldSchema"] = rest_field(name="items")
+    items_schema: Optional["_models.DocumentFieldSchema"] = rest_field(name="items")
     """Field type schema of each array element."""
     properties: Optional[Dict[str, "_models.DocumentFieldSchema"]] = rest_field()
     """Named sub-fields of the object field."""
@@ -1732,7 +1732,7 @@ class DocumentFieldSchema(_model_base.Model):
         type: Union[str, "_models.DocumentFieldType"],
         description: Optional[str] = None,
         example: Optional[str] = None,
-        items_property: Optional["_models.DocumentFieldSchema"] = None,
+        items_schema: Optional["_models.DocumentFieldSchema"] = None,
         properties: Optional[Dict[str, "_models.DocumentFieldSchema"]] = None,
     ) -> None: ...
 
