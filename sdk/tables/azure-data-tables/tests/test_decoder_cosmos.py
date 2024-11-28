@@ -25,8 +25,10 @@ class TestTableDecoderCosmos(AzureRecordedTestCase, TableTestCase):
         table_name = self.get_resource_name("uttable01")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         responses = {}
+
         def callback(response):
             responses["response_body"] = response.http_response.json()
+
         # Test basic string, int32 and bool data
         with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
             client.create_table()
@@ -72,8 +74,10 @@ class TestTableDecoderCosmos(AzureRecordedTestCase, TableTestCase):
         table_name = self.get_resource_name("uttable03")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         responses = {}
+
         def callback(response):
             responses["response_body"] = response.http_response.json()
+
         # All automatically detected data types
         with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
             client.create_table()
@@ -91,7 +95,7 @@ class TestTableDecoderCosmos(AzureRecordedTestCase, TableTestCase):
             }
             created = client.create_entity(test_entity)
             result = client.get_entity("PK", "RK", raw_response_hook=callback)
-            old_result =  _convert_to_entity(responses["response_body"])
+            old_result = _convert_to_entity(responses["response_body"])
             assert result == old_result, f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
 
             result = client.query_entities("PartitionKey eq 'PK'", raw_response_hook=callback)
@@ -123,8 +127,10 @@ class TestTableDecoderCosmos(AzureRecordedTestCase, TableTestCase):
         table_name = self.get_resource_name("uttable04")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         responses = {}
+
         def callback(response):
             responses["response_body"] = response.http_response.json()
+
         # Explicit datatypes using Tuple definition
         with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
             client.create_table()
@@ -196,8 +202,10 @@ class TestTableDecoderCosmos(AzureRecordedTestCase, TableTestCase):
         table_name = self.get_resource_name("uttable05")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         responses = {}
+
         def callback(response):
             responses["response_body"] = response.http_response.json()
+
         # Raw payload with existing EdmTypes
         with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
             client.create_table()
@@ -258,8 +266,10 @@ class TestTableDecoderCosmos(AzureRecordedTestCase, TableTestCase):
         table_name = self.get_resource_name("uttable06")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         responses = {}
+
         def callback(response):
             responses["response_body"] = response.http_response.json()
+
         with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
             client.create_table()
             # Non-UTF8 characters in both keys and properties

@@ -57,7 +57,7 @@ class TableClient(TablesBaseClient):
         ~azure.core.credentials.AzureSasCredential or
         ~azure.core.credentials.TokenCredential or None
     :ivar encoder_map: A dictionary maps the type and the convertion function of this type used in encoding.
-    :vartype encoder_map: 
+    :vartype encoder_map:
         dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
     :ivar decoder_map: A dictionary maps the type and the convertion function of this type used in decoding.
     :vartype decoder_map:
@@ -442,7 +442,7 @@ class TableClient(TablesBaseClient):
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
-        **kwargs
+        **kwargs,
     ) -> Dict[str, Any]:
         """Updates an already existing entity in a table.
 

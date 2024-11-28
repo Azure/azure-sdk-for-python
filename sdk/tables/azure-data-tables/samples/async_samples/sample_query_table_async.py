@@ -104,7 +104,7 @@ class SampleTablesQuery(object):
                     print(entity_chosen)
             except HttpResponseError as e:
                 raise
-        
+
         async with TableClient.from_connection_string(
             self.connection_string, self.table_name, flatten_result_entity=True
         ) as table_client:

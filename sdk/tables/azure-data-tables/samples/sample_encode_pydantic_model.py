@@ -29,7 +29,6 @@ from azure.data.tables import TableClient, EdmType
 
 
 class Review(BaseModel):
-    __table__: Literal['reviews'] = 'reviews'
     user_name: str
     rating: int
     review_text: Optional[str] = None
@@ -37,9 +36,12 @@ class Review(BaseModel):
 
 
 class Restaurant(BaseModel):
-    __table__: Literal['restaurants'] = 'restaurants'
-    id: str = Field(default_factory=lambda: str(uuid4()), serialization_alias='PartitionKey', validation_alias=AliasChoices('id', 'PartitionKey'))
-    name: str = Field(serialization_alias='RowKey', validation_alias=AliasChoices('name', 'RowKey'))
+    id: str = Field(
+        default_factory=lambda: str(uuid4()),
+        serialization_alias="PartitionKey",
+        validation_alias=AliasChoices("id", "PartitionKey"),
+    )
+    name: str = Field(serialization_alias="RowKey", validation_alias=AliasChoices("name", "RowKey"))
     street_address: str
     description: Optional[str] = None
     review: Review
@@ -48,9 +50,11 @@ class Restaurant(BaseModel):
 def encode_review(value):
     return EdmType.STRING, str(value)
 
+
 encoder_map = {
     dict: encode_review,
 }
+
 
 class CreateDeleteEntity(object):
     def __init__(self):

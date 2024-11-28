@@ -58,7 +58,7 @@ class TableClient(AsyncTablesBaseClient):
         ~azure.core.credentials.AzureSasCredential or
         ~azure.core.credentials_async.AsyncTokenCredential or None
     :ivar encoder_map: A dictionary maps the type and the convertion function of this type used in encoding.
-    :vartype encoder_map: 
+    :vartype encoder_map:
         dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
     :ivar decoder_map: A dictionary maps the type and the convertion function of this type used in decoding.
     :vartype decoder_map:

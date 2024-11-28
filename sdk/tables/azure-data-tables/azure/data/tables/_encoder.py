@@ -14,15 +14,13 @@ from ._common_conversion import _encode_base64, _to_utc_datetime
 from ._constants import MAX_INT64, MIN_INT64, _ERROR_VALUE_TOO_LARGE
 
 _ODATA_SUFFIX = "@odata.type"
-EncoderMapType = MutableMapping[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, None]]]]
+EncoderMapType = MutableMapping[
+    Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, None]]]
+]
 
 
-class TableEntityEncoder():
-    def __init__(
-        self,
-        *,
-        convert_map: Optional[EncoderMapType] = None
-    ) -> None:
+class TableEntityEncoder:
+    def __init__(self, *, convert_map: Optional[EncoderMapType] = None) -> None:
         self.convert_map = convert_map
 
     def __call__(self, entity: Union[TableEntity, Mapping[str, Any]]) -> Dict[str, Union[str, int, float, bool]]:
@@ -158,7 +156,7 @@ class TableEntityEncoder():
     def to_entity_tuple(self, value):
         if len(value) == 2:
             unencoded_value = value[0]
-            edm_type = EdmType(value[1]) # should raise error for unknown edmtypes
+            edm_type = EdmType(value[1])  # should raise error for unknown edmtypes
         else:
             raise ValueError("Tuple should have 2 items")
         if unencoded_value is None:
@@ -174,6 +172,7 @@ class TableEntityEncoder():
             return convert(self, unencoded_value)
         except KeyError as e:
             raise TypeError("Unsupported tuple type") from e
+
 
 # Conversion from Python type to a function which returns a tuple of the
 # type string and content string.

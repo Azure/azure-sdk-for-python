@@ -2217,7 +2217,7 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
         with pytest.raises(ClientAuthenticationError):
             for _ in client.list_tables():
                 pass
-    
+
     @tables_decorator
     @recorded_by_proxy
     def test_get_entity_with_flatten_metadata(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -2225,14 +2225,12 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
         url = self.account_url(tables_storage_account_name, "table")
         entity = {"PartitionKey": "pk", "RowKey": "rk", "Value": "foobar", "Answer": 42}
 
-        with TableClient(
-            url, table_name, credential=tables_primary_storage_account_key
-        ) as client:
+        with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
             client.create_table()
             client.create_entity(entity)
             received_entity1 = client.get_entity("pk", "rk")
             assert received_entity1.metadata
-        
+
         with TableClient(
             url, table_name, credential=tables_primary_storage_account_key, flatten_result_entity=True
         ) as client:

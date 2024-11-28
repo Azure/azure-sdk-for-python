@@ -28,8 +28,10 @@ class TestTableDecoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
         table_name = self.get_resource_name("uttable011")
         url = self.account_url(tables_storage_account_name, "table")
         responses = {}
+
         def callback(response):
             responses["response_body"] = response.http_response.json()
+
         # Test basic string, int32 and bool data
         async with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
             await client.create_table()
@@ -71,8 +73,10 @@ class TestTableDecoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
         table_name = self.get_resource_name("uttable02")
         url = self.account_url(tables_storage_account_name, "table")
         responses = {}
+
         def callback(response):
             responses["response_body"] = response.http_response.json()
+
         # All automatically detected data types
         async with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
             await client.create_table()
@@ -120,8 +124,10 @@ class TestTableDecoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
         table_name = self.get_resource_name("uttable03")
         url = self.account_url(tables_storage_account_name, "table")
         responses = {}
+
         def callback(response):
             responses["response_body"] = response.http_response.json()
+
         # Explicit datatypes using Tuple definition
         async with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
             await client.create_table()
@@ -142,7 +148,7 @@ class TestTableDecoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
             }
             created = await client.create_entity(test_entity)
             result = await client.get_entity("PK", "RK1", raw_response_hook=callback)
-            old_result =  _convert_to_entity(responses["response_body"])
+            old_result = _convert_to_entity(responses["response_body"])
             assert result == old_result, f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
 
             test_entity = {
@@ -189,8 +195,10 @@ class TestTableDecoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
         table_name = self.get_resource_name("uttable04")
         url = self.account_url(tables_storage_account_name, "table")
         responses = {}
+
         def callback(response):
             responses["response_body"] = response.http_response.json()
+
         # Raw payload with existing EdmTypes
         async with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
             await client.create_table()
@@ -246,8 +254,10 @@ class TestTableDecoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
         table_name = self.get_resource_name("uttable05")
         url = self.account_url(tables_storage_account_name, "table")
         responses = {}
+
         def callback(response):
             responses["response_body"] = response.http_response.json()
+
         async with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
             await client.create_table()
             # Non-UTF8 characters in both keys and properties

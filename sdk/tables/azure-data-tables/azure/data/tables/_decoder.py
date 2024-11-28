@@ -33,7 +33,7 @@ NO_ODATA = {
 }
 
 
-class TableEntityDecoder():
+class TableEntityDecoder:
     def __init__(
         self,
         *,
@@ -44,9 +44,8 @@ class TableEntityDecoder():
         self.flatten_result_entity = flatten_result_entity
 
     def __call__(  # pylint: disable=too-many-branches, too-many-statements
-            self,
-            response_data: Mapping[str, Any]
-        ) -> TableEntity:
+        self, response_data: Mapping[str, Any]
+    ) -> TableEntity:
         """Convert json response to entity.
         The entity format is:
         {
@@ -130,31 +129,26 @@ class TableEntityDecoder():
         entity._metadata = odata  # pylint: disable=protected-access
         return entity
 
-
     def from_entity_binary(self, value: str) -> bytes:
         return _decode_base64_to_bytes(value)
-
 
     def from_entity_int32(self, value: Union[int, str]) -> int:
         return int(value)
 
-
     def from_entity_int64(self, value: str) -> EntityProperty:
         return EntityProperty(int(value), EdmType.INT64)
-
 
     def from_entity_datetime(self, value: str) -> Optional[TablesEntityDatetime]:
         return deserialize_iso(value)
 
-
     def from_entity_guid(self, value: str) -> UUID:
         return UUID(value)
-
 
     def from_entity_str(self, value: Union[str, bytes]) -> str:
         if isinstance(value, bytes):
             return value.decode("utf-8")
         return value
+
 
 _ENTITY_TO_PYTHON_CONVERSIONS: DecoderMapType = {
     EdmType.BINARY: TableEntityDecoder.from_entity_binary,
@@ -167,6 +161,7 @@ _ENTITY_TO_PYTHON_CONVERSIONS: DecoderMapType = {
     EdmType.BOOLEAN: lambda _, v: v,
 }
 
+
 def deserialize_iso(value: Optional[str]) -> Optional[TablesEntityDatetime]:
     if not value:
         return None
@@ -178,6 +173,7 @@ def deserialize_iso(value: Optional[str]) -> Optional[TablesEntityDatetime]:
         dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
     dt_obj._service_value = value  # pylint:disable=protected-access,assigning-non-slot
     return dt_obj
+
 
 def _clean_up_dotnet_timestamps(value):
     # .NET has more decimal places than Python supports in datetime objects, this truncates

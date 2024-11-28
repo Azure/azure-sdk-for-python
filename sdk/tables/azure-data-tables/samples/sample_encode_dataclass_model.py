@@ -57,13 +57,16 @@ class Color(StrEnum):
 def encode_int(value):
     return EdmType.STRING, str(value)
 
+
 def encode_uuid(value):
     return None, str(value)
+
 
 encoder_map = {
     int: encode_int,
     UUID: encode_uuid,
 }
+
 
 def decode_string(value):
     try:
@@ -76,6 +79,7 @@ def decode_string(value):
                 return UUID(value)
             except ValueError:
                 return value
+
 
 decoder_map = {
     EdmType.STRING: decode_string,

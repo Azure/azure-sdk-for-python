@@ -2241,19 +2241,19 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_get_entity_with_flatten_metadata(self, tables_storage_account_name, tables_primary_storage_account_key):
+    async def test_get_entity_with_flatten_metadata(
+        self, tables_storage_account_name, tables_primary_storage_account_key
+    ):
         table_name = self._get_table_reference("table")
         url = self.account_url(tables_storage_account_name, "table")
         entity = {"PartitionKey": "pk", "RowKey": "rk", "Value": "foobar", "Answer": 42}
 
-        async with TableClient(
-            url, table_name, credential=tables_primary_storage_account_key
-        ) as client:
+        async with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
             await client.create_table()
             await client.create_entity(entity)
             received_entity1 = await client.get_entity("pk", "rk")
             assert received_entity1.metadata
-        
+
         async with TableClient(
             url, table_name, credential=tables_primary_storage_account_key, flatten_result_entity=True
         ) as client:
