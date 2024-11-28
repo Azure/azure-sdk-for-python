@@ -124,7 +124,6 @@ from azure.ai.ml.operations import (
     RegistryOperations,
     ServerlessEndpointOperations,
     WorkspaceConnectionsOperations,
-    WorkspaceOperations
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._feature_set_operations import FeatureSetOperations
@@ -133,7 +132,6 @@ from azure.ai.ml.operations._feature_store_operations import FeatureStoreOperati
 from azure.ai.ml.operations._local_deployment_helper import _LocalDeploymentHelper
 from azure.ai.ml.operations._local_endpoint_helper import _LocalEndpointHelper
 from azure.ai.ml.operations._schedule_operations import ScheduleOperations
-from azure.ai.ml.operations._workspace_outbound_rule_operations import WorkspaceOutboundRuleOperations
 from azure.ai.ml.operations._capability_hosts_operations import CapabilityHostsOperations
 from azure.ai.ml.operations._workspace_outbound_rule_operations import (
     WorkspaceOutboundRuleOperations,
