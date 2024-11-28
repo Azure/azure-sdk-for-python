@@ -2237,9 +2237,7 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
             url, table_name, credential=tables_primary_storage_account_key, flatten_result_entity=True
         ) as client:
             received_entity2 = client.get_entity("pk", "rk")
-            with pytest.raises(AttributeError) as err:
-                received_entity2.metadata
-            assert str(err.value) == "'dict' object has no attribute 'metadata'"
+            assert received_entity2.metadata == received_entity1.metadata
             for key, value in received_entity1.metadata.items():
                 assert received_entity2[key] == value
             client.delete_table()

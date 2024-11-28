@@ -164,7 +164,9 @@ _ENTITY_TO_PYTHON_CONVERSIONS = {
     EdmType.BOOLEAN: lambda _, v: v,
 }
 
-def deserialize_iso(value: str) -> TablesEntityDatetime:
+def deserialize_iso(value: Optional[str]) -> TablesEntityDatetime:
+    if not value:
+        return value
     # Cosmos returns this with a decimal point that throws an error on deserialization
     cleaned_value = _clean_up_dotnet_timestamps(value)
     try:
