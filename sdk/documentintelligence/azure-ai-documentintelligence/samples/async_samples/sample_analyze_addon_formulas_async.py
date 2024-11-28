@@ -74,7 +74,6 @@ async def analyze_formulas():
                 "prebuilt-layout",
                 analyze_request=f,
                 features=[DocumentAnalysisFeature.FORMULAS],
-                content_type="application/octet-stream",
             )
         result: AnalyzeResult = await poller.result()
 

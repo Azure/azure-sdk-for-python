@@ -66,7 +66,6 @@ def analyze_barcodes():
             "prebuilt-layout",
             analyze_request=f,
             features=[DocumentAnalysisFeature.BARCODES],
-            content_type="application/octet-stream",
         )
     result: AnalyzeResult = poller.result()
 

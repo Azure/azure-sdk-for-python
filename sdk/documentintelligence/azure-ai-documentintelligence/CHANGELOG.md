@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b5 (Unreleased)
+## 1.0.0 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+- No need to pass `content-type` when analyze_request is a stream in `begin_analyze_document()` and `begin_classify_document()`.
 
 ## 1.0.0b4 (2024-09-05)
 

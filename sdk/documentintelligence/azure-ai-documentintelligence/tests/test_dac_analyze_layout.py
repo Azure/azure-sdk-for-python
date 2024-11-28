@@ -36,7 +36,6 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
                 "prebuilt-layout",
                 document,
                 features=DocumentAnalysisFeature.STYLE_FONT,
-                content_type="application/octet-stream",
             )
         assert "features must be type [str]." in str(e.value)
 
@@ -55,7 +54,6 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
             "prebuilt-layout",
             document,
             features=[DocumentAnalysisFeature.STYLE_FONT],
-            content_type="application/octet-stream",
             cls=callback,
         )
         raw_response = poller.result()
@@ -65,7 +63,6 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
             "prebuilt-layout",
             document,
             features=[DocumentAnalysisFeature.STYLE_FONT],
-            content_type="application/octet-stream",
         )
         returned_model = poller.result()
 
@@ -100,7 +97,6 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         poller = client.begin_analyze_document(
             "prebuilt-layout",
             document,
-            content_type="application/octet-stream",
             cls=callback,
         )
         raw_response = poller.result()
@@ -109,7 +105,6 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         poller = client.begin_analyze_document(
             "prebuilt-layout",
             document,
-            content_type="application/octet-stream",
         )
         returned_model = poller.result()
 
@@ -144,7 +139,6 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         poller = client.begin_analyze_document(
             "prebuilt-layout",
             document,
-            content_type="application/octet-stream",
             cls=callback,
         )
         raw_response = poller.result()
@@ -153,7 +147,6 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         poller = client.begin_analyze_document(
             "prebuilt-layout",
             document,
-            content_type="application/octet-stream",
         )
         returned_model = poller.result()
 
@@ -184,7 +177,6 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         poller = client.begin_analyze_document(
             "prebuilt-layout",
             document,
-            content_type="application/octet-stream",
         )
         layout = poller.result()
         assert len(layout.tables) == 3
@@ -205,7 +197,6 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         poller = client.begin_analyze_document(
             "prebuilt-layout",
             document,
-            content_type="application/octet-stream",
         )
         continuation_token = poller.continuation_token()
         layout = client.begin_analyze_document(None, None, continuation_token=continuation_token).result()
@@ -264,7 +255,6 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         poller = client.begin_analyze_document(
             "prebuilt-read",
             document,
-            content_type="application/octet-stream",
             output=[AnalyzeOutputOption.PDF],
         )
         result = poller.result()
@@ -282,7 +272,6 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         poller = client.begin_analyze_document(
             "prebuilt-layout",
             document,
-            content_type="application/octet-stream",
             output=[AnalyzeOutputOption.FIGURES],
         )
         result = poller.result()

@@ -49,7 +49,7 @@ def analyze_tax_us_w2():
     document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     with open(path_to_sample_documents, "rb") as f:
         poller = document_intelligence_client.begin_analyze_document(
-            "prebuilt-tax.us.w2", analyze_request=f, locale="en-US", content_type="application/octet-stream"
+            "prebuilt-tax.us.w2", analyze_request=f, locale="en-US"
         )
     w2s: AnalyzeResult = poller.result()
 

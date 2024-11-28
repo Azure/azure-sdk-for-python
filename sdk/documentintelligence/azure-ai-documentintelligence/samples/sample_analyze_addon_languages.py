@@ -66,7 +66,6 @@ def analyze_languages():
             "prebuilt-layout",
             analyze_request=f,
             features=[DocumentAnalysisFeature.LANGUAGES],
-            content_type="application/octet-stream",
         )
     result: AnalyzeResult = poller.result()
 

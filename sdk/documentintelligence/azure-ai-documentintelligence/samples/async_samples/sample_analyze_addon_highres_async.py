@@ -89,7 +89,6 @@ async def analyze_with_highres():
                 "prebuilt-layout",
                 analyze_request=f,
                 features=[DocumentAnalysisFeature.OCR_HIGH_RESOLUTION],
-                content_type="application/octet-stream",
             )
         result: AnalyzeResult = await poller.result()
 

@@ -54,7 +54,7 @@ async def classify_document(classifier_id):
     async with document_intelligence_client:
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_intelligence_client.begin_classify_document(
-                classifier_id, classify_request=f, content_type="application/octet-stream"
+                classifier_id, classify_request=f
             )
         result: AnalyzeResult = await poller.result()
 

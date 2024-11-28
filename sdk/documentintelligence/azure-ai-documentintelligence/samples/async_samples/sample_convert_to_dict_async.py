@@ -47,7 +47,7 @@ async def convert_to_and_from_dict_async():
     async with document_intelligence_client:
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_intelligence_client.begin_analyze_document(
-                "prebuilt-layout", analyze_request=f, content_type="application/octet-stream"
+                "prebuilt-layout", analyze_request=f
             )
         result: AnalyzeResult = await poller.result()
 

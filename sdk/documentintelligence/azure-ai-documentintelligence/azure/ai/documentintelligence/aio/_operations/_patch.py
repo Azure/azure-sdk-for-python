@@ -7,6 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import sys
+import io
 from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, Mapping, cast, overload
 
 from azure.core.pipeline import PipelineResponse
@@ -524,6 +525,9 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
+            content_type = None
+            if isinstance(analyze_request, io.BytesIO):
+                content_type="application/octet-stream"
             raw_result = await self._analyze_document_initial(
                 model_id=model_id,
                 analyze_request=analyze_request,
@@ -578,6 +582,51 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
             )
         return AsyncAnalyzeDocumentLROPoller[_models.AnalyzeResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+    
+    @distributed_trace_async
+    async def begin_classify_document(
+        self,
+        classifier_id: str,
+        classify_request: Union[_models.ClassifyDocumentRequest, JSON, IO[bytes]],
+        *,
+        string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
+        split: Optional[Union[str, _models.SplitMode]] = None,
+        pages: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AnalyzeResult]:
+        """Classifies document with document classifier.
+
+        :param classifier_id: Unique document classifier name. Required.
+        :type classifier_id: str
+        :param classify_request: Classify request parameters. Is one of the following types:
+         ClassifyDocumentRequest, JSON, IO[bytes] Required.
+        :type classify_request: ~azure.ai.documentintelligence.models.ClassifyDocumentRequest or JSON
+         or IO[bytes]
+        :keyword string_index_type: Method used to compute string offset and length. Known values are:
+         "textElements", "unicodeCodePoint", and "utf16CodeUnit". Default value is None.
+        :paramtype string_index_type: str or ~azure.ai.documentintelligence.models.StringIndexType
+        :keyword split: Document splitting mode. Known values are: "auto", "none", and "perPage".
+         Default value is None.
+        :paramtype split: str or ~azure.ai.documentintelligence.models.SplitMode
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
+        :paramtype pages: str
+        :return: An instance of AsyncLROPoller that returns AnalyzeResult. The AnalyzeResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        content_type = None
+        if isinstance(classify_request, io.BytesIO):
+            content_type="application/octet-stream"
+        return await super().begin_classify_document(
+            classifier_id=classifier_id,
+            classify_request=classify_request,
+            content_type=content_type,
+            string_index_type=string_index_type,
+            split=split,
+            pages=pages,
+            **kwargs
         )
 
     @distributed_trace_async

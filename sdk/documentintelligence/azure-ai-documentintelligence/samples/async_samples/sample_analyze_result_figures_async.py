@@ -52,7 +52,6 @@ async def analyze_result_figures():
                 "prebuilt-layout",
                 analyze_request=f,
                 output=[AnalyzeOutputOption.FIGURES],
-                content_type="application/octet-stream",
             )
         result: AnalyzeResult = await poller.result()
         operation_id = poller.details["operation_id"]

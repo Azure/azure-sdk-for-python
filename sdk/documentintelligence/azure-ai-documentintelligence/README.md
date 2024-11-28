@@ -233,7 +233,7 @@ key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 with open(path_to_sample_documents, "rb") as f:
     poller = document_intelligence_client.begin_analyze_document(
-        "prebuilt-layout", analyze_request=f, content_type="application/octet-stream"
+        "prebuilt-layout", analyze_request=f
     )
 result: AnalyzeResult = poller.result()
 
@@ -327,7 +327,6 @@ with open(path_to_sample_documents, "rb") as f:
         "prebuilt-layout",
         analyze_request=f,
         output=[AnalyzeOutputOption.FIGURES],
-        content_type="application/octet-stream",
     )
 result: AnalyzeResult = poller.result()
 operation_id = poller.details["operation_id"]
@@ -369,7 +368,6 @@ with open(path_to_sample_documents, "rb") as f:
         "prebuilt-read",
         analyze_request=f,
         output=[AnalyzeOutputOption.PDF],
-        content_type="application/octet-stream",
     )
 result: AnalyzeResult = poller.result()
 operation_id = poller.details["operation_id"]
@@ -420,7 +418,6 @@ with open(path_to_sample_documents, "rb") as f:
         "prebuilt-layout",
         analyze_request=f,
         features=[DocumentAnalysisFeature.KEY_VALUE_PAIRS],
-        content_type="application/octet-stream",
     )
 result: AnalyzeResult = poller.result()
 
@@ -513,7 +510,7 @@ key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 with open(path_to_sample_documents, "rb") as f:
     poller = document_intelligence_client.begin_analyze_document(
-        "prebuilt-receipt", analyze_request=f, locale="en-US", content_type="application/octet-stream"
+        "prebuilt-receipt", analyze_request=f, locale="en-US"
     )
 receipts: AnalyzeResult = poller.result()
 
@@ -668,7 +665,7 @@ document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, cre
 # Make sure your document's type is included in the list of document types the custom model can analyze
 with open(path_to_sample_documents, "rb") as f:
     poller = document_intelligence_client.begin_analyze_document(
-        model_id=model_id, analyze_request=f, content_type="application/octet-stream"
+        model_id=model_id, analyze_request=f
     )
 result: AnalyzeResult = poller.result()
 

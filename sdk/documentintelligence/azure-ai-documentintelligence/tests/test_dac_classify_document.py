@@ -69,7 +69,6 @@ class TestDACClassifyDocumentAsync(DocumentIntelligenceTest):
         poller = di_client.begin_classify_document(
             classifier.classifier_id,
             my_file,
-            content_type="application/octet-stream",
         )
         document = poller.result()
         assert document.model_id == classifier.classifier_id

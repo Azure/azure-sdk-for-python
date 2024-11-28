@@ -29,7 +29,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
         with pytest.raises(ValueError) as e:
             async with client:
                 await client.begin_analyze_document(
-                    model_id=None, analyze_request=b"xx", content_type="application/octet-stream"
+                    model_id=None, analyze_request=b"xx"
                 )
         assert "No value for given attribute" in str(e.value)
 
@@ -53,7 +53,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
         with pytest.raises(ResourceNotFoundError) as e:
             async with client:
                 await client.begin_analyze_document(
-                    model_id="", analyze_request=b"xx", content_type="application/octet-stream"
+                    model_id="", analyze_request=b"xx"
                 )
         assert "Resource not found" in str(e.value)
 
@@ -96,7 +96,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
             my_file = fd.read()
         async with di_client:
             poller = await di_client.begin_analyze_document(
-                model.model_id, my_file, content_type="application/octet-stream"
+                model.model_id, my_file
             )
             document = await poller.result()
             assert document.model_id == model.model_id
@@ -142,7 +142,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
             my_file = fd.read()
         async with di_client:
             poller = await di_client.begin_analyze_document(
-                model.model_id, my_file, content_type="application/octet-stream"
+                model.model_id, my_file
             )
             continuation_token = poller.continuation_token()
 

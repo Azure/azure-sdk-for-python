@@ -76,7 +76,6 @@ async def analyze_read():
                 "prebuilt-read",
                 analyze_request=f,
                 features=[DocumentAnalysisFeature.STYLE_FONT],
-                content_type="application/octet-stream",
             )
         result: AnalyzeResult = await poller.result()
 

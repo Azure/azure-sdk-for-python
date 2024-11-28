@@ -59,7 +59,7 @@ def analyze_layout():
     document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     with open(path_to_sample_documents, "rb") as f:
         poller = document_intelligence_client.begin_analyze_document(
-            "prebuilt-layout", analyze_request=f, content_type="application/octet-stream"
+            "prebuilt-layout", analyze_request=f
         )
     result: AnalyzeResult = poller.result()
 

@@ -80,7 +80,7 @@ class TestDACAnalyzeCustomModel(DocumentIntelligenceTest):
 
         with open(self.form_jpg, "rb") as fd:
             my_file = fd.read()
-        poller = di_client.begin_analyze_document(model.model_id, my_file, content_type="application/octet-stream")
+        poller = di_client.begin_analyze_document(model.model_id, my_file)
         document = poller.result()
         assert document.model_id == model.model_id
         assert len(document.pages) == 1
@@ -118,7 +118,7 @@ class TestDACAnalyzeCustomModel(DocumentIntelligenceTest):
 
         with open(self.form_jpg, "rb") as fd:
             my_file = fd.read()
-        poller = di_client.begin_analyze_document(model.model_id, my_file, content_type="application/octet-stream")
+        poller = di_client.begin_analyze_document(model.model_id, my_file)
         continuation_token = poller.continuation_token()
         di_client2 = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential())
         poller2 = di_client2.begin_analyze_document(None, None, continuation_token=continuation_token)

@@ -65,7 +65,6 @@ def analyze_general_documents():
             "prebuilt-layout",
             analyze_request=f,
             features=[DocumentAnalysisFeature.KEY_VALUE_PAIRS],
-            content_type="application/octet-stream",
         )
     result: AnalyzeResult = poller.result()
 
