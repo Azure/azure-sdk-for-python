@@ -8,7 +8,7 @@ import hashlib
 import hmac
 from datetime import timezone
 from urllib.parse import ParseResult
-from typing import Optional, Tuple, List, Dict, Any
+from typing import Optional, Tuple, List, Dict, Any, Union
 
 
 def _to_str(value):
@@ -87,7 +87,7 @@ def _get_account(parsed_url: ParseResult) -> Tuple[List[str], Optional[str]]:
     return account, account_name
 
 
-def _prepare_key(key: str) -> str:
+def _prepare_key(key: Union[str, int, float, None]) -> str:
     """Duplicate the single quote char to escape.
 
     :param str key: The entity PartitionKey or RowKey value in table entity.

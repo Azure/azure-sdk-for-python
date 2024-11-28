@@ -75,7 +75,7 @@ class CreateDeleteEntity(object):
             await table_client.create_table()
 
             review = Review(
-                user_name="Alax",
+                user_name="Alex",
                 rating=8,
                 review_date=datetime(year=2014, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc),
             )

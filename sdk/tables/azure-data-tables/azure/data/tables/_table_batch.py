@@ -23,17 +23,11 @@ from ._generated._configuration import AzureTableConfiguration
 from ._generated.aio._configuration import AzureTableConfiguration as AsyncAzureTableConfiguration
 
 
-T = TypeVar("T")
-
 EntityType = Union[TableEntity, Mapping[str, Any]]
 OperationType = Union[TransactionOperation, str]
 TransactionOperationType = Union[
     Tuple[OperationType, EntityType],
     Tuple[OperationType, EntityType, Mapping[str, Any]],
-]
-CustomEntityTransactionOperationType = Union[
-    Tuple[OperationType, T],
-    Tuple[OperationType, T, Mapping[str, Any]],
 ]
 
 
@@ -93,7 +87,7 @@ class TableBatchOperations(object):
         elif entity_json["PartitionKey"] != self._partition_key:
             raise ValueError("Partition Keys in the batch must all be the same.")
 
-    def add_operation(self, operation: Union[TransactionOperationType, CustomEntityTransactionOperationType]) -> None:
+    def add_operation(self, operation: TransactionOperationType) -> None:
         """Add a single operation to a batch.
 
         :param operation: An operation include operation type and entity, may with kwargs.
@@ -139,7 +133,7 @@ class TableBatchOperations(object):
 
     def update(
         self,
-        entity: Union[EntityType, T],
+        entity: EntityType,
         mode: Union[str, UpdateMode] = UpdateMode.MERGE,
         *,
         etag: Optional[str] = None,
@@ -210,7 +204,7 @@ class TableBatchOperations(object):
 
     def delete(
         self,
-        entity: Union[EntityType, T],
+        entity: EntityType,
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -256,7 +250,7 @@ class TableBatchOperations(object):
         request.url = self._base_url + request.url
         self.requests.append(request)
 
-    def upsert(self, entity: Union[EntityType, T], mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs) -> None:
+    def upsert(self, entity: EntityType, mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs) -> None:
         """Adds an upsert (merge or replace) operation to the batch.
 
         :param entity: The properties for the table entity.

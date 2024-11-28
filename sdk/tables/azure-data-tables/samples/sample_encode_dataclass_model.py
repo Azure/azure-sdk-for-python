@@ -24,7 +24,7 @@ USAGE:
 import os
 from datetime import datetime, timezone
 from uuid import uuid4, UUID
-from enum import Enum
+from enum import StrEnum
 from dotenv import find_dotenv, load_dotenv
 from dataclasses import dataclass, asdict
 from typing import Optional
@@ -34,13 +34,13 @@ from azure.data.tables import TableClient, UpdateMode, EdmType
 @dataclass
 class Car:
     PartitionKey: str
-    RowKey: str
+    RowKey: UUID
     price: Optional[float] = None
     last_updated: Optional[datetime] = None
     product_id: Optional[UUID] = None
     inventory_count: Optional[int] = None
     barcode: Optional[bytes] = None
-    color: Optional[Enum] = None
+    color: Optional[str] = None
     maker: Optional[str] = None
     model: Optional[str] = None
     production_date: Optional[datetime] = None
@@ -48,7 +48,7 @@ class Car:
     is_second_hand: Optional[bool] = None
 
 
-class Color(Enum):
+class Color(StrEnum):
     WHITE = "white"
     GRAY = "gray"
     BLACK = "black"

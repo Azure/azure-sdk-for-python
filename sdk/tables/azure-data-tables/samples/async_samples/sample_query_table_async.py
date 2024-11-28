@@ -111,7 +111,7 @@ class SampleTablesQuery(object):
             try:
                 print("Basic sample:")
                 print("Entities with name: marker")
-                parameters: Dict[str, Any] = {"name": "marker"}
+                parameters = {"name": "marker"}
                 name_filter = "Name eq @name"
                 queried_entities = table_client.query_entities(
                     query_filter=name_filter, select=["Brand", "Color"], parameters=parameters

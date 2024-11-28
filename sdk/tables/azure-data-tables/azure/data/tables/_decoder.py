@@ -9,18 +9,21 @@ from urllib.parse import quote
 from uuid import UUID
 
 from ._common_conversion import _decode_base64_to_bytes
-from ._entity import EntityProperty, EdmType, TableEntity
+from ._entity import EntityProperty, EdmType, TableEntity, EntityMetadata
 
-DecoderMapType = Dict[EdmType, Callable[[Union[str, bool, int]], Any]]
+DecoderMapType = Dict[EdmType, Callable[[Union[str, bool, int, float]], Any]]
 
 
 class TablesEntityDatetime(datetime):
+    _service_value: str
+
     @property
-    def tables_service_value(self):
+    def tables_service_value(self) -> str:
         try:
             return self._service_value
         except AttributeError:
             return ""
+
 
 NO_ODATA = {
     int: EdmType.INT32,
@@ -70,7 +73,7 @@ class TableEntityDecoder():
 
         properties = {}
         edmtypes = {}
-        odata = {}
+        odata = EntityMetadata()
 
         for name, value in response_data.items():
             if name.startswith("odata."):
@@ -140,7 +143,7 @@ class TableEntityDecoder():
         return EntityProperty(int(value), EdmType.INT64)
 
 
-    def from_entity_datetime(self, value: str) -> TablesEntityDatetime:
+    def from_entity_datetime(self, value: str) -> Optional[TablesEntityDatetime]:
         return deserialize_iso(value)
 
 
@@ -153,7 +156,7 @@ class TableEntityDecoder():
             return value.decode("utf-8")
         return value
 
-_ENTITY_TO_PYTHON_CONVERSIONS = {
+_ENTITY_TO_PYTHON_CONVERSIONS: DecoderMapType = {
     EdmType.BINARY: TableEntityDecoder.from_entity_binary,
     EdmType.INT32: TableEntityDecoder.from_entity_int32,
     EdmType.INT64: TableEntityDecoder.from_entity_int64,
@@ -164,9 +167,9 @@ _ENTITY_TO_PYTHON_CONVERSIONS = {
     EdmType.BOOLEAN: lambda _, v: v,
 }
 
-def deserialize_iso(value: Optional[str]) -> TablesEntityDatetime:
+def deserialize_iso(value: Optional[str]) -> Optional[TablesEntityDatetime]:
     if not value:
-        return value
+        return None
     # Cosmos returns this with a decimal point that throws an error on deserialization
     cleaned_value = _clean_up_dotnet_timestamps(value)
     try:

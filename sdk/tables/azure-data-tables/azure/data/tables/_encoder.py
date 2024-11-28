@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Optional, Tuple, Mapping, Union, Dict, Type, Callable
+from typing import Any, Optional, Tuple, Mapping, Union, Dict, Type, Callable, MutableMapping
 from uuid import UUID
 from datetime import datetime
 from enum import Enum
@@ -14,7 +14,7 @@ from ._common_conversion import _encode_base64, _to_utc_datetime
 from ._constants import MAX_INT64, MIN_INT64, _ERROR_VALUE_TOO_LARGE
 
 _ODATA_SUFFIX = "@odata.type"
-EncoderMapType = Dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]]
+EncoderMapType = MutableMapping[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, None]]]]
 
 
 class TableEntityEncoder():
@@ -184,7 +184,7 @@ class TableEntityEncoder():
 # boolean and int32 have special processing below, as we would not normally add the
 # Odata type tags for these to keep payload size minimal.
 # This is also necessary for CLI compatibility.
-_PYTHON_TO_ENTITY_CONVERSIONS = {
+_PYTHON_TO_ENTITY_CONVERSIONS: EncoderMapType = {
     int: TableEntityEncoder.to_entity_int32,
     bool: TableEntityEncoder.to_entity_bool,
     datetime: TableEntityEncoder.to_entity_datetime,

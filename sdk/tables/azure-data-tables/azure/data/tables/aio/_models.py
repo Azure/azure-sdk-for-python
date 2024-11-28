@@ -27,7 +27,7 @@ class TablePropertiesPaged(AsyncPageIterator):
         super(TablePropertiesPaged, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,
-            continuation_token=kwargs.get("continuation_token") or "",
+            continuation_token=kwargs.get("continuation_token"),
         )
         self._command = command
         self._headers = None
@@ -79,7 +79,7 @@ class TableEntityPropertiesPaged(AsyncPageIterator):
         super(TableEntityPropertiesPaged, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,
-            continuation_token=kwargs.get("continuation_token") or {},
+            continuation_token=kwargs.get("continuation_token"),
         )
         self._command = command
         self._headers = None

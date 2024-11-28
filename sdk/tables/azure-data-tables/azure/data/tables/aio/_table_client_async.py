@@ -372,10 +372,10 @@ class TableClient(AsyncTablesBaseClient):
         except (TypeError, IndexError, AttributeError):
             partition_key = kwargs.pop("partition_key", None)
             if partition_key is None:
-                partition_key = args[0]
+                partition_key = cast(str, args[0])
             row_key = kwargs.pop("row_key", None)
             if row_key is None:
-                row_key = args[1]
+                row_key = cast(str, args[1])
 
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
