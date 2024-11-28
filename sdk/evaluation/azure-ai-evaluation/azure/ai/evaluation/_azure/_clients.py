@@ -73,9 +73,9 @@ class LiteMLClient:
         # 1. Get the default blob store
         # REST API documentation:
         # https://learn.microsoft.com/rest/api/azureml/datastores/list?view=rest-azureml-2024-10-01
-        url = self._generate_path(
+        url = self._generate_path(  # pylint: disable=specify-parameter-names-in-call
             *PATH_ML_WORKSPACES, workspace_name, "datastores"
-        )  # pylint: disable=specify-parameter-names-in-call
+        )
         headers = self._get_headers()
 
         stores_response = self._http_client.request(
