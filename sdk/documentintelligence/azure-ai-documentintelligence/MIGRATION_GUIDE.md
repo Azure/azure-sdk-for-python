@@ -27,12 +27,12 @@ There are many benefits to using the new design of the `azure-ai-documentintelli
 
 Supports output with Markdown content format along with the default plain _text_. For now, this is only supported for "prebuilt-layout". Markdown content format is deemed a more friendly format for LLM consumption in a chat or automation use scenario. Custom models should continue to use the default "text" content format for generating .ocr.json results.
 
-Service follows the GFM spec ([GitHub Flavored Markdown](https://github.github.com/gfm/)) for the Markdown format. This SDK introduces a new enum _ContentFormat_ with value "text" or "markdown" to indicate the result content format.
+Service follows the GFM spec ([GitHub Flavored Markdown](https://github.github.com/gfm/)) for the Markdown format. This SDK introduces a new enum _DocumentContentFormat_ with value "text" or "markdown" to indicate the result content format.
 
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
-from azure.ai.documentintelligence.models import AnalyzeDocumentRequest, ContentFormat
+from azure.ai.documentintelligence.models import AnalyzeDocumentRequest, DocumentContentFormat
 
 endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
 key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -40,7 +40,7 @@ url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/doc
 
 client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 poller = client.begin_analyze_document(
-    "prebuilt-layout", AnalyzeDocumentRequest(url_source=url), output_content_format=ContentFormat.MARKDOWN
+    "prebuilt-layout", AnalyzeDocumentRequest(url_source=url), output_content_format=DocumentContentFormat.MARKDOWN
 )
 result = poller.result()
 ```
