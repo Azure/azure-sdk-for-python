@@ -49,12 +49,21 @@ class CapabilityHost(Resource):
     :type vector_store_connections: Optional[List[str]]
     :param ai_services_connections: A list of OpenAI service connection.
     :type ai_services_connections: Optional[List[str]]
-    :param storage_connections: A list of storage connections.
+    :param storage_connections: A list of storage connections. Default storage connection value is projectname/workspaceblobstore for project workspace.
     :type storage_connections: Optional[List[str]]
     :param capability_host_kind: The kind of capability host, either as a string or CapabilityHostKind enum.
     :type capability_host_kind: Optional[Union[str, CapabilityHostKind]]
     :param kwargs: Additional keyword arguments.
     :type kwargs: Any
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_capability_host.py
+            :start-after: [START capability_host_object_create]
+            :end-before: [END capability_host_object_create]
+            :language: python
+            :dedent: 8
+            :caption: Create a CapabilityHost object.
     """
 
     def __init__(

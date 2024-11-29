@@ -1092,5 +1092,15 @@ def load_capability_host(
         Details will be provided in the error message.
     :return: Loaded CapabilityHost object.
     :rtype: ~azure.ai.ml.entities._workspace._ai_workspaces.capability_host.CapabilityHost
+    
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_capability_host.py
+            :start-after: [START load_capability_host]
+            :end-before: [END load_capability_host]
+            :language: python
+            :dedent: 8
+            :caption: Loading a capabilityhost from a YAML config file.
     """
     return cast(CapabilityHost, load_common(CapabilityHost, source, relative_origin, params_override, **kwargs))

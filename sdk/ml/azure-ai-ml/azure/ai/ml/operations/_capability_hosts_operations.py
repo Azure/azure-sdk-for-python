@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Any, Optional, List
+from typing import Any, List
 
 from azure.ai.ml._scope_dependent_operations import (
     OperationsContainer,
@@ -14,6 +14,7 @@ from azure.ai.ml._restclient.v2024_10_01_preview import (
     AzureMachineLearningWorkspaces as ServiceClient102024Preview,
 )
 from azure.ai.ml.entities._workspace.workspace import Workspace
+from azure.ai.ml._utils._experimental import experimental
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
@@ -89,6 +90,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         self._credentials = credentials
         self._init_kwargs = kwargs
 
+    @experimental
     @monitor_with_activity(ops_logger, "CapabilityHost.Get", ActivityType.PUBLICAPI)
     @distributed_trace
     def get(self, name: str, **kwargs: Any) -> CapabilityHost:
@@ -102,11 +104,18 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Capabilityhost name is not provided. Details will be provided in the error message.
         :return: CapabilityHost object.
         :rtype: ~azure.ai.ml.entities._workspace._ai_workspaces.capability_host.CapabilityHost
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_capability_host.py
+                :start-after: [START capability_host_get_operation]
+                :end-before: [END capability_host_get_operation]
+                :language: python
+                :dedent: 8
+                :caption: Get example.
         """
 
         self.__validate_workspace_name()
-
-        self.__validate_capability_host_name(name)
 
         rest_obj = self._capability_hosts_operations.get(
             resource_group_name=self._resource_group_name,
@@ -119,6 +128,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
 
         return capability_host
 
+    @experimental
     @monitor_with_activity(
         ops_logger, "CapabilityHost.BeginCreateOrUpdate", ActivityType.PUBLICAPI
     )
@@ -135,6 +145,15 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         :type kwargs: Any
         :return: An LROPoller object that can be used to track the long-running operation that is creation of capability host.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities._workspace._ai_workspaces.capability_host.CapabilityHost]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_capability_host.py
+                :start-after: [START capability_host_begin_create_or_update_operation]
+                :end-before: [END capability_host_begin_create_or_update_operation]
+                :language: python
+                :dedent: 8
+                :caption: Create example.
         """
         try:
             self.__validate_workspace_name()
@@ -186,6 +205,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
                 log_and_raise_error(ex)
             raise ex
 
+    @experimental
     @distributed_trace
     @monitor_with_activity(ops_logger, "CapabilityHost.Delete", ActivityType.PUBLICAPI)
     def begin_delete(
@@ -199,6 +219,15 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         :type name: str
         :return: A poller for deletion status
         :rtype: ~azure.core.polling.LROPoller[None]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_capability_host.py
+                :start-after: [START capability_host_delete_operation]
+                :end-before: [END capability_host_delete_operation]
+                :language: python
+                :dedent: 8
+                :caption: Delete example.
         """
         poller = self._capability_hosts_operations.begin_delete(
             resource_group_name=self._resource_group_name,
@@ -208,26 +237,6 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
             **kwargs,
         )
         return poller
-
-    def __validate_capability_host_name(
-        self, capability_host_name: Optional[str]
-    ) -> None:
-        """Validates that a capability host name exists.
-
-        :param capability_host_name: Capability host name
-        :type capability_host_name: str
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if capability host name is empty or None. Details will be provided in the error message.
-        :return: None, or the result of cls(response)
-        :rtype: None
-        """
-        if not capability_host_name:
-            msg = "Please provide capability host name"
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.CAPABILITY_HOST,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-            )
 
     def __get_default_storage_connections(self) -> List[str]:
         """Retrieve the default storage connections for a capability host.
