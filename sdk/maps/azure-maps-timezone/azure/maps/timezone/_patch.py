@@ -71,7 +71,6 @@ class MapsTimeZoneClient(TimezoneClientGenerated):
     @distributed_trace
     def get_timezone(
         self,
-        format: str = "json",
         *,
         timezone_id: Optional[str] = None,
         coordinates: Optional[List[float]] = None,
@@ -83,34 +82,33 @@ class MapsTimeZoneClient(TimezoneClientGenerated):
         **kwargs: Any
     ) -> JSON:
         """Unified method to get timezone information by either timezone_id or coordinates.
+        Only one of `coordinate` or `timezone_id` will be considered.
+        If `timezone_id` is provided, `coordinate` will be ignored, and vice versa.
 
-        :param format: Desired format of the response. Only ``json`` format is supported. "json"
-         Default value is "json".
-        :type format: str
-        :keyword timezone_id: The IANA time zone ID. Required.
+        :keyword timezone_id: The IANA time zone ID.
         :paramtype timezone_id: str
         :keyword coordinates: Coordinates of the point for which time zone information is requested.
          This parameter is a list of coordinates, containing a pair of coordinate(lat, long). When this
          endpoint is called directly, coordinates are passed in as a single string containing
-         coordinates, separated by commas. Required.
+         coordinates, separated by commas.
         :paramtype coordinates: list[float]
         :keyword accept_language: Specifies the language code in which the timezone names should be
          returned. If no language code is provided, the response will be in "EN". Please refer to
          `Supported Languages <https://docs.microsoft.com/azure/azure-maps/supported-languages>`_ for
          details. Default value is None.
         :paramtype accept_language: str
-        :keyword options: Alternatively, use alias "o". Options available for types of information
+        :keyword options: Options available for types of information
          returned in the result. Known values are: "none", "zoneInfo", "transitions", and "all". Default
          value is None.
         :paramtype options: str
-        :keyword time_stamp: Alternatively, use alias "stamp", or "s". Reference time, if omitted, the
+        :keyword time_stamp: Reference time, if omitted, the
          API will use the machine time serving the request. Default value is None.
         :paramtype time_stamp: ~datetime.datetime
-        :keyword dst_from: Alternatively, use alias "tf". The start date from which
+        :keyword dst_from: The start date from which
          daylight savings time (DST) transitions are requested, only applies when "options" = all or
          "options" = transitions. Default value is None.
         :paramtype dst_from: ~datetime.datetime
-        :keyword dst_lasting_years: Alternatively, use alias "ty". The number of
+        :keyword dst_lasting_years: The number of
          years from "transitionsFrom" for which DST transitions are requested, only applies when
          "options" = all or "options" = transitions. Default value is None.
         :paramtype dst_lasting_years: int
@@ -121,7 +119,7 @@ class MapsTimeZoneClient(TimezoneClientGenerated):
         if timezone_id:
             # Use the method for getting timezone by ID
             return self.get_timezone_by_id(
-                format=format,
+                format="json",
                 timezone_id=timezone_id,
                 accept_language=accept_language,
                 options=options,
@@ -133,7 +131,7 @@ class MapsTimeZoneClient(TimezoneClientGenerated):
         if coordinates:
             # Use the method for getting timezone by coordinates
             return self.get_timezone_by_coordinates(
-                format=format,
+                format="json",
                 coordinates=coordinates,
                 accept_language=accept_language,
                 options=options,
