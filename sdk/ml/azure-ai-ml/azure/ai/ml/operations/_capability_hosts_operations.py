@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Any, List
+from typing import Any, Iterable, List
 
 from azure.ai.ml._scope_dependent_operations import (
     OperationsContainer,
@@ -89,6 +89,33 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         self._workspace_operations = service_client_10_2024.workspaces
         self._credentials = credentials
         self._init_kwargs = kwargs
+
+    @experimental
+    @monitor_with_activity(ops_logger, "CapabilityHost.List", ActivityType.PUBLICAPI)
+    @distributed_trace
+    def list(self, **kwargs: Any) -> Iterable[CapabilityHost]:
+        """List capability hosts in a Hub or Project workspace.
+
+        :param kwargs: Additional keyword arguments.
+        :type kwargs: Any
+        :return: List of CapabilityHost objects.
+        :rtype: ~typing.Iterable[~azure.ai.ml.entities._workspace._ai_workspaces.capability_host.CapabilityHost]
+        
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_capability_host.py
+                :start-after: [START capability_host_list_operation]
+                :end-before: [END capability_host_list_operation]
+                :language: python
+                :dedent: 8
+                :caption: List example.
+        """
+
+        return self._capability_hosts_operations.list(
+            resource_group_name=self._resource_group_name,
+            workspace_name=self._workspace_name,
+            **kwargs,
+        )
 
     @experimental
     @monitor_with_activity(ops_logger, "CapabilityHost.Get", ActivityType.PUBLICAPI)

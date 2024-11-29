@@ -55,7 +55,7 @@ class TestCapabilityHostOperation:
     def test_begin_create_or_update(
         self, mock_capability_hosts_operation: CapabilityHostsOperations
     ) -> None:
-        """Test create or update capability host."""
+        """Test create or update CapabilityHost."""
         capability_host = load_capability_host(
             source="./tests/test_configs/workspace/ai_workspaces/test_capability_host_hub.yml"
         )
@@ -67,7 +67,7 @@ class TestCapabilityHostOperation:
     def test_get(
         self, mock_capability_hosts_operation: CapabilityHostsOperations
     ) -> None:
-        """Test get capability host."""
+        """Test get CapabilityHost."""
         mock_capability_hosts_operation.get(name="test_capability_host")
         mock_capability_hosts_operation._capability_hosts_operations.get.assert_called_once_with(
             name="test_capability_host",
@@ -75,10 +75,20 @@ class TestCapabilityHostOperation:
             workspace_name=mock_capability_hosts_operation._operation_scope.workspace_name,
         )
 
+    def test_list(
+        self, mock_capability_hosts_operation: CapabilityHostsOperations
+    ) -> None:
+        """Test list CapabilityHosts."""
+        mock_capability_hosts_operation.list()
+        mock_capability_hosts_operation._capability_hosts_operations.list.assert_called_once_with(
+            resource_group_name=mock_capability_hosts_operation._operation_scope.resource_group_name,
+            workspace_name=mock_capability_hosts_operation._operation_scope.workspace_name,
+        )
+
     def test_delete(
         self, mock_capability_hosts_operation: CapabilityHostsOperations
     ) -> None:
-        """Test delete capability host."""
+        """Test delete CapabilityHost."""
         mock_capability_hosts_operation.begin_delete(name="test_capability_host")
         mock_capability_hosts_operation._capability_hosts_operations.begin_delete.assert_called_once_with(
             name="test_capability_host",

@@ -162,6 +162,34 @@ class CapabilityHostConfigurationOptions(object):
         )
         # [END capability_host_delete_operation]
 
+        # [START capability_host_list_operation]
+        from azure.ai.ml import MLClient
+        from azure.identity import DefaultAzureCredential
+
+        subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
+        resource_group = os.environ["RESOURCE_GROUP_NAME"]
+        hub_name = "test-hub"
+        project_name = "test-project"
+
+        # List CapabilityHosts created in Hub
+        ml_client = MLClient(
+            DefaultAzureCredential(),
+            subscription_id,
+            resource_group,
+            workspace_name=hub_name,
+        )
+        capability_hosts = ml_client.capability_hosts.list()
+
+        # List CapabilityHosts created in Project
+        ml_client = MLClient(
+            DefaultAzureCredential(),
+            subscription_id,
+            resource_group,
+            workspace_name=project_name,
+        )
+        capability_hosts = ml_client.capability_hosts.list()
+        # [END capability_host_list_operation]
+
 
 if __name__ == "__main__":
     sample = CapabilityHostConfigurationOptions()
