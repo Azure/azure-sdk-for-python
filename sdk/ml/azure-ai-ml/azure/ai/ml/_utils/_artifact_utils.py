@@ -200,7 +200,7 @@ class ArtifactCache:
                 url, headers=header
             )
             if response.status_code == 200:
-                artifacts_tool_path = tempfile.mkdtemp()  # nosec B306
+                artifacts_tool_path = tempfile.mkstemp()  # nosec B306
                 artifacts_tool_uri = response.json()["uri"]
                 response = requests_pipeline.get(artifacts_tool_uri)  # pylint: disable=too-many-function-args
                 with zipfile.ZipFile(BytesIO(response.content)) as zip_file:
@@ -380,7 +380,7 @@ class ArtifactCache:
         :return artifact_package_path: Cache path of the artifact package
         :rtype: Path
         """
-        tempdir = tempfile.mkdtemp()  # nosec B306
+        tempdir = tempfile.mkstemp()  # nosec B306
         download_cmd = [
             shutil.which("az"),
             "artifacts",
@@ -438,7 +438,7 @@ class ArtifactCache:
             file_list = [os.path.join(root, f) for root, _, files in os.walk(tempdir) for f in files]
             artifact_hash = self.hash_files_content(file_list)
             os.rename(tempdir, artifact_package_path)
-            temp_checksum_file = os.path.join(tempfile.mkdtemp(), f"{version}_{self.POSTFIX_CHECKSUM}")
+            temp_checksum_file = os.path.join(tempfile.mkstemp(), f"{version}_{self.POSTFIX_CHECKSUM}")
             with open(temp_checksum_file, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                 f.write(artifact_hash)
             os.rename(
