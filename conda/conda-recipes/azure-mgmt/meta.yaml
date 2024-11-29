@@ -235,11 +235,6 @@ test:
     - azure.mgmt.containerservice.v2023_08_01.operations
     - azure.mgmt.containerservicefleet
     - azure.mgmt.containerservicefleet.aio
-    - azure.mgmt.containerservicefleet.v2023_10_15
-    - azure.mgmt.containerservicefleet.v2023_10_15.aio
-    - azure.mgmt.containerservicefleet.v2023_10_15.aio.operations
-    - azure.mgmt.containerservicefleet.v2023_10_15.models
-    - azure.mgmt.containerservicefleet.v2023_10_15.operations
     - azure.mgmt.cosmosdb
     - azure.mgmt.cosmosdb.aio
     - azure.mgmt.cosmosdb.aio.operations
@@ -262,11 +257,6 @@ test:
     - azure.mgmt.dashboard.operations
     - azure.mgmt.databox
     - azure.mgmt.databox.aio
-    - azure.mgmt.databox.v2022_12_01
-    - azure.mgmt.databox.v2022_12_01.aio
-    - azure.mgmt.databox.v2022_12_01.aio.operations
-    - azure.mgmt.databox.v2022_12_01.models
-    - azure.mgmt.databox.v2022_12_01.operations
     - azure.mgmt.datab
     - azure.mgmt.datab.aio
     - azure.mgmt.datab.aio.operations
@@ -346,11 +336,6 @@ test:
     - azure.mgmt.devtestlabs.operations
     - azure.mgmt.digitaltwins
     - azure.mgmt.digitaltwins.aio
-    - azure.mgmt.digitaltwins.v2023_01_31
-    - azure.mgmt.digitaltwins.v2023_01_31.aio
-    - azure.mgmt.digitaltwins.v2023_01_31.aio.operations
-    - azure.mgmt.digitaltwins.v2023_01_31.models
-    - azure.mgmt.digitaltwins.v2023_01_31.operations
     - azure.mgmt.dns
     - azure.mgmt.dns.aio
     - azure.mgmt.dns.v2018_05_01
@@ -375,11 +360,6 @@ test:
     - azure.mgmt.dynatrace.operations
     - azure.mgmt.edgeorder
     - azure.mgmt.edgeorder.aio
-    - azure.mgmt.edgeorder.v2021_12_01
-    - azure.mgmt.edgeorder.v2021_12_01.aio
-    - azure.mgmt.edgeorder.v2021_12_01.aio.operations
-    - azure.mgmt.edgeorder.v2021_12_01.models
-    - azure.mgmt.edgeorder.v2021_12_01.operations
     - azure.mgmt.elastic
     - azure.mgmt.elastic.aio
     - azure.mgmt.elastic.aio.operations
@@ -409,16 +389,6 @@ test:
     - azure.mgmt.eventhub.v2022_10_01_preview.operations
     - azure.mgmt.extendedlocation
     - azure.mgmt.extendedlocation.aio
-    - azure.mgmt.extendedlocation.v2021_08_15
-    - azure.mgmt.extendedlocation.v2021_08_15.aio
-    - azure.mgmt.extendedlocation.v2021_08_15.aio.operations
-    - azure.mgmt.extendedlocation.v2021_08_15.models
-    - azure.mgmt.extendedlocation.v2021_08_15.operations
-    - azure.mgmt.extendedlocation.v2021_08_31_preview
-    - azure.mgmt.extendedlocation.v2021_08_31_preview.aio
-    - azure.mgmt.extendedlocation.v2021_08_31_preview.aio.operations
-    - azure.mgmt.extendedlocation.v2021_08_31_preview.models
-    - azure.mgmt.extendedlocation.v2021_08_31_preview.operations
     - azure.mgmt.fabric
     - azure.mgmt.fabric.aio
     - azure.mgmt.fabric.aio.operations
@@ -797,11 +767,6 @@ test:
     - azure.mgmt.recoveryservicessiterecovery.operations
     - azure.mgmt.redhatopenshift
     - azure.mgmt.redhatopenshift.aio
-    - azure.mgmt.redhatopenshift.v2023_09_04
-    - azure.mgmt.redhatopenshift.v2023_09_04.aio
-    - azure.mgmt.redhatopenshift.v2023_09_04.aio.operations
-    - azure.mgmt.redhatopenshift.v2023_09_04.models
-    - azure.mgmt.redhatopenshift.v2023_09_04.operations
     - azure.mgmt.redis
     - azure.mgmt.redis.aio
     - azure.mgmt.redis.aio.operations
@@ -916,8 +881,6 @@ test:
     - azure.mgmt.serialconsole.models
     - azure.mgmt.serialconsole.operations
     - azure.mgmt.servermanager
-    - azure.mgmt.servermanager.aio
-    - azure.mgmt.servermanager.aio.operations
     - azure.mgmt.servermanager.models
     - azure.mgmt.servermanager.operations
     - azure.mgmt.servicefabric
@@ -1047,13 +1010,13 @@ about:
   home: "https://github.com/Azure/azure-sdk-for-python/"
   license: MIT
   license_family: MIT
-  license_file: 
+  license_file:
   summary: "Microsoft Azure Management Client Library for Python"
   description: |
     This package is the Microsoft Azure Resource Management bundle.
     Please see https://aka.ms/azsdk/conda/releases/mgmt for version details.
-  doc_url: 
-  dev_url: 
+  doc_url:
+  dev_url:
 
 extra:
   recipe-maintainers:

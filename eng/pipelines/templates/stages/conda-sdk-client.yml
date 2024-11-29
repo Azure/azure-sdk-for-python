@@ -751,7 +751,7 @@ extends:
                         - package: azure-mgmt-serialconsole
                           version: 1.0.0
                         - package: azure-mgmt-servermanager
-                          version: 1.0.0
+                          version: 2.0.1
                         - package: azure-mgmt-servicebus
                           version: 8.2.1
                         - package: azure-mgmt-servicefabric
