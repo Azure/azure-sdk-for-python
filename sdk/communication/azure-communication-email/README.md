@@ -81,7 +81,7 @@ message = {
     "senderAddress": "sender@contoso.com"
 }
 
-poller = email_client.begin_send(message)
+poller = client.begin_send(message)
 result = poller.result()
 ```
 
@@ -113,7 +113,7 @@ message = {
     "senderAddress": "sender@contoso.com"
 }
 
-poller = email_client.begin_send(message)
+poller = client.begin_send(message)
 result = poller.result()
 ```
 
@@ -153,7 +153,7 @@ message = {
     ]
 }
 
-poller = email_client.begin_send(message)
+poller = client.begin_send(message)
 result = poller.result()
 ```
 
@@ -195,7 +195,7 @@ message = {
     ]
 }
 
-poller = email_client.begin_send(message)
+poller = client.begin_send(message)
 result = poller.result()
 ```
 
