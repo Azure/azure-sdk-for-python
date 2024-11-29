@@ -111,7 +111,7 @@ class TableClient(AsyncTablesBaseClient):
         if not table_name:
             raise ValueError("Please specify a table name.")
         self.table_name: str = table_name
-        self.encoder = TableEntityEncoder(convert_map=encoder_map)
+        self.encoder = TableEntityEncoder(convert_map=encoder_map or {})
         self.decoder = TableEntityDecoder(convert_map=decoder_map, flatten_result_entity=flatten_result_entity)
         super(TableClient, self).__init__(endpoint, credential=credential, api_version=api_version, **kwargs)
 

@@ -30,7 +30,7 @@ def _to_utc_datetime(value):
 def _encode_base64(data):
     if isinstance(data, str):
         data = data.encode("utf-8")
-    encoded = base64.b64encode(data)
+    encoded = base64.b64encode(bytes(data))
     return encoded.decode("utf-8")
 
 
@@ -97,7 +97,7 @@ def _prepare_key(key: Union[str, int, float, None]) -> str:
     try:
         return cast(str, key).replace("'", "''")
     except (AttributeError, TypeError) as exc:
-        raise TypeError("PartitionKey or RowKey must be of type string.") from exc
+        raise TypeError("PartitionKey or RowKey must be of type string, or an encoder provided.") from exc
 
 
 def _get_enum_value(value):

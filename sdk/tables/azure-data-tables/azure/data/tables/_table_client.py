@@ -15,7 +15,7 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
 from ._common_conversion import _prepare_key, _return_headers_and_deserialized, _trim_service_metadata
-from ._encoder import TableEntityEncoder, EncoderMapType
+from ._encoder import TableEntityEncoder, EncoderMapType, SupportedDataTypes
 from ._decoder import TableEntityDecoder, deserialize_iso, DecoderMapType
 from ._base_client import parse_connection_str, TablesBaseClient
 from ._entity import TableEntity
@@ -66,6 +66,7 @@ class TableClient(TablesBaseClient):
         which means the metadata would be deserialized to property metadata in TableEntity.
     :vartype flatten_result_entity: bool
     """
+    encoder: TableEntityEncoder
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
         self,
@@ -74,9 +75,9 @@ class TableClient(TablesBaseClient):
         *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, TokenCredential]] = None,
         api_version: Optional[str] = None,
-        encoder_map: Optional[EncoderMapType] = None,
-        decoder_map: Optional[DecoderMapType] = None,
-        flatten_result_entity: bool = False,
+        encode_types: Optional[EncoderMapType] = None,
+        decode_types: Optional[DecoderMapType] = None,
+        trim_metadata: bool = True,
         **kwargs: Any,
     ) -> None:
         """Create TableClient from a Credential.
@@ -94,15 +95,15 @@ class TableClient(TablesBaseClient):
         :keyword api_version: Specifies the version of the operation to use for this request. Default value
             is "2019-02-02".
         :paramtype api_version: str or None
-        :keyword encoder_map:
+        :keyword encode_types:
             A dictionary maps the type and the convertion function of this type used in encoding.
-        :paramtype encoder_map:
+        :paramtype encode_types:
             dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-        :keyword decoder_map:
+        :keyword decode_types:
             A dictionary maps the type and the convertion function of this type used in decoding.
-        :paramtype decoder_map:
+        :paramtype decode_types:
             dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-        :paramtype bool flatten_result_entity:
+        :paramtype bool trim_metadata:
             Whether to flatten entity metadata in deserialization. Default is False,
             which means the metadata would be deserialized to property metadata in TableEntity.
         :returns: None
@@ -110,8 +111,8 @@ class TableClient(TablesBaseClient):
         if not table_name:
             raise ValueError("Please specify a table name.")
         self.table_name: str = table_name
-        self.encoder = TableEntityEncoder(convert_map=encoder_map)
-        self.decoder = TableEntityDecoder(convert_map=decoder_map, flatten_result_entity=flatten_result_entity)
+        self.encoder = TableEntityEncoder(convert_map=encode_types or {})
+        self.decoder = TableEntityDecoder(convert_map=decode_types, flatten_result_entity=not trim_metadata)
         super(TableClient, self).__init__(endpoint, credential=credential, api_version=api_version, **kwargs)
 
     @classmethod
@@ -291,11 +292,21 @@ class TableClient(TablesBaseClient):
                 _reprocess_error(decoded_error)
                 raise
 
+    def _encode_key(self, key_name: str, key_value: Any) -> SupportedDataTypes:
+        try:
+            _, encoded_key = self.encoder._property_types[key_name](
+                key_name,
+                key_value
+            )
+            return encoded_key
+        except (KeyError, AttributeError):
+            return cast(str, key_value)
+
     @overload
     def delete_entity(
         self,
-        partition_key: str,
-        row_key: str,
+        partition_key: Any,
+        row_key: Any,
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -357,38 +368,44 @@ class TableClient(TablesBaseClient):
         """
 
     @distributed_trace
-    def delete_entity(self, *args: Union[EntityType, str], **kwargs: Any) -> None:
+    def delete_entity(
+        self,
+        *args: Any,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> None:
         entity = kwargs.pop("entity", None)
         try:
             if not entity:
                 entity = args[0]
-            entity_json = self.encoder(entity)
+            entity_json = self.encoder(cast(Mapping[str, Any], entity))
             partition_key = entity_json.get("PartitionKey")
             row_key = entity_json.get("RowKey")
         except (TypeError, IndexError, AttributeError):
             partition_key = kwargs.pop("partition_key", None)
             if partition_key is None:
-                partition_key = cast(str, args[0])
+                partition_key = args[0]
+            partition_key = self._encode_key("PartitionKey", partition_key)
+
             row_key = kwargs.pop("row_key", None)
             if row_key is None:
-                row_key = cast(str, args[1])
+                row_key = args[1]
+            row_key = self._encode_key("RowKey", row_key)
 
-        match_condition = kwargs.pop("match_condition", None)
-        etag = kwargs.pop("etag", None)
         if match_condition and not etag and isinstance(entity, TableEntity):
-            etag = entity.metadata.get("etag")
-        match_condition = _get_match_condition(
+            etag = entity.metadata["etag"]
+        valid_match_condition = _get_match_condition(
             etag=etag,
             match_condition=match_condition or MatchConditions.Unconditionally,
         )
-
         try:
             self._client.table.delete_entity(
                 table=self.table_name,
                 partition_key=_prepare_key(partition_key),
                 row_key=_prepare_key(row_key),
                 etag=etag or "*",
-                match_condition=match_condition,
+                match_condition=valid_match_condition,
                 **kwargs,
             )
         except HttpResponseError as error:
@@ -460,9 +477,10 @@ class TableClient(TablesBaseClient):
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         if match_condition and not etag and isinstance(entity, TableEntity):
-            etag = entity.metadata.get("etag")
+            etag = entity.metadata["etag"]
         match_condition = _get_match_condition(
-            etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
+            etag=etag,
+            match_condition=match_condition or MatchConditions.Unconditionally
         )
         entity_json = self.encoder(entity)
         partition_key = entity_json.get("PartitionKey")
@@ -523,7 +541,6 @@ class TableClient(TablesBaseClient):
         """
         if select and not isinstance(select, str):
             select = ",".join(select)
-
         command = functools.partial(self._client.table.query_entities, **kwargs)
         return ItemPaged(
             command,
@@ -571,7 +588,6 @@ class TableClient(TablesBaseClient):
         query_filter = _parameter_filter_substitution(parameters, query_filter)
         if select and not isinstance(select, str):
             select = ",".join(select)
-
         command = functools.partial(self._client.table.query_entities, **kwargs)
         return ItemPaged(
             command,
@@ -586,8 +602,8 @@ class TableClient(TablesBaseClient):
     @distributed_trace
     def get_entity(
         self,
-        partition_key: str,
-        row_key: str,
+        partition_key: Any,
+        row_key: Any,
         *,
         select: Optional[Union[str, List[str]]] = None,
         **kwargs,
@@ -618,6 +634,8 @@ class TableClient(TablesBaseClient):
             user_select = ",".join(select)
         elif isinstance(select, str):
             user_select = select
+        partition_key = self._encode_key("PartitionKey", partition_key)
+        row_key = self._encode_key("RowKey", row_key)
         try:
             entity_json = self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,
