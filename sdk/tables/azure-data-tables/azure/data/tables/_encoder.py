@@ -102,15 +102,15 @@ class TableEntityEncoder:
             except AttributeError:
                 pass
             if odata_key in entity:
-                encoded[key] = self._edm_types[EdmType(entity[odata_key])](key, value)
+                encoded[key] = self._edm_types[EdmType(entity[odata_key])](key, value)[1]
                 continue
-            edm_type, encoded_value = self.encode(key, value)
+            edm_type, encoded_value = self._encode(key, value)
             encoded[key] = encoded_value
             if edm_type:
                 encoded[odata_key] = edm_type.value
         return encoded
 
-    def encode(self, key: str, value: Any) -> Tuple[Optional[EdmType], SupportedDataTypes]:
+    def _encode(self, key: str, value: Any) -> Tuple[Optional[EdmType], SupportedDataTypes]:
         try:
             return self._property_types[key](key, value)
         except KeyError:
@@ -118,13 +118,13 @@ class TableEntityEncoder:
         try:
             return self._obj_types[type(value)](key, value)
         except KeyError as e:
-            for obj_type, converter in self._obj_types.items():
-                if isinstance(value, obj_type):
-                    return converter(key, value)
             if isinstance(value, tuple):
                 return self._entity_tuple(key, value)
             if isinstance(value, Enum):
-                return self.encode(key, value.value)
+                return self._encode(key, value.value)
+            for obj_type, converter in self._obj_types.items():
+                if isinstance(value, obj_type):
+                    return converter(key, value)
             raise TypeError(f"No encoder found for value '{value}' of type '{type(value)}'.") from e
 
     def _entity_tuple(self, key: str, value: Tuple[Any, Union[str, EdmType]]) -> Tuple[EdmType, SupportedDataTypes]:
