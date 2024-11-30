@@ -95,8 +95,14 @@ class TableEntityEncoder:
         encoded = {}
         for key, value in entity.items():
             odata_key = f"{key}{_ODATA_SUFFIX}"
-            if value is None or _ODATA_SUFFIX in key or odata_key in entity:
-                encoded[key] = value
+            try:
+                if value is None or _ODATA_SUFFIX in key:
+                    encoded[key] = value
+                    continue
+            except TypeError:
+                key = str(key)
+            if odata_key in entity:
+                encoded[key] = self.encode(key, value)
                 continue
             edm_type, encoded_value = self.encode(key, value)
             encoded[key] = encoded_value
@@ -137,9 +143,9 @@ class TableEntityEncoder:
         return EdmType.BINARY, _encode_base64(value[-1])
 
     @staticmethod
-    def boolean(*value: Any) -> Tuple[None, bool]:
+    def boolean(*value: bool) -> Tuple[None, bool]:
         try:
-            return None, bool(value[-1])
+            return None, value[-1]
         except IndexError as e:
             raise TypeError("to_bool() missing 1 required positional argument: 'value'") from e
 

@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import datetime
 from enum import Enum
-from typing import Any, Union, NamedTuple, Optional
+from typing import Any, Union, NamedTuple, Optional, Dict
 from typing_extensions import TypedDict, Required
 
 from azure.core import CaseInsensitiveEnumMeta
@@ -33,14 +33,11 @@ class EntityMetadata(TypedDict, total=False):
     requested."""
 
 
-class TableEntity(dict):
+class TableEntity(Dict[str, Any]):
     """
     An Entity dictionary with additional metadata
 
     """
-
-    _metadata: EntityMetadata = {"etag": None, "timestamp": None}
-
     @property
     def metadata(self) -> EntityMetadata:
         """Includes the metadata with etag and timestamp.
@@ -48,7 +45,11 @@ class TableEntity(dict):
         :return: Dict of entity metadata
         :rtype: ~azure.data.tables.EntityMetadata
         """
-        return self._metadata
+        try:
+            return self._metadata
+        except AttributeError:
+            return {"etag": None, "timestamp": None}
+
 
 
 class EdmType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -56,15 +56,8 @@ class TableClient(TablesBaseClient):
         ~azure.core.credentials.AzureNamedKeyCredential or
         ~azure.core.credentials.AzureSasCredential or
         ~azure.core.credentials.TokenCredential or None
-    :ivar encoder_map: A dictionary maps the type and the convertion function of this type used in encoding.
-    :vartype encoder_map:
-        dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-    :ivar decoder_map: A dictionary maps the type and the convertion function of this type used in decoding.
-    :vartype decoder_map:
-        dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-    :ivar flatten_result_entity: Whether to flatten entity metadata in deserialization. Default is False,
-        which means the metadata would be deserialized to property metadata in TableEntity.
-    :vartype flatten_result_entity: bool
+    :ivar encoder: An encoder for converting entities into valid JSON payloads.
+    :vartype encoder: ~azure.data.tables.TableEntityEncoder
     """
 
     encoder: TableEntityEncoder
