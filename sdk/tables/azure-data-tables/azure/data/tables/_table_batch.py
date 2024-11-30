@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Union, Any, Mapping, Optional, List, Tuple, Dict
+from typing import Union, Any, Mapping, Optional, List, Tuple
 
 from azure.core import MatchConditions
 from azure.core.rest import HttpRequest
@@ -79,7 +79,7 @@ class TableBatchOperations(object):
     def __len__(self) -> int:
         return len(self.requests)
 
-    def _verify_partition_key(self, entity_json: Dict[Any, Any]) -> None:
+    def _verify_partition_key(self, entity_json: Mapping[Any, Any]) -> None:
         if "PartitionKey" not in entity_json or "RowKey" not in entity_json:
             raise ValueError("PartitionKey and/or RowKey were not provided in entity")
         if self._partition_key is None:

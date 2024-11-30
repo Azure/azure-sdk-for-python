@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
+import json
 from typing import Optional, Any, Union, List, Dict, Mapping, Iterable, overload, cast, Tuple
 from urllib.parse import urlparse, unquote
 
@@ -15,7 +16,13 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
 from ._common_conversion import _prepare_key, _return_headers_and_deserialized, _trim_service_metadata
-from ._encoder import TableEntityEncoder, EncoderMapType, SupportedDataTypes
+from ._encoder import (
+    _TableEntityEncoder,
+    TableEntityEncoder,
+    EncoderMapType,
+    SupportedDataTypes,
+    TableEntityJSONEncoder,
+)
 from ._decoder import TableEntityDecoder, deserialize_iso, DecoderMapType
 from ._base_client import parse_connection_str, TablesBaseClient
 from ._entity import TableEntity
@@ -105,7 +112,7 @@ class TableClient(TablesBaseClient):
         if not table_name:
             raise ValueError("Please specify a table name.")
         self.table_name: str = table_name
-        self.encoder = TableEntityEncoder(convert_map=encode_types or {})
+        self.encoder = _TableEntityEncoder(convert_map=encode_types or {})
         self.decoder = TableEntityDecoder(convert_map=decode_types, flatten_result_entity=not trim_metadata)
         super(TableClient, self).__init__(endpoint, credential=credential, api_version=api_version, **kwargs)
 
@@ -288,11 +295,9 @@ class TableClient(TablesBaseClient):
 
     def _encode_key(self, key_name: str, key_value: Any) -> SupportedDataTypes:
         try:
-            _, encoded_key = self.encoder._property_types[key_name](  # pylint:disable=protected-access
-                key_name, key_value
-            )
+            _, encoded_key = self.encoder(key_name, key_value)
             return encoded_key
-        except (KeyError, AttributeError):
+        except (KeyError, TypeError):
             return cast(str, key_value)
 
     @overload
@@ -422,12 +427,13 @@ class TableClient(TablesBaseClient):
                 :caption: Creating and adding an entity to a Table
         """
         entity_json = self.encoder(entity)
+        payload = json.dumps(entity_json, cls=TableEntityJSONEncoder).encode()
         try:
             metadata, content = cast(
                 Tuple[Dict[str, str], Optional[Dict[str, Any]]],
                 self._client.table.insert_entity(
                     table=self.table_name,
-                    table_entity_properties=entity_json,
+                    table_entity_properties=payload,
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs,
                 ),
@@ -473,6 +479,7 @@ class TableClient(TablesBaseClient):
         entity_json = self.encoder(entity)
         partition_key = entity_json.get("PartitionKey")
         row_key = entity_json.get("RowKey")
+        payload = json.dumps(entity_json, cls=TableEntityJSONEncoder).encode()
 
         try:
             if mode == UpdateMode.REPLACE:
@@ -482,7 +489,7 @@ class TableClient(TablesBaseClient):
                         table=self.table_name,
                         partition_key=_prepare_key(partition_key),
                         row_key=_prepare_key(row_key),
-                        table_entity_properties=entity_json,
+                        table_entity_properties=payload,
                         etag=etag,
                         match_condition=match_condition,
                         cls=kwargs.pop("cls", _return_headers_and_deserialized),
@@ -498,7 +505,7 @@ class TableClient(TablesBaseClient):
                         row_key=_prepare_key(row_key),
                         etag=etag,
                         match_condition=match_condition,
-                        table_entity_properties=entity_json,
+                        table_entity_properties=payload,
                         cls=kwargs.pop("cls", _return_headers_and_deserialized),
                         **kwargs,
                     ),
@@ -665,6 +672,7 @@ class TableClient(TablesBaseClient):
         entity_json = self.encoder(entity)
         partition_key = entity_json.get("PartitionKey")
         row_key = entity_json.get("RowKey")
+        payload = json.dumps(entity_json, cls=TableEntityJSONEncoder).encode()
 
         try:
             if mode == UpdateMode.MERGE:
@@ -674,7 +682,7 @@ class TableClient(TablesBaseClient):
                         table=self.table_name,
                         partition_key=_prepare_key(partition_key),
                         row_key=_prepare_key(row_key),
-                        table_entity_properties=entity_json,
+                        table_entity_properties=payload,
                         cls=kwargs.pop("cls", _return_headers_and_deserialized),
                         **kwargs,
                     ),
@@ -686,7 +694,7 @@ class TableClient(TablesBaseClient):
                         table=self.table_name,
                         partition_key=_prepare_key(partition_key),
                         row_key=_prepare_key(row_key),
-                        table_entity_properties=entity_json,
+                        table_entity_properties=payload,
                         cls=kwargs.pop("cls", _return_headers_and_deserialized),
                         **kwargs,
                     ),

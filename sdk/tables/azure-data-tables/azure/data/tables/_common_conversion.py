@@ -6,9 +6,11 @@
 import base64
 import hashlib
 import hmac
-from datetime import timezone
+from datetime import timezone, datetime
 from urllib.parse import ParseResult
 from typing import Optional, Tuple, List, Dict, Any, Union, cast
+
+SupportedDataTypes = Union[str, bool, int, float, None, datetime, bytes]
 
 
 def _to_str(value):
@@ -87,7 +89,7 @@ def _get_account(parsed_url: ParseResult) -> Tuple[List[str], Optional[str]]:
     return account, account_name
 
 
-def _prepare_key(key: Union[str, int, float, None]) -> str:
+def _prepare_key(key: SupportedDataTypes) -> str:
     """Duplicate the single quote char to escape.
 
     :param str key: The entity PartitionKey or RowKey value in table entity.

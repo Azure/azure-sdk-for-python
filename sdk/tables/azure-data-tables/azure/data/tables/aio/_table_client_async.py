@@ -18,7 +18,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._common_conversion import _prepare_key, _return_headers_and_deserialized, _trim_service_metadata
 from .._base_client import parse_connection_str
-from .._encoder import TableEntityEncoder, EncoderMapType
+from .._encoder import TableEntityEncoder, _TableEntityEncoder, EncoderMapType
 from .._entity import TableEntity
 from .._decoder import TableEntityDecoder, deserialize_iso, DecoderMapType
 from .._generated.models import SignedIdentifier, TableProperties
@@ -68,6 +68,8 @@ class TableClient(AsyncTablesBaseClient):
     :vartype flatten_result_entity: bool
     """
 
+    encoder: TableEntityEncoder
+
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
         self,
         endpoint: str,
@@ -111,7 +113,7 @@ class TableClient(AsyncTablesBaseClient):
         if not table_name:
             raise ValueError("Please specify a table name.")
         self.table_name: str = table_name
-        self.encoder = TableEntityEncoder(convert_map=encoder_map or {})
+        self.encoder = _TableEntityEncoder(convert_map=encoder_map or {})
         self.decoder = TableEntityDecoder(convert_map=decoder_map, flatten_result_entity=flatten_result_entity)
         super(TableClient, self).__init__(endpoint, credential=credential, api_version=api_version, **kwargs)
 
