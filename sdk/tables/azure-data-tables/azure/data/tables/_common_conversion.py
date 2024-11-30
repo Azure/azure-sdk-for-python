@@ -29,7 +29,7 @@ def _to_utc_datetime(value):
 
 def _encode_base64(data):
     if isinstance(data, str):
-        return data
+        data = data.encode("utf-8")
     encoded = base64.b64encode(bytes(data))
     return encoded.decode("utf-8")
 

@@ -127,7 +127,8 @@ class TableEntityDecoder:
         if self.flatten_result_entity:
             for name, value in odata.items():
                 entity[name] = value
-        entity._metadata = cast(EntityMetadata, odata)  # pylint: disable=protected-access
+        # pylint: disable=protected-access
+        entity._metadata = cast(EntityMetadata, odata)  # type:ignore[attr-defined]
         return entity
 
     def from_entity_binary(self, value: str) -> bytes:

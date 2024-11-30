@@ -96,13 +96,13 @@ class TableEntityEncoder:
         for key, value in entity.items():
             odata_key = f"{key}{_ODATA_SUFFIX}"
             try:
-                if value is None or _ODATA_SUFFIX in key:
+                if value is None or key.endswith(_ODATA_SUFFIX):
                     encoded[key] = value
                     continue
-            except TypeError:
-                key = str(key)
+            except AttributeError:
+                pass
             if odata_key in entity:
-                encoded[key] = self.encode(key, value)
+                encoded[key] = self._edm_types[EdmType(entity[odata_key])](key, value)
                 continue
             edm_type, encoded_value = self.encode(key, value)
             encoded[key] = encoded_value
@@ -143,7 +143,7 @@ class TableEntityEncoder:
         return EdmType.BINARY, _encode_base64(value[-1])
 
     @staticmethod
-    def boolean(*value: bool) -> Tuple[None, bool]:
+    def boolean(*value: Union[str, bool]) -> Tuple[None, Union[bool, str]]:
         try:
             return None, value[-1]
         except IndexError as e:

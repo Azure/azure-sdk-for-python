@@ -36,8 +36,8 @@ class EntityMetadata(TypedDict, total=False):
 class TableEntity(Dict[str, Any]):
     """
     An Entity dictionary with additional metadata
-
     """
+
     @property
     def metadata(self) -> EntityMetadata:
         """Includes the metadata with etag and timestamp.
@@ -46,10 +46,9 @@ class TableEntity(Dict[str, Any]):
         :rtype: ~azure.data.tables.EntityMetadata
         """
         try:
-            return self._metadata
+            return self._metadata  # type:ignore[attr-defined]
         except AttributeError:
             return {"etag": None, "timestamp": None}
-
 
 
 class EdmType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
