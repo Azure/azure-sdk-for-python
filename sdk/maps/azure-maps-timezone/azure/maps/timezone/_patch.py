@@ -12,8 +12,8 @@ import sys
 from typing import Union, Any, List, Optional
 from azure.core.tracing.decorator import distributed_trace
 
-from azure.core.credentials import AzureKeyCredential, TokenCredential
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
+from azure.core.credentials import AzureKeyCredential, AzureSasCredential, TokenCredential
+from azure.core.pipeline.policies import AzureKeyCredentialPolicy, AzureSasCredentialPolicy
 from ._client import TimezoneClient as TimezoneClientGenerated
 
 if sys.version_info >= (3, 9):
@@ -41,6 +41,8 @@ def _authentication_policy(credential):
         raise ValueError("Parameter 'credential' must not be None.")
     if isinstance(credential, AzureKeyCredential):
         authentication_policy = AzureKeyCredentialPolicy(name="subscription-key", credential=credential)
+    elif isinstance(credential, AzureSasCredential):
+        authentication_policy = AzureSasCredentialPolicy(credential)
     elif credential is not None and not hasattr(credential, "get_token"):
         raise TypeError(
             "Unsupported credential: {}. Use an instance of AzureKeyCredential "
@@ -53,7 +55,7 @@ def _authentication_policy(credential):
 class MapsTimeZoneClient(TimezoneClientGenerated):
     def __init__(
         self,
-        credential: Union[AzureKeyCredential, TokenCredential],
+        credential: Union[AzureKeyCredential, AzureSasCredential, TokenCredential],
         client_id: Optional[str] = None,
         *,
         endpoint: str = "https://atlas.microsoft.com",

@@ -33,7 +33,7 @@ pip install azure-maps-timezone
 
 ### Create and Authenticate the MapsTimeZoneClient
 
-To create a client object to access the Azure Maps Timezone API, you will need a **credential** object. Azure Maps Timezone client also support two ways to authenticate.
+To create a client object to access the Azure Maps Timezone API, you will need a **credential** object. Azure Maps Timezone client also support three ways to authenticate.
 
 #### 1. Authenticate with a Subscription Key Credential
 
@@ -54,7 +54,26 @@ timezone_client = MapsTimeZoneClient(
 )
 ```
 
-#### 2. Authenticate with an Microsoft Entra ID credential
+#### 2. Authenticate with a SAS Credential
+
+You can authenticate with your generated SAS token.
+Once the SAS token is created, set the value of the token as environment variable: `AZURE_SAS_TOKEN`.
+Then pass an `AZURE_SAS_TOKEN` as the `credential` parameter into an instance of AzureSasCredential.
+
+```python
+import os
+
+from azure.core.credentials import AzureSASCredential
+from azure.maps.timezone import MapsTimeZoneClient
+
+credential = AzureSASCredential(os.environ.get("AZURE_SAS_TOKEN"))
+
+timezone_client = MapsTimeZoneClient(
+    credential=credential,
+)
+```
+
+#### 3. Authenticate with an Microsoft Entra ID credential
 
 You can authenticate with [Microsoft Entra ID credential][maps_authentication_ms_entra_id] using the [Azure Identity library][azure_identity].
 Authentication by using Microsoft Entra ID requires some initial setup:
