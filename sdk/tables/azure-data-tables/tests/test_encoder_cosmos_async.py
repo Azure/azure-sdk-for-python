@@ -716,20 +716,20 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(TypeError) as error:
                 await client.upsert_entity(test_entity, mode="merge")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.upsert_entity(test_entity, mode="replace")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
 
             test_entity = {"PartitionKey": "PK", "RowKey": True}
             expected_entity = test_entity
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(TypeError) as error:
                 await client.upsert_entity(test_entity, mode="merge")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.upsert_entity(test_entity, mode="replace")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
 
             test_entity = {"PartitionKey": "PK", "RowKey": 3.14}
             expected_entity = {
@@ -740,10 +740,10 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(TypeError) as error:
                 await client.upsert_entity(test_entity, mode="merge")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.upsert_entity(test_entity, mode="replace")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             await client.delete_table()
 
     @cosmos_decorator_async
@@ -1607,20 +1607,20 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(TypeError) as error:
                 await client.update_entity(test_entity, mode="merge")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.update_entity(test_entity, mode="replace")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
 
             test_entity = {"PartitionKey": "PK", "RowKey": True}
             expected_entity = test_entity
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(TypeError) as error:
                 await client.update_entity(test_entity, mode="merge")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.update_entity(test_entity, mode="replace")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
 
             test_entity = {"PartitionKey": "PK", "RowKey": 3.14}
             expected_entity = {
@@ -1631,10 +1631,10 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(TypeError) as error:
                 await client.update_entity(test_entity, mode="merge")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.update_entity(test_entity, mode="replace")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             await client.delete_table()
 
     @cosmos_decorator_async
@@ -2420,22 +2420,22 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
             with pytest.raises(TypeError) as error:
                 await client.delete_entity("foo", 1)
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.delete_entity({"PartitionKey": "foo", "RowKey": 1})
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.delete_entity("foo", True)
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.delete_entity({"PartitionKey": "foo", "RowKey": True})
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.delete_entity("foo", 3.14)
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.delete_entity({"PartitionKey": "foo", "RowKey": 3.14})
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
 
             await client.delete_table()
 
@@ -2455,15 +2455,15 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
             with pytest.raises(TypeError) as error:
                 await client.delete_entity("foo", self.get_datetime())
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             await client.delete_entity({"PartitionKey": "foo", "RowKey": self.get_datetime()})
             with pytest.raises(TypeError) as error:
                 await client.delete_entity("foo", recorded_uuid)
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             await client.delete_entity({"PartitionKey": "foo", "RowKey": recorded_uuid})
             with pytest.raises(TypeError) as error:
                 await client.delete_entity("foo", b"binarydata")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             await client.delete_entity({"PartitionKey": "foo", "RowKey": b"binarydata"})
         return recorded_variables
 
@@ -2479,7 +2479,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
             with pytest.raises(TypeError) as error:
                 await client.delete_entity("foo", EntityProperty("bar", "Edm.String"))
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             await client.delete_entity({"PartitionKey": "foo", "RowKey": ("bar", EdmType.STRING)})
 
     @cosmos_decorator_async
@@ -2518,14 +2518,14 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
             with pytest.raises(TypeError) as error:
                 await client.delete_entity("foo", EnumBasicOptions.ONE)
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             await client.delete_entity({"PartitionKey": "foo", "RowKey": EnumBasicOptions.ONE})
             with pytest.raises(TypeError) as error:
                 await client.delete_entity("foo", EnumIntOptions.ONE)
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.delete_entity({"PartitionKey": "foo", "RowKey": EnumIntOptions.ONE})
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
 
             await client.upsert_entity({"PartitionKey": "foo", "RowKey": "One"})
             resp = await client.delete_entity(
@@ -2581,13 +2581,13 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
             with pytest.raises(TypeError) as error:
                 await client.get_entity("foo", 1)
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.get_entity("foo", True)
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.get_entity("foo", 3.14)
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
 
             await client.delete_table()
 
@@ -2607,13 +2607,13 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
             with pytest.raises(TypeError) as error:
                 await client.get_entity("foo", self.get_datetime())
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.get_entity("foo", recorded_uuid)
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.get_entity("foo", b"binarydata")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
         return recorded_variables
 
     @cosmos_decorator_async
@@ -2628,7 +2628,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
             with pytest.raises(TypeError) as error:
                 await client.get_entity("foo", EntityProperty("bar", "Edm.String"))
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
@@ -2658,10 +2658,10 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
             with pytest.raises(TypeError) as error:
                 await client.get_entity("foo", EnumBasicOptions.ONE)
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.get_entity("foo", EnumIntOptions.ONE)
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
 
             test_entity = {"PartitionKey": "foo", "RowKey": "One"}
             await client.upsert_entity(test_entity)

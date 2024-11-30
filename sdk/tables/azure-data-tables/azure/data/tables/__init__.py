@@ -51,5 +51,5 @@ __all__ = [
     "TransactionOperation",
     "RequestTooLargeError",
     "EntityMetadata",
-    "TableEntityEncoder"
+    "TableEntityEncoder",
 ]

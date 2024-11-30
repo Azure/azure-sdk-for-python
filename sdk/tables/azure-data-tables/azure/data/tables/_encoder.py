@@ -23,7 +23,6 @@ from uuid import UUID
 from datetime import datetime
 from enum import Enum
 from math import isnan
-from collections import ChainMap
 
 from ._entity import EdmType
 from ._decoder import TablesEntityDatetime
@@ -88,7 +87,7 @@ class TableEntityEncoder:
         self.types = EdmTypes(
             cast(EncoderMapType, self._obj_types),
             cast(EncoderMapType, self._edm_types),
-            cast(EncoderMapType, self._property_types)
+            cast(EncoderMapType, self._property_types),
         )
         self.types.update(convert_map)
 
@@ -122,20 +121,16 @@ class TableEntityEncoder:
                 return self.encode(key, value.value)
             raise TypeError(f"No encoder found for value '{value}' of type '{type(value)}'.") from e
 
-    def _entity_tuple(
-            self,
-            key: str,
-            value: Tuple[Any, Union[str, EdmType]]
-    ) -> Tuple[EdmType, SupportedDataTypes]:
+    def _entity_tuple(self, key: str, value: Tuple[Any, Union[str, EdmType]]) -> Tuple[EdmType, SupportedDataTypes]:
         if len(value) == 2:
             unencoded_value = value[0]
-            edm_type = EdmType(value[1])  # should raise error for unknown edmtypes
+            unencoded_edm = EdmType(value[1])  # should raise error for unknown edmtypes
         else:
             raise ValueError("Tuple should have 2 items")
         if unencoded_value is None:
-            return edm_type, unencoded_value
-        edm, encoded = self._edm_types[edm_type](key, value)
-        return edm or edm_type, encoded
+            return unencoded_edm, unencoded_value
+        encoded_edm, encoded_value = self._edm_types[unencoded_edm](key, unencoded_value)
+        return encoded_edm or unencoded_edm, encoded_value
 
     @staticmethod
     def binary(*value: Union[str, SupportsBytes]) -> Tuple[EdmType, str]:

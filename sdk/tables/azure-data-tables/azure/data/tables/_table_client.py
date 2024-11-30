@@ -66,6 +66,7 @@ class TableClient(TablesBaseClient):
         which means the metadata would be deserialized to property metadata in TableEntity.
     :vartype flatten_result_entity: bool
     """
+
     encoder: TableEntityEncoder
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
@@ -294,9 +295,8 @@ class TableClient(TablesBaseClient):
 
     def _encode_key(self, key_name: str, key_value: Any) -> SupportedDataTypes:
         try:
-            _, encoded_key = self.encoder._property_types[key_name](
-                key_name,
-                key_value
+            _, encoded_key = self.encoder._property_types[key_name](  # pylint:disable=protected-access
+                key_name, key_value
             )
             return encoded_key
         except (KeyError, AttributeError):
@@ -369,11 +369,7 @@ class TableClient(TablesBaseClient):
 
     @distributed_trace
     def delete_entity(
-        self,
-        *args: Any,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
+        self, *args: Any, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
     ) -> None:
         entity = kwargs.pop("entity", None)
         try:
@@ -479,8 +475,7 @@ class TableClient(TablesBaseClient):
         if match_condition and not etag and isinstance(entity, TableEntity):
             etag = entity.metadata["etag"]
         match_condition = _get_match_condition(
-            etag=etag,
-            match_condition=match_condition or MatchConditions.Unconditionally
+            etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
         entity_json = self.encoder(entity)
         partition_key = entity_json.get("PartitionKey")
