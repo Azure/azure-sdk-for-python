@@ -1,6 +1,5 @@
 from setuptools import setup, find_packages
 import os
-from io import open
 import re
 
 # example setup.py Feel free to copy the entire "azure-template" folder into a package folder named 

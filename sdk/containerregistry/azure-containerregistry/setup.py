@@ -1,6 +1,5 @@
 from setuptools import setup, find_packages
 import os
-from io import open
 import re
 
 # Change the PACKAGE_NAME only to change folder and different name

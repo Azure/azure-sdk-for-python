@@ -6,7 +6,6 @@
 # ------------------------------------
 import re
 import os.path
-from io import open
 from setuptools import find_packages, setup
 
 PACKAGE_NAME = "azure-identity"

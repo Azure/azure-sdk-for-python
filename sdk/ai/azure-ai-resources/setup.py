@@ -4,7 +4,6 @@
 
 import os
 import re
-from io import open
 from typing import Any, Match, cast
 
 import pkg_resources

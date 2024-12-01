@@ -8,7 +8,6 @@
 
 from setuptools import setup, find_packages
 import os
-from io import open
 import re
 
 PACKAGE_NAME = "azure-eventhub-checkpointstoretable"

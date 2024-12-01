@@ -8,7 +8,6 @@
 
 import re
 import os.path
-from io import open
 from setuptools import setup
 
 # Change the PACKAGE_NAME only to change folder and different name

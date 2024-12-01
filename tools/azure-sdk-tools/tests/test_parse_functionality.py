@@ -51,7 +51,6 @@ def test_sdk_sample_setup(test_patch):
     test_patch.return_value = """
 import re
 import os.path
-from io import open
 from setuptools import find_packages, setup  # type: ignore
 
 # Change the PACKAGE_NAME only to change folder and different name
@@ -131,7 +130,6 @@ def test_parse_recognizes_extensions(test_patch):
     test_patch.return_value = """
 import re
 import os.path
-from io import open
 import glob
 from setuptools import find_packages, setup, Extension  # type: ignore
 # Change the PACKAGE_NAME only to change folder and different name

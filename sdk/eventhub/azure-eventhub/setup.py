@@ -9,7 +9,6 @@
 import re
 import os.path
 import sys
-from io import open
 from setuptools import find_packages, setup
 
 

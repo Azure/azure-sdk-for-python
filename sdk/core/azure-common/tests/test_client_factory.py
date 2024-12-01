@@ -15,7 +15,6 @@ try:
     from unittest import mock
 except ImportError:
     import mock
-from io import open
 
 from msrestazure.azure_cloud import AZURE_PUBLIC_CLOUD
 # https://github.com/Azure/azure-cli/blob/4e1ff0ec626ea46d74793ad92a1b5eddc2b6e45b/src/azure-cli-core/azure/cli/core/cloud.py#L310

@@ -6,7 +6,6 @@
 # ------------------------------------
 # pylint:disable=missing-docstring
 
-from io import open
 import os
 import re
 from setuptools import setup, find_packages
