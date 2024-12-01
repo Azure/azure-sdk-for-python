@@ -190,7 +190,7 @@ class Schema(metaclass=ABC):
         """Returns: the JSON representation of this schema."""
         return json.dumps(self.to_json(names=None))
 
-    @dabstractmethod
+    @abstractmethod
     def to_json(self, names):
         """Converts the schema object into its AVRO specification representation.
 
