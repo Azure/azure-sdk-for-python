@@ -109,7 +109,7 @@ class _TableEntityDecoder:
                 entity[key] = self._edm_types[edm_type](value)
         entity._metadata["timestamp"] = entity.get("Timestamp")
         if self._trim_timestamp:
-            entity.pop("Timestamp")
+            entity.pop("Timestamp", None)
         return entity
 
     def _decode_int32(self, value: Union[str, int]) -> int:
