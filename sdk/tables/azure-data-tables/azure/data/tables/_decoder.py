@@ -91,9 +91,17 @@ class _TableEntityDecoder:
         entity = TableEntity()
         entity._metadata = {"etag": None, "timestamp": None}
         for key, value in response_data.items():
-            if key.startswith("odata.") and key != "odata.metadata":
+            if key.startswith("odata."):
                 if self._trim_odata:
-                    entity._metadata[key[6:]] = value  # type: ignore[literal-required]
+                    # TODO: replace with match statement
+                    if key == "odata.etag":
+                        entity._metadata["etag"] = value
+                    elif key == "odata.type":
+                        entity._metadata["type"] = value
+                    elif key == "odata.id":
+                        entity._metadata["id"] = value
+                    elif key == "odata.editLink":
+                        entity._metadata["editLink"] = value
                 else:
                     entity[key] = value
             elif key.endswith("@odata.type"):
