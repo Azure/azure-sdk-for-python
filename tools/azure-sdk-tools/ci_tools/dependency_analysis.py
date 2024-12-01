@@ -3,7 +3,6 @@ import argparse
 import ast
 from datetime import datetime
 import glob
-import io
 import json
 import os
 import re
@@ -126,7 +125,7 @@ def dict_compare(d1: Dict[Any, Any], d2: Dict[Any, Any]) -> Tuple[Set[Any], Set[
 def render_report(output_path: str, report_context: Dict[str, any]) -> None:
     env = Environment(loader=FileSystemLoader(os.path.dirname(os.path.realpath(__file__))))
     template = env.get_template("deps.html.j2")
-    with io.open(output_path, "w", encoding="utf-8") as output:
+    with open(output_path, "w", encoding="utf-8") as output:
         output.write(template.render(report_context))
 
 
@@ -356,9 +355,9 @@ def analyze_dependencies() -> None:
         pkg_ids = [k for k in dump_data.keys()]
         for pkg_id in pkg_ids:
             resolve_lib_deps(dump_data, data_pkgs, pkg_id)
-        with io.open(f"{args.dump}/data.js", "w", encoding="utf-8") as dump_file:
+        with open(f"{args.dump}/data.js", "w", encoding="utf-8") as dump_file:
             dump_file.write("const data = " + json.dumps(dump_data) + ";")
-        with io.open(f"{args.dump}/arcdata.json", "w", encoding="utf-8") as dump_file:
+        with open(f"{args.dump}/arcdata.json", "w", encoding="utf-8") as dump_file:
             dump_file.write(json.dumps(dump_data))
 
     sys.exit(exitcode)
