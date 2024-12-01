@@ -3,27 +3,20 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Mapping, Protocol, Union, Dict, Callable, cast
-from datetime import datetime, timezone
+from typing import Any, Mapping, Protocol, Union, Dict, Callable
+from datetime import timezone
 from uuid import UUID
 from base64 import b64decode
 
-from ._entity import EntityProperty, EdmType, TableEntity
+from ._entity import (
+    EntityProperty,
+    EdmType,
+    TableEntity,
+    TablesEntityDatetime,
+)
 
-DecoderMapType = Dict[Union[str, EdmType], Callable[[Union[str, bool, int, float]], Any]]
-
-
-class TablesEntityDatetime(datetime):
-
-    @property
-    def tables_service_value(self) -> str:
-        # pylint: disable=attribute-defined-outside-init
-        try:
-            return cast(str, self._service_value)  # type: ignore[attr-defined]
-        except AttributeError:
-            return ""
-
-
+DecodeCallable = Union[Callable[[str], Any], Callable[[int], Any], Callable[[bool], Any], Callable[[float], Any]]
+DecoderMapType = Dict[Union[str, EdmType], DecodeCallable]
 NO_ODATA = {
     int: EdmType.INT32,
     str: EdmType.STRING,
@@ -46,9 +39,9 @@ class _TableEntityDecoder:
     ) -> None:
         self._trim_timestamp = trim_timestamp
         self._trim_odata = trim_odata
-        self._edm_types: Dict[EdmType, Callable[[Any], Any]] = {
+        self._edm_types: Dict[EdmType, DecodeCallable] = {
             EdmType.BINARY: b64decode,
-            EdmType.INT32: int,
+            EdmType.INT32: self._decode_int32,
             EdmType.INT64: self._decode_int64,
             EdmType.DOUBLE: float,
             EdmType.DATETIME: deserialize_iso,
@@ -56,7 +49,7 @@ class _TableEntityDecoder:
             EdmType.STRING: str,
             EdmType.BOOLEAN: bool,
         }
-        self._property_types: Dict[str, Callable[[Any], Any]] = {"Timestamp": deserialize_iso}
+        self._property_types: Dict[str, DecodeCallable] = {"Timestamp": deserialize_iso}
         for key, value in convert_map.items():
             if isinstance(key, str):
                 self._property_types[key] = value
@@ -93,7 +86,7 @@ class _TableEntityDecoder:
         for key, value in response_data.items():
             if key.startswith("odata."):
                 if self._trim_odata:
-                    # TODO: replace with match statement
+                    # TODO: replace with match statement once we drop 3.9
                     if key == "odata.etag":
                         entity._metadata["etag"] = value
                     elif key == "odata.type":
@@ -114,9 +107,13 @@ class _TableEntityDecoder:
                     pass
                 edm_type = EdmType(response_data.get(key + "@odata.type", NO_ODATA[type(value)]))
                 entity[key] = self._edm_types[edm_type](value)
+        entity._metadata["timestamp"] = entity["Timestamp"]
         if self._trim_timestamp:
-            entity._metadata["timestamp"] = entity.pop("Timestamp")
+            entity.pop("Timestamp")
         return entity
+
+    def _decode_int32(self, value: Union[str, int]) -> int:
+        return int(value)
 
     def _decode_int64(self, value: str) -> EntityProperty:
         return EntityProperty(int(value), EdmType.INT64)
@@ -130,7 +127,7 @@ def deserialize_iso(value: str) -> TablesEntityDatetime:
         dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
     except ValueError:
         dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
-    dt_obj._service_value = value  # type: ignore[attr-defined]
+    dt_obj._service_value = value
     return dt_obj
 
 

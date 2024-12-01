@@ -80,7 +80,7 @@ class TableClient(TablesBaseClient):
         encode_types: Optional[EncoderMapType] = None,
         decode_types: Optional[DecoderMapType] = None,
         trim_timestamp: bool = True,
-        trim_odata: bool = True,
+        trim_metadata: bool = True,
         **kwargs: Any,
     ) -> None:
         """Create TableClient from a Credential.
@@ -106,9 +106,12 @@ class TableClient(TablesBaseClient):
             A dictionary maps the type and the convertion function of this type used in decoding.
         :paramtype decode_types:
             dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-        :paramtype bool trim_metadata:
-            Whether to flatten entity metadata in deserialization. Default is False,
-            which means the metadata would be deserialized to property metadata in TableEntity.
+        :keyword bool trim_timestamp:
+            Whether to remove the system property 'Timestamp' from the entity in deserialization. Default is
+            True. This can still be found the the `metadata` property of `TableEntity`.
+        :keyword bool trim_metadata:
+            Whether to remove entity odata metadata in deserialization. Default is True,
+            which means the metadata would be deserialized to property `metadata` in `TableEntity`.
         :returns: None
         """
         if not table_name:
@@ -118,7 +121,7 @@ class TableClient(TablesBaseClient):
         self.decoder = _TableEntityDecoder(
             convert_map=decode_types or {},
             trim_timestamp=trim_timestamp,
-            trim_odata=trim_odata,
+            trim_odata=trim_metadata,
         )
         super(TableClient, self).__init__(endpoint, credential=credential, api_version=api_version, **kwargs)
 

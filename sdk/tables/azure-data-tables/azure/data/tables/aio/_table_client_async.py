@@ -68,15 +68,10 @@ class TableClient(AsyncTablesBaseClient):
         ~azure.core.credentials.AzureNamedKeyCredential or
         ~azure.core.credentials.AzureSasCredential or
         ~azure.core.credentials_async.AsyncTokenCredential or None
-    :ivar encoder_map: A dictionary maps the type and the convertion function of this type used in encoding.
-    :vartype encoder_map:
-        dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-    :ivar decoder_map: A dictionary maps the type and the convertion function of this type used in decoding.
-    :vartype decoder_map:
-        dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-    :ivar flatten_result_entity: Whether to flatten entity metadata in deserialization. Default is False,
-        which means the metadata would be deserialized to property metadata in TableEntity.
-    :vartype flatten_result_entity: bool
+    :ivar encoder: The entity encoder.
+    :vartype encoder: ~azure.table.TableEntityEncoder
+    :ivar decoder: The entity decoder.
+    :vartype decoder: ~azure.table.TableEntityDecoder
     """
 
     encoder: TableEntityEncoder
@@ -92,7 +87,7 @@ class TableClient(AsyncTablesBaseClient):
         encoder_map: Optional[EncoderMapType] = None,
         decoder_map: Optional[DecoderMapType] = None,
         trim_timestamp: bool = True,
-        trim_odata: bool = True,
+        trim_metadata: bool = True,
         **kwargs: Any,
     ) -> None:
         """Creates TableClient from a Credential.
@@ -118,9 +113,12 @@ class TableClient(AsyncTablesBaseClient):
             A dictionary maps the type and the convertion function of this type used in decoding.
         :paramtype decoder_map:
             dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-        :paramtype bool flatten_result_entity:
-            Whether to flatten entity metadata in deserialization. Default is False,
-            which means the metadata would be deserialized to property metadata in TableEntity.
+        :keyword bool trim_timestamp:
+            Whether to remove the system property 'Timestamp' from the entity in deserialization. Default is
+            True. This can still be found the the `metadata` property of `TableEntity`.
+        :keyword bool trim_metadata:
+            Whether to remove entity odata metadata in deserialization. Default is True,
+            which means the metadata would be deserialized to property `metadata` in `TableEntity`.
         :returns: None
         """
         if not table_name:
@@ -128,7 +126,9 @@ class TableClient(AsyncTablesBaseClient):
         self.table_name: str = table_name
         self.encoder = _TableEntityEncoder(convert_map=encoder_map or {})
         self.decoder = _TableEntityDecoder(
-            convert_map=decoder_map or {}, trim_odata=trim_odata, trim_timestamp=trim_timestamp
+            convert_map=decoder_map or {},
+            trim_odata=trim_metadata,
+            trim_timestamp=trim_timestamp,
         )
         super(TableClient, self).__init__(endpoint, credential=credential, api_version=api_version, **kwargs)
 

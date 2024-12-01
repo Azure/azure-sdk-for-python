@@ -195,7 +195,7 @@ class TableTestCase(object):
             "birthday": datetime(1991, 10, 4, tzinfo=timezone.utc),
         }
 
-    def _assert_default_entity(self, entity):
+    def _assert_default_entity(self, entity: TableEntity):
         """
         Asserts that the entity passed in matches the default entity.
         """

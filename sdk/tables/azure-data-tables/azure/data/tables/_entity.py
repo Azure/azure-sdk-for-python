@@ -12,6 +12,18 @@ from typing_extensions import TypedDict, Required
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class TablesEntityDatetime(datetime.datetime):
+
+    @property
+    def tables_service_value(self) -> str:
+        # pylint: disable=attribute-defined-outside-init
+        try:
+            return self._service_value
+        except AttributeError:
+            self._service_value: str = ""
+            return self._service_value
+
+
 class EntityMetadata(TypedDict, total=False):
     etag: Required[Optional[str]]
     """A string representation of the timestamp property. Used to provide optimistic concurrency."""
@@ -46,20 +58,29 @@ class TableEntity(Dict[str, Any]):
         :return: Dict of entity metadata
         :rtype: ~azure.data.tables.EntityMetadata
         """
-        if not hasattr(self, "_metadata"):
-            self._metadata: EntityMetadata = {
-                "etag": None,
-                "timestamp": None,
-            }  # pylint: disable=attribute-defined-outside-init
-        if not self._metadata.get("timestamp"):
-            self._metadata["timestamp"] = self.get("Timestamp")
-        if not self._metadata.get("etag"):
-            try:
-                timestamp = self._metadata["timestamp"].tables_service_value  # type:ignore[union-attr]
+        # pylint: disable=attribute-defined-outside-init
+        try:
+            # It's possible for only the timestamp to have been populated, in which case
+            # we can automatically infer the etag.
+            if isinstance(self._metadata["timestamp"], TablesEntityDatetime) and self._metadata["etag"] is None:
+                timestamp = self._metadata["timestamp"].tables_service_value
                 self._metadata["etag"] = "W/\"datetime'" + quote(timestamp) + "'\""
-            except AttributeError:
-                self._metadata["etag"] = None
-        return self._metadata
+            return self._metadata
+        except KeyError:
+            # This probably means someone has popped keys from the dict
+            return self._metadata
+        except AttributeError:
+            # The metadata was never set - this would likely only happen if someone
+            # instantiated this object directly.
+            system_timestamp: Optional[datetime.datetime] = self.get("Timestamp")
+            etag: Optional[str] = None
+            if isinstance(system_timestamp, TablesEntityDatetime):
+                etag = "W/\"datetime'" + quote(system_timestamp.tables_service_value) + "'\""
+            self._metadata: EntityMetadata = {
+                "etag": etag,
+                "timestamp": system_timestamp,
+            }
+            return self._metadata
 
 
 class EdmType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
