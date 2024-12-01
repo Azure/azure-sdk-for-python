@@ -68,10 +68,10 @@ class TableClient(AsyncTablesBaseClient):
         ~azure.core.credentials.AzureNamedKeyCredential or
         ~azure.core.credentials.AzureSasCredential or
         ~azure.core.credentials_async.AsyncTokenCredential or None
-    :ivar encoder: The entity encoder.
-    :vartype encoder: ~azure.table.TableEntityEncoder
-    :ivar decoder: The entity decoder.
-    :vartype decoder: ~azure.table.TableEntityDecoder
+    :ivar encoder: An encoder for converting entities into valid JSON payloads.
+    :vartype encoder: ~azure.data.tables.TableEntityEncoder
+    :ivar decoder: A decoder for converting response entities into typed TableEntity objects.
+    :vartype decoder: ~azure.data.tables.TableEntityDecoder
     """
 
     encoder: TableEntityEncoder
@@ -84,8 +84,8 @@ class TableClient(AsyncTablesBaseClient):
         *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]] = None,
         api_version: Optional[str] = None,
-        encoder_map: Optional[EncoderMapType] = None,
-        decoder_map: Optional[DecoderMapType] = None,
+        encode_types: Optional[EncoderMapType] = None,
+        decode_types: Optional[DecoderMapType] = None,
         trim_timestamp: bool = True,
         trim_metadata: bool = True,
         **kwargs: Any,
@@ -105,13 +105,13 @@ class TableClient(AsyncTablesBaseClient):
         :keyword api_version: Specifies the version of the operation to use for this request. Default value
             is "2019-02-02".
         :paramtype api_version: str or None
-        :keyword encoder_map:
+        :keyword encode_types:
             A dictionary maps the type and the convertion function of this type used in encoding.
-        :paramtype encoder_map:
+        :paramtype encode_types:
             dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-        :keyword decoder_map:
+        :keyword decode_types:
             A dictionary maps the type and the convertion function of this type used in decoding.
-        :paramtype decoder_map:
+        :paramtype decode_types:
             dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
         :keyword bool trim_timestamp:
             Whether to remove the system property 'Timestamp' from the entity in deserialization. Default is
@@ -124,20 +124,48 @@ class TableClient(AsyncTablesBaseClient):
         if not table_name:
             raise ValueError("Please specify a table name.")
         self.table_name: str = table_name
-        self.encoder = _TableEntityEncoder(convert_map=encoder_map or {})
+        self.encoder = _TableEntityEncoder(convert_map=encode_types or {})
         self.decoder = _TableEntityDecoder(
-            convert_map=decoder_map or {},
+            convert_map=decode_types or {},
             trim_odata=trim_metadata,
             trim_timestamp=trim_timestamp,
         )
         super(TableClient, self).__init__(endpoint, credential=credential, api_version=api_version, **kwargs)
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, table_name: str, **kwargs: Any) -> "TableClient":
+    def from_connection_string(
+        cls,
+        conn_str: str,
+        table_name: str,
+        *,
+        api_version: Optional[str] = None,
+        encode_types: Optional[EncoderMapType] = None,
+        decode_types: Optional[DecoderMapType] = None,
+        trim_timestamp: bool = True,
+        trim_metadata: bool = True,
+        **kwargs: Any,
+    ) -> "TableClient":
         """Create TableClient from a Connection string.
 
         :param str conn_str: A connection string to an Azure Tables account.
         :param str table_name: The table name.
+        :keyword api_version: Specifies the version of the operation to use for this request. Default value
+            is "2019-02-02".
+        :paramtype api_version: str or None
+        :keyword encode_types:
+            A dictionary maps the type and the convertion function of this type used in encoding.
+        :paramtype encode_types:
+            dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
+        :keyword decode_types:
+            A dictionary maps the type and the convertion function of this type used in decoding.
+        :paramtype decode_types:
+            dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
+        :keyword bool trim_timestamp:
+            Whether to remove the system property 'Timestamp' from the entity in deserialization. Default is
+            True. This can still be found the the `metadata` property of `TableEntity`.
+        :keyword bool trim_metadata:
+            Whether to remove entity odata metadata in deserialization. Default is True,
+            which means the metadata would be deserialized to property `metadata` in `TableEntity`.
         :returns: A table client.
         :rtype: ~azure.data.tables.TableClient
 
@@ -151,7 +179,17 @@ class TableClient(AsyncTablesBaseClient):
                 :caption: Creating the TableClient from a connection string.
         """
         endpoint, credential = parse_connection_str(conn_str=conn_str, credential=None, keyword_args=kwargs)
-        return cls(endpoint, table_name=table_name, credential=credential, **kwargs)
+        return cls(
+            endpoint,
+            table_name=table_name,
+            credential=credential,
+            api_version=api_version,
+            encode_types=encode_types,
+            decode_types=decode_types,
+            trim_metadata=trim_metadata,
+            trim_timestamp=trim_timestamp,
+            **kwargs,
+        )
 
     @classmethod
     def from_table_url(

@@ -37,6 +37,8 @@ from .._error import (
     _decode_error,
     _validate_tablename_error,
 )
+from .._encoder import EncoderMapType
+from .._decoder import DecoderMapType
 from .._models import LocationMode
 from .._policies import CosmosPatchTransformPolicy, StorageHeadersPolicy, StorageHosts
 from .._sdk_moniker import SDK_MONIKER
@@ -58,6 +60,10 @@ class AsyncTablesBaseClient:  # pylint: disable=too-many-instance-attributes
         *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]] = None,
         api_version: Optional[str] = None,
+        encode_types: Optional[EncoderMapType] = None,
+        decode_types: Optional[DecoderMapType] = None,
+        trim_timestamp: bool = True,
+        trim_metadata: bool = True,
         **kwargs: Any,
     ) -> None:
         """
@@ -73,6 +79,20 @@ class AsyncTablesBaseClient:  # pylint: disable=too-many-instance-attributes
         :keyword api_version: Specifies the version of the operation to use for this request. Default value
             is "2019-02-02".
         :paramtype api_version: str or None
+        :keyword encode_types:
+            A dictionary maps the type and the convertion function of this type used in encoding.
+        :paramtype encode_types:
+            dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
+        :keyword decode_types:
+            A dictionary maps the type and the convertion function of this type used in decoding.
+        :paramtype decode_types:
+            dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
+        :keyword bool trim_timestamp:
+            Whether to remove the system property 'Timestamp' from the entity in deserialization. Default is
+            True. This can still be found the the `metadata` property of `TableEntity`.
+        :keyword bool trim_metadata:
+            Whether to remove entity odata metadata in deserialization. Default is True,
+            which means the metadata would be deserialized to property `metadata` in `TableEntity`.
         """
         try:
             if not endpoint.lower().startswith("http"):
@@ -125,6 +145,10 @@ class AsyncTablesBaseClient:  # pylint: disable=too-many-instance-attributes
         self._client._config.version = get_api_version(
             api_version, self._client._config.version
         )  # type: ignore[assignment]
+        self._encoder_map = encode_types or {}
+        self._decoder_map = decode_types or {}
+        self._trim_timestamp = trim_timestamp
+        self._trim_metadata = trim_metadata
 
     @property
     def url(self) -> str:

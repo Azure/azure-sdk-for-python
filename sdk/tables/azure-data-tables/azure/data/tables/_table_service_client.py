@@ -88,10 +88,37 @@ class TableServiceClient(TablesBaseClient):
     """
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "TableServiceClient":
+    def from_connection_string(
+        cls,
+        conn_str: str,
+        *,
+        api_version: Optional[str] = None,
+        encode_types: Optional[EncoderMapType] = None,
+        decode_types: Optional[DecoderMapType] = None,
+        trim_timestamp: bool = True,
+        trim_metadata: bool = True,
+        **kwargs: Any,
+    ) -> "TableServiceClient":
         """Create TableServiceClient from a connection string.
 
         :param str conn_str: A connection string to an Azure Storage or Cosmos account.
+        :keyword api_version: Specifies the version of the operation to use for this request. Default value
+            is "2019-02-02".
+        :paramtype api_version: str or None
+        :keyword encode_types:
+            A dictionary maps the type and the convertion function of this type used in encoding.
+        :paramtype encode_types:
+            dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
+        :keyword decode_types:
+            A dictionary maps the type and the convertion function of this type used in decoding.
+        :paramtype decode_types:
+            dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
+        :keyword bool trim_timestamp:
+            Whether to remove the system property 'Timestamp' from the entity in deserialization. Default is
+            True. This can still be found the the `metadata` property of `TableEntity`.
+        :keyword bool trim_metadata:
+            Whether to remove entity odata metadata in deserialization. Default is True,
+            which means the metadata would be deserialized to property `metadata` in `TableEntity`.
         :returns: A Table service client.
         :rtype: ~azure.data.tables.TableServiceClient
 
@@ -105,7 +132,16 @@ class TableServiceClient(TablesBaseClient):
                 :caption: Authenticating a TableServiceClient from a connection_string
         """
         endpoint, credential = parse_connection_str(conn_str=conn_str, credential=None, keyword_args=kwargs)
-        return cls(endpoint, credential=credential, **kwargs)
+        return cls(
+            endpoint,
+            credential=credential,
+            api_version=api_version,
+            encode_types=encode_types,
+            decode_types=decode_types,
+            trim_metadata=trim_metadata,
+            trim_timestamp=trim_timestamp,
+            **kwargs,
+        )
 
     @distributed_trace
     def get_service_stats(self, **kwargs) -> Dict[str, object]:

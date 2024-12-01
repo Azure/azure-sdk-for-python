@@ -107,7 +107,7 @@ class _TableEntityDecoder:
                     pass
                 edm_type = EdmType(response_data.get(key + "@odata.type", NO_ODATA[type(value)]))
                 entity[key] = self._edm_types[edm_type](value)
-        entity._metadata["timestamp"] = entity["Timestamp"]
+        entity._metadata["timestamp"] = entity.get("Timestamp")
         if self._trim_timestamp:
             entity.pop("Timestamp")
         return entity

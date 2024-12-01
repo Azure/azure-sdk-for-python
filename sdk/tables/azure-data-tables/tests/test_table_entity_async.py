@@ -2255,10 +2255,11 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
             assert received_entity1.metadata
 
         async with TableClient(
-            url, table_name, credential=tables_primary_storage_account_key, flatten_result_entity=True
+            url, table_name, credential=tables_primary_storage_account_key, trim_timestamp=False, trim_metadata=False
         ) as client:
             received_entity2 = await client.get_entity("pk", "rk")
             assert received_entity2.metadata == received_entity1.metadata
-            for key, value in received_entity1.metadata.items():
-                assert received_entity2[key] == value
+            assert received_entity2["Timestamp"] == received_entity2.metadata["timestamp"]
+            assert received_entity2["odata.etag"] == received_entity2.metadata["etag"]
+            assert received_entity2["odata.metadata"]
             await client.delete_table()
