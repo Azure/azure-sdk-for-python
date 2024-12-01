@@ -25,7 +25,7 @@ def get_mixedreality_credential(account_id: str,
         **kwargs)
 
 
-class MixedRealityTokenCredential(object):
+class MixedRealityTokenCredential:
     """ Represents a token credential that can be used to access a Mixed Reality service.
     This implements the TokenCredential protocol.
 

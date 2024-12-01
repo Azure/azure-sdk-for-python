@@ -274,7 +274,7 @@ def build_delete_tags_request(
     )
 
 # fmt: on
-class ExperimentsOperations(object):
+class ExperimentsOperations:
     """ExperimentsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

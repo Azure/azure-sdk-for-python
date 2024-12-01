@@ -155,7 +155,7 @@ class _AsyncChunkDownloader(_ChunkDownloader):
         return chunk_data, content_length
 
 
-class _AsyncChunkIterator(object):
+class _AsyncChunkIterator:
     """Async iterator for chunks in blob download stream."""
 
     def __init__(self, size: int, content: bytes, downloader: Optional[_AsyncChunkDownloader], chunk_size: int) -> None:

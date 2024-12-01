@@ -99,7 +99,7 @@ def get_element(element_pointer, read_result):
     return None, None, None
 
 
-class FakeTokenCredential(object):
+class FakeTokenCredential:
     """Protocol for classes able to provide OAuth tokens.
     :param str scopes: Lets you specify the type of access needed.
     """

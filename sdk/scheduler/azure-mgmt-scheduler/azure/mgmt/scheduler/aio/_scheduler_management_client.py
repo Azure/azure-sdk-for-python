@@ -21,7 +21,7 @@ from .operations import JobsOperations
 from .. import models
 
 
-class SchedulerManagementClient(object):
+class SchedulerManagementClient:
     """SchedulerManagementClient.
 
     :ivar job_collections: JobCollectionsOperations operations

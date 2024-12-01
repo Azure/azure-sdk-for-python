@@ -99,7 +99,7 @@ digest (bytes) is used so that we can compute the bytehash of a parent directory
 hexdigest is used so that we can serialize the tree using json"""
 
 
-class DirTreeNode(object):
+class DirTreeNode:
     def __init__(self, name=None, file_type=None, timestamp=None, hexdigest_hash=None, bytehash=None):
         self.file_type = file_type
         self.name = name

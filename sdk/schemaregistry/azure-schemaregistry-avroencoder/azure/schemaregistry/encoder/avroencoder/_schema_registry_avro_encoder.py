@@ -57,7 +57,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class AvroEncoder(object):
+class AvroEncoder:
     """
     AvroEncoder provides the ability to encode and decode content according
     to the given Avro schema. It would automatically register, get, and cache the schema.

@@ -27,7 +27,7 @@ from .operations import ClustersOperations
 from .. import models
 
 
-class BatchAI(object):
+class BatchAI:
     """The Azure BatchAI Management API.
 
     :ivar operations: Operations operations

@@ -14,7 +14,7 @@ _SASL_FRAME_TYPE = b"\x01"
 
 
 # TODO: do we need it here? it's a duplicate of the sync version
-class SASLPlainCredential(object):
+class SASLPlainCredential:
     """PLAIN SASL authentication mechanism.
     See https://tools.ietf.org/html/rfc4616 for details
     """
@@ -39,7 +39,7 @@ class SASLPlainCredential(object):
 
 
 # TODO: do we need it here? it's a duplicate of the sync version
-class SASLAnonymousCredential(object):
+class SASLAnonymousCredential:
     """ANONYMOUS SASL authentication mechanism.
     See https://tools.ietf.org/html/rfc4505 for details
     """
@@ -51,7 +51,7 @@ class SASLAnonymousCredential(object):
 
 
 # TODO: do we need it here? it's a duplicate of the sync version
-class SASLExternalCredential(object):
+class SASLExternalCredential:
     """EXTERNAL SASL mechanism.
     Enables external authentication, i.e. not handled through this protocol.
     Only passes 'EXTERNAL' as authentication mechanism, but no further

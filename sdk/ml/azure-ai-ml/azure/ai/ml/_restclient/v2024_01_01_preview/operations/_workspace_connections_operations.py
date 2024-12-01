@@ -328,7 +328,7 @@ def build_test_connection_request_initial(
     )
 
 # fmt: on
-class WorkspaceConnectionsOperations(object):
+class WorkspaceConnectionsOperations:
     """WorkspaceConnectionsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

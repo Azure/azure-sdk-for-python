@@ -18,7 +18,7 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class BandwidthSchedulesOperations(object):
+class BandwidthSchedulesOperations:
     """BandwidthSchedulesOperations operations.
 
     :param client: Client for service requests.

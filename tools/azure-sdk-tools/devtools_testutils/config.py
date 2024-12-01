@@ -16,7 +16,7 @@ PROXY_URL = os.getenv("PROXY_URL", "https://localhost:5001").rstrip("/")
 TEST_SETTING_FILENAME = "testsettings_local.cfg"
 
 
-class TestConfig(object):  # pylint: disable=too-few-public-methods
+class TestConfig:  # pylint: disable=too-few-public-methods
     def __init__(self, parent_parsers=None, config_file=None):
         parent_parsers = parent_parsers or []
         self.parser = configargparse.ArgumentParser(parents=parent_parsers)

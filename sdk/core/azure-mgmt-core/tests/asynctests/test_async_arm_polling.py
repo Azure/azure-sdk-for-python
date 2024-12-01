@@ -206,7 +206,7 @@ async def test_post(async_pipeline_client_builder, deserialization_cb):
     assert result is None
 
 
-class TestArmPolling(object):
+class TestArmPolling:
 
     convert = re.compile("([a-z0-9])([A-Z])")
 

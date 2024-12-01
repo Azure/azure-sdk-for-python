@@ -17,7 +17,7 @@ from testcase import ContainerRegistryTestClass, get_audience, get_authority, ge
 logger = logging.getLogger()
 
 
-class AsyncFakeTokenCredential(object):
+class AsyncFakeTokenCredential:
     """Protocol for classes able to provide OAuth tokens.
     :param str scopes: Lets you specify the type of access needed.
     """

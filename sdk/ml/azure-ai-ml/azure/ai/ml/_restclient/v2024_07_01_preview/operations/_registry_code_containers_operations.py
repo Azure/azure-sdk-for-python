@@ -193,7 +193,7 @@ def build_create_or_update_request_initial(
     )
 
 # fmt: on
-class RegistryCodeContainersOperations(object):
+class RegistryCodeContainersOperations:
     """RegistryCodeContainersOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

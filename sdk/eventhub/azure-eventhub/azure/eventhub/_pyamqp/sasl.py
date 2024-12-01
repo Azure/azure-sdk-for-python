@@ -12,7 +12,7 @@ from .performatives import SASLInit
 _SASL_FRAME_TYPE = b"\x01"
 
 
-class SASLPlainCredential(object):
+class SASLPlainCredential:
     """PLAIN SASL authentication mechanism.
     See https://tools.ietf.org/html/rfc4616 for details
     """
@@ -36,7 +36,7 @@ class SASLPlainCredential(object):
         return login_response
 
 
-class SASLAnonymousCredential(object):
+class SASLAnonymousCredential:
     """ANONYMOUS SASL authentication mechanism.
     See https://tools.ietf.org/html/rfc4505 for details
     """
@@ -47,7 +47,7 @@ class SASLAnonymousCredential(object):
         return b""
 
 
-class SASLExternalCredential(object):
+class SASLExternalCredential:
     """EXTERNAL SASL mechanism.
     Enables external authentication, i.e. not handled through this protocol.
     Only passes 'EXTERNAL' as authentication mechanism, but no further

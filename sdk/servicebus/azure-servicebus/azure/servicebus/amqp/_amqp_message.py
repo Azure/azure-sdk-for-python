@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     import uuid
 
 
-class DictMixin(object):
+class DictMixin:
     def __setitem__(self, key: str, item: Any) -> None:
         self.__dict__[key] = item
 
@@ -76,7 +76,7 @@ class DictMixin(object):
         return default
 
 
-class AmqpAnnotatedMessage(object):
+class AmqpAnnotatedMessage:
     # pylint: disable=too-many-instance-attributes
     """
     The AMQP Annotated Message for advanced sending and receiving scenarios which allows you to

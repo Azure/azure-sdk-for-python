@@ -21,7 +21,7 @@ from .operations import MonitoringOperations
 from .. import models
 
 
-class MonitoringClient(object):
+class MonitoringClient:
     """MonitoringClient.
 
     :ivar monitoring: MonitoringOperations operations

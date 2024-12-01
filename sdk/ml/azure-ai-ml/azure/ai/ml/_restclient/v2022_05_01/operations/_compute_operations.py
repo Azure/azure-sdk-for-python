@@ -426,7 +426,7 @@ def build_restart_request_initial(
     )
 
 # fmt: on
-class ComputeOperations(object):
+class ComputeOperations:
     """ComputeOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

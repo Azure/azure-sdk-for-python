@@ -16,7 +16,7 @@ USAGE:
 """
 
 
-class EvaluationCommonSamples(object):
+class EvaluationCommonSamples:
     def evaluation_common_classes_methods(self):
         # [START create_AOAI_model_config]
         from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration

@@ -40,7 +40,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusSASTokenCredential(object):
+class ServiceBusSASTokenCredential:
     """The shared access token credential used for authentication.
     :param str token: The shared access token string
     :param int expiry: The epoch timestamp
@@ -65,7 +65,7 @@ class ServiceBusSASTokenCredential(object):
         return AccessToken(self.token, self.expiry)
 
 
-class ServiceBusSharedKeyCredential(object):
+class ServiceBusSharedKeyCredential:
     """The shared access key credential used for authentication.
 
     :param str policy: The name of the shared access policy.
@@ -83,7 +83,7 @@ class ServiceBusSharedKeyCredential(object):
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
-class ServiceBusAzureNamedKeyTokenCredentialAsync(object):  # pylint:disable=name-too-long
+class ServiceBusAzureNamedKeyTokenCredentialAsync:  # pylint:disable=name-too-long
     """The named key credential used for authentication.
     :param credential: The AzureNamedKeyCredential that should be used.
     :type credential: ~azure.core.credentials.AzureNamedKeyCredential
@@ -100,7 +100,7 @@ class ServiceBusAzureNamedKeyTokenCredentialAsync(object):  # pylint:disable=nam
         return _generate_sas_token(scopes[0], name, key)
 
 
-class ServiceBusAzureSasTokenCredentialAsync(object):
+class ServiceBusAzureSasTokenCredentialAsync:
     """The shared access token credential used for authentication
     when AzureSasCredential is provided.
     :param azure_sas_credential: The credential to be used for authentication.

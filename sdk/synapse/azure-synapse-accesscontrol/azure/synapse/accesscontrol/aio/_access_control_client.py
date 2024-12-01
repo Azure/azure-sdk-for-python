@@ -22,7 +22,7 @@ from .operations import RoleDefinitionsOperations
 from .. import models
 
 
-class AccessControlClient(object):
+class AccessControlClient:
     """AccessControlClient.
 
     :ivar role_assignments: RoleAssignmentsOperations operations

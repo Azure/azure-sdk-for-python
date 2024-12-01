@@ -226,7 +226,7 @@ def build_create_or_update_request(
     )
 
 # fmt: on
-class ModelVersionsOperations(object):
+class ModelVersionsOperations:
     """ModelVersionsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

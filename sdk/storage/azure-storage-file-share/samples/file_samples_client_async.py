@@ -31,7 +31,7 @@ SOURCE_FILE = './SampleSource.txt'
 DEST_FILE = './SampleDestination.txt'
 
 
-class FileSamplesAsync(object):
+class FileSamplesAsync:
 
     connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
     account_name = os.getenv("AZURE_STORAGE_ACCOUNT_NAME")

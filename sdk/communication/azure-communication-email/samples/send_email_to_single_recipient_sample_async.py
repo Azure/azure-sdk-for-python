@@ -28,7 +28,7 @@ from azure.communication.email.aio import EmailClient
 sys.path.append("..")
 
 
-class EmailSingleRecipientSampleAsync(object):
+class EmailSingleRecipientSampleAsync:
 
     connection_string = os.getenv("COMMUNICATION_CONNECTION_STRING_EMAIL")
     sender_address = os.getenv("SENDER_ADDRESS")

@@ -67,7 +67,7 @@ def build_list_request(
     )
 
 # fmt: on
-class WorkspaceFeaturesOperations(object):
+class WorkspaceFeaturesOperations:
     """WorkspaceFeaturesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

@@ -27,7 +27,7 @@ from os import environ
 from azure.core.utils import parse_connection_string
 
 
-class ClientAuthSamples(object):
+class ClientAuthSamples:
     connection_string = environ["AZURE_DPS_CONNECTION_STRING"]
     conn_str_parts = parse_connection_string(connection_string)
     endpoint = conn_str_parts["hostname"]

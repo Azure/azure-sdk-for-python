@@ -128,7 +128,7 @@ class AvroReaderTestsAsync(unittest.TestCase):
         self.assertEqual(CHANGE_FEED_RECORD, records[0])
         self.assertIsNot(partial_data_stream.object_position, 0)
 
-class _HeaderStream(object):
+class _HeaderStream:
     def __init__(self):
         self._bytes_stream = BytesIO()
         self.object_position = 0

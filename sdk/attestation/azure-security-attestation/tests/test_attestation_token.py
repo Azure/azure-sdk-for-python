@@ -26,7 +26,7 @@ from azure.security.attestation import (
 )
 
 
-class TestAzureAttestationToken(object):
+class TestAzureAttestationToken:
     def test_create_signing_key(self):
         key = self._create_rsa_key()
         cert = self._create_x509_certificate(key, u"test certificate")

@@ -567,7 +567,7 @@ def build_list_outbound_network_dependencies_endpoints_request(
     )
 
 # fmt: on
-class WorkspacesOperations(object):
+class WorkspacesOperations:
     """WorkspacesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

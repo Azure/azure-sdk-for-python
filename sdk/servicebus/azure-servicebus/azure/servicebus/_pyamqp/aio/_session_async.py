@@ -28,7 +28,7 @@ from ..error import AMQPError, ErrorCondition
 _LOGGER = logging.getLogger(__name__)
 
 
-class Session(object):  # pylint: disable=too-many-instance-attributes
+class Session:  # pylint: disable=too-many-instance-attributes
     """
     :param int remote_channel: The remote channel for this Session.
     :param int next_outgoing_id: The transfer-id of the first transfer id the sender will send.

@@ -32,7 +32,7 @@ import os
 import sys
 
 
-class QueueAuthSamplesAsync(object):
+class QueueAuthSamplesAsync:
 
     connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 

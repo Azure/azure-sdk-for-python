@@ -28,7 +28,7 @@ from azure.containerregistry.aio import ContainerRegistryClient
 from utilities import get_authority, get_credential
 
 
-class SetGetImageAsync(object):
+class SetGetImageAsync:
     def __init__(self):
         load_dotenv(find_dotenv())
         self.endpoint = os.environ["CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT"]

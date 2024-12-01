@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from azure.core.credentials import AccessToken
 
-class StaticAccessTokenCredential(object):
+class StaticAccessTokenCredential:
     """ Represents a static access token credential.
     This implements the TokenCredential protocol.
 

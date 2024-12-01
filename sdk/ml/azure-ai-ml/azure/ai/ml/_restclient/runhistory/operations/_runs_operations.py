@@ -1288,7 +1288,7 @@ def build_cancel_run_with_uri_by_experiment_name_request(
     )
 
 # fmt: on
-class RunsOperations(object):  # pylint: disable=too-many-public-methods
+class RunsOperations:  # pylint: disable=too-many-public-methods
     """RunsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

@@ -373,7 +373,7 @@ def build_get_token_request(
     )
 
 # fmt: on
-class OnlineEndpointsOperations(object):
+class OnlineEndpointsOperations:
     """OnlineEndpointsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

@@ -61,7 +61,7 @@ def build_get_entites_cross_region_request(
 
 
 # fmt: on
-class IndexEntitiesOperations(object):
+class IndexEntitiesOperations:
     """IndexEntitiesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

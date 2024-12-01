@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     ContainerClient = TypeVar("ContainerClient")
 
 
-class BlobLeaseClient(object):
+class BlobLeaseClient:
     """Creates a new BlobLeaseClient.
 
     This client provides lease operations on a BlobClient or ContainerClient.

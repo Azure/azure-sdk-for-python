@@ -21,7 +21,7 @@ SERVICEBUS_FAKE_SAS = (
 STORAGE_ACCOUNT_FAKE_KEY = "NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg=="
 
 
-class FakeTokenCredential(object):
+class FakeTokenCredential:
     """Protocol for classes able to provide OAuth tokens.
 
     :param str scopes: Lets you specify the type of access needed.

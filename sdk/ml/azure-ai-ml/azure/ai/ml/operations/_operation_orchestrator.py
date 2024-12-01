@@ -72,7 +72,7 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 module_logger = logging.getLogger(__name__)
 
 
-class OperationOrchestrator(object):
+class OperationOrchestrator:
     def __init__(
         self,
         operation_container: OperationsContainer,

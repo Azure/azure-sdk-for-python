@@ -210,7 +210,7 @@ _RE_FULL_NAME = re.compile(
 )
 
 
-class Name(object):
+class Name:
     """Representation of an Avro name."""
 
     def __init__(self, name, namespace=None):
@@ -273,7 +273,7 @@ class Name(object):
 # ------------------------------------------------------------------------------
 
 
-class Names(object):
+class Names:
     """Tracks Avro named schemas and default namespace during parsing."""
 
     def __init__(self, default_namespace=None, names=None):
@@ -441,7 +441,7 @@ class NamedSchema(Schema):
 _NO_DEFAULT = object()
 
 
-class Field(object):
+class Field:
     """Representation of the schema of a field in a record."""
 
     def __init__(

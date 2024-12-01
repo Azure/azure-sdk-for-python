@@ -33,7 +33,7 @@ USAGE:
 import os
 
 
-class TrainModelWithLabelsSample(object):
+class TrainModelWithLabelsSample:
 
     def train_model_with_labels(self):
         from azure.ai.formrecognizer import FormTrainingClient

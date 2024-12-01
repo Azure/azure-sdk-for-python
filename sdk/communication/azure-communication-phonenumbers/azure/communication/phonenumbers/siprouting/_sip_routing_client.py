@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class SipRoutingClient(object):
+class SipRoutingClient:
     """A client to interact with the AzureCommunicationService SIP routing gateway.
     This client provides operations to retrieve and manage SIP routing configuration.
 

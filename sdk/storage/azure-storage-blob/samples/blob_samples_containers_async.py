@@ -24,7 +24,7 @@ from datetime import datetime, timedelta
 
 SOURCE_FILE = 'SampleSource.txt'
 
-class ContainerSamplesAsync(object):
+class ContainerSamplesAsync:
     connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
     # --Begin Blob Samples-----------------------------------------------------------------

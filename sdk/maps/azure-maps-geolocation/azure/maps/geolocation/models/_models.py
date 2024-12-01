@@ -6,7 +6,7 @@
 from typing import Optional
 
 
-class CountryRegionResult(object):
+class CountryRegionResult:
     """Represents coordinate latitude and longitude
 
     :keyword ip_address:

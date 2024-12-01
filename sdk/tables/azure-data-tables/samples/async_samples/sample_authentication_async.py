@@ -36,7 +36,7 @@ import asyncio
 from dotenv import find_dotenv, load_dotenv
 
 
-class TableAuthSamples(object):
+class TableAuthSamples:
     def __init__(self):
         load_dotenv(find_dotenv())
         self.access_key = os.environ["TABLES_PRIMARY_STORAGE_ACCOUNT_KEY"]

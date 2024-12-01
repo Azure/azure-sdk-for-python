@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from .._lro import AnalyzeActionsLROPoller, AnalyzeHealthcareEntitiesLROPoller
 
 
-class TextAnalyticsClientOperationsMixin(object):
+class TextAnalyticsClientOperationsMixin:
 
     def analyze_status(
         self,

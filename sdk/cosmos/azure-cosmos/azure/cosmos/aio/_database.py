@@ -56,7 +56,7 @@ def _get_database_link(database_or_id: Union[str, 'DatabaseProxy', Mapping[str, 
     return "dbs/{}".format(database_id)
 
 
-class DatabaseProxy(object):
+class DatabaseProxy:
     """An interface to interact with a specific database.
 
     This class should not be instantiated directly. Instead use the

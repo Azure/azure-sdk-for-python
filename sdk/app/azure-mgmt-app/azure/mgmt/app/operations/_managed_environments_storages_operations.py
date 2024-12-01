@@ -180,7 +180,7 @@ def build_delete_request(
         **kwargs
     )
 
-class ManagedEnvironmentsStoragesOperations(object):
+class ManagedEnvironmentsStoragesOperations:
     """ManagedEnvironmentsStoragesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

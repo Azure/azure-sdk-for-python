@@ -30,7 +30,7 @@ from .. import routing_range
 # pylint: disable=protected-access
 
 
-class PartitionKeyRangeCache(object):
+class PartitionKeyRangeCache:
     """
     PartitionKeyRangeCache provides list of effective partition key ranges for a
     collection.

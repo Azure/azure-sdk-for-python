@@ -5,7 +5,7 @@
 #--------------------------------------------------------------------------
 from enum import Enum
 
-class ProfileDefinition(object):
+class ProfileDefinition:
     """Allow to define a custom Profile definition.
 
     Note::
@@ -37,7 +37,7 @@ class ProfileDefinition(object):
         return self._profile_dict
 
 
-class DefaultProfile(object):
+class DefaultProfile:
     """Store a default profile.
 
     :var ProfileDefinition profile: The default profile as class attribute

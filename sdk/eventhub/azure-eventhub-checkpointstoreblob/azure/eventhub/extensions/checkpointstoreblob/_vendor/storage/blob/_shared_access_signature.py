@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     )
 
 
-class BlobQueryStringConstants(object):
+class BlobQueryStringConstants:
     SIGNED_TIMESTAMP = 'snapshot'
 
 

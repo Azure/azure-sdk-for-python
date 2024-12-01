@@ -186,7 +186,7 @@ def build_delete_request(
     )
 
 # fmt: on
-class EventRoutesOperations(object):
+class EventRoutesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.

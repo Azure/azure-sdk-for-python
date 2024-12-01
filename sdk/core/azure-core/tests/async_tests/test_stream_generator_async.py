@@ -18,7 +18,7 @@ from utils import request_and_responses_product, ASYNC_HTTP_RESPONSES, create_ht
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(ASYNC_HTTP_RESPONSES))
 async def test_connection_error_response(http_request, http_response):
-    class MockSession(object):
+    class MockSession:
         def __init__(self):
             self.auto_decompress = True
 

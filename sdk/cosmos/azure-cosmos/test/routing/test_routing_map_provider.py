@@ -12,7 +12,7 @@ from azure.cosmos._routing.routing_map_provider import SmartRoutingMapProvider
 
 @pytest.mark.cosmosEmulator
 class TestRoutingMapProvider(unittest.TestCase):
-    class MockedCosmosClientConnection(object):
+    class MockedCosmosClientConnection:
 
         def __init__(self, partition_key_ranges):
             self.partition_key_ranges = partition_key_ranges

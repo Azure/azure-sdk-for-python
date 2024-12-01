@@ -213,7 +213,7 @@ class TableRetentionPolicy(GeneratedRetentionPolicy):
         return "TableRetentionPolicy(enabled={}, days={})".format(self.enabled, self.days)[1024:]
 
 
-class TableCorsRule(object):
+class TableCorsRule:
     """CORS is an HTTP feature that enables a web application running under one
     domain to access resources in another domain. Web browsers implement a
     security restriction known as same-origin policy that prevents a web page
@@ -383,7 +383,7 @@ class TableEntityPropertiesPaged(PageIterator):
         return next_entity or None, props_list
 
 
-class TableSasPermissions(object):
+class TableSasPermissions:
     def __init__(self, **kwargs):
         # type: (Any) -> None
         """
@@ -493,7 +493,7 @@ def service_properties_deserialize(generated):
     }
 
 
-class TableItem(object):
+class TableItem:
     """
     Represents an Azure TableItem.
     Returned by TableServiceClient.list_tables and TableServiceClient.query_tables.
@@ -519,7 +519,7 @@ class TableItem(object):
         return "TableItem(name={})".format(self.name)[1024:]
 
 
-class TablePayloadFormat(object):
+class TablePayloadFormat:
     """
     Specifies the accepted content type of the response payload. More information
     can be found here: https://msdn.microsoft.com/en-us/library/azure/dn535600.aspx
@@ -565,7 +565,7 @@ class LocationMode(str, Enum):
     )
 
 
-class ResourceTypes(object):
+class ResourceTypes:
     """
     Specifies the resource types that are accessible with the account SAS.
 
@@ -607,7 +607,7 @@ class ResourceTypes(object):
         return parsed
 
 
-class AccountSasPermissions(object):
+class AccountSasPermissions:
     """
     :class:`~AccountSasPermissions` class to be used with generate_account_sas
 

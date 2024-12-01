@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 VALID_CODECS = frozenset(['null'])
 
 
-class AsyncDataFileReader(object):  # pylint: disable=too-many-instance-attributes
+class AsyncDataFileReader:  # pylint: disable=too-many-instance-attributes
     """Read files written by DataFileWriter."""
 
     def __init__(self, reader, datum_reader, **kwargs):

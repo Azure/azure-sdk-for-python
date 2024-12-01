@@ -9,7 +9,7 @@ from . import http_constants
 # pylint: disable=protected-access
 
 
-class DefaultRetryPolicy(object):
+class DefaultRetryPolicy:
 
     error_codes = http_constants._ErrorCodes
     CONNECTION_ERROR_CODES = [

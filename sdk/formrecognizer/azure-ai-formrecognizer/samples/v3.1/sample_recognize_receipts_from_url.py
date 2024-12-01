@@ -28,7 +28,7 @@ USAGE:
 import os
 
 
-class RecognizeReceiptsFromURLSample(object):
+class RecognizeReceiptsFromURLSample:
 
     def recognize_receipts_from_url(self):
         # [START recognize_receipts_from_url]

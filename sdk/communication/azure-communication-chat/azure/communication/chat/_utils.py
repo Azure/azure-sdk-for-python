@@ -13,7 +13,7 @@ def return_response(response, deserialized, _):  # pylint: disable=unused-argume
     return response, deserialized
 
 
-class CommunicationErrorResponseConverter(object):
+class CommunicationErrorResponseConverter:
     """
     Util to convert to List[Tuple[ChatParticipant, Optional[AddChatParticipantsErrors]]
 

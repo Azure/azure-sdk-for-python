@@ -8,7 +8,7 @@ from azure.iot.modelsrepository import dtmi_conventions
 
 
 @pytest.mark.describe(".is_valid_dtmi()")
-class TestIsValidDTMI(object):
+class TestIsValidDTMI:
     @pytest.mark.it("Returns True if given a valid DTMI")
     @pytest.mark.parametrize(
         "dtmi",
@@ -36,7 +36,7 @@ class TestIsValidDTMI(object):
 
 
 @pytest.mark.describe(".get_model_uri()")
-class TestGetModelURI(object):
+class TestGetModelURI:
     @pytest.mark.it("Returns the URI for a specified model at a specified repository")
     @pytest.mark.parametrize(
         "dtmi, repository_uri, expected_model_uri",

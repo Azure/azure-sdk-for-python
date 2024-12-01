@@ -19,7 +19,7 @@ USAGE:
 import os
 
 
-class ClassificationPolicySamples(object):
+class ClassificationPolicySamples:
     connection_string = os.environ["AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING"]
 
     _cp_policy_id = "sample_cp_policy"

@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AttestationClient(object):
+class AttestationClient:
     # pylint: disable=line-too-long, protected-access
     """Provides access to the Attestation family of APIs for trusted environment attestation.
 

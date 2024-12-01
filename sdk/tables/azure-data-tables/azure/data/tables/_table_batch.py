@@ -31,7 +31,7 @@ TransactionOperationType = Union[
 ]
 
 
-class TableBatchOperations(object):
+class TableBatchOperations:
     """
     This is the class that is used for batch operations for the data tables
     service.

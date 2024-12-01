@@ -402,7 +402,7 @@ def build_list_materialization_jobs_request(
     )
 
 # fmt: on
-class FeaturesetVersionsOperations(object):
+class FeaturesetVersionsOperations:
     """FeaturesetVersionsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

@@ -20,7 +20,7 @@ import os
 import asyncio
 
 
-class RouterWorkerSamplesAsync(object):
+class RouterWorkerSamplesAsync:
     connection_string = os.environ["AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING"]
 
     _worker_id = "sample_worker"

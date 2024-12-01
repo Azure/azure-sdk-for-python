@@ -26,7 +26,7 @@ import sys
 sys.path.append("..")
 
 
-class GetTemplatesSample(object):
+class GetTemplatesSample:
 
     connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
     channel_id = os.getenv("WHATSAPP_CHANNEL_ID")

@@ -52,7 +52,7 @@ _ERROR_TYPE_NOT_SUPPORTED = "Type not supported when sending data to the service
 _ERROR_VALUE_TOO_LARGE = "{0} is too large to be cast to type {1}."
 
 
-class FakeTokenCredential(object):
+class FakeTokenCredential:
     """Protocol for classes able to provide OAuth tokens.
     :param str scopes: Lets you specify the type of access needed.
     """
@@ -64,7 +64,7 @@ class FakeTokenCredential(object):
         return self.token
 
 
-class TableTestCase(object):
+class TableTestCase:
     def account_url(self, account, endpoint_type):
         """Return an url of storage account.
 
@@ -490,7 +490,7 @@ class TableTestCase(object):
         response.http_response.text = lambda _: SERVICE_LIVE_RESP_BODY
 
 
-class ResponseCallback(object):
+class ResponseCallback:
     def __init__(self, status=None, new_status=None):
         self.status = status
         self.new_status = new_status
@@ -509,7 +509,7 @@ class ResponseCallback(object):
         self.count += 1
 
 
-class RetryCounter(object):
+class RetryCounter:
     def __init__(self):
         self.count = 0
 

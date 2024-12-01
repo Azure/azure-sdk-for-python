@@ -8,7 +8,7 @@ from typing import Dict
 DO_WHILE_MAX_ITERATION = 1000
 
 
-class ComponentJobConstants(object):
+class ComponentJobConstants:
     INPUT_PATTERN = r"^\$\{\{parent\.(inputs|jobs)\.(.*?)\}\}$"
     OUTPUT_PATTERN = r"^\$\{\{parent\.outputs\.(.*?)\}\}$"
     LEGACY_INPUT_PATTERN = r"^\$\{\{(inputs|jobs)\.(.*?)\}\}$"
@@ -17,7 +17,7 @@ class ComponentJobConstants(object):
     OUTPUT_DESTINATION_FORMAT = "jobs.{}.outputs.{}"
 
 
-class NodeType(object):
+class NodeType:
     COMMAND = "command"
     SWEEP = "sweep"
     PARALLEL = "parallel"
@@ -32,7 +32,7 @@ class NodeType(object):
     _CONTAINER = "_container"
 
 
-class ControlFlowType(object):
+class ControlFlowType:
     DO_WHILE = "do_while"
     IF_ELSE = "if_else"
     PARALLEL_FOR = "parallel_for"
@@ -41,23 +41,23 @@ class ControlFlowType(object):
 CONTROL_FLOW_TYPES = [getattr(ControlFlowType, k) for k in dir(ControlFlowType) if k.isupper()]
 
 
-class DataTransferTaskType(object):
+class DataTransferTaskType:
     COPY_DATA = "copy_data"
     IMPORT_DATA = "import_data"
     EXPORT_DATA = "export_data"
 
 
-class DataCopyMode(object):
+class DataCopyMode:
     MERGE_WITH_OVERWRITE = "merge_with_overwrite"
     FAIL_IF_CONFLICT = "fail_if_conflict"
 
 
-class ExternalDataType(object):
+class ExternalDataType:
     FILE_SYSTEM = "file_system"
     DATABASE = "database"
 
 
-class DataTransferBuiltinComponentUri(object):
+class DataTransferBuiltinComponentUri:
     IMPORT_DATABASE = "azureml://registries/azureml/components/import_data_database/versions/0.0.1"
     IMPORT_FILE_SYSTEM = "azureml://registries/azureml/components/import_data_file_system/versions/0.0.1"
     EXPORT_DATABASE = "azureml://registries/azureml/components/export_data_database/versions/0.0.1"

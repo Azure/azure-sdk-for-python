@@ -81,7 +81,7 @@ def build_get_blob_reference_sas_request(
     )
 
 # fmt: on
-class DataReferencesOperations(object):
+class DataReferencesOperations:
     """DataReferencesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

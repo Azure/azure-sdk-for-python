@@ -23,7 +23,7 @@ from .feature_transformation_code_metadata import FeatureTransformationCodeMetad
 from .source_metadata import SourceMetadata
 
 
-class FeaturesetSpecMetadata(object):
+class FeaturesetSpecMetadata:
     """FeaturesetSpecMetadata for feature-set."""
 
     def __init__(

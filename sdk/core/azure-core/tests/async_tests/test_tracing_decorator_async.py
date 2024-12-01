@@ -91,7 +91,7 @@ class MockClient:
 
 
 @pytest.mark.usefixtures("fake_span")
-class TestAsyncDecorator(object):
+class TestAsyncDecorator:
     @pytest.mark.asyncio
     @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
     async def test_decorator_tracing_attr(self, http_request):

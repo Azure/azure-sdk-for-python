@@ -19,7 +19,7 @@ from .operations import WorkspaceAclOperations
 from . import models
 
 
-class SynapseClient(object):
+class SynapseClient:
     """
 
     :ivar monitoring: MonitoringOperations operations

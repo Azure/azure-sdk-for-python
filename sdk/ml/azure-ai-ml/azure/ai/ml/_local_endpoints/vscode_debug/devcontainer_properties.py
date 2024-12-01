@@ -11,7 +11,7 @@ from typing import Dict, Optional
 from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 
 
-class Image(object):
+class Image:
     """Python object representation of devcontainer image property."""
 
     def __init__(self, image: str):
@@ -21,7 +21,7 @@ class Image(object):
         return {"image": self._image}
 
 
-class Build(object):
+class Build:
     """Python object representation of devcontainer build.dockerfile property."""
 
     def __init__(
@@ -51,7 +51,7 @@ class Build(object):
         return build
 
 
-class ContainerEnv(object):
+class ContainerEnv:
     """Python object representation of devcontainer containerEnv property."""
 
     def __init__(self, environment_variables: dict):
@@ -61,7 +61,7 @@ class ContainerEnv(object):
         return {"containerEnv": self._environment_variables}
 
 
-class Mounts(object):
+class Mounts:
     """Python object representation of devcontainer mounts property."""
 
     def __init__(self, mounts: list):
@@ -71,7 +71,7 @@ class Mounts(object):
         return {"mounts": self._mounts}
 
 
-class Name(object):
+class Name:
     """Python object representation of devcontainer name property."""
 
     def __init__(self, name: str):
@@ -81,7 +81,7 @@ class Name(object):
         return {"name": self._name}
 
 
-class ForwardPorts(object):
+class ForwardPorts:
     """Python object representation of devcontainer name property."""
 
     def __init__(self, port: int):
@@ -91,7 +91,7 @@ class ForwardPorts(object):
         return {"forwardPorts": [self._port]}
 
 
-class AppPort(object):
+class AppPort:
     """Python object representation of devcontainer name property."""
 
     def __init__(self, port: int):
@@ -101,7 +101,7 @@ class AppPort(object):
         return {"appPort": [self._port]}
 
 
-class RunArgs(object):
+class RunArgs:
     """Python object representation of devcontainer runArgs property."""
 
     def __init__(self, name: Optional[str] = None, labels: Optional[list] = None):
@@ -114,7 +114,7 @@ class RunArgs(object):
         return {"runArgs": self._run_args}
 
 
-class OverrideCommand(object):
+class OverrideCommand:
     def __init__(self):
         pass
 
@@ -122,7 +122,7 @@ class OverrideCommand(object):
         return {"overrideCommand": True}
 
 
-class Extensions(object):
+class Extensions:
     def __init__(self):
         pass
 
@@ -130,7 +130,7 @@ class Extensions(object):
         return {"extensions": ["ms-python.python", "ms-toolsai.vscode-ai-inference"]}
 
 
-class Settings(object):
+class Settings:
     def __init__(self):
         pass
 

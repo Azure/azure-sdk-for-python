@@ -62,7 +62,7 @@ from sample_utils import (
 )
 
 
-class AttestationClientPolicySamples(object):
+class AttestationClientPolicySamples:
     def __init__(self):
         load_dotenv(find_dotenv())
         if os.environ.get("ATTESTATION_ISOLATED_URL"):

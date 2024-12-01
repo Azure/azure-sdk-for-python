@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential, AzureKeyCredential
 
 
-class CommunicationIdentityClient(object):
+class CommunicationIdentityClient:
     """Azure Communication Services Identity client.
 
     :param str endpoint:

@@ -34,7 +34,7 @@ from .._shared.authentication_endpoint import construct_endpoint_url
 from .._version import SDK_MONIKER
 from ._polling_async import ConversionPollingAsync, SessionPollingAsync
 
-class RemoteRenderingClient(object):
+class RemoteRenderingClient:
     """A client for the Azure Remote Rendering Service.
 
     This client offers functionality to convert assets to the format expected by the runtime, and also to manage the

@@ -87,7 +87,7 @@ def test_pipeline_context():
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_request_history(http_request):
-    class Non_deep_copyable(object):
+    class Non_deep_copyable:
         def __deepcopy__(self, memodict={}):
             raise ValueError()
 
@@ -102,7 +102,7 @@ def test_request_history(http_request):
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_request_history_type_error(http_request):
-    class Non_deep_copyable(object):
+    class Non_deep_copyable:
         def __deepcopy__(self, memodict={}):
             raise TypeError()
 

@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from ._models import BlobQueryError
 
 
-class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
+class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
     """A streaming object to read query results."""
 
     name: str
@@ -124,7 +124,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
                     yield record
 
 
-class QuickQueryStreamer(object):
+class QuickQueryStreamer:
     """
     File-like streaming iterator.
     """

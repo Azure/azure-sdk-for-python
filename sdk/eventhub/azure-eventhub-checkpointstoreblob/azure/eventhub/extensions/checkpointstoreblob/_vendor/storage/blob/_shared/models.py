@@ -182,7 +182,7 @@ class StorageErrorCode(str, Enum):
     source_path_is_being_deleted = 'SourcePathIsBeingDeleted'
 
 
-class DictMixin(object):
+class DictMixin:
 
     def __setitem__(self, key, item):
         self.__dict__[key] = item
@@ -233,7 +233,7 @@ class DictMixin(object):
         return default
 
 
-class LocationMode(object):
+class LocationMode:
     """
     Specifies the location the request should be sent to. This mode only applies
     for RA-GRS accounts which allow secondary read access. All other account types
@@ -244,7 +244,7 @@ class LocationMode(object):
     SECONDARY = 'secondary'  #: Requests should be sent to the secondary location, if possible.
 
 
-class ResourceTypes(object):
+class ResourceTypes:
     """
     Specifies the resource types that are accessible with the account SAS.
 
@@ -293,7 +293,7 @@ class ResourceTypes(object):
         return parsed
 
 
-class AccountSasPermissions(object):
+class AccountSasPermissions:
     """
     :class:`~ResourceTypes` class to be used with generate_account_sas
     function and for the AccessPolicies used with set_*_acl. There are two types of
@@ -389,7 +389,7 @@ class AccountSasPermissions(object):
 
         return parsed
 
-class Services(object):
+class Services:
     """Specifies the services accessible with the account SAS.
 
     :param bool blob:
@@ -433,7 +433,7 @@ class Services(object):
         return parsed
 
 
-class UserDelegationKey(object):
+class UserDelegationKey:
     """
     Represents a user delegation key, provided to the user by Azure Storage
     based on their Azure Active Directory access token.

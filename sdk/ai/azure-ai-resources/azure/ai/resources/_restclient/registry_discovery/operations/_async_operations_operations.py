@@ -50,7 +50,7 @@ def build_asyc_operations_request(
     )
 
 # fmt: on
-class AsyncOperationsOperations(object):
+class AsyncOperationsOperations:
     """AsyncOperationsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

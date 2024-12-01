@@ -63,7 +63,7 @@ class JSONEncoder(json.JSONEncoder):
             return super(JSONEncoder, self).default(obj)
 
 
-class _MinidomXmlToObject(object):
+class _MinidomXmlToObject:
 
     @staticmethod
     def parse_response(response, return_type):
@@ -480,7 +480,7 @@ def _data_to_xml(data):
     return xml
 
 
-class _XmlSerializer(object):
+class _XmlSerializer:
 
     @staticmethod
     def create_storage_service_input_to_xml(service_name, description, label,
@@ -1318,7 +1318,7 @@ class _XmlSerializer(object):
         return xml
 
 
-class _SqlManagementXmlSerializer(object):
+class _SqlManagementXmlSerializer:
 
     @staticmethod
     def create_server_to_xml(admin_login, admin_password, location):
@@ -1412,7 +1412,7 @@ def _parse_bool(value):
     return False
 
 
-class _ServiceBusManagementXmlSerializer(object):
+class _ServiceBusManagementXmlSerializer:
 
     @staticmethod
     def namespace_to_xml(region):
@@ -1642,7 +1642,7 @@ class _ServiceBusManagementXmlSerializer(object):
         return return_obj
 
 
-class _SchedulerManagementXmlSerializer(object):
+class _SchedulerManagementXmlSerializer:
 
     @staticmethod
     def create_cloud_service_to_xml(label, description, geo_region):

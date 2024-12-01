@@ -516,7 +516,7 @@ def build_update_idle_shutdown_setting_request(
     )
 
 # fmt: on
-class ComputeOperations(object):
+class ComputeOperations:
     """ComputeOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

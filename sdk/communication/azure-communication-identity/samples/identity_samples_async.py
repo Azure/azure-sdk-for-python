@@ -32,7 +32,7 @@ import asyncio
 import os
 
 
-class CommunicationIdentityClientSamples(object):
+class CommunicationIdentityClientSamples:
     def __init__(self):
         self.connection_string = os.getenv("COMMUNICATION_AUTH_SAMPLES_CONNECTION_STRING", "")
         self.endpoint = os.getenv("AZURE_COMMUNICATION_SERVICE_ENDPOINT")

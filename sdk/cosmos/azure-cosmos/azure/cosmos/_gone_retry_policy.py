@@ -27,7 +27,7 @@ Cosmos database service.
 # pylint: disable=protected-access
 
 
-class PartitionKeyRangeGoneRetryPolicy(object):
+class PartitionKeyRangeGoneRetryPolicy:
 
     def __init__(self, client, *args):
         self.retry_after_in_milliseconds = 1000

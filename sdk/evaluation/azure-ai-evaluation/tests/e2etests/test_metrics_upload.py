@@ -38,7 +38,7 @@ def tracking_uri(azure_ml_client, project_scope):
 
 
 @pytest.mark.usefixtures("model_config", "recording_injection", "project_scope", "recorded_test")
-class TestMetricsUpload(object):
+class TestMetricsUpload:
     """End to end tests to check how the metrics were uploaded to cloud."""
 
     def _assert_no_errors_for_module(self, records, module_names):

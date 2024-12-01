@@ -597,7 +597,7 @@ def build_resize_request_initial(
     )
 
 # fmt: on
-class ComputeOperations(object):  # pylint: disable=too-many-public-methods
+class ComputeOperations:  # pylint: disable=too-many-public-methods
     """ComputeOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

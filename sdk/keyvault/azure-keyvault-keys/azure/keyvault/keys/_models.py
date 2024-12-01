@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 KeyOperationResult = namedtuple("KeyOperationResult", ["id", "value"])
 
 
-class JsonWebKey(object):
+class JsonWebKey:
     """As defined in http://tools.ietf.org/html/draft-ietf-jose-json-web-key-18. All parameters are optional.
 
     :keyword str kid: Key identifier.
@@ -53,7 +53,7 @@ class JsonWebKey(object):
         return jwk
 
 
-class KeyProperties(object):
+class KeyProperties:
     """A key's ID and attributes.
 
     :param str key_id: The key ID.
@@ -264,7 +264,7 @@ class KeyProperties(object):
         return None
 
 
-class KeyReleasePolicy(object):
+class KeyReleasePolicy:
     """The policy rules under which a key can be exported.
 
     :param bytes encoded_policy: The policy rules under which the key can be released. Encoded based on the
@@ -283,7 +283,7 @@ class KeyReleasePolicy(object):
         self.immutable = kwargs.get("immutable", None)
 
 
-class ReleaseKeyResult(object):
+class ReleaseKeyResult:
     """The result of a key release operation.
 
     :ivar str value: A signed token containing the released key.
@@ -295,7 +295,7 @@ class ReleaseKeyResult(object):
         self.value = value
 
 
-class KeyRotationLifetimeAction(object):
+class KeyRotationLifetimeAction:
     """An action and its corresponding trigger that will be performed by Key Vault over the lifetime of a key.
 
     :param action: The action that will be executed.
@@ -329,7 +329,7 @@ class KeyRotationLifetimeAction(object):
         raise ValueError("Provided LifetimeActions model is missing a required lifetime action property.")
 
 
-class KeyRotationPolicy(object):
+class KeyRotationPolicy:
     """The key rotation policy that belongs to a key.
 
     :ivar id: The identifier of the key rotation policy.
@@ -371,7 +371,7 @@ class KeyRotationPolicy(object):
         return cls(policy_id=policy.id, lifetime_actions=lifetime_actions)
 
 
-class KeyVaultKey(object):
+class KeyVaultKey:
     """A key's attributes and cryptographic material.
 
     :param str key_id: Key Vault's identifier for the key. Typically a URI, e.g.
@@ -484,7 +484,7 @@ class KeyVaultKey(object):
         return self._key_material.key_ops  # type: ignore[attr-defined]
 
 
-class KeyVaultKeyIdentifier(object):
+class KeyVaultKeyIdentifier:
     """Information about a KeyVaultKey parsed from a key ID.
 
     :param str source_id: The full original identifier of a key

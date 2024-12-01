@@ -20,7 +20,7 @@ import os
 import asyncio
 
 
-class ClassificationPolicySamplesAsync(object):
+class ClassificationPolicySamplesAsync:
     connection_string = os.environ["AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING"]
 
     _cp_policy_id = "sample_cp_policy"

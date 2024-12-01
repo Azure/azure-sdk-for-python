@@ -18,7 +18,7 @@ USAGE:
 import os
 
 
-class SweepConfigurationOptions(object):
+class SweepConfigurationOptions:
     def ml_sweep_config(self):
         from azure.identity import DefaultAzureCredential
 

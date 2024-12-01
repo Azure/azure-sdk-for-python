@@ -31,7 +31,7 @@ from msal import PublicClientApplication
 from devtools_testutils import get_credential
 
 
-class CommunicationIdentityClientSamples(object):
+class CommunicationIdentityClientSamples:
     def __init__(self):
         self.connection_string = os.getenv("COMMUNICATION_AUTH_SAMPLES_CONNECTION_STRING", "")
         self.client_id = os.getenv("AZURE_CLIENT_ID")

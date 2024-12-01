@@ -58,7 +58,7 @@ def build_list_request(
     )
 
 # fmt: on
-class Operations(object):
+class Operations:
     """Operations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

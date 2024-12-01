@@ -21,7 +21,7 @@ from ._helpers_async import get_authentication_policy
 from .._helpers import construct_iso8601
 
 
-class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-keyword
+class MetricsQueryClient:  # pylint: disable=client-accepts-api-version-keyword
     """MetricsQueryClient
 
     :param credential: The credential to authenticate the client

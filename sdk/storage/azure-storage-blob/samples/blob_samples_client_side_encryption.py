@@ -111,7 +111,7 @@ class RSAKeyWrapper:
         return self.kid
 
 
-class BlobEncryptionSamples():
+class BlobEncryptionSamples:
     def __init__(self, bsc: BlobServiceClient):
         self.bsc = bsc
 

@@ -35,7 +35,7 @@ from azure.containerregistry.aio import ContainerRegistryClient
 from utilities import load_registry
 
 
-class ListTagsAsync(object):
+class ListTagsAsync:
     def __init__(self):
         load_dotenv(find_dotenv())
 

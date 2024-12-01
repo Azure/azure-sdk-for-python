@@ -18,7 +18,7 @@ from ._enums import(
 )
 
 
-class AdministratorContact(object):
+class AdministratorContact:
     """Details of the organization administrator of the certificate issuer.
 
     :param first_name: First name of the issuer.
@@ -80,7 +80,7 @@ class AdministratorContact(object):
         return self._phone
 
 
-class CertificateOperationError(object):
+class CertificateOperationError:
     """The key vault server error.
 
     :param str code: The error code.
@@ -133,7 +133,7 @@ class CertificateOperationError(object):
         return self._inner_error
 
 
-class CertificateProperties(object):
+class CertificateProperties:
     """Certificate properties consists of a certificates metadata."""
 
     def __init__(self, **kwargs: Any) -> None:
@@ -280,7 +280,7 @@ class CertificateProperties(object):
         return self._vault_id.version
 
 
-class KeyVaultCertificate(object):
+class KeyVaultCertificate:
     """Consists of a certificate and its attributes
 
     :param policy: The management policy for the certificate.
@@ -390,7 +390,7 @@ class KeyVaultCertificate(object):
         return self._cer
 
 
-class KeyVaultCertificateIdentifier(object):
+class KeyVaultCertificateIdentifier:
     """Information about a KeyVaultCertificate parsed from a certificate ID.
 
     :param str source_id: the full original identifier of a certificate
@@ -426,7 +426,7 @@ class KeyVaultCertificateIdentifier(object):
         return self._resource_id.version
 
 
-class CertificateOperation(object):
+class CertificateOperation:
     # pylint:disable=too-many-instance-attributes
     """A certificate operation is returned in case of long running requests.
 
@@ -630,7 +630,7 @@ class CertificateOperation(object):
         return self._request_id
 
 
-class CertificatePolicy(object):
+class CertificatePolicy:
     """Management policy for a certificate.
 
     :param issuer_name: Optional. Name of the referenced issuer object or reserved names; for example,
@@ -1059,7 +1059,7 @@ class CertificatePolicy(object):
         return self._attributes.updated if self._attributes else None
 
 
-class CertificateContact(object):
+class CertificateContact:
     """The contact information for the vault certificates.
 
     :param email: Email address of a contact for the certificate.
@@ -1103,7 +1103,7 @@ class CertificateContact(object):
         return self._phone
 
 
-class IssuerProperties(object):
+class IssuerProperties:
     """The properties of an issuer containing the issuer metadata.
 
     :param provider: The issuer provider.
@@ -1153,7 +1153,7 @@ class IssuerProperties(object):
         return self._provider
 
 
-class CertificateIssuer(object):
+class CertificateIssuer:
     """The issuer for a Key Vault certificate.
 
     :param provider: The issuer provider
@@ -1308,7 +1308,7 @@ class CertificateIssuer(object):
         return self._admin_contacts
 
 
-class LifetimeAction(object):
+class LifetimeAction:
     """Action and its trigger that will be performed by certificate Vault over the lifetime of a certificate.
 
     :param action: The type of the action. For valid values, see CertificatePolicyAction

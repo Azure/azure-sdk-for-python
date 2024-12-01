@@ -13,7 +13,7 @@ STOP_MSG = "[STOP]"
 _PRINT_STACK = os.environ.get("_AZUREML_TRACE_STACK", False)
 
 
-class ChainedIdentity(object):
+class ChainedIdentity:
     """A mixin that provides structured, chained logging for objects and contexts."""
 
     DELIM = "#"

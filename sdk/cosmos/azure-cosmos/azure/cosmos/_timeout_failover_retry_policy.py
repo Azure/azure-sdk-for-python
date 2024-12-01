@@ -7,7 +7,7 @@ Cosmos database service.
 from . import http_constants
 
 
-class _TimeoutFailoverRetryPolicy(object):
+class _TimeoutFailoverRetryPolicy:
 
     def __init__(self, connection_policy, global_endpoint_manager, *args):
         self._max_retry_attempt_count = 120

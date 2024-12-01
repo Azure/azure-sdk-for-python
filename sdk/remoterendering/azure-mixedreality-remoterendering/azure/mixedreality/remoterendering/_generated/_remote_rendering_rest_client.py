@@ -20,7 +20,7 @@ from .operations import RemoteRenderingOperations
 from . import models
 
 
-class RemoteRenderingRestClient(object):
+class RemoteRenderingRestClient:
     """Describing the `Azure Remote Rendering <https://docs.microsoft.com/azure/remote-rendering/>`_ REST API for rendering sessions and asset conversions. 
 
 All requests to these APIs must be authenticated using the Secure Token Service as described in the `Azure Remote rendering documentation chapter about authentication <https://docs.microsoft.com/azure/remote-rendering/how-tos/tokens>`_.

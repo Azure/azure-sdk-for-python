@@ -20,7 +20,7 @@ import sys
 import asyncio
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
 
-class BlobServiceSamplesAsync(object):
+class BlobServiceSamplesAsync:
 
     connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 

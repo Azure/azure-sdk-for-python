@@ -52,7 +52,7 @@ from sample_collateral import sample_open_enclave_report, sample_runtime_data
 from sample_utils import write_banner
 
 
-class AttestationClientAttestationSamples(object):
+class AttestationClientAttestationSamples:
     def __init__(self):
         load_dotenv(find_dotenv())
         shared_short_name = os.getenv("ATTESTATION_LOCATION_SHORT_NAME")

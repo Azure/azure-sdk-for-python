@@ -81,7 +81,7 @@ def process_content(data: Any, start_offset: int, end_offset: int, encryption: D
     return content
 
 
-class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
+class _ChunkDownloader:  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         client: "BlobOperations",
@@ -250,7 +250,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
         return chunk_data, content_length
 
 
-class _ChunkIterator(object):
+class _ChunkIterator:
     """Iterator for chunks in blob download stream."""
 
     def __init__(self, size: int, content: bytes, downloader: Optional[_ChunkDownloader], chunk_size: int) -> None:

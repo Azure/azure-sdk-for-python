@@ -18,7 +18,7 @@ USAGE:
 """
 
 
-class AIEvaluateSamples(object):
+class AIEvaluateSamples:
     def ai_evaluate_qa(self):
 
         # [START evaluate_task_type_qa]

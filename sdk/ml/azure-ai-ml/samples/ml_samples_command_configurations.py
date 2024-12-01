@@ -18,7 +18,7 @@ USAGE:
 import os
 
 
-class CommandConfigurationOptions(object):
+class CommandConfigurationOptions:
     def ml_command_config(self):
         from azure.ai.ml import MLClient
         from azure.identity import DefaultAzureCredential

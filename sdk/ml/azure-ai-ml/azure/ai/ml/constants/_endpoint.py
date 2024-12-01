@@ -3,23 +3,23 @@
 # ---------------------------------------------------------
 
 
-class EndpointKeyType(object):
+class EndpointKeyType:
     PRIMARY_KEY_TYPE = "primary"
     SECONDARY_KEY_TYPE = "secondary"
 
 
-class EndpointInvokeFields(object):
+class EndpointInvokeFields:
     DEFAULT_HEADER = {"Content-Type": "application/json"}
     AUTHORIZATION = "Authorization"
     MODEL_DEPLOYMENT = "azureml-model-deployment"
     REPEATABILITY_REQUEST_ID = "repeatability_request-id"
 
 
-class EndpointGetLogsFields(object):
+class EndpointGetLogsFields:
     LINES = 5000
 
 
-class EndpointYamlFields(object):
+class EndpointYamlFields:
     TYPE = "type"
     TRAFFIC_NAME = "traffic"
     NAME = "name"

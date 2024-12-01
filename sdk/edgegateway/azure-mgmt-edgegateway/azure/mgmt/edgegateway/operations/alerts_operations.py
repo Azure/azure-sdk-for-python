@@ -16,7 +16,7 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class AlertsOperations(object):
+class AlertsOperations:
     """AlertsOperations operations.
 
     :param client: Client for service requests.

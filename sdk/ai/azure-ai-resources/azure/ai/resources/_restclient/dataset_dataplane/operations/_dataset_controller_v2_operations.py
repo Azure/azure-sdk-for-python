@@ -469,7 +469,7 @@ def build_unregister_dataset_request(
     )
 
 # fmt: on
-class DatasetControllerV2Operations(object):
+class DatasetControllerV2Operations:
     """DatasetControllerV2Operations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

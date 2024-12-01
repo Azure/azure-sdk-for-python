@@ -28,7 +28,7 @@ USAGE:
 import os
 
 
-class RecognizeReceiptsSample(object):
+class RecognizeReceiptsSample:
 
     def recognize_receipts(self):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),

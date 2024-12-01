@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from azure.core.polling import LROPoller
 
 
-class FormRecognizerClientOperationsMixin(object):
+class FormRecognizerClientOperationsMixin:
 
     def authorize_copy_document_model(
         self,

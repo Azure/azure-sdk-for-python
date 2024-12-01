@@ -46,7 +46,7 @@ AttestationGetPolicyManagementCertificatesResult = Tuple[
 ]
 
 
-class AttestationAdministrationClient(object):
+class AttestationAdministrationClient:
     # pylint: disable=line-too-long, protected-access
     """Provides administrative APIs for managing an instance of the Attestation Service.
 

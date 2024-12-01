@@ -34,7 +34,7 @@ log_handler.setFormatter(log_formatter)
 logger.addHandler(log_handler)
 
 
-class _SessionRetryPolicy(object):
+class _SessionRetryPolicy:
     """The session retry policy used to handle read/write session unavailability.
     """
 

@@ -7,7 +7,7 @@ from typing import Dict, MutableMapping, Optional
 from urllib import parse
 
 
-class HttpChallenge(object):
+class HttpChallenge:
     """An object representing the content of a Key Vault authentication challenge.
 
     :param str request_uri: The URI of the HTTP request that prompted this challenge.

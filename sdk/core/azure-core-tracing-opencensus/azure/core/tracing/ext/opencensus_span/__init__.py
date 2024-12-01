@@ -35,7 +35,7 @@ __version__ = VERSION
 _config_integration.trace_integrations(["threading"])
 
 
-class OpenCensusSpan(HttpSpanMixin, object):
+class OpenCensusSpan(HttpSpanMixin):
     """Wraps a given OpenCensus Span so that it implements azure.core.tracing.AbstractSpan"""
 
     def __init__(self, span: Optional[Span] = None, name: Optional[str] = "span", **kwargs: Any) -> None:

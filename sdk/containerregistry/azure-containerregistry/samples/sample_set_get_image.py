@@ -29,7 +29,7 @@ from azure.containerregistry import (
 from utilities import get_authority, get_credential
 
 
-class SetGetImage(object):
+class SetGetImage:
     def __init__(self):
         load_dotenv(find_dotenv())
         self.endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]

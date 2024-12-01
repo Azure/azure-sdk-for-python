@@ -27,7 +27,7 @@ class ExchangeClientAuthenticationPolicy(SansIOHTTPPolicy):
         pass
 
 
-class ACRExchangeClient(object):
+class ACRExchangeClient:
     """Class for handling oauth authentication requests
 
     :param endpoint: Azure Container Registry endpoint

@@ -51,7 +51,7 @@ def ids(val):
         return "AAD"
 
 
-class MetricsAdvisorClientPreparer(object):
+class MetricsAdvisorClientPreparer:
     def __init__(self, client_cls,  client_kwargs={}, **kwargs):
         self.client_cls = client_cls
         self.client_kwargs = client_kwargs

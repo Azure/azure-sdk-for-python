@@ -24,7 +24,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.rest import HttpRequest, HttpResponse
 
-class AzureMachineLearningWorkspaces(object):    # pylint: disable=too-many-instance-attributes
+class AzureMachineLearningWorkspaces:    # pylint: disable=too-many-instance-attributes
     """These APIs allow end users to operate on Azure Machine Learning Workspace resources.
 
     :ivar operations: Operations operations

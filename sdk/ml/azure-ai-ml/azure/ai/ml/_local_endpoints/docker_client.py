@@ -37,7 +37,7 @@ DEFAULT_LABELS: Dict = {
 }
 
 
-class DockerClient(object):
+class DockerClient:
     """Client for interacting with User's Docker environment for local
     endpoints."""
 

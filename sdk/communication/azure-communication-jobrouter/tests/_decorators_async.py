@@ -13,7 +13,7 @@ from devtools_testutils import is_live, is_live_and_not_recording, trim_kwargs_f
 from azure.communication.jobrouter._shared.utils import parse_connection_str
 
 
-class RouterPreparersAsync(object):
+class RouterPreparersAsync:
     @staticmethod
     def before_test_execute_async(
         method_name,  # type: str

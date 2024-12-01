@@ -64,7 +64,7 @@ _SERVICE_PARAMS = {
 }
 
 
-class StorageAccountHostsMixin(object):
+class StorageAccountHostsMixin:
     _client: Any
     def __init__(
         self,

@@ -22,7 +22,7 @@ from .operations import ChangesOperations
 from .. import models
 
 
-class AzureChangeAnalysisManagementClient(object):
+class AzureChangeAnalysisManagementClient:
     """AzureChangeAnalysisManagementClient.
 
     :ivar operations: Operations operations

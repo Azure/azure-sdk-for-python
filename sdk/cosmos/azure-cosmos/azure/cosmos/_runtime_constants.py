@@ -23,7 +23,7 @@
 """
 
 
-class MediaTypes(object):
+class MediaTypes:
     """Constants of media types.
 
     See http://www.iana.org/assignments/media-types/media-types.xhtml for

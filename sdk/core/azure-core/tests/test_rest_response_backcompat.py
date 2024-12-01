@@ -129,7 +129,7 @@ def test_response_content_type(old_response, new_response):
 
 
 def _create_multiapart_request(http_request_class):
-    class ResponsePolicy(object):
+    class ResponsePolicy:
         def on_request(self, *args):
             return
 

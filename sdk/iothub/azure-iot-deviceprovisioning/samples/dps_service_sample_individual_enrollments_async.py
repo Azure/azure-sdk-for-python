@@ -24,7 +24,7 @@ import asyncio
 from os import environ
 
 
-class EnrollmentSamples(object):
+class EnrollmentSamples:
     connection_string = environ["AZURE_DPS_CONNECTION_STRING"]
     x509_cert_path = environ["AZURE_DPS_ENROLLMENT_CERT_PATH"]
 

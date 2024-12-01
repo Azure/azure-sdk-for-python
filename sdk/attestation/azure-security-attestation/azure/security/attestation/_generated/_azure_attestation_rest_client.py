@@ -27,7 +27,7 @@ from .operations import MetadataConfigurationOperations
 from . import models
 
 
-class AzureAttestationRestClient(object):
+class AzureAttestationRestClient:
     """Describes the interface for the per-tenant enclave service.
 
     :ivar policy: PolicyOperations operations

@@ -132,7 +132,7 @@ def build_get_quick_profile_for_ml_table_request(
     )
 
 # fmt: on
-class DataCallOperations(object):
+class DataCallOperations:
     """DataCallOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

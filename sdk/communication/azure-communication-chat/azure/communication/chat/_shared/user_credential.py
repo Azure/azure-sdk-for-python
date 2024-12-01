@@ -12,7 +12,7 @@ from .utils import get_current_utc_as_int
 from .utils import create_access_token
 
 
-class CommunicationTokenCredential(object):
+class CommunicationTokenCredential:
     """Credential type used for authenticating to an Azure Communication service.
 
     :param str token: The token used to authenticate to an Azure Communication service.

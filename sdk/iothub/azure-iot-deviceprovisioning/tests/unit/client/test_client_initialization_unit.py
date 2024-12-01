@@ -5,7 +5,7 @@ from azure.iot.deviceprovisioning import DeviceProvisioningClient
 endpoint = "fake_endpoint"
 
 
-class TestProvisioningClientInitialization(object):
+class TestProvisioningClientInitialization:
     def test_client_init_errors(self):
         # bad endpoint
         with pytest.raises(ValueError):

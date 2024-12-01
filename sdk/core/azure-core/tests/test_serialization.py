@@ -39,7 +39,7 @@ class DatetimeSubclass(datetime):
     """datetime.datetime subclass that tests datetimes without a type() of datetime.datetime"""
 
 
-class SerializerMixin(object):
+class SerializerMixin:
     """Mixin that provides methods for representing a model as a dictionary"""
 
     def to_dict(self):

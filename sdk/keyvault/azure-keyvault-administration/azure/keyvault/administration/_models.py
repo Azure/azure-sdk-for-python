@@ -18,7 +18,7 @@ from ._generated.models import (
 )
 
 
-class KeyVaultPermission(object):
+class KeyVaultPermission:
     """Role definition permissions.
 
     :ivar list[str] actions: Action permissions that are granted.
@@ -45,7 +45,7 @@ class KeyVaultPermission(object):
         )
 
 
-class KeyVaultRoleAssignment(object):
+class KeyVaultRoleAssignment:
     """Represents the assignment to a principal of a role over a scope
 
     :ivar str name: the assignment's name
@@ -76,7 +76,7 @@ class KeyVaultRoleAssignment(object):
         )
 
 
-class KeyVaultRoleAssignmentProperties(object):
+class KeyVaultRoleAssignmentProperties:
     """Properties of a role assignment
 
     :ivar str principal_id: ID of the principal the assignment applies to. This maps to an Active Directory user,
@@ -110,7 +110,7 @@ class KeyVaultRoleAssignmentProperties(object):
         )
 
 
-class KeyVaultRoleDefinition(object):
+class KeyVaultRoleDefinition:
     """The definition of a role over one or more scopes
 
     :ivar list[str] assignable_scopes: scopes the role can be assigned over
@@ -153,7 +153,7 @@ class KeyVaultRoleDefinition(object):
         )
 
 
-class KeyVaultBackupResult(object):
+class KeyVaultBackupResult:
     """A Key Vault full backup operation result
 
     :ivar str folder_url: URL of the Azure Blob Storage container containing the backup
@@ -171,7 +171,7 @@ class KeyVaultBackupResult(object):
         return cls(folder_url=deserialized_operation.azure_storage_blob_container_uri)
 
 
-class KeyVaultSetting(object):
+class KeyVaultSetting:
     """A Key Vault setting.
 
     :ivar str name: The name of the account setting.

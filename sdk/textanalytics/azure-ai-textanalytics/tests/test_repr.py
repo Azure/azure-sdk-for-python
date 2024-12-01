@@ -329,7 +329,7 @@ def healthcare_relation(healthcare_relation_role):
     assert repr(model) == model_repr
     return model, model_repr
 
-class TestRepr():
+class TestRepr:
     def test_text_document_input(self):
         model = _models.TextDocumentInput(
             id="1",

@@ -320,14 +320,14 @@ async def test_response_content_type_trio(get_old_response_trio, get_new_respons
 
 
 def _create_multiapart_request(http_request_class):
-    class ResponsePolicy(object):
+    class ResponsePolicy:
         def on_request(self, *args):
             return
 
         def on_response(self, request, response):
             response.http_response.headers["x-ms-fun"] = "true"
 
-    class AsyncResponsePolicy(object):
+    class AsyncResponsePolicy:
         def on_request(self, *args):
             return
 

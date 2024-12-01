@@ -28,6 +28,7 @@ __all__: List[str] = [
     "BatchClientOperationsMixin"
 ]  # Add all objects you want publicly available to users at this package level
 
+
 class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     """Customize generated code"""
 
@@ -417,7 +418,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 }
             )
             return super().disable_node_scheduling(*args, **kwargs)
-    
+
     def enable_pool_auto_scale(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
@@ -512,7 +513,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             }
         )
         return super().enable_pool_auto_scale(*args, **kwargs)
-    
+
     def terminate_job(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
@@ -592,7 +593,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
         return super().terminate_job(*args, **kwargs)
 
-class _TaskWorkflowManager():
+
+class _TaskWorkflowManager:
     """Worker class for one create_task_collection request
 
     :param ~TaskOperations task_operations: Parent object which instantiated this

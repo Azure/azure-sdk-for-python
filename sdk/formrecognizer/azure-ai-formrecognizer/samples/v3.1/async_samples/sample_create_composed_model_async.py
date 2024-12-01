@@ -39,7 +39,7 @@ import os
 import asyncio
 
 
-class ComposedModelSampleAsync(object):
+class ComposedModelSampleAsync:
 
     async def create_composed_model_async(self):
         # [START begin_create_composed_model_async]

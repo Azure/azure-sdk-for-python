@@ -15,7 +15,7 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class SignedInUserOperations(object):
+class SignedInUserOperations:
     """SignedInUserOperations operations.
 
     :param client: Client for service requests.

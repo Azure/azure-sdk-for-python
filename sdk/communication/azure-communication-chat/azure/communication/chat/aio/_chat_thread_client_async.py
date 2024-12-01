@@ -34,7 +34,7 @@ from .._utils import CommunicationErrorResponseConverter
 from .._version import SDK_MONIKER
 
 
-class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-keyword
+class ChatThreadClient:  # pylint: disable=client-accepts-api-version-keyword
     """A client to interact with the AzureCommunicationService Chat gateway.
     Instances of this class is normally retrieved by ChatClient.get_chat_thread_client()
 

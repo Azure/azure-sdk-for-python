@@ -26,7 +26,7 @@ class HTTPError(Exception):
         Exception.__init__(self, message)
 
 
-class HTTPResponse(object):
+class HTTPResponse:
 
     """Represents a response from an HTTP request.  An HTTPResponse has the
     following attributes:
@@ -48,7 +48,7 @@ class HTTPResponse(object):
         self.body = body
 
 
-class HTTPRequest(object):
+class HTTPRequest:
 
     '''Represents an HTTP Request.  An HTTP Request consists of the following
     attributes:

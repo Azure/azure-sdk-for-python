@@ -30,7 +30,7 @@ import sys
 from datetime import datetime, timedelta
 
 
-class FileAuthSamples(object):
+class FileAuthSamples:
 
     connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 

@@ -17,7 +17,7 @@ from .. import models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class WorkspaceAclOperations(object):
+class WorkspaceAclOperations:
     """WorkspaceAclOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.

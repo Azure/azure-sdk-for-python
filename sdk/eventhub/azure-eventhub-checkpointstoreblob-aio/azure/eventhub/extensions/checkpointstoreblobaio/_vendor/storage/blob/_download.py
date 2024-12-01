@@ -63,7 +63,7 @@ def process_content(data, start_offset, end_offset, encryption):
     return content
 
 
-class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
+class _ChunkDownloader:  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         client=None,
@@ -210,7 +210,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
         return chunk_data
 
 
-class _ChunkIterator(object):
+class _ChunkIterator:
     """Async iterator for chunks in blob download stream."""
 
     def __init__(self, size, content, downloader):
@@ -247,7 +247,7 @@ class _ChunkIterator(object):
     next = __next__  # Python 2 compatibility.
 
 
-class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attributes
+class StorageStreamDownloader:  # pylint: disable=too-many-instance-attributes
     """A streaming object to download from Azure Storage.
 
     :ivar str name:

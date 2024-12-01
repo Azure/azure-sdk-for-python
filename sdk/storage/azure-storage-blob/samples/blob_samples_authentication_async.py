@@ -27,7 +27,7 @@ import os
 import sys
 import asyncio
 
-class AuthSamplesAsync(object):
+class AuthSamplesAsync:
     url = "https://{}.blob.core.windows.net".format(
         os.getenv("AZURE_STORAGE_ACCOUNT_NAME")
     )

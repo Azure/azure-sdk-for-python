@@ -16,7 +16,7 @@ USAGE:
 """
 
 
-class AutoMLImageSamples(object):
+class AutoMLImageSamples:
     def automl_image_jobs(self):
 
         # [START automl.image_classification]

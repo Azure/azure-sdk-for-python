@@ -14,7 +14,7 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class ListManagementImageOperations(object):
+class ListManagementImageOperations:
     """ListManagementImageOperations operations.
 
     :param client: Client for service requests.

@@ -23,7 +23,7 @@ from .operations import SparkSessionOperations
 from . import models
 
 
-class SparkClient(object):
+class SparkClient:
     """SparkClient.
 
     :ivar spark_batch: SparkBatchOperations operations

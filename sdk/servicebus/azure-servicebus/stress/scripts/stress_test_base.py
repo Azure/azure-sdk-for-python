@@ -35,7 +35,7 @@ class ReceiveType:
     none = None
 
 
-class StressTestResults(object):
+class StressTestResults:
     def __init__(self):
         self.total_sent = 0
         self.total_received = 0
@@ -48,7 +48,7 @@ class StressTestResults(object):
         return str(vars(self))
 
 
-class StressTestRunnerState(object):
+class StressTestRunnerState:
     """Per-runner state, e.g. if you spawn 3 senders each will have this as their state object,
     which will be coalesced at completion into StressTestResults"""
 

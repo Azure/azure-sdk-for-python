@@ -58,7 +58,7 @@ ml_client = MLClient(
 )
 
 
-class GenAIMonitoringSamples(object):
+class GenAIMonitoringSamples:
     def ml_gen_ai_monitor_default(self):
         # [START default_monitoring]
         spark_compute = ServerlessSparkCompute(instance_type="standard_e4s_v3", runtime_version="3.3")

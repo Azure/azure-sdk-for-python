@@ -27,7 +27,7 @@ SOURCE_FILE = './SampleSource.txt'
 DEST_FILE = './SampleDestination.txt'
 
 
-class HelloWorldSamples(object):
+class HelloWorldSamples:
 
     connection_string = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
 

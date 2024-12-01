@@ -8,7 +8,7 @@ import os
 # the 1st element is conn timeout, the 2nd is the read timeout.
 
 
-class JobStatus(object):
+class JobStatus:
     """
     * NotStarted - This is a temporary state client-side Run objects are in before cloud submission.
     * Starting - The Run has started being processed in the cloud. The caller has a run ID at this point.
@@ -44,7 +44,7 @@ class JobStatus(object):
     NOTRESPONDING = "NotResponding"
 
 
-class RunHistoryConstants(object):
+class RunHistoryConstants:
     _DEFAULT_GET_CONTENT_TIMEOUT = (5, 120)
     _WAIT_COMPLETION_POLLING_INTERVAL_MIN = os.environ.get("AZUREML_RUN_POLLING_INTERVAL_MIN", 2)
     _WAIT_COMPLETION_POLLING_INTERVAL_MAX = os.environ.get("AZUREML_RUN_POLLING_INTERVAL_MAX", 60)

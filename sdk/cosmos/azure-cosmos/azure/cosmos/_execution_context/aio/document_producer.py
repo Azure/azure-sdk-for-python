@@ -31,7 +31,7 @@ from azure.cosmos._execution_context.aio.base_execution_context import _DefaultQ
 
 # pylint: disable=protected-access
 
-class _DocumentProducer(object):
+class _DocumentProducer:
     """This class takes care of handling of the results for one single partition
     key range.
 
@@ -109,7 +109,7 @@ def _compare_helper(a, b):
     return (a > b) - (a < b)
 
 
-class _PartitionKeyRangeDocumentProducerComparator(object):
+class _PartitionKeyRangeDocumentProducerComparator:
     """
     Provides a Comparator for document producers using the min value of the
     corresponding target partition.
@@ -124,7 +124,7 @@ class _PartitionKeyRangeDocumentProducerComparator(object):
         )
 
 
-class _OrderByHelper(object):
+class _OrderByHelper:
 
     @staticmethod
     def getTypeOrd(orderby_item):
@@ -291,7 +291,7 @@ class _NonStreamingItemResultProducer:
 
 
 
-class _NonStreamingOrderByComparator(object):
+class _NonStreamingOrderByComparator:
     """Provide a Comparator for item results which respects orderby sort order.
     """
 

@@ -17,7 +17,7 @@ from .operations import SmsOperations
 from .. import models
 
 
-class AzureCommunicationSMSService(object):
+class AzureCommunicationSMSService:
     """Azure Communication SMS Service.
 
     :ivar sms: SmsOperations operations

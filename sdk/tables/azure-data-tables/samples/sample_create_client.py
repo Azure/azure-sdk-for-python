@@ -25,7 +25,7 @@ from dotenv import find_dotenv, load_dotenv
 import os
 
 
-class CreateClients(object):
+class CreateClients:
     def __init__(self):
         load_dotenv(find_dotenv())
         self.access_key = os.environ["TABLES_PRIMARY_STORAGE_ACCOUNT_KEY"]

@@ -181,7 +181,7 @@ def build_delete_request(
         **kwargs
     )
 
-class ContainerAppsAuthConfigsOperations(object):
+class ContainerAppsAuthConfigsOperations:
     """ContainerAppsAuthConfigsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

@@ -110,7 +110,7 @@ class PersistentLocalsFunctionProfilerBuilder(PersistentLocalsFunctionBuilder):
         return outputs, _locals
 
 
-class PersistentLocalsFunction(object):
+class PersistentLocalsFunction:
     def __init__(
         self,
         _func,

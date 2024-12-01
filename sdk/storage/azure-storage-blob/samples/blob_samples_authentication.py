@@ -25,7 +25,7 @@ USAGE:
 import os
 import sys
 
-class AuthSamples(object):
+class AuthSamples:
     url = "https://{}.blob.core.windows.net".format(
         os.getenv("AZURE_STORAGE_ACCOUNT_NAME")
     )

@@ -31,7 +31,7 @@ _LOGGER = logging.getLogger(__name__)
 PendingManagementOperation = namedtuple("PendingManagementOperation", ["message", "on_execute_operation_complete"])
 
 
-class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
+class ManagementLink:  # pylint:disable=too-many-instance-attributes
     """
     # TODO: Fill in docstring
     """

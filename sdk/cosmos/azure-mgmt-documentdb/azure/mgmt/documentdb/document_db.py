@@ -51,7 +51,7 @@ class DocumentDBConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class DocumentDB(object):
+class DocumentDB:
     """Azure DocumentDB Database Service Resource Provider REST API
 
     :ivar config: Configuration for client.

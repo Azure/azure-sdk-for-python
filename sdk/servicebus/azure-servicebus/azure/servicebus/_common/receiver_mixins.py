@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from ..aio._transport._base_async import AmqpTransportAsync
 
 
-class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
+class ReceiverMixin:  # pylint: disable=too-many-instance-attributes
     def _populate_attributes(self, **kwargs):
         self._amqp_transport: Union["AmqpTransport", "AmqpTransportAsync"]
         self.entity_path: str

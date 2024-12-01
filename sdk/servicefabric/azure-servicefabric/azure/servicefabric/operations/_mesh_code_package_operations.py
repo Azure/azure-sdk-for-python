@@ -14,7 +14,7 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class MeshCodePackageOperations(object):
+class MeshCodePackageOperations:
     """MeshCodePackageOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.

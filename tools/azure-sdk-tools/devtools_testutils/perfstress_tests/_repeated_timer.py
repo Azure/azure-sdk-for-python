@@ -8,7 +8,7 @@ from threading import Timer, Lock
 
 
 # Credit to https://stackoverflow.com/questions/3393612/run-certain-code-every-n-seconds
-class RepeatedTimer(object):
+class RepeatedTimer:
     def __init__(self, interval, function, *args, start_now: bool = True, **kwargs):
         self._timer = None
         self.interval = interval
@@ -38,7 +38,7 @@ class RepeatedTimer(object):
 
 
 # Credit to https://julien.danjou.info/atomic-lock-free-counters-in-python/
-class AtomicCounter(object):
+class AtomicCounter:
 
     def __init__(self):
         self._number_of_read = 0

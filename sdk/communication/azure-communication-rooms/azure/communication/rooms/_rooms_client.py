@@ -20,7 +20,7 @@ from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
 
 
-class RoomsClient(object):
+class RoomsClient:
     """A client to interact with the AzureCommunicationService Rooms gateway.
 
     This client provides operations to manage rooms.

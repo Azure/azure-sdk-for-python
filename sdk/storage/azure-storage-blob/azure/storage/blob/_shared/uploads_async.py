@@ -142,7 +142,7 @@ async def upload_substream_blocks(
     return
 
 
-class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
+class _ChunkUploader:  # pylint: disable=too-many-instance-attributes
 
     def __init__(
             self, service,
@@ -422,7 +422,7 @@ class FileChunkUploader(_ChunkUploader):
         pass
 
 
-class AsyncIterStreamer():
+class AsyncIterStreamer:
     """
     File-like streaming object for AsyncGenerators.
     """

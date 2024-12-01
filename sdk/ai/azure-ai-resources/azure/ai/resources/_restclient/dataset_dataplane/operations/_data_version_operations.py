@@ -420,7 +420,7 @@ def build_batch_get_resolved_uris_request(
     )
 
 # fmt: on
-class DataVersionOperations(object):
+class DataVersionOperations:
     """DataVersionOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

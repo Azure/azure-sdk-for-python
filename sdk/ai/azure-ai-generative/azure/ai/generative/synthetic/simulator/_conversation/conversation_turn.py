@@ -4,7 +4,7 @@
 
 from .constants import ConversationRole
 
-class ConversationTurn(object):
+class ConversationTurn:
     def __init__(self, role: ConversationRole, name=None, message="", full_response=None, request=None):
         self.role = role
         self.name = name

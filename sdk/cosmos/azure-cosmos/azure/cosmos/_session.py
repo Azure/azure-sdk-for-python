@@ -32,7 +32,7 @@ from ._vector_session_token import VectorSessionToken
 from .exceptions import CosmosHttpResponseError
 
 
-class SessionContainer(object):
+class SessionContainer:
     def __init__(self):
         self.collection_name_to_rid = {}
         self.rid_to_session_token = {}
@@ -193,7 +193,7 @@ class SessionContainer(object):
         return id_to_sessionlsn
 
 
-class Session(object):
+class Session:
     """State of a Azure Cosmos session.
 
     This session object can be shared across clients within the same process.

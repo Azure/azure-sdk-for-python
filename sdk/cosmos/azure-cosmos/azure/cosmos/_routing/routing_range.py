@@ -27,7 +27,7 @@ import binascii
 import json
 
 
-class PartitionKeyRange(object):
+class PartitionKeyRange:
     """Partition Key Range Constants"""
 
     MinInclusive = "minInclusive"
@@ -36,7 +36,7 @@ class PartitionKeyRange(object):
     Parents = "parents"
 
 
-class Range(object):
+class Range:
     """description of class"""
 
     MinPath = "min"

@@ -20,7 +20,7 @@ import os
 import asyncio
 
 
-class ExceptionPolicySamplesAsync(object):
+class ExceptionPolicySamplesAsync:
     connection_string = os.environ["AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING"]
 
     _ep_policy_id = "sample_ep_policy"

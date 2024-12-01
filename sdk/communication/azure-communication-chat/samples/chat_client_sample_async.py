@@ -25,7 +25,7 @@ import os
 import asyncio
 
 
-class ChatClientSamplesAsync(object):
+class ChatClientSamplesAsync:
     from azure.communication.identity import CommunicationIdentityClient
 
     connection_string = os.environ.get("COMMUNICATION_SAMPLES_CONNECTION_STRING", None)

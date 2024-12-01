@@ -35,7 +35,7 @@ from ..exceptions import (
 )
 
 
-class AvroSerializer(object):
+class AvroSerializer:
     """
     AvroSerializer provides the ability to serialize and deserialize data according
     to the given avro schema. It would automatically register, get and cache the schema.

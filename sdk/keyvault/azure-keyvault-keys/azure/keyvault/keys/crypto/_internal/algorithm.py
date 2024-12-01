@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 _alg_registry = {}
 
 
-class Algorithm(object):
+class Algorithm:
     _name: Optional[str] = None
 
     @classmethod

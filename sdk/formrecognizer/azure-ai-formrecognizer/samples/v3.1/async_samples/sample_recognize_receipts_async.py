@@ -29,7 +29,7 @@ import os
 import asyncio
 
 
-class RecognizeReceiptsSampleAsync(object):
+class RecognizeReceiptsSampleAsync:
 
     async def recognize_receipts(self):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),

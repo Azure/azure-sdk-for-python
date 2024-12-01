@@ -11,7 +11,7 @@ from corehttp.runtime import AsyncPipelineClient
 from corehttp.runtime._pipeline_client_async import _Coroutine
 
 
-class AsyncMockRestClient(object):
+class AsyncMockRestClient:
     def __init__(self, port, *, transport=None, **kwargs):
         kwargs.setdefault("sdk_moniker", "autorestswaggerbatfileservice/1.0.0b1")
 

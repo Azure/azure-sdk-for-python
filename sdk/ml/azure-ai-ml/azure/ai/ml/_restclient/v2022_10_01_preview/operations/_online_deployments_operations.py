@@ -342,7 +342,7 @@ def build_list_skus_request(
     )
 
 # fmt: on
-class OnlineDeploymentsOperations(object):
+class OnlineDeploymentsOperations:
     """OnlineDeploymentsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

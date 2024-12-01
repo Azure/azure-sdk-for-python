@@ -29,7 +29,7 @@ class TestCommon(unittest.TestCase):
     @mock.patch('azure.common.client_factory.get_azure_cli_credentials')
     def test_get_client_from_cli_profile(self, get_azure_cli_credentials, get_cli_active_cloud):
 
-        class FakeClient(object):
+        class FakeClient:
             def __init__(self, credentials, subscription_id, base_url):
                 if credentials is None:
                     raise ValueError("Parameter 'credentials' must not be None.")
@@ -44,7 +44,7 @@ class TestCommon(unittest.TestCase):
                 self.subscription_id = subscription_id
                 self.base_url = base_url
 
-        class FakeSubscriptionClient(object):
+        class FakeSubscriptionClient:
             def __init__(self, credentials, base_url):
                 if credentials is None:
                     raise ValueError("Parameter 'credentials' must not be None.")
@@ -54,7 +54,7 @@ class TestCommon(unittest.TestCase):
                 self.credentials = credentials
                 self.base_url = base_url
 
-        class GraphRbacManagementClient(object):
+        class GraphRbacManagementClient:
             def __init__(self, credentials, tenant_id, base_url):
                 if credentials is None:
                     raise ValueError("Parameter 'credentials' must not be None.")
@@ -67,7 +67,7 @@ class TestCommon(unittest.TestCase):
                 self.tenant_id = tenant_id
                 self.base_url = base_url
 
-        class ApplicationInsightsDataClient(object):
+        class ApplicationInsightsDataClient:
             def __init__(self, credentials, base_url):
                 if credentials is None:
                     raise ValueError("Parameter 'credentials' must not be None.")
@@ -77,7 +77,7 @@ class TestCommon(unittest.TestCase):
                 self.credentials = credentials
                 self.base_url = base_url
 
-        class KeyVaultClient(object):
+        class KeyVaultClient:
             def __init__(self, credentials):
                 if credentials is None:
                     raise ValueError("Parameter 'credentials' must not be None.")
@@ -118,7 +118,7 @@ class TestCommon(unittest.TestCase):
     @mock.patch('azure.common.client_factory.get_azure_cli_credentials')
     def test_get_client_from_cli_profile_core(self, get_azure_cli_credentials, get_cli_active_cloud):
 
-        class KeyVaultClientBase(object):
+        class KeyVaultClientBase:
             def __init__(self, vault_url, credential):
                 if not credential:
                     raise ValueError(
@@ -133,7 +133,7 @@ class TestCommon(unittest.TestCase):
         class NewKeyVaultClient(KeyVaultClientBase):
             pass
 
-        class StorageAccountHostsMixin(object):
+        class StorageAccountHostsMixin:
             def __init__(
                     self, account_url,  # type: str
                     credential=None,  # type: Optional[Any]
@@ -182,7 +182,7 @@ class TestCommon(unittest.TestCase):
             "managementEndpointUrl": "https://management.core.windows.net/"
         }
 
-        class FakeClient(object):
+        class FakeClient:
             def __init__(self, credentials, subscription_id, base_url):
                 if credentials is None:
                     raise ValueError("Parameter 'credentials' must not be None.")
@@ -197,7 +197,7 @@ class TestCommon(unittest.TestCase):
                 self.subscription_id = subscription_id
                 self.base_url = base_url
 
-        class FakeSubscriptionClient(object):
+        class FakeSubscriptionClient:
             def __init__(self, credentials, base_url):
                 if credentials is None:
                     raise ValueError("Parameter 'credentials' must not be None.")
@@ -207,7 +207,7 @@ class TestCommon(unittest.TestCase):
                 self.credentials = credentials
                 self.base_url = base_url
 
-        class GraphRbacManagementClient(object):
+        class GraphRbacManagementClient:
             def __init__(self, credentials, tenant_id, base_url):
                 if credentials is None:
                     raise ValueError("Parameter 'credentials' must not be None.")
@@ -220,14 +220,14 @@ class TestCommon(unittest.TestCase):
                 self.tenant_id = tenant_id
                 self.base_url = base_url
 
-        class KeyVaultClient(object):
+        class KeyVaultClient:
             def __init__(self, credentials):
                 if credentials is None:
                     raise ValueError("Parameter 'credentials' must not be None.")
 
                 self.credentials = credentials
 
-        class KeyVaultClientTrack2(object):
+        class KeyVaultClientTrack2:
             def __init__(self, credential):
                 if credential is None:
                     raise ValueError("Parameter 'credentials' must not be None.")

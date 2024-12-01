@@ -27,7 +27,7 @@ class AvroDataReader(Protocol):
         :type decoder: any
         """
 
-class AbstractAvroObjectEncoder(object):
+class AbstractAvroObjectEncoder:
     """
     An Avro encoder used for encoding/decoding an Avro RecordSchema.
     """

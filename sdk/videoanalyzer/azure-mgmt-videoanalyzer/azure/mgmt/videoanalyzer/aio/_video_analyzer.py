@@ -37,7 +37,7 @@ from .operations import AccessPoliciesOperations
 from .. import models
 
 
-class VideoAnalyzer(object):
+class VideoAnalyzer:
     """Azure Video Analyzer provides a platform for you to build intelligent video applications that span the edge and the cloud.
 
     :ivar edge_modules: EdgeModulesOperations operations

@@ -519,7 +519,7 @@ class TableItem:
         return f"TableItem(name={self.name})"[1024:]
 
 
-class TablePayloadFormat(object):
+class TablePayloadFormat:
     """
     Specifies the accepted content type of the response payload. More information
     can be found here: https://msdn.microsoft.com/en-us/library/azure/dn535600.aspx
@@ -563,7 +563,7 @@ class LocationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SECONDARY = "secondary"  #: Requests should be sent to the secondary location, if possible.
 
 
-class ResourceTypes(object):
+class ResourceTypes:
     """Specifies the resource types that are accessible with the account SAS."""
 
     service: bool
@@ -610,7 +610,7 @@ class ResourceTypes(object):
         return parsed
 
 
-class AccountSasPermissions(object):
+class AccountSasPermissions:
     """:class:`~AccountSasPermissions` class to be used with generate_account_sas."""
 
     read: bool

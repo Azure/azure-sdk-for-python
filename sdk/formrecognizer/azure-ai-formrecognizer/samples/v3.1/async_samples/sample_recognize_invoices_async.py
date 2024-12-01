@@ -27,7 +27,7 @@ import os
 import asyncio
 
 
-class RecognizeInvoiceSampleAsync(object):
+class RecognizeInvoiceSampleAsync:
 
     async def recognize_invoice(self):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),

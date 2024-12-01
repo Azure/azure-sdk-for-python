@@ -12,7 +12,7 @@ from unittest_helpers import mock_response
 from unittest.mock import Mock, patch
 
 
-class FakeTokenCredential(object):
+class FakeTokenCredential:
     def __init__(self):
         self.token = AccessToken("Fake Token", 0)
 

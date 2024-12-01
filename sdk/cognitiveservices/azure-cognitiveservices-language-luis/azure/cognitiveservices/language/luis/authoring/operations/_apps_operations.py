@@ -15,7 +15,7 @@ from msrest.exceptions import HttpOperationError
 from .. import models
 
 
-class AppsOperations(object):
+class AppsOperations:
     """AppsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.

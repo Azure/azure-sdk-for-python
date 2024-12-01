@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class AccessControlClientOperationsMixin(object):
+class AccessControlClientOperationsMixin:
 
     def get_role_definitions(
         self,

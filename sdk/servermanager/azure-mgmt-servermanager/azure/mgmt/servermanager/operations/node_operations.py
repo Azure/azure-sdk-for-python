@@ -17,7 +17,7 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class NodeOperations(object):
+class NodeOperations:
     """NodeOperations operations.
 
     :param client: Client for service requests.

@@ -36,7 +36,7 @@ USAGE:
 import os
 
 
-class CopyModelSample(object):
+class CopyModelSample:
 
     def copy_model(self, custom_model_id):
         from azure.core.credentials import AzureKeyCredential

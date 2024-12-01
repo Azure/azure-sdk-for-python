@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 
-class SipTrunk(object):
+class SipTrunk:
     """Represents a SIP trunk for routing calls. See RFC 4904.
 
     :ivar fqdn: FQDN of the trunk.
@@ -30,7 +30,7 @@ class SipTrunk(object):
         self.sip_signaling_port = kwargs.get("sip_signaling_port", None)
 
 
-class SipTrunkRoute(object):
+class SipTrunkRoute:
     """Represents a trunk route for routing calls.
 
     :ivar description: Gets or sets description of the route.

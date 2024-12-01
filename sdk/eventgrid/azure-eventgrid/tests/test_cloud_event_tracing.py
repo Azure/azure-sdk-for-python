@@ -20,7 +20,7 @@ _tracestate_value = "rojo=00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-0
 # spell-chcker:enable
 
 
-class EventGridSerializationTests(object):
+class EventGridSerializationTests:
     def test_cloud_event_policy_copies(self):
         policy = CloudEventDistributedTracingPolicy()
 

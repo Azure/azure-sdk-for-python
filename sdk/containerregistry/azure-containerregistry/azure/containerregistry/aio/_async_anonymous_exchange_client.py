@@ -38,7 +38,7 @@ class AsyncAnonymousAccessCredential(AsyncTokenCredential):
         pass
 
 
-class AnonymousACRExchangeClient(object):
+class AnonymousACRExchangeClient:
     """Class for handling oauth authentication requests
 
     :param endpoint: Azure Container Registry endpoint

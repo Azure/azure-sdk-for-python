@@ -272,7 +272,7 @@ def build_publish_request_initial(
     )
 
 # fmt: on
-class ModelVersionsOperations(object):
+class ModelVersionsOperations:
     """ModelVersionsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

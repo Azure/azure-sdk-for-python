@@ -21,7 +21,7 @@ from .._exceptions import LogsQueryError
 JSON = MutableMapping[str, Any]
 
 
-class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-keyword
+class LogsQueryClient:  # pylint: disable=client-accepts-api-version-keyword
     """LogsQueryClient. Use this client to collect and organize log and performance data from
     monitored resources. Data from different sources such as platform logs from Azure services,
     log and performance data from virtual machines agents, and usage and performance data from

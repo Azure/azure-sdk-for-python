@@ -22,7 +22,7 @@ else:
     from collections.abc import Awaitable
 
 
-class AsyncKeyVaultClientBase(object):
+class AsyncKeyVaultClientBase:
     # pylint:disable=protected-access
     def __init__(self, vault_url: str, credential: AsyncTokenCredential, **kwargs: Any) -> None:
         if not credential:

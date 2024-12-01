@@ -23,7 +23,7 @@ from .operations import ManagedPrivateEndpointsOperations
 from . import models
 
 
-class VnetClient(object):
+class VnetClient:
     """VnetClient.
 
     :ivar managed_private_endpoints: ManagedPrivateEndpointsOperations operations

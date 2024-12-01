@@ -21,7 +21,7 @@ def test_default_profile():
 
 def test_multiapi_client():
 
-    class SDKClient(object):
+    class SDKClient:
         # Mock msrest.SDKClient to not import it
         def __init__(self, creds, config):
             assert creds == "creds"

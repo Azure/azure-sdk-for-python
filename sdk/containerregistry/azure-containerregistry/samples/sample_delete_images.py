@@ -32,7 +32,7 @@ from azure.containerregistry import ContainerRegistryClient, ArtifactManifestOrd
 from utilities import load_registry, get_authority, get_credential
 
 
-class DeleteImages(object):
+class DeleteImages:
     def __init__(self):
         load_dotenv(find_dotenv())
         self.endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]

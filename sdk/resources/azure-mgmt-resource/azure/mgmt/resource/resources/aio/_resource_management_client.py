@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class _SDKClient(object):
+class _SDKClient:
     def __init__(self, *args, **kwargs):
         """This is a fake class to support current implemetation of MultiApiClientMixin."
         Will be removed in final version of multiapi azure-core based client

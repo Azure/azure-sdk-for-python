@@ -81,12 +81,12 @@ class RestMockResponse(RestHttpResponseBase):
 MOCK_RESPONSES = [PipelineTransportMockResponse, RestMockResponse]
 
 
-class FakeErrorOne(object):
+class FakeErrorOne:
     def __init__(self):
         self.error = Mock(message="A fake error", code="FakeErrorOne")
 
 
-class FakeErrorTwo(object):
+class FakeErrorTwo:
     def __init__(self):
         self.code = "FakeErrorTwo"
         self.message = "A different fake error"
@@ -98,7 +98,7 @@ class FakeHttpResponse(HttpResponseError):
         super(FakeHttpResponse, self).__init__(self, response=response, *args, **kwargs)
 
 
-class TestExceptions(object):
+class TestExceptions:
     def test_empty_httpresponse_error(self):
         error = HttpResponseError()
         assert str(error) == "Operation returned an invalid status 'None'"

@@ -56,7 +56,7 @@ from azure.communication.jobrouter.models import (
 )
 
 
-class DistributionPolicyValidator(object):
+class DistributionPolicyValidator:
     @staticmethod
     def validate_id(distribution_policy, id, **kwargs):
         assert distribution_policy.id == id
@@ -115,7 +115,7 @@ class DistributionPolicyValidator(object):
             DistributionPolicyValidator.validate_distribution_mode(distribution_policy, kwargs.pop("mode"))
 
 
-class JobQueueValidator(object):
+class JobQueueValidator:
     @staticmethod
     def validate_id(entity, identifier, **kwargs):
         assert entity.id == identifier
@@ -164,7 +164,7 @@ class JobQueueValidator(object):
             JobQueueValidator.validate_queue_labels(job_queue, kwargs.pop("labels"))
 
 
-class WorkerSelectorValidator(object):
+class WorkerSelectorValidator:
     @staticmethod
     def validate_worker_selector(
         actual,  # type: RouterWorkerSelector
@@ -182,7 +182,7 @@ class WorkerSelectorValidator(object):
             assert actual.expedite == expected.expedite
 
 
-class QueueSelectorValidator(object):
+class QueueSelectorValidator:
     @staticmethod
     def validate_queue_selector(
         actual,  # type: QueueSelector
@@ -194,7 +194,7 @@ class QueueSelectorValidator(object):
         assert actual.value == expected.value
 
 
-class RouterRuleValidator(object):
+class RouterRuleValidator:
     @staticmethod
     def validate_function_rule(actual: FunctionRouterRule, expected: FunctionRouterRule, **kwargs: Any):
         assert actual.kind == expected.kind
@@ -245,7 +245,7 @@ class RouterRuleValidator(object):
             assert actual == expected
 
 
-class ClassificationPolicyValidator(object):
+class ClassificationPolicyValidator:
     @staticmethod
     def validate_id(entity, identifier, **kwargs):
         assert entity.id == identifier
@@ -418,7 +418,7 @@ class ClassificationPolicyValidator(object):
             )
 
 
-class LabelOperatorValidator(object):
+class LabelOperatorValidator:
     @staticmethod
     def validate_label_operator(actual, expected, **kwargs):
         try:
@@ -427,7 +427,7 @@ class LabelOperatorValidator(object):
             assert LabelOperator._value2member_map_[actual] == LabelOperator.__getattr__(expected.split(".", 1)[1])
 
 
-class ExceptionPolicyValidator(object):
+class ExceptionPolicyValidator:
     @staticmethod
     def validate_id(entity, identifier, **kwargs):
         assert entity.id == identifier
@@ -538,7 +538,7 @@ class ExceptionPolicyValidator(object):
             ExceptionPolicyValidator.validate_exception_rules(exception_policy, kwargs.pop("exception_rules"))
 
 
-class RouterWorkerValidator(object):
+class RouterWorkerValidator:
     @staticmethod
     def validate_id(entity, identifier, **kwargs):
         assert entity.id == identifier
@@ -625,7 +625,7 @@ class RouterWorkerValidator(object):
             RouterWorkerValidator.validate_max_concurrent_offers(worker, kwargs.pop("max_concurrent_offers"))
 
 
-class RouterJobValidator(object):
+class RouterJobValidator:
     @staticmethod
     def validate_id(entity: RouterJob, identifier, **kwargs):
         assert entity.id == identifier

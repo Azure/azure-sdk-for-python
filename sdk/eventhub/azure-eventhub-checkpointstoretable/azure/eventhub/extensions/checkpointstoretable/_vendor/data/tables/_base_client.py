@@ -69,7 +69,7 @@ def get_api_version(kwargs, default):
     return api_version or default
 
 
-class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
+class AccountHostsMixin:  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         account_url,  # type: Any

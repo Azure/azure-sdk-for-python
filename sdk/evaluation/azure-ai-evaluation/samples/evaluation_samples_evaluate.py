@@ -25,7 +25,7 @@ USAGE:
 """
 
 
-class EvaluationEvaluateSamples(object):
+class EvaluationEvaluateSamples:
     def evaluation_evaluate_classes_methods(self):
         # [START evaluate_method]
         import os

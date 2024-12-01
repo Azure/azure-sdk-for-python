@@ -91,7 +91,7 @@ async def test_basic_options_aiohttp(port, http_request):
 async def test_multipart_send(http_request):
     transport = MockAsyncHttpTransport()
 
-    class RequestPolicy(object):
+    class RequestPolicy:
         async def on_request(self, request):
             # type: (PipelineRequest) -> None
             request.http_request.headers["x-ms-date"] = "Thu, 14 Jun 2018 16:46:54 GMT"
@@ -139,7 +139,7 @@ async def test_multipart_send_with_context(http_request):
     transport = MockAsyncHttpTransport()
     header_policy = HeadersPolicy()
 
-    class RequestPolicy(object):
+    class RequestPolicy:
         async def on_request(self, request):
             # type: (PipelineRequest) -> None
             request.http_request.headers["x-ms-date"] = "Thu, 14 Jun 2018 16:46:54 GMT"
@@ -459,12 +459,12 @@ async def test_multipart_send_with_combination_changeset_middle(http_request):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request,mock_response", request_and_responses_product(MOCK_RESPONSES))
 async def test_multipart_receive(http_request, mock_response):
-    class ResponsePolicy(object):
+    class ResponsePolicy:
         def on_response(self, request, response):
             # type: (PipelineRequest, PipelineResponse) -> None
             response.http_response.headers["x-ms-fun"] = "true"
 
-    class AsyncResponsePolicy(object):
+    class AsyncResponsePolicy:
         async def on_response(self, request, response):
             # type: (PipelineRequest, PipelineResponse) -> None
             response.http_response.headers["x-ms-async-fun"] = "true"

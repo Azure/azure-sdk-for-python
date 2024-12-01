@@ -33,7 +33,7 @@ import azure.core.settings as m
 from azure.core import AzureClouds
 
 
-class TestPrioritizedSetting(object):
+class TestPrioritizedSetting:
     def test_env_var_property(self):
         ps = m.PrioritizedSetting("foo", env_var="AZURE_FOO")
         assert ps.env_var == "AZURE_FOO"
@@ -123,7 +123,7 @@ class TestPrioritizedSetting(object):
         assert str(ps) == "PrioritizedSetting(%r)" % "foo"
 
     def test_descriptors(self):
-        class FakeSettings(object):
+        class FakeSettings:
             foo = m.PrioritizedSetting("foo", env_var="AZURE_FOO")
             bar = m.PrioritizedSetting("bar", env_var="AZURE_BAR", default=10)
 
@@ -135,7 +135,7 @@ class TestPrioritizedSetting(object):
         assert s.bar() == 20
 
 
-class TestConverters(object):
+class TestConverters:
     @pytest.mark.parametrize("value", ["Yes", "YES", "yes", "1", "ON", "on", "true", "True", True])
     def test_convert_bool(self, value):
         assert m.convert_bool(value)
@@ -176,7 +176,7 @@ class TestConverters(object):
 _standard_settings = ["log_level", "tracing_enabled"]
 
 
-class TestStandardSettings(object):
+class TestStandardSettings:
     @pytest.mark.parametrize("name", _standard_settings)
     def test_setting_exists(self, name):
         assert hasattr(m.settings, name)

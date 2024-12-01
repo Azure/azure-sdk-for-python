@@ -28,7 +28,7 @@ from .operations import DeploymentOperationsOperations
 from . import models
 
 
-class ResourceManagementClient(object):
+class ResourceManagementClient:
     """Provides operations for working with resources and resource groups.
 
     :ivar operations: Operations operations

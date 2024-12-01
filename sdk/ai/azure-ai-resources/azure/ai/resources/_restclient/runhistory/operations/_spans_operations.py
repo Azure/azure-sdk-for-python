@@ -147,7 +147,7 @@ def build_get_active_request(
     )
 
 # fmt: on
-class SpansOperations(object):
+class SpansOperations:
     """SpansOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

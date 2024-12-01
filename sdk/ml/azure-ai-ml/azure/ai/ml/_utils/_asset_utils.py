@@ -86,7 +86,7 @@ class AssetNotChangedError(Exception):
     pass
 
 
-class IgnoreFile(object):
+class IgnoreFile:
     def __init__(self, file_path: Optional[Union[str, os.PathLike]] = None):
         """Base class for handling .gitignore and .amlignore files.
 

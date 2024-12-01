@@ -23,7 +23,7 @@ import logging
 from azure.ai.ml._logging.compliant_logger import DataCategory, enable_compliant_logging
 
 
-class CompliantLoggerSamples(object):
+class CompliantLoggerSamples:
     def get_logger(self):
         enable_compliant_logging(
             format="%(prefix)s %(asctime)s %(levelname)s:%(name)s:%(message)s", datefmt="%Y-%m-%d %H:%M:%S"

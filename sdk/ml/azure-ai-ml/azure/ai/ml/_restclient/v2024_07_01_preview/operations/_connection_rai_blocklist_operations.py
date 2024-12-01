@@ -158,7 +158,7 @@ def build_create_request_initial(
     )
 
 # fmt: on
-class ConnectionRaiBlocklistOperations(object):
+class ConnectionRaiBlocklistOperations:
     """ConnectionRaiBlocklistOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

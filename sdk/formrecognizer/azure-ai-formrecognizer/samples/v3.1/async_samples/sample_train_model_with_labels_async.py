@@ -34,7 +34,7 @@ import os
 import asyncio
 
 
-class TrainModelWithLabelsSampleAsync(object):
+class TrainModelWithLabelsSampleAsync:
 
     async def train_model_with_labels(self):
         from azure.ai.formrecognizer.aio import FormTrainingClient

@@ -36,7 +36,7 @@ from azure.cosmos._execution_context.aggregators import (
 )
 
 
-class _QueryExecutionEndpointComponent(object):
+class _QueryExecutionEndpointComponent:
     def __init__(self, execution_context):
         self._execution_context = execution_context
 

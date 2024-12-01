@@ -15,7 +15,7 @@ registrations_url = re.compile("{}/.+".format(registration_endpoint))
 query_url = "{}/{}/query".format(registration_endpoint, enrollment_group_id)
 
 
-class TestDeviceRegistrationStateGet(object):
+class TestDeviceRegistrationStateGet:
     @pytest.fixture()
     def service_client_get(self, mocked_response):
         mocked_response.get(
@@ -46,7 +46,7 @@ class TestDeviceRegistrationStateGet(object):
             sdk_client.device_registration_state.get(id=registration_id)
 
 
-class TestDeviceRegistrationStateDelete(object):
+class TestDeviceRegistrationStateDelete:
     @pytest.fixture()
     def service_client_delete(self, mocked_response):
         mocked_response.delete(
@@ -78,7 +78,7 @@ class TestDeviceRegistrationStateDelete(object):
             sdk_client.device_registration_state.delete(id=registration_id)
 
 
-class TestDeviceRegistrationStateQuery(object):
+class TestDeviceRegistrationStateQuery:
     @pytest.fixture()
     def service_client_query(self, mocked_response):
         mocked_response.post(

@@ -44,7 +44,7 @@ def format_bounding_box(bounding_box):
         return "N/A"
     return ", ".join(["[{}, {}]".format(p.x, p.y) for p in bounding_box])
 
-class DifferentiateOutputModelsTrainedWithAndWithoutLabels(object):
+class DifferentiateOutputModelsTrainedWithAndWithoutLabels:
 
     def recognize_custom_forms(self, labeled_model_id, unlabeled_model_id):
         from azure.core.credentials import AzureKeyCredential

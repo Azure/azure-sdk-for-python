@@ -29,7 +29,7 @@ from ..message import Properties, _MessageDelivery
 _LOGGER = logging.getLogger(__name__)
 
 
-class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
+class ManagementLink:  # pylint:disable=too-many-instance-attributes
     """
     # TODO: Fill in docstring
     """

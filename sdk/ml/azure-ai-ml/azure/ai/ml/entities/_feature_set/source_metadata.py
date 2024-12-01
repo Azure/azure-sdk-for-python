@@ -13,7 +13,7 @@ from .delay_metadata import DelayMetadata
 from .timestamp_column_metadata import TimestampColumnMetadata
 
 
-class SourceMetadata(object):
+class SourceMetadata:
     def __init__(
         self,
         *,

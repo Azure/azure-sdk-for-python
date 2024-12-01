@@ -19,7 +19,7 @@ USAGE:
 import os
 
 
-class JobQueueSamples(object):
+class JobQueueSamples:
     connection_string = os.environ["AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING"]
 
     _job_queue_id = "sample_q_policy"

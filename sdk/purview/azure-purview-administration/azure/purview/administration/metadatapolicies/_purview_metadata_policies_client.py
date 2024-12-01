@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.rest import HttpRequest, HttpResponse
 
-class PurviewMetadataPoliciesClient(object):
+class PurviewMetadataPoliciesClient:
     """PurviewMetadataPoliciesClient.
 
     :ivar metadata_roles: MetadataRolesOperations operations

@@ -13,7 +13,7 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class AutoSuggestClientOperationsMixin(object):
+class AutoSuggestClientOperationsMixin:
 
     def auto_suggest(
             self, query, accept_language=None, pragma=None, user_agent=None, client_id=None, client_ip=None, location=None, country_code=None, market="en-us", safe_search=None, set_lang=None, response_format=None, custom_headers=None, raw=False, **operation_config):

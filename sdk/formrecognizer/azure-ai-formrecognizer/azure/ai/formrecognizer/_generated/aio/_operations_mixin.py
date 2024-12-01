@@ -19,7 +19,7 @@ from azure.core.polling import AsyncLROPoller
 from .. import models as _models
 
 
-class FormRecognizerClientOperationsMixin(object):
+class FormRecognizerClientOperationsMixin:
 
     async def authorize_copy_document_model(
         self,

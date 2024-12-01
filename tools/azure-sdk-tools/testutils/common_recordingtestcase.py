@@ -20,7 +20,7 @@ import zlib
 from .common_extendedtestcase import ExtendedTestCase
 
 
-class TestMode(object):
+class TestMode:
     none = "None"  # this will be for unit test, no need for any recordings
     playback = "Playback"
     record = "Record"

@@ -25,7 +25,7 @@ DEST_FILE = 'BlockDestination.txt'
 SOURCE_FILE = 'SampleSource.txt'
 
 
-class BlobSamplesAsync(object):
+class BlobSamplesAsync:
 
     connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 

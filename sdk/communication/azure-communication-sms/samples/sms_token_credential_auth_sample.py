@@ -27,7 +27,7 @@ from azure.identity import DefaultAzureCredential
 sys.path.append("..")
 
 
-class SmsTokenCredentialAuthSample(object):
+class SmsTokenCredentialAuthSample:
 
     connection_string = os.getenv("COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING")
     phone_number = os.getenv("SMS_PHONE_NUMBER")

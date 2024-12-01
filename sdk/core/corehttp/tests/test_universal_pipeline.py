@@ -54,7 +54,7 @@ def test_pipeline_context():
 
 
 def test_request_history():
-    class Non_deep_copyable(object):
+    class Non_deep_copyable:
         def __deepcopy__(self, memodict={}):
             raise ValueError()
 
@@ -67,7 +67,7 @@ def test_request_history():
 
 
 def test_request_history_type_error():
-    class Non_deep_copyable(object):
+    class Non_deep_copyable:
         def __deepcopy__(self, memodict={}):
             raise TypeError()
 

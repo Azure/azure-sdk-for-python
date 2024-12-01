@@ -41,7 +41,7 @@ if TYPE_CHECKING:
 T = TypeVar("T")
 
 
-class AttestationSigner(object):
+class AttestationSigner:
     """Represents a signing certificate returned by the Attestation Service.
 
     :param certificates: A list of Base64 encoded X.509
@@ -70,7 +70,7 @@ class AttestationSigner(object):
         return cls(generated.x5_c, generated.kid)
 
 
-class AttestationPolicyCertificateResult(object):
+class AttestationPolicyCertificateResult:
     """The result of a policy certificate modification.
 
     :param str certificate_thumbprint: Hex encoded SHA1 Hash of the binary representation certificate
@@ -93,7 +93,7 @@ class AttestationPolicyCertificateResult(object):
         return cls(generated.certificate_thumbprint, generated.certificate_resolution)
 
 
-class AttestationPolicyResult(object):
+class AttestationPolicyResult:
     """The result of a :meth:`azure.security.attestation.AttestationAdministrationClient.set_policy`
     or :meth:`azure.security.attestation.AttestationAdministrationClient.reset_policy`
     API call.
@@ -134,7 +134,7 @@ class AttestationPolicyResult(object):
         )
 
 
-class AttestationResult(object):  # pylint: disable=too-many-instance-attributes
+class AttestationResult:  # pylint: disable=too-many-instance-attributes
     """Represents the claims returned from the attestation service as a result
     of a call to :meth:`azure.security.attestation.AttestationClient.attest_sgx_enclave`,
     or :meth:`azure.security.attestation.AttestationClient.attest_open_enclave`.
@@ -429,7 +429,7 @@ class AttestationResult(object):  # pylint: disable=too-many-instance-attributes
         return self._sgx_collateral
 
 
-class StoredAttestationPolicy(object):
+class StoredAttestationPolicy:
     """Represents an attestation policy in storage.
 
     When serialized, the `StoredAttestationPolicy` object will base64url encode the
@@ -458,7 +458,7 @@ class StoredAttestationPolicy(object):
         return StoredAttestationPolicy(generated.attestation_policy)
 
 
-class AttestationToken(object):
+class AttestationToken:
     """Represents a token returned from the attestation service.
 
     :keyword Any body: The body of the newly created token, if provided.
@@ -945,7 +945,7 @@ class AttestationTokenValidationException(ValueError):
             AttestationTokenValidationException, self
         ).__init__(self.message)
 
-class TpmAttestationResult(object):
+class TpmAttestationResult:
     """Represents the Tpm Attestation response data returned from the attestation service
     as a result of a call to :meth:`azure.security.attestation.AttestationClient.attest_tpm`.
 

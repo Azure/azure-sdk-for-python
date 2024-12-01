@@ -8,7 +8,7 @@ import requests
 from azure.core.credentials import AccessToken
 
 
-class StaticAccessTokenCredential(object):
+class StaticAccessTokenCredential:
     request_url: str
 
     def __init__(self, apikey, region):

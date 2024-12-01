@@ -13,7 +13,7 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class ServiceFabricClientAPIsOperationsMixin(object):
+class ServiceFabricClientAPIsOperationsMixin:
 
     def get_cluster_manifest(
             self, timeout=60, custom_headers=None, raw=False, **operation_config):

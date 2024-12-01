@@ -16,7 +16,7 @@ from ..constants import ManagementOpenResult, ManagementExecuteOperationResult
 _LOGGER = logging.getLogger(__name__)
 
 
-class ManagementOperation(object):
+class ManagementOperation:
     def __init__(self, session, endpoint="$management", **kwargs):
         self._mgmt_link_open_status = None
 

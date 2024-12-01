@@ -23,7 +23,7 @@ DataTypesMapping: Dict[str, DataAssetTypes] = {
     AssetTypes.TABLE: DataAssetTypes.MLTABLE,
 }
 
-class DataOperations():
+class DataOperations:
     """Operations for data resources
 
     You should not instantiate this class directly. Instead, you should

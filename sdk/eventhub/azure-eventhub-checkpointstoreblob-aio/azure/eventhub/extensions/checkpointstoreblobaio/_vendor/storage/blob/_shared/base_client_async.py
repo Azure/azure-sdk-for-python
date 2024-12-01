@@ -45,7 +45,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class AsyncStorageAccountHostsMixin(object):
+class AsyncStorageAccountHostsMixin:
 
     def __enter__(self):
         raise TypeError("Async client only supports 'async with'.")

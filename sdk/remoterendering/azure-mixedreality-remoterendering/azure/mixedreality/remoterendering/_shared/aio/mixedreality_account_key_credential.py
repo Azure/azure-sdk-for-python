@@ -13,7 +13,7 @@ from azure.core.credentials import AzureKeyCredential, AccessToken
 ACCOUNT_KEY_VALID_YEARS = 10
 
 
-class MixedRealityAccountKeyCredential(object):
+class MixedRealityAccountKeyCredential:
     """ Represents an object used for Mixed Reality account key authentication.
 
     :param str account_id: The Mixed Reality service account identifier.

@@ -8,7 +8,7 @@ import pytest
 from azure.core.exceptions import HttpResponseError
 
 
-class MgmtListTestHelperInterface(object):
+class MgmtListTestHelperInterface:
     def __init__(self, mgmt_client):
         self.sb_mgmt_client = mgmt_client
 

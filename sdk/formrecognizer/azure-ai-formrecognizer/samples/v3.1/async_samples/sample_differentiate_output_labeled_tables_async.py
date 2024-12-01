@@ -42,7 +42,7 @@ import os
 import asyncio
 
 
-class TestDifferentiateOutputLabeledTablesAsync(object):
+class TestDifferentiateOutputLabeledTablesAsync:
 
     async def test_recognize_tables_fixed_rows_async(self, custom_model_id):
         from azure.core.credentials import AzureKeyCredential

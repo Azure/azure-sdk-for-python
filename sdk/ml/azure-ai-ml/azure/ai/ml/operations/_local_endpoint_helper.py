@@ -29,7 +29,7 @@ docker = DockerProxy()
 module_logger = logging.getLogger(__name__)
 
 
-class _LocalEndpointHelper(object):
+class _LocalEndpointHelper:
     """A helper class to interact with Azure ML endpoints locally.
 
     Use this helper to manage Azure ML endpoints locally, e.g. create, invoke, show, list, delete.

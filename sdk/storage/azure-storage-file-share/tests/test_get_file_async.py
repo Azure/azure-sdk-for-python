@@ -65,7 +65,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             except:
                 pass
 
-    class NonSeekableFile(object):
+    class NonSeekableFile:
         def __init__(self, wrapped_file):
             self.wrapped_file = wrapped_file
 

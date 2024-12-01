@@ -331,7 +331,7 @@ class MessageSendFailed(MessageException):
     """
 
 
-class ErrorResponse(object):
+class ErrorResponse:
     """AMQP error object."""
 
     def __init__(self, **kwargs):

@@ -6,7 +6,7 @@
 from abc import ABCMeta, abstractmethod
 
 
-class CryptoTransform(object, metaclass=ABCMeta):
+class CryptoTransform(metaclass=ABCMeta):
     def __init__(self, key):
         self._key = key
 
@@ -35,13 +35,13 @@ class BlockCryptoTransform(CryptoTransform):
         raise NotImplementedError()
 
 
-class AuthenticatedCryptoTransform(object, metaclass=ABCMeta):
+class AuthenticatedCryptoTransform(metaclass=ABCMeta):
     @abstractmethod
     def tag(self):
         raise NotImplementedError()
 
 
-class SignatureTransform(object, metaclass=ABCMeta):
+class SignatureTransform(metaclass=ABCMeta):
     @abstractmethod
     def sign(self, digest):
         raise NotImplementedError()
@@ -51,7 +51,7 @@ class SignatureTransform(object, metaclass=ABCMeta):
         raise NotImplementedError()
 
 
-class DigestTransform(object, metaclass=ABCMeta):
+class DigestTransform(metaclass=ABCMeta):
     @abstractmethod
     def update(self, data):
         raise NotImplementedError()

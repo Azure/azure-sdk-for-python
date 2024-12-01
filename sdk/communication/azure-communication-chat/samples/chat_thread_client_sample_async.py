@@ -27,7 +27,7 @@ import os
 import asyncio
 
 
-class ChatThreadClientSamplesAsync(object):
+class ChatThreadClientSamplesAsync:
     from azure.communication.chat.aio import ChatClient, CommunicationTokenCredential
     from azure.communication.identity import CommunicationIdentityClient
 

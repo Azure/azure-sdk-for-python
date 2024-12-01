@@ -9,7 +9,7 @@ from typing import Union
 LOGGER = logging.getLogger(__name__)
 
 
-class JsonParser(object):
+class JsonParser:
     @staticmethod
     def parse(value: Union[str, bytes, bytearray]):
         """
@@ -27,7 +27,7 @@ class JsonParser(object):
         return value_as_json
 
 
-class NumberParser(object):
+class NumberParser:
     @staticmethod
     def parse(value):
         value_as_number = None

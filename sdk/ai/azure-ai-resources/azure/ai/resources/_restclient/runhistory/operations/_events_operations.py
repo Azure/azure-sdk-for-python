@@ -248,7 +248,7 @@ def build_post_request(
     )
 
 # fmt: on
-class EventsOperations(object):
+class EventsOperations:
     """EventsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

@@ -32,7 +32,7 @@ def get_test_item(num):
     return test_item
 
 
-class CosmosEmulatorCredential(object):
+class CosmosEmulatorCredential:
 
     async def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken

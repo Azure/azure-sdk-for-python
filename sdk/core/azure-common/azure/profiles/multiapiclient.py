@@ -10,7 +10,7 @@ class InvalidMultiApiClientError(Exception):
     """
     pass
 
-class MultiApiClientMixin(object):
+class MultiApiClientMixin:
     """Mixin that contains multi-api version profile management.
 
     To use this mixin, a client must define two class attributes:

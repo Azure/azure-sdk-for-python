@@ -22,7 +22,7 @@ from .operations import AccessControlOperations
 from . import models
 
 
-class AccessControlClient(object):
+class AccessControlClient:
     """AccessControlClient.
 
     :ivar access_control: AccessControlOperations operations

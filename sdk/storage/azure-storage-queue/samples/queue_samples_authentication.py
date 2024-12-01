@@ -31,7 +31,7 @@ import os
 import sys
 
 
-class QueueAuthSamples(object):
+class QueueAuthSamples:
 
     connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 

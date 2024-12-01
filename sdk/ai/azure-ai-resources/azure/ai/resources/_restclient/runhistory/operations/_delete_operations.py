@@ -94,7 +94,7 @@ def build_get_configuration_request(
     )
 
 # fmt: on
-class DeleteOperations(object):
+class DeleteOperations:
     """DeleteOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

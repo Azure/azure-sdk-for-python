@@ -23,7 +23,7 @@ from azure.identity import DefaultAzureCredential
 
 from configparser import ConfigParser
 
-class BatchSamples():
+class BatchSamples:
 
     def create_pool(self, client: BatchClient, pool_id: str):
 

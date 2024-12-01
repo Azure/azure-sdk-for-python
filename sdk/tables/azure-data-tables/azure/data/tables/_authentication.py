@@ -30,7 +30,7 @@ class AzureSigningError(ClientAuthenticationError):
     """
 
 
-class _HttpChallenge(object):  # pylint:disable=too-few-public-methods
+class _HttpChallenge:  # pylint:disable=too-few-public-methods
     """Represents a parsed HTTP WWW-Authentication Bearer challenge from a server.
 
     :param challenge: The WWW-Authenticate header of the challenge response.

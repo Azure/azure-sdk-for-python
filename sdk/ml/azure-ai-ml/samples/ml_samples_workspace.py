@@ -29,7 +29,7 @@ ml_client = MLClient(credential, subscription_id, resource_group)
 ml_client_ws = MLClient(credential, subscription_id, resource_group, workspace_name="test-ws1")
 
 
-class WorkspaceConfigurationOptions(object):
+class WorkspaceConfigurationOptions:
     def ml_workspace_config_sample_snippets_entities(self):
         # [START load_workspace]
         from azure.ai.ml import load_workspace

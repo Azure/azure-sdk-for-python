@@ -5,7 +5,7 @@ from multiprocessing.pool import ThreadPool
 import json
 from azure.cosmos import exceptions, PartitionKey
 
-class ConflictWorker(object):
+class ConflictWorker:
     def __init__(self, database_name, basic_collection_name, manual_collection_name, lww_collection_name, udp_collection_name):
         self.clients = []
         self.basic_collection_link = "dbs/" + database_name + "/colls/" + basic_collection_name

@@ -1,7 +1,7 @@
 import pytest
 from azure.media.videoanalyzeredge import *
 
-class TestPipelineBuildSerialize():
+class TestPipelineBuildSerialize:
     def test_build_pipeline_serialize(self):
         pipeline_topology_properties = PipelineTopologyProperties()
         pipeline_topology_name = 'pipelineTopologyTest'

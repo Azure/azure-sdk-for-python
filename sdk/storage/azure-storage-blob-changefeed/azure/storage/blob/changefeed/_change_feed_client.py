@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
 
 
-class ChangeFeedClient(object):
+class ChangeFeedClient:
     """A client to interact with a specific account change feed.
 
     :param str account_url:

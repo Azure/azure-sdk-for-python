@@ -38,7 +38,7 @@ USAGE:
 import os
 
 
-class ComposedModelSample(object):
+class ComposedModelSample:
 
     def create_composed_model(self):
         # [START begin_create_composed_model]

@@ -6,7 +6,7 @@
 from azure.core.credentials import AccessToken
 
 
-class FakeTokenCredential(object):
+class FakeTokenCredential:
     def __init__(self):
         self.token = AccessToken("Fake Token", 0)
 

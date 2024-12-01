@@ -11,7 +11,7 @@ from azure.ai.ml._local_endpoints.vscode_debug.devcontainer_resolver import DevC
 from azure.ai.ml.exceptions import VSCodeCommandNotFound
 
 
-class VSCodeClient(object):
+class VSCodeClient:
     # pylint: disable=client-method-has-more-than-5-positional-arguments
     def create_dev_container_json(
         self,

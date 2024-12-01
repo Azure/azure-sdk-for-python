@@ -26,7 +26,7 @@ USAGE:
 import os
 
 
-class ChatThreadClientSamples(object):
+class ChatThreadClientSamples:
     from azure.communication.identity import CommunicationIdentityClient
     from azure.communication.chat import ChatClient, CommunicationTokenCredential
 

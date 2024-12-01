@@ -31,7 +31,7 @@ class TestRestClientConfiguration(Configuration):
         self.authentication_policy = kwargs.get("authentication_policy")
 
 
-class AsyncMockRestClient(object):
+class AsyncMockRestClient:
     def __init__(self, port, **kwargs):
         self._config = TestRestClientConfiguration(**kwargs)
 

@@ -10,7 +10,7 @@ from azure.core.credentials import AccessToken
 from testcase import DocumentIntelligenceTest
 
 
-class AsyncFakeTokenCredential(object):
+class AsyncFakeTokenCredential:
     """Protocol for classes able to provide OAuth tokens.
     :param str scopes: Lets you specify the type of access needed.
     """

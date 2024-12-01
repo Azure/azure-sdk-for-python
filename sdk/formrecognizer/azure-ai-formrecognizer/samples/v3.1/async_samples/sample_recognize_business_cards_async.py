@@ -28,7 +28,7 @@ import os
 import asyncio
 
 
-class RecognizeBusinessCardSampleAsync(object):
+class RecognizeBusinessCardSampleAsync:
 
     async def recognize_business_card_async(self):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),

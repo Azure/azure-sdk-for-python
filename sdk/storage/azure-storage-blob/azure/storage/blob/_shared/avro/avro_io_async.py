@@ -43,7 +43,7 @@ logger = logging.getLogger(__name__)
 # Decoder
 
 
-class AsyncBinaryDecoder(object):
+class AsyncBinaryDecoder:
     """Read leaf values."""
 
     def __init__(self, reader):
@@ -185,7 +185,7 @@ class AsyncBinaryDecoder(object):
 # DatumReader
 
 
-class AsyncDatumReader(object):
+class AsyncDatumReader:
     """Deserialize Avro-encoded data into a Python data structure."""
 
     def __init__(self, writer_schema=None):

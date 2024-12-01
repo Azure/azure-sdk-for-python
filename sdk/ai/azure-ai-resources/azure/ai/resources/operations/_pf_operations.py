@@ -17,7 +17,7 @@ ops_logger = ActivityLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
-class PFOperations():
+class PFOperations:
     """Operations class for promptflow resources
 
     You should not instantiate this class directly. Instead, you should

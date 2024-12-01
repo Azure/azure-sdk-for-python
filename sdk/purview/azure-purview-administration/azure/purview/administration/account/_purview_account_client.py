@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.rest import HttpRequest, HttpResponse
 
-class PurviewAccountClient(object):
+class PurviewAccountClient:
     """Creates a Microsoft.Purview data plane account client.
 
     :ivar accounts: AccountsOperations operations

@@ -7,7 +7,7 @@ from corehttp.runtime import PipelineClient
 from copy import deepcopy
 
 
-class MockRestClient(object):
+class MockRestClient:
     def __init__(self, port, *, transport=None, **kwargs):
         kwargs.setdefault("sdk_moniker", "corehttp/1.0.0b1")
         self._client = PipelineClient(endpoint="http://localhost:{}/".format(port), transport=transport, **kwargs)

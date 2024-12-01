@@ -44,7 +44,7 @@ def get_cli_profile():
     return Profile(storage=ACCOUNT)
 
 
-class _CliCredentials(object):
+class _CliCredentials:
     """A wrapper of CLI credentials type that implements the azure-core credential protocol AND
     the msrestazure protocol.
 

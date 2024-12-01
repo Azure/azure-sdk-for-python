@@ -26,7 +26,7 @@ import os
 import asyncio
 
 
-class ManageCustomModelsSampleAsync(object):
+class ManageCustomModelsSampleAsync:
 
     async def manage_custom_models(self):
         from azure.core.credentials import AzureKeyCredential

@@ -29,7 +29,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.anomalydetector.models import *
 
 
-class DetectLastAnomalySample(object):
+class DetectLastAnomalySample:
     def detect_last_point(self):
         SUBSCRIPTION_KEY = os.environ["ANOMALY_DETECTOR_KEY"]
         ANOMALY_DETECTOR_ENDPOINT = os.environ["ANOMALY_DETECTOR_ENDPOINT"]

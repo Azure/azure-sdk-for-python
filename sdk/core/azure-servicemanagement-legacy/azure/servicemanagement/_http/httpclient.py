@@ -36,7 +36,7 @@ from . import HTTPError, HTTPResponse
 DEBUG_REQUESTS = False
 DEBUG_RESPONSES = False
 
-class _HTTPClient(object):
+class _HTTPClient:
 
     '''
     Takes the request and sends it to cloud service and returns the response.

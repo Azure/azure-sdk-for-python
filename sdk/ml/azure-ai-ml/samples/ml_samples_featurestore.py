@@ -18,7 +18,7 @@ USAGE:
 import os
 
 
-class FeatureStoreConfigurationOptions(object):
+class FeatureStoreConfigurationOptions:
     def feature_store(self):
         from azure.ai.ml import MLClient
         from azure.identity import DefaultAzureCredential

@@ -231,7 +231,7 @@ class CbsAuthState(Enum):
     FAILURE = 7  # Fail to open cbs links
 
 
-class Role(object):
+class Role:
     """Link endpoint role.
 
     Valid Values:
@@ -248,7 +248,7 @@ class Role(object):
     Receiver = True
 
 
-class SenderSettleMode(object):
+class SenderSettleMode:
     """Settlement policy for a Sender.
 
     Valid Values:
@@ -268,7 +268,7 @@ class SenderSettleMode(object):
     Mixed = 2
 
 
-class ReceiverSettleMode(object):
+class ReceiverSettleMode:
     """Settlement policy for a Receiver.
 
     Valid Values:
@@ -286,7 +286,7 @@ class ReceiverSettleMode(object):
     Second = 1
 
 
-class SASLCode(object):
+class SASLCode:
     """Codes to indicate the outcome of the sasl dialog.
 
     <type name="sasl-code" class="restricted" source="ubyte">
@@ -310,7 +310,7 @@ class SASLCode(object):
     SysTemp = 4
 
 
-class MessageDeliveryState(object):
+class MessageDeliveryState:
 
     WaitingToBeSent = 0
     WaitingForSendAck = 1

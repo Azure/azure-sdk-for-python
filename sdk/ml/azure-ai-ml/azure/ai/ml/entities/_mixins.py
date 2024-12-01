@@ -16,7 +16,7 @@ class RestTranslatableMixin:
         pass
 
 
-class DictMixin(object):
+class DictMixin:
     def __contains__(self, item: Any) -> bool:
         return self.__dict__.__contains__(item)
 

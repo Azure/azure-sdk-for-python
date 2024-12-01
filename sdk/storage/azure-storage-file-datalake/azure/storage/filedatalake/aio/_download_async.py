@@ -8,7 +8,7 @@ from typing import AsyncIterator, IO, Optional
 from .._deserialize import from_blob_properties
 
 
-class StorageStreamDownloader(object):
+class StorageStreamDownloader:
     """A streaming object to download from Azure Storage.
 
     :ivar str name:

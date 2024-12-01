@@ -40,7 +40,7 @@ class EntityType(TypedDict, total=False):
     barcode: bytes
 
 
-class TableEntitySamples(object):
+class TableEntitySamples:
     def __init__(self):
         load_dotenv(find_dotenv())
         self.access_key = os.environ["TABLES_PRIMARY_STORAGE_ACCOUNT_KEY"]

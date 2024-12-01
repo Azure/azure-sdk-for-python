@@ -20,7 +20,7 @@ AttributeValue = Union[
 Attributes = Optional[Dict[str, AttributeValue]]
 
 
-class FakeSpan(HttpSpanMixin, object):
+class FakeSpan(HttpSpanMixin):
     # Keep a fake context of the current one
     CONTEXT = []
 

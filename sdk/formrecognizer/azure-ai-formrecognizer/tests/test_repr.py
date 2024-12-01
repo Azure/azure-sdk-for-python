@@ -559,7 +559,7 @@ def document_analysis_error(document_analysis_inner_error):
     return model, model_repr
 
 
-class TestRepr():
+class TestRepr:
     # Not inheriting form FormRecognizerTest because that doesn't allow me to define pytest fixtures in the same file
     # Not worth moving pytest fixture definitions to conftest since all I would use is assertEqual and I can just use assert
     def test_recognized_form(self, form_field_one, page_range, form_page):

@@ -1,5 +1,5 @@
 # Replace ENDPOINT, ACCOUNT_KEY and REGIONS with values from your Azure Cosmos DB account.
-class Configurations(object):
+class Configurations:
     ENDPOINT = "ENDPOINT"
     ACCOUNT_KEY = "MASTER_KEY"
     REGIONS = "REGIONS"

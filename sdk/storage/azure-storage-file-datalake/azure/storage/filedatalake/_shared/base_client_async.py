@@ -49,7 +49,7 @@ _SERVICE_PARAMS = {
 }
 
 
-class AsyncStorageAccountHostsMixin(object):
+class AsyncStorageAccountHostsMixin:
 
     def __enter__(self):
         raise TypeError("Async client only supports 'async with'.")

@@ -22,7 +22,7 @@ from . import dtmi_conventions
 _LOGGER = logging.getLogger(__name__)
 
 
-class DtmiResolver(object):
+class DtmiResolver:
     def __init__(self, fetcher):
         """
         :param fetcher: A Fetcher configured to an endpoint to resolve DTMIs from

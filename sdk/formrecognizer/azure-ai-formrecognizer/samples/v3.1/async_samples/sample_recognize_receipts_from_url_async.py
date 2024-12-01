@@ -29,7 +29,7 @@ import os
 import asyncio
 
 
-class RecognizeReceiptsFromURLSampleAsync(object):
+class RecognizeReceiptsFromURLSampleAsync:
 
     async def recognize_receipts_from_url(self):
         # [START recognize_receipts_from_url_async]

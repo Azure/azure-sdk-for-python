@@ -32,7 +32,7 @@ _LOGGER = logging.getLogger()
 load_dotenv(find_dotenv())
 
 
-class AzureRecordedTestCase(object):
+class AzureRecordedTestCase:
     """Test class for use by data-plane tests that use the azure-sdk-tools test proxy.
 
     For more details and usage examples, refer to

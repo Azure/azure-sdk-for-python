@@ -16,7 +16,7 @@ from azure.core.paging import ItemPaged
 from . import models as _models
 
 
-class FeatureClientOperationsMixin(object):
+class FeatureClientOperationsMixin:
 
     def list_operations(
         self,

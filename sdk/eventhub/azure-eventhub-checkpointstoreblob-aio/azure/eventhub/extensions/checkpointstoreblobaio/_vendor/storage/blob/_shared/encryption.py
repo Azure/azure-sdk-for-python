@@ -44,7 +44,7 @@ def _validate_key_encryption_key_wrap(kek):
         raise AttributeError(_ERROR_OBJECT_INVALID.format('key encryption key', 'get_key_wrap_algorithm'))
 
 
-class _EncryptionAlgorithm(object):
+class _EncryptionAlgorithm:
     '''
     Specifies which client encryption algorithm is used.
     '''

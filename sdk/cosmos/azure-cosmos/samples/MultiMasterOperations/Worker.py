@@ -3,7 +3,7 @@ import time
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import StatusCodes
 
-class Worker(object):
+class Worker:
     def __init__(self, client, database_name, collection_name):
         self.client = client
         self.database = client.get_database_client(database_name)

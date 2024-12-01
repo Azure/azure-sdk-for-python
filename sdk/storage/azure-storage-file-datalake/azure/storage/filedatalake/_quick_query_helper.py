@@ -7,7 +7,7 @@
 from typing import Union, Iterable, IO
 
 
-class DataLakeFileQueryReader(object):
+class DataLakeFileQueryReader:
     """A streaming object to read query results.
 
     :ivar str name:

@@ -11,7 +11,7 @@ TYPE = "TYPE"
 VALUE = "VALUE"
 
 
-class AMQPTypes(object):
+class AMQPTypes:
     null = "NULL"
     boolean = "BOOL"
     ubyte = "UBYTE"
@@ -51,7 +51,7 @@ class ObjDefinition(Enum):
     error = "error"
 
 
-class ConstructorBytes(object):
+class ConstructorBytes:
     null = b"\x40"
     bool = b"\x56"
     bool_true = b"\x41"

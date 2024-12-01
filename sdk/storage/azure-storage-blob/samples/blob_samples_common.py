@@ -26,7 +26,7 @@ from azure.storage.blob import BlobServiceClient
 SOURCE_FILE = 'SampleSource.txt'
 
 
-class CommonBlobSamples(object):
+class CommonBlobSamples:
 
     connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 

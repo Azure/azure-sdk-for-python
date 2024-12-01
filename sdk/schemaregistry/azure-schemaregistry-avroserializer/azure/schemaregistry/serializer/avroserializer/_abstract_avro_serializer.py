@@ -8,7 +8,7 @@ from abc import abstractmethod
 
 ObjectType = TypeVar("ObjectType")
 
-class AbstractAvroObjectSerializer(object):
+class AbstractAvroObjectSerializer:
     """
     An Avro serializer used for serializing/deserializing an Avro RecordSchema.
     """

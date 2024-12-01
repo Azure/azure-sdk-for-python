@@ -59,7 +59,7 @@ class SchemaResolutionException(schema.AvroException):
 # Decoder
 
 
-class BinaryDecoder(object):
+class BinaryDecoder:
     """Read leaf values."""
 
     def __init__(self, reader):
@@ -202,7 +202,7 @@ class BinaryDecoder(object):
 # DatumReader
 
 
-class DatumReader(object):
+class DatumReader:
     """Deserialize Avro-encoded data into a Python data structure."""
 
     def __init__(self, writer_schema=None):

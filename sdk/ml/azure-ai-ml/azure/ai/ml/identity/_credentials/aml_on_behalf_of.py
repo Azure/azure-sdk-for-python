@@ -14,7 +14,7 @@ from .._internal.managed_identity_client import ManagedIdentityClient
 from ._AzureMLSparkOnBehalfOfCredential import _AzureMLSparkOnBehalfOfCredential
 
 
-class AzureMLOnBehalfOfCredential(object):
+class AzureMLOnBehalfOfCredential:
     # pylint: disable=line-too-long
     """Authenticates a user via the on-behalf-of flow.
 

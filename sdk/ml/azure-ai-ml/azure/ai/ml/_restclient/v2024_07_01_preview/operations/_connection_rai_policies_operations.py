@@ -70,7 +70,7 @@ def build_list_request(
     )
 
 # fmt: on
-class ConnectionRaiPoliciesOperations(object):
+class ConnectionRaiPoliciesOperations:
     """ConnectionRaiPoliciesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

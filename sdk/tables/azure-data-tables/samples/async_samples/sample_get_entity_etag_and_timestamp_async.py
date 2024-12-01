@@ -41,7 +41,7 @@ class EntityType(TypedDict, total=False):
     barcode: bytes
 
 
-class SampleGetEntityMetadata(object):
+class SampleGetEntityMetadata:
     def __init__(self):
         load_dotenv(find_dotenv())
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")

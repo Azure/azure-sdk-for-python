@@ -10,7 +10,7 @@ from ._generated import models as _models
 from ._shared import parse_key_vault_id
 
 
-class SecretProperties(object):
+class SecretProperties:
     """A secret's ID and attributes."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -186,7 +186,7 @@ class SecretProperties(object):
         return self._managed
 
 
-class KeyVaultSecret(object):
+class KeyVaultSecret:
     """All of a secret's properties, and its value.
 
     :param properties: The secret's properties.
@@ -246,7 +246,7 @@ class KeyVaultSecret(object):
         return self._value
 
 
-class KeyVaultSecretIdentifier(object):
+class KeyVaultSecretIdentifier:
     """Information about a KeyVaultSecret parsed from a secret ID.
 
     :param str source_id: the full original identifier of a secret
@@ -282,7 +282,7 @@ class KeyVaultSecretIdentifier(object):
         return self._resource_id.version
 
 
-class DeletedSecret(object):
+class DeletedSecret:
     """A deleted secret's properties and information about its deletion.
 
     If soft-delete is enabled, returns information about its recovery as well.

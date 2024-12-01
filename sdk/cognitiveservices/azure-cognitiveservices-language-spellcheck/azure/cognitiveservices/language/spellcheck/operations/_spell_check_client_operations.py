@@ -13,7 +13,7 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class SpellCheckClientOperationsMixin(object):
+class SpellCheckClientOperationsMixin:
 
     def spell_checker(
             self, text, accept_language=None, pragma=None, user_agent=None, client_id=None, client_ip=None, location=None, action_type=None, app_name=None, country_code=None, client_machine_name=None, doc_id=None, market=None, session_id=None, set_lang=None, user_id=None, mode=None, pre_context_text=None, post_context_text=None, custom_headers=None, raw=False, **operation_config):

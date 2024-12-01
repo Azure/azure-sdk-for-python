@@ -24,7 +24,7 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class VideoAnalyzersOperations(object):
+class VideoAnalyzersOperations:
     """VideoAnalyzersOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

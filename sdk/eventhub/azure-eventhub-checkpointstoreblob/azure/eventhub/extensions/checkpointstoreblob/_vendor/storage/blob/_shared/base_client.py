@@ -68,7 +68,7 @@ _SERVICE_PARAMS = {
 }
 
 
-class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
+class StorageAccountHostsMixin:  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         parsed_url,  # type: Any

@@ -237,7 +237,7 @@ def build_get_models_request(
     )
 
 # fmt: on
-class ConnectionOperations(object):
+class ConnectionOperations:
     """ConnectionOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

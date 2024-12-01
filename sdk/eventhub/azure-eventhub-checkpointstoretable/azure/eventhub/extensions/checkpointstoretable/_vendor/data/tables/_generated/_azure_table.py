@@ -21,7 +21,7 @@ from .operations import ServiceOperations
 from . import models
 
 
-class AzureTable(object):
+class AzureTable:
     """AzureTable.
 
     :ivar table: TableOperations operations

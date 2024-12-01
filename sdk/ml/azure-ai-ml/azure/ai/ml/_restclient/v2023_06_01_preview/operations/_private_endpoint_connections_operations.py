@@ -188,7 +188,7 @@ def build_create_or_update_request(
     )
 
 # fmt: on
-class PrivateEndpointConnectionsOperations(object):
+class PrivateEndpointConnectionsOperations:
     """PrivateEndpointConnectionsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

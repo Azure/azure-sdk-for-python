@@ -87,7 +87,7 @@ class ChangeFeedPaged(PageIterator):
         return json.dumps(cursor), self.current_page
 
 
-class ChangeFeed(object):
+class ChangeFeed:
     def __init__(self, client, page_size, start_time=None, end_time=None, cf_cursor=None):
         self.client = client
         self.page_size = page_size
@@ -218,7 +218,7 @@ class ChangeFeed(object):
         return segment_date > opaque_end_date
 
 
-class Segment(object):
+class Segment:
     def __init__(self, client, segment_path, page_size, segment_cursor=None):
         self.client = client
         self.segment_path = segment_path
@@ -286,7 +286,7 @@ class Segment(object):
                 self.shards.append(self.shards.popleft())
 
 
-class Shard(object):
+class Shard:
     def __init__(self, client, shard_path, shard_cursor=None):
         self.client = client
         self.shard_path = shard_path
@@ -335,7 +335,7 @@ class Shard(object):
         return None
 
 
-class Chunk(object):
+class Chunk:
     def __init__(self, client, chunk_path, chunk_cursor=None):
         self.client = client
         self.chunk_path = chunk_path
@@ -377,7 +377,7 @@ class Chunk(object):
             next(self.file_reader)
 
 
-class ChangeFeedStreamer(object):
+class ChangeFeedStreamer:
     """
     File-like streaming iterator.
     """

@@ -116,7 +116,7 @@ def trim_kwargs_from_test_function(fn, kwargs):
                 del kwargs[key]
 
 
-class RetryCounter(object):
+class RetryCounter:
     def __init__(self):
         self.count = 0
 
@@ -124,7 +124,7 @@ class RetryCounter(object):
         self.count += 1
 
 
-class ResponseCallback(object):
+class ResponseCallback:
     def __init__(self, status=None, new_status=None):
         self.status = status
         self.new_status = new_status

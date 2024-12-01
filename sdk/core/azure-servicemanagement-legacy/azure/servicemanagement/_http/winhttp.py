@@ -366,7 +366,7 @@ class _WinHttpRequest(c_void_p):
             _WinHttpRequest._Release(self)
 
 
-class _Response(object):
+class _Response:
 
     ''' Response class corresponding to the response returned from httplib
     HTTPConnection. '''
@@ -387,7 +387,7 @@ class _Response(object):
         return self.respbody[:_length]
 
 
-class _HTTPConnection(object):
+class _HTTPConnection:
 
     ''' Class corresponding to httplib HTTPConnection class. '''
 

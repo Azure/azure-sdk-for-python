@@ -25,7 +25,7 @@ USAGE:
 import os
 
 
-class ManageCustomModelsSample(object):
+class ManageCustomModelsSample:
 
     def manage_custom_models(self):
         from azure.core.credentials import AzureKeyCredential

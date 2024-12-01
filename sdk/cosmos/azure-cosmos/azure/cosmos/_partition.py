@@ -24,7 +24,7 @@ database service.
 """
 
 
-class Partition(object):
+class Partition:
     """A class that holds the hash value and node name for a partition.
     """
 

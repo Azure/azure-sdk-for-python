@@ -46,7 +46,7 @@ def connection_info(gc_objects: list) -> List[ConnectionInfo]:
 
 
 # pylint: disable=client-incorrect-naming-convention
-class diagnostic_log(object):
+class diagnostic_log:
     """Directs debug logs to a specified file.
 
     :param log_path: A path with log file name. If None, a file named "azureml.log" is

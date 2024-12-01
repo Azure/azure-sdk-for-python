@@ -20,7 +20,7 @@ __all__ = [
     "KeyVaultClientBase",
 ]
 
-class KeyVaultResourceId():
+class KeyVaultResourceId:
     """Represents a Key Vault identifier and its parsed contents.
 
     :param str source_id: The complete identifier received from Key Vault

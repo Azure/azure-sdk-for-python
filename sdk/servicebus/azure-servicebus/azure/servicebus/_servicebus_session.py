@@ -29,7 +29,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class BaseSession(object):
+class BaseSession:
     def __init__(self, session_id: str, receiver: Union["ServiceBusReceiver", "ServiceBusReceiverAsync"]) -> None:
         self._session_id = session_id
         self._receiver = receiver

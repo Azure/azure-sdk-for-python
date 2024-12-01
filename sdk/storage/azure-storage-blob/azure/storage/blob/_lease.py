@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from datetime import datetime
 
 
-class BlobLeaseClient(): # pylint: disable=client-accepts-api-version-keyword
+class BlobLeaseClient: # pylint: disable=client-accepts-api-version-keyword
     """Creates a new BlobLeaseClient.
 
     This client provides lease operations on a BlobClient or ContainerClient.

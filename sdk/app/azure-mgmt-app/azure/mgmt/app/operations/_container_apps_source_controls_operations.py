@@ -183,7 +183,7 @@ def build_delete_request_initial(
         **kwargs
     )
 
-class ContainerAppsSourceControlsOperations(object):
+class ContainerAppsSourceControlsOperations:
     """ContainerAppsSourceControlsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

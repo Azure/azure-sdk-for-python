@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class SipRoutingClient(object):
+class SipRoutingClient:
     """A client to interact with the SIP routing gateway asynchronously.
     This client provides operations to retrieve and update SIP routing configuration.
 

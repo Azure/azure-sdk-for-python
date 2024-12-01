@@ -41,7 +41,7 @@ USAGE:
 import os
 
 
-class TestDifferentiateOutputLabeledTables(object):
+class TestDifferentiateOutputLabeledTables:
 
     def test_recognize_tables_fixed_rows(self, custom_model_id):
         from azure.core.credentials import AzureKeyCredential

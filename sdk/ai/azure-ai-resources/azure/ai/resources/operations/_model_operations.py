@@ -14,7 +14,7 @@ from azure.ai.resources._utils._dockerfile_utils import create_dockerfile
 from azure.ai.resources._utils._scoring_script_utils import create_mlmodel_file
 
 
-class ModelOperations():
+class ModelOperations:
     """Operations for model resources
     
     You should not instantiate this class directly. Instead, you should

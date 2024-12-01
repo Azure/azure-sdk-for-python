@@ -1183,7 +1183,7 @@ def build_triggers_delete_trigger_request(
     )
 
 # fmt: on
-class KeyVaultConnectionsOperations(object):
+class KeyVaultConnectionsOperations:
     """KeyVaultConnectionsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
@@ -1502,7 +1502,7 @@ class KeyVaultConnectionsOperations(object):
             get_next, extract_data
         )
     list_all.metadata = {'url': '/azureKeyVaults'}  # type: ignore
-class ClassificationRulesOperations(object):
+class ClassificationRulesOperations:
     """ClassificationRulesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
@@ -1996,7 +1996,7 @@ class ClassificationRulesOperations(object):
 
     tag_classification_version.metadata = {'url': '/classificationrules/{classificationRuleName}/versions/{classificationRuleVersion}/:tag'}  # type: ignore
 
-class DataSourcesOperations(object):
+class DataSourcesOperations:
     """DataSourcesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
@@ -2577,7 +2577,7 @@ class DataSourcesOperations(object):
             get_next, extract_data
         )
     list_all.metadata = {'url': '/datasources'}  # type: ignore
-class FiltersOperations(object):
+class FiltersOperations:
     """FiltersOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
@@ -2770,7 +2770,7 @@ class FiltersOperations(object):
 
     create_or_update.metadata = {'url': '/datasources/{dataSourceName}/scans/{scanName}/filters/custom'}  # type: ignore
 
-class ScansOperations(object):
+class ScansOperations:
     """ScansOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
@@ -3330,7 +3330,7 @@ class ScansOperations(object):
             get_next, extract_data
         )
     list_by_data_source.metadata = {'url': '/datasources/{dataSourceName}/scans'}  # type: ignore
-class ScanResultOperations(object):
+class ScanResultOperations:
     """ScanResultOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
@@ -3658,7 +3658,7 @@ class ScanResultOperations(object):
             get_next, extract_data
         )
     list_scan_history.metadata = {'url': '/datasources/{dataSourceName}/scans/{scanName}/runs'}  # type: ignore
-class ScanRulesetsOperations(object):
+class ScanRulesetsOperations:
     """ScanRulesetsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
@@ -3989,7 +3989,7 @@ class ScanRulesetsOperations(object):
             get_next, extract_data
         )
     list_all.metadata = {'url': '/scanrulesets'}  # type: ignore
-class SystemScanRulesetsOperations(object):
+class SystemScanRulesetsOperations:
     """SystemScanRulesetsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
@@ -4410,7 +4410,7 @@ class SystemScanRulesetsOperations(object):
             get_next, extract_data
         )
     list_versions_by_data_source.metadata = {'url': '/systemScanRulesets/versions'}  # type: ignore
-class TriggersOperations(object):
+class TriggersOperations:
     """TriggersOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

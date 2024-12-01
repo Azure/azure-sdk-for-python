@@ -34,7 +34,7 @@ from azure.containerregistry.aio import ContainerRegistryClient
 from utilities import load_registry, get_authority, get_credential
 
 
-class DeleteImagesAsync(object):
+class DeleteImagesAsync:
     def __init__(self):
         load_dotenv(find_dotenv())
         self.endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]

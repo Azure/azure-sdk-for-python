@@ -37,7 +37,7 @@ import os
 import asyncio
 
 
-class CopyModelSampleAsync(object):
+class CopyModelSampleAsync:
 
     async def copy_model_async(self, custom_model_id):
         from azure.core.credentials import AzureKeyCredential

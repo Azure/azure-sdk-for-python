@@ -201,7 +201,7 @@ def build_create_or_update_request(
     )
 
 # fmt: on
-class EnvironmentContainersOperations(object):
+class EnvironmentContainersOperations:
     """EnvironmentContainersOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

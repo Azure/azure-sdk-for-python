@@ -259,7 +259,7 @@ def build_create_or_update_request(
     )
 
 # fmt: on
-class CapacityReservationGroupsOperations(object):
+class CapacityReservationGroupsOperations:
     """CapacityReservationGroupsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

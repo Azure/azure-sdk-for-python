@@ -15,7 +15,7 @@ _logger = logging.getLogger(__name__)
 # Core Utility
 
 
-class AbstractPreparer(object):
+class AbstractPreparer:
     _cache_lock = Lock()
     _resource_cache = {}
     ResourceCacheEntry = namedtuple("ResourceCacheEntry", "resource_name kwargs preparer")

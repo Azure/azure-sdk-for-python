@@ -60,7 +60,7 @@ def build_track_request(
 
 
 # fmt: on
-class AzureMonitorClientOperationsMixin(object):
+class AzureMonitorClientOperationsMixin:
 
     def track(
         self,

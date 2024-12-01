@@ -18,7 +18,7 @@ USAGE:
 import os
 
 
-class AutoMLNLPSamples(object):
+class AutoMLNLPSamples:
     def automl_nlp_jobs(self):
         # [START automl.text_classification]
         from azure.ai.ml import automl, Input

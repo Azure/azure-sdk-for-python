@@ -16,7 +16,7 @@ USAGE:
 """
 
 
-class InputOutputConfigurationOptions(object):
+class InputOutputConfigurationOptions:
     def ml_input_output_config(self):
         # [START configure_database]
         from azure.ai.ml.entities._inputs_outputs import Database

@@ -10,7 +10,7 @@ from azure.communication.callautomation import CallAutomationClient, Communicati
 sys.path.append("..")
 
 
-class CallAutomationCreateCallSample(object):
+class CallAutomationCreateCallSample:
 
     connection_string = os.getenv("COMMUNICATION_CONNECTION_STRING")
 

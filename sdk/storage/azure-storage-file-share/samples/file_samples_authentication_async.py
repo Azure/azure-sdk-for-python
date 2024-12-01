@@ -31,7 +31,7 @@ import sys
 from datetime import datetime, timedelta
 
 
-class FileAuthSamplesAsync(object):
+class FileAuthSamplesAsync:
 
     connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 

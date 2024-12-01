@@ -31,7 +31,7 @@ from . import http_constants
 # pylint: disable=protected-access
 
 
-class EndpointOperationType(object):
+class EndpointOperationType:
     NoneType = "None"
     ReadType = "Read"
     WriteType = "Write"
@@ -55,7 +55,7 @@ def get_endpoint_by_location(locations):
     return endpoints_by_location, parsed_locations
 
 
-class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
+class LocationCache:  # pylint: disable=too-many-public-methods,too-many-instance-attributes
     def current_time_millis(self):
         return int(round(time.time() * 1000))
 

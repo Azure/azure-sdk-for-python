@@ -34,7 +34,7 @@ from azure.containerregistry import ContainerRegistryClient
 from utilities import load_registry
 
 
-class ListTags(object):
+class ListTags:
     def __init__(self):
         load_dotenv(find_dotenv())
 

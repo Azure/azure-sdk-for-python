@@ -48,7 +48,7 @@ _LAST_UNSUPPRESSED_SPAN = "LAST_UNSUPPRESSED_SPAN"
 _ERROR_SPAN_ATTRIBUTE = "error.type"
 
 
-class OpenTelemetrySpan(HttpSpanMixin, object):
+class OpenTelemetrySpan(HttpSpanMixin):
     """OpenTelemetry plugin for Azure client libraries.
 
     :param span: The OpenTelemetry span to wrap, or nothing to create a new one.

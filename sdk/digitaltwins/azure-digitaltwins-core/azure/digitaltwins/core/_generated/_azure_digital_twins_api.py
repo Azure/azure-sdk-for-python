@@ -24,7 +24,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.rest import HttpRequest, HttpResponse
 
-class AzureDigitalTwinsAPI(object):
+class AzureDigitalTwinsAPI:
     """A service for managing and querying digital twins and digital twin models.
 
     :ivar digital_twin_models: DigitalTwinModelsOperations operations

@@ -18,7 +18,7 @@ from ._models import MetricsQueryResult, MetricDefinition, MetricNamespace
 from ._helpers import get_authentication_policy, construct_iso8601
 
 
-class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-keyword
+class MetricsQueryClient:  # pylint: disable=client-accepts-api-version-keyword
     """MetricsQueryClient should be used to collect numeric data from monitored resources into a
     time series database. Metrics are numerical values that are collected at regular intervals and
     describe some aspect of a system at a particular time. Metrics are lightweight and capable of

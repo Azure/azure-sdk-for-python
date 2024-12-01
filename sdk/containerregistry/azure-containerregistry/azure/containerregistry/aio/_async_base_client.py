@@ -23,7 +23,7 @@ class ContainerRegistryApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     V0_PREVIEW = ""
 
 
-class ContainerRegistryBaseClient(object):
+class ContainerRegistryBaseClient:
     """Base class for ContainerRegistryClient
 
     :param endpoint: Azure Container Registry endpoint

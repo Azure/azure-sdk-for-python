@@ -64,7 +64,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
     def _get_file_reference(self):
         return self.get_resource_name(TEST_FILE_PREFIX)
 
-    class NonSeekableFile(object):
+    class NonSeekableFile:
         def __init__(self, wrapped_file):
             self.wrapped_file = wrapped_file
 

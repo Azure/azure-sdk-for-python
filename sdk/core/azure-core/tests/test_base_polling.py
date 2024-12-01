@@ -356,7 +356,7 @@ def test_post_fail(pipeline_client_builder, deserialization_cb, http_request, ht
         result = poll.result()
 
 
-class TestBasePolling(object):
+class TestBasePolling:
 
     convert = re.compile("([a-z0-9])([A-Z])")
 

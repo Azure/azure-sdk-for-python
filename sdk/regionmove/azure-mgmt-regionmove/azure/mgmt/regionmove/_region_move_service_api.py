@@ -25,7 +25,7 @@ from .operations import OperationsDiscoveryOperations
 from . import models
 
 
-class RegionMoveServiceAPI(object):
+class RegionMoveServiceAPI:
     """A first party Azure service orchestrating the move of Azure resources from one Azure region to another or between zones within a region.
 
     :ivar move_collections: MoveCollectionsOperations operations

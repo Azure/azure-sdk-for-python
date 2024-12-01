@@ -31,7 +31,7 @@ import os
 import asyncio
 
 
-class TrainModelWithoutLabelsSampleAsync(object):
+class TrainModelWithoutLabelsSampleAsync:
 
     async def train_model_without_labels(self):
         # [START training_async]

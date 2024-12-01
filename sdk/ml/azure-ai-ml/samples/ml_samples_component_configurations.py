@@ -18,7 +18,7 @@ USAGE:
 import os
 
 
-class ComponentConfigurationOptions(object):
+class ComponentConfigurationOptions:
     def ml_component_config(self):
         from azure.ai.ml import MLClient
         from azure.ai.ml.entities import Environment

@@ -25,7 +25,7 @@ import os
 import sys
 
 
-class QueueHelloWorldSamples(object):
+class QueueHelloWorldSamples:
 
     connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 

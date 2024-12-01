@@ -141,7 +141,7 @@ class LegacyMgmtManagementCertificateTest(LegacyMgmtTestCase):
             self._management_certificate_exists(local_cert.thumbprint))
 
 
-class LocalCertificate(object):
+class LocalCertificate:
 
     def __init__(self, thumbprint='', data='', public_key=''):
         self.thumbprint = thumbprint

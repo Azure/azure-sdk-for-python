@@ -257,7 +257,7 @@ def build_create_or_update_request_initial(
     )
 
 # fmt: on
-class InferenceEndpointsOperations(object):
+class InferenceEndpointsOperations:
     """InferenceEndpointsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

@@ -223,7 +223,7 @@ def build_query_by_id_request(
     )
 
 # fmt: on
-class AssetsOperations(object):
+class AssetsOperations:
     """AssetsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

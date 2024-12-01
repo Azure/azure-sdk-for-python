@@ -269,7 +269,7 @@ def build_backfill_request_initial(
     )
 
 # fmt: on
-class FeaturesetVersionsOperations(object):
+class FeaturesetVersionsOperations:
     """FeaturesetVersionsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

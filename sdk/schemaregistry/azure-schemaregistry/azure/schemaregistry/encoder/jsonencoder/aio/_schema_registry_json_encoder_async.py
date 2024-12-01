@@ -57,7 +57,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class JsonSchemaEncoder(object):
+class JsonSchemaEncoder:
     """
     JsonSchemaEncoder provides the ability to encode and decode content according to the given JSON schema.
      It will check the registry for the pre-registered schema and cache the schema locally.

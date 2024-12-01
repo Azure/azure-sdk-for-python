@@ -31,7 +31,7 @@ _LOGGER = logging.getLogger(__name__)
 __all__ = ["NULL", "AzureJSONEncoder", "Model", "rest_field", "rest_discriminator"]
 
 
-class _Null(object):
+class _Null:
     """To create a Falsy object"""
 
     def __bool__(self):

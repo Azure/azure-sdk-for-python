@@ -56,7 +56,7 @@ def build_registry_management_non_workspace_request(
     )
 
 # fmt: on
-class RegistryManagementNonWorkspaceOperations(object):
+class RegistryManagementNonWorkspaceOperations:
     """RegistryManagementNonWorkspaceOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

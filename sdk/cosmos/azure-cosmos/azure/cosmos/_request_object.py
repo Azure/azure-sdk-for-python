@@ -23,7 +23,7 @@
 """
 from typing import Optional
 
-class RequestObject(object):
+class RequestObject:
     def __init__(self, resource_type: str, operation_type: str, endpoint_override: Optional[str] = None) -> None:
         self.resource_type = resource_type
         self.operation_type = operation_type

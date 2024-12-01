@@ -803,7 +803,7 @@ class AccessPolicy(GenAccessPolicy):
         self.permission = permission
 
 
-class ContainerSasPermissions(object):
+class ContainerSasPermissions:
     """ContainerSasPermissions class to be used with the
     :func:`~azure.storage.blob.generate_container_sas` function and
     for the AccessPolicies used with
@@ -871,7 +871,7 @@ class ContainerSasPermissions(object):
         return parsed
 
 
-class BlobSasPermissions(object):
+class BlobSasPermissions:
     """BlobSasPermissions class to be used with the
     :func:`~azure.storage.blob.generate_blob_sas` function.
 
@@ -940,7 +940,7 @@ class BlobSasPermissions(object):
         return parsed
 
 
-class CustomerProvidedEncryptionKey(object):
+class CustomerProvidedEncryptionKey:
     """
     All data in Azure Storage is encrypted at-rest using an account-level encryption key.
     In versions 2018-06-17 and newer, you can manage the key used to encrypt blob contents
@@ -968,7 +968,7 @@ class CustomerProvidedEncryptionKey(object):
         self.algorithm = 'AES256'
 
 
-class ContainerEncryptionScope(object):
+class ContainerEncryptionScope:
     """The default encryption scope configuration for a container.
 
     This scope is used implicitly for all future writes within the container,
@@ -999,7 +999,7 @@ class ContainerEncryptionScope(object):
         return None
 
 
-class DelimitedJsonDialect(object):
+class DelimitedJsonDialect:
     """Defines the input or output JSON serialization for a blob data query.
 
     :keyword str delimiter: The line separator character, default value is '\n'
@@ -1009,7 +1009,7 @@ class DelimitedJsonDialect(object):
         self.delimiter = kwargs.pop('delimiter', '\n')
 
 
-class DelimitedTextDialect(object):
+class DelimitedTextDialect:
     """Defines the input or output delimited (CSV) serialization for a blob query request.
 
     :keyword str delimiter:
@@ -1086,7 +1086,7 @@ class ObjectReplicationRule(DictMixin):
         self.status = kwargs.pop('status', None)
 
 
-class BlobQueryError(object):
+class BlobQueryError:
     """The error happened during quick query operation.
 
     :ivar str error:

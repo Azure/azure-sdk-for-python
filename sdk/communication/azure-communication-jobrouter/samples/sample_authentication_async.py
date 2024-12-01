@@ -20,7 +20,7 @@ import os
 import asyncio
 
 
-class RouterClientAuthenticationSamplesAsync(object):
+class RouterClientAuthenticationSamplesAsync:
     connection_string = os.environ["AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING"]
 
     async def create_router_client(self):

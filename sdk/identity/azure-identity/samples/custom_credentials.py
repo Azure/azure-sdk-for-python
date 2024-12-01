@@ -12,7 +12,7 @@ from azure.identity import AuthenticationRequiredError, AzureAuthorityHosts
 import msal
 
 
-class StaticTokenCredential(object):
+class StaticTokenCredential:
     """Authenticates with a previously-acquired access token
 
     Note that an access token is valid only for certain resources and eventually expires. This credential is therefore
@@ -35,7 +35,7 @@ class StaticTokenCredential(object):
         return self._token
 
 
-class MsalTokenCredential(object):
+class MsalTokenCredential:
     """Uses an MSAL client directly to obtain access tokens with an interactive flow."""
 
     def __init__(self, tenant_id: str, client_id: str) -> None:

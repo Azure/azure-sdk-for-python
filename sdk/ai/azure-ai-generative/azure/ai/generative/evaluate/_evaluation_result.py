@@ -7,7 +7,7 @@ from typing import Dict, Optional
 from azure.ai.generative.evaluate._utils import _get_ai_studio_url
 
 
-class EvaluationResult(object):
+class EvaluationResult:
 
     def __init__(self, metrics_summary: Dict[str, float], artifacts: Dict[str, str], **kwargs):
         self._metrics_summary = metrics_summary

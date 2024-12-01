@@ -329,7 +329,7 @@ def build_resume_request_initial(
     )
 
 # fmt: on
-class LabelingJobsOperations(object):
+class LabelingJobsOperations:
     """LabelingJobsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

@@ -336,7 +336,7 @@ async def test_post_fail(async_pipeline_client_builder, deserialization_cb, http
         result = await poll
 
 
-class TestBasePolling(object):
+class TestBasePolling:
 
     convert = re.compile("([a-z0-9])([A-Z])")
 

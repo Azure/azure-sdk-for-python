@@ -227,7 +227,7 @@ def build_update_request(
         **kwargs
     )
 
-class CertificatesOperations(object):
+class CertificatesOperations:
     """CertificatesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

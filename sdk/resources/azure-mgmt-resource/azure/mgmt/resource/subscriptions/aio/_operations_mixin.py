@@ -15,7 +15,7 @@ from typing import Any, IO, Optional, Union
 from .. import models as _models
 
 
-class SubscriptionClientOperationsMixin(object):
+class SubscriptionClientOperationsMixin:
 
     async def check_resource_name(
         self,

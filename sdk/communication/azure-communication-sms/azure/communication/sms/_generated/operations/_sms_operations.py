@@ -28,7 +28,7 @@ if TYPE_CHECKING:
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 
-class SmsOperations(object):
+class SmsOperations:
     """SmsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

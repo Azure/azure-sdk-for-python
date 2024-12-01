@@ -26,7 +26,7 @@ Cosmos database service.
 from . import http_constants
 
 
-class ResourceThrottleRetryPolicy(object):
+class ResourceThrottleRetryPolicy:
     def __init__(self, max_retry_attempt_count, fixed_retry_interval_in_milliseconds, max_wait_time_in_seconds):
         self._max_retry_attempt_count = max_retry_attempt_count
         self._fixed_retry_interval_in_milliseconds = fixed_retry_interval_in_milliseconds

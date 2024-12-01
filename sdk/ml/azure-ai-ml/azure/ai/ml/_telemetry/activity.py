@@ -32,7 +32,7 @@ from azure.core.exceptions import HttpResponseError
 IS_IN_CI_PIPELINE = _str_to_bool(os.environ.get("IS_IN_CI_PIPELINE", "False"))
 
 
-class ActivityType(object):
+class ActivityType:
     """The type of activity (code) monitored.
 
     The default type is "PublicAPI".
@@ -43,7 +43,7 @@ class ActivityType(object):
     CLIENTPROXY = "ClientProxy"  # an outgoing service API call
 
 
-class ActivityCompletionStatus(object):
+class ActivityCompletionStatus:
     """The activity (code) completion status, success, or failure."""
 
     SUCCESS = "Success"

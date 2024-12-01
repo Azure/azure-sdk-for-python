@@ -40,7 +40,7 @@ def format_bounding_box(bounding_box):
     return ", ".join(["[{}, {}]".format(p.x, p.y) for p in bounding_box])
 
 
-class GetBoundingBoxesSampleAsync(object):
+class GetBoundingBoxesSampleAsync:
 
     async def get_bounding_boxes(self, custom_model_id):
         from azure.core.credentials import AzureKeyCredential

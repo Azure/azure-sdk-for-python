@@ -27,7 +27,7 @@ from os import environ
 GLOBAL_PROVISIONING_HOST = "global.azure-devices-provisioning.net"
 
 
-class DeviceRegistrationSamples(object):
+class DeviceRegistrationSamples:
     connection_string = environ["AZURE_DPS_CONNECTION_STRING"]
     id_scope = environ["AZURE_DPS_ID_SCOPE"]
     enrollment_group_id = "sample_symmetric_enrollment_group"

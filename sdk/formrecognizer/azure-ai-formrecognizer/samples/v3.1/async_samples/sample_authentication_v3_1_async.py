@@ -34,7 +34,7 @@ import os
 import asyncio
 
 
-class AuthenticationSampleAsync(object):
+class AuthenticationSampleAsync:
 
     url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"
 

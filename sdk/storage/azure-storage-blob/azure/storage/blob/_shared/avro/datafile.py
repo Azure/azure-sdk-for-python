@@ -72,7 +72,7 @@ class DataFileException(schema.AvroException):
 # ------------------------------------------------------------------------------
 
 
-class DataFileReader(object):  # pylint: disable=too-many-instance-attributes
+class DataFileReader:  # pylint: disable=too-many-instance-attributes
     """Read files written by DataFileWriter."""
 
     def __init__(self, reader, datum_reader, **kwargs):

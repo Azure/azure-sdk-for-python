@@ -329,7 +329,7 @@ def build_get_dataset_by_name_request(
     )
 
 # fmt: on
-class DatasetV2Operations(object):
+class DatasetV2Operations:
     """DatasetV2Operations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

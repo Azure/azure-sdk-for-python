@@ -231,7 +231,7 @@ def build_delete_request(
     )
 
 # fmt: on
-class DigitalTwinModelsOperations(object):
+class DigitalTwinModelsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.

@@ -16,7 +16,7 @@ import logging
 _LOGGER = logging.getLogger(__name__)
 
 
-class PseudoParser(object):
+class PseudoParser:
     def __init__(self, resolver):
         """
         :param resolver: The resolver for the parser to use to resolve model dependencies

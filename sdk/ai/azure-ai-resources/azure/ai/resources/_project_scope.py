@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 @dataclass
-class OperationScope(object):
+class OperationScope:
 
     subscription_id: str
     resource_group_name: str

@@ -162,7 +162,7 @@ enrollment_list = [
 ]
 
 
-class TestIndividualEnrollmentGet(object):
+class TestIndividualEnrollmentGet:
     @pytest.fixture()
     def service_client_get(self, mocked_response):
         mocked_response.get(
@@ -194,7 +194,7 @@ class TestIndividualEnrollmentGet(object):
             sdk_client.enrollment.get(id=create_random_name())
 
 
-class TestIndividualEnrollmentCreate(object):
+class TestIndividualEnrollmentCreate:
     @pytest.fixture()
     def service_client(self, mocked_response):
         mocked_response.put(
@@ -237,7 +237,7 @@ class TestIndividualEnrollmentCreate(object):
             )
 
 
-class TestIndividualEnrollmentDelete(object):
+class TestIndividualEnrollmentDelete:
     @pytest.fixture()
     def service_client(self, mocked_response):
         mocked_response.delete(
@@ -270,7 +270,7 @@ class TestIndividualEnrollmentDelete(object):
             sdk_client.enrollment.delete(id=enrollment_id)
 
 
-class TestIndividualEnrollmentQuery(object):
+class TestIndividualEnrollmentQuery:
     @pytest.fixture()
     def service_client(self, mocked_response):
         mocked_response.post(
@@ -308,7 +308,7 @@ class TestIndividualEnrollmentQuery(object):
             assert [enrollment for enrollment in query]
 
 
-class TestIndividualEnrollmentAttestation(object):
+class TestIndividualEnrollmentAttestation:
     @pytest.fixture()
     def service_client(self, mocked_response):
         mocked_response.post(
@@ -345,7 +345,7 @@ class TestIndividualEnrollmentAttestation(object):
             sdk_client.enrollment.get_attestation_mechanism(id=enrollment_id)
 
 
-class TestIndividualEnrollmentBulk(object):
+class TestIndividualEnrollmentBulk:
     @pytest.fixture()
     def service_client(self, mocked_response):
         mocked_response.post(

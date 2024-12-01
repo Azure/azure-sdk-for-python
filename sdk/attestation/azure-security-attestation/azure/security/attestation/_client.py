@@ -30,7 +30,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AttestationClient(object):
+class AttestationClient:
     # pylint: disable=protected-access
     """Provides access to the Attestation family of APIs for trusted environment attestation.
 

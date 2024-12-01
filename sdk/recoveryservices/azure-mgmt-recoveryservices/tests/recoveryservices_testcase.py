@@ -20,7 +20,7 @@ from azure.mgmt.recoveryservices.models import (Vault, Sku, SkuName, VaultProper
                                                 )
 
 
-class MgmtRecoveryServicesTestDefinition(object):
+class MgmtRecoveryServicesTestDefinition:
     def __init__(self, subscription_id, vault_name, vault_rg_name, location):
         self.subscription_id = subscription_id
         self.vault_rg_name = vault_rg_name
@@ -32,7 +32,7 @@ class MgmtRecoveryServicesTestDefinition(object):
         return self.resource_name
 
 
-class MgmtRecoveryServicesTestHelper(object):
+class MgmtRecoveryServicesTestHelper:
 
     def __init__(self, test_context):
         self.context = test_context

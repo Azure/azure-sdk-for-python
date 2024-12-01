@@ -458,7 +458,7 @@ def build_deployment_settings_request(
     )
 
 # fmt: on
-class ModelsOperations(object):
+class ModelsOperations:
     """ModelsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

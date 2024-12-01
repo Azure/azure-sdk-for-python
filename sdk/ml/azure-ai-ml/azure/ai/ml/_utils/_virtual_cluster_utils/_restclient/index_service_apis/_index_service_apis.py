@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from azure.core.rest import HttpRequest, HttpResponse
 
 
-class IndexServiceAPIs(object):
+class IndexServiceAPIs:
     """IndexServiceAPIs.
 
     :ivar index_entities: IndexEntitiesOperations operations

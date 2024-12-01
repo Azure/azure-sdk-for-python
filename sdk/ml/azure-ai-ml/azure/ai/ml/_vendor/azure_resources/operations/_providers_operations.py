@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 
-class ProvidersOperations(object):
+class ProvidersOperations:
     """ProvidersOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

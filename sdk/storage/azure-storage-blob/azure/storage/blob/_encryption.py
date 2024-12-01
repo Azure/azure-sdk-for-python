@@ -85,7 +85,7 @@ def _validate_key_encryption_key_wrap(kek: KeyEncryptionKey):
         raise AttributeError(_ERROR_OBJECT_INVALID.format('key encryption key', 'get_key_wrap_algorithm'))
 
 
-class StorageEncryptionMixin(object):
+class StorageEncryptionMixin:
     def _configure_encryption(self, kwargs: Dict[str, Any]):
         self.require_encryption = kwargs.get("require_encryption", False)
         self.encryption_version = kwargs.get("encryption_version", "1.0")
@@ -98,7 +98,7 @@ class StorageEncryptionMixin(object):
                           "specified using the 'encryption_version' keyword.")
 
 
-class _EncryptionAlgorithm(object):
+class _EncryptionAlgorithm:
     """
     Specifies which client encryption algorithm is used.
     """

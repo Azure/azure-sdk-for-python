@@ -623,7 +623,7 @@ def build_batch_create_empty_artifacts_by_experiment_id_request(
     )
 
 # fmt: on
-class RunArtifactsOperations(object):
+class RunArtifactsOperations:
     """RunArtifactsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

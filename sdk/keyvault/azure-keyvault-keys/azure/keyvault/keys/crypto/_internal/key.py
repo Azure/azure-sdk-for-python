@@ -9,7 +9,7 @@ from typing import Any, FrozenSet
 from .algorithm import Algorithm
 
 
-class Key(object, metaclass=ABCMeta):
+class Key(metaclass=ABCMeta):
     _supported_encryption_algorithms: FrozenSet[Any] = frozenset([])
     _supported_key_wrap_algorithms: FrozenSet[Any] = frozenset([])
     _supported_signature_algorithms: FrozenSet[Any] = frozenset([])

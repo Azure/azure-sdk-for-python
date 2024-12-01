@@ -21,7 +21,7 @@ import os
 import time
 
 
-class RouterJobSamples(object):
+class RouterJobSamples:
     connection_string = os.environ["AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING"]
 
     _job_id = "sample_job"

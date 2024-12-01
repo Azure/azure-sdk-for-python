@@ -26,7 +26,7 @@ USAGE:
 import os
 
 
-class RecognizeIdDocumentsSample(object):
+class RecognizeIdDocumentsSample:
 
     def recognize_identity_documents(self):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),

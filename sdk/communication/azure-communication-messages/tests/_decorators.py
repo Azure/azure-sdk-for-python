@@ -11,7 +11,7 @@ from devtools_testutils import is_live, is_live_and_not_recording, trim_kwargs_f
 from azure.communication.messages._shared.utils import parse_connection_str
 
 
-class MessagesPreparers(object):
+class MessagesPreparers:
 
     @staticmethod
     def messages_test_decorator(func: Callable[[], object], **kwargs: Any):

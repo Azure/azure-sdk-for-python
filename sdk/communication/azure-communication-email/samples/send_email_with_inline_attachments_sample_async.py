@@ -29,7 +29,7 @@ from azure.communication.email.aio import EmailClient
 sys.path.append("..")
 
 
-class EmailWithAttachmentSampleAsync(object):
+class EmailWithAttachmentSampleAsync:
 
     connection_string = os.getenv("COMMUNICATION_CONNECTION_STRING_EMAIL")
     sender_address = os.getenv("SENDER_ADDRESS")

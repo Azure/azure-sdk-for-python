@@ -8,7 +8,7 @@ from abc import abstractmethod, ABCMeta
 from azure.cosmos._execution_context.document_producer import _OrderByHelper
 
 
-class _Aggregator(object):
+class _Aggregator:
     __metaclass__ = ABCMeta
 
     @abstractmethod

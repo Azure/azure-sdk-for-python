@@ -24,7 +24,7 @@ else:
 JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
 
 
-class WebSiteManagementClientOperationsMixin(object):
+class WebSiteManagementClientOperationsMixin:
 
     async def check_name_availability(
         self,

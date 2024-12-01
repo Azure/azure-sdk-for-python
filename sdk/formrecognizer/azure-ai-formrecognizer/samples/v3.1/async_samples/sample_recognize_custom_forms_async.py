@@ -34,7 +34,7 @@ import os
 import asyncio
 
 
-class RecognizeCustomFormsSampleAsync(object):
+class RecognizeCustomFormsSampleAsync:
 
     async def recognize_custom_forms(self, custom_model_id):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),

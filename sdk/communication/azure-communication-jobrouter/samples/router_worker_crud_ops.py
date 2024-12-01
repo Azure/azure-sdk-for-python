@@ -19,7 +19,7 @@ USAGE:
 import os
 
 
-class RouterWorkerSamples(object):
+class RouterWorkerSamples:
     connection_string = os.environ["AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING"]
 
     _worker_id = "sample_worker"

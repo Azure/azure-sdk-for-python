@@ -15,7 +15,7 @@ from msrest.exceptions import HttpOperationError
 from .. import models
 
 
-class EventsOperations(object):
+class EventsOperations:
     """EventsOperations operations.
 
     :param client: Client for service requests.

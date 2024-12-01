@@ -103,7 +103,7 @@ class ChangeFeedFetcherV1(ChangeFeedFetcher):
         return fetched_items
 
 
-class ChangeFeedFetcherV2(object):
+class ChangeFeedFetcherV2:
     """Internal class for change feed fetch v2 implementation.
     """
 

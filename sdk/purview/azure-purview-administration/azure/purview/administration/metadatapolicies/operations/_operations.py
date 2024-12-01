@@ -154,7 +154,7 @@ def build_metadata_policy_get_request(
     )
 
 # fmt: on
-class MetadataRolesOperations(object):
+class MetadataRolesOperations:
     """MetadataRolesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
@@ -294,7 +294,7 @@ class MetadataRolesOperations(object):
             get_next, extract_data
         )
     list.metadata = {'url': '/metadataRoles'}  # type: ignore
-class MetadataPolicyOperations(object):
+class MetadataPolicyOperations:
     """MetadataPolicyOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

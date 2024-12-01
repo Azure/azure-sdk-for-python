@@ -281,7 +281,7 @@ def build_list_secrets_request(
     )
 
 # fmt: on
-class WorkspaceConnectionsOperations(object):
+class WorkspaceConnectionsOperations:
     """WorkspaceConnectionsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

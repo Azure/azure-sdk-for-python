@@ -37,7 +37,7 @@ from azure.communication.rooms import RoomParticipant, ParticipantRole
 sys.path.append("..")
 
 
-class RoomsSample(object):
+class RoomsSample:
 
     def setUp(self):
         # [START auth_from_connection_string_async]

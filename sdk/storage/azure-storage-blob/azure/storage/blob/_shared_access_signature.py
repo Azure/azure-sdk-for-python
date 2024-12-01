@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from ..blob import AccountSasPermissions, BlobSasPermissions, ContainerSasPermissions, ResourceTypes
 
 
-class BlobQueryStringConstants(object):
+class BlobQueryStringConstants:
     SIGNED_TIMESTAMP = 'snapshot'
 
 

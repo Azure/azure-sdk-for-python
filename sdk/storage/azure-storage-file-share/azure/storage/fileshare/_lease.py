@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from azure.storage.fileshare import ShareClient, ShareFileClient
 
 
-class ShareLeaseClient(object):  # pylint: disable=client-accepts-api-version-keyword
+class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
     """Creates a new ShareLeaseClient.
 
     This client provides lease operations on a ShareClient or ShareFileClient.

@@ -68,7 +68,7 @@ def build_query_twins_request(
     )
 
 # fmt: on
-class QueryOperations(object):
+class QueryOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.

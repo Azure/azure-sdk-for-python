@@ -15,14 +15,14 @@
 import sys
 
 
-class WindowsAzureData(object):
+class WindowsAzureData:
 
     ''' This is the base of data class.
     It is only used to check whether it is instance or not. '''
     pass
 
 
-class Feed(object):
+class Feed:
     pass
 
 

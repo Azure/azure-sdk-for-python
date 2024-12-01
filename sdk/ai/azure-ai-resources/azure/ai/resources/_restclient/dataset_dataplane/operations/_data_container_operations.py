@@ -163,7 +163,7 @@ def build_modify_data_container_request(
     )
 
 # fmt: on
-class DataContainerOperations(object):
+class DataContainerOperations:
     """DataContainerOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

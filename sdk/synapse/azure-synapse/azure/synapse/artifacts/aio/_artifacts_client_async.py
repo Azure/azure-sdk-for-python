@@ -30,7 +30,7 @@ from .operations_async import NotebookOperations
 from .. import models
 
 
-class ArtifactsClient(object):
+class ArtifactsClient:
     """ArtifactsClient.
 
     :ivar linked_service: LinkedServiceOperations operations

@@ -44,7 +44,7 @@ compute_name_2 = f"compute-{randint(1, 1000)}-sample"
 ci_name = f"ci-{randint(1, 1000)}-sample"
 
 
-class ComputeConfigurationOptions(object):
+class ComputeConfigurationOptions:
     @handle_resource_exists_error
     def ml_compute_config_setup_0(self):
         # [START compute_instance]

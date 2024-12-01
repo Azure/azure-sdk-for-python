@@ -100,7 +100,7 @@ def test_get_function_and_class_name(http_request):
 
 
 @pytest.mark.usefixtures("fake_span")
-class TestDecorator(object):
+class TestDecorator:
     @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
     def test_decorator_tracing_attr(self, http_request):
         with FakeSpan(name="parent") as parent:

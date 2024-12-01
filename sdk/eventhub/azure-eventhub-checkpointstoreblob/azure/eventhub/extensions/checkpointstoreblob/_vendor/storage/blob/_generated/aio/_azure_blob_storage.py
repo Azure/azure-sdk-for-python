@@ -22,7 +22,7 @@ from .operations import BlockBlobOperations
 from .. import models
 
 
-class AzureBlobStorage(object):
+class AzureBlobStorage:
     """AzureBlobStorage.
 
     :ivar service: ServiceOperations operations

@@ -28,7 +28,7 @@ def _get_blob_url(container_sas_url, container, file_name):
     blob_sas_url = url[0] + url[1]
     return blob_sas_url
 
-class FakeTokenCredential(object):
+class FakeTokenCredential:
     """Protocol for classes able to provide OAuth tokens.
     :param str scopes: Lets you specify the type of access needed.
     """

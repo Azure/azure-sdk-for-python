@@ -12,7 +12,7 @@ from . import sign_string, url_quote
 
 # cspell:ignoreRegExp rsc.
 # cspell:ignoreRegExp s..?id
-class QueryStringConstants(object):
+class QueryStringConstants:
     SIGNED_SIGNATURE = 'sig'
     SIGNED_PERMISSION = 'sp'
     SIGNED_START = 'st'
@@ -85,7 +85,7 @@ class QueryStringConstants(object):
         ]
 
 
-class SharedAccessSignature(object):
+class SharedAccessSignature:
     '''
     Provides a factory for creating account access
     signature tokens with an account name and account key. Users can either
@@ -174,7 +174,7 @@ class SharedAccessSignature(object):
         return sas.get_token()
 
 
-class _SharedAccessHelper(object):
+class _SharedAccessHelper:
     def __init__(self):
         self.query_dict = {}
         self.string_to_sign = ""

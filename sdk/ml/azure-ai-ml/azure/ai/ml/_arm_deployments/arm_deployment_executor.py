@@ -35,7 +35,7 @@ initialize_logger_info(module_logger, terminator="")
 
 
 # pylint: disable=too-many-instance-attributes
-class ArmDeploymentExecutor(object):
+class ArmDeploymentExecutor:
     def __init__(
         self,
         credentials: TokenCredential,

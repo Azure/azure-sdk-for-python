@@ -194,7 +194,7 @@ def build_create_or_update_request(
     )
 
 # fmt: on
-class DataContainersOperations(object):
+class DataContainersOperations:
     """DataContainersOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

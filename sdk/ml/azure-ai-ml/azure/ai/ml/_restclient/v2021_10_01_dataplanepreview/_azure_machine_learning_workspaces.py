@@ -38,7 +38,7 @@ if TYPE_CHECKING:
     from azure.core.rest import HttpRequest, HttpResponse
 
 
-class AzureMachineLearningWorkspaces(object):
+class AzureMachineLearningWorkspaces:
     """AzureMachineLearningWorkspaces.
 
     :ivar code_containers: CodeContainersOperations operations

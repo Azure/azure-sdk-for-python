@@ -26,7 +26,7 @@ USAGE:
 import os
 
 
-class RecognizeBusinessCardSample(object):
+class RecognizeBusinessCardSample:
 
     def recognize_business_card(self):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),

@@ -32,7 +32,7 @@ from azure.ai.formrecognizer import FormField, RecognizedForm
 from typing import List
 
 
-class Receipt(object):
+class Receipt:
     """Creates a strongly-typed Receipt class from the fields returned in a RecognizedForm.
     If a specific field is not found on the receipt, it will return None.
 
@@ -61,7 +61,7 @@ class Receipt(object):
         return [ReceiptItem(item) for item in items.value]
 
 
-class ReceiptItem(object):
+class ReceiptItem:
     """Creates a strongly-typed ReceiptItem for every receipt item found in a RecognizedForm
     """
 
@@ -72,7 +72,7 @@ class ReceiptItem(object):
         self.total_price: FormField  = item.value.get("TotalPrice", FormField())
 
 
-class StronglyTypedRecognizedFormSampleAsync(object):
+class StronglyTypedRecognizedFormSampleAsync:
 
     async def strongly_typed_receipt_async(self):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "..", "./sample_forms/receipt/contoso-allinone.jpg"))

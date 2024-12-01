@@ -295,7 +295,7 @@ def build_remove_regions_request_initial(
     )
 
 # fmt: on
-class RegistriesOperations(object):
+class RegistriesOperations:
     """RegistriesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

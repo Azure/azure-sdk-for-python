@@ -11,7 +11,7 @@ from corehttp.exceptions import HttpResponseError
 import pytest
 
 
-class TestPaging(object):
+class TestPaging:
     def test_basic_paging(self):
         def get_next(continuation_token=None):
             """Simplify my life and return JSON and not response, but should be response."""

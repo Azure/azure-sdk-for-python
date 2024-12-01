@@ -30,7 +30,7 @@ class Score(collections.namedtuple("Score", ["precision", "recall", "fmeasure"])
     """Tuple containing precision, recall, and f-measure values."""
 
 
-class BaseScorer(object, metaclass=abc.ABCMeta):
+class BaseScorer(metaclass=abc.ABCMeta):
     """Base class for Scorer objects."""
 
     @abc.abstractmethod

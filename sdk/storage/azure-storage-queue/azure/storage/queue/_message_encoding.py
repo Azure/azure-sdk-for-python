@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
 
 
-class MessageEncodePolicy(object):
+class MessageEncodePolicy:
 
     require_encryption: bool
     """Indicates whether encryption is required or not."""
@@ -56,7 +56,7 @@ class MessageEncodePolicy(object):
         raise NotImplementedError("Must be implemented by child class.")
 
 
-class MessageDecodePolicy(object):
+class MessageDecodePolicy:
 
     require_encryption: bool = False
     """Indicates whether encryption is required or not."""

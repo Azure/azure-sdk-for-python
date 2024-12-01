@@ -18,7 +18,7 @@ import os
 import sys
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
 
-class BlobServiceSamples(object):
+class BlobServiceSamples:
 
     connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 

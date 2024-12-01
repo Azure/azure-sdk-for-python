@@ -18,7 +18,7 @@ USAGE:
 import os
 
 
-class PipelineConfigurationOptions(object):
+class PipelineConfigurationOptions:
     def ml_pipeline_config(self):
         from azure.ai.ml import Input, MLClient
         from azure.ai.ml.constants._common import AssetTypes

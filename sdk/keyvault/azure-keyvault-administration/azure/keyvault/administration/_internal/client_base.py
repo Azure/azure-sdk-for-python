@@ -64,7 +64,7 @@ def _format_api_version(request: HttpRequest, api_version: str) -> HttpRequest:
     return request_copy
 
 
-class KeyVaultClientBase(object):
+class KeyVaultClientBase:
     # pylint:disable=protected-access
     def __init__(self, vault_url: str, credential: TokenCredential, **kwargs: Any) -> None:
         if not credential:

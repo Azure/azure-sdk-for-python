@@ -162,7 +162,7 @@ def build_get_request(
     )
 
 # fmt: on
-class BatchJobDeploymentOperations(object):
+class BatchJobDeploymentOperations:
     """BatchJobDeploymentOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

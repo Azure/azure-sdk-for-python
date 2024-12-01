@@ -257,7 +257,7 @@ def build_cancel_request_initial(
     )
 
 # fmt: on
-class JobsOperations(object):
+class JobsOperations:
     """JobsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

@@ -22,7 +22,7 @@ class AnonymousAccessCredential(TokenCredential):
         raise ValueError("This credential cannot be used to obtain access tokens.")
 
 
-class AnonymousACRExchangeClient(object):
+class AnonymousACRExchangeClient:
     """Class for handling oauth authentication requests
 
     :param endpoint: Azure Container Registry endpoint

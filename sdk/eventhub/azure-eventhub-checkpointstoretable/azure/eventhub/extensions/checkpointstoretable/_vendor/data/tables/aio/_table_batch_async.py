@@ -24,7 +24,7 @@ if TYPE_CHECKING:
     from .._generated import models
 
 
-class TableBatchOperations(object):
+class TableBatchOperations:
     """
     This is the class that is used for batch operations for the data tables
     service.

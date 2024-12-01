@@ -117,7 +117,7 @@ def test_timeout(get_token_method):
 
     timeout = 0.01
 
-    class GuaranteedTimeout(AuthCodeRedirectServer, object):
+    class GuaranteedTimeout(AuthCodeRedirectServer):
         def handle_request(self):
             time.sleep(timeout + 0.01)
             super(GuaranteedTimeout, self).handle_request()

@@ -324,7 +324,7 @@ def build_list_secrets_request(
         **kwargs
     )
 
-class ContainerAppsOperations(object):
+class ContainerAppsOperations:
     """ContainerAppsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

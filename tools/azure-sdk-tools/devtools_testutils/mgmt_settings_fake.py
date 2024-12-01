@@ -44,7 +44,7 @@ def get_azure_core_credentials(**kwargs):
     # Needed to play recorded tests
     from azure.core.credentials import AccessToken
 
-    class FakeCredential(object):
+    class FakeCredential:
         def get_token(self, *scopes, **kwargs):
             return AccessToken("fake_token", 2527537086)
 

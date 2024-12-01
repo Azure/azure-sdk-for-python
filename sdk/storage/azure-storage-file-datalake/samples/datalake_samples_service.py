@@ -25,7 +25,7 @@ USAGE:
 import os
 
 
-class DataLakeServiceSamples(object):
+class DataLakeServiceSamples:
 
     connection_string = os.environ['AZURE_STORAGE_CONNECTION_STRING']
     account_name = os.getenv('STORAGE_ACCOUNT_NAME', "")

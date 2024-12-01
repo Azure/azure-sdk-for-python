@@ -310,7 +310,7 @@ def build_create_or_get_start_pending_upload_request(
     )
 
 # fmt: on
-class RegistryModelVersionsOperations(object):
+class RegistryModelVersionsOperations:
     """RegistryModelVersionsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

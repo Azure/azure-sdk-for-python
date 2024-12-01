@@ -17,7 +17,7 @@ class AssetTypes:
     TABLE = "table"
     """Table data asset type."""
 
-class IndexInputType(object):
+class IndexInputType:
     """An enumeration of values for the types of input data for an index."""
     GIT = "git"
     LOCAL = "local"
@@ -25,7 +25,7 @@ class IndexInputType(object):
     """Azure OpenAI input data type."""
 
 
-class IndexType(object):
+class IndexType:
     """An enumeration of values for the types of an index."""
     ACS = "acs"
     FAISS = "faiss"

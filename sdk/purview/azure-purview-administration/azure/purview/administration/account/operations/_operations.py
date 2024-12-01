@@ -452,7 +452,7 @@ def build_resource_set_rules_list_resource_set_rules_request(
     )
 
 # fmt: on
-class AccountsOperations(object):
+class AccountsOperations:
     """AccountsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
@@ -843,7 +843,7 @@ class AccountsOperations(object):
 
     regenerate_access_key.metadata = {'url': '/regeneratekeys'}  # type: ignore
 
-class CollectionsOperations(object):
+class CollectionsOperations:
     """CollectionsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
@@ -1347,7 +1347,7 @@ class CollectionsOperations(object):
 
     get_collection_path.metadata = {'url': '/collections/{collectionName}/getCollectionPath'}  # type: ignore
 
-class ResourceSetRulesOperations(object):
+class ResourceSetRulesOperations:
     """ResourceSetRulesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

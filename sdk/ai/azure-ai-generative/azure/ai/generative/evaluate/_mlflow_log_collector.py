@@ -9,7 +9,7 @@ from typing import Any
 import mlflow
 
 
-class OutputCollector(object):
+class OutputCollector:
     def __init__(self, stream, processor):
         self._inner = stream
         self.processor = processor
@@ -22,7 +22,7 @@ class OutputCollector(object):
         return getattr(self._inner, name)
 
 
-class RedirectUserOutputStreams(object):
+class RedirectUserOutputStreams:
     def __init__(self, logger):
         self.logger = logger
         self.user_log_path = tempfile.mkstemp(suffix="_stdout_stderr.txt")[1]

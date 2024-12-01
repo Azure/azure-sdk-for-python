@@ -59,7 +59,7 @@ if TYPE_CHECKING:
 PrimitiveTypes = Union[int, float, bytes, bool, str, uuid.UUID]
 
 
-class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
+class ServiceBusMessage:  # pylint: disable=too-many-public-methods,too-many-instance-attributes
     """A Service Bus Message.
 
     :param body: The data to send in a single message.
@@ -605,7 +605,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
         self._raw_amqp_message.properties.to = value
 
 
-class ServiceBusMessageBatch(object):
+class ServiceBusMessageBatch:
     """A batch of messages.
 
     Sending messages in a batch is more performant than sending individual message.

@@ -18,7 +18,7 @@ from azure.core.polling import AsyncLROPoller
 from .. import models as _models
 
 
-class TextAnalyticsClientOperationsMixin(object):
+class TextAnalyticsClientOperationsMixin:
 
     async def analyze_status(
         self,

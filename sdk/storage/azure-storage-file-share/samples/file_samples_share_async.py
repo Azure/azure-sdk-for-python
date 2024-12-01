@@ -31,7 +31,7 @@ SOURCE_FILE = './SampleSource.txt'
 DEST_FILE = './SampleDestination.txt'
 
 
-class ShareSamplesAsync(object):
+class ShareSamplesAsync:
 
     connection_string = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
 

@@ -28,7 +28,7 @@ SOURCE_FILE = './SampleSource.txt'
 DEST_FILE = './SampleDestination.txt'
 
 
-class FileSamples(object):
+class FileSamples:
 
     connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
     account_name = os.getenv("AZURE_STORAGE_ACCOUNT_NAME")

@@ -30,7 +30,7 @@ USAGE:
 import os
 
 
-class TrainModelWithoutLabelsSample(object):
+class TrainModelWithoutLabelsSample:
 
     def train_model_without_labels(self):
         # [START training]

@@ -18,7 +18,7 @@ USAGE:
 import os
 
 
-class SparkConfigurationOptions(object):
+class SparkConfigurationOptions:
     def ml_spark_config(self):
         from azure.ai.ml import MLClient
         from azure.identity import DefaultAzureCredential

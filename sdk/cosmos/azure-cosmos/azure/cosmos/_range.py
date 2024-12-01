@@ -23,7 +23,7 @@
 """
 
 
-class Range(object):
+class Range:
     """Represents the Range class used to map the partition key of the document
     to its associated collection.
     """

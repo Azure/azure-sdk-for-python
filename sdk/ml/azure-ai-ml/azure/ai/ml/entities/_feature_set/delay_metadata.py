@@ -8,7 +8,7 @@
 from typing import Any, Optional
 
 
-class DelayMetadata(object):
+class DelayMetadata:
     def __init__(
         self, *, days: Optional[int] = None, hours: Optional[int] = None, minutes: Optional[int] = None, **kwargs: Any
     ):

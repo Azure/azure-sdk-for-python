@@ -26,7 +26,7 @@ from azure.communication.sms.aio import SmsClient
 sys.path.append("..")
 
 
-class SmsMultipleRecipientsSampleAsync(object):
+class SmsMultipleRecipientsSampleAsync:
 
     connection_string = os.getenv("COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING")
     phone_number = os.getenv("SMS_PHONE_NUMBER")

@@ -47,7 +47,7 @@ import asyncio
 from sample_utils import write_banner
 
 
-class AttestationClientCreateSamples(object):
+class AttestationClientCreateSamples:
     def __init__(self):
         load_dotenv(find_dotenv())
         self.aad_url = os.environ.get("ATTESTATION_AAD_URL")

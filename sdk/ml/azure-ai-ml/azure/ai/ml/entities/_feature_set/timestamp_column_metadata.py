@@ -8,7 +8,7 @@
 from typing import Any, Optional
 
 
-class TimestampColumnMetadata(object):
+class TimestampColumnMetadata:
     def __init__(self, *, name: str, format: Optional[str] = None, **kwargs: Any):
         self.name = name
         self.format = format

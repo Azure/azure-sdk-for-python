@@ -10,7 +10,7 @@ class DistributionType:
     RAY = "ray"
 
 
-class JobType(object):
+class JobType:
     COMMAND = "command"
     SWEEP = "sweep"
     PIPELINE = "pipeline"
@@ -25,7 +25,7 @@ class JobType(object):
     DISTILLATION = "distillation"
 
 
-class JobLimitsType(object):
+class JobLimitsType:
     SWEEP = "Sweep"
 
 
@@ -48,7 +48,7 @@ class ImportSourceType:
     S3 = "s3"
 
 
-class JobComputePropertyFields(object):
+class JobComputePropertyFields:
     # Legacy name
     AISUPERCOMPUTER = "AISuperComputer"
     SINGULARITY = "Singularity"

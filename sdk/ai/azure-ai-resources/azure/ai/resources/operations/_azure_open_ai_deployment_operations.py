@@ -11,7 +11,7 @@ from azure.ai.ml import MLClient
 from .._restclient._azure_open_ai._client import MachineLearningServicesClient
 from ..entities import AzureOpenAIDeployment
 
-class AzureOpenAIDeploymentOperations():
+class AzureOpenAIDeploymentOperations:
     def __init__(self, ml_client: MLClient, ai_client: MachineLearningServicesClient, **kwargs): # pylint: disable=unused-argument
         self._ml_client = ml_client
         self._ai_client = ai_client

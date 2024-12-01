@@ -208,7 +208,7 @@ def build_restart_revision_request(
         **kwargs
     )
 
-class ContainerAppsRevisionsOperations(object):
+class ContainerAppsRevisionsOperations:
     """ContainerAppsRevisionsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

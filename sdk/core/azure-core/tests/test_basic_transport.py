@@ -630,7 +630,7 @@ def test_multipart_send_with_combination_changeset_middle(http_request):
 
 @pytest.mark.parametrize("http_request,mock_response", request_and_responses_product(MOCK_RESPONSES))
 def test_multipart_receive(http_request, mock_response):
-    class ResponsePolicy(object):
+    class ResponsePolicy:
         def on_response(self, request, response):
             # type: (PipelineRequest, PipelineResponse) -> None
             response.http_response.headers["x-ms-fun"] = "true"

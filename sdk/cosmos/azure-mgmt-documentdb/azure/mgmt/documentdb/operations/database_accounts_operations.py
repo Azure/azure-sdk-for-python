@@ -17,7 +17,7 @@ import uuid
 from .. import models
 
 
-class DatabaseAccountsOperations(object):
+class DatabaseAccountsOperations:
     """DatabaseAccountsOperations operations.
 
     :param client: Client for service requests.

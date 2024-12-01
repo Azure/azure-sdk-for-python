@@ -164,7 +164,7 @@ def build_create_request_initial(
     )
 
 # fmt: on
-class RaiPolicyOperations(object):
+class RaiPolicyOperations:
     """RaiPolicyOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

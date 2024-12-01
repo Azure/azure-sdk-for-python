@@ -67,7 +67,7 @@ def build_outbound_network_dependencies_endpoints_request(
     )
 
 # fmt: on
-class AzureMachineLearningWorkspacesOperationsMixin(object):
+class AzureMachineLearningWorkspacesOperationsMixin:
 
     @distributed_trace
     def outbound_network_dependencies_endpoints(

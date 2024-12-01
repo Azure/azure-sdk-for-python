@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 
-class DeploymentType(object):
+class DeploymentType:
     K8S = "Kubernetes"
     MANAGED = "Managed"
 
@@ -18,7 +18,7 @@ class BatchDeploymentType:
     PIPELINE = "pipeline"
 
 
-class EndpointDeploymentLogContainerType(object):
+class EndpointDeploymentLogContainerType:
     STORAGE_INITIALIZER_REST = "StorageInitializer"
     INFERENCE_SERVER_REST = "InferenceServer"
     INFERENCE_SERVER = "inference-server"

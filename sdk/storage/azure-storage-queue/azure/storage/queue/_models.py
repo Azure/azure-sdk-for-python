@@ -222,7 +222,7 @@ class CorsRule(GeneratedCorsRule):
         )
 
 
-class QueueSasPermissions(object):
+class QueueSasPermissions:
     """QueueSasPermissions class to be used with the
     :func:`~azure.storage.queue.generate_queue_sas` function and for the AccessPolicies used with
     :func:`~azure.storage.queue.QueueClient.set_queue_access_policy`.

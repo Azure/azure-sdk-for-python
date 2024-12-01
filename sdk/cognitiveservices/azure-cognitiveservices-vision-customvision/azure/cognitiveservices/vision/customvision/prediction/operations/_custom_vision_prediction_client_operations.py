@@ -13,7 +13,7 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class CustomVisionPredictionClientOperationsMixin(object):
+class CustomVisionPredictionClientOperationsMixin:
 
     def classify_image(
             self, project_id, published_name, image_data, application=None, custom_headers=None, raw=False, **operation_config):

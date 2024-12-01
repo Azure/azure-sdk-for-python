@@ -53,7 +53,7 @@ from ._serialization import (
 )
 
 
-class _ServiceManagementClient(object):
+class _ServiceManagementClient:
 
     def __init__(self, subscription_id=None, cert_file=None,
                  host=MANAGEMENT_HOST, request_session=None,

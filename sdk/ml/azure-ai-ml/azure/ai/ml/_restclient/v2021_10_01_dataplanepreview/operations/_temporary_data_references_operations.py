@@ -81,7 +81,7 @@ def build_create_or_get_temporary_data_reference_request(
     )
 
 # fmt: on
-class TemporaryDataReferencesOperations(object):
+class TemporaryDataReferencesOperations:
     """TemporaryDataReferencesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

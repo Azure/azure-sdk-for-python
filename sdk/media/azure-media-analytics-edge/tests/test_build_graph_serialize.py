@@ -1,7 +1,7 @@
 import pytest
 from azure.media.analyticsedge import *
 
-class TestGraphBuildSerialize():
+class TestGraphBuildSerialize:
     def test_build_graph_serialize(self):
         graph_topology_name = "graphTopology1"
         graph_properties = MediaGraphTopologyProperties()

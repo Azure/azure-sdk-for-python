@@ -33,7 +33,7 @@ class _ValidationStatus:
     """Failed."""
 
 
-class Diagnostic(object):
+class Diagnostic:
     """Represents a diagnostic of an asset validation error with the location info."""
 
     def __init__(self, yaml_path: str, message: Optional[str], error_code: Optional[str]) -> None:
@@ -84,7 +84,7 @@ class Diagnostic(object):
         )
 
 
-class ValidationResult(object):
+class ValidationResult:
     """Represents the result of job/asset validation.
 
     This class is used to organize and parse diagnostics from both client & server side before expose them. The result

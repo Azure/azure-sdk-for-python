@@ -26,7 +26,7 @@ from azure.core.exceptions import ResourceExistsError
 SOURCE_FILE = './SampleSource.txt'
 
 
-class CommonBlobSamplesAsync(object):
+class CommonBlobSamplesAsync:
 
     connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 

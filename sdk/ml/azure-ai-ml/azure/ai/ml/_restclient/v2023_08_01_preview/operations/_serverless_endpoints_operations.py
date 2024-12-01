@@ -355,7 +355,7 @@ def build_get_status_request(
     )
 
 # fmt: on
-class ServerlessEndpointsOperations(object):
+class ServerlessEndpointsOperations:
     """ServerlessEndpointsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

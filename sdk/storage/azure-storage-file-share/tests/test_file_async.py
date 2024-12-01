@@ -161,7 +161,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         actual_data = await content.readall()
         assert actual_data == expected_data
 
-    class NonSeekableFile(object):
+    class NonSeekableFile:
         def __init__(self, wrapped_file):
             self.wrapped_file = wrapped_file
 

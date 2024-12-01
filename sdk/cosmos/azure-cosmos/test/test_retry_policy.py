@@ -272,7 +272,7 @@ class TestRetryPolicy(unittest.TestCase):
             message="Request rate is too large",
             response=response)
 
-    class MockExecuteFunctionTimeout(object):
+    class MockExecuteFunctionTimeout:
         def __init__(self, org_func):
             self.org_func = org_func
             self.counter = 0
@@ -283,7 +283,7 @@ class TestRetryPolicy(unittest.TestCase):
                 message="Timeout",
                 response=test_config.FakeResponse({}))
 
-    class MockExecuteFunctionConnectionReset(object):
+    class MockExecuteFunctionConnectionReset:
 
         def __init__(self, org_func):
             self.org_func = org_func

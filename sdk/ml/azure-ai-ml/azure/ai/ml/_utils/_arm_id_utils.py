@@ -29,7 +29,7 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 module_logger = logging.getLogger(__name__)
 
 
-class AMLVersionedArmId(object):
+class AMLVersionedArmId:
     """Parser for versioned arm id: e.g. /subscription/.../code/my- code/versions/1.
 
     :param arm_id: The versioned ARM id.
@@ -86,7 +86,7 @@ def get_datastore_arm_id(
     )
 
 
-class AMLLabelledArmId(object):
+class AMLLabelledArmId:
     """Parser for versioned arm id: e.g. /subscription/.../code/my- code/labels/default.
 
     :param arm_id: The labelled ARM id.

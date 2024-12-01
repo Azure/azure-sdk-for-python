@@ -10,7 +10,7 @@ import zlib
 from .preparers import AbstractPreparer
 
 
-class HttpStatusCode(object):
+class HttpStatusCode:
     OK = 200
     Created = 201
     Accepted = 202

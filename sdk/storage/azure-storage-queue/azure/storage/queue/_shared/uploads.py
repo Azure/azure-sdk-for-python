@@ -117,7 +117,7 @@ def upload_substream_blocks(
     return []
 
 
-class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
+class _ChunkUploader:  # pylint: disable=too-many-instance-attributes
 
     def __init__(
             self, service,
@@ -555,7 +555,7 @@ class SubStream(IOBase):
         return False
 
 
-class IterStreamer(object):
+class IterStreamer:
     """
     File-like streaming iterator.
     """

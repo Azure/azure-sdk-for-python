@@ -50,7 +50,7 @@ class TestRestClientConfiguration(Configuration):
         self.authentication_policy = kwargs.get("authentication_policy")
 
 
-class MockRestClient(object):
+class MockRestClient:
     def __init__(self, port, *, transport=None, **kwargs):
         self._config = TestRestClientConfiguration(**kwargs)
         self._client = PipelineClient(

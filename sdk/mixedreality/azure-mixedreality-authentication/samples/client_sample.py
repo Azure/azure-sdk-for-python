@@ -22,7 +22,7 @@ USAGE:
 import os
 
 
-class ClientSamples(object):
+class ClientSamples:
     from azure.core.credentials import AzureKeyCredential
 
     account_domain = os.environ.get("MIXEDREALITY_ACCOUNT_DOMAIN", None)

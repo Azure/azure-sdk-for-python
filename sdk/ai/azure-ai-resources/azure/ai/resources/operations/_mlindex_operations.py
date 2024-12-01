@@ -21,7 +21,7 @@ ops_logger = ActivityLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
-class MLIndexOperations():
+class MLIndexOperations:
     """MLIndexOperations.
 
     You should not instantiate this class directly. Instead, you should

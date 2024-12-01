@@ -24,7 +24,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.rest import HttpRequest, HttpResponse
 
-class AzureMachineLearningWorkspaces(object):
+class AzureMachineLearningWorkspaces:
     """AzureMachineLearningWorkspaces.
 
     :ivar async_operations: AsyncOperationsOperations operations

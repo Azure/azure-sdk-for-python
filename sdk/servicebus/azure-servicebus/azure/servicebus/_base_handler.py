@@ -161,7 +161,7 @@ def _get_backoff_time(retry_mode, backoff_factor, backoff_max, retried_times):
     return min(backoff_max, backoff_value)
 
 
-class ServiceBusSASTokenCredential(object):
+class ServiceBusSASTokenCredential:
     """The shared access token credential used for authentication.
     :param str token: The shared access token string
     :param int expiry: The epoch timestamp
@@ -186,7 +186,7 @@ class ServiceBusSASTokenCredential(object):
         return AccessToken(self.token, self.expiry)
 
 
-class ServiceBusSharedKeyCredential(object):
+class ServiceBusSharedKeyCredential:
     """The shared access key credential used for authentication.
 
     :param str policy: The name of the shared access policy.
@@ -204,7 +204,7 @@ class ServiceBusSharedKeyCredential(object):
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
-class ServiceBusAzureNamedKeyTokenCredential(object):
+class ServiceBusAzureNamedKeyTokenCredential:
     """The named key credential used for authentication.
     :param credential: The AzureNamedKeyCredential that should be used.
     :type credential: ~azure.core.credentials.AzureNamedKeyCredential
@@ -221,7 +221,7 @@ class ServiceBusAzureNamedKeyTokenCredential(object):
         return _generate_sas_token(scopes[0], name, key)
 
 
-class ServiceBusAzureSasTokenCredential(object):
+class ServiceBusAzureSasTokenCredential:
     """The shared access token credential used for authentication
     when AzureSasCredential is provided.
     :param azure_sas_credential: The credential to be used for authentication.

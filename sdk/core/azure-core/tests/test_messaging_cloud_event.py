@@ -12,7 +12,7 @@ from azure.core.utils._messaging_shared import _get_json_content
 from azure.core.serialization import NULL
 
 
-class MockQueueMessage(object):
+class MockQueueMessage:
     def __init__(self, content=None):
         self.id = uuid.uuid4()
         self.inserted_on = datetime.datetime.now()
@@ -23,7 +23,7 @@ class MockQueueMessage(object):
         self.next_visible_on = None
 
 
-class MockServiceBusReceivedMessage(object):
+class MockServiceBusReceivedMessage:
     def __init__(self, body=None, **kwargs):
         self.body = body
         self.application_properties = None
@@ -50,7 +50,7 @@ class MockServiceBusReceivedMessage(object):
         self.lock_token = "233146e3-d5a6-45eb-826f-691d82fb8b13"
 
 
-class MockEventhubData(object):
+class MockEventhubData:
     def __init__(self, body=None):
         self._last_enqueued_event_properties = {}
         self._sys_properties = None
@@ -65,7 +65,7 @@ class MockEventhubData(object):
         self.correlation_id = None
 
 
-class MockBody(object):
+class MockBody:
     def __init__(self, data=None):
         self.data = data
 
@@ -80,7 +80,7 @@ class MockBody(object):
     next = __next__
 
 
-class MockEhBody(object):
+class MockEhBody:
     def __init__(self, data=None):
         self.data = data
 

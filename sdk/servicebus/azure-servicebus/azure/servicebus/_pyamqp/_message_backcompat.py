@@ -71,7 +71,7 @@ RECEIVE_STATES = (MessageState.ReceivedSettled, MessageState.ReceivedUnsettled)
 PENDING_STATES = (MessageState.WaitingForSendAck, MessageState.WaitingToBeSent)
 
 
-class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
+class LegacyMessage:  # pylint: disable=too-many-instance-attributes
     def __init__(self, message: "AmqpAnnotatedMessage", *, to_outgoing_amqp_message: Callable, **kwargs: Any) -> None:
         self._message: "AmqpAnnotatedMessage" = message
         self.state: "MessageState" = MessageState.SendComplete
@@ -202,7 +202,7 @@ class LegacyBatchMessage(LegacyMessage):
     size_offset = 0
 
 
-class LegacyMessageProperties(object):  # pylint: disable=too-many-instance-attributes
+class LegacyMessageProperties:  # pylint: disable=too-many-instance-attributes
     def __init__(self, properties: "AmqpMessageProperties"):
         self.message_id: Optional[bytes] = _encode_property(properties.message_id)
         self.user_id: Optional[bytes] = _encode_property(properties.user_id)
@@ -255,7 +255,7 @@ class LegacyMessageProperties(object):  # pylint: disable=too-many-instance-attr
         )
 
 
-class LegacyMessageHeader(object):
+class LegacyMessageHeader:
     def __init__(self, header: "AmqpMessageHeader") -> None:
         self.delivery_count: int = header.delivery_count or 0
         self.time_to_live: Optional[int] = header.time_to_live

@@ -16,7 +16,7 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class OAuth2PermissionGrantOperations(object):
+class OAuth2PermissionGrantOperations:
     """OAuth2PermissionGrantOperations operations.
 
     :param client: Client for service requests.

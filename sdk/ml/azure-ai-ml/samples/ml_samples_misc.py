@@ -33,7 +33,7 @@ import uuid
 job_name = f"iris-dataset-job-{str(uuid.uuid4())}"
 
 
-class MiscConfigurationOptions(object):
+class MiscConfigurationOptions:
     def ml_misc_config_0(self):
         # [START job_operations_create_and_update]
         from azure.ai.ml import load_job

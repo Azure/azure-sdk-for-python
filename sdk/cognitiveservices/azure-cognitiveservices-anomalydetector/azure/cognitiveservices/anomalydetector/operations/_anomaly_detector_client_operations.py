@@ -13,7 +13,7 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class AnomalyDetectorClientOperationsMixin(object):
+class AnomalyDetectorClientOperationsMixin:
 
     def entire_detect(
             self, body, custom_headers=None, raw=False, **operation_config):

@@ -86,7 +86,7 @@ decoder_map = {
 }
 
 
-class InsertUpdateDeleteEntity(object):
+class InsertUpdateDeleteEntity:
     def __init__(self):
         load_dotenv(find_dotenv())
         self.access_key = os.environ["TABLES_PRIMARY_COSMOS_ACCOUNT_KEY"]

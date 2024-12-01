@@ -27,7 +27,7 @@ import sys
 sys.path.append("..")
 
 
-class SendWhatsAppMessageSample(object):
+class SendWhatsAppMessageSample:
 
     connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
     phone_number = os.getenv("RECIPIENT_PHONE_NUMBER")

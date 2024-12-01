@@ -19,7 +19,7 @@ USAGE:
 import os
 
 
-class RouterClientAuthenticationSamples(object):
+class RouterClientAuthenticationSamples:
     connection_string = os.environ["AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING"]
 
     def create_router_client(self):

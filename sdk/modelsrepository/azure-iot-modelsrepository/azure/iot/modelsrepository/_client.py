@@ -40,7 +40,7 @@ _REMOTE_PROTOCOLS = ["http", "https"]
 _TRACE_NAMESPACE = "modelsrepository"
 
 
-class ModelsRepositoryClient(object):
+class ModelsRepositoryClient:
     """Client providing APIs for Models Repository operations"""
 
     def __init__(self, **kwargs):  # pylint: disable=missing-client-constructor-parameter-credential

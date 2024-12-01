@@ -20,7 +20,7 @@ import os
 import asyncio
 
 
-class DistributionPolicySamplesAsync(object):
+class DistributionPolicySamplesAsync:
     connection_string = os.environ["AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING"]
 
     _dp_policy_id = "sample_dp_policy"

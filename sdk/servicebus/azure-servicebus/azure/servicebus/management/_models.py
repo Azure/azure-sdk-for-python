@@ -43,7 +43,7 @@ if TYPE_CHECKING:
 adjust_attribute_map()
 
 
-class DictMixin(object):
+class DictMixin:
     def __setitem__(self, key: str, item: Any) -> None:
         self.__dict__[key] = item
 
@@ -464,7 +464,7 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         return self._internal_qd
 
 
-class QueueRuntimeProperties(object):
+class QueueRuntimeProperties:
     """Service Bus queue runtime properties."""
 
     def __init__(self) -> None:
@@ -734,7 +734,7 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         return self._internal_td
 
 
-class TopicRuntimeProperties(object):
+class TopicRuntimeProperties:
     """Runtime properties of a Service Bus topic resource."""
 
     def __init__(self) -> None:
@@ -1009,7 +1009,7 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
         return self._internal_sd
 
 
-class SubscriptionRuntimeProperties(object):
+class SubscriptionRuntimeProperties:
     """Runtime properties of a Service Bus topic subscription resource."""
 
     def __init__(self) -> None:
@@ -1179,7 +1179,7 @@ class RuleProperties(DictMixin):
         return self._internal_rule
 
 
-class CorrelationRuleFilter(object):
+class CorrelationRuleFilter:
     """Represents the correlation filter expression.
 
     :keyword correlation_id: Identifier of the correlation.
@@ -1264,7 +1264,7 @@ class CorrelationRuleFilter(object):
         return internal_entity
 
 
-class SqlRuleFilter(object):
+class SqlRuleFilter:
     """Represents a filter which is a composition of an expression and an action
     that is executed in the pub/sub pipeline.
 
@@ -1350,7 +1350,7 @@ class FalseRuleFilter(SqlRuleFilter):
         return internal_entity
 
 
-class SqlRuleAction(object):
+class SqlRuleAction:
     """Represents set of actions written in SQL language-based syntax that is
     performed against a ServiceBus.Messaging.BrokeredMessage .
 
@@ -1403,7 +1403,7 @@ EMPTY_RULE_ACTION = InternalEmptyRuleAction()
 TRUE_FILTER = TrueRuleFilter()
 
 
-class AuthorizationRule(object):
+class AuthorizationRule:
     """Authorization rule of an entity.
 
     :keyword type: The authorization type.

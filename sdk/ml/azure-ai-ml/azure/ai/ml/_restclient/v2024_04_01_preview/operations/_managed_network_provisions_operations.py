@@ -72,7 +72,7 @@ def build_provision_managed_network_request_initial(
     )
 
 # fmt: on
-class ManagedNetworkProvisionsOperations(object):
+class ManagedNetworkProvisionsOperations:
     """ManagedNetworkProvisionsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

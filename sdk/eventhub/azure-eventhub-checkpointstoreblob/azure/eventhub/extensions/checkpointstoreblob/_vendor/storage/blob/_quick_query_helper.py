@@ -11,7 +11,7 @@ from ._shared.avro.datafile import DataFileReader
 from ._shared.avro.avro_io import DatumReader
 
 
-class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
+class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
     """A streaming object to read query results.
 
     :ivar str name:
@@ -124,7 +124,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
 
 
 
-class QuickQueryStreamer(object):
+class QuickQueryStreamer:
     """
     File-like streaming iterator.
     """

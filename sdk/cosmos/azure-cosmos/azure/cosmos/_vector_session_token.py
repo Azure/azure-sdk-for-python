@@ -26,7 +26,7 @@ from . import exceptions
 from .http_constants import StatusCodes as _StatusCodes
 
 
-class VectorSessionToken(object):
+class VectorSessionToken:
     segment_separator = "#"
     region_progress_separator = "="
 

@@ -26,7 +26,7 @@ from azure.core.exceptions import ResourceExistsError
 SOURCE_FILE = 'SampleSource.txt'
 
 
-class ContainerSamples(object):
+class ContainerSamples:
 
     connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 

@@ -23,7 +23,7 @@ import os
 import asyncio
 
 
-class ClientSamplesAsync(object):
+class ClientSamplesAsync:
     from azure.core.credentials import AzureKeyCredential
 
     account_domain = os.environ.get("MIXEDREALITY_ACCOUNT_DOMAIN", None)

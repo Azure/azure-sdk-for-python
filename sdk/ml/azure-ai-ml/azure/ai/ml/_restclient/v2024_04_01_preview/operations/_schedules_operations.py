@@ -238,7 +238,7 @@ def build_trigger_request(
     )
 
 # fmt: on
-class SchedulesOperations(object):
+class SchedulesOperations:
     """SchedulesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

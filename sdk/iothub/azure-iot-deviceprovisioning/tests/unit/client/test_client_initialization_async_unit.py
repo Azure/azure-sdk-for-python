@@ -7,7 +7,7 @@ from azure.iot.deviceprovisioning.aio import (
 endpoint = "fake_endpoint"
 
 
-class TestProvisioningClientInitialization(object):
+class TestProvisioningClientInitialization:
     @pytest.mark.asyncio
     async def test_client_init_errors_async(self):
         # bad endpoint

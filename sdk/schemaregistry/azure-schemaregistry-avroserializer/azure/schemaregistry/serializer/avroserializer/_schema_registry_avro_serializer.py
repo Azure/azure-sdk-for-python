@@ -39,7 +39,7 @@ from ._apache_avro_serializer import ApacheAvroObjectSerializer as AvroObjectSer
 from ._constants import SCHEMA_ID_START_INDEX, SCHEMA_ID_LENGTH, DATA_START_INDEX
 
 
-class AvroSerializer(object):
+class AvroSerializer:
     """
     AvroSerializer provides the ability to serialize and deserialize data according
     to the given avro schema. It would automatically register, get and cache the schema.

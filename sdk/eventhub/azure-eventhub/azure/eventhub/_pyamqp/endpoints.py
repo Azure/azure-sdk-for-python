@@ -22,7 +22,7 @@ from .constants import FIELD
 from .performatives import _CAN_ADD_DOCSTRING
 
 
-class TerminusDurability(object):
+class TerminusDurability:
     """Durability policy for a terminus.
 
     <type name="terminus-durability" class="restricted" source="uint">
@@ -43,7 +43,7 @@ class TerminusDurability(object):
     UnsettledState = 2
 
 
-class ExpiryPolicy(object):
+class ExpiryPolicy:
     """Expiry policy for a terminus.
 
     <type name="terminus-expiry-policy" class="restricted" source="symbol">
@@ -69,7 +69,7 @@ class ExpiryPolicy(object):
     Never = b"never"
 
 
-class DistributionMode(object):
+class DistributionMode:
     """Link distribution policy.
 
     <type name="std-dist-mode" class="restricted" source="symbol" provides="distribution-mode">
@@ -88,7 +88,7 @@ class DistributionMode(object):
     Copy = b"copy"
 
 
-class LifeTimePolicy(object):
+class LifeTimePolicy:
     #: Lifetime of dynamic node scoped to lifetime of link which caused creation.
     #: A node dynamically created with this lifetime policy will be deleted at the point that the link
     #: which caused its creation ceases to exist.
@@ -107,7 +107,7 @@ class LifeTimePolicy(object):
     DeleteOnNoLinksOrMessages = 0x0000002E
 
 
-class SupportedOutcomes(object):
+class SupportedOutcomes:
     #: Indicates successful processing at the receiver.
     accepted = b"amqp:accepted:list"
     #: Indicates an invalid and unprocessable message.
@@ -118,7 +118,7 @@ class SupportedOutcomes(object):
     modified = b"amqp:modified:list"
 
 
-class ApacheFilters(object):
+class ApacheFilters:
     #: Exact match on subject - analogous to legacy AMQP direct exchange bindings.
     legacy_amqp_direct_binding = b"apache.org:legacy-amqp-direct-binding:string"
     #: Pattern match on subject - analogous to legacy AMQP topic exchange bindings.

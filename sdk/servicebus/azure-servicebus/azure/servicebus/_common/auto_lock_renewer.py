@@ -29,7 +29,7 @@ SHORT_RENEW_OFFSET = 0.5  # Seconds that if a renew period is longer than lock d
 SHORT_RENEW_SCALING_FACTOR = 0.75  # In this situation we need a "Short renew" and should scale by this factor.
 
 
-class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
+class AutoLockRenewer:  # pylint:disable=too-many-instance-attributes
     """Auto renew locks for messages and sessions using a background thread pool.
 
     :param max_lock_renewal_duration: A time in seconds that locks registered to this renewer

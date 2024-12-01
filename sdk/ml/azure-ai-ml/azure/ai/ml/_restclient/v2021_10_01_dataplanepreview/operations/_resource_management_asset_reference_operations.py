@@ -79,7 +79,7 @@ def build_import_method_request_initial(
     )
 
 # fmt: on
-class ResourceManagementAssetReferenceOperations(object):
+class ResourceManagementAssetReferenceOperations:
     """ResourceManagementAssetReferenceOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

@@ -30,7 +30,7 @@ SOURCE_FILE = './SampleSource.txt'
 DEST_FILE = './SampleDestination.txt'
 
 
-class ShareSamples(object):
+class ShareSamples:
 
     connection_string = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
 

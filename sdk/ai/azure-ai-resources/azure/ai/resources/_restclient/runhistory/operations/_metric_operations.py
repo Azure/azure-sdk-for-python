@@ -345,7 +345,7 @@ def build_get_metric_details_by_experiment_id_request(
     )
 
 # fmt: on
-class MetricOperations(object):
+class MetricOperations:
     """MetricOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

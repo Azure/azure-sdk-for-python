@@ -14,7 +14,7 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class TextModerationOperations(object):
+class TextModerationOperations:
     """TextModerationOperations operations.
 
     :param client: Client for service requests.

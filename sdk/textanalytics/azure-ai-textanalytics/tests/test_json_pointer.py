@@ -95,7 +95,7 @@ def generated_sentiment_response(generated_document_sentiment):
     )
 
 
-class TestJsonPointer():
+class TestJsonPointer:
 
     def test_json_pointer_parsing(self):
         assert [1, 0, 15] == _get_indices("#/documents/1/sentences/0/assessments/15")

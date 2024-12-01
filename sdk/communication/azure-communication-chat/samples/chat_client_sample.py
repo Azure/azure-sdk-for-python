@@ -25,7 +25,7 @@ USAGE:
 import os
 
 
-class ChatClientSamples(object):
+class ChatClientSamples:
     from azure.communication.identity import CommunicationIdentityClient
 
     connection_string = os.environ.get("COMMUNICATION_SAMPLES_CONNECTION_STRING", None)

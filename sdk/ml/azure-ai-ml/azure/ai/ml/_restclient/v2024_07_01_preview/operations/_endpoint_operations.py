@@ -283,7 +283,7 @@ def build_regenerate_keys_request(
     )
 
 # fmt: on
-class EndpointOperations(object):
+class EndpointOperations:
     """EndpointOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

@@ -86,7 +86,7 @@ def build_list_by_compute_request(
     )
 
 # fmt: on
-class RunOperations(object):
+class RunOperations:
     """RunOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

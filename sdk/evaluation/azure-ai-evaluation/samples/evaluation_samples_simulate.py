@@ -24,7 +24,7 @@ USAGE:
 """
 
 
-class EvaluationSimulateSamples(object):
+class EvaluationSimulateSamples:
     def evaluation_simulate_classes_methods(self):
         # [START adversarial_scenario]
         import os

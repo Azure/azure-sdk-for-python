@@ -15,7 +15,7 @@ from .dockerfile_instructions import Cmd, Copy, From, Run, Workdir
 module_logger = logging.getLogger(__name__)
 
 
-class DockerfileResolver(object):
+class DockerfileResolver:
     """Represents the contents of a Dockerfile and handles writing the Dockerfile to User's system.
 
     :param docker_base_image: name of local endpoint

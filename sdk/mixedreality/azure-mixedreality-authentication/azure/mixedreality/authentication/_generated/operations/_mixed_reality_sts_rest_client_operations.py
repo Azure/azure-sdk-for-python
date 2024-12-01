@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class MixedRealityStsRestClientOperationsMixin(object):
+class MixedRealityStsRestClientOperationsMixin:
 
     def get_token(
         self,

@@ -154,7 +154,7 @@ enrollment_group_list = [
 ]
 
 
-class TestGroupEnrollmentGet(object):
+class TestGroupEnrollmentGet:
     @pytest.fixture()
     def service_client_get(self, mocked_response):
         mocked_response.get(
@@ -186,7 +186,7 @@ class TestGroupEnrollmentGet(object):
             sdk_client.enrollment_group.get(id=enrollment_group_id)
 
 
-class TestGroupEnrollmentCreate(object):
+class TestGroupEnrollmentCreate:
     @pytest.fixture()
     def service_client(self, mocked_response):
         mocked_response.put(
@@ -227,7 +227,7 @@ class TestGroupEnrollmentCreate(object):
             )
 
 
-class TestGroupEnrollmentDelete(object):
+class TestGroupEnrollmentDelete:
     @pytest.fixture()
     def service_client(self, mocked_response):
         mocked_response.delete(
@@ -258,7 +258,7 @@ class TestGroupEnrollmentDelete(object):
             sdk_client.enrollment_group.delete(id=enrollment_group_id)
 
 
-class TestGroupEnrollmentQuery(object):
+class TestGroupEnrollmentQuery:
     @pytest.fixture()
     def service_client(self, mocked_response):
         mocked_response.post(
@@ -294,7 +294,7 @@ class TestGroupEnrollmentQuery(object):
             assert [enrollment for enrollment in query]
 
 
-class TestGroupEnrollmentAttestation(object):
+class TestGroupEnrollmentAttestation:
     @pytest.fixture()
     def service_client(self, mocked_response):
         mocked_response.post(
@@ -331,7 +331,7 @@ class TestGroupEnrollmentAttestation(object):
             )
 
 
-class TestGroupEnrollmentBulk(object):
+class TestGroupEnrollmentBulk:
     @pytest.fixture()
     def service_client(self, mocked_response):
         mocked_response.post(

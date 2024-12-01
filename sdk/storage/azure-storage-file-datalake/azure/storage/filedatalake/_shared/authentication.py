@@ -210,7 +210,7 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
         # logger.debug("String_to_sign=%s", string_to_sign)
 
 
-class StorageHttpChallenge(object):
+class StorageHttpChallenge:
     def __init__(self, challenge):
         """ Parses an HTTP WWW-Authentication Bearer challenge from the Storage service. """
         if not challenge:

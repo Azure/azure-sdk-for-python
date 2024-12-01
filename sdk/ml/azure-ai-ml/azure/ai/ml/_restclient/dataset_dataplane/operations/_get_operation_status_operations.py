@@ -64,7 +64,7 @@ def build_get_dataset_operation_status_request_initial(
     )
 
 # fmt: on
-class GetOperationStatusOperations(object):
+class GetOperationStatusOperations:
     """GetOperationStatusOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

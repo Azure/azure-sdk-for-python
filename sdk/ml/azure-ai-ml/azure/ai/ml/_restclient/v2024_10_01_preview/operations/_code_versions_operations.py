@@ -301,7 +301,7 @@ def build_create_or_get_start_pending_upload_request(
     )
 
 # fmt: on
-class CodeVersionsOperations(object):
+class CodeVersionsOperations:
     """CodeVersionsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

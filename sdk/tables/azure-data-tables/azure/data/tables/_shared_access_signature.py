@@ -20,7 +20,7 @@ def _to_utc_datetime(value):
     return value.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-class SharedAccessSignature(object):
+class SharedAccessSignature:
     """
     Provides a factory for creating account access
     signature tokens with an account name and account key. Users can either
@@ -109,7 +109,7 @@ class SharedAccessSignature(object):
 
 
 # cspell:ignoreRegExp rsc.
-class QueryStringConstants(object):
+class QueryStringConstants:
     SIGNED_SIGNATURE = "sig"
     SIGNED_PERMISSION = "sp"
     SIGNED_START = "st"
@@ -159,7 +159,7 @@ class QueryStringConstants(object):
         ]
 
 
-class _SharedAccessHelper(object):
+class _SharedAccessHelper:
     def __init__(self):
         self.query_dict = {}
 

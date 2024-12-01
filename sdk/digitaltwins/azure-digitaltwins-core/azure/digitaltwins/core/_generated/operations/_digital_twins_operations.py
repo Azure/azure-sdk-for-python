@@ -645,7 +645,7 @@ def build_update_component_request(
     )
 
 # fmt: on
-class DigitalTwinsOperations(object):
+class DigitalTwinsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.

@@ -5,7 +5,7 @@ from multiprocessing.pool import ThreadPool
 import azure.cosmos.documents as documents
 from azure.cosmos import CosmosClient
 
-class MultiMasterScenario(object):
+class MultiMasterScenario:
     def __init__(self):
         self.account_endpoint = Configurations.ENDPOINT
         self.account_key = Configurations.ACCOUNT_KEY

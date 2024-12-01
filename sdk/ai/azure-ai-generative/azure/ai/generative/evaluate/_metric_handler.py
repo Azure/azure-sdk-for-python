@@ -23,7 +23,7 @@ NODE_LIST_BY_TASK = {
 }
 
 
-class MetricHandler(object):
+class MetricHandler:
     def __init__(
             self,
             task_type,

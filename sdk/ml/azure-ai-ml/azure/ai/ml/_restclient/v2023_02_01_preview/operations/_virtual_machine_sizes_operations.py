@@ -72,7 +72,7 @@ def build_list_request(
     )
 
 # fmt: on
-class VirtualMachineSizesOperations(object):
+class VirtualMachineSizesOperations:
     """VirtualMachineSizesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

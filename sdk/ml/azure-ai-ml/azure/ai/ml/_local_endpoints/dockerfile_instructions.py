@@ -8,7 +8,7 @@
 from typing import Optional
 
 
-class Cmd(object):
+class Cmd:
     """Python object representation of Docker CMD instruction."""
 
     def __init__(self, command_array):
@@ -19,7 +19,7 @@ class Cmd(object):
         return f"CMD [{', '.join(string_arr)}]"
 
 
-class Copy(object):
+class Copy:
     """Python object representation of Docker COPY instruction."""
 
     def __init__(self, src, dest):
@@ -31,7 +31,7 @@ class Copy(object):
         return f"COPY {from_str} {self.dest}"
 
 
-class Env(object):
+class Env:
     """Python object representation of Docker ENV instruction."""
 
     def __init__(self, key, value):
@@ -42,7 +42,7 @@ class Env(object):
         return f"ENV {self.key}={self.value}"
 
 
-class Expose(object):
+class Expose:
     """Python object representation of Docker EXPOSE instruction."""
 
     def __init__(self, port):
@@ -52,7 +52,7 @@ class Expose(object):
         return f"EXPOSE {self.port}"
 
 
-class From(object):
+class From:
     """Python object representation of Docker FROM instruction."""
 
     def __init__(self, base_image_name: str, stage_name: Optional[str] = None):
@@ -66,7 +66,7 @@ class From(object):
         return f"FROM {self.base_image} as {self.stage_name}"
 
 
-class Run(object):
+class Run:
     """Python object representation of Docker RUN instruction."""
 
     def __init__(self, command: str):
@@ -76,7 +76,7 @@ class Run(object):
         return f"RUN {self.command}"
 
 
-class Workdir(object):
+class Workdir:
     """Python object representation of Docker WORKDIR instruction."""
 
     def __init__(self, directory: str):

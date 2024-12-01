@@ -14,7 +14,7 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class KnowledgebaseOperations(object):
+class KnowledgebaseOperations:
     """KnowledgebaseOperations operations.
 
     :param client: Client for service requests.

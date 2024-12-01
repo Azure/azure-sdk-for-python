@@ -156,7 +156,7 @@ class UnexpectedFrame(Exception):
     pass
 
 
-class _AbstractTransport(object):  # pylint: disable=too-many-instance-attributes
+class _AbstractTransport:  # pylint: disable=too-many-instance-attributes
     """Common superclass for TCP and SSL transports."""
 
     def __init__(

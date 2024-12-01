@@ -16,7 +16,7 @@ CONFIGURATION_NAME_FACE_API_ACCOUNT_KEY = "azure_face_api_account_key"
 
 
 # Test images
-class TestImages(object):
+class TestImages:
     IMAGE_PARENT_FOLDER = "../../samples/images/"
 
     IMAGE_FAMILY_1_DAD_1 = "Family1-Dad1.jpg"

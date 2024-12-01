@@ -25,7 +25,7 @@ NORMALIZE_PATH_SEPS = [sep for sep in [os.sep, os.altsep] if sep and sep != posi
 _BYTES_ENCODING = "latin1"
 
 
-class Pattern(object):
+class Pattern:
     """
     The :class:`Pattern` class is the abstract definition of a pattern.
     """
@@ -194,7 +194,7 @@ class RegexPattern(Pattern):
 
 
 @dataclasses.dataclass()
-class RegexMatchResult(object):
+class RegexMatchResult:
     """
     The :class:`RegexMatchResult` data class is used to return information
     about the matched regular expression.

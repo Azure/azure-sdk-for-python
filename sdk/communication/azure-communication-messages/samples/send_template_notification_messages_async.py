@@ -30,7 +30,7 @@ import sys
 sys.path.append("..")
 
 
-class SendWhatsAppTemplateMessageSampleAsync(object):
+class SendWhatsAppTemplateMessageSampleAsync:
 
     connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
     phone_number = os.getenv("RECIPIENT_PHONE_NUMBER")

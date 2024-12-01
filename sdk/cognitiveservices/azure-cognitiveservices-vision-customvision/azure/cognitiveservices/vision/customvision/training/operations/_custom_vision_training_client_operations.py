@@ -14,7 +14,7 @@ from msrest.exceptions import HttpOperationError
 from .. import models
 
 
-class CustomVisionTrainingClientOperationsMixin(object):
+class CustomVisionTrainingClientOperationsMixin:
 
     def get_domains(
             self, custom_headers=None, raw=False, **operation_config):

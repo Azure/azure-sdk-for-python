@@ -182,7 +182,7 @@ class StorageRecordedTestCase(AzureRecordedTestCase):
         return datetime.strptime(dt_string, "%Y-%m-%dT%H:%M:%S.%f")
 
 
-class LogCaptured(object):
+class LogCaptured:
     def __init__(self, test_case=None):
         # accept the test case so that we may reset logging after capturing logs
         self.test_case = test_case

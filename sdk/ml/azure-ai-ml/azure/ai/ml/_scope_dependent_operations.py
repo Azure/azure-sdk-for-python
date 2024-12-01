@@ -13,7 +13,7 @@ T = TypeVar("T")
 module_logger = logging.getLogger(__name__)
 
 
-class OperationConfig(object):
+class OperationConfig:
     """This class is used to store common configurations that are shared across operation objects of an MLClient object.
 
     :param object: _description_
@@ -43,7 +43,7 @@ class OperationConfig(object):
         return self._enable_telemetry
 
 
-class OperationScope(object):
+class OperationScope:
     def __init__(
         self,
         subscription_id: str,
@@ -85,7 +85,7 @@ class OperationScope(object):
         self._registry_name = value
 
 
-class _ScopeDependentOperations(object):
+class _ScopeDependentOperations:
     def __init__(self, operation_scope: OperationScope, operation_config: OperationConfig):
         self._operation_scope = operation_scope
         self._operation_config = operation_config
@@ -118,7 +118,7 @@ class _ScopeDependentOperations(object):
         return self._operation_config.enable_telemetry
 
 
-class OperationsContainer(object):
+class OperationsContainer:
     def __init__(self):
         self._all_operations = {}
 

@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.rest import HttpRequest, HttpResponse
 
-class PurviewScanningClient(object):
+class PurviewScanningClient:
     """Creates a Microsoft.Scanning management client.
 
     :ivar key_vault_connections: KeyVaultConnectionsOperations operations

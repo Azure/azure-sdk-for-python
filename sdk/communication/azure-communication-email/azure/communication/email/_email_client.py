@@ -23,7 +23,7 @@ else:
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class EmailClient(object):
+class EmailClient:
     """A client to interact with the AzureCommunicationService Email gateway.
 
     This client provides operations to send an email and monitor its status.

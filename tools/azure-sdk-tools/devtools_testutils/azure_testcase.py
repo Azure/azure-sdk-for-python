@@ -10,7 +10,7 @@ import zlib
 from .config import TEST_SETTING_FILENAME, TestConfig
 
 
-class HttpStatusCode(object):
+class HttpStatusCode:
     OK = 200
     Created = 201
     Accepted = 202

@@ -14,7 +14,7 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class EndpointSettingsOperations(object):
+class EndpointSettingsOperations:
     """EndpointSettingsOperations operations.
 
     :param client: Client for service requests.

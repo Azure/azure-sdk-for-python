@@ -19,7 +19,7 @@ USAGE:
 import os
 
 
-class ExceptionPolicySamples(object):
+class ExceptionPolicySamples:
     connection_string = os.environ["AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING"]
 
     _ep_policy_id = "sample_ep_policy"

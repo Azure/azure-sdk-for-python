@@ -27,7 +27,7 @@ import os
 import asyncio
 
 
-class RecognizeIdDocumentsSampleAsync(object):
+class RecognizeIdDocumentsSampleAsync:
 
     async def recognize_identity_documents(self):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),

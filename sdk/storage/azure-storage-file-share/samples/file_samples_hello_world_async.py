@@ -28,7 +28,7 @@ SOURCE_FILE = './SampleSource.txt'
 DEST_FILE = './SampleDestination.txt'
 
 
-class HelloWorldSamplesAsync(object):
+class HelloWorldSamplesAsync:
 
     connection_string = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
 

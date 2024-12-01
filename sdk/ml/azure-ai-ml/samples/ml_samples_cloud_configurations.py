@@ -22,7 +22,7 @@ from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
 from azure.identity import AzureAuthorityHosts, DefaultAzureCredential
 
 
-class CloudConfigurationOptions(object):
+class CloudConfigurationOptions:
     def ml_cloud_config_from_environment_arm(self):
         subscription_id = "AZURE_SUBSCRIPTION_ID"
         resource_group = "RESOURCE_GROUP_NAME"

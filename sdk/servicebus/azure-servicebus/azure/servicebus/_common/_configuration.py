@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from ..aio._transport._base_async import AmqpTransportAsync
 
 
-class Configuration(object):  # pylint:disable=too-many-instance-attributes
+class Configuration:  # pylint:disable=too-many-instance-attributes
     def __init__(self, **kwargs):
         self.user_agent: Optional[str] = kwargs.get("user_agent")
         self.retry_total: int = kwargs.get("retry_total", 3)

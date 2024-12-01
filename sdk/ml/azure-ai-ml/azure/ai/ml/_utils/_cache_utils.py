@@ -55,7 +55,7 @@ class _CacheContent:
         self.on_disk_hash = CachedNodeResolver.calc_on_disk_hash_for_component(self.component_ref, self.in_memory_hash)
 
 
-class CachedNodeResolver(object):
+class CachedNodeResolver:
     """Class to resolve component in nodes with cached component resolution results.
 
     This class is thread-safe if:

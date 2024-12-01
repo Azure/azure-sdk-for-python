@@ -61,7 +61,7 @@ def build_start_migration_request(
     )
 
 # fmt: on
-class MigrationOperations(object):
+class MigrationOperations:
     """MigrationOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

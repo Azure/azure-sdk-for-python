@@ -18,7 +18,7 @@ except ImportError:
     import mock
 
 
-class ContextHelper(object):
+class ContextHelper:
     def __init__(self, environ=None, tracer_to_use=None):
         if environ is None:
             environ = {}

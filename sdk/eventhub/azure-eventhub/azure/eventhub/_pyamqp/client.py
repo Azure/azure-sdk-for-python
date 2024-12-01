@@ -57,7 +57,7 @@ Outcomes = Union[Received, Rejected, Released, Accepted, Modified]
 _logger = logging.getLogger(__name__)
 
 
-class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
+class AMQPClient:  # pylint: disable=too-many-instance-attributes
     """An AMQP client.
     :param hostname: The AMQP endpoint to connect to.
     :type hostname: str

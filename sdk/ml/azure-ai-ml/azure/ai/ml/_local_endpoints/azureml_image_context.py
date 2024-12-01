@@ -13,7 +13,7 @@ from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 module_logger = logging.getLogger(__name__)
 
 
-class AzureMlImageContext(object):
+class AzureMlImageContext:
     """Entity holding context for building the Azure ML specific image.
 
     :attribute docker_azureml_app_path: the name of the online endpoint

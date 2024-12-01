@@ -100,7 +100,7 @@ def build_list_replicas_request(
         **kwargs
     )
 
-class ContainerAppsRevisionReplicasOperations(object):
+class ContainerAppsRevisionReplicasOperations:
     """ContainerAppsRevisionReplicasOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that

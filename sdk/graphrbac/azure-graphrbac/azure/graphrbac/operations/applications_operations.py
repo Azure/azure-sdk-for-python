@@ -15,7 +15,7 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class ApplicationsOperations(object):
+class ApplicationsOperations:
     """ApplicationsOperations operations.
 
     :param client: Client for service requests.

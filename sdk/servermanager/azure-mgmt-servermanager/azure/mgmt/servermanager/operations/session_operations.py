@@ -17,7 +17,7 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class SessionOperations(object):
+class SessionOperations:
     """SessionOperations operations.
 
     :param client: Client for service requests.

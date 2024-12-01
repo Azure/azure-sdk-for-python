@@ -10,7 +10,7 @@ from azure.ai.ml.constants._common import DefaultOpenEncoding
 from azure.ai.ml.entities._deployment.data_collector import DataCollector
 
 
-class MdcConfigResolver(object):
+class MdcConfigResolver:
     """Represents the contents of mdc config and handles writing the mdc configuration to User's system.
 
     :param data_collector: model data collector entity

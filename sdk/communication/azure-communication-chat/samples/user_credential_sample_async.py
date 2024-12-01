@@ -25,7 +25,7 @@ from azure.communication.chat.aio import CommunicationTokenCredential
 from azure.communication.identity import CommunicationIdentityClient
 
 
-class CommunicationTokenCredentialSamples(object):
+class CommunicationTokenCredentialSamples:
 
     connection_string = os.environ.get("COMMUNICATION_SAMPLES_CONNECTION_STRING", None)
     if not connection_string:

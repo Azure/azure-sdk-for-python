@@ -32,7 +32,7 @@ from ... import http_constants
 # pylint: disable=protected-access
 
 
-class _QueryExecutionContextBase(object):
+class _QueryExecutionContextBase:
     """
     This is the abstract base execution context class.
     """

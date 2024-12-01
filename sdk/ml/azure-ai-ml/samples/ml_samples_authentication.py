@@ -24,7 +24,7 @@ USAGE:
 import os
 
 
-class MLClientSamples(object):
+class MLClientSamples:
     def ml_auth_azure_default_credential(self):
         subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
         resource_group = os.environ["RESOURCE_GROUP_NAME"]

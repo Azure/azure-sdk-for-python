@@ -34,7 +34,7 @@ def format_bounding_box(bounding_box):
     return ", ".join(["[{}, {}]".format(p.x, p.y) for p in bounding_box])
 
 
-class RecognizeContentSample(object):
+class RecognizeContentSample:
 
     def recognize_content(self):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),

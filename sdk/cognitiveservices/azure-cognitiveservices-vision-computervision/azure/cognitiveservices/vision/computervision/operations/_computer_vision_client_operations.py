@@ -14,7 +14,7 @@ from msrest.exceptions import HttpOperationError
 from .. import models
 
 
-class ComputerVisionClientOperationsMixin(object):
+class ComputerVisionClientOperationsMixin:
 
     def analyze_image(
             self, url, visual_features=None, details=None, language="en", description_exclude=None, model_version="latest", custom_headers=None, raw=False, **operation_config):

@@ -112,7 +112,7 @@ class _AsyncChunkDownloader(_ChunkDownloader):
         return chunk_data
 
 
-class _AsyncChunkIterator(object):
+class _AsyncChunkIterator:
     """Async iterator for chunks in blob download stream."""
 
     def __init__(self, size, content, downloader):
@@ -153,7 +153,7 @@ class _AsyncChunkIterator(object):
         return self._current_content
 
 
-class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attributes
+class StorageStreamDownloader:  # pylint: disable=too-many-instance-attributes
     """A streaming object to download from Azure Storage.
 
     :ivar str name:
