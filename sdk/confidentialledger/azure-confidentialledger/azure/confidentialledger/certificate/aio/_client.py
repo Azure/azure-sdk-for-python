@@ -18,7 +18,7 @@ from ._operations import ConfidentialLedgerCertificateClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Dict
+    from typing import Any, Awaitable, Dict
 
 
 class ConfidentialLedgerCertificateClient(
