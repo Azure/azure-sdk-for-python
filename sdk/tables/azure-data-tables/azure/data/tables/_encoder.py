@@ -42,14 +42,16 @@ class TableEntityJSONEncoder(JSONEncoder):
     """A JSON encoder that's capable of serializing datetime objects and bytes."""
 
     def default(self, o: Any) -> Any:
-        if isinstance(o, (bytes, bytearray)):
-            return b64encode(o).decode()
         if isinstance(o, datetime):
             if isinstance(o, TablesEntityDatetime) and o.tables_service_value:
                 # Check is this is a 'round-trip' datetime, and if so
                 # pass through the original value.
                 return o.tables_service_value
             return _to_utc_datetime(o)
+        if isinstance(o, UUID):
+            return str(o)
+        if isinstance(o, (bytes, bytearray)):
+            return b64encode(o).decode()
         return super().default(o)
 
 
@@ -139,13 +141,17 @@ class _TableEntityEncoder(TableEntityEncoder):
         try:
             return self._convert(key, value, self._obj_types[type(value)])
         except KeyError as e:
-            # if isinstance(value, tuple):
-            #     return self._entity_tuple(value)
+            if isinstance(value, Enum):
+                return self._encode_by_type(key, value.value)
+            if isinstance(value, SupportsInt):
+                return self._convert(key, value, self._obj_types[int])
+            if isinstance(value, SupportsFloat):
+                return self._convert(key, value, self._obj_types[float])
+            if isinstance(value, SupportsBytes):
+                return self._convert(key, value, self._obj_types[bytes])
             for obj_type, converter in self._obj_types.items():
                 if isinstance(value, obj_type):
                     return self._convert(key, value, converter)
-            if isinstance(value, Enum):
-                return self._encode_by_type(key, value.value)
             raise TypeError(f"No encoder found for value '{value}' of type '{type(value)}'.") from e
 
     def _encode_tuple(self, _: str, value: Tuple[Any, Union[str, EdmType]]) -> Tuple[EdmType, SupportedDataTypes]:
@@ -165,8 +171,11 @@ class _TableEntityEncoder(TableEntityEncoder):
     def _encode_boolean(self, value: Union[str, bool]) -> Tuple[None, Union[bool, str]]:
         return None, value
 
-    def _encode_datetime(self, value: Union[str, datetime]) -> Tuple[EdmType, Union[str, datetime]]:
-        return EdmType.DATETIME, value
+    def _encode_datetime(self, value: Union[str, datetime]) -> Tuple[EdmType, str]:
+        if isinstance(value, str):
+            # Pass a serialized value straight through
+            return EdmType.DATETIME, value
+        return EdmType.DATETIME, _to_utc_datetime(value)
 
     def _encode_double(self, value: Union[str, SupportsFloat]) -> Tuple[EdmType, Union[str, float]]:
         if isinstance(value, str):

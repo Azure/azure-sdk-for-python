@@ -387,6 +387,7 @@ def build_table_insert_entity_request(
     timeout: Optional[int] = None,
     format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
     response_preference: Optional[Union[str, _models.ResponseFormat]] = None,
+    json: Optional[Dict[str, Any]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -420,7 +421,7 @@ def build_table_insert_entity_request(
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 def build_table_get_access_policy_request(table: str, *, timeout: Optional[int] = None, **kwargs: Any) -> HttpRequest:
@@ -1122,7 +1123,7 @@ class TableOperations:
         table: str,
         partition_key: str,
         row_key: str,
-        table_entity_properties: Optional[Union[IO, bytes]] = None,
+        table_entity_properties: Optional[IO] = None,
         *,
         timeout: Optional[int] = None,
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
@@ -1169,7 +1170,7 @@ class TableOperations:
         table: str,
         partition_key: str,
         row_key: str,
-        table_entity_properties: Optional[Union[Dict[str, Any], IO, bytes]] = None,
+        table_entity_properties: Optional[Union[Dict[str, Any], IO]] = None,
         *,
         timeout: Optional[int] = None,
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
@@ -1343,7 +1344,7 @@ class TableOperations:
         table: str,
         partition_key: str,
         row_key: str,
-        table_entity_properties: Optional[Union[IO, bytes]] = None,
+        table_entity_properties: Optional[IO] = None,
         *,
         timeout: Optional[int] = None,
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
@@ -1390,7 +1391,7 @@ class TableOperations:
         table: str,
         partition_key: str,
         row_key: str,
-        table_entity_properties: Optional[Union[Dict[str, Any], IO, bytes]] = None,
+        table_entity_properties: Optional[Union[Dict[str, Any], IO]] = None,
         *,
         timeout: Optional[int] = None,
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
@@ -1618,7 +1619,7 @@ class TableOperations:
     def insert_entity(
         self,
         table: str,
-        table_entity_properties: Optional[Union[Dict[str, Any], IO, bytes]] = None,
+        table_entity_properties: Optional[Dict[str, Any]] = None,
         *,
         timeout: Optional[int] = None,
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
@@ -1667,15 +1668,10 @@ class TableOperations:
         )
         cls: ClsType[Optional[Dict[str, Any]]] = kwargs.pop("cls", None)
 
-        _json = None
-        _content = None
-        if isinstance(table_entity_properties, (IOBase, bytes)):
-            _content = table_entity_properties
+        if table_entity_properties is not None:
+            _json = self._serialize.body(table_entity_properties, "{object}")
         else:
-            if table_entity_properties is not None:
-                _json = self._serialize.body(table_entity_properties, "{object}")
-            else:
-                _json = None
+            _json = None
 
         request = build_table_insert_entity_request(
             table=table,
@@ -1686,7 +1682,6 @@ class TableOperations:
             content_type=content_type,
             version=self._config.version,
             json=_json,
-            content=_content,
             headers=_headers,
             params=_params,
         )

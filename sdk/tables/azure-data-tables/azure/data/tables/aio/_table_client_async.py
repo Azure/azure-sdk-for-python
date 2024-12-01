@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
+import json
 from typing import AsyncIterable, Optional, Any, Union, List, Dict, Mapping, Iterable, overload, cast, Tuple
 from urllib.parse import urlparse, unquote
 
@@ -18,7 +19,12 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._common_conversion import _prepare_key, _return_headers_and_deserialized, _trim_service_metadata
 from .._base_client import parse_connection_str
-from .._encoder import TableEntityEncoder, _TableEntityEncoder, EncoderMapType
+from .._encoder import (
+    _TableEntityEncoder,
+    TableEntityEncoder,
+    EncoderMapType,
+    TableEntityJSONEncoder,
+)
 from .._entity import TableEntity
 from .._decoder import TableEntityDecoder, deserialize_iso, DecoderMapType
 from .._generated.models import SignedIdentifier, TableProperties
@@ -382,7 +388,7 @@ class TableClient(AsyncTablesBaseClient):
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
         if match_condition and not etag and isinstance(entity, TableEntity):
-            etag = entity.metadata.get("etag")
+            etag = entity.metadata["etag"]
         match_condition = _get_match_condition(
             etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
@@ -422,12 +428,13 @@ class TableClient(AsyncTablesBaseClient):
                 :caption: Creating and adding an entity to a Table
         """
         entity_json = self.encoder(entity)
+        payload = json.dumps(entity_json, cls=TableEntityJSONEncoder).encode()
         try:
             metadata, content = cast(
                 Tuple[Dict[str, str], Optional[Dict[str, Any]]],
                 await self._client.table.insert_entity(
                     table=self.table_name,
-                    table_entity_properties=entity_json,
+                    table_entity_properties=payload,
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs,
                 ),
@@ -475,13 +482,14 @@ class TableClient(AsyncTablesBaseClient):
                 :caption: Updating an already existing entity in a Table
         """
         if match_condition and not etag and isinstance(entity, TableEntity):
-            etag = entity.metadata.get("etag")
+            etag = entity.metadata["etag"]
         match_condition = _get_match_condition(
             etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
         entity_json = self.encoder(entity)
         partition_key = entity_json.get("PartitionKey")
         row_key = entity_json.get("RowKey")
+        payload = json.dumps(entity_json, cls=TableEntityJSONEncoder).encode()
 
         try:
             if mode == UpdateMode.REPLACE:
@@ -491,7 +499,7 @@ class TableClient(AsyncTablesBaseClient):
                         table=self.table_name,
                         partition_key=_prepare_key(partition_key),
                         row_key=_prepare_key(row_key),
-                        table_entity_properties=entity_json,
+                        table_entity_properties=payload,
                         etag=etag,
                         match_condition=match_condition,
                         cls=kwargs.pop("cls", _return_headers_and_deserialized),
@@ -508,7 +516,7 @@ class TableClient(AsyncTablesBaseClient):
                         etag=etag,
                         match_condition=match_condition,
                         cls=kwargs.pop("cls", _return_headers_and_deserialized),
-                        table_entity_properties=entity_json,
+                        table_entity_properties=payload,
                         **kwargs,
                     ),
                 )
@@ -683,6 +691,7 @@ class TableClient(AsyncTablesBaseClient):
         entity_json = self.encoder(entity)
         partition_key = entity_json.get("PartitionKey")
         row_key = entity_json.get("RowKey")
+        payload = json.dumps(entity_json, cls=TableEntityJSONEncoder).encode()
 
         try:
             if mode == UpdateMode.MERGE:
@@ -692,7 +701,7 @@ class TableClient(AsyncTablesBaseClient):
                         table=self.table_name,
                         partition_key=_prepare_key(partition_key),
                         row_key=_prepare_key(row_key),
-                        table_entity_properties=entity_json,
+                        table_entity_properties=payload,
                         cls=kwargs.pop("cls", _return_headers_and_deserialized),
                         **kwargs,
                     ),
@@ -704,7 +713,7 @@ class TableClient(AsyncTablesBaseClient):
                         table=self.table_name,
                         partition_key=_prepare_key(partition_key),
                         row_key=_prepare_key(row_key),
-                        table_entity_properties=entity_json,
+                        table_entity_properties=payload,
                         cls=kwargs.pop("cls", _return_headers_and_deserialized),
                         **kwargs,
                     ),
