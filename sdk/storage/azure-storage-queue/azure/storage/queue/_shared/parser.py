@@ -11,15 +11,6 @@ from typing import Optional
 EPOCH_AS_FILETIME = 116444736000000000  # January 1, 1970 as MS filetime
 HUNDREDS_OF_NANOSECONDS = 10000000
 
-if sys.version_info < (3,):
-    def _str(value):
-        if isinstance(value, unicode):  # pylint: disable=undefined-variable
-            return value.encode('utf-8')
-
-        return str(value)
-else:
-    _str = str
-
 
 def _to_utc_datetime(value: datetime) -> str:
     return value.strftime('%Y-%m-%dT%H:%M:%SZ')

@@ -2,7 +2,6 @@ import logging
 import os
 from unittest.mock import Mock, patch
 
-import mock
 import pytest
 from test_utilities.constants import Test_Resource_Group, Test_Subscription
 

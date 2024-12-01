@@ -13,13 +13,6 @@ from ..algorithm import SignatureAlgorithm
 from ..transform import SignatureTransform
 from ..._enums import SignatureAlgorithm as KeyVaultSignatureAlgorithm
 
-if sys.version_info < (3, 3):
-    abstractproperty = abc.abstractproperty
-else:  # abc.abstractproperty is deprecated as of 3.3
-    import functools
-
-    abstractproperty = functools.partial(property, abc.abstractmethod)
-
 
 class _EcdsaSignatureTransform(SignatureTransform):
     def __init__(self, key, hash_algorithm):
@@ -39,7 +32,8 @@ class _Ecdsa(SignatureAlgorithm):
     def create_signature_transform(self, key):
         return _EcdsaSignatureTransform(key, self.default_hash_algorithm)
 
-    @abstractproperty
+    @property
+    @abc.abstractmethod
     def coordinate_length(self):
         pass
 
