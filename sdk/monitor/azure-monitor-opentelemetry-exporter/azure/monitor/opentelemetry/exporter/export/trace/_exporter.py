@@ -125,7 +125,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         envelope.tags.update(_utils._populate_part_a_fields(resource))  # pylint: disable=W0212
         envelope.instrumentation_key = self._instrumentation_key
         data_point = MetricDataPoint(
-            name=str("_OTELRESOURCE_")[:1024],
+            name="_OTELRESOURCE_"[:1024],
             value=0,
         )
 
