@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import datetime
 from enum import Enum
+from urllib.parse import quote
 from typing import Any, Union, NamedTuple, Optional, Dict
 from typing_extensions import TypedDict, Required
 
@@ -45,10 +46,20 @@ class TableEntity(Dict[str, Any]):
         :return: Dict of entity metadata
         :rtype: ~azure.data.tables.EntityMetadata
         """
-        try:
-            return self._metadata  # type:ignore[attr-defined]
-        except AttributeError:
-            return {"etag": None, "timestamp": None}
+        if not hasattr(self, "_metadata"):
+            self._metadata: EntityMetadata = {
+                "etag": None,
+                "timestamp": None,
+            }  # pylint: disable=attribute-defined-outside-init
+        if not self._metadata.get("timestamp"):
+            self._metadata["timestamp"] = self.get("Timestamp")
+        if not self._metadata.get("etag"):
+            try:
+                timestamp = self._metadata["timestamp"].tables_service_value  # type:ignore[union-attr]
+                self._metadata["etag"] = "W/\"datetime'" + quote(timestamp) + "'\""
+            except AttributeError:
+                self._metadata["etag"] = None
+        return self._metadata
 
 
 class EdmType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

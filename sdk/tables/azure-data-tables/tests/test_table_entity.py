@@ -2232,10 +2232,15 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
             assert received_entity1.metadata
 
         with TableClient(
-            url, table_name, credential=tables_primary_storage_account_key, flatten_result_entity=True
+            url, table_name, credential=tables_primary_storage_account_key, trim_timestamp=False, trim_odata=False
         ) as client:
             received_entity2 = client.get_entity("pk", "rk")
-            assert received_entity2.metadata == received_entity1.metadata
+            assert received_entity2["Timestamp"] == received_entity1.metadata["timestamp"]
+            assert received_entity2.metadata["etag"] == received_entity1.metadata["etag"]
+            assert received_entity2.metadata["timestamp"] == received_entity1.metadata["timestamp"]
+            assert received_entity2.metadata != received_entity1.metadata
             for key, value in received_entity1.metadata.items():
-                assert received_entity2[key] == value
+                if key in ["etag", "timestamp"]:
+                    continue
+                assert received_entity2["odata." + key] == value
             client.delete_table()

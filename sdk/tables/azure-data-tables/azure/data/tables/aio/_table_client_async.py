@@ -17,7 +17,12 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from .._common_conversion import _prepare_key, _return_headers_and_deserialized, _trim_service_metadata
+from .._common_conversion import (
+    SupportedDataTypes,
+    _prepare_key,
+    _return_headers_and_deserialized,
+    _trim_service_metadata,
+)
 from .._base_client import parse_connection_str
 from .._encoder import (
     _TableEntityEncoder,
@@ -26,7 +31,7 @@ from .._encoder import (
     TableEntityJSONEncoder,
 )
 from .._entity import TableEntity
-from .._decoder import TableEntityDecoder, deserialize_iso, DecoderMapType
+from .._decoder import _TableEntityDecoder, TableEntityDecoder, deserialize_iso, DecoderMapType
 from .._generated.models import SignedIdentifier, TableProperties
 from .._models import TableAccessPolicy, TableItem, UpdateMode
 from .._serialize import (
@@ -75,6 +80,7 @@ class TableClient(AsyncTablesBaseClient):
     """
 
     encoder: TableEntityEncoder
+    decoder: TableEntityDecoder
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
         self,
@@ -85,7 +91,8 @@ class TableClient(AsyncTablesBaseClient):
         api_version: Optional[str] = None,
         encoder_map: Optional[EncoderMapType] = None,
         decoder_map: Optional[DecoderMapType] = None,
-        flatten_result_entity: bool = False,
+        trim_timestamp: bool = True,
+        trim_odata: bool = True,
         **kwargs: Any,
     ) -> None:
         """Creates TableClient from a Credential.
@@ -120,7 +127,9 @@ class TableClient(AsyncTablesBaseClient):
             raise ValueError("Please specify a table name.")
         self.table_name: str = table_name
         self.encoder = _TableEntityEncoder(convert_map=encoder_map or {})
-        self.decoder = TableEntityDecoder(convert_map=decoder_map, flatten_result_entity=flatten_result_entity)
+        self.decoder = _TableEntityDecoder(
+            convert_map=decoder_map or {}, trim_odata=trim_odata, trim_timestamp=trim_timestamp
+        )
         super(TableClient, self).__init__(endpoint, credential=credential, api_version=api_version, **kwargs)
 
     @classmethod
@@ -208,9 +217,11 @@ class TableClient(AsyncTablesBaseClient):
         output = {}  # type: Dict[str, Optional[TableAccessPolicy]]
         for identifier in cast(List[SignedIdentifier], identifiers):
             if identifier.access_policy:
+                start = identifier.access_policy.start
+                expiry = identifier.access_policy.expiry
                 output[identifier.id] = TableAccessPolicy(
-                    start=deserialize_iso(identifier.access_policy.start),
-                    expiry=deserialize_iso(identifier.access_policy.expiry),
+                    start=deserialize_iso(start) if start else None,
+                    expiry=deserialize_iso(expiry) if expiry else None,
                     permission=identifier.access_policy.permission,
                 )
             else:
@@ -302,11 +313,18 @@ class TableClient(AsyncTablesBaseClient):
                 _reprocess_error(decoded_error)
                 raise
 
+    def _encode_key(self, key_name: str, key_value: Any) -> SupportedDataTypes:
+        try:
+            _, encoded_key = self.encoder(key_name, key_value)
+            return encoded_key
+        except (KeyError, TypeError):
+            return cast(str, key_value)
+
     @overload
     async def delete_entity(
         self,
-        partition_key: str,
-        row_key: str,
+        partition_key: Any,
+        row_key: Any,
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -369,7 +387,7 @@ class TableClient(AsyncTablesBaseClient):
         """
 
     @distributed_trace_async
-    async def delete_entity(self, *args: Union[EntityType, str], **kwargs: Any) -> None:
+    async def delete_entity(self, *args: Any, **kwargs: Any) -> None:
         entity = kwargs.pop("entity", None)
         try:
             if not entity:
@@ -381,9 +399,11 @@ class TableClient(AsyncTablesBaseClient):
             partition_key = kwargs.pop("partition_key", None)
             if partition_key is None:
                 partition_key = cast(str, args[0])
+            partition_key = self._encode_key("PartitionKey", partition_key)
             row_key = kwargs.pop("row_key", None)
             if row_key is None:
                 row_key = cast(str, args[1])
+            row_key = self._encode_key("RowKey", row_key)
 
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
@@ -618,8 +638,8 @@ class TableClient(AsyncTablesBaseClient):
     @distributed_trace_async
     async def get_entity(
         self,
-        partition_key: str,
-        row_key: str,
+        partition_key: Any,
+        row_key: Any,
         *,
         select: Optional[Union[str, List[str]]] = None,
         **kwargs,
@@ -645,6 +665,8 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 16
                 :caption: Getting an entity with PartitionKey and RowKey from a table
         """
+        partition_key = self._encode_key("PartitionKey", partition_key)
+        row_key = self._encode_key("RowKey", row_key)
         user_select = None
         if select and not isinstance(select, str):
             user_select = ",".join(select)

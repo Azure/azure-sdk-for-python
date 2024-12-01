@@ -23,7 +23,7 @@ from ._encoder import (
     SupportedDataTypes,
     TableEntityJSONEncoder,
 )
-from ._decoder import TableEntityDecoder, deserialize_iso, DecoderMapType
+from ._decoder import _TableEntityDecoder, TableEntityDecoder, deserialize_iso, DecoderMapType
 from ._base_client import parse_connection_str, TablesBaseClient
 from ._entity import TableEntity
 from ._error import (
@@ -68,6 +68,7 @@ class TableClient(TablesBaseClient):
     """
 
     encoder: TableEntityEncoder
+    decoder: TableEntityDecoder
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
         self,
@@ -78,7 +79,8 @@ class TableClient(TablesBaseClient):
         api_version: Optional[str] = None,
         encode_types: Optional[EncoderMapType] = None,
         decode_types: Optional[DecoderMapType] = None,
-        trim_metadata: bool = True,
+        trim_timestamp: bool = True,
+        trim_odata: bool = True,
         **kwargs: Any,
     ) -> None:
         """Create TableClient from a Credential.
@@ -113,7 +115,11 @@ class TableClient(TablesBaseClient):
             raise ValueError("Please specify a table name.")
         self.table_name: str = table_name
         self.encoder = _TableEntityEncoder(convert_map=encode_types or {})
-        self.decoder = TableEntityDecoder(convert_map=decode_types, flatten_result_entity=not trim_metadata)
+        self.decoder = _TableEntityDecoder(
+            convert_map=decode_types or {},
+            trim_timestamp=trim_timestamp,
+            trim_odata=trim_odata,
+        )
         super(TableClient, self).__init__(endpoint, credential=credential, api_version=api_version, **kwargs)
 
     @classmethod
@@ -201,9 +207,11 @@ class TableClient(TablesBaseClient):
         output: Dict[str, Optional[TableAccessPolicy]] = {}
         for identifier in cast(List[SignedIdentifier], identifiers):
             if identifier.access_policy:
+                start = identifier.access_policy.start
+                expiry = identifier.access_policy.expiry
                 output[identifier.id] = TableAccessPolicy(
-                    start=deserialize_iso(identifier.access_policy.start),
-                    expiry=deserialize_iso(identifier.access_policy.expiry),
+                    start=deserialize_iso(start) if start else None,
+                    expiry=deserialize_iso(expiry) if expiry else None,
                     permission=identifier.access_policy.permission,
                 )
             else:

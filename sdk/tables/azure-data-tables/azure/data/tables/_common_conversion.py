@@ -6,11 +6,11 @@
 import base64
 import hashlib
 import hmac
-from datetime import timezone, datetime
+from datetime import timezone
 from urllib.parse import ParseResult
 from typing import Optional, Tuple, List, Dict, Any, Union, cast
 
-SupportedDataTypes = Union[str, bool, int, float, None, datetime, bytes]
+SupportedDataTypes = Union[str, bool, int, float, None]
 
 
 def _to_str(value):
