@@ -175,6 +175,8 @@ class _TableEntityEncoder(TableEntityEncoder):
         if isinstance(value, str):
             # Pass a serialized value straight through
             return EdmType.DATETIME, value
+        if isinstance(value, TablesEntityDatetime) and value.tables_service_value:
+            return EdmType.DATETIME, value.tables_service_value
         return EdmType.DATETIME, _to_utc_datetime(value)
 
     def _encode_double(self, value: Union[str, SupportsFloat]) -> Tuple[EdmType, Union[str, float]]:
