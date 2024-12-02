@@ -41,7 +41,7 @@ class TestDatalakeService(StorageRecordedTestCase):
         self._assert_logging_equal(prop['analytics_logging'], AnalyticsLogging())
         self._assert_metrics_equal(prop['hour_metrics'], Metrics())
         self._assert_metrics_equal(prop['minute_metrics'], Metrics())
-        self._assert_cors_equal(prop['cors'], list())
+        self._assert_cors_equal(prop['cors'], [])
 
     def _assert_logging_equal(self, log1, log2):
         if log1 is None or log2 is None:
@@ -122,7 +122,7 @@ class TestDatalakeService(StorageRecordedTestCase):
             analytics_logging=AnalyticsLogging(),
             hour_metrics=Metrics(),
             minute_metrics=Metrics(),
-            cors=list(),
+            cors=[],
             target_version='2014-02-14'
         )
 

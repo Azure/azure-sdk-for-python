@@ -63,7 +63,7 @@ def get_url(request):
 def get_files():
     """Returns files dict from request context."""
 
-    files = dict()
+    files = {}
 
     for k, v in request.files.items():
         content_type = request.files[k].content_type or "application/octet-stream"
@@ -152,7 +152,7 @@ def get_dict(*keys, **extras):
         method=request.method,
     )
 
-    out_d = dict()
+    out_d = {}
 
     for key in keys:
         out_d[key] = d.get(key)

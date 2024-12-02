@@ -59,7 +59,7 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
             if self.custom_endpoint_address.find("//") == -1:
                 self.custom_endpoint_address = "sb://" + self.custom_endpoint_address
             endpoint = urlparse(self.custom_endpoint_address)
-            self.transport_type = TransportType.AmqpOverWebsocket
+            self.transport_type = kwargs.get("transport_type") or TransportType.AmqpOverWebsocket
             self.custom_endpoint_hostname = endpoint.hostname
             if amqp_transport.KIND == "pyamqp":
                 self.custom_endpoint_address += "/$servicebus/websocket"

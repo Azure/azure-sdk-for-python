@@ -14,7 +14,7 @@ from ._generated.models import (
     SsmlSource as SsmlSourceInternal,
     PlaySource as PlaySourceInternal,
     Choice as ChoiceInternal,
-    ChannelAffinity as ChannelAffinityInternal
+    ChannelAffinity as ChannelAffinityInternal,
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -27,10 +27,11 @@ from ._utils import (
     deserialize_phone_identifier,
     deserialize_identifier,
     deserialize_comm_user_identifier,
-    serialize_identifier
+    serialize_identifier,
 )
+
 if TYPE_CHECKING:
-    from ._generated.models._enums  import (
+    from ._generated.models._enums import (
         MediaStreamingTransportType,
         MediaStreamingContentType,
         MediaStreamingAudioChannelType,
@@ -39,9 +40,9 @@ if TYPE_CHECKING:
         RecordingState,
         RecordingKind,
         VoiceKind,
-        DtmfTone
+        DtmfTone,
     )
-    from ._generated.models  import (
+    from ._generated.models import (
         CallParticipant as CallParticipantRest,
         CallConnectionProperties as CallConnectionPropertiesRest,
         AddParticipantResponse as AddParticipantResultRest,
@@ -68,6 +69,7 @@ class CallInvite:
     :keyword source_display_name: Set display name for caller
     :paramtype source_display_name: str
     """
+
     target: CommunicationIdentifier
     """Target's identity."""
     source_caller_id_number: Optional[PhoneNumberIdentifier]
@@ -81,7 +83,7 @@ class CallInvite:
         *,
         source_caller_id_number: Optional[PhoneNumberIdentifier] = None,
         source_display_name: Optional[str] = None,
-        **kwargs
+        **kwargs,
     ):
         self.target = target
         self.source_caller_id_number = source_caller_id_number
@@ -97,16 +99,13 @@ class ServerCallLocator:
     :param server_call_id: The server call id of ongoing call.
     :type server_call_id: str
     """
+
     server_call_id: str
     """The server call id of ongoing call."""
     kind: str = "serverCallLocator"
     """This is for locating the call with server call id."""
 
-    def __init__(  # pylint: disable=unused-argument
-        self,
-        server_call_id: str,
-        **kwargs
-    ):
+    def __init__(self, server_call_id: str, **kwargs):  # pylint: disable=unused-argument
         self.server_call_id = server_call_id
         self.kind = "serverCallLocator"
 
@@ -123,16 +122,13 @@ class GroupCallLocator:
     :param group_call_id: The group call id of ongoing call.
     :type group_call_id: str
     """
+
     group_call_id: str
     """The group call id of ongoing call."""
     kind: str = "groupCallLocator"
     """This is for locating the call with group call id."""
 
-    def __init__(  # pylint: disable=unused-argument
-        self,
-        group_call_id: str,
-        **kwargs
-    ):
+    def __init__(self, group_call_id: str, **kwargs):  # pylint: disable=unused-argument
         self.group_call_id = group_call_id
         self.kind = "groupCallLocator"
 
@@ -144,6 +140,7 @@ class GroupCallLocator:
         :param kind: Defines the kind of external storage.
         :type kind: str
         """
+
         kind: str
         """The recording storage kind"""
 
@@ -153,9 +150,10 @@ class GroupCallLocator:
         :param kind: Defines the kind of external storage.
         :type kind: ~azure.communication.callautomation.RecordingStorageKind or str
         """
-        kind: Literal[RecordingStorageKind
-                      .AZURE_COMMUNICATION_SERVICES
-                      ] = RecordingStorageKind.AZURE_COMMUNICATION_SERVICES
+
+        kind: Literal[RecordingStorageKind.AZURE_COMMUNICATION_SERVICES] = (
+            RecordingStorageKind.AZURE_COMMUNICATION_SERVICES
+        )
         """The kind of recording storage is set to AZURE_COMMUNICATION_SERVICES"""
 
     class AzureBlobContainerRecordingStorage(RecordingStorage):
@@ -165,10 +163,12 @@ class GroupCallLocator:
         :param container_url: Defines the kind of external storage. Required.
         :type container_url: str
         """
+
         kind: Literal[RecordingStorageKind.AZURE_BLOB_STORAGE] = RecordingStorageKind.AZURE_BLOB_STORAGE
         """The kind of recording storage is set to AZURE_BLOB_STORAGE"""
         container_url: str
         """The container url for the AZURE_BLOB_STORAGE type"""
+
         def __init__(self, container_url: str):
             self.container_url = container_url
 
@@ -192,16 +192,14 @@ class ChannelAffinity:
     """ Channel number to which bitstream from a particular participant will be written."""
 
     def __init__(  # pylint: disable=unused-argument
-        self,
-        target_participant: CommunicationIdentifier,
-        channel: int,
-        **kwargs
+        self, target_participant: CommunicationIdentifier, channel: int, **kwargs
     ):
         self.target_participant = target_participant
         self.channel = channel
 
     def _to_generated(self):
         return ChannelAffinityInternal(participant=serialize_identifier(self.target_participant), channel=self.channel)
+
 
 class FileSource:
     """Media file source of URL to be played in action such as Play media.
@@ -218,11 +216,7 @@ class FileSource:
     """Cached source id of the play media, if it exists."""
 
     def __init__(  # pylint: disable=unused-argument
-        self,
-        url: str,
-        *,
-        play_source_cache_id: Optional[str] = None,
-        **kwargs
+        self, url: str, *, play_source_cache_id: Optional[str] = None, **kwargs
     ):
         self.url = url
         self.play_source_cache_id = play_source_cache_id
@@ -231,7 +225,7 @@ class FileSource:
         return PlaySourceInternal(
             kind=PlaySourceType.FILE,
             file=FileSourceInternal(uri=self.url),
-            play_source_cache_id=self.play_source_cache_id
+            play_source_cache_id=self.play_source_cache_id,
         )
 
 
@@ -259,7 +253,7 @@ class TextSource:
     source_locale: Optional[str]
     """Source language locale to be played. Refer to available locales here:
         https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"""
-    voice_kind: Optional[Union[str, 'VoiceKind']]
+    voice_kind: Optional[Union[str, "VoiceKind"]]
     """Voice kind type. Known values are: "male" and "female"."""
     voice_name: Optional[str]
     """Voice name to be played. Refer to available Text-to-speech voices here:
@@ -274,10 +268,10 @@ class TextSource:
         *,
         text: str,
         source_locale: Optional[str] = None,
-        voice_kind: Optional[Union[str, 'VoiceKind']] = None,
+        voice_kind: Optional[Union[str, "VoiceKind"]] = None,
         voice_name: Optional[str] = None,
         play_source_cache_id: Optional[str] = None,
-        custom_voice_endpoint_id: Optional[str] = None
+        custom_voice_endpoint_id: Optional[str] = None,
     ):
         self.text = text
         self.source_locale = source_locale
@@ -294,9 +288,11 @@ class TextSource:
                 source_locale=self.source_locale,
                 voice_kind=self.voice_kind,
                 voice_name=self.voice_name,
-                custom_voice_endpoint_id=self.custom_voice_endpoint_id),
-            play_source_cache_id=self.play_source_cache_id
+                custom_voice_endpoint_id=self.custom_voice_endpoint_id,
+            ),
+            play_source_cache_id=self.play_source_cache_id,
         )
+
 
 class SsmlSource:
     """SsmlSource to be played in actions such as Play media.
@@ -321,7 +317,7 @@ class SsmlSource:
         *,
         ssml_text: str,
         play_source_cache_id: Optional[str] = None,
-        custom_voice_endpoint_id: Optional[str] = None
+        custom_voice_endpoint_id: Optional[str] = None,
     ):
         self.ssml_text = ssml_text
         self.play_source_cache_id = play_source_cache_id
@@ -330,11 +326,10 @@ class SsmlSource:
     def _to_generated(self):
         return PlaySourceInternal(
             kind=PlaySourceType.SSML,
-            ssml=SsmlSourceInternal(
-                ssml_text=self.ssml_text,
-                custom_voice_endpoint_id=self.custom_voice_endpoint_id),
-            play_source_cache_id=self.play_source_cache_id
+            ssml=SsmlSourceInternal(ssml_text=self.ssml_text, custom_voice_endpoint_id=self.custom_voice_endpoint_id),
+            play_source_cache_id=self.play_source_cache_id,
         )
+
 
 class MediaStreamingConfiguration:
     """Configuration of Media streaming.
@@ -351,19 +346,19 @@ class MediaStreamingConfiguration:
 
     transport_url: str
     """Transport URL for media streaming."""
-    transport_type: Union[str, 'MediaStreamingTransportType']
+    transport_type: Union[str, "MediaStreamingTransportType"]
     """The type of transport to be used for media streaming."""
-    content_type: Union[str, 'MediaStreamingContentType']
+    content_type: Union[str, "MediaStreamingContentType"]
     """Content type to stream, eg. audio, audio/video."""
-    audio_channel_type: Union[str, 'MediaStreamingAudioChannelType']
+    audio_channel_type: Union[str, "MediaStreamingAudioChannelType"]
     """Audio channel type to stream, eg. unmixed audio, mixed audio."""
 
     def __init__(
         self,
         transport_url: str,
-        transport_type: Union[str, 'MediaStreamingTransportType'],
-        content_type: Union[str, 'MediaStreamingContentType'],
-        audio_channel_type: Union[str, 'MediaStreamingAudioChannelType']
+        transport_type: Union[str, "MediaStreamingTransportType"],
+        content_type: Union[str, "MediaStreamingContentType"],
+        audio_channel_type: Union[str, "MediaStreamingAudioChannelType"],
     ):
         self.transport_url = transport_url
         self.transport_type = transport_type
@@ -375,8 +370,9 @@ class MediaStreamingConfiguration:
             transport_url=self.transport_url,
             transport_type=self.transport_type,
             content_type=self.content_type,
-            audio_channel_type=self.audio_channel_type
+            audio_channel_type=self.audio_channel_type,
         )
+
 
 class TranscriptionConfiguration:
     """Configuration of live transcription.
@@ -395,7 +391,7 @@ class TranscriptionConfiguration:
 
     transport_url: str
     """Transport URL for live transcription."""
-    transport_type: Union[str, 'TranscriptionTransportType']
+    transport_type: Union[str, "TranscriptionTransportType"]
     """The type of transport to be used for live transcription."""
     locale: str
     """Defines the locale for the data."""
@@ -405,9 +401,9 @@ class TranscriptionConfiguration:
     def __init__(
         self,
         transport_url: str,
-        transport_type: Union[str, 'TranscriptionTransportType'],
+        transport_type: Union[str, "TranscriptionTransportType"],
         locale: str,
-        start_transcription: bool
+        start_transcription: bool,
     ):
         self.transport_url = transport_url
         self.transport_type = transport_type
@@ -419,11 +415,12 @@ class TranscriptionConfiguration:
             transport_url=self.transport_url,
             transport_type=self.transport_type,
             locale=self.locale,
-            start_transcription=self.start_transcription
+            start_transcription=self.start_transcription,
         )
 
+
 class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
-    """ Detailed properties of the call.
+    """Detailed properties of the call.
 
     :keyword call_connection_id: The call connection id of this call leg.
     :paramtype call_connection_id: str
@@ -458,7 +455,7 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     """The server call id of this call."""
     targets: Optional[List[CommunicationIdentifier]]
     """The targets of the call when the call was originally initiated."""
-    call_connection_state: Optional[Union[str, 'CallConnectionState']]
+    call_connection_state: Optional[Union[str, "CallConnectionState"]]
     """The state of the call."""
     callback_url: Optional[str]
     """The callback URL."""
@@ -483,14 +480,14 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
         call_connection_id: Optional[str] = None,
         server_call_id: Optional[str] = None,
         targets: Optional[List[CommunicationIdentifier]] = None,
-        call_connection_state: Optional[Union[str, 'CallConnectionState']] = None,
+        call_connection_state: Optional[Union[str, "CallConnectionState"]] = None,
         callback_url: Optional[str] = None,
         media_subscription_id: Optional[str] = None,
         source_caller_id_number: Optional[PhoneNumberIdentifier] = None,
         source_display_name: Optional[str] = None,
         source: Optional[CommunicationIdentifier] = None,
         correlation_id: Optional[str] = None,
-        answered_by: Optional[CommunicationUserIdentifier] = None
+        answered_by: Optional[CommunicationUserIdentifier] = None,
     ):
         self.call_connection_id = call_connection_id
         self.server_call_id = server_call_id
@@ -505,7 +502,7 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
         self.answered_by = answered_by
 
     @classmethod
-    def _from_generated(cls, call_connection_properties_generated: 'CallConnectionPropertiesRest'):
+    def _from_generated(cls, call_connection_properties_generated: "CallConnectionPropertiesRest"):
         target_models = []
         for target in call_connection_properties_generated.targets:
             target_models.append(deserialize_identifier(target))
@@ -517,19 +514,23 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
             call_connection_state=call_connection_properties_generated.call_connection_state,
             callback_url=call_connection_properties_generated.callback_uri,
             media_subscription_id=call_connection_properties_generated.media_subscription_id,
-            source_caller_id_number=deserialize_phone_identifier(
-            call_connection_properties_generated.source_caller_id_number)
-            if call_connection_properties_generated.source_caller_id_number
-            else None,
+            source_caller_id_number=(
+                deserialize_phone_identifier(call_connection_properties_generated.source_caller_id_number)
+                if call_connection_properties_generated.source_caller_id_number
+                else None
+            ),
             source_display_name=call_connection_properties_generated.source_display_name,
-            source=deserialize_identifier(call_connection_properties_generated.source)
-            if call_connection_properties_generated.source
-            else None,
+            source=(
+                deserialize_identifier(call_connection_properties_generated.source)
+                if call_connection_properties_generated.source
+                else None
+            ),
             correlation_id=call_connection_properties_generated.correlation_id,
-            answered_by=deserialize_comm_user_identifier(
-                call_connection_properties_generated.answered_by)
-            if call_connection_properties_generated.answered_by
-            else None
+            answered_by=(
+                deserialize_comm_user_identifier(call_connection_properties_generated.answered_by)
+                if call_connection_properties_generated.answered_by
+                else None
+            ),
         )
 
 
@@ -544,23 +545,19 @@ class RecordingProperties:
 
     recording_id: Optional[str]
     """Id of this recording operation."""
-    recording_state: Optional[Union[str,'RecordingState']]
+    recording_state: Optional[Union[str, "RecordingState"]]
     """state of ongoing recording."""
 
     def __init__(
-        self,
-        *,
-        recording_id: Optional[str] = None,
-        recording_state: Optional[Union[str,'RecordingState']] = None
+        self, *, recording_id: Optional[str] = None, recording_state: Optional[Union[str, "RecordingState"]] = None
     ):
         self.recording_id = recording_id
         self.recording_state = recording_state
 
     @classmethod
-    def _from_generated(cls, recording_state_result: 'RecordingStateResultRest'):
+    def _from_generated(cls, recording_state_result: "RecordingStateResultRest"):
         return cls(
-            recording_id=recording_state_result.recording_id,
-            recording_state=recording_state_result.recording_state
+            recording_id=recording_state_result.recording_id, recording_state=recording_state_result.recording_state
         )
 
 
@@ -594,16 +591,16 @@ class CallParticipant:
         self.is_on_hold = is_on_hold
 
     @classmethod
-    def _from_generated(cls, call_participant_generated: 'CallParticipantRest'):
+    def _from_generated(cls, call_participant_generated: "CallParticipantRest"):
         return cls(
             identifier=deserialize_identifier(call_participant_generated.identifier),
             is_muted=call_participant_generated.is_muted,
-            is_on_hold=call_participant_generated.is_on_hold
+            is_on_hold=call_participant_generated.is_on_hold,
         )
 
 
 class AddParticipantResult:
-    """ The result payload for adding participants to the call.
+    """The result payload for adding participants to the call.
 
     :keyword participant: Participant that was added with this request.
     :paramtype participant: ~azure.communication.callautomation.CallParticipant
@@ -623,20 +620,20 @@ class AddParticipantResult:
         *,
         invitation_id: str,
         participant: Optional[CallParticipant] = None,
-        operation_context: Optional[str] = None
+        operation_context: Optional[str] = None,
     ):
         self.invitation_id = invitation_id
         self.participant = participant
         self.operation_context = operation_context
 
     @classmethod
-    def _from_generated(cls, add_participant_result_generated: 'AddParticipantResultRest'):
+    def _from_generated(cls, add_participant_result_generated: "AddParticipantResultRest"):
         return cls(
             invitation_id=add_participant_result_generated.invitation_id,
             participant=CallParticipant._from_generated(  # pylint:disable=protected-access
                 add_participant_result_generated.participant
             ),
-            operation_context=add_participant_result_generated.operation_context
+            operation_context=add_participant_result_generated.operation_context,
         )
 
 
@@ -650,15 +647,11 @@ class RemoveParticipantResult:
     operation_context: Optional[str]
     """The operation context provided by client."""
 
-    def __init__(
-        self,
-        *,
-        operation_context: Optional[str] = None
-    ) -> None:
+    def __init__(self, *, operation_context: Optional[str] = None) -> None:
         self.operation_context = operation_context
 
     @classmethod
-    def _from_generated(cls, remove_participant_result_generated: 'RemoveParticipantResultRest'):
+    def _from_generated(cls, remove_participant_result_generated: "RemoveParticipantResultRest"):
         return cls(operation_context=remove_participant_result_generated.operation_context)
 
 
@@ -672,16 +665,13 @@ class TransferCallResult:
     operation_context: Optional[str]
     """The operation context provided by client."""
 
-    def __init__(
-        self,
-        *,
-        operation_context: Optional[str] = None
-    ) -> None:
+    def __init__(self, *, operation_context: Optional[str] = None) -> None:
         self.operation_context = operation_context
 
     @classmethod
-    def _from_generated(cls, transfer_result_generated: 'TransferParticipantResultRest'):
+    def _from_generated(cls, transfer_result_generated: "TransferParticipantResultRest"):
         return cls(operation_context=transfer_result_generated.operation_context)
+
 
 class RecognitionChoice:
     """
@@ -700,23 +690,18 @@ class RecognitionChoice:
     """Identifier for a given choice."""
     phrases: List[str]
     """List of phrases to recognize."""
-    tone: Optional[Union[str, 'DtmfTone']]
+    tone: Optional[Union[str, "DtmfTone"]]
     """Known values are: "zero", "one", "two", "three", "four", "five", "six", "seven",
      "eight", "nine", "a", "b", "c", "d", "pound", and "asterisk"."""
 
-    def __init__(
-        self,
-        *,
-        label: str,
-        phrases: List[str],
-        tone: Optional[Union[str, 'DtmfTone']] = None
-    ):
+    def __init__(self, *, label: str, phrases: List[str], tone: Optional[Union[str, "DtmfTone"]] = None):
         self.label = label
         self.phrases = phrases
         self.tone = tone
 
     def _to_generated(self):
         return ChoiceInternal(label=self.label, phrases=self.phrases, tone=self.tone)
+
 
 class MuteParticipantResult:
     """The result payload for muting participant from the call.
@@ -728,16 +713,13 @@ class MuteParticipantResult:
     operation_context: Optional[str]
     """The operation context provided by client."""
 
-    def __init__(
-        self,
-        *,
-        operation_context: Optional[str] = None
-    ) -> None:
+    def __init__(self, *, operation_context: Optional[str] = None) -> None:
         self.operation_context = operation_context
 
     @classmethod
-    def _from_generated(cls, mute_participant_result_generated: 'MuteParticipantsResultRest'):
+    def _from_generated(cls, mute_participant_result_generated: "MuteParticipantsResultRest"):
         return cls(operation_context=mute_participant_result_generated.operation_context)
+
 
 class SendDtmfTonesResult:
     """The result payload for send Dtmf tones.
@@ -748,19 +730,16 @@ class SendDtmfTonesResult:
     operation_context: Optional[str]
     """The operation context provided by client."""
 
-    def __init__(
-        self,
-        *,
-        operation_context: Optional[str] = None
-    ) -> None:
+    def __init__(self, *, operation_context: Optional[str] = None) -> None:
         self.operation_context = operation_context
 
     @classmethod
-    def _from_generated(cls, send_dtmf_tones_result_generated: 'SendDtmfTonesResultRest'):
+    def _from_generated(cls, send_dtmf_tones_result_generated: "SendDtmfTonesResultRest"):
         return cls(operation_context=send_dtmf_tones_result_generated.operation_context)
 
+
 class CancelAddParticipantOperationResult:
-    """ The result payload for cancelling add participant request for a participant.
+    """The result payload for cancelling add participant request for a participant.
     :keyword invitation_id: Invitation ID that was used to add the participant to the call.
     :paramtype participant: str
     :keyword operation_context: The operation context provided by client.
@@ -772,18 +751,13 @@ class CancelAddParticipantOperationResult:
     operation_context: Optional[str]
     """The operation context provided by client."""
 
-    def __init__(
-        self,
-        *,
-        invitation_id: str,
-        operation_context: Optional[str] = None
-    ):
+    def __init__(self, *, invitation_id: str, operation_context: Optional[str] = None):
         self.invitation_id = invitation_id
         self.operation_context = operation_context
 
     @classmethod
-    def _from_generated(cls, cancel_add_participant_operation_result_generated: 'CancelAddParticipantResultRest'):
+    def _from_generated(cls, cancel_add_participant_operation_result_generated: "CancelAddParticipantResultRest"):
         return cls(
             invitation_id=cancel_add_participant_operation_result_generated.invitation_id,
-            operation_context=cancel_add_participant_operation_result_generated.operation_context
+            operation_context=cancel_add_participant_operation_result_generated.operation_context,
         )

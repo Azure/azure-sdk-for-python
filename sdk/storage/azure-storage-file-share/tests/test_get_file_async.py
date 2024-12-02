@@ -373,7 +373,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
         # Act
-        chunk_size_list = list()
+        chunk_size_list = []
         with tempfile.TemporaryFile() as temp_file:
             download = await file_client.download_file()
             async for data in download.chunks():

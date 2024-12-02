@@ -6,7 +6,4 @@
 from ._call_automation_client_async import CallAutomationClient
 from ._call_connection_client_async import CallConnectionClient
 
-__all__ = [
-    "CallAutomationClient",
-    "CallConnectionClient"
-]
+__all__ = ["CallAutomationClient", "CallConnectionClient"]

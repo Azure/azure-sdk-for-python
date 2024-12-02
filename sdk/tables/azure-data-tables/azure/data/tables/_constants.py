@@ -13,6 +13,7 @@ DEFAULT_STORAGE_ENDPOINT_SUFFIX = "core.windows.net"
 DEFAULT_COSMOS_ENDPOINT_SUFFIX = "cosmos.azure.com"
 
 STORAGE_OAUTH_SCOPE = "https://storage.azure.com/.default"
+COSMOS_OAUTH_SCOPE = "https://cosmos.azure.com/.default"
 
 NEXT_TABLE_NAME = "x-ms-continuation-NextTableName"
 NEXT_PARTITION_KEY = "x-ms-continuation-NextPartitionKey"

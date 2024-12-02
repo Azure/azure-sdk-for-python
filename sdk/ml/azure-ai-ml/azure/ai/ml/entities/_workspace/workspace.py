@@ -350,12 +350,6 @@ class Workspace(Resource):
                     mlflow_tracking_uri = rest_obj.ml_flow_tracking_uri
             except ImportError:
                 mlflow_tracking_uri = rest_obj.ml_flow_tracking_uri
-                error_msg = (
-                    "azureml.mlflow could not be imported. "
-                    "Please ensure that latest 'azureml-mlflow' has been installed in the current python environment"
-                )
-                print(error_msg)
-                # warnings.warn(error_msg, UserWarning)
 
         # TODO: Remove once Online Endpoints updates API version to at least 2023-08-01
         allow_roleassignment_on_rg = None

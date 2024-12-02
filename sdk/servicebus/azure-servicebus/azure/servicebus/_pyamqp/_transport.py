@@ -32,9 +32,6 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 # -------------------------------------------------------------------------
 
-
-from __future__ import absolute_import, unicode_literals
-
 import errno
 import re
 import socket
@@ -491,9 +488,13 @@ class SSLTransport(_AbstractTransport):
 
     def __init__(self, host, *, port=AMQPS_PORT, socket_timeout=None, ssl_opts=None, **kwargs):
         self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else {}
-        self.sslopts["server_hostname"] = host
+        self._custom_endpoint = kwargs.get("custom_endpoint")
+        self._custom_port = kwargs.get("custom_port")
+        self.sslopts["server_hostname"] = self._custom_endpoint or host
         self._read_buffer = BytesIO()
-        super(SSLTransport, self).__init__(host, port=port, socket_timeout=socket_timeout, **kwargs)
+        super(SSLTransport, self).__init__(
+            self._custom_endpoint or host, port=self._custom_port or port, socket_timeout=socket_timeout, **kwargs
+        )
 
     def _setup_transport(self):
         """Wrap the socket in an SSL object."""
