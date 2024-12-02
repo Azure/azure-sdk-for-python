@@ -61,5 +61,5 @@ __all__ = [
     "MarketplaceSubscriptionOperations",
     "IndexOperations",
     "AzureOpenAIDeploymentOperations",
-    "CapabilityHostsOperations"
+    "CapabilityHostsOperations",
 ]

@@ -15,7 +15,12 @@ from ._utils._logger_utils import initialize_logger_info
 from ._version import VERSION
 from .entities._builders.command_func import command
 from .entities._builders.spark_func import spark
-from .entities._job.distribution import MpiDistribution, PyTorchDistribution, RayDistribution, TensorFlowDistribution
+from .entities._job.distribution import (
+    MpiDistribution,
+    PyTorchDistribution,
+    RayDistribution,
+    TensorFlowDistribution,
+)
 from .entities._load_functions import (
     load_batch_deployment,
     load_batch_endpoint,
