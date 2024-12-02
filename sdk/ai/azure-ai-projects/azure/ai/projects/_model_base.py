@@ -754,7 +754,7 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-retur
         except AttributeError:
             model_name = annotation
         if module is not None:
-            annotation = _get_model(module, model_name)  # type: ignore
+            annotation = _get_model(module, model_name)
 
     try:
         if module and _is_model(annotation):

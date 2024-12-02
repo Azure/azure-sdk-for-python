@@ -1851,7 +1851,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         truncation_strategy: Optional[_models.TruncationObject] = None,
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
-        parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.ThreadRun:
@@ -1924,9 +1923,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          AgentsApiResponseFormat Default value is None.
         :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
          or ~azure.ai.projects.models.AgentsApiResponseFormat
-        :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
-         Default value is None.
-        :paramtype parallel_tool_calls: bool
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -1975,7 +1971,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         truncation_strategy: Optional[_models.TruncationObject] = None,
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
-        parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.ThreadRun:
@@ -2047,9 +2042,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          AgentsApiResponseFormat Default value is None.
         :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
          or ~azure.ai.projects.models.AgentsApiResponseFormat
-        :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
-         Default value is None.
-        :paramtype parallel_tool_calls: bool
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -2085,7 +2077,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
                 "max_prompt_tokens": max_prompt_tokens,
                 "metadata": metadata,
                 "model": model,
-                "parallel_tool_calls": parallel_tool_calls,
                 "response_format": response_format,
                 "stream": stream_parameter,
                 "temperature": temperature,
@@ -2754,7 +2745,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         truncation_strategy: Optional[_models.TruncationObject] = None,
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
-        parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.ThreadRun:
@@ -2824,9 +2814,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          AgentsApiResponseFormat Default value is None.
         :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
          or ~azure.ai.projects.models.AgentsApiResponseFormat
-        :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
-         Default value is None.
-        :paramtype parallel_tool_calls: bool
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -2872,7 +2859,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         truncation_strategy: Optional[_models.TruncationObject] = None,
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
-        parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.ThreadRun:
@@ -2941,9 +2927,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          AgentsApiResponseFormat Default value is None.
         :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
          or ~azure.ai.projects.models.AgentsApiResponseFormat
-        :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
-         Default value is None.
-        :paramtype parallel_tool_calls: bool
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -2977,7 +2960,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
                 "max_prompt_tokens": max_prompt_tokens,
                 "metadata": metadata,
                 "model": model,
-                "parallel_tool_calls": parallel_tool_calls,
                 "response_format": response_format,
                 "stream": stream_parameter,
                 "temperature": temperature,
