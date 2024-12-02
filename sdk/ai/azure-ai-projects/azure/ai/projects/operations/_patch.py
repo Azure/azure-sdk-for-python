@@ -1587,8 +1587,14 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def create_stream(
-        self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentRunStream[_models.AgentEventHandler]:
+        self,
+        thread_id: str,
+        body: JSON,
+        *,
+        event_handler: BaseAgentEventHandlerT = _defaultAgentEventHandler,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.AgentRunStream[BaseAgentEventHandlerT]:
         """Creates a new stream for an agent thread.
 
         Terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
@@ -1597,6 +1603,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type thread_id: str
         :param body: Required.
         :type body: JSON
+        :keyword event_handler: The event handler to use for processing events during the run. Default
+            value is None.
+        :paramtype event_handler: ~azure.ai.projects.models.AgentEventHandler
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1707,8 +1716,14 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def create_stream(
-        self, thread_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentRunStream[_models.AgentEventHandler]:
+        self,
+        thread_id: str,
+        body: IO[bytes],
+        *,
+        event_handler: BaseAgentEventHandlerT = _defaultAgentEventHandler,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.AgentRunStream[BaseAgentEventHandlerT]:
         """Creates a new run for an agent thread.
 
         Terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
@@ -1717,6 +1732,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type thread_id: str
         :param body: Required.
         :type body: IO[bytes]
+        :keyword event_handler: The event handler to use for processing events during the run. Default
+            value is None.
+        :paramtype event_handler: ~azure.ai.projects.models.AgentEventHandler
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1992,8 +2010,15 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def submit_tool_outputs_to_stream(
-        self, thread_id: str, run_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentRunStream[_models.AgentEventHandler]:
+        self,
+        thread_id: str,
+        run_id: str,
+        body: JSON,
+        *,
+        event_handler: BaseAgentEventHandlerT = _defaultAgentEventHandler,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.AgentRunStream[BaseAgentEventHandlerT]:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
@@ -2004,6 +2029,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type run_id: str
         :param body: Required.
         :type body: JSON
+        :keyword event_handler: The event handler to use for processing events during the run. Default
+            value is None.
+        :paramtype event_handler: ~azure.ai.projects.models.AgentEventHandler
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2046,8 +2074,15 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def submit_tool_outputs_to_stream(
-        self, thread_id: str, run_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentRunStream:
+        self,
+        thread_id: str,
+        run_id: str,
+        body: IO[bytes],
+        *,
+        event_handler: BaseAgentEventHandlerT = _defaultAgentEventHandler,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.AgentRunStream[BaseAgentEventHandlerT]:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.
@@ -2058,6 +2093,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type run_id: str
         :param body: Required.
         :type body: IO[bytes]
+        :keyword event_handler: The event handler to use for processing events during the run. Default
+            value is None.
+        :paramtype event_handler: ~azure.ai.projects.models.AgentEventHandler
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
