@@ -152,13 +152,13 @@ class TestJobOperations:
     def test_list(self, mock_job_operation: JobOperations) -> None:
         mock_job_operation.list()
         expected = (mock_job_operation._resource_group_name, mock_job_operation._workspace_name)
-        assert expected in mock_job_operation.service_client_10_2024_preview.jobs.list.call_args
+        assert expected in mock_job_operation.service_client_01_2024_preview.jobs.list.call_args
 
     @patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"})
     def test_list_private_preview(self, mock_job_operation: JobOperations) -> None:
         mock_job_operation.list()
         expected = (mock_job_operation._resource_group_name, mock_job_operation._workspace_name)
-        assert expected in mock_job_operation.service_client_10_2024_preview.jobs.list.call_args
+        assert expected in mock_job_operation.service_client_01_2024_preview.jobs.list.call_args
 
     @patch.object(Job, "_from_rest_object")
     def test_get(self, mock_method, mock_job_operation: JobOperations) -> None:
