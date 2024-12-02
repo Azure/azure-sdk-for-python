@@ -178,7 +178,7 @@ class AdversarialTemplateHandler:
         plist = self.categorized_ch_parameters
         ch_templates = []
         for key, value in plist.items():
-            if value["category"] == template_category:
+            if value["category"] == template_category and "enterprise" not in key:
                 params = value["parameters"]
                 for p in params:
                     p.update({"ch_template_placeholder": "{{ch_template_placeholder}}"})
