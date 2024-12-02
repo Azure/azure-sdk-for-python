@@ -265,7 +265,7 @@ class TestSimAndEval:
         # run the evaluation
         eval_output = evaluate(
             data=file_name,
-            # evaluation_name="sim_image_understanding_protected_material_eval_2",
+            evaluation_name="sim_image_understanding_protected_material_eval",
             # azure_ai_project=project_scope,
             evaluators={"protected_material": protected_material_eval},
         )
