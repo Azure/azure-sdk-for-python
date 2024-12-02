@@ -4,6 +4,13 @@
 ### Features Added
   - Added support for IP-based access control to default and hub workspaces. 
   - Add support for additional include in spark component.
+  - Removing preview tag for following connections type
+    - Azure AI Search
+    - Azure AI Content Safety
+    - Azure AI Speech
+    - Azure Blob Storage
+    - Azure Datalake Storage Gen 2
+    - Microsoft OneLake
 
 ### Bugs Fixed
 
