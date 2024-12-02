@@ -27,7 +27,7 @@ from uuid import uuid4, UUID
 from enum import Enum
 from dotenv import find_dotenv, load_dotenv
 from dataclasses import dataclass, asdict
-from typing import Any, Callable, Dict, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Optional, Tuple, Union, Type
 from azure.data.tables import TableClient, UpdateMode, EdmType
 
 
@@ -54,11 +54,11 @@ class Color(str, Enum):
     BLACK = "black"
 
 
-def encode_large_int(_: str, value: int) -> Tuple[EdmType, str]:
+def encode_large_int(_: str, value: Any) -> Tuple[EdmType, str]:
     return EdmType.STRING, str(value)
 
 
-def encode_uuid(_: str, value: UUID) -> Tuple[None, str]:
+def encode_uuid(_: str, value: Any) -> Tuple[None, str]:
     return None, str(value)
 
 
@@ -69,7 +69,7 @@ def decode_color(value: str) -> str:
         return value
 
 
-encoder_map: Dict[str, Callable[[str, Any], Tuple[Optional[EdmType], str]]] = {
+encoder_map: Dict[str, Callable] = {
     "RowKey": encode_uuid,
     "big_number": encode_large_int,
 }
@@ -93,7 +93,7 @@ class InsertUpdateDeleteEntity(object):
 
     def create_delete_entity(self):
         table_client = TableClient.from_connection_string(
-            self.connection_string, self.table_name, encode_types=encoder_map, decode_types=decoder_map
+            self.connection_string, self.table_name, encode_types=encoder_map, decode_types=decoder_map  # type: ignore
         )
         with table_client:
             table_client.create_table()

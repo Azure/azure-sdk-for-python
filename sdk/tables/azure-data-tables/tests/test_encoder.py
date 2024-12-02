@@ -608,18 +608,9 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
             assert "is out of range to be cast to" in str(error.value)
-            with pytest.raises(HttpResponseError) as error:
-                resp = client.create_entity(
-                    test_entity,
-                    verify_payload=json.dumps(expected_entity, sort_keys=True),
-                    verify_url=f"/{table_name}",
-                    verify_headers={"Content-Type": "application/json;odata=nometadata"},
-                )
-            assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert (
-                '"code":"InvalidInput","message":{"lang":"en-US","value":"An error occurred while processing this request.'
-                in str(error.value)
-            )
+            with pytest.raises(TypeError) as error:
+                client.create_entity(test_entity)
+            assert "is out of range to be cast to" in str(error.value)
 
             # Valid int64 value with Edm
             test_entity = {"PartitionKey": "PK3", "RowKey": "RK3", "Data": (max_int64, "Edm.Int64")}
@@ -1378,32 +1369,12 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
             assert "is out of range to be cast to" in str(error.value)
-            with pytest.raises(HttpResponseError) as error:
-                client.upsert_entity(
-                    test_entity,
-                    mode=UpdateMode.REPLACE,
-                    verify_payload=json.dumps(expected_entity, sort_keys=True),
-                    verify_url=f"/{table_name}(PartitionKey='PK2',RowKey='RK2')",
-                    verify_headers={
-                        "Content-Type": "application/json",
-                        "Accept": "application/json",
-                    },
-                )
-            assert "An error occurred while processing this request." in str(error.value)
-            assert error.value.error_code == "InvalidInput"
-            with pytest.raises(HttpResponseError) as error:
-                client.upsert_entity(
-                    test_entity,
-                    mode=UpdateMode.REPLACE,
-                    verify_payload=json.dumps(expected_entity, sort_keys=True),
-                    verify_url=f"/{table_name}(PartitionKey='PK2',RowKey='RK2')",
-                    verify_headers={
-                        "Content-Type": "application/json",
-                        "Accept": "application/json",
-                    },
-                )
-            assert "An error occurred while processing this request." in str(error.value)
-            assert error.value.error_code == "InvalidInput"
+            with pytest.raises(TypeError) as error:
+                client.upsert_entity(test_entity, mode=UpdateMode.MERGE)
+            assert "is out of range to be cast to" in str(error.value)
+            with pytest.raises(TypeError) as error:
+                client.upsert_entity(test_entity, mode=UpdateMode.REPLACE)
+            assert "is out of range to be cast to" in str(error.value)
 
             # Valid int64 value with Edm
             test_entity = {"PartitionKey": "PK3", "RowKey": "RK3", "Data": (max_int64, "Edm.Int64")}
@@ -2205,10 +2176,10 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             max_int64 = 9223372036854775807
             test_entity = {"PartitionKey": "PK1", "RowKey": "RK1", "Data": int((max_int64 + 1) * 1000)}
             with pytest.raises(TypeError) as error:
-                client.upsert_entity(test_entity, mode=UpdateMode.MERGE)
+                client.update_entity(test_entity, mode=UpdateMode.MERGE)
             assert "is out of range to be cast to" in str(error.value)
             with pytest.raises(TypeError) as error:
-                client.upsert_entity(test_entity, mode=UpdateMode.REPLACE)
+                client.update_entity(test_entity, mode=UpdateMode.REPLACE)
             assert "is out of range to be cast to" in str(error.value)
 
             test_entity = {"PartitionKey": "PK2", "RowKey": "RK2", "Data": (max_int64 + 1, "Edm.Int64")}
@@ -2221,27 +2192,12 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
             assert "is out of range to be cast to" in str(error.value)
-            client.upsert_entity({"PartitionKey": "PK2", "RowKey": "RK2"})
-            with pytest.raises(HttpResponseError) as error:
-                client.update_entity(
-                    test_entity,
-                    mode=UpdateMode.REPLACE,
-                    verify_payload=json.dumps(expected_entity, sort_keys=True),
-                    verify_url=f"/{table_name}(PartitionKey='PK2',RowKey='RK2')",
-                    verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-                )
-            assert "An error occurred while processing this request" in str(error.value)
-            assert error.value.error_code == "InvalidInput"
-            with pytest.raises(HttpResponseError) as error:
-                client.update_entity(
-                    test_entity,
-                    mode=UpdateMode.REPLACE,
-                    verify_payload=json.dumps(expected_entity, sort_keys=True),
-                    verify_url=f"/{table_name}(PartitionKey='PK2',RowKey='RK2')",
-                    verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-                )
-            assert "An error occurred while processing this request" in str(error.value)
-            assert error.value.error_code == "InvalidInput"
+            with pytest.raises(TypeError) as error:
+                client.update_entity(test_entity, mode=UpdateMode.MERGE)
+            assert "is out of range to be cast to" in str(error.value)
+            with pytest.raises(TypeError) as error:
+                client.update_entity(test_entity, mode=UpdateMode.REPLACE)
+            assert "is out of range to be cast to" in str(error.value)
 
             # Valid int64 value with Edm
             test_entity = {"PartitionKey": "PK3", "RowKey": "RK3", "Data": (max_int64, "Edm.Int64")}

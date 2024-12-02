@@ -169,6 +169,7 @@ class _TableEntityEncoder(TableEntityEncoder):
         return EdmType.BINARY, _encode_base64(value)
 
     def _encode_boolean(self, value: Union[str, bool]) -> Tuple[None, Union[bool, str]]:
+        # TODO: return EdmType.BOOLEAN, value
         return None, value
 
     def _encode_datetime(self, value: Union[str, datetime]) -> Tuple[EdmType, str]:
@@ -198,6 +199,7 @@ class _TableEntityEncoder(TableEntityEncoder):
         int_value = int(value)
         if int_value >= MAX_INT32 or int_value < MIN_INT32:
             raise TypeError(_ERROR_VALUE_TOO_LARGE.format(str(value), EdmType.INT32))
+        # TODO: return EdmType.INT32, int_value
         return None, int_value
 
     def _encode_int64(self, value: Any) -> Tuple[EdmType, str]:
