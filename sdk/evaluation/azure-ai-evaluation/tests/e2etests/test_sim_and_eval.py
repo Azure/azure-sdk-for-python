@@ -75,19 +75,24 @@ class TestSimAndEval:
                 randomization_seed=42,
             )
         )
-        
+
         assert len(simulator_output) == 2
         assert len(simulator_output[0]["messages"]) == 4
         assert simulator_output[0]["messages"][0]["content"] == simulator_output[0]["messages"][1]["content"]
         # message 2 is non-deterministic, don't check it
         assert simulator_output[0]["messages"][0]["content"] == simulator_output[0]["messages"][3]["content"]
-        
+
         # Write simulator output to file
         file_name = "eval_sim_test.jsonl"
         # Sadly tempfile doesn't play nice with evaluate's data reader
         # Write the output to the file
         with open(file_name, "w") as file:
-            file.writelines([json.dumps({"conversation":{"messages": conversation["messages"]}}) + "\n" for conversation in simulator_output])
+            file.writelines(
+                [
+                    json.dumps({"conversation": {"messages": conversation["messages"]}}) + "\n"
+                    for conversation in simulator_output
+                ]
+            )
 
         # Evaluator simulator output
         violence_eval = ViolenceEvaluator(azure_cred, project_scope)
@@ -96,9 +101,7 @@ class TestSimAndEval:
             data=file_name,
             # evaluation_name="sim_conv_violence_eval",
             # azure_ai_project=project_scope,
-            evaluators= { 
-                "violence": violence_eval
-            },
+            evaluators={"violence": violence_eval},
         )
 
         # validate the results
@@ -110,20 +113,20 @@ class TestSimAndEval:
 
         assert len(eval_output["rows"][0]["outputs.violence.evaluation_per_turn"]["violence_reason"]) == 2
         assert len(eval_output["rows"][1]["outputs.violence.evaluation_per_turn"]["violence_reason"]) == 2
-        
+
         row_result_df = pd.DataFrame(eval_output["rows"])
         assert "inputs.conversation" in row_result_df.columns.to_list()
         assert "outputs.violence.violence_score" in row_result_df.columns.to_list()
         assert "outputs.violence.evaluation_per_turn" in row_result_df.columns.to_list()
-        
+
         assert row_result_df["outputs.violence.violence_score"][0] in [0, 5]
         assert row_result_df["outputs.violence.violence_score"][1] in [0, 5]
 
-        metrics = eval_output["metrics"]    
+        metrics = eval_output["metrics"]
         assert metrics is not None
         assert "violence.violence_defect_rate" in metrics.keys()
         assert metrics["violence.violence_defect_rate"] is not None
-        
+
         # Cleanup file
         os.remove(file_name)
 
@@ -161,19 +164,19 @@ class TestSimAndEval:
 
         simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
-        simulator_output = asyncio.run(
-            simulator(
-                scenario=AdversarialScenario.ADVERSARIAL_QA,
-                target=callback
-            )
-        )
-        
+        simulator_output = asyncio.run(simulator(scenario=AdversarialScenario.ADVERSARIAL_QA, target=callback))
+
         # Write simulator output to file
         file_name = "eval_sim_test.jsonl"
         # Sadly tempfile doesn't play nice with evaluate's data reader
         # Write the output to the file
         with open(file_name, "w") as file:
-            file.writelines([json.dumps({"conversation":{"messages": conversation["messages"]}}) + "\n" for conversation in simulator_output])
+            file.writelines(
+                [
+                    json.dumps({"conversation": {"messages": conversation["messages"]}}) + "\n"
+                    for conversation in simulator_output
+                ]
+            )
 
         # Evaluator simulator output
         violence_eval = ViolenceEvaluator(azure_cred, project_scope)
@@ -182,25 +185,23 @@ class TestSimAndEval:
             data=file_name,
             # evaluation_name="sim_conv_violence_eval",
             # azure_ai_project=project_scope,
-            evaluators= { 
-                "violence": violence_eval
-            },
+            evaluators={"violence": violence_eval},
         )
 
         # validate the results
         assert eval_output is not None
         assert eval_output["rows"] is not None
         assert eval_output["metrics"] is not None
-        
+
         row_result_df = pd.DataFrame(eval_output["rows"])
         metrics = eval_output["metrics"]
-        
+
         assert "inputs.conversation" in row_result_df.columns.to_list()
         assert "outputs.violence.violence_score" in row_result_df.columns.to_list()
-        
+
         assert row_result_df["outputs.violence.violence_score"][1] in [4, 5]
         assert "violence.violence_defect_rate" in metrics.keys()
-        
+
         # Cleanup file
         os.remove(file_name)
 
@@ -252,7 +253,12 @@ class TestSimAndEval:
 
         # Write the output to the file
         with open(file_name, "w") as file:
-            file.writelines([json.dumps({"conversation":{"messages": conversation["messages"]}}) + "\n" for conversation in simulator_output])
+            file.writelines(
+                [
+                    json.dumps({"conversation": {"messages": conversation["messages"]}}) + "\n"
+                    for conversation in simulator_output
+                ]
+            )
 
         # Evaluator simulator output
         protected_material_eval = ProtectedMaterialMultimodalEvaluator(azure_cred, project_scope)
@@ -268,7 +274,7 @@ class TestSimAndEval:
         assert eval_output is not None
         assert eval_output["rows"] is not None
         assert eval_output["metrics"] is not None
-        
+
         assert len(eval_output["rows"]) == 1
         assert eval_output["rows"][0]["outputs.protected_material.fictional_characters_reason"] is not None
         assert eval_output["rows"][0]["outputs.protected_material.artwork_reason"] is not None
