@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Type, Union
 
 from azure.ai.ml._restclient.runhistory.models import Run
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase as RestJobBase, JobService
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, JobService
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_2401
 from azure.ai.ml._restclient.v2024_01_01_preview.models import (
@@ -48,7 +48,7 @@ from .pipeline._component_translatable import ComponentTranslatableMixin
 module_logger = logging.getLogger(__name__)
 
 
-def _is_pipeline_child_job(job: RestJobBase) -> bool:
+def _is_pipeline_child_job(job: JobBase) -> bool:
     # pipeline child job has no properties, so we can check through testing job.properties
     # if backend has spec changes, this method need to be updated
     return job.properties is None
@@ -294,7 +294,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
 
     @classmethod
     def _from_rest_object(  # pylint: disable=too-many-return-statements
-        cls, obj: Union[RestJobBase, JobBase_2401, Run]
+        cls, obj: Union[JobBase, JobBase_2401, Run]
     ) -> "Job":  # pylint: disable=too-many-return-statements
         from azure.ai.ml.entities import PipelineJob
         from azure.ai.ml.entities._builders.command import Command
