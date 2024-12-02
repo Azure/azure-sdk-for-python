@@ -29,10 +29,8 @@ QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
 
 
 async def send_single_message(sender):
-    print(f"Sending a single message on {asyncio.current_task().get_name()}")
     message = ServiceBusMessage("Single Message")
     await sender.send_messages(message)
-    print(f"Sent a single message on {asyncio.current_task().get_name()}")
 
 
 async def main():

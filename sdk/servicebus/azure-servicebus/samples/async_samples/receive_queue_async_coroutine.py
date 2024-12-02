@@ -29,13 +29,9 @@ QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
 
 
 async def receive_single_message(receiver):
-    print(f"Receving a single message on {asyncio.current_task().get_name()}")
     message = await receiver.receive_messages()
-    print(f"Received a single message on {asyncio.current_task().get_name()}")
     await asyncio.sleep(12 * 60)
-    print(f"Complete the message on {asyncio.current_task().get_name()}")
     await receiver.complete_message(message[0])
-    print(f"Completed the message on {asyncio.current_task().get_name()}")
 
 
 async def main():

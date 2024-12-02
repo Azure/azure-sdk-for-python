@@ -87,11 +87,7 @@ def parse_connection_string(conn_str: str) -> "ServiceBusConnectionStringPropert
     :rtype: ~azure.servicebus.ServiceBusConnectionStringProperties
     """
     # pylint: disable=unused-variable
-    fully_qualified_namespace, policy, key, entity, signature, emulator = _parse_conn_str(
-        conn_str, True
-    )[
-        :-1
-    ]
+    fully_qualified_namespace, policy, key, entity, signature, emulator = _parse_conn_str(conn_str, True)[:-1]
     endpoint = "sb://" + fully_qualified_namespace + "/"
     return ServiceBusConnectionStringProperties(
         fully_qualified_namespace=fully_qualified_namespace,

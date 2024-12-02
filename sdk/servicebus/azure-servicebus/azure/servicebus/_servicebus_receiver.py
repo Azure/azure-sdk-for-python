@@ -459,6 +459,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                     return [self._build_received_message(message) for message in batch]
             finally:
                 self._receive_context.clear()
+        return []
 
     def _settle_message_with_retry(
         self,
