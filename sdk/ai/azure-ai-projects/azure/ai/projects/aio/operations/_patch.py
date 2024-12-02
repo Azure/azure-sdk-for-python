@@ -97,7 +97,7 @@ class InferenceOperations:
             connection = await self._outer_instance.connections.get_default(
                 connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
             )
-        logger.debug("[InferenceOperations.get_chat_completions_client] connection = " + str(connection))
+        logger.debug("[InferenceOperations.get_chat_completions_client] connection = %s", str(connection))
 
         try:
             from azure.ai.inference.aio import ChatCompletionsClient
@@ -173,7 +173,7 @@ class InferenceOperations:
             connection = await self._outer_instance.connections.get_default(
                 connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
             )
-        logger.debug("[InferenceOperations.get_embeddings_client] connection = " + str(connection))
+        logger.debug("[InferenceOperations.get_embeddings_client] connection = %s", str(connection))
 
         try:
             from azure.ai.inference.aio import EmbeddingsClient
@@ -237,7 +237,7 @@ class InferenceOperations:
         connection = await self._outer_instance.connections.get_default(
             connection_type=ConnectionType.AZURE_OPEN_AI, include_credentials=True, **kwargs
         )
-        logger.debug("[InferenceOperations.get_azure_openai_client] connection = " + str(connection))
+        logger.debug("[InferenceOperations.get_azure_openai_client] connection = %s", str(connection))
 
         try:
             from openai import AsyncAzureOpenAI
@@ -275,7 +275,7 @@ class InferenceOperations:
                 "[InferenceOperations.get_azure_openai_client] " + "Creating AzureOpenAI using SAS authentication"
             )
             raise ValueError(
-                "Getting chat completions client from a connection with SAS authentication is not yet supported"
+                "Getting an AzureOpenAI client from a connection with SAS authentication is not yet supported"
             )
         else:
             raise ValueError("Unknown authentication type")
