@@ -1,4 +1,3 @@
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -28,6 +27,7 @@ import os
 
 class ChatClientSamples(object):
     from azure.communication.identity import CommunicationIdentityClient
+
     connection_string = os.environ.get("COMMUNICATION_SAMPLES_CONNECTION_STRING", None)
     if not connection_string:
         raise ValueError("Set COMMUNICATION_SAMPLES_CONNECTION_STRING env before run this sample.")
@@ -60,32 +60,26 @@ class ChatClientSamples(object):
         # [START create_thread]
         from datetime import datetime
 
-        from azure.communication.chat import(
+        from azure.communication.chat import (
             ChatClient,
             ChatParticipant,
             CommunicationUserIdentifier,
-            CommunicationTokenCredential
+            CommunicationTokenCredential,
         )
 
         # set `endpoint` to an existing ACS endpoint
         chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
 
         topic = "test topic"
-        participants = [ChatParticipant(
-            identifier=user,
-            display_name='name',
-            share_history_time=datetime.utcnow()
-        )]
+        participants = [ChatParticipant(identifier=user, display_name="name", share_history_time=datetime.utcnow())]
 
         # creates a new chat_thread everytime
         create_chat_thread_result = chat_client.create_chat_thread(topic, thread_participants=participants)
 
         # creates a new chat_thread if not exists
-        idempotency_token = 'b66d6031-fdcc-41df-8306-e524c9f226b8' # unique identifier
+        idempotency_token = "b66d6031-fdcc-41df-8306-e524c9f226b8"  # unique identifier
         create_chat_thread_result_w_repeatability_id = chat_client.create_chat_thread(
-            topic,
-            thread_participants=participants,
-            idempotency_token=idempotency_token
+            topic, thread_participants=participants, idempotency_token=idempotency_token
         )
         # [END create_thread]
 
@@ -108,7 +102,6 @@ class ChatClientSamples(object):
         # [END get_chat_thread_client]
 
         print("get_chat_thread_client succeeded with thread id: ", chat_thread_client.thread_id)
-
 
     def list_threads(self):
         token = self.token
@@ -150,7 +143,7 @@ class ChatClientSamples(object):
         self.identity_client.delete_user(self.user)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = ChatClientSamples()
     sample.create_chat_client()
     sample.create_thread()
