@@ -7,7 +7,7 @@
 from typing import Any, Optional, cast
 
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml._restclient.v2024_01_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
     ModelProvider as RestModelProvider,
     FineTuningVertical as RestFineTuningVertical,
     UriFileJobInput,

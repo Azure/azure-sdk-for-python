@@ -14,9 +14,12 @@ from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Type, Union
 
 from azure.ai.ml._restclient.runhistory.models import Run
-from azure.ai.ml._restclient.v2024_10_01_preview.models import JobBase as RestJobBase
-from azure.ai.ml._restclient.v2024_10_01_preview.models import JobType as RestJobType
-from azure.ai.ml._restclient.v2024_10_01_preview.models import JobService as RestJobService
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase as RestJobBase, JobService
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobType as RestJobType
+from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_2401
+from azure.ai.ml._restclient.v2024_01_01_preview.models import (
+    JobType as RestJobType_20240101Preview,
+)
 from azure.ai.ml._utils._html_utils import make_link, to_html
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import (
@@ -86,7 +89,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         properties: Optional[Dict] = None,
         experiment_name: Optional[str] = None,
         compute: Optional[str] = None,
-        services: Optional[Dict[str, RestJobService]] = None,
+        services: Optional[Dict[str, JobService]] = None,
         **kwargs: Any,
     ) -> None:
         self._type: Optional[str] = kwargs.pop("type", JobType.COMMAND)
@@ -291,7 +294,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
 
     @classmethod
     def _from_rest_object(  # pylint: disable=too-many-return-statements
-        cls, obj: Union[RestJobBase, Run]
+        cls, obj: Union[RestJobBase, JobBase_2401, Run]
     ) -> "Job":  # pylint: disable=too-many-return-statements
         from azure.ai.ml.entities import PipelineJob
         from azure.ai.ml.entities._builders.command import Command
@@ -328,7 +331,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
                 return SweepJob._load_from_rest(obj)
             if obj.properties.job_type == RestJobType.AUTO_ML:
                 return AutoMLJob._load_from_rest(obj)
-            if obj.properties.job_type == RestJobType.FINE_TUNING:
+            if obj.properties.job_type == RestJobType_20240101Preview.FINE_TUNING:
                 if obj.properties.properties.get("azureml.enable_distillation", False):
                     return DistillationJob._load_from_rest(obj)
                 return FineTuningJob._load_from_rest(obj)

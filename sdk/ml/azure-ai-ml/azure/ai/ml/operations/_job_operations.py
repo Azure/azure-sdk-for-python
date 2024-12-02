@@ -39,7 +39,9 @@ from azure.ai.ml._restclient.v2023_04_01_preview import (
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, ListViewType, UserIdentity
 from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_2401
-from azure.ai.ml._restclient.v2024_10_01_preview.models import JobType as RestJobType_20241001Preview
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
+    JobType as RestJobType_20241001Preview,
+)
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -315,7 +317,7 @@ class JobOperations(_ScopeDependentOperations):
 
         return cast(
             Iterable[Job],
-            self.service_client_10_2024_preview.jobs.list(
+            self.service_client_01_2024_preview.jobs.list(
                 self._operation_scope.resource_group_name,
                 self._workspace_name,
                 cls=lambda objs: [self._handle_rest_errors(obj) for obj in objs],
