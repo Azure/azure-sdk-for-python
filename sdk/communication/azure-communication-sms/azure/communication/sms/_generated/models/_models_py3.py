@@ -32,16 +32,16 @@ class SendMessageRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'from_property': {'required': True},
-        'sms_recipients': {'required': True},
-        'message': {'required': True, 'max_length': 2048, 'min_length': 0},
+        "from_property": {"required": True},
+        "sms_recipients": {"required": True},
+        "message": {"required": True, "max_length": 2048, "min_length": 0},
     }
 
     _attribute_map = {
-        'from_property': {'key': 'from', 'type': 'str'},
-        'sms_recipients': {'key': 'smsRecipients', 'type': '[SmsRecipient]'},
-        'message': {'key': 'message', 'type': 'str'},
-        'sms_send_options': {'key': 'smsSendOptions', 'type': 'SmsSendOptions'},
+        "from_property": {"key": "from", "type": "str"},
+        "sms_recipients": {"key": "smsRecipients", "type": "[SmsRecipient]"},
+        "message": {"key": "message", "type": "str"},
+        "sms_send_options": {"key": "smsSendOptions", "type": "SmsSendOptions"},
     }
 
     def __init__(
@@ -81,13 +81,13 @@ class SmsRecipient(msrest.serialization.Model):
     """
 
     _validation = {
-        'to': {'required': True},
+        "to": {"required": True},
     }
 
     _attribute_map = {
-        'to': {'key': 'to', 'type': 'str'},
-        'repeatability_request_id': {'key': 'repeatabilityRequestId', 'type': 'str'},
-        'repeatability_first_sent': {'key': 'repeatabilityFirstSent', 'type': 'str'},
+        "to": {"key": "to", "type": "str"},
+        "repeatability_request_id": {"key": "repeatabilityRequestId", "type": "str"},
+        "repeatability_first_sent": {"key": "repeatabilityFirstSent", "type": "str"},
     }
 
     def __init__(
@@ -118,21 +118,15 @@ class SmsSendOptions(msrest.serialization.Model):
     """
 
     _validation = {
-        'enable_delivery_report': {'required': True},
+        "enable_delivery_report": {"required": True},
     }
 
     _attribute_map = {
-        'enable_delivery_report': {'key': 'enableDeliveryReport', 'type': 'bool'},
-        'tag': {'key': 'tag', 'type': 'str'},
+        "enable_delivery_report": {"key": "enableDeliveryReport", "type": "bool"},
+        "tag": {"key": "tag", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        enable_delivery_report: bool,
-        tag: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, enable_delivery_report: bool, tag: Optional[str] = None, **kwargs):
         super(SmsSendOptions, self).__init__(**kwargs)
         self.enable_delivery_report = enable_delivery_report
         self.tag = tag
@@ -148,19 +142,14 @@ class SmsSendResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SmsSendResponseItem]'},
+        "value": {"key": "value", "type": "[SmsSendResponseItem]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["SmsSendResponseItem"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["SmsSendResponseItem"], **kwargs):
         super(SmsSendResponse, self).__init__(**kwargs)
         self.value = value
 
@@ -188,18 +177,18 @@ class SmsSendResponseItem(msrest.serialization.Model):
     """
 
     _validation = {
-        'to': {'required': True},
-        'http_status_code': {'required': True},
-        'successful': {'required': True},
+        "to": {"required": True},
+        "http_status_code": {"required": True},
+        "successful": {"required": True},
     }
 
     _attribute_map = {
-        'to': {'key': 'to', 'type': 'str'},
-        'message_id': {'key': 'messageId', 'type': 'str'},
-        'http_status_code': {'key': 'httpStatusCode', 'type': 'int'},
-        'repeatability_result': {'key': 'repeatabilityResult', 'type': 'str'},
-        'successful': {'key': 'successful', 'type': 'bool'},
-        'error_message': {'key': 'errorMessage', 'type': 'str'},
+        "to": {"key": "to", "type": "str"},
+        "message_id": {"key": "messageId", "type": "str"},
+        "http_status_code": {"key": "httpStatusCode", "type": "int"},
+        "repeatability_result": {"key": "repeatabilityResult", "type": "str"},
+        "successful": {"key": "successful", "type": "bool"},
+        "error_message": {"key": "errorMessage", "type": "str"},
     }
 
     def __init__(
