@@ -21,11 +21,11 @@ class TestCosmosDBManagementThroughputPoolOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_throughput_pool_get(self, resource_group):
         response = await self.client.throughput_pool.get(
             resource_group_name=resource_group.name,
             throughput_pool_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestCosmosDBManagementThroughputPoolOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_throughput_pool_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.throughput_pool.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -55,7 +55,7 @@ class TestCosmosDBManagementThroughputPoolOperationsAsync(AzureMgmtRecordedTestC
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-09-01-preview",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -64,12 +64,12 @@ class TestCosmosDBManagementThroughputPoolOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_throughput_pool_begin_update(self, resource_group):
         response = await (
             await self.client.throughput_pool.begin_update(
                 resource_group_name=resource_group.name,
                 throughput_pool_name="str",
-                api_version="2024-09-01-preview",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -78,12 +78,12 @@ class TestCosmosDBManagementThroughputPoolOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_throughput_pool_begin_delete(self, resource_group):
         response = await (
             await self.client.throughput_pool.begin_delete(
                 resource_group_name=resource_group.name,
                 throughput_pool_name="str",
-                api_version="2024-09-01-preview",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
