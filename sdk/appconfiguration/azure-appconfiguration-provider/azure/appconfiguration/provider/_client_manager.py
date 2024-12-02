@@ -298,7 +298,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
         replica_discovery_enabled,
         min_backoff_sec,
         max_backoff_sec,
-        load_balancing_enabled: bool,
+        load_balancing_enabled,
         **kwargs
     ):
         super(ConfigurationClientManager, self).__init__(
@@ -323,27 +323,24 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
                     endpoint, connection_string, user_agent, retry_total, retry_backoff_max, **self._args
                 )
             )
-            self._setup_failover_endpoints()
-            if load_balancing_enabled:
-                random.shuffle(self._replica_clients)
-            return
-        if endpoint and credential:
+        elif endpoint and credential:
             self._replica_clients.append(
                 _ConfigurationClientWrapper.from_credential(
                     endpoint, credential, user_agent, retry_total, retry_backoff_max, **self._args
                 )
             )
-            self._setup_failover_endpoints()
-            if load_balancing_enabled:
-                random.shuffle(self._replica_clients)
-            return
-        raise ValueError("Please pass either endpoint and credential, or a connection string with a value.")
+        else:
+            raise ValueError("Please pass either endpoint and credential, or a connection string with a value.")
+        self._setup_failover_endpoints()
+        if load_balancing_enabled:
+            random.shuffle(self._replica_clients)
+        return
 
     def get_next_client(self) -> Optional[_ConfigurationClientWrapper]:
         """
         Get the next client to be used for the request. find_active_clients needs be called before this method or None
         client will be returned. If load_balancing_enabled isn't enabled the first active client will be returned,
-        which is the provided endpoint unless it has failed. If load_balancing_enabled is enabled the next client in 
+        which is the provided endpoint unless it has failed. If load_balancing_enabled is enabled the next client in
         the list will be returned.
 
         :return: The next client to be used for the request.

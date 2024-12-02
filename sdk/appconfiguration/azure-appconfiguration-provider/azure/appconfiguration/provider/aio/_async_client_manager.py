@@ -304,7 +304,7 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
         replica_discovery_enabled,
         min_backoff_sec,
         max_backoff_sec,
-        load_balancing_enabled: bool,
+        load_balancing_enabled,
         **kwargs
     ):
         super(AsyncConfigurationClientManager, self).__init__(
@@ -329,14 +329,12 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
                     endpoint, connection_string, user_agent, retry_total, retry_backoff_max, **self._args
                 )
             )
-            return
         if endpoint and credential:
             self._replica_clients.append(
                 _AsyncConfigurationClientWrapper.from_credential(
                     endpoint, credential, user_agent, retry_total, retry_backoff_max, **self._args
                 )
             )
-            return
         raise ValueError("Please pass either endpoint and credential, or a connection string with a value.")
 
     def get_next_client(self) -> Optional[_AsyncConfigurationClientWrapper]:
