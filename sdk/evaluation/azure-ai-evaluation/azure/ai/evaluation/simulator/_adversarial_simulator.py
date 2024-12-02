@@ -221,6 +221,11 @@ class AdversarialSimulator:
             random.shuffle(templates)
         parameter_lists = [t.template_parameters for t in templates]
         zipped_parameters = list(zip_longest(*parameter_lists))
+        filtered_parameters = []
+        for params in zipped_parameters:
+            if None not in params:
+                filtered_parameters.append(params)
+        zipped_parameters = filtered_parameters
         for param_group in zipped_parameters:
             for template, parameter in zip(templates, param_group):
                 if _jailbreak_type == "upia":
