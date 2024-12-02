@@ -41,6 +41,11 @@ def _get_tracking_uri(azure_ml_client: LiteMLClient, project_scope: dict) -> str
 class TestMetricsUpload(object):
     """End to end tests to check how the metrics were uploaded to cloud."""
 
+    # NOTE:
+    # If you are re-recording the tests, remember to disable Promptflow telemetry from the command line using:
+    # pf config set telemetry.enabled=false
+    # Otherwise you will capture telemetry requests in the recording which will cause test playback failures.
+
     def _assert_no_errors_for_module(self, records, module_names):
         """Check there are no errors in the log."""
         error_messages = []
