@@ -76,6 +76,12 @@ class TestSimAndEval:
             )
         )
         
+        assert len(simulator_output) == 2
+        assert len(simulator_output[0]["messages"]) == 4
+        assert simulator_output[0]["messages"][0]["content"] == simulator_output[0]["messages"][1]["content"]
+        # message 2 is non-deterministic, don't check it
+        assert simulator_output[0]["messages"][0]["content"] == simulator_output[0]["messages"][3]["content"]
+        
         # Write simulator output to file
         file_name = "eval_sim_test.jsonl"
         # Sadly tempfile doesn't play nice with evaluate's data reader
@@ -98,17 +104,25 @@ class TestSimAndEval:
         # validate the results
         assert eval_output is not None
         assert eval_output["rows"] is not None
-        assert eval_output["metrics"] is not None
+        assert len(eval_output["rows"]) == 2
+        assert eval_output["rows"][0]["inputs.conversation"]["messages"] == simulator_output[0]["messages"]
+        assert eval_output["rows"][1]["inputs.conversation"]["messages"] == simulator_output[1]["messages"]
+
+        assert len(eval_output["rows"][0]["outputs.violence.evaluation_per_turn"]["violence_reason"]) == 2
+        assert len(eval_output["rows"][1]["outputs.violence.evaluation_per_turn"]["violence_reason"]) == 2
         
         row_result_df = pd.DataFrame(eval_output["rows"])
-        metrics = eval_output["metrics"]
-        
         assert "inputs.conversation" in row_result_df.columns.to_list()
         assert "outputs.violence.violence_score" in row_result_df.columns.to_list()
         assert "outputs.violence.evaluation_per_turn" in row_result_df.columns.to_list()
         
-        assert row_result_df["outputs.violence.violence_score"][1] in [4, 5]
+        assert row_result_df["outputs.violence.violence_score"][0] in [0, 5]
+        assert row_result_df["outputs.violence.violence_score"][1] in [0, 5]
+
+        metrics = eval_output["metrics"]    
+        assert metrics is not None
         assert "violence.violence_defect_rate" in metrics.keys()
+        assert metrics["violence.violence_defect_rate"] is not None
         
         # Cleanup file
         os.remove(file_name)
