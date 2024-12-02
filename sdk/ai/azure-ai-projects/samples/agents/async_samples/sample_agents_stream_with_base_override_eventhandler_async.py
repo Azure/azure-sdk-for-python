@@ -17,7 +17,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity
+    pip install azure-ai-projects azure-identity aiohttp
 
     Set these environment variables with your own values:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
