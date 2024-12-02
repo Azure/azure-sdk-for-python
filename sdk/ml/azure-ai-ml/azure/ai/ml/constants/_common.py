@@ -529,7 +529,7 @@ class YAMLRefDocLinks:
     FEATURE_SET = "https://aka.ms/ml-cli-v2-featureset-yaml-reference"
     FEATURE_STORE_ENTITY = "https://aka.ms/ml-cli-v2-featurestore-entity-yaml-reference"
     HUB = "https://aka.ms/ml-cli-v2-workspace-hub-entity-yaml-reference"
-    CAPABILITY_HOST = "https://aka.ms/ml-cli-v2-workspace-yaml-reference"
+    CAPABILITY_HOST = "https://aka.ms/ml-cli-v2-capability-host-yaml-reference"
 
 
 class YAMLRefDocSchemaNames:

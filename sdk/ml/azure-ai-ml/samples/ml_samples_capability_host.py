@@ -78,9 +78,7 @@ class CapabilityHostConfigurationOptions(object):
             description="some description",
             capability_host_kind=CapabilityHostKind.AGENTS,
         )
-        result = ml_client.capability_hosts.begin_create_or_update(
-            capability_host
-        ).result()
+        result = ml_client.capability_hosts.begin_create_or_update(capability_host).result()
 
         # Create a CapabilityHost in Project
         ml_client = MLClient(
@@ -97,9 +95,7 @@ class CapabilityHostConfigurationOptions(object):
             storage_connections=["projectname/workspaceblobstore"],
             vector_store_connections=["connection1"],
         )
-        result = ml_client.capability_hosts.begin_create_or_update(
-            capability_host
-        ).result()
+        result = ml_client.capability_hosts.begin_create_or_update(capability_host).result()
         # [END capability_host_begin_create_or_update_operation]
 
         # [START capability_host_get_operation]
@@ -146,9 +142,7 @@ class CapabilityHostConfigurationOptions(object):
             resource_group,
             workspace_name=hub_name,
         )
-        capability_host = ml_client.capability_hosts.begin_delete(
-            name="test-capability-host"
-        )
+        capability_host = ml_client.capability_hosts.begin_delete(name="test-capability-host")
 
         # Delete CapabilityHost created in Project
         ml_client = MLClient(
@@ -157,9 +151,7 @@ class CapabilityHostConfigurationOptions(object):
             resource_group,
             workspace_name=project_name,
         )
-        capability_host = ml_client.capability_hosts.begin_delete(
-            name="test-capability-host"
-        )
+        capability_host = ml_client.capability_hosts.begin_delete(name="test-capability-host")
         # [END capability_host_delete_operation]
 
         # [START capability_host_list_operation]

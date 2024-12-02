@@ -1405,6 +1405,7 @@ def _(entity: Workspace, operations, *args, **kwargs):
     module_logger.debug("Creating or updating workspaces")
     return operations[AzureMLResourceType.WORKSPACE].begin_create(entity, **kwargs)
 
+
 @_begin_create_or_update.register(CapabilityHost)
 def _(entity: CapabilityHost, operations, *args, **kwargs):
     module_logger.debug("Creating or updating capability hosts")

@@ -80,9 +80,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         :type kwargs: Any
         """
 
-        super(CapabilityHostsOperations, self).__init__(
-            operation_scope, operation_config
-        )
+        super(CapabilityHostsOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._all_operations = all_operations
         self._capability_hosts_operations = service_client_10_2024.capability_hosts
@@ -155,13 +153,9 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         return capability_host
 
     @experimental
-    @monitor_with_activity(
-        ops_logger, "CapabilityHost.BeginCreateOrUpdate", ActivityType.PUBLICAPI
-    )
+    @monitor_with_activity(ops_logger, "CapabilityHost.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     @distributed_trace
-    def begin_create_or_update(
-        self, capability_host: CapabilityHost, **kwargs: Any
-    ) -> LROPoller[CapabilityHost]:
+    def begin_create_or_update(self, capability_host: CapabilityHost, **kwargs: Any) -> LROPoller[CapabilityHost]:
         """Begin the creation of a capability host in a Hub or Project workspace.
         Note that currently this method can only accept the `create` operation request
         and not `update` operation request.
@@ -189,13 +183,8 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
             self.__validate_properties(capability_host, workspace._kind)
 
             if workspace._kind == WorkspaceKind.PROJECT:
-                if (
-                    capability_host.storage_connections is None
-                    or len(capability_host.storage_connections) == 0
-                ):
-                    capability_host.storage_connections = (
-                        self.__get_default_storage_connections()
-                    )
+                if capability_host.storage_connections is None or len(capability_host.storage_connections) == 0:
+                    capability_host.storage_connections = self.__get_default_storage_connections()
 
             capability_host_resource = (
                 capability_host._to_rest_object_for_hub()
@@ -270,9 +259,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         """
         return [f"{self._workspace_name}/{DEFAULT_STORAGE_CONNECTION_NAME}"]
 
-    def __validate_properties(
-        self, capability_host: CapabilityHost, workspace_kind: str
-    ) -> None:
+    def __validate_properties(self, capability_host: CapabilityHost, workspace_kind: str) -> None:
         """Validate the properties of the capability host based on the workspace kind.
 
         :param capability_host: The capability host to validate.
@@ -298,10 +285,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
             )
 
         if workspace_kind == WorkspaceKind.PROJECT:
-            if (
-                capability_host.ai_services_connections is None
-                or capability_host.vector_store_connections is None
-            ):
+            if capability_host.ai_services_connections is None or capability_host.vector_store_connections is None:
                 msg = "For Project workspace kind, OpenAI service connections and vector store (AISearch) connections are required."  # pylint: disable=line-too-long
                 raise ValidationException(
                     message=msg,
@@ -329,9 +313,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         :return: Hub or Project object if it exists
         :rtype: ~azure.ai.ml.entities._workspace.workspace.Workspace
         """
-        rest_workspace = self._workspace_operations.get(
-            self._resource_group_name, self._workspace_name
-        )
+        rest_workspace = self._workspace_operations.get(self._resource_group_name, self._workspace_name)
         workspace = Workspace._from_rest_object(rest_workspace)
         if workspace is None:
             msg = f"Workspace with name {self._workspace_name} does not exist."

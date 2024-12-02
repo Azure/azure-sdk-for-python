@@ -25,17 +25,10 @@ class TestCapabilityHostEntity:
         assert capability_host.name == "test_capability_host_hub"
         assert capability_host.description == "Capability host in hub for unit tests"
         assert capability_host.capability_host_kind == "Agents"
+        assert capability_host.ai_services_connections is not None and len(capability_host.ai_services_connections) == 0
+        assert capability_host.storage_connections is not None and len(capability_host.storage_connections) == 0
         assert (
-            capability_host.ai_services_connections is not None
-            and len(capability_host.ai_services_connections) == 0
-        )
-        assert (
-            capability_host.storage_connections is not None
-            and len(capability_host.storage_connections) == 0
-        )
-        assert (
-            capability_host.vector_store_connections is not None
-            and len(capability_host.vector_store_connections) == 0
+            capability_host.vector_store_connections is not None and len(capability_host.vector_store_connections) == 0
         )
 
     def test_capability_host_project_schema(self) -> None:
@@ -44,9 +37,7 @@ class TestCapabilityHostEntity:
         )
         assert capability_host is not None
         assert capability_host.name == "test_capability_host_project"
-        assert (
-            capability_host.description == "Capability host in project for unit tests"
-        )
+        assert capability_host.description == "Capability host in project for unit tests"
         assert capability_host.capability_host_kind == "Agents"
         assert (
             capability_host.ai_services_connections is not None
@@ -61,8 +52,7 @@ class TestCapabilityHostEntity:
         assert (
             capability_host.vector_store_connections is not None
             and len(capability_host.vector_store_connections) == 1
-            and capability_host.vector_store_connections[0]
-            == "vector_store_connection_1"
+            and capability_host.vector_store_connections[0] == "vector_store_connection_1"
         )
 
     def test_capability_host_constructor(self) -> None:
@@ -91,8 +81,7 @@ class TestCapabilityHostEntity:
         assert (
             capability_host.vector_store_connections is not None
             and len(capability_host.vector_store_connections) == 1
-            and capability_host.vector_store_connections[0]
-            == "vector_store_connection_1"
+            and capability_host.vector_store_connections[0] == "vector_store_connection_1"
         )
 
     def test_from_rest_object(self) -> None:
@@ -124,8 +113,7 @@ class TestCapabilityHostEntity:
         assert (
             capability_host.vector_store_connections is not None
             and len(capability_host.vector_store_connections) == 1
-            and capability_host.vector_store_connections[0]
-            == "vector_store_connection_1"
+            and capability_host.vector_store_connections[0] == "vector_store_connection_1"
         )
 
     def test_to_rest_object_for_hub(self) -> None:
@@ -136,10 +124,7 @@ class TestCapabilityHostEntity:
 
         assert isinstance(rest_capability_host, RestCapabilityHost)
         assert rest_capability_host.properties is not None
-        assert (
-            rest_capability_host.properties.description
-            == "Capability host in hub for unit tests"
-        )
+        assert rest_capability_host.properties.description == "Capability host in hub for unit tests"
         assert rest_capability_host.properties.capability_host_kind == "Agents"
         assert rest_capability_host.properties.ai_services_connections is None
         assert rest_capability_host.properties.storage_connections is None
@@ -149,43 +134,33 @@ class TestCapabilityHostEntity:
         capability_host = load_capability_host(
             source="./tests/test_configs/workspace/ai_workspaces/test_capability_host_project.yml"
         )
-        rest_capability_host = CapabilityHost._to_rest_object_for_project(
-            capability_host
-        )
+        rest_capability_host = CapabilityHost._to_rest_object_for_project(capability_host)
 
         assert isinstance(rest_capability_host, RestCapabilityHost)
         assert rest_capability_host.properties is not None
-        assert (
-            rest_capability_host.properties.description
-            == "Capability host in project for unit tests"
-        )
+        assert rest_capability_host.properties.description == "Capability host in project for unit tests"
         assert rest_capability_host.properties.capability_host_kind == "Agents"
         assert (
             rest_capability_host.properties.ai_services_connections is not None
             and len(rest_capability_host.properties.ai_services_connections) == 1
-            and rest_capability_host.properties.ai_services_connections[0]
-            == "aiservice_connection_1"
+            and rest_capability_host.properties.ai_services_connections[0] == "aiservice_connection_1"
         )
         assert (
             rest_capability_host.properties.storage_connections is not None
             and len(rest_capability_host.properties.storage_connections) == 1
-            and rest_capability_host.properties.storage_connections[0]
-            == "storage_connection_1"
+            and rest_capability_host.properties.storage_connections[0] == "storage_connection_1"
         )
         assert (
             rest_capability_host.properties.vector_store_connections is not None
             and len(rest_capability_host.properties.vector_store_connections) == 1
-            and rest_capability_host.properties.vector_store_connections[0]
-            == "vector_store_connection_1"
+            and rest_capability_host.properties.vector_store_connections[0] == "vector_store_connection_1"
         )
 
     def test_dump(self) -> None:
         capability_host = load_capability_host(
             source="./tests/test_configs/workspace/ai_workspaces/test_capability_host_project.yml"
         )
-        epoch_timestamp = int(
-            datetime.now().timestamp()
-        )  # Current Unix timestamp as an integer
+        epoch_timestamp = int(datetime.now().timestamp())  # Current Unix timestamp as an integer
         dump_file_name = f"./tests/test_configs/workspace/ai_workspaces/test_capability_host_dump_{epoch_timestamp}.yml"
         CapabilityHost.dump(capability_host, dest=dump_file_name)
 

@@ -1092,7 +1092,7 @@ def load_capability_host(
         Details will be provided in the error message.
     :return: Loaded CapabilityHost object.
     :rtype: ~azure.ai.ml.entities._workspace._ai_workspaces.capability_host.CapabilityHost
-    
+
 
     .. admonition:: Example:
 
