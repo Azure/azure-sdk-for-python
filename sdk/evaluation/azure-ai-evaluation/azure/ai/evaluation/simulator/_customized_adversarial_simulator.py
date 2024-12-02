@@ -181,13 +181,15 @@ class CustomAdversarialSimulator:
         randomization_seed: Optional[int] = None,
         personality: Optional[str] = None,
         application_scenario: Optional[str] = None,
+        temperature: float = 0.7,
     ):
         self.logger.info(f"User inputs: scenario={scenario}, max_conversation_turns={max_conversation_turns}, "
                      f"max_simulation_results={max_simulation_results}, api_call_retry_limit={api_call_retry_limit}, "
                      f"api_call_retry_sleep_sec={api_call_retry_sleep_sec}, api_call_delay_sec={api_call_delay_sec}, "
                      f"concurrent_async_task={concurrent_async_task}, _jailbreak_type={_jailbreak_type}, "
                      f"language={language}, randomize_order={randomize_order}, randomization_seed={randomization_seed}, "
-                     f"personality={personality}, application_scenario={application_scenario}")
+                     f"personality={personality}, application_scenario={application_scenario}, "
+                     f"temperature={temperature}")
 
         self._ensure_service_dependencies()
         self._validate_inputs(
@@ -247,6 +249,7 @@ class CustomAdversarialSimulator:
                 progress_bar=progress_bar,
                 jailbreak_dataset=jailbreak_dataset,
                 _jailbreak_type=_jailbreak_type,
+                temperature==temperature,
             )
             for template, parameter in template_parameter_pairs[:max_simulation_results]
         ]
@@ -339,6 +342,7 @@ class CustomAdversarialSimulator:
         progress_bar,
         jailbreak_dataset=None,
         _jailbreak_type=None,
+        temperature=0.7,
     ):
         if _jailbreak_type == "upia" and jailbreak_dataset:
             parameter = self._join_conversation_starter(parameters=parameter, to_join=random.choice(jailbreak_dataset))
@@ -357,6 +361,7 @@ class CustomAdversarialSimulator:
                 api_call_retry_sleep_sec=api_call_retry_sleep_sec,
                 api_call_delay_sec=api_call_delay_sec,
                 progress_bar=progress_bar,
+                temperature=temperature,
             )
         )
 
@@ -375,6 +380,7 @@ class CustomAdversarialSimulator:
         api_call_retry_sleep_sec,
         api_call_delay_sec,
         progress_bar,
+        temperature,
     ):
         async with semaphore:
             user_bot, system_bot = self._setup_bots(template=template, parameter=parameter, target=target)
@@ -394,6 +400,7 @@ class CustomAdversarialSimulator:
                 application_scenario=application_scenario,
                 other_template_kwargs=extra_kwargs,
                 logger=self.logger,
+                temperature=temperature,
             )
             end_time = time.time()
             time_taken = end_time - start_time
