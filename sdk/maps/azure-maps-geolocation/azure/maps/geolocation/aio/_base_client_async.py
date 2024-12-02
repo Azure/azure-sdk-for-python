@@ -22,14 +22,17 @@ def _authentication_policy(credential):
     elif credential is not None and not hasattr(credential, "get_token"):
         raise TypeError(
             "Unsupported credential: {}. Use an instance of AzureKeyCredential "
-            "or a token credential from azure.identity".format(type(credential))
+            "or AzureSasCredential or a token credential from azure.identity".format(type(credential))
         )
     return authentication_policy
 
 
 class AsyncMapsGeolocationClientBase:
-    def __init__(self, credential: Union[AzureKeyCredential, AzureSasCredential, AsyncTokenCredential], **kwargs: Any) -> None:
-
+    def __init__(
+            self,
+            credential: Union[AzureKeyCredential, AzureSasCredential, AsyncTokenCredential],
+            **kwargs: Any
+    ) -> None:
         self._maps_client = _MapsGeolocationClient(
             credential=credential,  # type: ignore
             api_version=kwargs.pop("api_version", VERSION),
