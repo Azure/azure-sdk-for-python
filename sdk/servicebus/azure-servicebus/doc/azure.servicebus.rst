@@ -7,6 +7,12 @@ azure.servicebus package
    :inherited-members:
    :exclude-members: to_bytes, from_bytes
 
+.. autoclass:: azure.servicebus.ServiceBusMessageState
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :exclude-members: as_integer_ratio, bit_count, bit_length, conjugate, imag, numerator, real
+
 Subpackages
 -----------
 
