@@ -5,13 +5,7 @@ azure.servicebus package
    :members:
    :undoc-members:
    :inherited-members:
-   :exclude-members: to_bytes, from_bytes
-
-.. autoclass:: azure.servicebus.ServiceBusMessageState
-   :members:
-   :undoc-members:
-   :inherited-members:
-   :exclude-members: as_integer_ratio, bit_count, bit_length, conjugate, imag, numerator, real
+   :exclude-members: to_bytes, from_bytes, as_integer_ratio, bit_count, bit_length, conjugate, imag, numerator, real, capitalize, casefold, center, count, encode, endswith, startswith, expandtabs, find, format, format_map, index, isalpha, isalnum, isascii, isdecimal, isdigit, isidentifier, islower, isnumeric, isprintable, isspace, istitle, isupper, join, ljust, lower, lstrip, maketrans, partition, removeprefix, removesuffix, replace, rfind, rindex, rjust, rpartition, rsplit, rstrip, split, splitlines, strip, swapcase, title, translate, upper, zfill, 
 
 Subpackages
 -----------
