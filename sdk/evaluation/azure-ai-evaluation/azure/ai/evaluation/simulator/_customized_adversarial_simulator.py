@@ -249,7 +249,7 @@ class CustomAdversarialSimulator:
                 progress_bar=progress_bar,
                 jailbreak_dataset=jailbreak_dataset,
                 _jailbreak_type=_jailbreak_type,
-                temperature==temperature,
+                temperature=temperature,
             )
             for template, parameter in template_parameter_pairs[:max_simulation_results]
         ]

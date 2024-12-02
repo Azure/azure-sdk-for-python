@@ -199,7 +199,7 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
             "headers": {
                 "Content-Type": "application/json",
             },
-            "json": '{"messages": [{"role": "system", "content": "{{ch_template_placeholder}}"}], "temperature": ' + temperature + ', "max_tokens": 4096, "n": 1, "frequency_penalty": 0, "presence_penalty": 0, "stop": ["<|im_end|>", "<|endoftext|>"]}',
+            "json": '{"messages": [{"role": "system", "content": "{{ch_template_placeholder}}"}], "temperature": ' + str(temperature) + ', "max_tokens": 4096, "n": 1, "frequency_penalty": 0, "presence_penalty": 0, "stop": ["<|im_end|>", "<|endoftext|>"]}',
             "params": {"api-version": "2023-07-01-preview"},
             "templatekey": str(template_key),
             "templateParameters": {
