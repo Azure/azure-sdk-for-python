@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TypeVar, Any
+from typing import TypeVar, Any, Generic
 from collections.abc import MutableSequence
 from azure.core import PipelineClient
 from .policies import ARMAutoResourceProviderRegistrationPolicy, ARMHttpLoggingPolicy
@@ -32,7 +32,7 @@ HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 
 
-class ARMPipelineClient(PipelineClient[HTTPRequestType, HTTPResponseType]):
+class ARMPipelineClient(PipelineClient, Generic[HTTPResponseType, HTTPRequestType]):
     """A pipeline client designed for ARM explicitly.
 
     :param str base_url: URL for the request.
