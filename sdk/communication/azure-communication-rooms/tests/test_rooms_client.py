@@ -10,15 +10,12 @@ from datetime import datetime, timedelta
 
 from azure.core.exceptions import HttpResponseError
 from azure.communication.identity import CommunicationIdentityClient
-from azure.communication.rooms import (
-    ParticipantRole,
-    RoomParticipant,
-    RoomsClient
-)
+from azure.communication.rooms import ParticipantRole, RoomParticipant, RoomsClient
 from azure.communication.rooms._shared.models import CommunicationUserIdentifier
 from _shared.utils import get_http_logging_policy
 from acs_rooms_test_case import ACSRoomsTestCase
 from devtools_testutils import is_live, add_general_regex_sanitizer, recorded_by_proxy
+
 
 class TestRoomsClient(ACSRoomsTestCase):
     def setup_method(self):
@@ -28,9 +25,7 @@ class TestRoomsClient(ACSRoomsTestCase):
         sanitizedId3 = "8:acs:sanitized3"
         sanitizedId4 = "8:acs:sanitized4"
         if is_live():
-            self.identity_client = CommunicationIdentityClient.from_connection_string(
-                self.connection_str)
-
+            self.identity_client = CommunicationIdentityClient.from_connection_string(self.connection_str)
 
             self.id1 = self.identity_client.create_user().properties["id"]
             self.id2 = self.identity_client.create_user().properties["id"]
@@ -47,27 +42,22 @@ class TestRoomsClient(ACSRoomsTestCase):
             self.id4 = sanitizedId4
 
         self.rooms_client = RoomsClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
+            self.connection_str, http_logging_policy=get_http_logging_policy()
         )
 
         self.users = {
-            "john" : RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id1),
-                role=ParticipantRole.PRESENTER
+            "john": RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id1), role=ParticipantRole.PRESENTER
             ),
-            "fred" : RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id2),
-                role=ParticipantRole.CONSUMER
+            "fred": RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id2), role=ParticipantRole.CONSUMER
             ),
-            "chris" : RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id3),
-                role=ParticipantRole.ATTENDEE
-            )
+            "chris": RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id3), role=ParticipantRole.ATTENDEE
+            ),
         }
         self.rooms_client = RoomsClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
+            self.connection_str, http_logging_policy=get_http_logging_policy()
         )
 
     @recorded_by_proxy
@@ -79,10 +69,7 @@ class TestRoomsClient(ACSRoomsTestCase):
     @recorded_by_proxy
     def test_create_room_only_participants(self):
         # add john and chris to room
-        participants = [
-            self.users["john"],
-            self.users["chris"]
-        ]
+        participants = [self.users["john"], self.users["chris"]]
 
         response = self.rooms_client.create_room(participants=participants)
         # delete created room
@@ -93,7 +80,7 @@ class TestRoomsClient(ACSRoomsTestCase):
     @recorded_by_proxy
     def test_create_room_validUntil_seven_months(self):
         # room attributes
-        valid_from =  datetime.now() + timedelta(days=3)
+        valid_from = datetime.now() + timedelta(days=3)
         valid_until = valid_from + timedelta(weeks=29)
 
         with pytest.raises(HttpResponseError) as ex:
@@ -114,7 +101,7 @@ class TestRoomsClient(ACSRoomsTestCase):
     @recorded_by_proxy
     def test_create_room_correct_timerange(self):
         # room attributes
-        valid_from =  datetime.now() + timedelta(days=3)
+        valid_from = datetime.now() + timedelta(days=3)
         valid_until = valid_from + timedelta(weeks=4)
 
         response = self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until)
@@ -126,10 +113,8 @@ class TestRoomsClient(ACSRoomsTestCase):
     def test_create_room_incorrectMri(self):
         # room attributes
         participants = [
-            RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier("wrong_mri"),
-                role='Attendee'),
-            self.users["john"]
+            RoomParticipant(communication_identifier=CommunicationUserIdentifier("wrong_mri"), role="Attendee"),
+            self.users["john"],
         ]
 
         with pytest.raises(HttpResponseError) as ex:
@@ -141,40 +126,40 @@ class TestRoomsClient(ACSRoomsTestCase):
     @recorded_by_proxy
     def test_create_room_all_attributes(self):
         # room attributes
-        valid_from =  datetime.now() + timedelta(days=3)
+        valid_from = datetime.now() + timedelta(days=3)
         valid_until = valid_from + timedelta(weeks=4)
-        participants = [
-            self.users["john"]
-        ]
+        participants = [self.users["john"]]
 
-        response = self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, participants=participants)
+        response = self.rooms_client.create_room(
+            valid_from=valid_from, valid_until=valid_until, participants=participants
+        )
 
         # delete created room
         self.rooms_client.delete_room(room_id=response.id)
 
-        self.verify_successful_room_response(
-            response=response, valid_from=valid_from, valid_until=valid_until)
+        self.verify_successful_room_response(response=response, valid_from=valid_from, valid_until=valid_until)
 
     @pytest.mark.live_test_only
     @recorded_by_proxy
     def test_get_room(self):
         # room attributes
-        valid_from =  datetime.now() + timedelta(days=3)
+        valid_from = datetime.now() + timedelta(days=3)
         valid_until = valid_from + timedelta(weeks=2)
         # add john to room
-        participants = [
-            self.users["john"]
-        ]
+        participants = [self.users["john"]]
 
         # create a room first
-        create_response = self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, participants=participants)
+        create_response = self.rooms_client.create_room(
+            valid_from=valid_from, valid_until=valid_until, participants=participants
+        )
 
         get_response = self.rooms_client.get_room(room_id=create_response.id)
 
         # delete created room
         self.rooms_client.delete_room(room_id=create_response.id)
         self.verify_successful_room_response(
-            response=get_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id)
+            response=get_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id
+        )
 
     @recorded_by_proxy
     def test_get_invalid_format_roomId(self):
@@ -193,15 +178,18 @@ class TestRoomsClient(ACSRoomsTestCase):
         create_response = self.rooms_client.create_room()
 
         # update room attributes
-        valid_from =  datetime.now() + timedelta(days=3)
-        valid_until =  datetime.now() + timedelta(weeks=4)
+        valid_from = datetime.now() + timedelta(days=3)
+        valid_until = datetime.now() + timedelta(weeks=4)
 
-        update_response = self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
+        update_response = self.rooms_client.update_room(
+            room_id=create_response.id, valid_from=valid_from, valid_until=valid_until
+        )
 
         # delete created room
         self.rooms_client.delete_room(room_id=create_response.id)
         self.verify_successful_room_response(
-            response=update_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id)
+            response=update_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id
+        )
 
     @pytest.mark.live_test_only
     @recorded_by_proxy
@@ -213,12 +201,14 @@ class TestRoomsClient(ACSRoomsTestCase):
         update_response = self.rooms_client.update_room(room_id=create_response.id, pstn_dial_out_enabled=True)
 
         self.verify_successful_room_response(
-            response=update_response, pstn_dial_out_enabled=True, room_id=create_response.id)
+            response=update_response, pstn_dial_out_enabled=True, room_id=create_response.id
+        )
 
         update_response = self.rooms_client.update_room(room_id=create_response.id, pstn_dial_out_enabled=False)
 
         self.verify_successful_room_response(
-            response=update_response, pstn_dial_out_enabled=False, room_id=create_response.id)
+            response=update_response, pstn_dial_out_enabled=False, room_id=create_response.id
+        )
         # delete created room
         self.rooms_client.delete_room(room_id=create_response.id)
 
@@ -229,13 +219,20 @@ class TestRoomsClient(ACSRoomsTestCase):
         create_response = self.rooms_client.create_room(pstn_dial_out_enabled=True)
 
         # update room attributes
-        valid_from =  datetime.now() + timedelta(days=3)
-        valid_until =  datetime.now() + timedelta(weeks=4)
+        valid_from = datetime.now() + timedelta(days=3)
+        valid_until = datetime.now() + timedelta(weeks=4)
         # update room attributes
-        update_response = self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
+        update_response = self.rooms_client.update_room(
+            room_id=create_response.id, valid_from=valid_from, valid_until=valid_until
+        )
 
         self.verify_successful_room_response(
-            response=update_response, valid_from=valid_from, valid_until=valid_until, pstn_dial_out_enabled=True, room_id=create_response.id)
+            response=update_response,
+            valid_from=valid_from,
+            valid_until=valid_until,
+            pstn_dial_out_enabled=True,
+            room_id=create_response.id,
+        )
 
         # delete created room
         self.rooms_client.delete_room(room_id=create_response.id)
@@ -244,7 +241,7 @@ class TestRoomsClient(ACSRoomsTestCase):
     def test_update_room_invalid_format_roomId(self):
         # try to update room with random room_id
         with pytest.raises(HttpResponseError) as ex:
-            valid_from =  datetime.now() + timedelta(days=3)
+            valid_from = datetime.now() + timedelta(days=3)
             valid_until = valid_from + timedelta(days=4)
             self.rooms_client.update_room(room_id="invalid_id", valid_from=valid_from, valid_until=valid_until)
             #  assert error is bad request
@@ -258,8 +255,8 @@ class TestRoomsClient(ACSRoomsTestCase):
 
         with pytest.raises(HttpResponseError) as ex:
             # update room attributes
-            valid_from =  datetime.now() - timedelta(days=3)
-            valid_until =  datetime.now() - timedelta(weeks=1)
+            valid_from = datetime.now() - timedelta(days=3)
+            valid_until = datetime.now() - timedelta(weeks=1)
             self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
             # delete created room
             self.rooms_client.delete_room(room_id=create_response.id)
@@ -274,7 +271,7 @@ class TestRoomsClient(ACSRoomsTestCase):
         # delete the room
         self.rooms_client.delete_room(room_id=create_response.id)
         with pytest.raises(HttpResponseError) as ex:
-            valid_from =  datetime.now() + timedelta(days=3)
+            valid_from = datetime.now() + timedelta(days=3)
             valid_until = valid_from + timedelta(days=4)
             self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
 
@@ -288,49 +285,42 @@ class TestRoomsClient(ACSRoomsTestCase):
         create_response = self.rooms_client.create_room()
 
         # update room attributes
-        valid_from =  datetime.now() + timedelta(days=3)
-        valid_until =  datetime.now() + timedelta(weeks=29)
+        valid_from = datetime.now() + timedelta(days=3)
+        valid_until = datetime.now() + timedelta(weeks=29)
 
         with pytest.raises(HttpResponseError) as ex:
             self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
             assert str(ex.value.status_code) == "400"
             assert ex.value.message is not None
 
-         # delete created room
+        # delete created room
         self.rooms_client.delete_room(room_id=create_response.id)
 
     @recorded_by_proxy
     def test_add_or_update_participants(self):
         # add john and chris to room
-        create_participants = [
-            self.users["john"],
-            self.users["chris"]
-        ]
+        create_participants = [self.users["john"], self.users["chris"]]
         create_response = self.rooms_client.create_room(participants=create_participants)
 
         # update join to consumer and add fred to room
         self.users["john"].role = ParticipantRole.CONSUMER
-        add_or_update_participants = [
-            self.users["john"],
-            self.users["fred"]
-        ]
+        add_or_update_participants = [self.users["john"], self.users["fred"]]
 
         expected_participants = [
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id1),
-                role=ParticipantRole.CONSUMER
+                communication_identifier=CommunicationUserIdentifier(self.id1), role=ParticipantRole.CONSUMER
             ),
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id3),
-                role=ParticipantRole.ATTENDEE
+                communication_identifier=CommunicationUserIdentifier(self.id3), role=ParticipantRole.ATTENDEE
             ),
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id2),
-                role=ParticipantRole.CONSUMER
-            )
+                communication_identifier=CommunicationUserIdentifier(self.id2), role=ParticipantRole.CONSUMER
+            ),
         ]
 
-        self.rooms_client.add_or_update_participants(room_id=create_response.id, participants=add_or_update_participants)
+        self.rooms_client.add_or_update_participants(
+            room_id=create_response.id, participants=add_or_update_participants
+        )
         update_response = self.rooms_client.list_participants(room_id=create_response.id)
         participants = []
         for participant in update_response:
@@ -344,31 +334,22 @@ class TestRoomsClient(ACSRoomsTestCase):
     @recorded_by_proxy
     def test_add_or_update_participants_with_null_role(self):
         create_participants = [
+            RoomParticipant(communication_identifier=CommunicationUserIdentifier(self.id1), role=None),
+            RoomParticipant(communication_identifier=CommunicationUserIdentifier(self.id2)),
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id1),
-                role=None
+                communication_identifier=CommunicationUserIdentifier(self.id3), role=ParticipantRole.PRESENTER
             ),
-            RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id2)
-            ),
-            RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id3),
-                role=ParticipantRole.PRESENTER
-            )
         ]
         expected_participants = [
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id1),
-                role=ParticipantRole.ATTENDEE
+                communication_identifier=CommunicationUserIdentifier(self.id1), role=ParticipantRole.ATTENDEE
             ),
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id2),
-                role=ParticipantRole.ATTENDEE
+                communication_identifier=CommunicationUserIdentifier(self.id2), role=ParticipantRole.ATTENDEE
             ),
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id3),
-                role=ParticipantRole.PRESENTER
-            )
+                communication_identifier=CommunicationUserIdentifier(self.id3), role=ParticipantRole.PRESENTER
+            ),
         ]
 
         # Check participants with null roles were added in created room
@@ -383,40 +364,31 @@ class TestRoomsClient(ACSRoomsTestCase):
 
         # Check participants were added or updated properly
         add_or_update_participants = [
+            RoomParticipant(communication_identifier=CommunicationUserIdentifier(self.id1), role=None),
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id1),
-                role=None
+                communication_identifier=CommunicationUserIdentifier(self.id2), role=ParticipantRole.CONSUMER
             ),
-            RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id2),
-                role=ParticipantRole.CONSUMER
-            ),
-            RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id3)
-            ),
-            RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id4)
-        )]
+            RoomParticipant(communication_identifier=CommunicationUserIdentifier(self.id3)),
+            RoomParticipant(communication_identifier=CommunicationUserIdentifier(self.id4)),
+        ]
 
         expected_participants = [
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id1),
-                role=ParticipantRole.ATTENDEE
+                communication_identifier=CommunicationUserIdentifier(self.id1), role=ParticipantRole.ATTENDEE
             ),
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id2),
-                role=ParticipantRole.CONSUMER
+                communication_identifier=CommunicationUserIdentifier(self.id2), role=ParticipantRole.CONSUMER
             ),
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id3),
-                role=ParticipantRole.ATTENDEE
+                communication_identifier=CommunicationUserIdentifier(self.id3), role=ParticipantRole.ATTENDEE
             ),
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id4),
-                role=ParticipantRole.ATTENDEE
-            )
+                communication_identifier=CommunicationUserIdentifier(self.id4), role=ParticipantRole.ATTENDEE
+            ),
         ]
-        self.rooms_client.add_or_update_participants(room_id=create_response.id, participants=add_or_update_participants)
+        self.rooms_client.add_or_update_participants(
+            room_id=create_response.id, participants=add_or_update_participants
+        )
         update_response = self.rooms_client.list_participants(room_id=create_response.id)
         updated_participants = []
         for participant in update_response:
@@ -434,9 +406,9 @@ class TestRoomsClient(ACSRoomsTestCase):
 
         participants = [
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier("wrong_mri"),
-                role=ParticipantRole.ATTENDEE),
-            self.users["john"]
+                communication_identifier=CommunicationUserIdentifier("wrong_mri"), role=ParticipantRole.ATTENDEE
+            ),
+            self.users["john"],
         ]
 
         # update room attributes
@@ -453,9 +425,7 @@ class TestRoomsClient(ACSRoomsTestCase):
         create_response = self.rooms_client.create_room()
 
         participants = [
-            RoomParticipant(
-                communication_identifier=self.users["john"].communication_identifier,
-                role='Kafka'),
+            RoomParticipant(communication_identifier=self.users["john"].communication_identifier, role="Kafka"),
         ]
 
         # update room attributes
@@ -469,21 +439,15 @@ class TestRoomsClient(ACSRoomsTestCase):
     @recorded_by_proxy
     def test_remove_participants(self):
         # add john and chris to room
-        create_participants = [
-            self.users["john"],
-            self.users["chris"]
-        ]
+        create_participants = [self.users["john"], self.users["chris"]]
         create_response = self.rooms_client.create_room(participants=create_participants)
 
         # participants to be removed
-        removed_participants = [
-            self.users["john"].communication_identifier
-        ]
+        removed_participants = [self.users["john"].communication_identifier]
 
         expected_participants = [
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id3),
-                role=ParticipantRole.ATTENDEE
+                communication_identifier=CommunicationUserIdentifier(self.id3), role=ParticipantRole.ATTENDEE
             )
         ]
         self.rooms_client.remove_participants(room_id=create_response.id, participants=removed_participants)
@@ -501,22 +465,15 @@ class TestRoomsClient(ACSRoomsTestCase):
     @recorded_by_proxy
     def test_remove_participant_who_do_not_exist(self):
         # add john and chris to room
-        create_participants = [
-            self.users["john"],
-            self.users["chris"]
-        ]
-        remove_participants = [
-            self.users["fred"].communication_identifier
-        ]
+        create_participants = [self.users["john"], self.users["chris"]]
+        remove_participants = [self.users["fred"].communication_identifier]
         expected_participants = [
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id1),
-                role=ParticipantRole.PRESENTER
+                communication_identifier=CommunicationUserIdentifier(self.id1), role=ParticipantRole.PRESENTER
             ),
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id3),
-                role=ParticipantRole.ATTENDEE
-            )
+                communication_identifier=CommunicationUserIdentifier(self.id3), role=ParticipantRole.ATTENDEE
+            ),
         ]
         create_response = self.rooms_client.create_room(participants=create_participants)
         self.rooms_client.remove_participants(room_id=create_response.id, participants=remove_participants)
@@ -533,14 +490,11 @@ class TestRoomsClient(ACSRoomsTestCase):
     @recorded_by_proxy
     def test_remove_participant_wrong_mri(self):
         # add john and chris to room
-        create_participants = [
-            self.users["john"],
-            self.users["chris"]
-        ]
+        create_participants = [self.users["john"], self.users["chris"]]
         remove_participants = [
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier("wrong_mri"),
-                role=ParticipantRole.ATTENDEE),
+                communication_identifier=CommunicationUserIdentifier("wrong_mri"), role=ParticipantRole.ATTENDEE
+            ),
         ]
         create_response = self.rooms_client.create_room(participants=create_participants)
         with pytest.raises(HttpResponseError) as ex:
@@ -615,32 +569,44 @@ class TestRoomsClient(ACSRoomsTestCase):
     @recorded_by_proxy
     def test_create_room_timerange_pstn_dial_out_enabled(self):
         # room attributes
-        valid_from =  datetime.now() + timedelta(days=3)
+        valid_from = datetime.now() + timedelta(days=3)
         valid_until = valid_from + timedelta(weeks=4)
 
-        response = self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, pstn_dial_out_enabled=True)
+        response = self.rooms_client.create_room(
+            valid_from=valid_from, valid_until=valid_until, pstn_dial_out_enabled=True
+        )
 
-        self.verify_successful_room_response(response=response, valid_from=valid_from, valid_until=valid_until, pstn_dial_out_enabled=True)
-
-        # delete created room
-        self.rooms_client.delete_room(room_id=response.id)
-
-        response = self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, pstn_dial_out_enabled=False)
-
-        self.verify_successful_room_response(response=response, valid_from=valid_from, valid_until=valid_until, pstn_dial_out_enabled=False)
+        self.verify_successful_room_response(
+            response=response, valid_from=valid_from, valid_until=valid_until, pstn_dial_out_enabled=True
+        )
 
         # delete created room
         self.rooms_client.delete_room(room_id=response.id)
 
-    def verify_successful_room_response(self, response, valid_from=None, valid_until=None, room_id=None, pstn_dial_out_enabled=None):
+        response = self.rooms_client.create_room(
+            valid_from=valid_from, valid_until=valid_until, pstn_dial_out_enabled=False
+        )
+
+        self.verify_successful_room_response(
+            response=response, valid_from=valid_from, valid_until=valid_until, pstn_dial_out_enabled=False
+        )
+
+        # delete created room
+        self.rooms_client.delete_room(room_id=response.id)
+
+    def verify_successful_room_response(
+        self, response, valid_from=None, valid_until=None, room_id=None, pstn_dial_out_enabled=None
+    ):
         if room_id is not None:
             assert room_id == response.id
         if valid_from is not None:
             assert valid_from.replace(tzinfo=None) == datetime.strptime(
-                response.valid_from, "%Y-%m-%dT%H:%M:%S.%f%z").replace(tzinfo=None)
+                response.valid_from, "%Y-%m-%dT%H:%M:%S.%f%z"
+            ).replace(tzinfo=None)
         if valid_until is not None:
             assert valid_until.replace(tzinfo=None) == datetime.strptime(
-                response.valid_until, "%Y-%m-%dT%H:%M:%S.%f%z").replace(tzinfo=None)
+                response.valid_until, "%Y-%m-%dT%H:%M:%S.%f%z"
+            ).replace(tzinfo=None)
         assert response.created_at is not None
         if pstn_dial_out_enabled is not None:
             assert pstn_dial_out_enabled == response.pstn_dial_out_enabled
