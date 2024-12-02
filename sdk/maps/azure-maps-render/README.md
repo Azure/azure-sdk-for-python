@@ -33,7 +33,7 @@ pip install azure-maps-render
 
 ### Create and Authenticate the MapsRenderClient
 
-To create a client object to access the Azure Maps Render API, you will need a **credential** object. Azure Maps Render client also support two ways to authenticate.
+To create a client object to access the Azure Maps Render API, you will need a **credential** object. Azure Maps Render client also support three ways to authenticate.
 
 #### 1. Authenticate with a Subscription Key Credential
 

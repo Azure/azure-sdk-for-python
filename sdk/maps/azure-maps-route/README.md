@@ -33,7 +33,7 @@ pip install azure-maps-route
 
 ### Create and Authenticate the MapsRouteClient
 
-To create a client object to access the Azure Maps Route API, you will need a **credential** object. Azure Maps Route client also support two ways to authenticate.
+To create a client object to access the Azure Maps Route API, you will need a **credential** object. Azure Maps Route client also support three ways to authenticate.
 
 #### 1. Authenticate with a Subscription Key Credential
 
