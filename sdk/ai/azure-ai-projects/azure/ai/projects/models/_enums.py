@@ -80,8 +80,6 @@ class AgentStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ThreadRun"""
     THREAD_RUN_COMPLETED = "thread.run.completed"
     """Event sent when a run is completed. The data of this event is of type ThreadRun"""
-    THREAD_RUN_INCOMPLETE = "thread.run.incomplete"
-    """Event sent when a run ends incomplete. The data of this event is of type ThreadRun"""
     THREAD_RUN_FAILED = "thread.run.failed"
     """Event sent when a run fails. The data of this event is of type ThreadRun"""
     THREAD_RUN_CANCELLING = "thread.run.cancelling"
@@ -231,7 +229,7 @@ class Frequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MINUTE = "Minute"
 
 
-class IncompleteDetailsReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class IncompleteRunDetails(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The reason why the run is incomplete. This will point to which specific token limit was reached
     over the course of the run.
     """
@@ -393,8 +391,6 @@ class RunStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ThreadRun"""
     THREAD_RUN_COMPLETED = "thread.run.completed"
     """Event sent when a run is completed. The data of this event is of type ThreadRun"""
-    THREAD_RUN_INCOMPLETE = "thread.run.incomplete"
-    """Event sent when a run ends incomplete. The data of this event is of type ThreadRun"""
     THREAD_RUN_FAILED = "thread.run.failed"
     """Event sent when a run fails. The data of this event is of type ThreadRun"""
     THREAD_RUN_CANCELLING = "thread.run.cancelling"
@@ -444,9 +440,7 @@ class VectorStoreDataSourceAssetType(str, Enum, metaclass=CaseInsensitiveEnumMet
     """
 
     URI_ASSET = "uri_asset"
-    """Azure URI"""
     ID_ASSET = "id_asset"
-    """The data ID"""
 
 
 class VectorStoreExpirationPolicyAnchor(str, Enum, metaclass=CaseInsensitiveEnumMeta):
