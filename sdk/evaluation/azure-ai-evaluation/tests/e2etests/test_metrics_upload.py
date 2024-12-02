@@ -146,7 +146,7 @@ class TestMetricsUpload(object):
         self._assert_no_errors_for_module(caplog.records, EvalRun.__module__)
 
     @pytest.mark.performance_test
-    def test_e2e_run_target_fn(self, caplog, project_scope, questions_answers_file, monkeypatch):
+    def test_e2e_run_target_fn(self, caplog, project_scope, questions_answers_file, monkeypatch, azure_cred):
         """Test evaluation run logging."""
         # Afer re-recording this test, please make sure, that the cassette contains the POST
         # request ending by 00000/rundata and it has status 200.
@@ -178,11 +178,12 @@ class TestMetricsUpload(object):
             target=target_fn,
             evaluators={"f1": f1_score_eval},
             azure_ai_project=project_scope,
+            credential=azure_cred,
         )
         self._assert_no_errors_for_module(caplog.records, (ev_utils.__name__, EvalRun.__module__))
 
     @pytest.mark.performance_test
-    def test_e2e_run(self, caplog, project_scope, questions_answers_file, monkeypatch):
+    def test_e2e_run(self, caplog, project_scope, questions_answers_file, monkeypatch, azure_cred):
         """Test evaluation run logging."""
         # Afer re-recording this test, please make sure, that the cassette contains the POST
         # request ending by /BulkRuns/create.
@@ -205,5 +206,6 @@ class TestMetricsUpload(object):
             data=questions_answers_file,
             evaluators={"f1": f1_score_eval},
             azure_ai_project=project_scope,
+            credential=azure_cred,
         )
         self._assert_no_errors_for_module(caplog.records, (ev_utils.__name__, EvalRun.__module__))

@@ -8,7 +8,7 @@ from threading import Lock
 from urllib.parse import quote
 from json.decoder import JSONDecodeError
 
-from azure.core.credentials import TokenCredential, AzureNamedKeyCredential, AzureSasCredential
+from azure.core.credentials import TokenCredential, AzureSasCredential
 from azure.core.rest import HttpResponse
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import HttpPipeline, get_http_client
@@ -96,7 +96,7 @@ class LiteMLClient:
         # 2. Get the SAS token to use for accessing the blob store
         # REST API documentation:
         # https://learn.microsoft.com/rest/api/azureml/datastores/list-secrets?view=rest-azureml-2024-10-01
-        blob_store_credential: Union[AzureNamedKeyCredential, AzureSasCredential, None] = None
+        blob_store_credential: Optional[Union[AzureSasCredential, str]] = None
         if include_credentials:
             url = self._generate_path(
                 *PATH_ML_WORKSPACES, workspace_name, "datastores", "workspaceblobstore", "listSecrets"
@@ -117,10 +117,9 @@ class LiteMLClient:
             if secrets_type == "sas":
                 blob_store_credential = AzureSasCredential(secrets_json["sasToken"])
             elif secrets_type == "accountkey":
-                # as per the documentation for BlobServiceCredential the name of the credential should be set
-                # to the account name, and key should the account key
-                # https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.blobserviceclient?view=azure-python#parameters
-                blob_store_credential = AzureNamedKeyCredential(name=account_name, key=secrets_json["key"])
+                # To support olders versions of azure-storage-blob better, we return a string here instead of
+                # an AzureNamedKeyCredential
+                blob_store_credential = secrets_json["key"]
             else:
                 raise EvaluationException(
                     message=f"The '{account_name}' blob store does not use a recognized credential type.",

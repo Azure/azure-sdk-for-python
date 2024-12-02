@@ -52,9 +52,7 @@ class TestLiteAzureManagementClient(object):
         assert store.endpoint
         assert store.container_name
         if include_credentials:
-            assert isinstance(store.credential, AzureNamedKeyCredential) or isinstance(
-                store.credential, AzureSasCredential
-            )
+            assert isinstance(store.credential, str) or isinstance(store.credential, AzureSasCredential)
         else:
             assert store.credential == None
 

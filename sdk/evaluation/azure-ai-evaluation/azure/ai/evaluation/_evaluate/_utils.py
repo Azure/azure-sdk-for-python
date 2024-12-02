@@ -132,6 +132,7 @@ def _log_metrics_and_instance_results(
     trace_destination: Optional[str],
     run: Run,
     evaluation_name: Optional[str],
+    **kwargs,
 ) -> Optional[str]:
     from azure.ai.evaluation._evaluate._eval_run import EvalRun
 
@@ -144,6 +145,7 @@ def _log_metrics_and_instance_results(
         subscription_id=ws_triad.subscription_id,
         resource_group=ws_triad.resource_group_name,
         logger=LOGGER,
+        credential=kwargs.get("credential"),
         # let the client automatically determine the credentials to use
     )
     tracking_uri = management_client.workspace_get_info(ws_triad.workspace_name).ml_flow_tracking_uri
