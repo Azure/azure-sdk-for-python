@@ -910,7 +910,7 @@ class WebPubSubClient(
                 self._ack_map.clear()
 
                 if self._is_stopping:
-                    _LOGGER.warning("The client is stopping state. Stop recovery.")
+                    _LOGGER.info("The client is stopping state. Stop recovery.")
                     self._handle_connection_close_and_no_recovery(ws_instance.reconnect_tried_times)
                     return
 

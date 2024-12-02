@@ -19,12 +19,18 @@ USAGE:
 import os
 from azure.communication.phonenumbers.siprouting import SipRoutingClient, SipTrunkRoute
 
-ROUTES = [SipTrunkRoute(name="First rule", description="Handle numbers starting with '+123'", number_pattern="\+123[0-9]+", trunks=[])]
+ROUTES = [
+    SipTrunkRoute(
+        name="First rule", description="Handle numbers starting with '+123'", number_pattern="\+123[0-9]+", trunks=[]
+    )
+]
 connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
 client = SipRoutingClient.from_connection_string(connection_string)
 
+
 def set_sip_routes_sample():
     client.set_routes(ROUTES)
+
 
 if __name__ == "__main__":
     set_sip_routes_sample()

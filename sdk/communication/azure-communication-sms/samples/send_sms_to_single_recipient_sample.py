@@ -24,11 +24,12 @@ from azure.communication.sms import SmsClient
 
 sys.path.append("..")
 
+
 class SmsSingleRecipientSample(object):
 
     connection_string = os.getenv("COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING")
     phone_number = os.getenv("SMS_PHONE_NUMBER")
-    
+
     def send_sms_to_single_recipient(self):
         # [START auth_from_connection_string]
         sms_client = SmsClient.from_connection_string(self.connection_string)
@@ -39,17 +40,23 @@ class SmsSingleRecipientSample(object):
             from_=self.phone_number,
             to=self.phone_number,
             message="Hello World via SMS",
-            enable_delivery_report=True, # optional property
-            tag="custom-tag") # optional property
+            enable_delivery_report=True,  # optional property
+            tag="custom-tag",
+        )  # optional property
         sms_response = sms_responses[0]
-        
-        if (sms_response.successful):
-            print("Message with message id {} was successful sent to {}"
-            .format(sms_response.message_id, sms_response.to))
-        else:
-            print("Message failed to send to {} with the status code {} and error: {}"
-            .format(sms_response.to, sms_response.http_status_code, sms_response.error_message))
 
-if __name__ == '__main__':
+        if sms_response.successful:
+            print(
+                "Message with message id {} was successful sent to {}".format(sms_response.message_id, sms_response.to)
+            )
+        else:
+            print(
+                "Message failed to send to {} with the status code {} and error: {}".format(
+                    sms_response.to, sms_response.http_status_code, sms_response.error_message
+                )
+            )
+
+
+if __name__ == "__main__":
     sample = SmsSingleRecipientSample()
     sample.send_sms_to_single_recipient()
