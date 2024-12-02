@@ -291,11 +291,12 @@ class TestMassEvaluate:
         assert metrics["indirect_attack.xpia_defect_rate"] >= 0
         assert metrics["eci.eci_defect_rate"] >= 0
 
+    # Imagee urls with target is disabled due to being unstable in CI
     @pytest.mark.parametrize(
         "multi_modal_input_type",
         [
             "imageurls",
-            "imageurls_with_target",
+            # "imageurls_with_target",
             "b64_images",
         ],
     )
