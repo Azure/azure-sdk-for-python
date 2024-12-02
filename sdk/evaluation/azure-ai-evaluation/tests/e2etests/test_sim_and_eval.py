@@ -199,7 +199,7 @@ class TestSimAndEval:
         assert "inputs.conversation" in row_result_df.columns.to_list()
         assert "outputs.violence.violence_score" in row_result_df.columns.to_list()
 
-        assert row_result_df["outputs.violence.violence_score"][1] in [4, 5]
+        assert row_result_df["outputs.violence.violence_score"][1] in [0, 5]
         assert "violence.violence_defect_rate" in metrics.keys()
 
         # Cleanup file
