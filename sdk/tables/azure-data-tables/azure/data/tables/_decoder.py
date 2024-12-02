@@ -16,7 +16,7 @@ from ._entity import (
 )
 
 DecodeCallable = Union[Callable[[str], Any], Callable[[int], Any], Callable[[bool], Any], Callable[[float], Any]]
-DecoderMapType = Dict[Union[str, EdmType], DecodeCallable]
+DecoderMapType = Dict[Union[str, EdmType], Union[DecodeCallable, EdmType]]
 NO_ODATA = {
     int: EdmType.INT32,
     str: EdmType.STRING,
@@ -41,20 +41,29 @@ class _TableEntityDecoder:
         self._trim_odata = trim_odata
         self._edm_types: Dict[EdmType, DecodeCallable] = {
             EdmType.BINARY: b64decode,
-            EdmType.INT32: self._decode_int32,
+            EdmType.INT32: int,
             EdmType.INT64: self._decode_int64,
             EdmType.DOUBLE: float,
             EdmType.DATETIME: deserialize_iso,
             EdmType.GUID: UUID,
             EdmType.STRING: str,
-            EdmType.BOOLEAN: bool,
+            EdmType.BOOLEAN: self._decode_boolean,
         }
         self._property_types: Dict[str, DecodeCallable] = {"Timestamp": deserialize_iso}
+        # First we want to update the callables
         for key, value in convert_map.items():
-            if isinstance(key, str):
-                self._property_types[key] = value
-            else:
-                self._edm_types[key] = value
+            if not isinstance(value, EdmType):
+                if isinstance(key, str):
+                    self._property_types[key] = value
+                else:
+                    self._edm_types[key] = value
+        # Next we want to assign callables by edmtypes
+        for key, value in convert_map.items():
+            if isinstance(value, EdmType):
+                if isinstance(key, str):
+                    self._property_types[key] = self._edm_types[value]
+                else:
+                    self._edm_types[key] = self._edm_types[value]
 
     def __call__(  # pylint: disable=too-many-branches, too-many-statements
         self, response_data: Mapping[str, Any]
@@ -112,11 +121,19 @@ class _TableEntityDecoder:
             entity.pop("Timestamp", None)
         return entity
 
-    def _decode_int32(self, value: Union[str, int]) -> int:
-        return int(value)
-
     def _decode_int64(self, value: str) -> EntityProperty:
         return EntityProperty(int(value), EdmType.INT64)
+
+    def _decode_boolean(self, value: Union[str, bool, int]) -> bool:
+        try:
+            value = value.lower()  # type: ignore[union-attr]
+        except AttributeError:
+            return bool(value)
+        if value == "true":
+            return True
+        if value == "false":
+            return False
+        return bool(value)
 
 
 def deserialize_iso(value: str) -> TablesEntityDatetime:

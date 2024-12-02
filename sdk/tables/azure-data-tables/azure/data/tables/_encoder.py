@@ -30,7 +30,7 @@ from base64 import b64encode
 from ._entity import EdmType, EntityProperty
 from ._decoder import TablesEntityDatetime
 from ._common_conversion import _encode_base64, _to_utc_datetime, SupportedDataTypes
-from ._constants import MAX_INT64, MIN_INT64, _ERROR_VALUE_TOO_LARGE
+from ._constants import MAX_INT32, MIN_INT32, MAX_INT64, MIN_INT64, _ERROR_VALUE_TOO_LARGE
 
 _ODATA_SUFFIX = "@odata.type"
 
@@ -196,11 +196,14 @@ class _TableEntityEncoder(TableEntityEncoder):
 
     def _encode_int32(self, value: Union[str, SupportsInt]) -> Tuple[None, int]:
         int_value = int(value)
-        if int_value >= MAX_INT64 or int_value < MIN_INT64:
+        if int_value >= MAX_INT32 or int_value < MIN_INT32:
             raise TypeError(_ERROR_VALUE_TOO_LARGE.format(str(value), EdmType.INT32))
         return None, int_value
 
     def _encode_int64(self, value: Any) -> Tuple[EdmType, str]:
+        int_value = int(value)
+        if int_value >= MAX_INT64 or int_value < MIN_INT64:
+            raise TypeError(_ERROR_VALUE_TOO_LARGE.format(str(value), EdmType.INT64))
         return EdmType.INT64, str(value)
 
     def _encode_string(self, value: Any) -> Tuple[None, str]:

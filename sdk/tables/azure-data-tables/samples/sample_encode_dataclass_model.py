@@ -27,7 +27,7 @@ from uuid import uuid4, UUID
 from enum import Enum
 from dotenv import find_dotenv, load_dotenv
 from dataclasses import dataclass, asdict
-from typing import Optional
+from typing import Any, Callable, Dict, Optional, Tuple, Union
 from azure.data.tables import TableClient, UpdateMode, EdmType
 
 
@@ -54,35 +54,30 @@ class Color(str, Enum):
     BLACK = "black"
 
 
-def encode_int(value):
+def encode_large_int(_: str, value: int) -> Tuple[EdmType, str]:
     return EdmType.STRING, str(value)
 
 
-def encode_uuid(value):
+def encode_uuid(_: str, value: UUID) -> Tuple[None, str]:
     return None, str(value)
 
 
-encoder_map = {
-    int: encode_int,
-    UUID: encode_uuid,
+def decode_color(value: str) -> str:
+    try:
+        return Color(value)
+    except ValueError:
+        return value
+
+
+encoder_map: Dict[str, Callable[[str, Any], Tuple[Optional[EdmType], str]]] = {
+    "RowKey": encode_uuid,
+    "big_number": encode_large_int,
 }
 
-
-def decode_string(value):
-    try:
-        return int(value)
-    except ValueError:
-        try:
-            return Color(value)
-        except ValueError:
-            try:
-                return UUID(value)
-            except ValueError:
-                return value
-
-
-decoder_map = {
-    EdmType.STRING: decode_string,
+decoder_map: Dict[str, Union[EdmType, Callable[[Any], Any]]] = {
+    "RowKey": EdmType.GUID,  # We can override the selected EdmType for decoding
+    "color": decode_color,  # Or we can provide a custom callable.
+    "big_number": int,
 }
 
 
@@ -98,7 +93,7 @@ class InsertUpdateDeleteEntity(object):
 
     def create_delete_entity(self):
         table_client = TableClient.from_connection_string(
-            self.connection_string, self.table_name, encoder_map=encoder_map, decoder_map=decoder_map
+            self.connection_string, self.table_name, encode_types=encoder_map, decode_types=decoder_map
         )
         with table_client:
             table_client.create_table()

@@ -505,7 +505,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK1", "RowKey": "RK1", "Data": int((max_int64 + 1) * 1000)}
             with pytest.raises(TypeError) as error:
                 client.create_entity(test_entity)
-            assert "is too large to be cast to" in str(error.value)
+            assert "is out of range to be cast to" in str(error.value)
 
             test_entity = {"PartitionKey": "PK2", "RowKey": "RK2", "Data": (max_int64 + 1, "Edm.Int64")}
             expected_entity = {
@@ -516,7 +516,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             }
             with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
-            assert "is too large to be cast to" in str(error.value)
+            assert "is out of range to be cast to" in str(error.value)
             with pytest.raises(HttpResponseError) as error:
                 resp = client.create_entity(
                     test_entity,
@@ -552,7 +552,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK4", "RowKey": "RK4", "Data": max_int64}
             with pytest.raises(TypeError) as error:
                 client.create_entity(test_entity)
-            assert "is too large to be cast to" in str(error.value)
+            assert "is out of range to be cast to" in str(error.value)
 
             # Infinite float values
             test_entity = {
@@ -1280,10 +1280,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK1", "RowKey": "RK1", "Data": int((max_int64 + 1) * 1000)}
             with pytest.raises(TypeError) as error:
                 client.upsert_entity(test_entity, mode=UpdateMode.MERGE)
-            assert "is too large to be cast to" in str(error.value)
+            assert "is out of range to be cast to" in str(error.value)
             with pytest.raises(TypeError) as error:
                 client.upsert_entity(test_entity, mode=UpdateMode.REPLACE)
-            assert "is too large to be cast to" in str(error.value)
+            assert "is out of range to be cast to" in str(error.value)
 
             test_entity = {"PartitionKey": "PK2", "RowKey": "RK2", "Data": (max_int64 + 1, "Edm.Int64")}
             expected_entity = {
@@ -1294,7 +1294,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             }
             with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
-            assert "is too large to be cast to" in str(error.value)
+            assert "is out of range to be cast to" in str(error.value)
             with pytest.raises(HttpResponseError) as error:
                 client.upsert_entity(
                     test_entity,
@@ -1360,10 +1360,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK4", "RowKey": "RK4", "Data": max_int64}
             with pytest.raises(TypeError) as error:
                 client.upsert_entity(test_entity, mode=UpdateMode.MERGE)
-            assert "is too large to be cast to" in str(error.value)
+            assert "is out of range to be cast to" in str(error.value)
             with pytest.raises(TypeError) as error:
                 client.upsert_entity(test_entity, mode=UpdateMode.REPLACE)
-            assert "is too large to be cast to" in str(error.value)
+            assert "is out of range to be cast to" in str(error.value)
 
             # Infinite float values
             test_entity = {
@@ -2134,10 +2134,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK1", "RowKey": "RK1", "Data": int((max_int64 + 1) * 1000)}
             with pytest.raises(TypeError) as error:
                 client.upsert_entity(test_entity, mode=UpdateMode.MERGE)
-            assert "is too large to be cast to" in str(error.value)
+            assert "is out of range to be cast to" in str(error.value)
             with pytest.raises(TypeError) as error:
                 client.upsert_entity(test_entity, mode=UpdateMode.REPLACE)
-            assert "is too large to be cast to" in str(error.value)
+            assert "is out of range to be cast to" in str(error.value)
 
             test_entity = {"PartitionKey": "PK2", "RowKey": "RK2", "Data": (max_int64 + 1, "Edm.Int64")}
             expected_entity = {
@@ -2148,7 +2148,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             }
             with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
-            assert "is too large to be cast to" in str(error.value)
+            assert "is out of range to be cast to" in str(error.value)
             client.upsert_entity({"PartitionKey": "PK2", "RowKey": "RK2"})
             with pytest.raises(HttpResponseError) as error:
                 client.update_entity(
@@ -2204,10 +2204,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             test_entity = {"PartitionKey": "PK4", "RowKey": "RK4", "Data": max_int64}
             with pytest.raises(TypeError) as error:
                 client.update_entity(test_entity, mode=UpdateMode.MERGE)
-            assert "is too large to be cast to" in str(error.value)
+            assert "is out of range to be cast to" in str(error.value)
             with pytest.raises(TypeError) as error:
                 client.update_entity(test_entity, mode=UpdateMode.REPLACE)
-            assert "is too large to be cast to" in str(error.value)
+            assert "is out of range to be cast to" in str(error.value)
 
             # Infinite float values
             test_entity = {

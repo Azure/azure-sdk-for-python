@@ -73,8 +73,8 @@ class TableEntity(Dict[str, Any]):
             # The metadata was never set - this would likely only happen if someone
             # instantiated this object directly.
             system_timestamp: Optional[datetime.datetime] = self.get("Timestamp")
-            etag: Optional[str] = None
-            if isinstance(system_timestamp, TablesEntityDatetime):
+            etag: Optional[str] = self.get("odata.etag")
+            if etag is None and isinstance(system_timestamp, TablesEntityDatetime):
                 etag = "W/\"datetime'" + quote(system_timestamp.tables_service_value) + "'\""
             self._metadata: EntityMetadata = {
                 "etag": etag,
