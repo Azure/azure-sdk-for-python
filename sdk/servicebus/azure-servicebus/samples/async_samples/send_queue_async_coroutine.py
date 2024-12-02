@@ -35,7 +35,6 @@ async def send_single_message(sender):
     print(f"Sent a single message on {asyncio.current_task().get_name()}")
 
 
-
 async def main():
     credential = DefaultAzureCredential()
     servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential, logging_enable=True)
@@ -52,7 +51,7 @@ async def main():
                 asyncio.create_task(send_single_message(sender)),
             ]
             await asyncio.gather(*tasks)
-            
+
     print("Send message is done.")
 
 

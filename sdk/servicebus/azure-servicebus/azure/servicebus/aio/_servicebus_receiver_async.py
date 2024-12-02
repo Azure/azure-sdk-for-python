@@ -73,7 +73,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
+class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):  # pylint: disable=too-many-instance-attributes
     """The ServiceBusReceiver class defines a high level interface for
     receiving messages from the Azure Service Bus Queue or Topic Subscription.
 
@@ -385,7 +385,9 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
                     else 0
                 )
                 abs_timeout = (
-                    self._amqp_transport.get_current_time(amqp_receive_client) + timeout_seconds if timeout_seconds else 0
+                    self._amqp_transport.get_current_time(amqp_receive_client) + timeout_seconds
+                    if timeout_seconds
+                    else 0
                 )
 
                 batch: Union[List["uamqp_Message"], List["pyamqp_Message"]] = []

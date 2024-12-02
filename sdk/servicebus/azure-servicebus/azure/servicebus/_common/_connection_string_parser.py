@@ -86,7 +86,10 @@ def parse_connection_string(conn_str: str) -> "ServiceBusConnectionStringPropert
     :return: A properties model containing the parsed connection string.
     :rtype: ~azure.servicebus.ServiceBusConnectionStringProperties
     """
-    fully_qualified_namespace, policy, key, entity, signature, emulator = _parse_conn_str(conn_str, True)[ # pylint: disable=unused-variable
+    # pylint: disable=unused-variable
+    fully_qualified_namespace, policy, key, entity, signature, emulator = _parse_conn_str(
+        conn_str, True
+    )[
         :-1
     ]
     endpoint = "sb://" + fully_qualified_namespace + "/"
