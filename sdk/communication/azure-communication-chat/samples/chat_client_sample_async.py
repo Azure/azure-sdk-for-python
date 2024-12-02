@@ -1,4 +1,3 @@
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -28,6 +27,7 @@ import asyncio
 
 class ChatClientSamplesAsync(object):
     from azure.communication.identity import CommunicationIdentityClient
+
     connection_string = os.environ.get("COMMUNICATION_SAMPLES_CONNECTION_STRING", None)
     if not connection_string:
         raise ValueError("Set COMMUNICATION_SAMPLES_CONNECTION_STRING env before run this sample.")
@@ -71,20 +71,17 @@ class ChatClientSamplesAsync(object):
         async with chat_client:
 
             topic = "test topic"
-            participants = [ChatParticipant(
-                identifier=self.user,
-                display_name='name',
-                share_history_time=datetime.utcnow()
-            )]
+            participants = [
+                ChatParticipant(identifier=self.user, display_name="name", share_history_time=datetime.utcnow())
+            ]
             # creates a new chat_thread everytime
             create_chat_thread_result = await chat_client.create_chat_thread(topic, thread_participants=participants)
 
             # creates a new chat_thread if not exists
-            idempotency_token = 'b66d6031-fdcc-41df-8306-e524c9f226b8'  # unique identifier
+            idempotency_token = "b66d6031-fdcc-41df-8306-e524c9f226b8"  # unique identifier
             create_chat_thread_result_w_repeatability_id = await chat_client.create_chat_thread(
-                topic,
-                thread_participants=participants,
-                idempotency_token=idempotency_token)
+                topic, thread_participants=participants, idempotency_token=idempotency_token
+            )
             # [END create_thread]
 
             self._thread_id = create_chat_thread_result.chat_thread.id
@@ -107,7 +104,6 @@ class ChatClientSamplesAsync(object):
 
         print("chat_thread_client created with thread id: ", chat_thread_client.thread_id)
 
-
     async def list_threads_async(self):
         token = self.token
         endpoint = self.endpoint
@@ -121,6 +117,7 @@ class ChatClientSamplesAsync(object):
         async with chat_client:
 
             from datetime import datetime, timedelta
+
             start_time = datetime.utcnow() - timedelta(days=2)
             chat_threads = chat_client.list_chat_threads(results_per_page=5, start_time=start_time)
             print("list_threads succeeded with results_per_page is 5, and were created since 2 days ago.")
@@ -142,7 +139,7 @@ class ChatClientSamplesAsync(object):
         async with chat_client:
             # set `thread_id` to an existing chat thread id
             await chat_client.delete_chat_thread(thread_id)
-        # [END delete_thread]
+            # [END delete_thread]
             print("delete_thread succeeded")
 
     def clean_up(self):
@@ -159,5 +156,6 @@ async def main():
     await sample.delete_thread_async()
     sample.clean_up()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

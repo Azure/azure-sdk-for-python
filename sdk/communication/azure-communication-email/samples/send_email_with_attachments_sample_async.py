@@ -28,20 +28,19 @@ from azure.communication.email.aio import EmailClient
 
 sys.path.append("..")
 
+
 class EmailWithAttachmentSampleAsync(object):
 
     connection_string = os.getenv("COMMUNICATION_CONNECTION_STRING_EMAIL")
     sender_address = os.getenv("SENDER_ADDRESS")
     recipient_address = os.getenv("RECIPIENT_ADDRESS")
-    
+
     async def send_email_with_attachment_async(self):
         # creating the email client
         email_client = EmailClient.from_connection_string(self.connection_string)
 
         # creating the email message
-        attachment_path = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            "attachment.txt")
+        attachment_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "attachment.txt")
 
         with open(attachment_path, "rb") as file:
             file_bytes = file.read()
@@ -52,24 +51,13 @@ class EmailWithAttachmentSampleAsync(object):
             "content": {
                 "subject": "This is the subject",
                 "plainText": "This is the body",
-                "html": "html><h1>This is the body</h1></html>"
+                "html": "html><h1>This is the body</h1></html>",
             },
-            "recipients": {
-                "to": [
-                    {
-                        "address": self.recipient_address,
-                        "displayName": "Customer Name"
-                    }
-                ]
-            },
+            "recipients": {"to": [{"address": self.recipient_address, "displayName": "Customer Name"}]},
             "senderAddress": self.sender_address,
             "attachments": [
-                {
-                    "name": "attachment.txt",
-                    "contentType": "text/plain",
-                    "contentInBase64": file_bytes_b64.decode()
-                }
-            ]
+                {"name": "attachment.txt", "contentType": "text/plain", "contentInBase64": file_bytes_b64.decode()}
+            ],
         }
 
         async with email_client:
@@ -77,11 +65,12 @@ class EmailWithAttachmentSampleAsync(object):
                 # sending the email message
                 poller = await email_client.begin_send(message)
                 response = await poller.result()
-                print("Operation ID: " + response['id'])
+                print("Operation ID: " + response["id"])
             except HttpResponseError as ex:
                 print(ex)
                 pass
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     sample = EmailWithAttachmentSampleAsync()
     asyncio.run(sample.send_email_with_attachment_async())
