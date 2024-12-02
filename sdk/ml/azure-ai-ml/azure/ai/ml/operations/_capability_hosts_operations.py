@@ -1,9 +1,10 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# pylint: disable=protected-access
 
 from typing import Any, Iterable, List
-
+from marshmallow.exceptions import ValidationError as SchemaValidationError
 from azure.ai.ml._scope_dependent_operations import (
     OperationsContainer,
     OperationScope,
@@ -27,7 +28,6 @@ from azure.ai.ml.constants._common import WorkspaceKind
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml.constants._common import DEFAULT_STORAGE_CONNECTION_NAME
-from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -45,7 +45,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
     :param service_client_10_2024: Service client to allow end users to operate on Azure Machine Learning Workspace
         resources (ServiceClient102024Preview).
-    :type service_client_10_2024: ~azure.ai.ml._restclient.v2024_10_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces
+    :type service_client_10_2024: ~azure.ai.ml._restclient.v2024_10_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces    # pylint: disable=line-too-long
     :param all_operations: All operations classes of an MLClient object.
     :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
     :param credentials: Credential to use for authentication.
@@ -71,7 +71,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
         :param service_client_10_2024: Service client to allow end users to operate on Azure Machine Learning Workspace
             resources (ServiceClient102024Preview).
-        :type service_client_10_2024: ~azure.ai.ml._restclient.v2024_10_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces
+        :type service_client_10_2024: ~azure.ai.ml._restclient.v2024_10_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces    # pylint: disable=line-too-long
         :param all_operations: All operations classes of an MLClient object.
         :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
         :param credentials: Credential to use for authentication.
@@ -96,11 +96,9 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
     def list(self, **kwargs: Any) -> Iterable[CapabilityHost]:
         """List capability hosts in a Hub or Project workspace.
 
-        :param kwargs: Additional keyword arguments.
-        :type kwargs: Any
         :return: List of CapabilityHost objects.
         :rtype: ~typing.Iterable[~azure.ai.ml.entities._workspace._ai_workspaces.capability_host.CapabilityHost]
-        
+
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/ml_samples_capability_host.py
@@ -125,10 +123,11 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
 
         :param name: The name of the capability host to retrieve.
         :type name: str
-        :param kwargs: Additional keyword arguments.
-        :type kwargs: Any
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if project name or hub name not provided while creation of MLClient object in workspacename param. Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Capabilityhost name is not provided. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if project name or hub name
+            not provided while creation of MLClient object in workspacename param.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Capabilityhost name is not provided.
+            Details will be provided in the error message.
         :return: CapabilityHost object.
         :rtype: ~azure.ai.ml.entities._workspace._ai_workspaces.capability_host.CapabilityHost
 
@@ -164,14 +163,14 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         self, capability_host: CapabilityHost, **kwargs: Any
     ) -> LROPoller[CapabilityHost]:
         """Begin the creation of a capability host in a Hub or Project workspace.
-        Note that currently this method can only accept the `create` operation request and not `update` operation request.
+        Note that currently this method can only accept the `create` operation request
+        and not `update` operation request.
 
         :param capability_host: The CapabilityHost object containing the details of the capability host to create.
         :type capability_host: ~azure.ai.ml.entities.CapabilityHost
-        :param kwargs: Additional keyword arguments.
-        :type kwargs: Any
-        :return: An LROPoller object that can be used to track the long-running operation that is creation of capability host.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities._workspace._ai_workspaces.capability_host.CapabilityHost]
+        :return: An LROPoller object that can be used to track the long-running
+            operation that is creation of capability host.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities._workspace._ai_workspaces.capability_host.CapabilityHost]    # pylint: disable=line-too-long
 
         .. admonition:: Example:
 
@@ -212,9 +211,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
                 :rtype: ~azure.ai.ml.entities._workspace._ai_workspaces.capability_host.CapabilityHost
                 """
 
-                return CapabilityHost._from_rest_object(
-                    deserialized
-                )  # pylint: disable=protected-access
+                return CapabilityHost._from_rest_object(deserialized)
 
             poller = self._capability_hosts_operations.begin_create_or_update(
                 resource_group_name=self._resource_group_name,
@@ -282,8 +279,11 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         :type capability_host: CapabilityHost
         :param workspace_kind: The kind of the workspace, either hub or project only.
         :type workspace_kind: str
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if workspace kind is not Hub or Project. Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the OpenAI service connection or vector store (AISearch) connection is empty for a Project workspace kind. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if workspace kind is not Hub or Project.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the OpenAI service connection or
+            vector store (AISearch) connection is empty for a Project workspace kind.
+            Details will be provided in the error message.
         :return: None, or the result of cls(response)
         :rtype: None
         """
@@ -302,7 +302,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
                 capability_host.ai_services_connections is None
                 or capability_host.vector_store_connections is None
             ):
-                msg = "For Project workspace kind, OpenAI service connections and vector store (AISearch) connections are required."
+                msg = "For Project workspace kind, OpenAI service connections and vector store (AISearch) connections are required."  # pylint: disable=line-too-long
                 raise ValidationException(
                     message=msg,
                     target=ErrorTarget.CAPABILITY_HOST,
@@ -324,7 +324,8 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
     def __get_workspace(self) -> Workspace:
         """Retrieve the workspace object.
 
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if specified Hub or Project do not exist. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if specified Hub or Project do not exist.
+            Details will be provided in the error message.
         :return: Hub or Project object if it exists
         :rtype: ~azure.ai.ml.entities._workspace.workspace.Workspace
         """
@@ -345,7 +346,9 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
     def __validate_workspace_name(self) -> None:
         """Validates that a hub name or project name is set in the MLClient's workspace name parameter.
 
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if project name or hub name not provided while creation of MLClient object in workspacename param. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if project name or hub name
+            not provided while creation of
+            MLClient object in workspacename param. Details will be provided in the error message.
         :return: None, or the result of cls(response)
         :rtype: None
         """

@@ -108,4 +108,7 @@ class TestCapabilityHostOperation:
             mock_invalid_capability_hosts_operation.begin_create_or_update(
                 capability_host=capability_host
             )
-        assert "Please set hub name or project name in workspacename parameter while initializing MLClient object." in ve.value.args[0]
+        assert (
+            "Please set hub name or project name in workspacename parameter while initializing MLClient object."
+            in ve.value.args[0]
+        )
