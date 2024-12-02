@@ -13,7 +13,7 @@ class TestLiteAzureManagementClient(object):
         client = LiteMLClient(
             subscription_id=project_scope["subscription_id"],
             resource_group=project_scope["resource_group_name"],
-            credentials=azure_cred,
+            credential=azure_cred,
             logger=logging.getLogger(__name__),
         )
 
@@ -25,7 +25,7 @@ class TestLiteAzureManagementClient(object):
         client = LiteMLClient(
             subscription_id=project_scope["subscription_id"],
             resource_group=project_scope["resource_group_name"],
-            credentials=azure_cred,
+            credential=azure_cred,
             logger=logging.getLogger(__name__),
         )
 
@@ -38,7 +38,7 @@ class TestLiteAzureManagementClient(object):
         client = LiteMLClient(
             subscription_id=project_scope["subscription_id"],
             resource_group=project_scope["resource_group_name"],
-            credentials=azure_cred,
+            credential=azure_cred,
             logger=logging.getLogger(__name__),
         )
 
@@ -63,7 +63,7 @@ class TestLiteAzureManagementClient(object):
         client = LiteMLClient(
             subscription_id=project_scope["subscription_id"],
             resource_group=project_scope["resource_group_name"],
-            credentials=azure_cred,
+            credential=azure_cred,
             logger=logging.getLogger(__name__),
         )
 
