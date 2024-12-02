@@ -52,7 +52,26 @@ route_client = MapsRouteClient(
 )
 ```
 
-#### 2. Authenticate with an Azure Active Directory credential
+#### 2. Authenticate with a SAS Credential
+
+You can authenticate with your generated SAS token.
+Once the SAS token is created, set the value of the token as environment variable: `AZURE_SAS_TOKEN`.
+Then pass an `AZURE_SAS_TOKEN` as the `credential` parameter into an instance of AzureSasCredential.
+
+```python
+import os
+
+from azure.core.credentials import AzureSASCredential
+from azure.maps.route import MapsRouteClient
+
+credential = AzureSASCredential(os.environ.get("AZURE_SAS_TOKEN"))
+
+timezone_client = MapsRouteClient(
+    credential=credential,
+)
+```
+
+#### 3. Authenticate with an Azure Active Directory credential
 
 You can authenticate with [Azure Active Directory (AAD) token credential][maps_authentication_aad] using the [Azure Identity library][azure_identity].
 Authentication by using AAD requires some initial setup:
