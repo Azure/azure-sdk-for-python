@@ -20,6 +20,8 @@ USAGE:
  
     Set this environment variables with your own values:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    Please see Getting Started with Azure Functions page for more information on Azure Functions:
+    https://learn.microsoft.com/azure/azure-functions/functions-get-started
 """
 
 import os
