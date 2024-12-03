@@ -1571,6 +1571,63 @@ class CommunicationUserIdentifierModel(_serialization.Model):
         self.id = id
 
 
+class ConnectFailed(_serialization.Model):
+    """The ConnectFailed event.
+
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    """
+
+    _attribute_map = {
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+    }
+
+    def __init__(
+        self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["_models.ResultInformation"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword call_connection_id: Call connection ID.
+        :paramtype call_connection_id: str
+        :keyword server_call_id: Server call ID.
+        :paramtype server_call_id: str
+        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+         skype chain ID.
+        :paramtype correlation_id: str
+        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
+         request to the response event.
+        :paramtype operation_context: str
+        :keyword result_information: Contains the resulting SIP code, sub-code and message.
+        :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
+        """
+        super().__init__(**kwargs)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
+
+
 class ConnectRequest(_serialization.Model):
     """The request payload for creating a connection to a CallLocator.
 
@@ -4523,6 +4580,63 @@ class PlaySource(_serialization.Model):
         self.ssml = ssml
 
 
+class PlayStarted(_serialization.Model):
+    """Play started event.
+
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    """
+
+    _attribute_map = {
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+    }
+
+    def __init__(
+        self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["_models.ResultInformation"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword call_connection_id: Call connection ID.
+        :paramtype call_connection_id: str
+        :keyword server_call_id: Server call ID.
+        :paramtype server_call_id: str
+        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+         skype chain ID.
+        :paramtype correlation_id: str
+        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
+         request to the response event.
+        :paramtype operation_context: str
+        :keyword result_information: Contains the resulting SIP code, sub-code and message.
+        :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
+        """
+        super().__init__(**kwargs)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
+
+
 class PowerVirtualAgentsDialog(BaseDialog):
     """Power Virtual Agents Dialog.
 
@@ -5937,25 +6051,51 @@ class StartTranscriptionRequest(_serialization.Model):
 
     :ivar locale: Defines Locale for the transcription e,g en-US.
     :vartype locale: str
+    :ivar speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
+    :vartype speech_recognition_model_endpoint_id: str
     :ivar operation_context: The value to identify context of the operation.
     :vartype operation_context: str
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
     """
 
     _attribute_map = {
         "locale": {"key": "locale", "type": "str"},
+        "speech_recognition_model_endpoint_id": {"key": "speechRecognitionModelEndpointId", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
     }
 
-    def __init__(self, *, locale: Optional[str] = None, operation_context: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        locale: Optional[str] = None,
+        speech_recognition_model_endpoint_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword locale: Defines Locale for the transcription e,g en-US.
         :paramtype locale: str
+        :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
+        :paramtype speech_recognition_model_endpoint_id: str
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
         """
         super().__init__(**kwargs)
         self.locale = locale
+        self.speech_recognition_model_endpoint_id = speech_recognition_model_endpoint_id
         self.operation_context = operation_context
+        self.operation_callback_uri = operation_callback_uri
 
 
 class StopMediaStreamingRequest(_serialization.Model):
@@ -5966,22 +6106,30 @@ class StopMediaStreamingRequest(_serialization.Model):
      This setup is per-action. If this is not set, the default callback URI set by
      CreateCall/AnswerCall will be used.
     :vartype operation_callback_uri: str
+    :ivar operation_context: The value to identify context of the operation.
+    :vartype operation_context: str
     """
 
     _attribute_map = {
         "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
+        "operation_context": {"key": "operationContext", "type": "str"},
     }
 
-    def __init__(self, *, operation_callback_uri: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, operation_callback_uri: Optional[str] = None, operation_context: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
          by CreateCall/AnswerCall for this operation.
          This setup is per-action. If this is not set, the default callback URI set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_uri: str
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
         """
         super().__init__(**kwargs)
         self.operation_callback_uri = operation_callback_uri
+        self.operation_context = operation_context
 
 
 class StopTranscriptionRequest(_serialization.Model):
@@ -5989,19 +6137,33 @@ class StopTranscriptionRequest(_serialization.Model):
 
     :ivar operation_context: The value to identify context of the operation.
     :vartype operation_context: str
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
     """
 
     _attribute_map = {
         "operation_context": {"key": "operationContext", "type": "str"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
     }
 
-    def __init__(self, *, operation_context: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, operation_context: Optional[str] = None, operation_callback_uri: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
         """
         super().__init__(**kwargs)
         self.operation_context = operation_context
+        self.operation_callback_uri = operation_callback_uri
 
 
 class TextSource(_serialization.Model):
@@ -6783,6 +6945,16 @@ class UpdateTranscriptionRequest(_serialization.Model):
 
     :ivar locale: Defines new locale for transcription. Required.
     :vartype locale: str
+    :ivar speech_recognition_model_endpoint_id: Sets Endpoint id where the custom model was
+     deployed.
+    :vartype speech_recognition_model_endpoint_id: str
+    :ivar operation_context: The value to identify context of the operation.
+    :vartype operation_context: str
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
     """
 
     _validation = {
@@ -6791,15 +6963,39 @@ class UpdateTranscriptionRequest(_serialization.Model):
 
     _attribute_map = {
         "locale": {"key": "locale", "type": "str"},
+        "speech_recognition_model_endpoint_id": {"key": "speechRecognitionModelEndpointId", "type": "str"},
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
     }
 
-    def __init__(self, *, locale: str, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        locale: str,
+        speech_recognition_model_endpoint_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword locale: Defines new locale for transcription. Required.
         :paramtype locale: str
+        :keyword speech_recognition_model_endpoint_id: Sets Endpoint id where the custom model was
+         deployed.
+        :paramtype speech_recognition_model_endpoint_id: str
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
         """
         super().__init__(**kwargs)
         self.locale = locale
+        self.speech_recognition_model_endpoint_id = speech_recognition_model_endpoint_id
+        self.operation_context = operation_context
+        self.operation_callback_uri = operation_callback_uri
 
 
 class UserConsent(_serialization.Model):

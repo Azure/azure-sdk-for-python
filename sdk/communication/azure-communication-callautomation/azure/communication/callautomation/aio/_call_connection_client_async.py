@@ -922,7 +922,13 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def start_transcription(
-        self, *, locale: Optional[str] = None, operation_context: Optional[str] = None, **kwargs
+        self,
+        *,
+        locale: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        speech_recognition_model_endpoint_id: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        **kwargs
     ) -> None:
         """Starts transcription in the call.
 
@@ -930,20 +936,41 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :paramtype locale: str
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
+        :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
+        :paramtype speech_recognition_model_endpoint_id: str
+        :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URL set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_url: str or None
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         start_transcription_request = StartTranscriptionRequest(
-            locale=locale, operation_context=operation_context, **kwargs
+            locale=locale,
+            operation_context=operation_context,
+            speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id,
+            operation_callback_uri=operation_callback_url,
+            **kwargs
         )
         await self._call_media_client.start_transcription(self._call_connection_id, start_transcription_request)
 
     @distributed_trace_async
-    async def stop_transcription(self, *, operation_context: Optional[str] = None, **kwargs) -> None:
+    async def stop_transcription(
+        self,
+        *,
+        operation_context: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        **kwargs) -> None:
         """Stops transcription in the call.
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
+        :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URL set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_url: str or None
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -951,21 +978,43 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
         stop_transcription_request = StopTranscriptionRequest(
             operation_context=operation_context,
+            operation_callback_uri=operation_callback_url,
             **kwargs
         )
         await self._call_media_client.stop_transcription(self._call_connection_id, stop_transcription_request)
 
     @distributed_trace_async
-    async def update_transcription(self, locale: str, **kwargs) -> None:
+    async def update_transcription(
+        self,
+        locale: str,
+        *,
+        operation_context: Optional[str] = None,
+        speech_recognition_model_endpoint_id: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        **kwargs) -> None:
         """API to change transcription language.
 
         :param locale: Defines new locale for transcription.
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
+        :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
+        :paramtype speech_recognition_model_endpoint_id: str
+        :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URL set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_url: str or None
         :type locale: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        update_transcription_request = UpdateTranscriptionRequest(locale=locale, **kwargs)
+        update_transcription_request = UpdateTranscriptionRequest(
+            locale=locale,
+            operation_context=operation_context,
+            speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id,
+            operation_callback_uri=operation_callback_url,
+            **kwargs)
         await self._call_media_client.update_transcription(self._call_connection_id, update_transcription_request)
 
     @distributed_trace_async
@@ -1076,6 +1125,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         self,
         *,
         operation_callback_url: Optional[str] = None,
+        operation_context: Optional[str] = None,
         **kwargs
     )->None:
         """Stops media streaming in the call.
@@ -1085,12 +1135,15 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
+        :keyword operation_context: (Optional) Value that can be used to track this call and its associated events.
+        :paramtype operation_context: str or None
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError: If there's an HTTP response error.
         """
         stop_media_streaming_request=StopMediaStreamingRequest(
-            operation_callback_uri=operation_callback_url
+            operation_callback_uri=operation_callback_url,
+            operation_context=operation_context
             )
         self._call_media_client.stop_media_streaming(
             self._call_connection_id,
