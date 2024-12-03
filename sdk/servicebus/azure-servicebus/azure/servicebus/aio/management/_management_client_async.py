@@ -248,14 +248,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          in reduced feature compatibility.
         :paramtype api_version: str or ApiVersion
         """
-        (
-            endpoint,
-            shared_access_key_name,
-            shared_access_key,
-            _,
-            token,
-            token_expiry,
-        ) = _parse_conn_str(conn_str)
+        # pylint: disable=unused-variable
+        (endpoint, shared_access_key_name, shared_access_key, _, token, token_expiry, emulator) = _parse_conn_str(
+            conn_str
+        )
         if token and token_expiry:
             credential = ServiceBusSASTokenCredential(token, token_expiry)
         elif shared_access_key_name and shared_access_key:

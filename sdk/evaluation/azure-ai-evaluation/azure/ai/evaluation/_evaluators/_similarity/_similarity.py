@@ -80,7 +80,7 @@ class _AsyncSimilarityEvaluator:
 
 class SimilarityEvaluator:
     """
-    Evaluates similarity score for a given query, response, and ground truth or a multi-turn conversation.
+    Evaluates similarity score for a given query, response, and ground truth.
 
     The similarity measure evaluates the likeness between a ground truth sentence (or document) and the
     AI model's generated prediction. This calculation involves creating sentence-level embeddings for both
