@@ -64,7 +64,6 @@ with project_client:
         model="gpt-4",
         name="azure-function-agent-foo",
         instructions=f"You are a helpful support agent. Use the provided function any time the prompt contains the string 'What would foo say?'. When you invoke the function, ALWAYS specify the output queue uri parameter as '{storage_queue_uri}/azure-function-tool-output'. Always responds with \"Foo says\" and then the response from the tool.",
-        headers={"x-ms-enable-preview": "true"},
         tools=azure_function_tool.definitions,
     )
     print(f"Created agent, agent ID: {agent.id}")
