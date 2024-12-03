@@ -225,7 +225,6 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                         total += difference
                 data.measurements["timeSinceEnqueued"] = max(0, total / len(span.links))
         elif SpanAttributes.HTTP_METHOD in span.attributes:  # HTTP
-            url = ""
             path = ""
             if SpanAttributes.HTTP_USER_AGENT in span.attributes:
                 # TODO: Not exposed in Swagger, need to update def
@@ -234,35 +233,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             if SpanAttributes.HTTP_CLIENT_IP in span.attributes:
                 envelope.tags[ContextTagKeys.AI_LOCATION_IP] = span.attributes[SpanAttributes.HTTP_CLIENT_IP]
             # url
-            if SpanAttributes.HTTP_URL in span.attributes:
-                url = span.attributes[SpanAttributes.HTTP_URL]
-            elif SpanAttributes.HTTP_SCHEME in span.attributes and SpanAttributes.HTTP_TARGET in span.attributes:
-                scheme = span.attributes[SpanAttributes.HTTP_SCHEME]
-                http_target = span.attributes[SpanAttributes.HTTP_TARGET]
-                if SpanAttributes.HTTP_HOST in span.attributes:
-                    url = "{}://{}{}".format(
-                        scheme,
-                        span.attributes[SpanAttributes.HTTP_HOST],
-                        http_target,
-                    )
-                elif SpanAttributes.NET_HOST_PORT in span.attributes:
-                    host_port = span.attributes[SpanAttributes.NET_HOST_PORT]
-                    if SpanAttributes.HTTP_SERVER_NAME in span.attributes:
-                        server_name = span.attributes[SpanAttributes.HTTP_SERVER_NAME]
-                        url = "{}://{}:{}{}".format(
-                            scheme,
-                            server_name,
-                            host_port,
-                            http_target,
-                        )
-                    elif SpanAttributes.NET_HOST_NAME in span.attributes:
-                        host_name = span.attributes[SpanAttributes.NET_HOST_NAME]
-                        url = "{}://{}:{}{}".format(
-                            scheme,
-                            host_name,
-                            host_port,
-                            http_target,
-                        )
+            url = trace_utils._get_url_for_http_request(span.attributes)
             data.url = url
             # Http specific logic for ai.operation.name
             if SpanAttributes.HTTP_ROUTE in span.attributes:
