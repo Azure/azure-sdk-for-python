@@ -152,7 +152,10 @@ class TestMetricsUpload(object):
         self._assert_no_errors_for_module(caplog.records, EvalRun.__module__)
 
     @pytest.mark.performance_test
-    @pytest.mark.skipif(in_ci(), reason="There is some weird JSON serialiazation issue that only appears in CI where a \n becomes a \r\n")
+    @pytest.mark.skipif(
+        in_ci(),
+        reason="There is some weird JSON serialiazation issue that only appears in CI where a \n becomes a \r\n",
+    )
     def test_e2e_run_target_fn(self, caplog, project_scope, questions_answers_file, monkeypatch, azure_cred):
         """Test evaluation run logging."""
         # Afer re-recording this test, please make sure, that the cassette contains the POST
@@ -190,7 +193,10 @@ class TestMetricsUpload(object):
         self._assert_no_errors_for_module(caplog.records, (ev_utils.__name__, EvalRun.__module__))
 
     @pytest.mark.performance_test
-    @pytest.mark.skipif(in_ci(), reason="There is some weird JSON serialiazation issue that only appears in CI where a \n becomes a \r\n")
+    @pytest.mark.skipif(
+        in_ci(),
+        reason="There is some weird JSON serialiazation issue that only appears in CI where a \n becomes a \r\n",
+    )
     def test_e2e_run(self, caplog, project_scope, questions_answers_file, monkeypatch, azure_cred):
         """Test evaluation run logging."""
         # Afer re-recording this test, please make sure, that the cassette contains the POST
