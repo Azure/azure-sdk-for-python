@@ -4,6 +4,8 @@
 
 ### Features Added
 
+* Add `parallel_tool_calls` parameter to allow parallel tool execution.
+
 ### Bugs Fixed
 
 ## 1.0.0b2 (2024-12-03)
