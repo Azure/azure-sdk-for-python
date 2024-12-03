@@ -26,7 +26,7 @@
 import json
 import logging
 import time
-from typing import Optional, Union, Dict, Any, TYPE_CHECKING, Callable, Mapping
+from typing import Optional, Union, Dict, Any, TYPE_CHECKING, Callable, Mapping, Sequence
 import types
 
 
@@ -76,7 +76,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             else:
                 self._should_log = self.diagnostics_handler  # type: ignore
         elif isinstance(self.diagnostics_handler, Mapping):
-            self._should_log = types.MethodType(self._dict_should_log, self)
+            self._should_log = self._dict_should_log  # type: ignore
         else:
             self._should_log = types.MethodType(self._default_should_log, self)
         self.__global_endpoint_manager = global_endpoint_manager
@@ -108,11 +108,11 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
     ) -> None:
         duration = time.time() - request.context["start_time"] if "start_time" in request.context else None
         status_code = response.http_response.status_code
-        sub_status_code = None
+        sub_status_str = response.http_response.headers.get("x-ms-substatus")
+        sub_status_code = int(sub_status_str) if sub_status_str else None
         verb = request.http_request.method
-        resource_type = None
         if self._should_log(duration=duration, status_code=status_code, sub_status_code=sub_status_code,
-                            verb=verb, resource_type=resource_type, is_request=False):
+                            verb=verb, is_request=False):
             if not self.__request_already_logged:
                 self._log_client_settings()
                 self._log_database_account_settings()
@@ -140,7 +140,6 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             status_code: Optional[int] = None,
             sub_status_code: Optional[int] = None,
             verb: Optional[str] = None,
-            resource_type: Optional[str] = None,
             is_request: bool = False
     ) -> bool:
         return True
@@ -149,17 +148,14 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                          status_code: Optional[int] = None,
                          sub_status_code: Optional[int] = None,
                          verb: Optional[str] = None,
-                         resource_type: Optional[str] = None,
                          is_request: bool = False) -> bool:
         params = {
             'duration': duration,
-            'status code': status_code,
-            'sub status code': sub_status_code,
-            'verb': verb,
-            'resource type': resource_type
+            'status code': (status_code, sub_status_code) if status_code else None,
+            'verb': verb
         }
         for key, param in params.items():
-            if param is not None and self.diagnostics_handler[key] is not None:
+            if param and isinstance(self.diagnostics_handler, Mapping) and self.diagnostics_handler[key] is not None:
                 if self.diagnostics_handler[key](param):
                     return True
         return False
@@ -179,8 +175,9 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
 
     def _log_client_settings(self) -> None:
         self.logger.info("Client Settings:", exc_info=False)
-        self.logger.info("\tClient Preferred Regions: {}".format(self.__client_settings["Client Preferred Regions"])
-                         , exc_info=False)  # connection retry policy stuff values that configure timeouts etc
+        if self.__client_settings and isinstance(self.__client_settings, dict):
+            self.logger.info("\tClient Preferred Regions: {}".format(self.__client_settings["Client Preferred Regions"])
+                                        , exc_info=False)
 
     def _log_database_account_settings(self) -> None:
         self.logger.info("Database Account Settings:", exc_info=False)
