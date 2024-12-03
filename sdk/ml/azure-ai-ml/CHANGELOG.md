@@ -9,7 +9,6 @@
     - Azure AI Content Safety
     - Azure AI Speech
     - Azure Blob Storage
-    - Azure Datalake Storage Gen 2
     - Microsoft OneLake
 
 ### Bugs Fixed
