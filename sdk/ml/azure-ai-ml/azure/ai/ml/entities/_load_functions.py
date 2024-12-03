@@ -804,7 +804,6 @@ def load_batch_endpoint(
     return cast(BatchEndpoint, load_common(BatchEndpoint, source, relative_origin, params_override, **kwargs))
 
 
-@experimental
 def load_connection(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
