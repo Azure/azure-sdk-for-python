@@ -50,7 +50,7 @@ async def test_claims_challenge():
     expected_claims = '{"access_token": {"essential": "true"}'
     expected_scope = "scope"
 
-    challenge = 'Bearer authorization_uri="https://localhost", error=".", error_description=".", claims="{}"'.format(
+    challenge = 'Bearer authorization_uri="https://localhost", error="insufficient_claims", error_description=".", claims="{}"'.format(
         base64.b64encode(expected_claims.encode()).decode()
     )
     responses = (
@@ -97,34 +97,68 @@ async def test_claims_challenge():
 
 
 async def test_multiple_claims_challenges():
-    """ARMChallengeAuthenticationPolicy should not attempt to handle a response having multiple claims challenges"""
+    """ARMChallengeAuthenticationPolicy handle a response having multiple claims challenges"""
+    first_token = AccessToken("first", int(time.time()) + 3600)
+    second_token = AccessToken("second", int(time.time()) + 3600)
+    tokens = (t for t in (first_token, second_token))
+
+    expected_claims = '{"access_token": {"essential": "true"}'
+    expected_scope = "scope"
+
+    claims = base64.b64encode(expected_claims.encode()).decode()
 
     expected_header = ",".join(
         (
-            'Bearer realm="", authorization_uri="https://login.microsoftonline.com/common/oauth2/authorize", client_id="00000003-0000-0000-c000-000000000000", error="insufficient_claims", claims="eyJhY2Nlc3NfdG9rZW4iOiB7ImZvbyI6ICJiYXIifX0="',
-            'Bearer authorization_uri="https://login.windows-ppe.net/", error="invalid_token", error_description="User session has been revoked", claims="eyJhY2Nlc3NfdG9rZW4iOnsibmJmIjp7ImVzc2VudGlhbCI6dHJ1ZSwgInZhbHVlIjoiMTYwMzc0MjgwMCJ9fX0="',
+            'Bearer realm="", authorization_uri="https://localhost", client_id="00", error="insufficient_claims", claims="{}"'.format(
+                claims
+            ),
+            'Bearer authorization_uri="https://login.windows-ppe.net/", error="invalid_token", error_description="User session has been revoked", claims="{}"'.format(
+                claims
+            ),
+        )
+    )
+
+    responses = (
+        r
+        for r in (
+            Mock(status_code=401, headers={"WWW-Authenticate": expected_header}),
+            Mock(status_code=200),
         )
     )
 
     async def send(request):
-        return Mock(status_code=401, headers={"WWW-Authenticate": expected_header})
+        res = next(responses)
+        if res.status_code == 401:
+            expected_token = first_token.token
+        else:
+            expected_token = second_token.token
+        assert request.headers["Authorization"] == "Bearer " + expected_token
 
-    async def get_token(*_, **__):
-        return AccessToken("***", 42)
+        return res
 
-    transport = Mock(send=Mock(wraps=send))
+    async def get_token(*scopes, **kwargs):
+        assert scopes == (expected_scope,)
+        return next(tokens)
+
     credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
-    policies = [AsyncARMChallengeAuthenticationPolicy(credential, "scope")]
+    transport = Mock(send=Mock(wraps=send))
+    policies = [AsyncARMChallengeAuthenticationPolicy(credential, expected_scope)]
     pipeline = AsyncPipeline(transport=transport, policies=policies)
 
     response = await pipeline.run(HttpRequest("GET", "https://localhost"))
 
-    assert transport.send.call_count == 1
-    assert credential.get_token.call_count == 1
+    assert response.http_response.status_code == 200
+    assert transport.send.call_count == 2
+    assert credential.get_token.call_count == 2
 
-    # the policy should have returned the error response because it was unable to handle the challenge
-    assert response.http_response.status_code == 401
-    assert response.http_response.headers["WWW-Authenticate"] == expected_header
+    args, kwargs = credential.get_token.call_args
+    assert expected_scope in args
+    assert kwargs["claims"] == expected_claims
+
+    with pytest.raises(StopIteration):
+        next(tokens)
+    with pytest.raises(StopIteration):
+        next(responses)
 
 
 async def test_auxiliary_authentication_policy():

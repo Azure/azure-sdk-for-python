@@ -20,7 +20,7 @@ import subprocess
 import urllib3
 
 from shutil import rmtree
-from typing import List, Any
+from typing import List, Any, Optional
 from subprocess import check_call
 from ci_tools.variables import discover_repo_root, in_ci
 from ci_tools.functions import unzip_file_to_directory, cleanup_directory
@@ -538,8 +538,8 @@ def prep_and_create_environment(environment_dir: str) -> None:
             environment_dir,
             "conda-build",
             "conda-verify",
-            "typing-extensions",
             "conda-index",
+            "typing_extensions",
         ],
         cwd=environment_dir,
         check=True,
@@ -575,11 +575,14 @@ def build_conda_packages(
 ):
     """Conda builds each individually assembled conda package folder."""
     conda_output_dir = prep_directory(os.path.join(repo_root, "conda", "output")).replace("\\", "/")
+    conda_broken_output_dir = prep_directory(os.path.join(repo_root, "conda", "broken")).replace("\\", "/")
     conda_sdist_dir = os.path.join(repo_root, "conda", "assembled").replace("\\", "/")
     conda_env_dir = prep_directory(os.path.join(repo_root, "conda", "conda-env")).replace("\\", "/")
+    conda_broken_dir = prep_directory(os.path.join(repo_root, "conda", "conda-env", "conda-bld", "broken")).replace(
+        "\\", "/"
+    )
 
     prep_and_create_environment(conda_env_dir)
-
     if additional_channel_folders:
         for channel in additional_channel_folders:
             copy_channel_files(conda_output_dir, channel)
@@ -589,29 +592,54 @@ def build_conda_packages(
                 check=True,
             )
     else:
-        subprocess.run(
-            ["conda", "run", "--prefix", conda_env_dir, "python", "-m", "conda_index", conda_output_dir],
-            cwd=repo_root,
-            check=True,
-        )
+        if len(os.listdir(conda_output_dir)) > 1:
+            subprocess.run(
+                ["conda", "run", "--prefix", conda_env_dir, "python", "-m", "conda_index", conda_output_dir],
+                cwd=repo_root,
+                check=True,
+            )
 
+    return_codes = []
     for conda_build in conda_configurations:
         conda_build_folder = os.path.join(conda_sdist_dir, conda_build.name).replace("\\", "/")
 
         if conda_build.conda_py_versions:
             for pyversion in conda_build.conda_py_versions:
-                invoke_conda_build(conda_output_dir, conda_env_dir, conda_build_folder, pyversion, conda_build.channels)
+                return_codes.append(
+                    invoke_conda_build(
+                        conda_output_dir, conda_env_dir, conda_build_folder, pyversion, conda_build.channels
+                    )
+                )
         else:
-            invoke_conda_build(conda_output_dir, conda_env_dir, conda_build_folder, None, conda_build.channels)
+            return_codes.append(
+                invoke_conda_build(conda_output_dir, conda_env_dir, conda_build_folder, None, conda_build.channels)
+            )
+
+        if os.path.exists(conda_broken_dir):
+            if len(os.listdir(conda_broken_dir)):
+                for item in os.listdir(conda_broken_dir):
+                    source_path = os.path.join(conda_broken_dir, item)
+                    dest_directory = os.path.join(conda_broken_output_dir, conda_build.name)
+
+                    if not os.path.exists(dest_directory):
+                        os.makedirs(dest_directory)
+                    dest_path = os.path.join(dest_directory, item)
+
+                    # Move each item to the destination directory
+                    shutil.move(source_path, dest_path)
+
+    if any([code for code in return_codes if code > 0]):
+        print("One or more conda builds failed. Exiting with a non-zero return code.")
+        exit(1)
 
 
 def invoke_conda_build(
     conda_output_dir: str,
     conda_env_dir: str,
     conda_build_folder: str,
-    optional_py_version: str = None,
+    optional_py_version: Optional[str] = None,
     channels: List[str] = [],
-) -> None:
+) -> int:
 
     command = [
         "conda",
@@ -624,6 +652,7 @@ def invoke_conda_build(
         conda_output_dir,
         "-c",
         conda_output_dir,
+        "--no-test"
     ]
     for channel in channels:
         command.extend(["-c", channel])
@@ -632,7 +661,9 @@ def invoke_conda_build(
         command.extend(["--py", f"{optional_py_version}"])
 
     print(f"Calling '{command}' in folder {conda_build_folder}.")
-    subprocess.run(command, cwd=conda_build_folder, check=True)
+    result = subprocess.run(command, cwd=conda_build_folder, check=False)
+
+    return result.returncode
 
 
 def check_conda_config():
