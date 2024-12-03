@@ -38,16 +38,26 @@ project_client = AIProjectClient.from_connection_string(
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
+conn_list = project_client.connections.list()
+conn_id = ""
+for conn in conn_list:
+    if conn.connection_type == "CognitiveSearch":
+        conn_id = conn.id
+        break
+
+print(conn_id)
+
 # Initialize agent AI search tool and add the search index connection id
-ai_search = AzureAISearchTool(index_connection_id="myconnectionid", index_name="myindexname")
+ai_search = AzureAISearchTool(index_connection_id=conn_id, index_name="myindexname")
 
 # Create agent with AI search tool and process assistant run
 with project_client:
     agent = project_client.agents.create_agent(
-        model="gpt-4o",
+        model="gpt-4o-mini",
         name="my-assistant",
         instructions="You are a helpful assistant",
         tools=ai_search.definitions,
+        tool_resources=ai_search.resources,
         headers={"x-ms-enable-preview": "true"},
     )
     print(f"Created agent, ID: {agent.id}")
