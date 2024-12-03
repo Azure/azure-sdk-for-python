@@ -23,15 +23,25 @@ from azure.ai.ml._azure_environments import (
     _resource_to_scopes,
 )
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.dataset_dataplane import AzureMachineLearningWorkspaces as ServiceClientDatasetDataplane
-from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspaces as ServiceClientModelDataplane
-from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as ServiceClientRunHistory
+from azure.ai.ml._restclient.dataset_dataplane import (
+    AzureMachineLearningWorkspaces as ServiceClientDatasetDataplane,
+)
+from azure.ai.ml._restclient.model_dataplane import (
+    AzureMachineLearningWorkspaces as ServiceClientModelDataplane,
+)
+from azure.ai.ml._restclient.runhistory import (
+    AzureMachineLearningWorkspaces as ServiceClientRunHistory,
+)
 from azure.ai.ml._restclient.runhistory.models import Run
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
+from azure.ai.ml._restclient.v2023_04_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient022023Preview,
+)
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, ListViewType, UserIdentity
 from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_2401
-from azure.ai.ml._restclient.v2024_01_01_preview.models import JobType as RestJobType_20240101
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
+    JobType as RestJobType_20241001Preview,
+)
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -105,7 +115,11 @@ from ..entities._job.pipeline._io import InputOutputBase, PipelineInput, _GroupA
 from ._component_operations import ComponentOperations
 from ._compute_operations import ComputeOperations
 from ._dataset_dataplane_operations import DatasetDataplaneOperations
-from ._job_ops_helper import get_git_properties, get_job_output_uris_from_dataplane, stream_logs_until_completion
+from ._job_ops_helper import (
+    get_git_properties,
+    get_job_output_uris_from_dataplane,
+    stream_logs_until_completion,
+)
 from ._local_job_invoker import is_local_run, start_run_if_local
 from ._model_dataplane_operations import ModelDataplaneOperations
 from ._operation_orchestrator import (
@@ -180,6 +194,7 @@ class JobOperations(_ScopeDependentOperations):
         )  # pylint: disable=line-too-long
 
         self.service_client_01_2024_preview = kwargs.pop("service_client_01_2024_preview", None)
+        self.service_client_10_2024_preview = kwargs.pop("service_client_10_2024_preview", None)
         self._kwargs = kwargs
 
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
@@ -207,7 +222,8 @@ class JobOperations(_ScopeDependentOperations):
         return cast(
             VirtualClusterOperations,
             self._all_operations.get_operation(  # type: ignore[misc]
-                AzureMLResourceType.VIRTUALCLUSTER, lambda x: isinstance(x, VirtualClusterOperations)
+                AzureMLResourceType.VIRTUALCLUSTER,
+                lambda x: isinstance(x, VirtualClusterOperations),
             ),
         )
 
@@ -387,7 +403,11 @@ class JobOperations(_ScopeDependentOperations):
         """
 
         service_instances_dict = self._runs_operations._operation.get_run_service_instances(
-            self._subscription_id, self._operation_scope.resource_group_name, self._workspace_name, name, node_index
+            self._subscription_id,
+            self._operation_scope.resource_group_name,
+            self._workspace_name,
+            name,
+            node_index,
         )
         if not service_instances_dict.instances:
             return None
@@ -513,7 +533,12 @@ class JobOperations(_ScopeDependentOperations):
 
     @monitor_with_telemetry_mixin(ops_logger, "Job.Validate", ActivityType.INTERNALCALL)
     def _validate(
-        self, job: Job, *, raise_on_failure: bool = False, **kwargs: Any  # pylint:disable=unused-argument
+        self,
+        job: Job,
+        *,
+        raise_on_failure: bool = False,
+        # pylint:disable=unused-argument
+        **kwargs: Any,
     ) -> ValidationResult:
         """Implementation of validate.
 
@@ -722,8 +747,8 @@ class JobOperations(_ScopeDependentOperations):
         self, rest_job_resource: JobBase, **kwargs: Any
     ) -> JobBase:
         service_client_operation = self._operation_2023_02_preview
-        if rest_job_resource.properties.job_type == RestJobType_20240101.FINE_TUNING:
-            service_client_operation = self.service_client_01_2024_preview.jobs
+        if rest_job_resource.properties.job_type == RestJobType_20241001Preview.FINE_TUNING:
+            service_client_operation = self.service_client_10_2024_preview.jobs
         if rest_job_resource.properties.job_type == RestJobType.PIPELINE:
             service_client_operation = self.service_client_01_2024_preview.jobs
         if rest_job_resource.properties.job_type == RestJobType.AUTO_ML:
@@ -831,7 +856,10 @@ class JobOperations(_ScopeDependentOperations):
             raise PipelineChildJobError(job_id=job_object.id)
 
         self._stream_logs_until_completion(
-            self._runs_operations, job_object, self._datastore_operations, requests_pipeline=self._requests_pipeline
+            self._runs_operations,
+            job_object,
+            self._datastore_operations,
+            requests_pipeline=self._requests_pipeline,
         )
 
     @distributed_trace
@@ -876,7 +904,11 @@ class JobOperations(_ScopeDependentOperations):
         ):
             reused_job_name = job_details.properties[PipelineConstants.REUSED_JOB_ID]
             reused_job_detail = self.get(reused_job_name)
-            module_logger.info("job %s reuses previous job %s, download from the reused job.", name, reused_job_name)
+            module_logger.info(
+                "job %s reuses previous job %s, download from the reused job.",
+                name,
+                reused_job_name,
+            )
             name, job_details = reused_job_name, reused_job_detail
         job_status = job_details.status
         if job_status not in RunHistoryConstants.TERMINAL_STATUSES:
@@ -901,7 +933,10 @@ class JobOperations(_ScopeDependentOperations):
 
         def log_missing_uri(what: str) -> None:
             module_logger.debug(
-                'Could not download %s for job "%s" (job status: %s)', what, job_details.name, job_details.status
+                'Could not download %s for job "%s" (job status: %s)',
+                what,
+                job_details.name,
+                job_details.status,
             )
 
         if isinstance(job_details, SweepJob):
@@ -1042,12 +1077,27 @@ class JobOperations(_ScopeDependentOperations):
         return uri
 
     def _get_job(self, name: str) -> JobBase:
-        return self.service_client_01_2024_preview.jobs.get(
+        job = self.service_client_01_2024_preview.jobs.get(
             id=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
             **self._kwargs,
         )
+
+        if (
+            hasattr(job, "properties")
+            and job.properties
+            and hasattr(job.properties, "job_type")
+            and job.properties.job_type == RestJobType_20241001Preview.FINE_TUNING
+        ):
+            return self.service_client_10_2024_preview.jobs.get(
+                id=name,
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                **self._kwargs,
+            )
+
+        return job
 
     # Upgrade api from 2023-04-01-preview to 2024-01-01-preview for pipeline job
     # We can remove this function once `_get_job` function has also been upgraded to the same version with pipeline
@@ -1068,7 +1118,8 @@ class JobOperations(_ScopeDependentOperations):
         )
         all_urls = json.loads(
             download_text_from_url(
-                discovery_url, create_requests_pipeline_with_retry(requests_pipeline=self._requests_pipeline)
+                discovery_url,
+                create_requests_pipeline_with_retry(requests_pipeline=self._requests_pipeline),
             )
         )
         return all_urls[url_key]

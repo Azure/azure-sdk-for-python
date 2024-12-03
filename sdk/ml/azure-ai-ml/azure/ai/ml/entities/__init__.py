@@ -38,14 +38,12 @@ from ._assets._artifacts.model import Model
 from ._assets.asset import Asset
 from ._assets.environment import BuildContext, Environment
 from ._assets.intellectual_property import IntellectualProperty
-from ._assets.workspace_asset_reference import (
-    WorkspaceAssetReference as WorkspaceModelReference,
-)
+from ._assets.workspace_asset_reference import WorkspaceAssetReference as WorkspaceModelReference
 from ._autogen_entities.models import (
     AzureOpenAIDeployment,
+    MarketplacePlan,
     MarketplaceSubscription,
     ServerlessEndpoint,
-    MarketplacePlan,
 )
 from ._builders import Command, Parallel, Pipeline, Spark, Sweep
 from ._component.command_component import CommandComponent
@@ -78,17 +76,11 @@ from ._compute.compute_instance import (
     ComputeInstanceSshSettings,
 )
 from ._compute.kubernetes_compute import KubernetesCompute
-from ._compute.synapsespark_compute import (
-    AutoPauseSettings,
-    AutoScaleSettings,
-    SynapseSparkCompute,
-)
+from ._compute.synapsespark_compute import AutoPauseSettings, AutoScaleSettings, SynapseSparkCompute
 from ._compute.unsupported_compute import UnsupportedCompute
-from ._compute.virtual_machine_compute import (
-    VirtualMachineCompute,
-    VirtualMachineSshSettings,
-)
+from ._compute.virtual_machine_compute import VirtualMachineCompute, VirtualMachineSshSettings
 from ._credentials import (
+    AadCredentialConfiguration,
     AccessKeyConfiguration,
     AccountKeyConfiguration,
     AmlTokenConfiguration,
@@ -97,7 +89,6 @@ from ._credentials import (
     IdentityConfiguration,
     ManagedIdentityConfiguration,
     NoneCredentialConfiguration,
-    AadCredentialConfiguration,
     PatTokenConfiguration,
     SasTokenConfiguration,
     ServicePrincipalConfiguration,
@@ -134,9 +125,7 @@ from ._deployment.online_deployment import (
     ManagedOnlineDeployment,
     OnlineDeployment,
 )
-from ._deployment.pipeline_component_batch_deployment import (
-    PipelineComponentBatchDeployment,
-)
+from ._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
 from ._deployment.request_logging import RequestLogging
 from ._deployment.resource_requirements_settings import ResourceRequirementsSettings
 from ._deployment.scale_settings import (
@@ -147,9 +136,9 @@ from ._deployment.scale_settings import (
 from ._endpoint.batch_endpoint import BatchEndpoint
 from ._endpoint.endpoint import Endpoint
 from ._endpoint.online_endpoint import (
+    EndpointAadToken,
     EndpointAuthKeys,
     EndpointAuthToken,
-    EndpointAadToken,
     KubernetesOnlineEndpoint,
     ManagedOnlineEndpoint,
     OnlineEndpoint,
@@ -158,14 +147,10 @@ from ._feature_set.data_availability_status import DataAvailabilityStatus
 from ._feature_set.feature import Feature
 from ._feature_set.feature_set_backfill_metadata import FeatureSetBackfillMetadata
 from ._feature_set.feature_set_backfill_request import FeatureSetBackfillRequest
-from ._feature_set.feature_set_materialization_metadata import (
-    FeatureSetMaterializationMetadata,
-)
+from ._feature_set.feature_set_materialization_metadata import FeatureSetMaterializationMetadata
 from ._feature_set.feature_set_specification import FeatureSetSpecification
 from ._feature_set.feature_window import FeatureWindow
-from ._feature_set.materialization_compute_resource import (
-    MaterializationComputeResource,
-)
+from ._feature_set.materialization_compute_resource import MaterializationComputeResource
 from ._feature_set.materialization_settings import MaterializationSettings
 from ._feature_set.materialization_type import MaterializationType
 from ._feature_store.feature_store import FeatureStore
@@ -173,18 +158,15 @@ from ._feature_store.materialization_store import MaterializationStore
 from ._feature_store_entity.data_column import DataColumn
 from ._feature_store_entity.data_column_type import DataColumnType
 from ._feature_store_entity.feature_store_entity import FeatureStoreEntity
-from ._indexes import (
-    AzureAISearchConfig,
-    IndexDataSource,
-    GitSource,
-    LocalSource,
-)
+from ._indexes import AzureAISearchConfig, GitSource, IndexDataSource, LocalSource
 from ._indexes import ModelConfiguration as IndexModelConfiguration
 from ._job.command_job import CommandJob
 from ._job.compute_configuration import ComputeConfiguration
+from ._job.finetuning.custom_model_finetuning_job import CustomModelFineTuningJob
 from ._job.input_port import InputPort
 from ._job.job import Job
 from ._job.job_limits import CommandJobLimits
+from ._job.job_resources import JobResources
 from ._job.job_resource_configuration import JobResourceConfiguration
 from ._job.job_service import (
     JobService,
@@ -261,22 +243,24 @@ from ._schedule.schedule import JobSchedule, Schedule, ScheduleTriggerResult
 from ._schedule.trigger import CronTrigger, RecurrencePattern, RecurrenceTrigger
 from ._system_data import SystemData
 from ._validation import ValidationResult
+from ._workspace._ai_workspaces.hub import Hub
+from ._workspace._ai_workspaces.project import Project
 from ._workspace.compute_runtime import ComputeRuntime
-from ._workspace.connections.workspace_connection import WorkspaceConnection
 from ._workspace.connections.connection_subtypes import (
-    AzureBlobStoreConnection,
-    MicrosoftOneLakeConnection,
-    AzureOpenAIConnection,
-    AzureAIServicesConnection,
-    AzureAISearchConnection,
-    AzureContentSafetyConnection,
-    AzureSpeechServicesConnection,
     APIKeyConnection,
+    AzureAISearchConnection,
+    AzureAIServicesConnection,
+    AzureBlobStoreConnection,
+    AzureContentSafetyConnection,
+    AzureOpenAIConnection,
+    AzureSpeechServicesConnection,
+    MicrosoftOneLakeConnection,
     OpenAIConnection,
     SerpConnection,
     ServerlessConnection,
 )
 from ._workspace.connections.one_lake_artifacts import OneLakeConnectionArtifact
+from ._workspace.connections.workspace_connection import WorkspaceConnection
 from ._workspace.customer_managed_key import CustomerManagedKey
 from ._workspace.diagnose import (
     DiagnoseRequestProperties,
@@ -286,6 +270,7 @@ from ._workspace.diagnose import (
     DiagnoseWorkspaceParameters,
 )
 from ._workspace.feature_store_settings import FeatureStoreSettings
+from ._workspace.network_acls import DefaultActionType, IPRule, NetworkAcls
 from ._workspace.networking import (
     FqdnDestination,
     IsolationMode,
@@ -298,8 +283,6 @@ from ._workspace.networking import (
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.serverless_compute import ServerlessComputeSettings
 from ._workspace.workspace import Workspace
-from ._workspace._ai_workspaces.hub import Hub
-from ._workspace._ai_workspaces.project import Project
 from ._workspace.workspace_keys import (
     ContainerRegistryCredential,
     NotebookAccessKeys,
@@ -318,8 +301,10 @@ __all__ = [
     "SparkJobEntryType",
     "CommandJobLimits",
     "ComputeConfiguration",
+    "CustomModelFineTuningJob",
     "CreatedByType",
     "ResourceConfiguration",
+    "JobResources",
     "JobResourceConfiguration",
     "QueueSettings",
     "JobService",
@@ -357,6 +342,9 @@ __all__ = [
     "Model",
     "ModelBatchDeployment",
     "ModelBatchDeploymentSettings",
+    "IPRule",
+    "DefaultActionType",
+    "NetworkAcls",
     "Workspace",
     "WorkspaceKeys",
     "WorkspaceConnection",

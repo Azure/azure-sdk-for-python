@@ -226,7 +226,8 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
                 :caption: Create a new instance of the ServiceBusClient from connection string.
 
         """
-        host, policy, key, entity_in_conn_str, token, token_expiry = _parse_conn_str(conn_str)
+        host, policy, key, entity_in_conn_str, token, token_expiry, emulator = _parse_conn_str(conn_str)
+        kwargs["use_tls"] = not emulator
         if token and token_expiry:
             credential = ServiceBusSASTokenCredential(token, token_expiry)
         elif policy and key:
@@ -312,6 +313,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             connection_verify=self._connection_verify,
             ssl_context=self._ssl_context,
             amqp_transport=self._amqp_transport,
+            use_tls=self._config.use_tls,
             **kwargs,
         )
         self._handlers.add(handler)
@@ -433,6 +435,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             connection_verify=self._connection_verify,
             ssl_context=self._ssl_context,
             amqp_transport=self._amqp_transport,
+            use_tls=self._config.use_tls,
             **kwargs,
         )
         self._handlers.add(handler)
@@ -486,6 +489,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             connection_verify=self._connection_verify,
             ssl_context=self._ssl_context,
             amqp_transport=self._amqp_transport,
+            use_tls=self._config.use_tls,
             **kwargs,
         )
         self._handlers.add(handler)
@@ -609,6 +613,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
                 connection_verify=self._connection_verify,
                 ssl_context=self._ssl_context,
                 amqp_transport=self._amqp_transport,
+                use_tls=self._config.use_tls,
                 **kwargs,
             )
         except ValueError:
@@ -638,6 +643,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
                 connection_verify=self._connection_verify,
                 ssl_context=self._ssl_context,
                 amqp_transport=self._amqp_transport,
+                use_tls=self._config.use_tls,
                 **kwargs,
             )
         self._handlers.add(handler)
