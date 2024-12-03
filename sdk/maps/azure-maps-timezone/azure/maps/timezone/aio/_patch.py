@@ -85,7 +85,7 @@ class MapsTimeZoneClient(TimezoneClientGenerated):
     ) -> JSON:
         """Unified method to get timezone information by either timezone_id or coordinates.
         Only one of `coordinate` or `timezone_id` will be considered.
-        If `timezone_id` is provided, `coordinate` will be ignored, and vice versa.
+        If `timezone_id` is provided, `coordinate` will be ignored.
 
         :keyword timezone_id: The IANA time zone ID.
         :paramtype timezone_id: str
