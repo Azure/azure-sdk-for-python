@@ -11,6 +11,7 @@ import platform
 from typing import Any
 
 from azure.ai.ml._user_agent import USER_AGENT
+from azure.monitor.opentelemetry import configure_azure_monitor
 
 # Disable internal azure monitor openTelemetry logs
 AZURE_MONITOR_OPENTELEMETRY_LOGGER_NAMESPACE = "azure.monitor.opentelemetry"
@@ -128,8 +129,6 @@ def set_appinsights_distro(
             custom_properties.update(kwargs.pop("properties"))
 
         logger.addFilter(CustomDimensionsFilter(custom_properties))
-
-        from azure.monitor.opentelemetry import configure_azure_monitor
 
         configure_azure_monitor(
             connection_string=connection_string,
