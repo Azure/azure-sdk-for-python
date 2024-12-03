@@ -200,7 +200,7 @@ class ArtifactCache:
                 url, headers=header
             )
             if response.status_code == 200:
-                artifacts_tool_path = tempfile.mktemp()  # nosec B306
+                artifacts_tool_path = tempfile.mkdtemp()  # nosec B306
                 artifacts_tool_uri = response.json()["uri"]
                 response = requests_pipeline.get(artifacts_tool_uri)  # pylint: disable=too-many-function-args
                 with zipfile.ZipFile(BytesIO(response.content)) as zip_file:
