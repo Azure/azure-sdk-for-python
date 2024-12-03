@@ -33,88 +33,15 @@ class ActionBindings(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar action_binding_kind: Kind of the MessageActionBinding. Required. Known values are:
-     "whatsAppListAction", "whatsAppButtonAction", and "whatsAppUrlAction".
-    :vartype action_binding_kind: str or
-     ~azure.communication.messages.models.MessageActionBindingKind
-    """
-
-    __mapping__: Dict[str, _model_base.Model] = {}
-    action_binding_kind: str = rest_discriminator(name="actionBindingKind")
-    """Kind of the MessageActionBinding. Required. Known values are: \"whatsAppListAction\",
-     \"whatsAppButtonAction\", and \"whatsAppUrlAction\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        action_binding_kind: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ActionSet(_model_base.Model):
-    """The Action Set content.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar title: Title of the ActionSet. Required.
-    :vartype title: str
-    :ivar items_property: Array of items in ActionSet. Required.
-    :vartype items_property: list[~azure.communication.messages.models.ActionSetItem]
-    """
-
-    title: str = rest_field()
-    """Title of the ActionSet. Required."""
-    items_property: List["_models.ActionSetItem"] = rest_field(name="items")
-    """Array of items in ActionSet. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        title: str,
-        items_property: List["_models.ActionSetItem"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class MessageContent(_model_base.Model):
-    """The message content object used to create interactive messages components.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ActionSetContent, ButtonSetContent, DocumentMessageContent, ImageMessageContent,
-    TextMessageContent, UrlContent, VideoMessageContent
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar kind: Kind of MessageContent. Required. Known values are: "text", "image", "video",
-     "document", "actionSet", "buttonSet", and "url".
-    :vartype kind: str or ~azure.communication.messages.models.MessageContentKind
+    :ivar kind: Kind of the MessageActionBinding. Required. Known values are: "whatsAppListAction",
+     "whatsAppButtonAction", and "whatsAppUrlAction".
+    :vartype kind: str or ~azure.communication.messages.models.MessageActionBindingKind
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
     kind: str = rest_discriminator(name="kind")
-    """Kind of MessageContent. Required. Known values are: \"text\", \"image\", \"video\",
-     \"document\", \"actionSet\", \"buttonSet\", and \"url\"."""
+    """Kind of the MessageActionBinding. Required. Known values are: \"whatsAppListAction\",
+     \"whatsAppButtonAction\", and \"whatsAppUrlAction\"."""
 
     @overload
     def __init__(
@@ -134,32 +61,28 @@ class MessageContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ActionSetContent(MessageContent, discriminator="actionSet"):
-    """The action content of type ActionSet.
+class ActionGroup(_model_base.Model):
+    """The Action Group content.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar kind: Message content kind is actionSet. Required. The ActionSet content type.
-    :vartype kind: str or ~azure.communication.messages.models.ACTION_SET
-    :ivar title: Title of the actionSet content. Required.
+    :ivar title: Title of the ActionGroup. Required.
     :vartype title: str
-    :ivar action_set: Set or group of actions. Required.
-    :vartype action_set: list[~azure.communication.messages.models.ActionSet]
+    :ivar items_property: Array of items in ActionGroup. Required.
+    :vartype items_property: list[~azure.communication.messages.models.ActionGroupItem]
     """
 
-    kind: Literal[MessageContentKind.ACTION_SET] = rest_discriminator(name="kind")  # type: ignore
-    """Message content kind is actionSet. Required. The ActionSet content type."""
     title: str = rest_field()
-    """Title of the actionSet content. Required."""
-    action_set: List["_models.ActionSet"] = rest_field(name="actionSet")
-    """Set or group of actions. Required."""
+    """Title of the ActionGroup. Required."""
+    items_property: List["_models.ActionGroupItem"] = rest_field(name="items")
+    """Array of items in ActionGroup. Required."""
 
     @overload
     def __init__(
         self,
         *,
         title: str,
-        action_set: List["_models.ActionSet"],
+        items_property: List["_models.ActionGroupItem"],
     ) -> None: ...
 
     @overload
@@ -170,11 +93,87 @@ class ActionSetContent(MessageContent, discriminator="actionSet"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=MessageContentKind.ACTION_SET, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
-class ActionSetItem(_model_base.Model):
-    """The Action set item in the content.
+class MessageContent(_model_base.Model):
+    """The message content object used to create interactive messages components.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ButtonSetContent, DocumentMessageContent, ActionGroupContent, ImageMessageContent,
+    TextMessageContent, LinkContent, VideoMessageContent
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar kind: Kind of MessageContent. Required. Known values are: "text", "image", "video",
+     "document", "group", "buttonSet", and "url".
+    :vartype kind: str or ~azure.communication.messages.models.MessageContentKind
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    kind: str = rest_discriminator(name="kind")
+    """Kind of MessageContent. Required. Known values are: \"text\", \"image\", \"video\",
+     \"document\", \"group\", \"buttonSet\", and \"url\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ActionGroupContent(MessageContent, discriminator="group"):
+    """The action content of type ActionGroup.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar kind: Message content kind is actionGroup. Required. The ActionSet content type.
+    :vartype kind: str or ~azure.communication.messages.models.GROUP
+    :ivar title: Title of the actionGroup content. Required.
+    :vartype title: str
+    :ivar groups: Set or group of actions. Required.
+    :vartype groups: list[~azure.communication.messages.models.ActionGroup]
+    """
+
+    kind: Literal[MessageContentKind.GROUP] = rest_discriminator(name="kind")  # type: ignore
+    """Message content kind is actionGroup. Required. The ActionSet content type."""
+    title: str = rest_field()
+    """Title of the actionGroup content. Required."""
+    groups: List["_models.ActionGroup"] = rest_field()
+    """Set or group of actions. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        title: str,
+        groups: List["_models.ActionGroup"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, kind=MessageContentKind.GROUP, **kwargs)
+
+
+class ActionGroupItem(_model_base.Model):
+    """The Action group item in the content.
 
     All required parameters must be populated in order to send to server.
 
@@ -558,9 +557,9 @@ class InteractiveMessage(_model_base.Model):
     :vartype body: ~azure.communication.messages.models.TextMessageContent
     :ivar footer: Gets or Sets Message footer content. Emojis, markdown, and links are supported.
     :vartype footer: ~azure.communication.messages.models.TextMessageContent
-    :ivar action_bindings: The binding object to get or set Action which describes options user
-     have to respond to message. Required.
-    :vartype action_bindings: ~azure.communication.messages.models.ActionBindings
+    :ivar action: The binding object to get or set Action which describes options user have to
+     respond to message. Required.
+    :vartype action: ~azure.communication.messages.models.ActionBindings
     """
 
     header: Optional["_models.MessageContent"] = rest_field()
@@ -569,7 +568,7 @@ class InteractiveMessage(_model_base.Model):
     """Gets or Sets Message body content. Emojis, markdown, and links are supported. Required."""
     footer: Optional["_models.TextMessageContent"] = rest_field()
     """Gets or Sets Message footer content. Emojis, markdown, and links are supported."""
-    action_bindings: "_models.ActionBindings" = rest_field(name="actionBindings")
+    action: "_models.ActionBindings" = rest_field()
     """The binding object to get or set Action which describes options user have to respond to
      message. Required."""
 
@@ -578,7 +577,7 @@ class InteractiveMessage(_model_base.Model):
         self,
         *,
         body: "_models.TextMessageContent",
-        action_bindings: "_models.ActionBindings",
+        action: "_models.ActionBindings",
         header: Optional["_models.MessageContent"] = None,
         footer: Optional["_models.TextMessageContent"] = None,
     ) -> None: ...
@@ -634,6 +633,45 @@ class InteractiveNotificationContent(NotificationContent, discriminator="interac
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, kind=CommunicationMessageKind.INTERACTIVE, **kwargs)
+
+
+class LinkContent(MessageContent, discriminator="url"):
+    """The message content of type Url information.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar kind: Message content kind is url. Required. The Url content type.
+    :vartype kind: str or ~azure.communication.messages.models.URL
+    :ivar title: Title of the url content. Required.
+    :vartype title: str
+    :ivar url: The url in the content. Required.
+    :vartype url: str
+    """
+
+    kind: Literal[MessageContentKind.URL] = rest_discriminator(name="kind")  # type: ignore
+    """Message content kind is url. Required. The Url content type."""
+    title: str = rest_field()
+    """Title of the url content. Required."""
+    url: str = rest_field()
+    """The url in the content. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        title: str,
+        url: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, kind=MessageContentKind.URL, **kwargs)
 
 
 class MediaNotificationContent(NotificationContent, discriminator="image_v0"):
@@ -1403,45 +1441,6 @@ class TextNotificationContent(NotificationContent, discriminator="text"):
         super().__init__(*args, kind=CommunicationMessageKind.TEXT, **kwargs)
 
 
-class UrlContent(MessageContent, discriminator="url"):
-    """The message content of type Url information.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar kind: Message content kind is url. Required. The Url content type.
-    :vartype kind: str or ~azure.communication.messages.models.URL
-    :ivar title: Title of the url content. Required.
-    :vartype title: str
-    :ivar url: The url in the content. Required.
-    :vartype url: str
-    """
-
-    kind: Literal[MessageContentKind.URL] = rest_discriminator(name="kind")  # type: ignore
-    """Message content kind is url. Required. The Url content type."""
-    title: str = rest_field()
-    """Title of the url content. Required."""
-    url: str = rest_field()
-    """The url in the content. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        title: str,
-        url: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=MessageContentKind.URL, **kwargs)
-
-
 class VideoMessageContent(MessageContent, discriminator="video"):
     """The message content of type video information.
 
@@ -1529,25 +1528,24 @@ class WhatsAppButtonActionBindings(ActionBindings, discriminator="whatsAppButton
 
     All required parameters must be populated in order to send to server.
 
-    :ivar action_binding_kind: Message action binding type is WhatsAppButtonAction. Required. The
-     WhatsApp Button action binding kind.
-    :vartype action_binding_kind: str or
-     ~azure.communication.messages.models.WHATS_APP_BUTTON_ACTION
-    :ivar action: Action content of Interactive message. Required.
-    :vartype action: ~azure.communication.messages.models.ButtonSetContent
+    :ivar kind: Message action binding type is WhatsAppButtonAction. Required. The WhatsApp Button
+     action binding kind.
+    :vartype kind: str or ~azure.communication.messages.models.WHATS_APP_BUTTON_ACTION
+    :ivar content: Action content of Interactive message. Required.
+    :vartype content: ~azure.communication.messages.models.ButtonSetContent
     """
 
-    action_binding_kind: Literal[MessageActionBindingKind.WHATS_APP_BUTTON_ACTION] = rest_discriminator(name="actionBindingKind")  # type: ignore
+    kind: Literal[MessageActionBindingKind.WHATS_APP_BUTTON_ACTION] = rest_discriminator(name="kind")  # type: ignore
     """Message action binding type is WhatsAppButtonAction. Required. The WhatsApp Button action
      binding kind."""
-    action: "_models.ButtonSetContent" = rest_field()
+    content: "_models.ButtonSetContent" = rest_field()
     """Action content of Interactive message. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        action: "_models.ButtonSetContent",
+        content: "_models.ButtonSetContent",
     ) -> None: ...
 
     @overload
@@ -1558,7 +1556,7 @@ class WhatsAppButtonActionBindings(ActionBindings, discriminator="whatsAppButton
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, action_binding_kind=MessageActionBindingKind.WHATS_APP_BUTTON_ACTION, **kwargs)
+        super().__init__(*args, kind=MessageActionBindingKind.WHATS_APP_BUTTON_ACTION, **kwargs)
 
 
 class WhatsAppListActionBindings(ActionBindings, discriminator="whatsAppListAction"):
@@ -1566,24 +1564,24 @@ class WhatsAppListActionBindings(ActionBindings, discriminator="whatsAppListActi
 
     All required parameters must be populated in order to send to server.
 
-    :ivar action_binding_kind: Message action binding type is WhatsAppListAction. Required. The
-     WhatsApp List action binding kind.
-    :vartype action_binding_kind: str or ~azure.communication.messages.models.WHATS_APP_LIST_ACTION
-    :ivar action: Action content of Interactive message. Required.
-    :vartype action: ~azure.communication.messages.models.ActionSetContent
+    :ivar kind: Message action binding type is WhatsAppListAction. Required. The WhatsApp List
+     action binding kind.
+    :vartype kind: str or ~azure.communication.messages.models.WHATS_APP_LIST_ACTION
+    :ivar content: Action content of Interactive message. Required.
+    :vartype content: ~azure.communication.messages.models.ActionGroupContent
     """
 
-    action_binding_kind: Literal[MessageActionBindingKind.WHATS_APP_LIST_ACTION] = rest_discriminator(name="actionBindingKind")  # type: ignore
+    kind: Literal[MessageActionBindingKind.WHATS_APP_LIST_ACTION] = rest_discriminator(name="kind")  # type: ignore
     """Message action binding type is WhatsAppListAction. Required. The WhatsApp List action binding
      kind."""
-    action: "_models.ActionSetContent" = rest_field()
+    content: "_models.ActionGroupContent" = rest_field()
     """Action content of Interactive message. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        action: "_models.ActionSetContent",
+        content: "_models.ActionGroupContent",
     ) -> None: ...
 
     @overload
@@ -1594,7 +1592,7 @@ class WhatsAppListActionBindings(ActionBindings, discriminator="whatsAppListActi
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, action_binding_kind=MessageActionBindingKind.WHATS_APP_LIST_ACTION, **kwargs)
+        super().__init__(*args, kind=MessageActionBindingKind.WHATS_APP_LIST_ACTION, **kwargs)
 
 
 class WhatsAppMessageTemplateBindings(MessageTemplateBindings, discriminator="whatsApp"):
@@ -1769,24 +1767,24 @@ class WhatsAppUrlActionBindings(ActionBindings, discriminator="whatsAppUrlAction
 
     All required parameters must be populated in order to send to server.
 
-    :ivar action_binding_kind: Message action binding type is WhatsAppUrlAction. Required. The
-     WhatsApp Url action binding kind.
-    :vartype action_binding_kind: str or ~azure.communication.messages.models.WHATS_APP_URL_ACTION
-    :ivar action: Action content of Interactive message. Required.
-    :vartype action: ~azure.communication.messages.models.UrlContent
+    :ivar kind: Message action binding type is WhatsAppUrlAction. Required. The WhatsApp Url action
+     binding kind.
+    :vartype kind: str or ~azure.communication.messages.models.WHATS_APP_URL_ACTION
+    :ivar content: Action content of Interactive message. Required.
+    :vartype content: ~azure.communication.messages.models.LinkContent
     """
 
-    action_binding_kind: Literal[MessageActionBindingKind.WHATS_APP_URL_ACTION] = rest_discriminator(name="actionBindingKind")  # type: ignore
+    kind: Literal[MessageActionBindingKind.WHATS_APP_URL_ACTION] = rest_discriminator(name="kind")  # type: ignore
     """Message action binding type is WhatsAppUrlAction. Required. The WhatsApp Url action binding
      kind."""
-    action: "_models.UrlContent" = rest_field()
+    content: "_models.LinkContent" = rest_field()
     """Action content of Interactive message. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        action: "_models.UrlContent",
+        content: "_models.LinkContent",
     ) -> None: ...
 
     @overload
@@ -1797,4 +1795,4 @@ class WhatsAppUrlActionBindings(ActionBindings, discriminator="whatsAppUrlAction
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, action_binding_kind=MessageActionBindingKind.WHATS_APP_URL_ACTION, **kwargs)
+        super().__init__(*args, kind=MessageActionBindingKind.WHATS_APP_URL_ACTION, **kwargs)

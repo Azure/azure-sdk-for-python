@@ -43,7 +43,7 @@ class SendWhatsAppMessageSample(object):
         video_options = StickerNotificationContent(
             channel_registration_id=self.channel_id,
             to=[self.phone_number],
-            media_uri="https://www.simpleimageresizer.com/_uploads/photos/d299e618/1.sm_512x512_1_cropped.webp",
+            media_uri="https://www.simpleimageresizer.com/_uploads/photos/d299e618/1.sm_512x512_cropped.webp",
         )
 
         # calling send() with whatsapp message details

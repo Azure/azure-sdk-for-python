@@ -65,7 +65,7 @@ class MessageContentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The video content type."""
     DOCUMENT = "document"
     """The document content type."""
-    ACTION_SET = "actionSet"
+    GROUP = "group"
     """The ActionSet content type."""
     BUTTON_SET = "buttonSet"
     """The ButtonSet content type."""
