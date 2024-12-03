@@ -334,7 +334,6 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
         self._setup_failover_endpoints()
         if load_balancing_enabled:
             random.shuffle(self._replica_clients)
-        return
 
     def get_next_client(self) -> Optional[_ConfigurationClientWrapper]:
         """
