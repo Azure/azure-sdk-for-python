@@ -51,7 +51,7 @@ class CapabilityHost(Resource):
     :param storage_connections: A list of storage connections. Default storage connection value is
         projectname/workspaceblobstore for project workspace.
     :type storage_connections: Optional[List[str]]
-    :param capability_host_kind: The kind of capability host, either as a string or CapabilityHostKind enum. 
+    :param capability_host_kind: The kind of capability host, either as a string or CapabilityHostKind enum.
         Default is AGENTS.
     :type capability_host_kind: Optional[Union[str, CapabilityHostKind]]
     :param kwargs: Additional keyword arguments.
