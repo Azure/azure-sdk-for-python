@@ -56,7 +56,7 @@ class SendWhatsAppMessageSample(object):
             body=TextMessageContent(text="Test Body"),
             footer=TextMessageContent(text="Test Footer"),
             header=TextMessageContent(text="Test Header"),
-            action_bindings=WhatsAppButtonActionBindings(action=button_set),
+            action=WhatsAppButtonActionBindings(content=button_set),
         )
         interactiveMessageContent = InteractiveNotificationContent(
             channel_registration_id=self.channel_id,

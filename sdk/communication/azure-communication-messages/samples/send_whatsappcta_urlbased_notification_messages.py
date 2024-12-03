@@ -37,7 +37,7 @@ class SendWhatsAppMessageSample(object):
 
         from azure.communication.messages import NotificationMessagesClient
         from azure.communication.messages.models import (
-            UrlContent,
+            LinkContent,
             InteractiveMessage,
             TextMessageContent,
             WhatsAppUrlActionBindings,
@@ -46,7 +46,7 @@ class SendWhatsAppMessageSample(object):
 
         messaging_client = NotificationMessagesClient.from_connection_string(self.connection_string)
 
-        urlAction = UrlContent(
+        urlAction = LinkContent(
             title="Test Url",
             url="https://example.com/audio.mp3",
         )
@@ -54,7 +54,7 @@ class SendWhatsAppMessageSample(object):
             body=TextMessageContent(text="Test Body"),
             footer=TextMessageContent(text="Test Footer"),
             header=TextMessageContent(text="Test Header"),
-            action_bindings=WhatsAppUrlActionBindings(action=urlAction),
+            action=WhatsAppUrlActionBindings(content=urlAction),
         )
         interactiveMessageContent = InteractiveNotificationContent(
             channel_registration_id=self.channel_id,
