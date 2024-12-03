@@ -4,6 +4,7 @@
 from enum import Enum
 
 from azure.core import CaseInsensitiveEnumMeta
+from azure.ai.ml._utils._experimental import experimental
 
 
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -47,6 +48,7 @@ class OutboundRuleType:
     SERVICE_TAG = "ServiceTag"
 
 
+@experimental
 class CapabilityHostKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Capabilityhost kind."""
 

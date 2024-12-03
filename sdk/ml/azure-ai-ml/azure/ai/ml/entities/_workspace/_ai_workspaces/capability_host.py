@@ -157,9 +157,9 @@ class CapabilityHost(Resource):
         capability_host = cls(
             name=str(rest_obj.name),
             description=(rest_obj.properties.description if rest_obj.properties else None),
-            ai_services_connections=(rest_obj.properties.ai_services_connections if rest_obj.properties else []),
-            storage_connections=(rest_obj.properties.storage_connections if rest_obj.properties else []),
-            vector_store_connections=(rest_obj.properties.vector_store_connections if rest_obj.properties else []),
+            ai_services_connections=(rest_obj.properties.ai_services_connections if rest_obj.properties else None),
+            storage_connections=(rest_obj.properties.storage_connections if rest_obj.properties else None),
+            vector_store_connections=(rest_obj.properties.vector_store_connections if rest_obj.properties else None),
             capability_host_kind=(
                 rest_obj.properties.capability_host_kind if rest_obj.properties else CapabilityHostKind.AGENTS
             ),
