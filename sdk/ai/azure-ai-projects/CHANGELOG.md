@@ -4,6 +4,8 @@
 
 ### Features Added
 
+* Added objects used to call Azure Functions.
+
 ### Bugs Fixed
 
 ## 1.0.0b2 (2024-12-03)
@@ -17,8 +19,6 @@
 * Fix a bug that would cause agent function tool related function names and parameters to be included in traces even when content recording is not enabled.
 
 ### Features Added
-
-* Added objects used to call Azure Functions.
 
 ## 1.0.0b1 (2024-11-15)
 

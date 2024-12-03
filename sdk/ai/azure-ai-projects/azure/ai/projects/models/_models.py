@@ -598,18 +598,22 @@ class AzureFunctionDefinition(_model_base.Model):
 
     :ivar function: The definition of azure function and its parameters. Required.
     :vartype function: ~azure.ai.projects.models.FunctionDefinition
-    :ivar input_binding: Input storage queue. Required.
+    :ivar input_binding: Input storage queue. The queue storage trigger runs a function as messages
+     are added to it. Required.
     :vartype input_binding: ~azure.ai.projects.models.AzureStorageQueueBinding
-    :ivar output_binding: Output storage queue. Required.
+    :ivar output_binding: Output storage queue. The function writes output to this queue when the
+     input items are processed. Required.
     :vartype output_binding: ~azure.ai.projects.models.AzureStorageQueueBinding
     """
 
     function: "_models.FunctionDefinition" = rest_field()
     """The definition of azure function and its parameters. Required."""
     input_binding: "_models.AzureStorageQueueBinding" = rest_field()
-    """Input storage queue. Required."""
+    """Input storage queue. The queue storage trigger runs a function as messages are added to it.
+     Required."""
     output_binding: "_models.AzureStorageQueueBinding" = rest_field()
-    """Output storage queue. Required."""
+    """Output storage queue. The function writes output to this queue when the input items are
+     processed. Required."""
 
     @overload
     def __init__(
@@ -635,14 +639,15 @@ class AzureFunctionStorageQueue(_model_base.Model):
     """The structure for keeping storage queue name and URI.
 
 
-    :ivar storage_queue_uri: The URI of an Azure function storage queue. Required.
+    :ivar storage_queue_uri: URI to the Azure Storage Queue service allowing you to manipulate a
+     queue. Required.
     :vartype storage_queue_uri: str
     :ivar queue_name: The name of an Azure function storage queue. Required.
     :vartype queue_name: str
     """
 
     storage_queue_uri: str = rest_field(name="queue_service_uri")
-    """The URI of an Azure function storage queue. Required."""
+    """URI to the Azure Storage Queue service allowing you to manipulate a queue. Required."""
     queue_name: str = rest_field()
     """The name of an Azure function storage queue. Required."""
 
@@ -1312,7 +1317,7 @@ class FileSearchToolDefinitionDetails(_model_base.Model):
      Note that the file search tool may output fewer than ``max_num_results`` results. See the file
      search tool documentation for more information.
     :vartype max_num_results: int
-    :ivar ranking_options:
+    :ivar ranking_options: Ranking options for file search.
     :vartype ranking_options: ~azure.ai.projects.models.FileSearchRankingOptions
     """
 
@@ -1323,6 +1328,7 @@ class FileSearchToolDefinitionDetails(_model_base.Model):
      Note that the file search tool may output fewer than ``max_num_results`` results. See the file
      search tool documentation for more information."""
     ranking_options: Optional["_models.FileSearchRankingOptions"] = rest_field()
+    """Ranking options for file search."""
 
     @overload
     def __init__(
@@ -1546,6 +1552,39 @@ class GetWorkspaceResponse(_model_base.Model):
     """The name of the resource. Required."""
     properties: "_models._models.WorkspaceProperties" = rest_field()
     """The properties of the resource. Required."""
+
+
+class IncompleteRunDetails(_model_base.Model):
+    """Details on why the run is incomplete. Will be ``null`` if the run is not incomplete.
+
+
+    :ivar reason: The reason why the run is incomplete. This indicates which specific token limit
+     was reached during the run. Required. Known values are: "max_completion_tokens" and
+     "max_prompt_tokens".
+    :vartype reason: str or ~azure.ai.projects.models.IncompleteDetailsReason
+    """
+
+    reason: Union[str, "_models.IncompleteDetailsReason"] = rest_field()
+    """The reason why the run is incomplete. This indicates which specific token limit was reached
+     during the run. Required. Known values are: \"max_completion_tokens\" and
+     \"max_prompt_tokens\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        reason: Union[str, "_models.IncompleteDetailsReason"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class IndexResource(_model_base.Model):
@@ -5191,8 +5230,8 @@ class ThreadRun(_model_base.Model):
     :ivar failed_at: The Unix timestamp, in seconds, representing when this failed. Required.
     :vartype failed_at: ~datetime.datetime
     :ivar incomplete_details: Details on why the run is incomplete. Will be ``null`` if the run is
-     not incomplete. Required. Known values are: "max_completion_tokens" and "max_prompt_tokens".
-    :vartype incomplete_details: str or ~azure.ai.projects.models.IncompleteRunDetails
+     not incomplete. Required.
+    :vartype incomplete_details: ~azure.ai.projects.models.IncompleteRunDetails
     :ivar usage: Usage statistics related to the run. This value will be ``null`` if the run is not
      in a terminal state (i.e. ``in_progress``\\ , ``queued``\\ , etc.). Required.
     :vartype usage: ~azure.ai.projects.models.RunCompletionUsage
@@ -5227,6 +5266,7 @@ class ThreadRun(_model_base.Model):
      modifying the behavior on a per-run basis.
     :vartype tool_resources: ~azure.ai.projects.models.UpdateToolResourcesOptions
     :ivar parallel_tool_calls: Determines if tools can be executed in parallel within the run.
+     Required.
     :vartype parallel_tool_calls: bool
     """
 
@@ -5263,9 +5303,8 @@ class ThreadRun(_model_base.Model):
     """The Unix timestamp, in seconds, representing when this was cancelled. Required."""
     failed_at: datetime.datetime = rest_field(format="unix-timestamp")
     """The Unix timestamp, in seconds, representing when this failed. Required."""
-    incomplete_details: Union[str, "_models.IncompleteRunDetails"] = rest_field()
-    """Details on why the run is incomplete. Will be ``null`` if the run is not incomplete. Required.
-     Known values are: \"max_completion_tokens\" and \"max_prompt_tokens\"."""
+    incomplete_details: "_models.IncompleteRunDetails" = rest_field()
+    """Details on why the run is incomplete. Will be ``null`` if the run is not incomplete. Required."""
     usage: "_models.RunCompletionUsage" = rest_field()
     """Usage statistics related to the run. This value will be ``null`` if the run is not in a
      terminal state (i.e. ``in_progress``\ , ``queued``\ , etc.). Required."""
@@ -5295,8 +5334,8 @@ class ThreadRun(_model_base.Model):
     tool_resources: Optional["_models.UpdateToolResourcesOptions"] = rest_field()
     """Override the tools the agent can use for this run. This is useful for modifying the behavior on
      a per-run basis."""
-    parallel_tool_calls: Optional[bool] = rest_field(name="parallelToolCalls")
-    """Determines if tools can be executed in parallel within the run."""
+    parallel_tool_calls: bool = rest_field()
+    """Determines if tools can be executed in parallel within the run. Required."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -5316,7 +5355,7 @@ class ThreadRun(_model_base.Model):
         completed_at: datetime.datetime,
         cancelled_at: datetime.datetime,
         failed_at: datetime.datetime,
-        incomplete_details: Union[str, "_models.IncompleteRunDetails"],
+        incomplete_details: "_models.IncompleteRunDetails",
         usage: "_models.RunCompletionUsage",
         max_prompt_tokens: int,
         max_completion_tokens: int,
@@ -5324,11 +5363,11 @@ class ThreadRun(_model_base.Model):
         tool_choice: "_types.AgentsApiToolChoiceOption",
         response_format: "_types.AgentsApiResponseFormatOption",
         metadata: Dict[str, str],
+        parallel_tool_calls: bool,
         required_action: Optional["_models.RequiredAction"] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         tool_resources: Optional["_models.UpdateToolResourcesOptions"] = None,
-        parallel_tool_calls: Optional[bool] = None,
     ) -> None: ...
 
     @overload
