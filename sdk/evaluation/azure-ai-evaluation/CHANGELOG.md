@@ -3,7 +3,7 @@
 ## 1.0.1 (Unreleased)
 
 ### Bugs Fixed
-- Fixed `[remote]` extra to be needed only when tracking results in Azure AI Studio.
+- Removed `[remote]` extra. This is no longer needed when tracking results in Azure AI Studio.
 - Removing `azure-ai-inference` as dependency.
 - Fixed `AttributeError: 'NoneType' object has no attribute 'get'` while running simulator with 1000+ results
 
