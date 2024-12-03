@@ -53,19 +53,19 @@ def build_external_storage(
     return request
 
 def build_call_locator(
-    args: List[Union['ServerCallLocator', 'GroupCallLocator', 'RoomCallLocator']],
-    call_locator: Optional[Union['ServerCallLocator', 'GroupCallLocator', 'RoomCallLocator']],
+    call_locator: Optional[Union['ServerCallLocator', 'GroupCallLocator','RoomCallLocator']],
     server_call_id: Optional[str],
     group_call_id: Optional[str],
     room_id: Optional[str],
-) -> Optional[CallLocator]:
+    args: List[Union['ServerCallLocator', 'GroupCallLocator','RoomCallLocator']] = None,
+) -> CallLocator:
     """Build the generated callLocator object from args in kwargs with support for legacy models.
 
     :param args: Any positional parameters provided. This may include the legacy model. The new method signature
      does not support positional params, so if there's anything here, it's the old model.
-    :type args: list[ServerCallLocator or GroupCallLocator]
+    :type args: list[ServerCallLocator or GroupCallLocator or RoomCallLocator]
     :param call_locator: If the legacy call_locator was provided via keyword arg.
-    :type call_locator: ServerCallLocator or GroupCallLocator or None
+    :type call_locator: ServerCallLocator or GroupCallLocator or RoomCallLocator or None
     :param server_call_id: If the new server_call_id was provided via keyword arg.
     :type server_call_id: str or None
     :param group_call_id: If the new group_call_id was provided via keyword arg.
@@ -108,7 +108,9 @@ def build_call_locator(
                 "Please provide either 'group_call_id' or 'server_call_id' or 'room_id'."
             )
         request = CallLocator(room_id=room_id, kind="roomCallLocator")
-
+    if request is None:
+        raise ValueError("Call locator required."
+                        "Please provide either 'group_call_id' or 'server_call_id' or 'room_id'.")
     return request
 
 

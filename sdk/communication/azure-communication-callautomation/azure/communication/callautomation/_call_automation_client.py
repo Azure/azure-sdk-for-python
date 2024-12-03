@@ -172,9 +172,9 @@ class CallAutomationClient:
     @overload
     def connect_call(
         self,
+        callback_url: str,
         *,
         server_call_id: str,
-        callback_url: str,
         cognitive_services_endpoint: Optional[str] = None,
         operation_context: Optional[str] = None,
         media_streaming: Optional['MediaStreamingOptions'] = None,
@@ -183,10 +183,10 @@ class CallAutomationClient:
     ) -> CallConnectionProperties:
         """The request payload for creating a connection to a room CallLocator.
         All required parameters must be populated in order to send to server.
+        :param callback_url: The call back url where callback events are sent. Required
+        :type callback_url: str
         :keyword server_call_id: The server call ID to locate ongoing call.
         :paramtype server_call_id: str
-        :keyword callback_url: The call back url where callback events are sent. Required
-        :paramtype callback_url: str
         :keyword cognitive_services_endpoint:
          The identifier of the Cognitive Service resource assigned to this call.
         :paramtype cognitive_services_endpoint: str or None
@@ -206,9 +206,9 @@ class CallAutomationClient:
     @overload
     def connect_call(
         self,
+        callback_url: str,
         *,
         group_call_id: str,
-        callback_url: str,
         cognitive_services_endpoint: Optional[str] = None,
         operation_context: Optional[str] = None,
         media_streaming: Optional['MediaStreamingOptions'] = None,
@@ -217,10 +217,10 @@ class CallAutomationClient:
     ) -> CallConnectionProperties:
         """The request payload for creating a connection to a room CallLocator.
         All required parameters must be populated in order to send to server.
+        :param callback_url: The call back url where callback events are sent. Required
+        :type callback_url: str
         :keyword group_call_id: The group call ID to locate ongoing call.
         :paramtype group_call_id: str
-        :keyword callback_url: The call back url where callback events are sent. Required
-        :paramtype callback_url: str
         :keyword cognitive_services_endpoint:
          The identifier of the Cognitive Service resource assigned to this call.
         :paramtype cognitive_services_endpoint: str or None
@@ -240,9 +240,9 @@ class CallAutomationClient:
     @overload
     def connect_call(
         self,
+        callback_url: str,
         *,
         room_id: str,
-        callback_url: str,
         cognitive_services_endpoint: Optional[str] = None,
         operation_context: Optional[str] = None,
         media_streaming: Optional['MediaStreamingOptions'] = None,
@@ -251,10 +251,10 @@ class CallAutomationClient:
     ) -> CallConnectionProperties:
         """The request payload for creating a connection to a room CallLocator.
         All required parameters must be populated in order to send to server.
+        :param callback_url: The call back url where callback events are sent. Required
+        :type callback_url: str
         :keyword room_id: Acs room id. Required
         :paramtype room_id: str
-        :keyword callback_url: The call back url where callback events are sent. Required
-        :paramtype callback_url: str
         :keyword cognitive_services_endpoint:
          The identifier of the Cognitive Service resource assigned to this call.
         :paramtype cognitive_services_endpoint: str or None
@@ -274,7 +274,7 @@ class CallAutomationClient:
     @distributed_trace
     def connect_call(
         self,
-        *args: Union['ServerCallLocator', 'GroupCallLocator', 'RoomCallLocator'],
+        callback_url: str,
         **kwargs
     ) -> CallConnectionProperties:
 
@@ -288,7 +288,6 @@ class CallAutomationClient:
         media_streaming_options = kwargs.pop("media_streaming", None)
         transcription_options = kwargs.pop("transcription", None)
         call_locator = build_call_locator(
-            args,
             kwargs.pop("call_locator", None),
             kwargs.pop("server_call_id", None),
             kwargs.pop("group_call_id", None),
@@ -296,7 +295,7 @@ class CallAutomationClient:
         )
         connect_call_request = ConnectRequest(
             call_locator=call_locator,
-            callback_uri=kwargs.pop("callback_url", None),
+            callback_uri=callback_url,
             operation_context=kwargs.pop("operation_context", None),
             call_intelligence_options=call_intelligence_options,
             media_streaming_options=media_streaming_options.to_generated() if media_streaming_options else None,
