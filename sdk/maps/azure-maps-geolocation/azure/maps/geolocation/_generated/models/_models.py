@@ -28,19 +28,15 @@ class CountryRegion(_serialization.Model):
     """
 
     _validation = {
-        'iso_code': {'readonly': True},
+        "iso_code": {"readonly": True},
     }
 
     _attribute_map = {
         "iso_code": {"key": "isoCode", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.iso_code = None
 
@@ -57,8 +53,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
@@ -66,12 +62,8 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.type = None
         self.info = None
@@ -95,11 +87,11 @@ class ErrorDetail(_serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
@@ -110,12 +102,8 @@ class ErrorDetail(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.code = None
         self.message = None
@@ -135,12 +123,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["_models.ErrorDetail"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
         """
         :keyword error: The error object.
         :paramtype error: ~azure.maps.geolocation.models.ErrorDetail
@@ -161,8 +144,8 @@ class IpAddressToLocationResult(_serialization.Model):
     """
 
     _validation = {
-        'country_region': {'readonly': True},
-        'ip_address': {'readonly': True},
+        "country_region": {"readonly": True},
+        "ip_address": {"readonly": True},
     }
 
     _attribute_map = {
@@ -170,12 +153,8 @@ class IpAddressToLocationResult(_serialization.Model):
         "ip_address": {"key": "ipAddress", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.country_region = None
         self.ip_address = None

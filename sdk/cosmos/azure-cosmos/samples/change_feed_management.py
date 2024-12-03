@@ -73,6 +73,51 @@ def read_change_feed_with_start_time(container, start_time):
     print('\nFinished reading all the change feed from start time of {}\n'.format(time))
 
 
+def read_change_feed_with_continuation(container, continuation):
+    print('\nReading change feed from continuation\n')
+
+    # You can read change feed from a specific continuation token.
+    # You must pass in a valid continuation token.
+    response = container.query_items_change_feed(continuation=continuation)
+    for doc in response:
+        print(doc)
+
+    print('\nFinished reading all the change feed from continuation\n')
+
+def delete_all_items(container):
+    print('\nDeleting all item\n')
+
+    for item in container.query_items(query='SELECT * FROM c', enable_cross_partition_query=True):
+        # Deleting the current item
+        container.delete_item(item, partition_key=item['address']['state'])
+
+    print('Deleted all items')
+
+def read_change_feed_with_all_versions_and_delete_mode(container):
+    change_feed_mode = "AllVersionsAndDeletes"
+    print("\nReading change feed with 'AllVersionsAndDeletes' mode.\n")
+
+    # You can read change feed with a specific change feed mode.
+    # You must pass in a valid change feed mode: ["LatestVersion", "AllVersionsAndDeletes"].
+    response = container.query_items_change_feed(mode=change_feed_mode)
+    for doc in response:
+        print(doc)
+
+    print("\nFinished reading all the change feed with 'AllVersionsAndDeletes' mode.\n")
+
+def read_change_feed_with_all_versions_and_delete_mode_from_continuation(container, continuation):
+    change_feed_mode = "AllVersionsAndDeletes"
+    print("\nReading change feed with 'AllVersionsAndDeletes' mode.\n")
+
+    # You can read change feed with a specific change feed mode from a specific continuation token.
+    # You must pass in a valid change feed mode: ["LatestVersion", "AllVersionsAndDeletes"].
+    # You must pass in a valid continuation token.
+    response = container.query_items_change_feed(mode=change_feed_mode, continuation=continuation)
+    for doc in response:
+        print(doc)
+
+    print("\nFinished reading all the change feed with 'AllVersionsAndDeletes' mode.\n")
+
 def run_sample():
     client = cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY})
     try:
@@ -103,6 +148,17 @@ def run_sample():
         read_change_feed(container)
         # Read Change Feed from timestamp
         read_change_feed_with_start_time(container, timestamp)
+        # Delete all items from container
+        delete_all_items(container)
+        # Read change feed with 'AllVersionsAndDeletes' mode
+        read_change_feed_with_all_versions_and_delete_mode(container)
+        continuation_token = container.client_connection.last_response_headers['etag']
+        # Read change feed with 'AllVersionsAndDeletes' mode after create item
+        create_items(container, 10)
+        read_change_feed_with_all_versions_and_delete_mode_from_continuation(container,continuation_token)
+        # Read change feed with 'AllVersionsAndDeletes' mode after create/delete item
+        delete_all_items(container)
+        read_change_feed_with_all_versions_and_delete_mode_from_continuation(container,continuation_token)
 
         # cleanup database after sample
         try:

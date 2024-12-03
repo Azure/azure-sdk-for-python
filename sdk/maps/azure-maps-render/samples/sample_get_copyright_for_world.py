@@ -25,6 +25,7 @@ import os
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
+
 def get_copyright_for_world():
     # [START get_copyright_for_world]
     from azure.core.credentials import AzureKeyCredential
@@ -39,5 +40,5 @@ def get_copyright_for_world():
     # [END get_copyright_for_world]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     get_copyright_for_world()

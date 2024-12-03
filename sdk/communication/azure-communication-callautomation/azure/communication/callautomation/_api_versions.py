@@ -6,6 +6,7 @@
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
+
 class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     V2023_03_06 = "2023-03-06"
     V2023_06_15_PREVIEW = "2023-06-15-preview"

@@ -5,11 +5,12 @@
 # mypy: disable-error-code="import-untyped,return-value"
 # pylint: disable=line-too-long,R,wrong-import-order,global-variable-not-assigned)
 import json
+import os
 import re
 import sys
-import yaml
-from typing import Any, Dict, Union
+from typing import Any, Dict
 from pathlib import Path
+
 
 _yaml_regex = re.compile(
     r"^\s*" + r"(?:---|\+\+\+)" + r"(.*?)" + r"(?:---|\+\+\+)" + r"\s*(.+)$",
@@ -26,31 +27,16 @@ def load_json(file_path, encoding="utf-8"):
     return json.loads(load_text(file_path, encoding=encoding))
 
 
-def _find_global_config(prompty_path: Path = Path.cwd()) -> Union[Path, None]:
-    prompty_config = list(Path.cwd().glob("**/prompty.json"))
-
-    if len(prompty_config) > 0:
-        return sorted(
-            [c for c in prompty_config if len(c.parent.parts) <= len(prompty_path.parts)],
-            key=lambda p: len(p.parts),
-        )[-1]
-    else:
-        return None
-
-
 def load_global_config(prompty_path: Path = Path.cwd(), configuration: str = "default") -> Dict[str, Any]:
-    # prompty.config laying around?
-    config = _find_global_config(prompty_path)
-
-    # if there is one load it
-    if config is not None:
-        c = load_json(config)
+    prompty_config_path = prompty_path.joinpath("prompty.json")
+    if os.path.exists(prompty_config_path):
+        c = load_json(prompty_config_path)
         if configuration in c:
             return c[configuration]
         else:
-            raise ValueError(f'Item "{configuration}" not found in "{config}"')
-
-    return {}
+            raise ValueError(f'Item "{configuration}" not found in "{prompty_config_path}"')
+    else:
+        return {}
 
 
 def load_prompty(file_path, encoding="utf-8") -> Dict[str, Any]:
@@ -59,6 +45,11 @@ def load_prompty(file_path, encoding="utf-8") -> Dict[str, Any]:
 
 
 def parse(contents):
+    try:
+        import yaml  # type: ignore
+    except ImportError as exc:
+        raise ImportError("Please install pyyaml to use this function. Run `pip install pyyaml`.") from exc
+
     global _yaml_regex
 
     fmatter = ""

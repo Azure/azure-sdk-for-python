@@ -10,7 +10,6 @@ from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, T
 
 import pandas as pd
 from promptflow._sdk._constants import LINE_NUMBER
-from promptflow._sdk._errors import UserAuthenticationError, UploadInternalError
 from promptflow.client import PFClient
 from promptflow.entities import Run
 
@@ -21,7 +20,6 @@ from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarg
 from .._constants import (
     CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT,
     EvaluationMetrics,
-    EvaluationRunProperties,
     Prefixes,
     _InternalEvaluationMetrics,
 )
@@ -468,33 +466,14 @@ def _apply_target_to_data(
     :rtype: Tuple[pandas.DataFrame, List[str]]
     """
     _run_name = kwargs.get("_run_name")
-    upload_target_snaphot = kwargs.get("_upload_target_snapshot", False)
-
-    try:
-        with TargetRunContext(upload_target_snaphot):
-            run: Run = pf_client.run(
-                flow=target,
-                display_name=evaluation_name,
-                data=data,
-                properties={EvaluationRunProperties.RUN_TYPE: "eval_run", "isEvaluatorRun": "true"},
-                stream=True,
-                name=_run_name,
-            )
-    except (UserAuthenticationError, UploadInternalError) as ex:
-        if "Failed to upload run" in ex.message:
-            msg = (
-                "Failed to upload the target run to the cloud. "
-                "This may be caused by insufficient permission to access storage or other errors."
-            )
-            raise EvaluationException(
-                message=msg,
-                target=ErrorTarget.EVALUATE,
-                category=ErrorCategory.FAILED_REMOTE_TRACKING,
-                blame=ErrorBlame.USER_ERROR,
-                tsg_link="https://aka.ms/azsdk/python/evaluation/remotetracking/troubleshoot",
-            ) from ex
-
-        raise ex
+    with TargetRunContext():
+        run: Run = pf_client.run(
+            flow=target,
+            display_name=evaluation_name,
+            data=data,
+            stream=True,
+            name=_run_name,
+        )
 
     target_output: pd.DataFrame = pf_client.runs.get_details(run, all_results=True)
     # Remove input and output prefix
@@ -831,13 +810,15 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     # Since tracing is disabled, pass None for target_run so a dummy evaluation run will be created each time.
     target_run = None
     trace_destination = _trace_destination_from_project_scope(azure_ai_project) if azure_ai_project else None
-    studio_url = _log_metrics_and_instance_results(
-        metrics,
-        result_df,
-        trace_destination,
-        target_run,
-        evaluation_name,
-    )
+    studio_url = None
+    if trace_destination:
+        studio_url = _log_metrics_and_instance_results(
+            metrics,
+            result_df,
+            trace_destination,
+            target_run,
+            evaluation_name,
+        )
 
     result_df_dict = result_df.to_dict("records")
     result: EvaluationResult = {"rows": result_df_dict, "metrics": metrics, "studio_url": studio_url}  # type: ignore

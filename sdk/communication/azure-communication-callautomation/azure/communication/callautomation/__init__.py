@@ -82,7 +82,6 @@ __all__ = [
     "MuteParticipantResult",
     "SendDtmfTonesResult",
     "CancelAddParticipantOperationResult",
-
     # common ACS communication identifier
     "CommunicationIdentifier",
     "PhoneNumberIdentifier",
@@ -114,30 +113,36 @@ __version__ = VERSION
 
 
 def __getattr__(name):
-    if name == 'CallInvite':
+    if name == "CallInvite":
         warnings.warn(
             "CallInvite is deprecated and should not be used. Please pass in keyword arguments directly.",
-            DeprecationWarning
+            DeprecationWarning,
         )
         from ._models import CallInvite
+
         return CallInvite
-    if name == 'GroupCallLocator':
+    if name == "GroupCallLocator":
         warnings.warn(
             "GroupCallLocator is deprecated and should not be used. Please pass in 'group_call_id' directly.",
-            DeprecationWarning
+            DeprecationWarning,
         )
         from ._models import GroupCallLocator
+
         return GroupCallLocator
-    if name == 'ServerCallLocator':
+    if name == "ServerCallLocator":
         warnings.warn(
             "ServerCallLocator is deprecated and should not be used. Please pass in 'server_call_id' directly.",
-            DeprecationWarning
+            DeprecationWarning,
         )
         from ._models import ServerCallLocator
+
         return ServerCallLocator
-    if name == 'MicrosoftBotIdentifier':
-        warnings.warn(f"{name} is deprecated and should not be used. Please use 'MicrosoftTeamsAppIdentifier' instead.",
-                       DeprecationWarning)
+    if name == "MicrosoftBotIdentifier":
+        warnings.warn(
+            f"{name} is deprecated and should not be used. Please use 'MicrosoftTeamsAppIdentifier' instead.",
+            DeprecationWarning,
+        )
         from ._shared.models import _MicrosoftBotIdentifier
+
         return _MicrosoftBotIdentifier
     raise AttributeError(f"module 'azure.communication.callautomation' has no attribute {name}")

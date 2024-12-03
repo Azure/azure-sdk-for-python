@@ -265,7 +265,7 @@ async def examples_async():
 
         # Get the feed ranges list from container.
         # [START read_feed_ranges]
-        feed_ranges = [feed_range async for feed_range in await container.read_feed_ranges()]
+        feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
         # [END read_feed_ranges]
 
         # Get a feed range from a partition key.
@@ -296,7 +296,6 @@ async def examples_async():
         # The asynchronous client returns asynchronous iterators for its query methods;
         # as such, we iterate over it by using an async for loop
         # [START query_items_change_feed_from_beginning]
-        feed_ranges = [feed_range async for feed_range in await container.read_feed_ranges()]
         async for item in container.query_items_change_feed(feed_range=feed_ranges[0], start_time="Beginning"):
             print(json.dumps(item, indent=True))
         # [END query_items_change_feed_from_beginning]
