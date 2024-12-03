@@ -1,6 +1,6 @@
 type: finetuning
 
-name: "llama-3-8B"
+name: "llama-3-8B-with-instance-types"
 experiment_name: "llama-3-8B-finetuning-experiment"
 display_name: "llama3-8B-display-name"
 task: text_completion
@@ -8,6 +8,10 @@ model_provider: custom
 model: 
   path: "azureml://registries/azureml-meta/models/Meta-Llama-3-8B/versions/8"
   type: mlflow_model
+resources:
+  instance_types:
+    - "Standard_NC96ads_A100_v4"
+    - "Standard_E4s_v3"
 training_data: tests/test_configs/finetuning_job/test_datasets/text_completion/train.jsonl
 validation_data:
   path: tests/test_configs/finetuning_job/test_datasets/text_completion/validation.jsonl
