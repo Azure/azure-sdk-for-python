@@ -618,7 +618,7 @@ with project_client.agents.create_stream(
 
 <!-- END SNIPPET -->
 
-The event handler is optional. Here is an example:
+The event handler is optional.  If you don't provide one, the SDK will use the default `AgentEventHandler` or `AsyncAgentEventHandler`. Here is an example:
 
 <!-- SNIPPET:sample_agents_stream_eventhandler.stream_event_handler -->
 
@@ -650,6 +650,44 @@ class MyEventHandler(AgentEventHandler):
 ```
 
 <!-- END SNIPPET -->
+
+Within `AgentEventHandler` or `AsyncAgentEventHandler`, the stream content from the HTTP response is parsed into event types and data that are iterable as follows:
+
+<!-- SNIPPET:sample_agents_stream_iteration.iterate_stream -->
+
+```python
+with project_client.agents.create_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
+
+    for event_type, event_data in stream:
+
+        if isinstance(event_data, MessageDeltaChunk):
+            for content_part in event_data.delta.content:
+                if isinstance(content_part, MessageDeltaTextContent):
+                    text_value = content_part.text.value if content_part.text else "No text"
+                    print(f"Text delta received: {text_value}")
+
+        elif isinstance(event_data, ThreadMessage):
+            print(f"ThreadMessage created. ID: {event_data.id}, Status: {event_data.status}")
+
+        elif isinstance(event_data, ThreadRun):
+            print(f"ThreadRun status: {event_data.status}")
+
+        elif isinstance(event_data, RunStep):
+            print(f"RunStep type: {event_data.type}, Status: {event_data.status}")
+
+        elif event_type == AgentStreamEvent.ERROR:
+            print(f"An error occurred. Data: {event_data}")
+
+        elif event_type == AgentStreamEvent.DONE:
+            print("Stream completed.")
+            break
+
+        else:
+            print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
+```
+
+<!-- END SNIPPET -->
+As you can see, this SDK parses the events and produces various event types similar to OpenAI assistants. In your use case, you might not be interested in handling all these types and may decide to parse the events on your own. To achieve this, please refer to [override base event handler](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_stream_with_base_override_eventhandler.py).
 
 #### Retrieve Message
 
