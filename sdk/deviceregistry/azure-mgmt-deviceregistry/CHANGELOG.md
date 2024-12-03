@@ -1,5 +1,264 @@
 # Release History
 
+## 1.0.0b2 (2024-12-23)
+
+### Features Added
+
+  - Client `DeviceRegistryMgmtClient` added method `send_request`
+  - Client `DeviceRegistryMgmtClient` added operation group `billing_containers`
+  - Client `DeviceRegistryMgmtClient` added operation group `discovered_assets`
+  - Client `DeviceRegistryMgmtClient` added operation group `discovered_asset_endpoint_profiles`
+  - Client `DeviceRegistryMgmtClient` added operation group `schema_registries`
+  - Client `DeviceRegistryMgmtClient` added operation group `schemas`
+  - Client `DeviceRegistryMgmtClient` added operation group `schema_versions`
+  - Model `AssetEndpointProfileProperties` added property `endpoint_profile_type`
+  - Model `AssetEndpointProfileProperties` added property `authentication`
+  - Model `AssetEndpointProfileProperties` added property `discovered_asset_endpoint_profile_ref`
+  - Model `AssetEndpointProfileProperties` added property `status`
+  - Model `AssetEndpointProfileUpdateProperties` added property `endpoint_profile_type`
+  - Model `AssetEndpointProfileUpdateProperties` added property `authentication`
+  - Model `AssetProperties` added property `asset_endpoint_profile_ref`
+  - Model `AssetProperties` added property `discovered_asset_refs`
+  - Model `AssetProperties` added property `default_datasets_configuration`
+  - Model `AssetProperties` added property `default_topic`
+  - Model `AssetProperties` added property `datasets`
+  - Model `AssetStatus` added property `datasets`
+  - Model `AssetStatus` added property `events`
+  - Model `AssetUpdateProperties` added property `default_datasets_configuration`
+  - Model `AssetUpdateProperties` added property `default_topic`
+  - Model `AssetUpdateProperties` added property `datasets`
+  - Model `Event` added property `topic`
+  - Enum `ProvisioningState` added member `DELETING`
+  - Added model `AssetEndpointProfileStatus`
+  - Added model `AssetEndpointProfileStatusError`
+  - Added model `AssetStatusDataset`
+  - Added model `AssetStatusEvent`
+  - Added model `Authentication`
+  - Added enum `AuthenticationMethod`
+  - Added model `BillingContainer`
+  - Added model `BillingContainerProperties`
+  - Added model `DataPointBase`
+  - Added enum `DataPointObservabilityMode`
+  - Added model `Dataset`
+  - Added model `DiscoveredAsset`
+  - Added model `DiscoveredAssetEndpointProfile`
+  - Added model `DiscoveredAssetEndpointProfileProperties`
+  - Added model `DiscoveredAssetEndpointProfileUpdate`
+  - Added model `DiscoveredAssetEndpointProfileUpdateProperties`
+  - Added model `DiscoveredAssetProperties`
+  - Added model `DiscoveredAssetUpdate`
+  - Added model `DiscoveredAssetUpdateProperties`
+  - Added model `DiscoveredDataPoint`
+  - Added model `DiscoveredDataset`
+  - Added model `DiscoveredEvent`
+  - Added model `EventBase`
+  - Added enum `EventObservabilityMode`
+  - Added enum `Format`
+  - Added model `MessageSchemaReference`
+  - Added model `ProxyResource`
+  - Added model `Schema`
+  - Added model `SchemaProperties`
+  - Added model `SchemaRegistry`
+  - Added model `SchemaRegistryProperties`
+  - Added model `SchemaRegistryUpdate`
+  - Added model `SchemaRegistryUpdateProperties`
+  - Added enum `SchemaType`
+  - Added model `SchemaVersion`
+  - Added model `SchemaVersionProperties`
+  - Added model `SystemAssignedServiceIdentity`
+  - Added enum `SystemAssignedServiceIdentityType`
+  - Added model `Topic`
+  - Added enum `TopicRetainType`
+  - Added model `BillingContainersOperations`
+  - Added model `DiscoveredAssetEndpointProfilesOperations`
+  - Added model `DiscoveredAssetsOperations`
+  - Added model `SchemaRegistriesOperations`
+  - Added model `SchemaVersionsOperations`
+  - Added model `SchemasOperations`
+  - Method `Asset.__init__` has a new overload `def __init__(self: None, location: str, extended_location: _models.ExtendedLocation, tags: Optional[Dict[str, str]], properties: Optional[_models.AssetProperties])`
+  - Method `Asset.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `Asset.__init__` has a new overload `def __init__(self: None, location: str, tags: Optional[Dict[str, str]])`
+  - Method `Asset.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `AssetEndpointProfile.__init__` has a new overload `def __init__(self: None, location: str, extended_location: _models.ExtendedLocation, tags: Optional[Dict[str, str]], properties: Optional[_models.AssetEndpointProfileProperties])`
+  - Method `AssetEndpointProfile.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `AssetEndpointProfile.__init__` has a new overload `def __init__(self: None, location: str, tags: Optional[Dict[str, str]])`
+  - Method `AssetEndpointProfile.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `AssetEndpointProfileProperties.__init__` has a new overload `def __init__(self: None, target_address: str, endpoint_profile_type: str, authentication: Optional[_models.Authentication], additional_configuration: Optional[str], discovered_asset_endpoint_profile_ref: Optional[str])`
+  - Method `AssetEndpointProfileProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `AssetEndpointProfileUpdate.__init__` has a new overload `def __init__(self: None, tags: Optional[Dict[str, str]], properties: Optional[_models.AssetEndpointProfileUpdateProperties])`
+  - Method `AssetEndpointProfileUpdate.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `AssetEndpointProfileUpdateProperties.__init__` has a new overload `def __init__(self: None, target_address: Optional[str], endpoint_profile_type: Optional[str], authentication: Optional[_models.Authentication], additional_configuration: Optional[str])`
+  - Method `AssetEndpointProfileUpdateProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `AssetProperties.__init__` has a new overload `def __init__(self: None, asset_endpoint_profile_ref: str, enabled: Optional[bool], external_asset_id: Optional[str], display_name: Optional[str], description: Optional[str], manufacturer: Optional[str], manufacturer_uri: Optional[str], model: Optional[str], product_code: Optional[str], hardware_revision: Optional[str], software_revision: Optional[str], documentation_uri: Optional[str], serial_number: Optional[str], attributes: Optional[Dict[str, Any]], discovered_asset_refs: Optional[List[str]], default_datasets_configuration: Optional[str], default_events_configuration: Optional[str], default_topic: Optional[_models.Topic], datasets: Optional[List[_models.Dataset]], events: Optional[List[_models.Event]])`
+  - Method `AssetProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `AssetUpdate.__init__` has a new overload `def __init__(self: None, tags: Optional[Dict[str, str]], properties: Optional[_models.AssetUpdateProperties])`
+  - Method `AssetUpdate.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `AssetUpdateProperties.__init__` has a new overload `def __init__(self: None, enabled: Optional[bool], display_name: Optional[str], description: Optional[str], manufacturer: Optional[str], manufacturer_uri: Optional[str], model: Optional[str], product_code: Optional[str], hardware_revision: Optional[str], software_revision: Optional[str], documentation_uri: Optional[str], serial_number: Optional[str], attributes: Optional[Dict[str, Any]], default_datasets_configuration: Optional[str], default_events_configuration: Optional[str], default_topic: Optional[_models.Topic], datasets: Optional[List[_models.Dataset]], events: Optional[List[_models.Event]])`
+  - Method `AssetUpdateProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `DataPoint.__init__` has a new overload `def __init__(self: None, name: str, data_source: str, data_point_configuration: Optional[str], observability_mode: Optional[Union[str, _models.DataPointObservabilityMode]])`
+  - Method `DataPoint.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `DataPoint.__init__` has a new overload `def __init__(self: None, name: str, data_source: str, data_point_configuration: Optional[str])`
+  - Method `DataPoint.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `ErrorResponse.__init__` has a new overload `def __init__(self: None, error: Optional[_models.ErrorDetail])`
+  - Method `ErrorResponse.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `Event.__init__` has a new overload `def __init__(self: None, name: str, event_notifier: str, event_configuration: Optional[str], topic: Optional[_models.Topic], observability_mode: Optional[Union[str, _models.EventObservabilityMode]])`
+  - Method `Event.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `Event.__init__` has a new overload `def __init__(self: None, name: str, event_notifier: str, event_configuration: Optional[str], topic: Optional[_models.Topic])`
+  - Method `Event.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `ExtendedLocation.__init__` has a new overload `def __init__(self: None, type: str, name: str)`
+  - Method `ExtendedLocation.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `Operation.__init__` has a new overload `def __init__(self: None, action_type: Optional[Union[str, _models.ActionType]])`
+  - Method `Operation.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `OperationStatusResult.__init__` has a new overload `def __init__(self: None, status: str, id: Optional[str], name: Optional[str], percent_complete: Optional[float], start_time: Optional[datetime], end_time: Optional[datetime], operations: Optional[List[_models.OperationStatusResult]], error: Optional[_models.ErrorDetail])`
+  - Method `OperationStatusResult.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `SystemData.__init__` has a new overload `def __init__(self: None, created_by: Optional[str], created_by_type: Optional[Union[str, _models.CreatedByType]], created_at: Optional[datetime], last_modified_by: Optional[str], last_modified_by_type: Optional[Union[str, _models.CreatedByType]], last_modified_at: Optional[datetime])`
+  - Method `SystemData.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `TrackedResource.__init__` has a new overload `def __init__(self: None, location: str, tags: Optional[Dict[str, str]])`
+  - Method `TrackedResource.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `UsernamePasswordCredentials.__init__` has a new overload `def __init__(self: None, username_secret_name: str, password_secret_name: str)`
+  - Method `UsernamePasswordCredentials.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `X509Credentials.__init__` has a new overload `def __init__(self: None, certificate_secret_name: str)`
+  - Method `X509Credentials.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `Authentication.__init__` has a new overload `def __init__(self: None, method: Union[str, _models.AuthenticationMethod], username_password_credentials: Optional[_models.UsernamePasswordCredentials], x509_credentials: Optional[_models.X509Credentials])`
+  - Method `Authentication.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `BillingContainer.__init__` has a new overload `def __init__(self: None, properties: Optional[_models.BillingContainerProperties])`
+  - Method `BillingContainer.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `DataPointBase.__init__` has a new overload `def __init__(self: None, name: str, data_source: str, data_point_configuration: Optional[str])`
+  - Method `DataPointBase.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `Dataset.__init__` has a new overload `def __init__(self: None, name: str, dataset_configuration: Optional[str], topic: Optional[_models.Topic], data_points: Optional[List[_models.DataPoint]])`
+  - Method `Dataset.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `DiscoveredAsset.__init__` has a new overload `def __init__(self: None, location: str, extended_location: _models.ExtendedLocation, tags: Optional[Dict[str, str]], properties: Optional[_models.DiscoveredAssetProperties])`
+  - Method `DiscoveredAsset.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `DiscoveredAsset.__init__` has a new overload `def __init__(self: None, location: str, tags: Optional[Dict[str, str]])`
+  - Method `DiscoveredAsset.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `DiscoveredAssetEndpointProfile.__init__` has a new overload `def __init__(self: None, location: str, extended_location: _models.ExtendedLocation, tags: Optional[Dict[str, str]], properties: Optional[_models.DiscoveredAssetEndpointProfileProperties])`
+  - Method `DiscoveredAssetEndpointProfile.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `DiscoveredAssetEndpointProfile.__init__` has a new overload `def __init__(self: None, location: str, tags: Optional[Dict[str, str]])`
+  - Method `DiscoveredAssetEndpointProfile.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `DiscoveredAssetEndpointProfileProperties.__init__` has a new overload `def __init__(self: None, target_address: str, endpoint_profile_type: str, discovery_id: str, version: int, additional_configuration: Optional[str], supported_authentication_methods: Optional[List[Union[str, _models.AuthenticationMethod]]])`
+  - Method `DiscoveredAssetEndpointProfileProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `DiscoveredAssetEndpointProfileUpdate.__init__` has a new overload `def __init__(self: None, tags: Optional[Dict[str, str]], properties: Optional[_models.DiscoveredAssetEndpointProfileUpdateProperties])`
+  - Method `DiscoveredAssetEndpointProfileUpdate.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `DiscoveredAssetEndpointProfileUpdateProperties.__init__` has a new overload `def __init__(self: None, target_address: Optional[str], additional_configuration: Optional[str], supported_authentication_methods: Optional[List[Union[str, _models.AuthenticationMethod]]], endpoint_profile_type: Optional[str], discovery_id: Optional[str], version: Optional[int])`
+  - Method `DiscoveredAssetEndpointProfileUpdateProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `DiscoveredAssetProperties.__init__` has a new overload `def __init__(self: None, asset_endpoint_profile_ref: str, discovery_id: str, version: int, manufacturer: Optional[str], manufacturer_uri: Optional[str], model: Optional[str], product_code: Optional[str], hardware_revision: Optional[str], software_revision: Optional[str], documentation_uri: Optional[str], serial_number: Optional[str], default_datasets_configuration: Optional[str], default_events_configuration: Optional[str], default_topic: Optional[_models.Topic], datasets: Optional[List[_models.DiscoveredDataset]], events: Optional[List[_models.DiscoveredEvent]])`
+  - Method `DiscoveredAssetProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `DiscoveredAssetUpdate.__init__` has a new overload `def __init__(self: None, tags: Optional[Dict[str, str]], properties: Optional[_models.DiscoveredAssetUpdateProperties])`
+  - Method `DiscoveredAssetUpdate.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `DiscoveredAssetUpdateProperties.__init__` has a new overload `def __init__(self: None, discovery_id: Optional[str], version: Optional[int], manufacturer: Optional[str], manufacturer_uri: Optional[str], model: Optional[str], product_code: Optional[str], hardware_revision: Optional[str], software_revision: Optional[str], documentation_uri: Optional[str], serial_number: Optional[str], default_datasets_configuration: Optional[str], default_events_configuration: Optional[str], default_topic: Optional[_models.Topic], datasets: Optional[List[_models.DiscoveredDataset]], events: Optional[List[_models.DiscoveredEvent]])`
+  - Method `DiscoveredAssetUpdateProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `DiscoveredDataPoint.__init__` has a new overload `def __init__(self: None, name: str, data_source: str, data_point_configuration: Optional[str], last_updated_on: Optional[datetime])`
+  - Method `DiscoveredDataPoint.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `DiscoveredDataset.__init__` has a new overload `def __init__(self: None, name: str, dataset_configuration: Optional[str], topic: Optional[_models.Topic], data_points: Optional[List[_models.DiscoveredDataPoint]])`
+  - Method `DiscoveredDataset.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `DiscoveredEvent.__init__` has a new overload `def __init__(self: None, name: str, event_notifier: str, event_configuration: Optional[str], topic: Optional[_models.Topic], last_updated_on: Optional[datetime])`
+  - Method `DiscoveredEvent.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `EventBase.__init__` has a new overload `def __init__(self: None, name: str, event_notifier: str, event_configuration: Optional[str], topic: Optional[_models.Topic])`
+  - Method `EventBase.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `Schema.__init__` has a new overload `def __init__(self: None, properties: Optional[_models.SchemaProperties])`
+  - Method `Schema.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `SchemaProperties.__init__` has a new overload `def __init__(self: None, format: Union[str, _models.Format], schema_type: Union[str, _models.SchemaType], display_name: Optional[str], description: Optional[str], tags: Optional[Dict[str, str]])`
+  - Method `SchemaProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `SchemaRegistry.__init__` has a new overload `def __init__(self: None, location: str, tags: Optional[Dict[str, str]], properties: Optional[_models.SchemaRegistryProperties], identity: Optional[_models.SystemAssignedServiceIdentity])`
+  - Method `SchemaRegistry.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `SchemaRegistry.__init__` has a new overload `def __init__(self: None, location: str, tags: Optional[Dict[str, str]])`
+  - Method `SchemaRegistry.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `SchemaRegistryProperties.__init__` has a new overload `def __init__(self: None, namespace: str, storage_account_container_url: str, display_name: Optional[str], description: Optional[str])`
+  - Method `SchemaRegistryProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `SchemaRegistryUpdate.__init__` has a new overload `def __init__(self: None, identity: Optional[_models.SystemAssignedServiceIdentity], tags: Optional[Dict[str, str]], properties: Optional[_models.SchemaRegistryUpdateProperties])`
+  - Method `SchemaRegistryUpdate.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `SchemaRegistryUpdateProperties.__init__` has a new overload `def __init__(self: None, display_name: Optional[str], description: Optional[str])`
+  - Method `SchemaRegistryUpdateProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `SchemaVersion.__init__` has a new overload `def __init__(self: None, properties: Optional[_models.SchemaVersionProperties])`
+  - Method `SchemaVersion.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `SchemaVersionProperties.__init__` has a new overload `def __init__(self: None, schema_content: str, description: Optional[str])`
+  - Method `SchemaVersionProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `SystemAssignedServiceIdentity.__init__` has a new overload `def __init__(self: None, type: Union[str, _models.SystemAssignedServiceIdentityType])`
+  - Method `SystemAssignedServiceIdentity.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `Topic.__init__` has a new overload `def __init__(self: None, path: str, retain: Optional[Union[str, _models.TopicRetainType]])`
+  - Method `Topic.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
+  - Method `AssetEndpointProfilesOperations.begin_create_or_replace` has a new overload `def begin_create_or_replace(self: None, resource_group_name: str, asset_endpoint_profile_name: str, resource: JSON, content_type: str)`
+  - Method `AssetEndpointProfilesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, asset_endpoint_profile_name: str, properties: JSON, content_type: str)`
+  - Method `AssetsOperations.begin_create_or_replace` has a new overload `def begin_create_or_replace(self: None, resource_group_name: str, asset_name: str, resource: JSON, content_type: str)`
+  - Method `AssetsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, asset_name: str, properties: JSON, content_type: str)`
+  - Method `DiscoveredAssetEndpointProfilesOperations.begin_create_or_replace` has a new overload `def begin_create_or_replace(self: None, resource_group_name: str, discovered_asset_endpoint_profile_name: str, resource: DiscoveredAssetEndpointProfile, content_type: str)`
+  - Method `DiscoveredAssetEndpointProfilesOperations.begin_create_or_replace` has a new overload `def begin_create_or_replace(self: None, resource_group_name: str, discovered_asset_endpoint_profile_name: str, resource: JSON, content_type: str)`
+  - Method `DiscoveredAssetEndpointProfilesOperations.begin_create_or_replace` has a new overload `def begin_create_or_replace(self: None, resource_group_name: str, discovered_asset_endpoint_profile_name: str, resource: IO[bytes], content_type: str)`
+  - Method `DiscoveredAssetEndpointProfilesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, discovered_asset_endpoint_profile_name: str, properties: DiscoveredAssetEndpointProfileUpdate, content_type: str)`
+  - Method `DiscoveredAssetEndpointProfilesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, discovered_asset_endpoint_profile_name: str, properties: JSON, content_type: str)`
+  - Method `DiscoveredAssetEndpointProfilesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, discovered_asset_endpoint_profile_name: str, properties: IO[bytes], content_type: str)`
+  - Method `DiscoveredAssetsOperations.begin_create_or_replace` has a new overload `def begin_create_or_replace(self: None, resource_group_name: str, discovered_asset_name: str, resource: DiscoveredAsset, content_type: str)`
+  - Method `DiscoveredAssetsOperations.begin_create_or_replace` has a new overload `def begin_create_or_replace(self: None, resource_group_name: str, discovered_asset_name: str, resource: JSON, content_type: str)`
+  - Method `DiscoveredAssetsOperations.begin_create_or_replace` has a new overload `def begin_create_or_replace(self: None, resource_group_name: str, discovered_asset_name: str, resource: IO[bytes], content_type: str)`
+  - Method `DiscoveredAssetsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, discovered_asset_name: str, properties: DiscoveredAssetUpdate, content_type: str)`
+  - Method `DiscoveredAssetsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, discovered_asset_name: str, properties: JSON, content_type: str)`
+  - Method `DiscoveredAssetsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, discovered_asset_name: str, properties: IO[bytes], content_type: str)`
+  - Method `SchemaRegistriesOperations.begin_create_or_replace` has a new overload `def begin_create_or_replace(self: None, resource_group_name: str, schema_registry_name: str, resource: SchemaRegistry, content_type: str)`
+  - Method `SchemaRegistriesOperations.begin_create_or_replace` has a new overload `def begin_create_or_replace(self: None, resource_group_name: str, schema_registry_name: str, resource: JSON, content_type: str)`
+  - Method `SchemaRegistriesOperations.begin_create_or_replace` has a new overload `def begin_create_or_replace(self: None, resource_group_name: str, schema_registry_name: str, resource: IO[bytes], content_type: str)`
+  - Method `SchemaRegistriesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, schema_registry_name: str, properties: SchemaRegistryUpdate, content_type: str)`
+  - Method `SchemaRegistriesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, schema_registry_name: str, properties: JSON, content_type: str)`
+  - Method `SchemaRegistriesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, schema_registry_name: str, properties: IO[bytes], content_type: str)`
+  - Method `SchemaVersionsOperations.create_or_replace` has a new overload `def create_or_replace(self: None, resource_group_name: str, schema_registry_name: str, schema_name: str, schema_version_name: str, resource: SchemaVersion, content_type: str)`
+  - Method `SchemaVersionsOperations.create_or_replace` has a new overload `def create_or_replace(self: None, resource_group_name: str, schema_registry_name: str, schema_name: str, schema_version_name: str, resource: JSON, content_type: str)`
+  - Method `SchemaVersionsOperations.create_or_replace` has a new overload `def create_or_replace(self: None, resource_group_name: str, schema_registry_name: str, schema_name: str, schema_version_name: str, resource: IO[bytes], content_type: str)`
+  - Method `SchemasOperations.create_or_replace` has a new overload `def create_or_replace(self: None, resource_group_name: str, schema_registry_name: str, schema_name: str, resource: Schema, content_type: str)`
+  - Method `SchemasOperations.create_or_replace` has a new overload `def create_or_replace(self: None, resource_group_name: str, schema_registry_name: str, schema_name: str, resource: JSON, content_type: str)`
+  - Method `SchemasOperations.create_or_replace` has a new overload `def create_or_replace(self: None, resource_group_name: str, schema_registry_name: str, schema_name: str, resource: IO[bytes], content_type: str)`
+
+### Breaking Changes
+
+  - Model `Asset` deleted or renamed its instance variable `additional_properties`
+  - Model `AssetEndpointProfile` deleted or renamed its instance variable `additional_properties`
+  - Model `AssetEndpointProfileProperties` deleted or renamed its instance variable `user_authentication`
+  - Model `AssetEndpointProfileProperties` deleted or renamed its instance variable `transport_authentication`
+  - Model `AssetEndpointProfileProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `AssetEndpointProfileUpdate` deleted or renamed its instance variable `additional_properties`
+  - Model `AssetEndpointProfileUpdateProperties` deleted or renamed its instance variable `user_authentication`
+  - Model `AssetEndpointProfileUpdateProperties` deleted or renamed its instance variable `transport_authentication`
+  - Model `AssetEndpointProfileUpdateProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `AssetProperties` deleted or renamed its instance variable `asset_type`
+  - Model `AssetProperties` deleted or renamed its instance variable `asset_endpoint_profile_uri`
+  - Model `AssetProperties` deleted or renamed its instance variable `default_data_points_configuration`
+  - Model `AssetProperties` deleted or renamed its instance variable `data_points`
+  - Model `AssetProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `AssetStatus` deleted or renamed its instance variable `additional_properties`
+  - Model `AssetStatusError` deleted or renamed its instance variable `additional_properties`
+  - Model `AssetUpdate` deleted or renamed its instance variable `additional_properties`
+  - Model `AssetUpdateProperties` deleted or renamed its instance variable `asset_type`
+  - Model `AssetUpdateProperties` deleted or renamed its instance variable `default_data_points_configuration`
+  - Model `AssetUpdateProperties` deleted or renamed its instance variable `data_points`
+  - Model `AssetUpdateProperties` deleted or renamed its instance variable `additional_properties`
+  - Model `DataPoint` deleted or renamed its instance variable `capability_id`
+  - Model `DataPoint` deleted or renamed its instance variable `additional_properties`
+  - Model `ErrorAdditionalInfo` deleted or renamed its instance variable `additional_properties`
+  - Model `ErrorDetail` deleted or renamed its instance variable `additional_properties`
+  - Model `ErrorResponse` deleted or renamed its instance variable `additional_properties`
+  - Model `Event` deleted or renamed its instance variable `capability_id`
+  - Model `Event` deleted or renamed its instance variable `additional_properties`
+  - Model `ExtendedLocation` deleted or renamed its instance variable `additional_properties`
+  - Model `Operation` deleted or renamed its instance variable `additional_properties`
+  - Model `OperationDisplay` deleted or renamed its instance variable `additional_properties`
+  - Model `OperationStatusResult` deleted or renamed its instance variable `additional_properties`
+  - Model `Resource` deleted or renamed its instance variable `additional_properties`
+  - Model `SystemData` deleted or renamed its instance variable `additional_properties`
+  - Model `TrackedResource` deleted or renamed its instance variable `additional_properties`
+  - Model `UsernamePasswordCredentials` deleted or renamed its instance variable `username_reference`
+  - Model `UsernamePasswordCredentials` deleted or renamed its instance variable `password_reference`
+  - Model `UsernamePasswordCredentials` deleted or renamed its instance variable `additional_properties`
+  - Model `X509Credentials` deleted or renamed its instance variable `certificate_reference`
+  - Model `X509Credentials` deleted or renamed its instance variable `additional_properties`
+  - Deleted or renamed model `DataPointsObservabilityMode`
+  - Deleted or renamed model `EventsObservabilityMode`
+  - Deleted or renamed model `OwnCertificate`
+  - Deleted or renamed model `TransportAuthentication`
+  - Deleted or renamed model `TransportAuthenticationUpdate`
+  - Deleted or renamed model `UserAuthentication`
+  - Deleted or renamed model `UserAuthenticationMode`
+  - Deleted or renamed model `UserAuthenticationUpdate`
+  - Deleted or renamed model `UsernamePasswordCredentialsUpdate`
+  - Deleted or renamed model `X509CredentialsUpdate`
+
 ## 1.0.0b1 (2024-04-22)
 
 * Initial Release

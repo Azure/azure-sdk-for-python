@@ -14,6 +14,7 @@ from devtools_testutils import (
 
 AZURE_LOCATION = "eastus"
 
+
 @pytest.mark.live_test_only
 class TestMgmtDeviceRegistryList(AzureMgmtRecordedTestCase):
 
