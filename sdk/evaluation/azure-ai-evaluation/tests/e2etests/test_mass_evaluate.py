@@ -9,7 +9,7 @@ import pytest
 
 from azure.ai.evaluation import (
     F1ScoreEvaluator,
-    # GleuScoreEvaluator,
+    GleuScoreEvaluator,
     BleuScoreEvaluator,
     RougeScoreEvaluator,
     MeteorScoreEvaluator,
@@ -79,7 +79,7 @@ class TestMassEvaluate:
         # content safety disabled temporarily to test CI PF teardown race condition
         evaluators = {
             "f1_score": F1ScoreEvaluator(),
-            # "gleu": GleuScoreEvaluator(),
+            "gleu": GleuScoreEvaluator(),
             "bleu": BleuScoreEvaluator(),
             "rouge": RougeScoreEvaluator(RougeType.ROUGE_L),
             "meteor": MeteorScoreEvaluator(),
@@ -105,13 +105,13 @@ class TestMassEvaluate:
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
 
-        assert len(row_result_df.keys()) == 45  #  63 with gleu, qa/similarity
+        assert len(row_result_df.keys()) == 46  #  63 with gleu, qa/similarity
         assert len(row_result_df["inputs.query"]) == 3
         assert len(row_result_df["inputs.context"]) == 3
         assert len(row_result_df["inputs.response"]) == 3
         assert len(row_result_df["inputs.ground_truth"]) == 3
         assert len(row_result_df["outputs.f1_score.f1_score"]) == 3
-        # assert len(row_result_df["outputs.gleu.gleu_score"]) == 3
+        assert len(row_result_df["outputs.gleu.gleu_score"]) == 3
         assert len(row_result_df["outputs.bleu.bleu_score"]) == 3
         assert len(row_result_df["outputs.rouge.rouge_precision"]) == 3
         assert len(row_result_df["outputs.rouge.rouge_recall"]) == 3
@@ -170,9 +170,9 @@ class TestMassEvaluate:
         assert len(row_result_df["outputs.content_safety.violence_score"]) == 3
         assert len(row_result_df["outputs.content_safety.violence_reason"]) == 3
 
-        assert len(metrics.keys()) == 25  # 39 with gleu, qa, similarity
+        assert len(metrics.keys()) == 26  # 39 with gleu, qa, similarity
         assert metrics["f1_score.f1_score"] >= 0
-        # assert metrics["gleu.gleu_score"] >= 0
+        assert metrics["gleu.gleu_score"] >= 0
         assert metrics["bleu.bleu_score"] >= 0
         assert metrics["rouge.rouge_precision"] >= 0
         assert metrics["rouge.rouge_recall"] >= 0
