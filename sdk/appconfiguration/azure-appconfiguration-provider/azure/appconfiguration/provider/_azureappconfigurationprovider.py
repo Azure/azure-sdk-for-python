@@ -451,7 +451,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
     keys. Enables resolution of Key Vault references in configuration settings.
     """
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         endpoint = kwargs.pop("endpoint", None)
         self._origin_endpoint = endpoint
 

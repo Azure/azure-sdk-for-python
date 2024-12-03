@@ -13,6 +13,7 @@ from ._constants import TransportType
 if TYPE_CHECKING:
     from ._pyamqp.authentication import JWTTokenAuth
     from ._pyamqp._connection import Connection
+
     try:
         from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
         from uamqp import Connection as uamqp_Connection
@@ -48,24 +49,24 @@ class _ConnectionMode(Enum):
 
 
 class _SharedConnectionManager:  # pylint:disable=too-many-instance-attributes
-    def __init__( #pylint:disable=unused-argument
-            self,
-            *,
-            container_id: Optional[str] = None,
-            custom_endpoint_address: Optional[str] = None,
-            debug: bool = False,
-            error_policy: Optional[Any] = None,
-            properties: Optional[Dict[str, Any]] = None,
-            encoding: str = "UTF-8",
-            transport_type: TransportType = TransportType.Amqp,
-            http_proxy: Optional[str] = None,
-            max_frame_size: int,
-            channel_max: int,
-            idle_timeout: float,
-            remote_idle_timeout_empty_frame_send_ratio: float,
-            amqp_transport: AmqpTransport,
-            **kwargs: Any
-            ):
+    def __init__(  # pylint:disable=unused-argument
+        self,
+        *,
+        container_id: Optional[str] = None,
+        custom_endpoint_address: Optional[str] = None,
+        debug: bool = False,
+        error_policy: Optional[Any] = None,
+        properties: Optional[Dict[str, Any]] = None,
+        encoding: str = "UTF-8",
+        transport_type: TransportType = TransportType.Amqp,
+        http_proxy: Optional[str] = None,
+        max_frame_size: int,
+        channel_max: int,
+        idle_timeout: float,
+        remote_idle_timeout_empty_frame_send_ratio: float,
+        amqp_transport: AmqpTransport,
+        **kwargs: Any,
+    ):
         self._lock = Lock()
         self._conn: Union[Connection, uamqp_Connection] = None
 

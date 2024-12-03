@@ -27,7 +27,7 @@ class TestHybridComputeManagementAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 machine_name="str",
                 extension_upgrade_parameters={"extensionTargets": {"str": {"targetVersion": "str"}}},
-                api_version="2024-07-10",
+                api_version="2024-07-31-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

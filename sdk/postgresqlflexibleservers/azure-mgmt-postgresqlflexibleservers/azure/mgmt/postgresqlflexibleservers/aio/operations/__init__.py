@@ -25,9 +25,11 @@ from ._get_private_dns_zone_suffix_operations import GetPrivateDnsZoneSuffixOper
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_endpoint_connection_operations import PrivateEndpointConnectionOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
+from ._quota_usages_operations import QuotaUsagesOperations
 from ._replicas_operations import ReplicasOperations
 from ._log_files_operations import LogFilesOperations
 from ._server_threat_protection_settings_operations import ServerThreatProtectionSettingsOperations
+from ._tuning_options_operations import TuningOptionsOperations
 from ._virtual_endpoints_operations import VirtualEndpointsOperations
 from ._virtual_network_subnet_usage_operations import VirtualNetworkSubnetUsageOperations
 
@@ -55,9 +57,11 @@ __all__ = [
     "PrivateEndpointConnectionsOperations",
     "PrivateEndpointConnectionOperations",
     "PrivateLinkResourcesOperations",
+    "QuotaUsagesOperations",
     "ReplicasOperations",
     "LogFilesOperations",
     "ServerThreatProtectionSettingsOperations",
+    "TuningOptionsOperations",
     "VirtualEndpointsOperations",
     "VirtualNetworkSubnetUsageOperations",
 ]

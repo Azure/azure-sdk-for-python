@@ -24,13 +24,13 @@ class RankableAction(Model):
     """
 
     _validation = {
-        'id': {'required': True, 'max_length': 256},
-        'features': {'required': True},
+        "id": {"required": True, "max_length": 256},
+        "features": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'features': {'key': 'features', 'type': '[object]'},
+        "id": {"key": "id", "type": "str"},
+        "features": {"key": "features", "type": "[object]"},
     }
 
     def __init__(self, *, id: str, features, **kwargs) -> None:

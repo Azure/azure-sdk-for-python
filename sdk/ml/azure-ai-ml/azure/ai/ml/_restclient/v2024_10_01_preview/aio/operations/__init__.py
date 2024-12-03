@@ -25,6 +25,7 @@ from ._registry_model_containers_operations import RegistryModelContainersOperat
 from ._registry_model_versions_operations import RegistryModelVersionsOperations
 from ._batch_endpoints_operations import BatchEndpointsOperations
 from ._batch_deployments_operations import BatchDeploymentsOperations
+from ._capability_hosts_operations import CapabilityHostsOperations
 from ._code_containers_operations import CodeContainersOperations
 from ._code_versions_operations import CodeVersionsOperations
 from ._component_containers_operations import ComponentContainersOperations
@@ -89,6 +90,7 @@ __all__ = [
     'RegistryModelVersionsOperations',
     'BatchEndpointsOperations',
     'BatchDeploymentsOperations',
+    'CapabilityHostsOperations',
     'CodeContainersOperations',
     'CodeVersionsOperations',
     'ComponentContainersOperations',

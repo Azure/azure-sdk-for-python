@@ -73,20 +73,22 @@ def create_stress_blob(stress_config, blob_name):
 def create_stress_eventhub(stress_config, eventhub_name):
     hub_value = EventHub(
         message_retention_in_days=stress_config["BASIC_CONFIG"]["message_retention_in_days"],
-        partition_count=stress_config["BASIC_CONFIG"]["partition_cnt_to_create"]
+        partition_count=stress_config["BASIC_CONFIG"]["partition_cnt_to_create"],
     )
     if stress_config["CREDENTIALS"]["EVENT_HUB_CONN_STR"]:
-        _, namespace, shared_access_key_name, shared_access_key, _ = parse_eventhub_conn_str(stress_config["CREDENTIALS"]["EVENT_HUB_CONN_STR"])
+        _, namespace, shared_access_key_name, shared_access_key, _ = parse_eventhub_conn_str(
+            stress_config["CREDENTIALS"]["EVENT_HUB_CONN_STR"]
+        )
         client = ServiceBusService(
             service_namespace=namespace,
             shared_access_key_name=shared_access_key_name,
-            shared_access_key_value=shared_access_key
+            shared_access_key_value=shared_access_key,
         )
     else:
         client = ServiceBusService(
             service_namespace=stress_config["CREDENTIALS"]["EVENT_HUB_NAMESPACE"],
-            shared_access_key_name=stress_config['CREDENTIALS']["EVENT_HUB_SAS_POLICY"],
-            shared_access_key_value=stress_config['CREDENTIALS']["EVENT_HUB_SAS_KEY"]
+            shared_access_key_name=stress_config["CREDENTIALS"]["EVENT_HUB_SAS_POLICY"],
+            shared_access_key_value=stress_config["CREDENTIALS"]["EVENT_HUB_SAS_KEY"],
         )
     client.delete_event_hub(eventhub_name)
     if client.create_event_hub(eventhub_name, hub=hub_value, fail_on_exist=True):
@@ -99,7 +101,7 @@ def create_resource_for_task_if_needed(stress_config, task_name):
         print("    ---- No resources would be created, using existing resources.")
         return (
             stress_config["CREDENTIALS"]["EVENT_HUB_NAME"],
-            stress_config["CREDENTIALS"]["AZURE_STORAGE_BLOB_CONTAINER_NAME"]
+            stress_config["CREDENTIALS"]["AZURE_STORAGE_BLOB_CONTAINER_NAME"],
         )
 
     resource_name = str.replace(task_name, "_", "-")
@@ -131,40 +133,38 @@ def generate_base_receive_command(task_name):
 
 def generate_command_basic_config(basic_config):
     partial_command = ""
-    partial_command += (" --duration {}".format(basic_config["duration"]))
+    partial_command += " --duration {}".format(basic_config["duration"])
     if basic_config.getboolean("print_console"):
         partial_command += " --print_console"
-    partial_command += (" --auth_timeout {}".format(basic_config["auth_timeout"]))
-    partial_command += (" --output_interval {}".format(basic_config["output_interval"]))
+    partial_command += " --auth_timeout {}".format(basic_config["auth_timeout"])
+    partial_command += " --output_interval {}".format(basic_config["output_interval"])
     return partial_command
 
 
 def generate_command_send_config(send_config, proxy_config):
     partial_command = ""
     if send_config["parallel_send_cnt"]:
-        partial_command += (" --parallel_send_cnt {}".format(send_config["parallel_send_cnt"]))
+        partial_command += " --parallel_send_cnt {}".format(send_config["parallel_send_cnt"])
         if send_config["parallel_create_new_client"] and send_config.getboolean("parallel_create_new_client"):
             partial_command += " --parallel_create_new_client"
-    partial_command += (" --payload {}".format(send_config["payload"]))
-    partial_command += (" --partitions {}".format(send_config["partitions"]))
+    partial_command += " --payload {}".format(send_config["payload"])
+    partial_command += " --partitions {}".format(send_config["partitions"])
     if send_config.getboolean("uamqp_logging_enable"):
         partial_command += " --uamqp_logging_enable"
     if send_config.getboolean("use_http_proxy"):
-        partial_command += (
-            " --proxy_hostname {} --proxy_port {} --proxy_username {} --proxy_password {}".format(
-                proxy_config["proxy_hostname"],
-                proxy_config["proxy_port"],
-                proxy_config["proxy_username"],
-                proxy_config["proxy_password"]
-            )
+        partial_command += " --proxy_hostname {} --proxy_port {} --proxy_username {} --proxy_password {}".format(
+            proxy_config["proxy_hostname"],
+            proxy_config["proxy_port"],
+            proxy_config["proxy_username"],
+            proxy_config["proxy_password"],
         )
-    partial_command += (" --transport_type {}".format(send_config["transport_type"]))
+    partial_command += " --transport_type {}".format(send_config["transport_type"])
     if send_config["retry_total"]:
-        partial_command += (" --retry_total {}".format(send_config["retry_total"]))
+        partial_command += " --retry_total {}".format(send_config["retry_total"])
     if send_config["retry_backoff_factor"]:
-        partial_command += (" --retry_backoff_factor {}".format(send_config["retry_backoff_factor"]))
+        partial_command += " --retry_backoff_factor {}".format(send_config["retry_backoff_factor"])
     if send_config["retry_backoff_max"]:
-        partial_command += (" --retry_backoff_max {}".format(send_config["retry_backoff_max"]))
+        partial_command += " --retry_backoff_max {}".format(send_config["retry_backoff_max"])
     if send_config.getboolean("ignore_send_failure"):
         partial_command += " --ignore_send_failure"
     return partial_command
@@ -180,7 +180,7 @@ def generate_command_receive_config(receive_config, proxy_config):
     if receive_config["starting_sequence_number"]:
         partial_command += " --starting_sequence_number {}".format(receive_config["starting_sequence_number"])
     if receive_config["starting_datetime"]:
-        partial_command += " --starting_datetime \"{}\"".format(receive_config["starting_datetime"])
+        partial_command += ' --starting_datetime "{}"'.format(receive_config["starting_datetime"])
     partial_command += " --partitions {}".format(receive_config["partitions"])
     partial_command += " --load_balancing_interval {}".format(receive_config["load_balancing_interval"])
     partial_command += " --transport_type {}".format(receive_config["transport_type"])
@@ -190,13 +190,11 @@ def generate_command_receive_config(receive_config, proxy_config):
     if receive_config.getboolean("uamqp_logging_enable"):
         partial_command += " --uamqp_logging_enable"
     if receive_config.getboolean("use_http_proxy"):
-        partial_command += (
-            " --proxy_hostname {} --proxy_port {} --proxy_username {} --proxy_password {}".format(
-                proxy_config["proxy_hostname"],
-                proxy_config["proxy_port"],
-                proxy_config["proxy_username"],
-                proxy_config["proxy_password"]
-            )
+        partial_command += " --proxy_hostname {} --proxy_port {} --proxy_username {} --proxy_password {}".format(
+            proxy_config["proxy_hostname"],
+            proxy_config["proxy_port"],
+            proxy_config["proxy_username"],
+            proxy_config["proxy_password"],
         )
 
     if receive_config["parallel_recv_cnt"]:
@@ -211,7 +209,7 @@ def generate_command_resource_config(credential_config, eventhub_name, blob_name
     partial_command = ""
     # EventHub Configuration
     if credential_config["EVENT_HUB_CONN_STR"]:
-        partial_command += " --conn_str \"{}\"".format(credential_config["EVENT_HUB_CONN_STR"])
+        partial_command += ' --conn_str "{}"'.format(credential_config["EVENT_HUB_CONN_STR"])
     if credential_config["EVENT_HUB_HOSTNAME"]:
         partial_command += "--hostname {}".format(credential_config["EVENT_HUB_HOSTNAME"])
     if eventhub_name or credential_config["EVENT_HUB_NAME"]:
@@ -230,8 +228,8 @@ def generate_command_resource_config(credential_config, eventhub_name, blob_name
     # Blob Configuration
     if blob_name:
         if credential_config["AZURE_STORAGE_CONN_STR"]:
-            partial_command += " --storage_conn_str \"{}\"".format(credential_config["AZURE_STORAGE_CONN_STR"])
-        partial_command += " --storage_container_name \"{}\"".format(blob_name)
+            partial_command += ' --storage_conn_str "{}"'.format(credential_config["AZURE_STORAGE_CONN_STR"])
+        partial_command += ' --storage_container_name "{}"'.format(blob_name)
 
     return partial_command
 
@@ -243,11 +241,8 @@ def generate_running_command(task_name, stress_config, eventhub_name, blob_name)
         send_command = generate_base_send_command(task_name)
         send_command += generate_command_resource_config(stress_config["CREDENTIALS"], eventhub_name, None)
         send_command += generate_command_basic_config(stress_config["BASIC_CONFIG"])
-        send_command += generate_command_send_config(
-            stress_config["EVENTHUB_SEND_CONFIG"],
-            stress_config["PROXY"]
-        )
-        send_command += " --log_filename \"{}_send.log\"".format(task_name)
+        send_command += generate_command_send_config(stress_config["EVENTHUB_SEND_CONFIG"], stress_config["PROXY"])
+        send_command += ' --log_filename "{}_send.log"'.format(task_name)
         commands.append(send_command)
 
     if "receive" in task_name:
@@ -255,20 +250,19 @@ def generate_running_command(task_name, stress_config, eventhub_name, blob_name)
         receive_command += generate_command_resource_config(stress_config["CREDENTIALS"], eventhub_name, blob_name)
         receive_command += generate_command_basic_config(stress_config["BASIC_CONFIG"])
         receive_command += generate_command_receive_config(
-            stress_config["EVENTHUB_RECEIVE_CONFIG"],
-            stress_config["PROXY"]
+            stress_config["EVENTHUB_RECEIVE_CONFIG"], stress_config["PROXY"]
         )
-        receive_command += " --log_filename \"{}_recv.log\"".format(task_name)
+        receive_command += ' --log_filename "{}_recv.log"'.format(task_name)
         commands.append(receive_command)
 
     return commands
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     config = configparser.ConfigParser()
     config.read("./stress_runner.cfg")
 
-    target_stress_method = [m for m in config['RUN_METHODS'] if config['RUN_METHODS'].getboolean(m)]
+    target_stress_method = [m for m in config["RUN_METHODS"] if config["RUN_METHODS"].getboolean(m)]
 
     print("#### The following methods will be tested:")
 
@@ -283,12 +277,7 @@ if __name__ == '__main__':
     python_commands = []
     for i in range(len(target_stress_method)):
         python_commands.extend(
-            generate_running_command(
-                target_stress_method[i],
-                config,
-                resources[i][0],
-                resources[i][1]
-            )
+            generate_running_command(target_stress_method[i], config, resources[i][0], resources[i][1])
         )
 
     for command in python_commands:
@@ -296,7 +285,7 @@ if __name__ == '__main__':
 
     print("#### Generating commands done.")
 
-    if config['BASIC_CONFIG'].getboolean("run_generated_commands"):
+    if config["BASIC_CONFIG"].getboolean("run_generated_commands"):
         for command in python_commands:
             Popen(command, shell=(platform != "win32"))
 

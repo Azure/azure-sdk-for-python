@@ -28,6 +28,7 @@ from process_monitor import ProcessMonitor
 PRINT_CONSOLE = True
 LOGFILE_NAME = os.environ.get("DEBUG_SHARE") + "output"
 
+
 class ReceiveType:
     push = "push"
     pull = "pull"
@@ -45,6 +46,7 @@ class StressTestResults(object):
 
     def __repr__(self):
         return str(vars(self))
+
 
 class StressTestRunnerState(object):
     """Per-runner state, e.g. if you spawn 3 senders each will have this as their state object,
@@ -109,9 +111,7 @@ class StressTestRunner:
         self.max_message_count = max_message_count
         self.fail_on_exception = fail_on_exception
         self.send_session_id = send_session_id
-        self.azure_monitor_metric = azure_monitor_metric or AbstractMonitorMetric(
-            "fake_test_name"
-        )
+        self.azure_monitor_metric = azure_monitor_metric or AbstractMonitorMetric("fake_test_name")
         self.logging_level = logging_level
         logfile_name = LOGFILE_NAME
         if transport_type:
@@ -173,9 +173,7 @@ class StressTestRunner:
         def _do_interval_logging():
             if end_time > datetime.utcnow() and not self._should_stop:
                 self._state.populate_process_stats(process_monitor)
-                logger.critical(
-                    "%s RECURRENT STATUS: %s", description, self._state
-                )
+                logger.critical("%s RECURRENT STATUS: %s", description, self._state)
                 self._schedule_interval_logger(end_time, logger, process_monitor, description, interval_seconds)
 
         t = threading.Timer(interval_seconds, _do_interval_logging)
@@ -185,17 +183,13 @@ class StressTestRunner:
         if self.send_batch_size != None:
             batch = ServiceBusMessageBatch()
             for _ in range(self.send_batch_size):
-                message = ServiceBusMessage(
-                    self.pre_process_message_body("a" * self.message_size)
-                )
+                message = ServiceBusMessage(self.pre_process_message_body("a" * self.message_size))
                 self.pre_process_message(message)
                 batch.add_message(message)
             self.pre_process_message_batch(batch)
             return batch
         else:
-            message = ServiceBusMessage(
-                self.pre_process_message_body("a" * self.message_size)
-            )
+            message = ServiceBusMessage(self.pre_process_message_body("a" * self.message_size))
             self.pre_process_message(message)
             return message
 
@@ -221,9 +215,9 @@ class StressTestRunner:
                         if self.send_batch_size:
                             self._state.total_sent += self.send_batch_size
                         else:
-                            self._state.total_sent += 1 # send single message
+                            self._state.total_sent += 1  # send single message
                         self.on_send(self._state, message, sender)
-          
+
                     except Exception as e:
                         self.logger.exception("Exception during send: %s", e)
                         self.azure_monitor_metric.record_error(e)
@@ -303,17 +297,11 @@ class StressTestRunner:
             with concurrent.futures.ThreadPoolExecutor(max_workers=4) as proc_pool:
                 self.logger.info("STARTING PROC POOL")
                 if self.senders:
-                    senders = [
-                        proc_pool.submit(self._send, sender, end_time)
-                        for sender in self.senders
-                    ]
+                    senders = [proc_pool.submit(self._send, sender, end_time) for sender in self.senders]
                 else:
                     senders = []
                 if self.receivers:
-                    receivers = [
-                        proc_pool.submit(self._receive, receiver, end_time)
-                        for receiver in self.receivers
-                    ]
+                    receivers = [proc_pool.submit(self._receive, receiver, end_time) for receiver in self.receivers]
                 else:
                     receivers = []
                 result = StressTestResults()
@@ -326,25 +314,15 @@ class StressTestRunner:
                 # TODO: do as_completed in one batch to provide a way to short-circuit on failure.
                 if self.senders:
                     result.state_by_sender = {
-                        s: f.result()
-                        for s, f in zip(
-                            self.senders, concurrent.futures.as_completed(senders)
-                        )
+                        s: f.result() for s, f in zip(self.senders, concurrent.futures.as_completed(senders))
                     }
-                    result.total_sent = sum(
-                        [r.total_sent for r in result.state_by_sender.values()]
-                    )
+                    result.total_sent = sum([r.total_sent for r in result.state_by_sender.values()])
                 if self.receivers:
                     result.state_by_receiver = {
-                        r: f.result()
-                        for r, f in zip(
-                            self.receivers, concurrent.futures.as_completed(receivers)
-                        )
+                        r: f.result() for r, f in zip(self.receivers, concurrent.futures.as_completed(receivers))
                     }
                     self.logger.info("Got receiver results")
-                    result.total_received = sum(
-                        [r.total_received for r in result.state_by_receiver.values()]
-                    )
+                    result.total_received = sum([r.total_received for r in result.state_by_receiver.values()])
                 result.time_elapsed = end_time - start_time
                 self.logger.critical("Stress test completed.  Results:\n %s", result)
                 return result
@@ -455,18 +433,14 @@ class StressTestRunnerAsync(StressTestRunner):
                                 max_wait_time=self.max_wait_time,
                             )
                             for message in batch:
-                                await self._receive_handle_message(
-                                    message, receiver, end_time
-                                )
+                                await self._receive_handle_message(message, receiver, end_time)
                         elif self.receive_type == ReceiveType.push:
                             receiver.max_wait_time = self.max_wait_time
                             batch = receiver
                             async for message in batch:
                                 if end_time <= datetime.utcnow():
                                     break
-                                await self._receive_handle_message(
-                                    message, receiver, end_time
-                                )
+                                await self._receive_handle_message(message, receiver, end_time)
                         self.post_receive(self._state, receiver)
                     except Exception as e:
                         self.logger.exception("Exception during receive: %s", e)
@@ -488,16 +462,12 @@ class StressTestRunnerAsync(StressTestRunner):
             self.duration = timedelta(seconds=self.duration)
         end_time = start_time + (self._duration_override or self.duration)
         if self.senders:
-            send_tasks = [
-                asyncio.create_task(self._send_async(sender, end_time))
-                for sender in self.senders
-            ]
+            send_tasks = [asyncio.create_task(self._send_async(sender, end_time)) for sender in self.senders]
         else:
             send_tasks = []
         if self.receivers:
             receive_tasks = [
-                asyncio.create_task(self._receive_async(receiver, end_time))
-                for receiver in self.receivers
+                asyncio.create_task(self._receive_async(receiver, end_time)) for receiver in self.receivers
             ]
         else:
             receive_tasks = []
@@ -510,21 +480,13 @@ class StressTestRunnerAsync(StressTestRunner):
                     print(e)
             result = StressTestResults()
             if self.senders:
-                result.state_by_sender = {
-                    s: f.result() for s, f in zip(self.senders, send_tasks)
-                }
-                result.total_sent = sum(
-                [r.total_sent for r in result.state_by_sender.values()]
-                )
+                result.state_by_sender = {s: f.result() for s, f in zip(self.senders, send_tasks)}
+                result.total_sent = sum([r.total_sent for r in result.state_by_sender.values()])
             if self.receivers:
-                result.state_by_receiver = {
-                    r: f.result() for r, f in zip(self.receivers, receive_tasks)
-                }
+                result.state_by_receiver = {r: f.result() for r, f in zip(self.receivers, receive_tasks)}
                 self.logger.info("got receiver results")
 
-                result.total_received = sum(
-                    [r.total_received for r in result.state_by_receiver.values()]
-                )
+                result.total_received = sum([r.total_received for r in result.state_by_receiver.values()])
             result.time_elapsed = end_time - start_time
             self.logger.critical("Stress test completed.  Results:\n%s", result)
             return result

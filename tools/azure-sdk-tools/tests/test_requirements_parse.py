@@ -65,12 +65,12 @@ def test_replace_dev_reqs_relative(tmp_directory_create):
         os.path.join(expected_output_folder, "coretestserver-1.0.0b1-py3-none-any.whl"),
         os.path.join(expected_output_folder, "azure_identity-1.19.1-py3-none-any.whl"),
         os.path.join(expected_output_folder, "azure_identity-1.19.1-py3-none-any.whl"),
-        os.path.join(expected_output_folder, "azure_mgmt_core-1.4.0-py3-none-any.whl"),
-        os.path.join(expected_output_folder, "azure_mgmt_core-1.4.0-py3-none-any.whl"),
+        os.path.join(expected_output_folder, "azure_mgmt_core-1.5.0-py3-none-any.whl"),
+        os.path.join(expected_output_folder, "azure_mgmt_core-1.5.0-py3-none-any.whl"),
         os.path.join(expected_output_folder, "azure_sdk_tools-0.0.0-py3-none-any.whl[build]"),
         os.path.join(expected_output_folder, "azure_sdk_tools-0.0.0-py3-none-any.whl[build]"),
-        os.path.join(expected_output_folder, "azure_core-1.32.0-py3-none-any.whl"),
-        os.path.join(expected_output_folder, "azure_core-1.32.0-py3-none-any.whl"),
+        os.path.join(expected_output_folder, "azure_core-1.32.1-py3-none-any.whl"),
+        os.path.join(expected_output_folder, "azure_core-1.32.1-py3-none-any.whl"),
     ]
 
     requirements_before = get_requirements_from_file(requirements_file)

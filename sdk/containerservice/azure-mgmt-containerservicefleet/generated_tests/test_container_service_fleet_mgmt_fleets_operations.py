@@ -22,7 +22,7 @@ class TestContainerServiceFleetMgmtFleetsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_list_by_subscription(self, resource_group):
         response = self.client.fleets.list_by_subscription(
-            api_version="2024-05-02-preview",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestContainerServiceFleetMgmtFleetsOperations(AzureMgmtRecordedTestCase):
     def test_list_by_resource_group(self, resource_group):
         response = self.client.fleets.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-05-02-preview",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestContainerServiceFleetMgmtFleetsOperations(AzureMgmtRecordedTestCase):
         response = self.client.fleets.get(
             resource_group_name=resource_group.name,
             fleet_name="str",
-            api_version="2024-05-02-preview",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -62,11 +62,7 @@ class TestContainerServiceFleetMgmtFleetsOperations(AzureMgmtRecordedTestCase):
                 "eTag": "str",
                 "hubProfile": {
                     "agentProfile": {"subnetId": "str", "vmSize": "str"},
-                    "apiServerAccessProfile": {
-                        "enablePrivateCluster": bool,
-                        "enableVnetIntegration": bool,
-                        "subnetId": "str",
-                    },
+                    "apiServerAccessProfile": {"enablePrivateCluster": bool},
                     "dnsPrefix": "str",
                     "fqdn": "str",
                     "kubernetesVersion": "str",
@@ -92,7 +88,7 @@ class TestContainerServiceFleetMgmtFleetsOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-05-02-preview",
+            api_version="2024-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -113,7 +109,7 @@ class TestContainerServiceFleetMgmtFleetsOperations(AzureMgmtRecordedTestCase):
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2024-05-02-preview",
+            api_version="2024-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -125,7 +121,7 @@ class TestContainerServiceFleetMgmtFleetsOperations(AzureMgmtRecordedTestCase):
         response = self.client.fleets.begin_delete(
             resource_group_name=resource_group.name,
             fleet_name="str",
-            api_version="2024-05-02-preview",
+            api_version="2024-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -137,7 +133,7 @@ class TestContainerServiceFleetMgmtFleetsOperations(AzureMgmtRecordedTestCase):
         response = self.client.fleets.list_credentials(
             resource_group_name=resource_group.name,
             fleet_name="str",
-            api_version="2024-05-02-preview",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself

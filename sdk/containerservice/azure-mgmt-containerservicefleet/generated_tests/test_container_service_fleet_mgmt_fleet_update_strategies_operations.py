@@ -24,7 +24,7 @@ class TestContainerServiceFleetMgmtFleetUpdateStrategiesOperations(AzureMgmtReco
         response = self.client.fleet_update_strategies.list_by_fleet(
             resource_group_name=resource_group.name,
             fleet_name="str",
-            api_version="2024-05-02-preview",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestContainerServiceFleetMgmtFleetUpdateStrategiesOperations(AzureMgmtReco
             resource_group_name=resource_group.name,
             fleet_name="str",
             update_strategy_name="str",
-            api_version="2024-05-02-preview",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -66,7 +66,7 @@ class TestContainerServiceFleetMgmtFleetUpdateStrategiesOperations(AzureMgmtReco
                 },
                 "type": "str",
             },
-            api_version="2024-05-02-preview",
+            api_version="2024-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -79,7 +79,7 @@ class TestContainerServiceFleetMgmtFleetUpdateStrategiesOperations(AzureMgmtReco
             resource_group_name=resource_group.name,
             fleet_name="str",
             update_strategy_name="str",
-            api_version="2024-05-02-preview",
+            api_version="2024-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

@@ -15,20 +15,16 @@ ENV_MONITOR_LOCATION = "MONITOR_LOCATION"
 LOGS_ENVIRONMENT_ENDPOINT_MAP = {
     "AzureCloud": "https://api.loganalytics.io/v1",
     "AzureChinaCloud": "https://api.loganalytics.azure.cn/v1",
-    "AzureUSGovernment": "https://api.loganalytics.us/v1"
+    "AzureUSGovernment": "https://api.loganalytics.us/v1",
 }
 
 METRICS_CLIENT_ENVIRONMENT_AUDIENCE_MAP = {
     "AzureCloud": "https://metrics.monitor.azure.com",
     "AzureChinaCloud": "https://metrics.monitor.azure.cn",
-    "AzureUSGovernment": "https://metrics.monitor.azure.us"
+    "AzureUSGovernment": "https://metrics.monitor.azure.us",
 }
 
-TLD_MAP = {
-    "AzureCloud": "com",
-    "AzureChinaCloud": "cn",
-    "AzureUSGovernment": "us"
-}
+TLD_MAP = {"AzureCloud": "com", "AzureChinaCloud": "cn", "AzureUSGovernment": "us"}
 
 
 class AzureMonitorQueryLogsTestCase(AzureRecordedTestCase):
@@ -57,7 +53,7 @@ class MetricsQueryClientTestCase(AzureRecordedTestCase):
 
 class MetricsClientTestCase(AzureRecordedTestCase):
 
-    def get_client(self, client_class, credential, endpoint = None):
+    def get_client(self, client_class, credential, endpoint=None):
 
         environment = os.getenv(ENV_MONITOR_ENVIRONMENT)
         kwargs = {}

@@ -20,6 +20,7 @@ import os
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
+
 def get_map_tileset():
     # [START get_map_tileset]
     from azure.core.credentials import AzureKeyCredential
@@ -35,5 +36,5 @@ def get_map_tileset():
     # [END get_map_tileset]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     get_map_tileset()

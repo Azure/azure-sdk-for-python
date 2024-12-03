@@ -6,7 +6,7 @@ Read more about Azure Communication Services [here](https://docs.microsoft.com/a
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-sms)
 | [Package (Pypi)](https://pypi.org/project/azure-communication-sms/)
 | [Package (Conda)](https://anaconda.org/microsoft/azure-communication/)
-| [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-sms)
+| [API reference documentation](https://learn.microsoft.com/python/api/overview/azure/communication-sms-readme?view=azure-python)
 | [Product documentation](https://docs.microsoft.com/azure/communication-services/quickstarts/telephony-sms/send?pivots=programming-language-python)
 
 ## _Disclaimer_

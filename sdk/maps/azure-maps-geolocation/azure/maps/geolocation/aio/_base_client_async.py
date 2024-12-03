@@ -10,14 +10,13 @@ from azure.core.credentials_async import AsyncTokenCredential
 from .._generated.aio import GeolocationClient as _MapsGeolocationClient
 from .._version import VERSION
 
+
 def _authentication_policy(credential):
     authentication_policy = None
     if credential is None:
         raise ValueError("Parameter 'credential' must not be None.")
     if isinstance(credential, AzureKeyCredential):
-        authentication_policy = AzureKeyCredentialPolicy(
-            name="subscription-key", credential=credential
-        )
+        authentication_policy = AzureKeyCredentialPolicy(name="subscription-key", credential=credential)
     elif credential is not None and not hasattr(credential, "get_token"):
         raise TypeError(
             "Unsupported credential: {}. Use an instance of AzureKeyCredential "
@@ -25,12 +24,9 @@ def _authentication_policy(credential):
         )
     return authentication_policy
 
+
 class AsyncMapsGeolocationClientBase:
-    def __init__(
-        self,
-        credential: Union[AzureKeyCredential, AsyncTokenCredential],
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any) -> None:
 
         self._maps_client = _MapsGeolocationClient(
             credential=credential,  # type: ignore

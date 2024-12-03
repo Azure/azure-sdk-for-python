@@ -373,6 +373,7 @@ class _OperationType:
             _OperationType.Replace,
             _OperationType.Upsert,
             _OperationType.Update,
+            _OperationType.Batch
         )
 
     @staticmethod
@@ -411,6 +412,8 @@ class _QueryFeature:
     OrderBy: Literal["OrderBy"] = "OrderBy"
     Top: Literal["Top"] = "Top"
     NonStreamingOrderBy: Literal["NonStreamingOrderBy"] = "NonStreamingOrderBy"
+    HybridSearch: Literal["HybridSearch"] = "HybridSearch"
+    CountIf: Literal["CountIf"] = "CountIf"
 
 
 class _DistinctType:

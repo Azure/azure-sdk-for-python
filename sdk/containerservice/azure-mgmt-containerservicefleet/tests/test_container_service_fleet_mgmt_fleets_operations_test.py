@@ -24,7 +24,6 @@ class TestContainerServiceFleetMgmtFleetsOperations(AzureMgmtRecordedTestCase):
         response = self.client.fleets.list_by_subscription()
         result = [r for r in response]
         assert response
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
@@ -34,4 +33,3 @@ class TestContainerServiceFleetMgmtFleetsOperations(AzureMgmtRecordedTestCase):
         )
         result = [r for r in response]
         assert result == []
-        

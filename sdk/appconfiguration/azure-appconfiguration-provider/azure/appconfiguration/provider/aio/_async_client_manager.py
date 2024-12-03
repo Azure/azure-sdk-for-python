@@ -165,6 +165,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         loaded_feature_flags = []
         # Needs to be removed unknown keyword argument for list_configuration_settings
         kwargs.pop("sentinel_keys", None)
+        endpoint = self._client._impl._config.endpoint  # pylint: disable=protected-access
         filters_used: Dict[str, bool] = {}
         for select in feature_flag_selectors:
             feature_flags = self._client.list_configuration_settings(
@@ -178,6 +179,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
 
                 feature_flag_value = json.loads(feature_flag.value)
 
+                self._feature_flag_telemetry(endpoint, feature_flag, feature_flag_value)
                 self._feature_flag_appconfig_telemetry(feature_flag, filters_used)
 
                 loaded_feature_flags.append(feature_flag_value)

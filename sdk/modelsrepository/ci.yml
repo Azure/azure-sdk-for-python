@@ -28,6 +28,3 @@ extends:
   parameters:
     ServiceDirectory: modelsrepository
     TestProxy: true
-    Artifacts:
-    - name: azure-iot-modelsrepository
-      safeName: azureiotmodelsrepository

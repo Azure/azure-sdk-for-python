@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.devtestlabs import DevTestLabsClient
 
 """
@@ -29,12 +30,11 @@ def main():
         subscription_id="{subscriptionId}",
     )
 
-    response = client.service_runners.delete(
+    client.service_runners.delete(
         resource_group_name="resourceGroupName",
         lab_name="{devtestlabName}",
         name="{servicerunnerName}",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/devtestlabs/resource-manager/Microsoft.DevTestLab/stable/2018-09-15/examples/ServiceRunners_Delete.json

@@ -27,10 +27,9 @@ tracer = trace.get_tracer(__name__)
 
 # azure monitor trace exporter to send telemetry to appinsights
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
+
 span_processor = BatchSpanProcessor(
-    AzureMonitorTraceExporter.from_connection_string(
-        os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
-    )
+    AzureMonitorTraceExporter.from_connection_string(os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"])
 )
 trace.get_tracer_provider().add_span_processor(span_processor)
 
@@ -43,8 +42,9 @@ sms_client = SmsClient.from_connection_string(connection_str)
 
 with tracer.start_as_current_span(name="SendSMS"):
     sms_responses = sms_client.send(
-    from_="<from-phone-number>",
-    to="<to-phone-number-1>",
-    message="Hello World via SMS",
-    enable_delivery_report=True, # optional property
-    tag="custom-tag") # optional property
+        from_="<from-phone-number>",
+        to="<to-phone-number-1>",
+        message="Hello World via SMS",
+        enable_delivery_report=True,  # optional property
+        tag="custom-tag",
+    )  # optional property

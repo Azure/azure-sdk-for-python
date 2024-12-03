@@ -7,7 +7,7 @@ DESCRIPTION:
     This sample demonstrates how to use tracing with the Inference client library.
     Azure AI Inference is instrumented with OpenTelemetry. In order to enable tracing
     you need to configure OpenTelemetry to export traces to your observability backend.
-    This sample shows how to capture the traces to a file.
+    This sample shows how to print traces to stdout.
 
     This sample assumes the AI model is hosted on a Serverless API or
     Managed Compute endpoint. For GitHub Models or Azure OpenAI endpoints,
@@ -18,44 +18,48 @@ USAGE:
     python sample_chat_completions_with_tracing.py
 
     Set these two environment variables before running the sample:
-    1) AZURE_AI_CHAT_ENDPOINT - Your endpoint URL, in the form 
+    1) AZURE_AI_CHAT_ENDPOINT - Your endpoint URL, in the form
         https://<your-deployment-name>.<your-azure-region>.models.ai.azure.com
         where `your-deployment-name` is your unique AI Model deployment name, and
         `your-azure-region` is the Azure region where your model is deployed.
     2) AZURE_AI_CHAT_KEY - Your model key (a 32-character string). Keep it secret.
+    3) AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to 'true'
+        for detailed traces, including chat request and response messages.
 """
 
 
 import os
 from opentelemetry import trace
-# opentelemetry-sdk is required for the opentelemetry.sdk imports.
-# You can install it with command "pip install opentelemetry-sdk".
-#from opentelemetry.sdk.trace import TracerProvider
-#from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
+
+# Install opentelemetry with command "pip install opentelemetry-sdk".
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
 from azure.ai.inference import ChatCompletionsClient
 from azure.ai.inference.models import SystemMessage, UserMessage, CompletionsFinishReason
 from azure.core.credentials import AzureKeyCredential
 
- # [START trace_setting]
+# [START trace_setting]
 from azure.core.settings import settings
+
 settings.tracing_implementation = "opentelemetry"
 # [END trace_setting]
 
 # Setup tracing to console
 # Requires opentelemetry-sdk
-#exporter = ConsoleSpanExporter()
-#trace.set_tracer_provider(TracerProvider())
-#tracer = trace.get_tracer(__name__)
-#trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(exporter))
+span_exporter = ConsoleSpanExporter()
+tracer_provider = TracerProvider()
+tracer_provider.add_span_processor(SimpleSpanProcessor(span_exporter))
+trace.set_tracer_provider(tracer_provider)
 
-
- # [START trace_function]
+# [START trace_function]
 from opentelemetry.trace import get_tracer
+
 tracer = get_tracer(__name__)
+
 
 # The tracer.start_as_current_span decorator will trace the function call and enable adding additional attributes
 # to the span in the function implementation. Note that this will trace the function parameters and their values.
-@tracer.start_as_current_span("get_temperature") # type: ignore
+@tracer.start_as_current_span("get_temperature")  # type: ignore
 def get_temperature(city: str) -> str:
 
     # Adding attributes to the current span
@@ -68,7 +72,9 @@ def get_temperature(city: str) -> str:
         return "80"
     else:
         return "Unavailable"
- # [END trace_function]
+
+
+# [END trace_function]
 
 
 def get_weather(city: str) -> str:
@@ -82,7 +88,13 @@ def get_weather(city: str) -> str:
 
 def chat_completion_with_function_call(key, endpoint):
     import json
-    from azure.ai.inference.models import ToolMessage, AssistantMessage, ChatCompletionsToolCall, ChatCompletionsToolDefinition, FunctionDefinition
+    from azure.ai.inference.models import (
+        ToolMessage,
+        AssistantMessage,
+        ChatCompletionsToolCall,
+        ChatCompletionsToolDefinition,
+        FunctionDefinition,
+    )
 
     weather_description = ChatCompletionsToolDefinition(
         function=FunctionDefinition(
@@ -119,7 +131,7 @@ def chat_completion_with_function_call(key, endpoint):
     )
 
     client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-    messages=[
+    messages = [
         SystemMessage(content="You are a helpful assistant."),
         UserMessage(content="What is the weather and temperature in Seattle?"),
     ]
@@ -142,13 +154,14 @@ def chat_completion_with_function_call(key, endpoint):
                     messages.append(ToolMessage(tool_call_id=tool_call.id, content=function_response))
                     # With the additional tools information on hand, get another response from the model
             response = client.complete(messages=messages, tools=[weather_description, temperature_in_city])
-    
+
     print(f"Model response = {response.choices[0].message.content}")
 
 
 def main():
     # [START instrument_inferencing]
     from azure.ai.inference.tracing import AIInferenceInstrumentor
+
     # Instrument AI Inference API
     AIInferenceInstrumentor().instrument()
     # [END instrument_inferencing]

@@ -65,7 +65,7 @@ def sample_chat_completions_azure_openai():
             endpoint=endpoint,
             credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
             credential_scopes=["https://cognitiveservices.azure.com/.default"],
-            api_version="2024-06-01",  # Azure OpenAI api-version. See https://aka.ms/azsdk/azure-ai-inference/azure-openai-api-versions 
+            api_version="2024-06-01",  # Azure OpenAI api-version. See https://aka.ms/azsdk/azure-ai-inference/azure-openai-api-versions
         )
 
     response = client.complete(

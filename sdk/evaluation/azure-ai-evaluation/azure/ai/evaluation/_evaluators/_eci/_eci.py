@@ -1,15 +1,16 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing_extensions import override
+from typing_extensions import overload, override
 
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import _InternalEvaluationMetrics
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
+from azure.ai.evaluation._model_configurations import Conversation
 
 
 @experimental
-class ECIEvaluator(RaiServiceEvaluatorBase[str]):
+class ECIEvaluator(RaiServiceEvaluatorBase):
     """
     Initialize an ECI evaluator to evaluate ECI based on the following guidelines:
     Detects whether ECI is present without a disclaimer in the AI system’s response.
@@ -49,16 +50,40 @@ class ECIEvaluator(RaiServiceEvaluatorBase[str]):
         }
     """
 
+    id = "eci"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+
     @override
     def __init__(
         self,
         credential,
         azure_ai_project,
-        eval_last_turn: bool = False,
     ):
         super().__init__(
             eval_metric=_InternalEvaluationMetrics.ECI,
             azure_ai_project=azure_ai_project,
             credential=credential,
-            eval_last_turn=eval_last_turn,
         )
+
+    @overload
+    def __call__(
+        self,
+        *,
+        query: str,
+        response: str,
+    ): ...
+
+    @overload
+    def __call__(
+        self,
+        *,
+        conversation: Conversation,
+    ): ...
+
+    @override
+    def __call__(  # pylint: disable=docstring-missing-param
+        self,
+        *args,
+        **kwargs,
+    ):
+        return super().__call__(*args, **kwargs)

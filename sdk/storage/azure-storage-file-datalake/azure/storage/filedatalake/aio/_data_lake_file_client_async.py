@@ -406,6 +406,10 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_. This method may make multiple calls to the service and
             the timeout will apply to each call individually.
+        :keyword int max_concurrency:
+            Maximum number of parallel connections to use when transferring the file in chunks.
+            This option does not affect the underlying connection pool, and may
+            require a separate configuration of the connection pool.
         :keyword int chunk_size:
             The maximum chunk size for uploading a file in chunks.
             Defaults to 100*1024*1024, or 100MB.
@@ -623,7 +627,9 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             Use of customer-provided keys must be done over HTTPS.
             Required if the file was created with a Customer-Provided Key.
         :keyword int max_concurrency:
-            The number of parallel connections with which to download.
+            Maximum number of parallel connections to use when transferring the file in chunks.
+            This option does not affect the underlying connection pool, and may
+            require a separate configuration of the connection pool.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.

@@ -8,7 +8,13 @@
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Dict, Optional, TypeVar, Union
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
@@ -18,7 +24,8 @@ from azure.core.utils import case_insensitive_dict
 from .. import models as _models
 from .._serialization import Serializer
 from .._vendor import _format_url_section
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
@@ -35,33 +42,28 @@ def build_geolocation_get_location_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "1.0"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "1.0"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/geolocation/ip/{format}"
     path_format_arguments = {
-        "format": _SERIALIZER.url("format", format, 'str'),
+        "format": _SERIALIZER.url("format", format, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-    _params['ip'] = _SERIALIZER.query("ip_address", ip_address, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["ip"] = _SERIALIZER.query("ip_address", ip_address, "str")
 
     # Construct headers
     if client_id is not None:
-        _headers['x-ms-client-id'] = _SERIALIZER.header("client_id", client_id, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["x-ms-client-id"] = _SERIALIZER.header("client_id", client_id, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
 
 class GeolocationOperations:
     """
@@ -82,14 +84,9 @@ class GeolocationOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace
     def get_location(
-        self,
-        format: Union[str, "_models.JsonFormat"] = "json",
-        *,
-        ip_address: str,
-        **kwargs: Any
+        self, format: Union[str, "_models.JsonFormat"] = "json", *, ip_address: str, **kwargs: Any
     ) -> _models.IpAddressToLocationResult:
         """**Applies to:** see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
@@ -106,17 +103,14 @@ class GeolocationOperations:
         :rtype: ~azure.maps.geolocation.models.IpAddressToLocationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.IpAddressToLocationResult]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IpAddressToLocationResult]
 
-        
         request = build_geolocation_get_location_request(
             format=format,
             ip_address=ip_address,
@@ -128,9 +122,7 @@ class GeolocationOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -140,11 +132,9 @@ class GeolocationOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('IpAddressToLocationResult', pipeline_response)
+        deserialized = self._deserialize("IpAddressToLocationResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-
-

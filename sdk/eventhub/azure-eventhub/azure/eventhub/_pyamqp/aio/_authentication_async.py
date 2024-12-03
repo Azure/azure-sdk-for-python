@@ -1,34 +1,30 @@
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 from functools import partial
 import time
 from typing import Awaitable, Callable, Optional, Tuple, Union, Any
 
 from ..sasl import SASLAnonymousCredential
 
-from ..authentication import (
-    _generate_sas_access_token,
-    AccessToken
-)
+from ..authentication import _generate_sas_access_token, AccessToken
 from ..constants import AUTH_DEFAULT_EXPIRATION_SECONDS, AUTH_TYPE_CBS, TOKEN_TYPE_JWT, TOKEN_TYPE_SASTOKEN
 
+
 async def _generate_sas_token_async(
-        auth_uri: str,
-        sas_name: str,
-        sas_key: str,
-        expiry_in: float = AUTH_DEFAULT_EXPIRATION_SECONDS
-    ) -> AccessToken:
+    auth_uri: str, sas_name: str, sas_key: str, expiry_in: float = AUTH_DEFAULT_EXPIRATION_SECONDS
+) -> AccessToken:
     return _generate_sas_access_token(auth_uri, sas_name, sas_key, expiry_in=expiry_in)
+
 
 class _CBSAuthAsync:
     # TODO:
     #  1. naming decision, suffix with Auth vs Credential
     auth_type = AUTH_TYPE_CBS
 
-    def __init__( # pylint: disable=unused-argument
+    def __init__(  # pylint: disable=unused-argument
         self,
         uri: str,
         audience: str,
@@ -160,11 +156,4 @@ class SASTokenAuthAsync(_CBSAuthAsync):
         self.password = password
         expires_in, expires_on = self._set_expiry(expires_in, expires_on)
         self.get_token = partial(_generate_sas_token_async, uri, username, password, expires_in)
-        super().__init__(
-            uri,
-            audience,
-            token_type,
-            self.get_token,
-            expires_in=expires_in,
-            expires_on=expires_on
-        )
+        super().__init__(uri, audience, token_type, self.get_token, expires_in=expires_in, expires_on=expires_on)

@@ -1,6 +1,7 @@
 from .__openai_patcher import TestProxyConfig, TestProxyHttpxClientBase  # isort: split
 from . import __pf_service_isolation  # isort: split  # noqa: F401
 
+import os
 import json
 import multiprocessing
 import time
@@ -40,12 +41,13 @@ CONNECTION_FILE = (PROMPTFLOW_ROOT / "azure-ai-evaluation" / "connections.json")
 RECORDINGS_TEST_CONFIGS_ROOT = Path(PROMPTFLOW_ROOT / "azure-ai-evaluation/tests/test_configs").resolve()
 
 
-class SanitizedValues(str, Enum):
+class SanitizedValues:
     SUBSCRIPTION_ID = "00000000-0000-0000-0000-000000000000"
     RESOURCE_GROUP_NAME = "00000"
     WORKSPACE_NAME = "00000"
     TENANT_ID = "00000000-0000-0000-0000-000000000000"
     USER_OBJECT_ID = "00000000-0000-0000-0000-000000000000"
+    IMAGE_NAME = "00000000.png"
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -82,7 +84,7 @@ def add_sanitizers(
     def azure_workspace_triad_sanitizer():
         """Sanitize subscription, resource group, and workspace."""
         add_general_regex_sanitizer(
-            regex=r"/subscriptions/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})",
+            regex=r"/subscriptions/([-\w\._\(\)]+)",
             value=mock_project_scope["subscription_id"],
             group_for_replace="1",
         )
@@ -93,6 +95,9 @@ def add_sanitizers(
         )
         add_general_regex_sanitizer(
             regex=r"/workspaces/([-\w\._\(\)]+)", value=mock_project_scope["project_name"], group_for_replace="1"
+        )
+        add_general_regex_sanitizer(
+            regex=r"image_understanding/([-\w\._\(\)/]+)", value=mock_project_scope["image_name"], group_for_replace="1"
         )
 
     def openai_stainless_default_headers():
@@ -142,11 +147,20 @@ def add_sanitizers(
         add_general_regex_sanitizer(regex=project_scope["project_name"], value=SanitizedValues.WORKSPACE_NAME)
         add_general_regex_sanitizer(regex=model_config["azure_endpoint"], value=mock_model_config["azure_endpoint"])
 
+    def promptflow_root_run_id_sanitizer():
+        """Sanitize the promptflow service isolation values."""
+        add_general_regex_sanitizer(
+            value="root_run_id",
+            regex=r'"root_run_id": "azure_ai_evaluation_evaluators_common_base_eval_asyncevaluatorbase_[^"]+"',
+            replacement='"root_run_id": "azure_ai_evaluation_evaluators_common_base_eval_asyncevaluatorbase_SANITIZED"',
+        )
+
     azure_workspace_triad_sanitizer()
     azureopenai_connection_sanitizer()
     openai_stainless_default_headers()
     azure_ai_generative_sanitizer()
     live_connection_file_values()
+    promptflow_root_run_id_sanitizer()
 
 
 @pytest.fixture
@@ -203,7 +217,7 @@ def simple_conversation():
     return {
         "messages": [
             {
-                "content": "What is the capital of France?",
+                "content": "What is the capital of France?`''\"</>{}{{]",
                 "role": "user",
                 "context": "Customer wants to know the capital of France",
             },
@@ -266,9 +280,9 @@ def dev_connections(
 @pytest.fixture(scope="session")
 def mock_model_config() -> AzureOpenAIModelConfiguration:
     return AzureOpenAIModelConfiguration(
-        azure_endpoint="https://Sanitized.api.cognitive.microsoft.com",
+        azure_endpoint="https://Sanitized.cognitiveservices.azure.com",
         api_key="aoai-api-key",
-        api_version="2024-04-01-preview",
+        api_version="2024-08-01-preview",
         azure_deployment="aoai-deployment",
     )
 
@@ -279,6 +293,7 @@ def mock_project_scope() -> Dict[str, str]:
         "subscription_id": f"{SanitizedValues.SUBSCRIPTION_ID}",
         "resource_group_name": f"{SanitizedValues.RESOURCE_GROUP_NAME}",
         "project_name": f"{SanitizedValues.WORKSPACE_NAME}",
+        "image_name": f"{SanitizedValues.IMAGE_NAME}",
     }
 
 
@@ -461,7 +476,6 @@ def user_object_id() -> str:
     if not AZURE_INSTALLED:
         return ""
     if not is_live():
-
         return SanitizedValues.USER_OBJECT_ID
     credential = get_cred()
     access_token = credential.get_token("https://management.azure.com/.default")
@@ -474,7 +488,6 @@ def tenant_id() -> str:
     if not AZURE_INSTALLED:
         return ""
     if not is_live():
-
         return SanitizedValues.TENANT_ID
     credential = get_cred()
     access_token = credential.get_token("https://management.azure.com/.default")

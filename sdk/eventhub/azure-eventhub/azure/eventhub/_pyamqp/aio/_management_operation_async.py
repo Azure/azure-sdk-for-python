@@ -1,29 +1,23 @@
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 import logging
 import uuid
 import time
 from functools import partial
 
 from ._management_link_async import ManagementLink
-from ..error import (
-    AMQPLinkError,
-    ErrorCondition
-)
+from ..error import AMQPLinkError, ErrorCondition
 
-from ..constants import (
-    ManagementOpenResult,
-    ManagementExecuteOperationResult
-)
+from ..constants import ManagementOpenResult, ManagementExecuteOperationResult
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class ManagementOperation(object):
-    def __init__(self, session, endpoint='$management', **kwargs):
+    def __init__(self, session, endpoint="$management", **kwargs):
         self._mgmt_link_open_status = None
 
         self._session = session
@@ -31,7 +25,7 @@ class ManagementOperation(object):
         self._network_trace_params = {
             "amqpConnection": self._session._connection._container_id,
             "amqpSession": self._session.name,
-            "amqpLink": ""
+            "amqpLink": "",
         }
         self._mgmt_link: ManagementLink = self._session.create_request_response_link_pair(
             endpoint=endpoint,
@@ -57,13 +51,7 @@ class ManagementOperation(object):
         self._mgmt_error = ValueError("Management Operation error occurred.")
 
     async def _on_execute_operation_complete(
-        self,
-        operation_id,
-        operation_result,
-        status_code,
-        status_description,
-        raw_message,
-        error=None
+        self, operation_id, operation_result, status_code, status_description, raw_message, error=None
     ):
         _LOGGER.debug(
             "Management operation completed, id: %r; result: %r; code: %r; description: %r, error: %r",
@@ -72,16 +60,13 @@ class ManagementOperation(object):
             status_code,
             status_description,
             error,
-            extra=self._network_trace_params
+            extra=self._network_trace_params,
         )
 
-        if operation_result in\
-                (ManagementExecuteOperationResult.ERROR, ManagementExecuteOperationResult.LINK_CLOSED):
+        if operation_result in (ManagementExecuteOperationResult.ERROR, ManagementExecuteOperationResult.LINK_CLOSED):
             self._mgmt_error = error
             _LOGGER.error(
-                "Failed to complete management operation due to error: %r.",
-                error,
-                extra=self._network_trace_params
+                "Failed to complete management operation due to error: %r.", error, extra=self._network_trace_params
             )
         else:
             self._responses[operation_id] = (status_code, status_description, raw_message)
@@ -97,7 +82,7 @@ class ManagementOperation(object):
             partial(self._on_execute_operation_complete, operation_id),
             timeout=timeout,
             operation=operation,
-            type=operation_type
+            type=operation_type,
         )
 
         while not self._responses[operation_id] and not self._mgmt_error:
@@ -133,7 +118,7 @@ class ManagementOperation(object):
         raise AMQPLinkError(
             condition=ErrorCondition.ClientError,
             description="Failed to open mgmt link, management link status: {}".format(self._mgmt_link_open_status),
-            info=None
+            info=None,
         )
 
     async def close(self):

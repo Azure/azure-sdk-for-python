@@ -144,6 +144,21 @@ class Caching(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     READ_ONLY = "ReadOnly"
     READ_WRITE = "ReadWrite"
 
+class CapabilityHostKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    AGENTS = "Agents"
+
+class CapabilityHostProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Provisioning state of capability host.
+    """
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+
 class CategoricalDataDriftMetric(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     #: The Jensen Shannon Distance (JSD) metric.

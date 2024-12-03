@@ -24,6 +24,7 @@ from azure.core.exceptions import HttpResponseError
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
+
 async def get_tropical_storm_forecast():
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.weather.aio import MapsWeatherClient
@@ -32,9 +33,7 @@ async def get_tropical_storm_forecast():
     try:
         async with maps_weather_client:
             result = await maps_weather_client.get_tropical_storm_forecast(
-                year=2021,
-                basin_id="NP",
-                government_storm_id=2
+                year=2021, basin_id="NP", government_storm_id=2
             )
             print(json.dumps(result, indent=4))
     except HttpResponseError as exception:
@@ -42,6 +41,6 @@ async def get_tropical_storm_forecast():
             print(f"Error Code: {exception.error.code}")
             print(f"Message: {exception.error.message}")
 
-if __name__ == '__main__':
-    asyncio.run(get_tropical_storm_forecast())
 
+if __name__ == "__main__":
+    asyncio.run(get_tropical_storm_forecast())

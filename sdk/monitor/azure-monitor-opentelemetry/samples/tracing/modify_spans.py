@@ -8,6 +8,7 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 from opentelemetry import trace
 from opentelemetry.sdk.trace import SpanProcessor
 
+
 # Define a custom processor to modify your spans
 class SpanEnrichingProcessor(SpanProcessor):
 
@@ -16,16 +17,15 @@ class SpanEnrichingProcessor(SpanProcessor):
         span._name = "Updated-" + span.name
         # Add the custom dimension "CustomDimension1" with the value "Value1".
         span._attributes["CustomDimension1"] = "Value1"
-         # Add the custom dimension "CustomDimension2" with the value "Value2".
+        # Add the custom dimension "CustomDimension2" with the value "Value2".
         span._attributes["CustomDimension2"] = "Value2"
+
 
 # Create a SpanEnrichingProcessor instance.
 span_enrich_processor = SpanEnrichingProcessor()
 
 # Pass in your processor to configuration options
-configure_azure_monitor(
-    span_processors=[span_enrich_processor]
-)
+configure_azure_monitor(span_processors=[span_enrich_processor])
 
 tracer = trace.get_tracer(__name__)
 

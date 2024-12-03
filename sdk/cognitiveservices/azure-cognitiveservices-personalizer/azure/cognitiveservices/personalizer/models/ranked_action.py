@@ -25,13 +25,13 @@ class RankedAction(Model):
     """
 
     _validation = {
-        'id': {'readonly': True, 'max_length': 256},
-        'probability': {'readonly': True, 'maximum': 1, 'minimum': 0},
+        "id": {"readonly": True, "max_length": 256},
+        "probability": {"readonly": True, "maximum": 1, "minimum": 0},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'probability': {'key': 'probability', 'type': 'float'},
+        "id": {"key": "id", "type": "str"},
+        "probability": {"key": "probability", "type": "float"},
     }
 
     def __init__(self, **kwargs):

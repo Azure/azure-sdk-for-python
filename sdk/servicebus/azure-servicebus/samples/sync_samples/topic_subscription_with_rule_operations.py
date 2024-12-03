@@ -17,54 +17,59 @@ from azure.servicebus.management import (
     TrueRuleFilter,
     SqlRuleFilter,
     SqlRuleAction,
-    CorrelationRuleFilter
+    CorrelationRuleFilter,
 )
 from azure.servicebus import ServiceBusMessage, ServiceBusClient
 from azure.identity import DefaultAzureCredential
 
-FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
-TOPIC_NAME = os.environ['SERVICEBUS_TOPIC_NAME']
-ALL_MSGS_SUBSCRIPTION_NAME = 'sb-allmsgs-sub'
-SQL_FILTER_ONLY_SUBSCRIPTION_NAME = 'sb-sqlfilteronly-sub'
-SQL_FILTER_WITH_ACTION_SUBSCRIPTION_NAME = 'sb-sqlfilteraction-sub'
-CORRELATION_FILTER_SUBSCRIPTION_NAME = 'sb-corrfiltersub'
+FULLY_QUALIFIED_NAMESPACE = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
+TOPIC_NAME = os.environ["SERVICEBUS_TOPIC_NAME"]
+ALL_MSGS_SUBSCRIPTION_NAME = "sb-allmsgs-sub"
+SQL_FILTER_ONLY_SUBSCRIPTION_NAME = "sb-sqlfilteronly-sub"
+SQL_FILTER_WITH_ACTION_SUBSCRIPTION_NAME = "sb-sqlfilteraction-sub"
+CORRELATION_FILTER_SUBSCRIPTION_NAME = "sb-corrfiltersub"
+
 
 def create_rules_with_filter(servicebus_mgmt_client):
     # First subscription is already created with default rule. Leave as is.
     print("SubscriptionName: {}, Removing and re-adding Default Rule".format(ALL_MSGS_SUBSCRIPTION_NAME))
-    create_rule_with_filter(
-        servicebus_mgmt_client,
-        ALL_MSGS_SUBSCRIPTION_NAME,
-        "$Default",
-        filter=TrueRuleFilter()
-    )
+    create_rule_with_filter(servicebus_mgmt_client, ALL_MSGS_SUBSCRIPTION_NAME, "$Default", filter=TrueRuleFilter())
 
     # Second subscription: Add required SqlRuleFilter Rule.
-    print("SubscriptionName: {}, Removing Default Rule and Adding SqlRuleFilter.".format(SQL_FILTER_ONLY_SUBSCRIPTION_NAME))
+    print(
+        "SubscriptionName: {}, Removing Default Rule and Adding SqlRuleFilter.".format(
+            SQL_FILTER_ONLY_SUBSCRIPTION_NAME
+        )
+    )
     create_rule_with_filter(
-        servicebus_mgmt_client,
-        SQL_FILTER_ONLY_SUBSCRIPTION_NAME,
-        "RedSqlRule",
-        filter=SqlRuleFilter("Color = 'Red'")
+        servicebus_mgmt_client, SQL_FILTER_ONLY_SUBSCRIPTION_NAME, "RedSqlRule", filter=SqlRuleFilter("Color = 'Red'")
     )
 
     # Third subscription: Add SqlRuleFilter and SqlRuleAction.
-    print("SubscriptionName: {}, Removing Default Rule and Adding SqlRuleFilter and SqlRuleAction".format(SQL_FILTER_WITH_ACTION_SUBSCRIPTION_NAME))
+    print(
+        "SubscriptionName: {}, Removing Default Rule and Adding SqlRuleFilter and SqlRuleAction".format(
+            SQL_FILTER_WITH_ACTION_SUBSCRIPTION_NAME
+        )
+    )
     create_rule_with_filter(
         servicebus_mgmt_client,
         SQL_FILTER_WITH_ACTION_SUBSCRIPTION_NAME,
         "BlueSqlRule",
         filter=SqlRuleFilter("Color = 'Blue'"),
-        action=SqlRuleAction("SET Color = 'BlueProcessed'")
+        action=SqlRuleAction("SET Color = 'BlueProcessed'"),
     )
 
     # Fourth subscription: Add CorrelationRuleFilter.
-    print("SubscriptionName: {}, Removing Default Rule and Adding CorrelationRuleFilter".format(CORRELATION_FILTER_SUBSCRIPTION_NAME))
+    print(
+        "SubscriptionName: {}, Removing Default Rule and Adding CorrelationRuleFilter".format(
+            CORRELATION_FILTER_SUBSCRIPTION_NAME
+        )
+    )
     create_rule_with_filter(
         servicebus_mgmt_client,
         CORRELATION_FILTER_SUBSCRIPTION_NAME,
         "ImportantCorrelationRule",
-        filter=CorrelationRuleFilter(correlation_id='important', label="Red")
+        filter=CorrelationRuleFilter(correlation_id="important", label="Red"),
     )
 
     # Get rules on subscription, called here only for one subscription as an example.
@@ -72,21 +77,17 @@ def create_rules_with_filter(servicebus_mgmt_client):
     for rule in servicebus_mgmt_client.list_rules(TOPIC_NAME, CORRELATION_FILTER_SUBSCRIPTION_NAME):
         print("Rule {}; Filter: {}".format(rule.name, type(rule.filter).__name__))
 
+
 def create_rule_with_filter(servicebus_mgmt_client, subscription_name, filter_name, filter, action=None):
     try:
         servicebus_mgmt_client.delete_rule(TOPIC_NAME, subscription_name, "$Default")
     except ResourceNotFoundError:
         pass
     try:
-        servicebus_mgmt_client.create_rule(
-            TOPIC_NAME,
-            subscription_name,
-            filter_name,
-            filter=filter,
-            action=action
-        )
+        servicebus_mgmt_client.create_rule(TOPIC_NAME, subscription_name, filter_name, filter=filter, action=action)
     except ResourceExistsError:
         pass
+
 
 def send_messages():
     credential = DefaultAzureCredential()
@@ -105,26 +106,30 @@ def send_messages():
         msgs_to_send.append(create_message(label="Green", correlation_id="notimportant"))
         sender.send_messages(msgs_to_send)
 
+
 def create_message(label, correlation_id=None):
-    return ServiceBusMessage("Rule with filter sample", application_properties={"Color": label}, subject=label, correlation_id=correlation_id)
+    return ServiceBusMessage(
+        "Rule with filter sample", application_properties={"Color": label}, subject=label, correlation_id=correlation_id
+    )
+
 
 def receive_messages(servicebus_client, subscription_name):
     with servicebus_client:
         receiver = servicebus_client.get_subscription_receiver(
-            topic_name=TOPIC_NAME,
-            subscription_name=subscription_name
+            topic_name=TOPIC_NAME, subscription_name=subscription_name
         )
         with receiver:
             print("==========================================================================")
             print("Receiving Messages From Subscription: {}".format(subscription_name))
             received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
             for msg in received_msgs:
-                color = msg.application_properties.get(b'Color').decode()
+                color = msg.application_properties.get(b"Color").decode()
                 correlation_id = msg.correlation_id
                 print("Color Property = {}, Correlation ID = {}".format(color, correlation_id))
                 receiver.complete_message(msg)
             print("'{}' Messages From Subscription: {}".format(len(received_msgs), subscription_name))
             print("==========================================================================")
+
 
 def create_subscription(servicebus_mgmt_client, subscription_name):
     try:
@@ -133,6 +138,7 @@ def create_subscription(servicebus_mgmt_client, subscription_name):
         pass
     print("Subscription {} is created.".format(subscription_name))
 
+
 def delete_subscription(servicebus_mgmt_client, subscription_name):
     try:
         servicebus_mgmt_client.delete_subscription(TOPIC_NAME, subscription_name)
@@ -140,7 +146,8 @@ def delete_subscription(servicebus_mgmt_client, subscription_name):
         pass
     print("Subscription {} is deleted.".format(subscription_name))
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     credential = DefaultAzureCredential()
     servicebus_mgmt_client = ServiceBusAdministrationClient(FULLY_QUALIFIED_NAMESPACE, credential)
     servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential)
@@ -153,7 +160,7 @@ if __name__=="__main__":
 
     # Create rules
     create_rules_with_filter(servicebus_mgmt_client)
-        
+
     # Send messages to topic
     send_messages()
 

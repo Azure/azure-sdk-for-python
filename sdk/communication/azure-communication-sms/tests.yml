@@ -15,6 +15,6 @@ extends:
             - TestSamples=.*/true
       EnvVars:
         AZURE_SKIP_LIVE_RECORDING: 'True'
-        AZURE_TEST_RUN_LIVE: 'True'
+        AZURE_TEST_RUN_LIVE: 'False'
       TestResourceDirectories:
         - communication/test-resources/

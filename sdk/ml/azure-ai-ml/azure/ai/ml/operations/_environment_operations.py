@@ -26,7 +26,7 @@ from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _get_latest,
-    _get_next_version_from_container,
+    _get_next_latest_versions_from_container,
     _resolve_label_to_asset,
 )
 from azure.ai.ml._utils._experimental import experimental
@@ -39,7 +39,7 @@ from azure.ai.ml._utils._registry_utils import (
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ID_FORMAT, AzureMLResourceType
 from azure.ai.ml.entities._assets import Environment, WorkspaceAssetReference
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -110,7 +110,8 @@ class EnvironmentOperations(_ScopeDependentOperations):
         """
         try:
             if not environment.version and environment._auto_increment_version:
-                environment.version = _get_next_version_from_container(
+
+                next_version, latest_version = _get_next_latest_versions_from_container(
                     name=environment.name,
                     container_operation=self._containers_operations,
                     resource_group_name=self._operation_scope.resource_group_name,
@@ -118,6 +119,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
                     registry_name=self._registry_name,
                     **self._kwargs,
                 )
+                # If user not passing the version, SDK will try to update the latest version
+                return self._try_update_latest_version(next_version, latest_version, environment)
+
             sas_uri = None
             if self._registry_name:
                 if isinstance(environment, WorkspaceAssetReference):
@@ -203,6 +207,25 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 log_and_raise_error(ex)
             else:
                 raise ex
+
+    def _try_update_latest_version(
+        self, next_version: str, latest_version: str, environment: Environment
+    ) -> Environment:
+        env = None
+        if self._registry_name:
+            environment.version = next_version
+            env = self.create_or_update(environment)
+        else:
+            environment.version = latest_version
+            try:  # Try to update the latest version
+                env = self.create_or_update(environment)
+            except Exception as ex:  # pylint: disable=W0718
+                if isinstance(ex, ResourceExistsError):
+                    environment.version = next_version
+                    env = self.create_or_update(environment)
+                else:
+                    raise ex
+        return env
 
     def _get(self, name: str, version: Optional[str] = None) -> EnvironmentVersion:
         if version:

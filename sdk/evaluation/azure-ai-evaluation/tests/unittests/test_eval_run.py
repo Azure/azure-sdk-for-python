@@ -4,8 +4,10 @@ import os
 import time
 from unittest.mock import MagicMock, patch
 from uuid import uuid4
-
+import tempfile
 import jwt
+import pandas as pd
+import pathlib
 import pytest
 from promptflow.azure._utils._token_cache import ArmTokenCache
 
@@ -302,6 +304,30 @@ class TestEvalRun:
                 run.log_artifact(artifact_folder)
             assert len(caplog.records) == 1
             assert expected_error in caplog.records[0].message
+
+    def test_store_multi_modal_no_images(self, token_mock, caplog):
+        data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
+        data_file = os.path.join(data_path, "generated_qa_chat_conv.jsonl")
+        data_convo = pd.read_json(data_file, lines=True)
+        with tempfile.TemporaryDirectory() as tmpdir:
+            for value in data_convo["messages"]:
+                ev_utils._store_multimodal_content(value, tmpdir)
+
+    def test_store_multi_modal_image_urls(self, token_mock, caplog):
+        data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
+        data_file = os.path.join(data_path, "generated_conv_image_urls.jsonl")
+        data_convo = pd.read_json(data_file, lines=True)
+        with tempfile.TemporaryDirectory() as tmpdir:
+            for value in data_convo["messages"]:
+                ev_utils._store_multimodal_content(value, tmpdir)
+
+    def test_store_multi_modal_images(self, token_mock, caplog):
+        data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
+        data_file = os.path.join(data_path, "generated_conv_images.jsonl")
+        data_convo = pd.read_json(data_file, lines=True)
+        with tempfile.TemporaryDirectory() as tmpdir:
+            for value in data_convo["messages"]:
+                ev_utils._store_multimodal_content(value, tmpdir)
 
     def test_log_metrics_and_instance_results_logs_error(self, token_mock, caplog):
         """Test that we are logging the error when there is no trace destination."""

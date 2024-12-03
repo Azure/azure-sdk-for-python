@@ -44,13 +44,15 @@ def sample_embeddings_with_base64_encoding():
 
     # Request embeddings as base64 encoded strings
     response = client.embed(
-        input=["first phrase", "second phrase", "third phrase"],
-        encoding_format=EmbeddingEncodingFormat.BASE64)
+        input=["first phrase", "second phrase", "third phrase"], encoding_format=EmbeddingEncodingFormat.BASE64
+    )
 
     for item in response.data:
         # Display the start and end of the resulting base64 string
-        print(f"data[{item.index}] encoded (string length={len(item.embedding)}): "
-              f"\"{item.embedding[:32]}...{item.embedding[-32:]}\"")
+        print(
+            f"data[{item.index}] encoded (string length={len(item.embedding)}): "
+            f'"{item.embedding[:32]}...{item.embedding[-32:]}"'
+        )
 
         # For display purposes, decode the string into a list of floating point numbers.
         # Display the first and last two elements of the list.

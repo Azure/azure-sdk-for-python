@@ -30,7 +30,7 @@ class PartitionContext:
         eventhub_name: str,
         consumer_group: str,
         partition_id: str,
-        checkpoint_store: Optional[CheckpointStore]=None,
+        checkpoint_store: Optional[CheckpointStore] = None,
     ) -> None:
         self.fully_qualified_namespace = fully_qualified_namespace
         self.partition_id = partition_id
@@ -79,9 +79,7 @@ class PartitionContext:
                 try:
                     self._checkpoint_store.update_checkpoint(checkpoint, **kwargs)
                 except TypeError as e:
-                    if "update_checkpoint() got an unexpected keyword argument" in str(
-                        e
-                    ):
+                    if "update_checkpoint() got an unexpected keyword argument" in str(e):
                         _LOGGER.info(
                             "The provided checkpointstore method 'update_checkpoint' does not accept keyword arguments,"
                             " so keyword arguments will be ignored. Please update method signature to support kwargs."

@@ -3,7 +3,6 @@ import pytest
 import threading
 import sys
 
-from azure.core.tracing import SpanKind
 from azure.eventhub import EventData
 from azure.eventhub import EventHubConsumerClient
 from azure.eventhub._eventprocessor.in_memory_checkpoint_store import (
@@ -56,9 +55,7 @@ def test_receive_storage_checkpoint(
             sequence_numbers_1.append(sequence_num)
 
     with client:
-        worker = threading.Thread(
-            target=client.receive, args=(on_event,), kwargs={"starting_position": "-1"}
-        )
+        worker = threading.Thread(target=client.receive, args=(on_event,), kwargs={"starting_position": "-1"})
         worker.start()
 
         # Update the eventhub
@@ -121,35 +118,16 @@ def test_receive_no_partition(auth_credential_senders, uamqp_transport):
     on_event.sequence_number = None
 
     with client:
-        worker = threading.Thread(
-            target=client.receive, args=(on_event,), kwargs={"starting_position": "-1"}
-        )
+        worker = threading.Thread(target=client.receive, args=(on_event,), kwargs={"starting_position": "-1"})
         worker.start()
         time.sleep(20)
         assert on_event.received == 2
-        checkpoints = list(client._event_processors.values())[
-            0
-        ]._checkpoint_store.list_checkpoints(
+        checkpoints = list(client._event_processors.values())[0]._checkpoint_store.list_checkpoints(
             on_event.namespace, on_event.eventhub_name, on_event.consumer_group
         )
+        assert len([checkpoint for checkpoint in checkpoints if checkpoint["offset"] == on_event.offset]) > 0
         assert (
-            len(
-                [
-                    checkpoint
-                    for checkpoint in checkpoints
-                    if checkpoint["offset"] == on_event.offset
-                ]
-            )
-            > 0
-        )
-        assert (
-            len(
-                [
-                    checkpoint
-                    for checkpoint in checkpoints
-                    if checkpoint["sequence_number"] == on_event.sequence_number
-                ]
-            )
+            len([checkpoint for checkpoint in checkpoints if checkpoint["sequence_number"] == on_event.sequence_number])
             > 0
         )
 
@@ -163,7 +141,7 @@ def test_receive_partition(auth_credential_senders, uamqp_transport):
         eventhub_name=eventhub_name,
         credential=credential(),
         consumer_group="$default",
-        uamqp_transport=uamqp_transport
+        uamqp_transport=uamqp_transport,
     )
 
     def on_event(partition_context, event):
@@ -192,9 +170,7 @@ def test_receive_partition(auth_credential_senders, uamqp_transport):
 @pytest.mark.liveTest
 def test_receive_load_balancing(auth_credential_senders, uamqp_transport):
     if sys.platform.startswith("darwin"):
-        pytest.skip(
-            "Skipping on OSX - test code using multiple threads. Sometimes OSX aborts python process"
-        )
+        pytest.skip("Skipping on OSX - test code using multiple threads. Sometimes OSX aborts python process")
 
     fully_qualified_namespace, eventhub_name, credential, senders = auth_credential_senders
     cs = InMemoryCheckpointStore()
@@ -221,24 +197,16 @@ def test_receive_load_balancing(auth_credential_senders, uamqp_transport):
         pass
 
     with client1, client2:
-        worker1 = threading.Thread(
-            target=client1.receive, args=(on_event,), kwargs={"starting_position": "-1"}
-        )
+        worker1 = threading.Thread(target=client1.receive, args=(on_event,), kwargs={"starting_position": "-1"})
 
-        worker2 = threading.Thread(
-            target=client2.receive, args=(on_event,), kwargs={"starting_position": "-1"}
-        )
+        worker2 = threading.Thread(target=client2.receive, args=(on_event,), kwargs={"starting_position": "-1"})
 
         worker1.start()
         time.sleep(3.3)
         worker2.start()
         time.sleep(20)
-        assert (
-            len(client1._event_processors[("$default", ALL_PARTITIONS)]._consumers) == 1
-        )
-        assert (
-            len(client2._event_processors[("$default", ALL_PARTITIONS)]._consumers) == 1
-        )
+        assert len(client1._event_processors[("$default", ALL_PARTITIONS)]._consumers) == 1
+        assert len(client2._event_processors[("$default", ALL_PARTITIONS)]._consumers) == 1
 
 
 def test_receive_batch_no_max_wait_time(auth_credential_senders, uamqp_transport):
@@ -251,7 +219,7 @@ def test_receive_batch_no_max_wait_time(auth_credential_senders, uamqp_transport
         eventhub_name=eventhub_name,
         credential=credential(),
         consumer_group="$default",
-        uamqp_transport=uamqp_transport
+        uamqp_transport=uamqp_transport,
     )
 
     def on_event_batch(partition_context, event_batch):
@@ -280,23 +248,12 @@ def test_receive_batch_no_max_wait_time(auth_credential_senders, uamqp_transport
         time.sleep(20)
         assert on_event_batch.received == 2
 
-        checkpoints = list(client._event_processors.values())[
-            0
-        ]._checkpoint_store.list_checkpoints(
+        checkpoints = list(client._event_processors.values())[0]._checkpoint_store.list_checkpoints(
             on_event_batch.namespace,
             on_event_batch.eventhub_name,
             on_event_batch.consumer_group,
         )
-        assert (
-            len(
-                [
-                    checkpoint
-                    for checkpoint in checkpoints
-                    if checkpoint["offset"] == on_event_batch.offset
-                ]
-            )
-            > 0
-        )
+        assert len([checkpoint for checkpoint in checkpoints if checkpoint["offset"] == on_event_batch.offset]) > 0
         assert (
             len(
                 [
@@ -311,9 +268,7 @@ def test_receive_batch_no_max_wait_time(auth_credential_senders, uamqp_transport
     worker.join()
 
 
-@pytest.mark.parametrize(
-    "max_wait_time, sleep_time, expected_result", [(3, 15, []), (3, 2, None)]
-)
+@pytest.mark.parametrize("max_wait_time, sleep_time, expected_result", [(3, 15, []), (3, 2, None)])
 def test_receive_batch_empty_with_max_wait_time(
     auth_credentials, uamqp_transport, max_wait_time, sleep_time, expected_result
 ):
@@ -324,7 +279,7 @@ def test_receive_batch_empty_with_max_wait_time(
         eventhub_name=eventhub_name,
         credential=credential(),
         consumer_group="$default",
-        uamqp_transport=uamqp_transport
+        uamqp_transport=uamqp_transport,
     )
 
     def on_event_batch(partition_context, event_batch):
@@ -353,7 +308,7 @@ def test_receive_batch_early_callback(auth_credential_senders, uamqp_transport):
         eventhub_name=eventhub_name,
         credential=credential(),
         consumer_group="$default",
-        uamqp_transport=uamqp_transport
+        uamqp_transport=uamqp_transport,
     )
 
     def on_event_batch(partition_context, event_batch):
@@ -383,20 +338,20 @@ def test_receive_batch_tracing(auth_credential_senders, uamqp_transport):
     """Test that that receive and process spans are properly created and linked."""
 
     # TODO: Commenting out tracing for now. Need to fix this issue first: #36571
-    #fake_span = enable_tracing
+    # fake_span = enable_tracing
     fully_qualified_namespace, eventhub_name, credential, senders = auth_credential_senders
 
-    #with fake_span(name="SendSpan") as root_send:
+    # with fake_span(name="SendSpan") as root_send:
     senders[0].send([EventData(b"Data"), EventData(b"Data")])
 
-    #assert len(root_send.children) == 3
-    #assert root_send.children[0].name == "EventHubs.message"
-    #assert root_send.children[1].name == "EventHubs.message"
-    #assert root_send.children[2].name == "EventHubs.send"
-    #assert len(root_send.children[2].links) == 2
+    # assert len(root_send.children) == 3
+    # assert root_send.children[0].name == "EventHubs.message"
+    # assert root_send.children[1].name == "EventHubs.message"
+    # assert root_send.children[2].name == "EventHubs.send"
+    # assert len(root_send.children[2].links) == 2
 
-    #traceparent1 = root_send.children[2].links[0].headers["traceparent"]
-    #traceparent2 = root_send.children[2].links[1].headers["traceparent"]
+    # traceparent1 = root_send.children[2].links[0].headers["traceparent"]
+    # traceparent2 = root_send.children[2].links[1].headers["traceparent"]
 
     def on_event_batch(partition_context, event_batch):
         on_event_batch.received += len(event_batch)
@@ -408,10 +363,10 @@ def test_receive_batch_tracing(auth_credential_senders, uamqp_transport):
         eventhub_name=eventhub_name,
         credential=credential(),
         consumer_group="$default",
-        uamqp_transport=uamqp_transport
+        uamqp_transport=uamqp_transport,
     )
 
-    #with fake_span(name="ReceiveSpan") as root_receive:
+    # with fake_span(name="ReceiveSpan") as root_receive:
     with client:
         worker = threading.Thread(
             target=client.receive_batch,
@@ -424,24 +379,24 @@ def test_receive_batch_tracing(auth_credential_senders, uamqp_transport):
 
     worker.join()
 
-    #assert root_receive.name == "ReceiveSpan"
+    # assert root_receive.name == "ReceiveSpan"
     ## One receive span and one process span.
-    #assert len(root_receive.children) == 2
+    # assert len(root_receive.children) == 2
 
-    #assert root_receive.children[0].name == "EventHubs.receive"
-    #assert root_receive.children[0].kind == SpanKind.CLIENT
+    # assert root_receive.children[0].name == "EventHubs.receive"
+    # assert root_receive.children[0].kind == SpanKind.CLIENT
 
     ## One link for each message in the batch.
-    #assert len(root_receive.children[0].links) == 2
-    #assert root_receive.children[0].links[0].headers["traceparent"] == traceparent1
-    #assert root_receive.children[0].links[1].headers["traceparent"] == traceparent2
+    # assert len(root_receive.children[0].links) == 2
+    # assert root_receive.children[0].links[0].headers["traceparent"] == traceparent1
+    # assert root_receive.children[0].links[1].headers["traceparent"] == traceparent2
 
-    #assert root_receive.children[1].name == "EventHubs.process"
-    #assert root_receive.children[1].kind == SpanKind.CONSUMER
+    # assert root_receive.children[1].name == "EventHubs.process"
+    # assert root_receive.children[1].kind == SpanKind.CONSUMER
 
-    #assert len(root_receive.children[1].links) == 2
-    #assert root_receive.children[1].links[0].headers["traceparent"] == traceparent1
-    #assert root_receive.children[1].links[1].headers["traceparent"] == traceparent2
+    # assert len(root_receive.children[1].links) == 2
+    # assert root_receive.children[1].links[0].headers["traceparent"] == traceparent1
+    # assert root_receive.children[1].links[1].headers["traceparent"] == traceparent2
 
 
 @pytest.mark.liveTest
@@ -453,7 +408,7 @@ def test_receive_batch_large_event(auth_credential_senders, uamqp_transport):
         eventhub_name=eventhub_name,
         credential=credential(),
         consumer_group="$default",
-        uamqp_transport=uamqp_transport
+        uamqp_transport=uamqp_transport,
     )
 
     def on_event(partition_context, event):
@@ -462,10 +417,7 @@ def test_receive_batch_large_event(auth_credential_senders, uamqp_transport):
         on_event.consumer_group = partition_context.consumer_group
         on_event.fully_qualified_namespace = partition_context.fully_qualified_namespace
         on_event.eventhub_name = partition_context.eventhub_name
-        assert (
-            client._event_processors[0]._consumers[0]._handler._link.current_link_credit
-            == 1
-        )
+        assert client._event_processors[0]._consumers[0]._handler._link.current_link_credit == 1
 
     on_event.received = 0
     with client:

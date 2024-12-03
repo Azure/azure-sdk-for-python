@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.loganalytics import LogAnalyticsManagementClient
 
 """
@@ -29,12 +30,11 @@ def main():
         subscription_id="00000000-0000-0000-0000-00000000000",
     )
 
-    response = client.saved_searches.delete(
+    client.saved_searches.delete(
         resource_group_name="TestRG",
         workspace_name="TestWS",
         saved_search_id="00000000-0000-0000-0000-00000000000",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/operationalinsights/resource-manager/Microsoft.OperationalInsights/stable/2020-08-01/examples/WorkspacesDeleteSavedSearches.json

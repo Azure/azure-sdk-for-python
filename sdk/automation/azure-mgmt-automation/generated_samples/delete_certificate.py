@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.automation import AutomationClient
 
 """
@@ -29,12 +30,11 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.certificate.delete(
+    client.certificate.delete(
         resource_group_name="rg",
         automation_account_name="myAutomationAccount33",
         certificate_name="testCert",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/stable/2022-08-08/examples/deleteCertificate.json

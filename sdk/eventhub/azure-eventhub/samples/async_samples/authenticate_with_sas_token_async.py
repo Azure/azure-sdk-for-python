@@ -25,12 +25,12 @@ from azure.eventhub import EventData
 
 def generate_sas_token(uri, sas_name, sas_value, token_ttl):
     """Performs the signing and encoding needed to generate a sas token from a sas key."""
-    sas = sas_value.encode('utf-8')
+    sas = sas_value.encode("utf-8")
     expiry = str(int(time.time() + token_ttl))
-    string_to_sign = (uri + '\n' + expiry).encode('utf-8')
+    string_to_sign = (uri + "\n" + expiry).encode("utf-8")
     signed_hmac_sha256 = hmac.HMAC(sas, string_to_sign, hashlib.sha256)
     signature = url_parse_quote(base64.b64encode(signed_hmac_sha256.digest()))
-    return 'SharedAccessSignature sr={}&sig={}&se={}&skn={}'.format(uri, signature, expiry, sas_name)
+    return "SharedAccessSignature sr={}&sig={}&se={}&skn={}".format(uri, signature, expiry, sas_name)
 
 
 class CustomizedSASCredential:
@@ -42,20 +42,20 @@ class CustomizedSASCredential:
         self.token = token
         self.expiry = expiry
         self.token_type = b"servicebus.windows.net:sastoken"
- 
+
     async def get_token(self, *scopes, **kwargs) -> AccessToken:
         """
         This method is automatically called when token is about to expire.
         """
         return AccessToken(self.token, self.expiry)
- 
+
     async def close(self):
         pass
- 
+
     async def __aenter__(self):
         """Return `self` upon entering the runtime context."""
         return self
- 
+
     async def __aexit__(
         self,
         exc_type: Optional[Type[BaseException]] = None,
@@ -64,13 +64,14 @@ class CustomizedSASCredential:
     ) -> None:
         pass
 
+
 # Target namespace and hub must also be specified.  Consumer group is set to default unless required otherwise.
-FULLY_QUALIFIED_NAMESPACE = os.environ['EVENT_HUB_HOSTNAME']
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
+EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
 
 # The following part creates a SAS token. Users can use any way to create a SAS token.
-SAS_POLICY = os.environ['EVENT_HUB_SAS_POLICY']
-SAS_KEY = os.environ['EVENT_HUB_SAS_KEY']
+SAS_POLICY = os.environ["EVENT_HUB_SAS_POLICY"]
+SAS_KEY = os.environ["EVENT_HUB_SAS_KEY"]
 
 
 async def create_with_sas_token():
@@ -83,12 +84,12 @@ async def create_with_sas_token():
         fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
         eventhub_name=EVENTHUB_NAME,
         credential=CustomizedSASCredential(sas_token, time.time() + token_ttl),
-        logging_enable=True
+        logging_enable=True,
     )
 
     async with producer_client:
         event_data_batch = await producer_client.create_batch()
-        event_data_batch.add(EventData('Single message'))
+        event_data_batch.add(EventData("Single message"))
         await producer_client.send_batch(event_data_batch)
 
 

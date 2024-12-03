@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync
     from .._pyamqp.aio._connection_async import Connection as ConnectionAsync
     from ._transport._base_async import AmqpTransportAsync
+
     try:
         from uamqp.authentication import JWTTokenAsync as uamqp_JWTTokenAuthAsync
         from uamqp.async_ops import ConnectionAsync as uamqp_ConnectionAsync
@@ -44,22 +45,22 @@ if TYPE_CHECKING:
 
 class _SharedConnectionManager:  # pylint:disable=too-many-instance-attributes
     def __init__(
-            self,
-            *,
-            container_id: Optional[str] = None,
-            custom_endpoint_address: Optional[str] = None,
-            debug: bool = False,
-            error_policy: Optional[Any] = None,
-            properties: Optional[Dict[str, Any]] = None,
-            encoding: str = "UTF-8",
-            transport_type: TransportType = TransportType.Amqp,
-            http_proxy: Optional[str] = None,
-            max_frame_size: int,
-            channel_max: int,
-            idle_timeout: float,
-            remote_idle_timeout_empty_frame_send_ratio: float,
-            amqp_transport: AmqpTransportAsync,
-            **kwargs: Any
+        self,
+        *,
+        container_id: Optional[str] = None,
+        custom_endpoint_address: Optional[str] = None,
+        debug: bool = False,
+        error_policy: Optional[Any] = None,
+        properties: Optional[Dict[str, Any]] = None,
+        encoding: str = "UTF-8",
+        transport_type: TransportType = TransportType.Amqp,
+        http_proxy: Optional[str] = None,
+        max_frame_size: int,
+        channel_max: int,
+        idle_timeout: float,
+        remote_idle_timeout_empty_frame_send_ratio: float,
+        amqp_transport: AmqpTransportAsync,
+        **kwargs: Any,
     ) -> None:
         self._loop = kwargs.get("loop")
         self._lock = Lock(loop=self._loop)

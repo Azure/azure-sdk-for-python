@@ -28,10 +28,9 @@ tracer = trace.get_tracer(__name__)
 
 # azure monitor trace exporter to send telemetry to appinsights
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
+
 span_processor = BatchSpanProcessor(
-    AzureMonitorTraceExporter.from_connection_string(
-        os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
-    )
+    AzureMonitorTraceExporter.from_connection_string(os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"])
 )
 trace.get_tracer_provider().add_span_processor(span_processor)
 
@@ -40,9 +39,10 @@ from azure.eventhub import EventHubConsumerClient
 from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
 STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
 BLOB_CONTAINER_NAME = "your-blob-container-name"  # Please make sure the blob container resource exists.
+
 
 def on_event(partition_context, event):
     # Put your code here.
@@ -50,15 +50,13 @@ def on_event(partition_context, event):
     print(event)
     partition_context.update_checkpoint(event)
 
+
 checkpoint_store = BlobCheckpointStore.from_connection_string(
     STORAGE_CONNECTION_STR,
     container_name=BLOB_CONTAINER_NAME,
 )
 client = EventHubConsumerClient.from_connection_string(
-    CONNECTION_STR,
-    consumer_group='$Default',
-    eventhub_name=EVENTHUB_NAME,
-    checkpoint_store=checkpoint_store
+    CONNECTION_STR, consumer_group="$Default", eventhub_name=EVENTHUB_NAME, checkpoint_store=checkpoint_store
 )
 
 with tracer.start_as_current_span(name="MyEventHub"):

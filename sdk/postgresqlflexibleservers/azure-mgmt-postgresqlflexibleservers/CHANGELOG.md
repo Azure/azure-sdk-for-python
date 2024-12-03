@@ -1,5 +1,49 @@
 # Release History
 
+## 1.1.0b1 (2024-11-04)
+
+### Features Added
+
+  - Client `PostgreSQLManagementClient` added operation group `quota_usages`
+  - Client `PostgreSQLManagementClient` added operation group `tuning_options`
+  - Model `FlexibleServerCapability` added property `supported_features`
+  - Enum `IdentityType` added member `SYSTEM_ASSIGNED`
+  - Model `Server` added property `cluster`
+  - Model `ServerSkuCapability` added property `supported_features`
+  - Model `ServerSkuCapability` added property `security_profile`
+  - Enum `ServerVersion` added member `SEVENTEEN`
+  - Model `ServerVersionCapability` added property `supported_features`
+  - Enum `SourceType` added member `APSARA_DB_RDS`
+  - Enum `SourceType` added member `CRUNCHY_POSTGRE_SQL`
+  - Enum `SourceType` added member `DIGITAL_OCEAN_DROPLETS`
+  - Enum `SourceType` added member `DIGITAL_OCEAN_POSTGRE_SQL`
+  - Enum `SourceType` added member `EDB_ORACLE_SERVER`
+  - Enum `SourceType` added member `EDB_POSTGRE_SQL`
+  - Enum `SourceType` added member `HEROKU_POSTGRE_SQL`
+  - Enum `SourceType` added member `HUAWEI_COMPUTE`
+  - Enum `SourceType` added member `HUAWEI_RDS`
+  - Enum `SourceType` added member `POSTGRE_SQL_COSMOS_DB`
+  - Enum `SourceType` added member `POSTGRE_SQL_FLEXIBLE_SERVER`
+  - Enum `SourceType` added member `SUPABASE_POSTGRE_SQL`
+  - Enum `StorageType` added member `ULTRA_SSD_LRS`
+  - Added model `Cluster`
+  - Added model `ImpactRecord`
+  - Added model `IndexRecommendationDetails`
+  - Added model `IndexRecommendationListResult`
+  - Added model `IndexRecommendationResource`
+  - Added model `IndexRecommendationResourcePropertiesAnalyzedWorkload`
+  - Added model `IndexRecommendationResourcePropertiesImplementationDetails`
+  - Added model `NameProperty`
+  - Added model `QuotaUsage`
+  - Added model `QuotaUsagesListResult`
+  - Added enum `RecommendationType`
+  - Added enum `RecommendationTypeEnum`
+  - Added model `SupportedFeature`
+  - Added enum `SupportedFeatureStatusEnum`
+  - Added enum `TuningOptionEnum`
+  - Added model `TuningOptionsListResult`
+  - Added model `TuningOptionsResource`
+
 ## 1.0.0 (2024-10-11)
 
 ### Features Added

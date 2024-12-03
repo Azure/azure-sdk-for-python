@@ -10,13 +10,7 @@ INSTRUMENTATION_KEY = "instrumentationkey"
 
 # Validate UUID format
 # Specs taken from https://tools.ietf.org/html/rfc4122
-uuid_regex_pattern = re.compile(
-    "^[0-9a-f]{8}-"
-    "[0-9a-f]{4}-"
-    "[0-9a-f]{4}-"
-    "[0-9a-f]{4}-"
-    "[0-9a-f]{12}$"
-)
+uuid_regex_pattern = re.compile("^[0-9a-f]{8}-" "[0-9a-f]{4}-" + "[0-9a-f]{4}-" "[0-9a-f]{4}-" "[0-9a-f]{12}$")
 
 
 class ConnectionStringParser:
@@ -27,10 +21,7 @@ class ConnectionStringParser:
     :rtype: None
     """
 
-    def __init__(
-        self,
-        connection_string: typing.Optional[str] = None
-    ) -> None:
+    def __init__(self, connection_string: typing.Optional[str] = None) -> None:
         self.instrumentation_key = None
         self.endpoint = ""
         self.live_endpoint = ""
@@ -42,9 +33,7 @@ class ConnectionStringParser:
         # connection string and ikey
         code_cs = self._parse_connection_string(self._connection_string)
         code_ikey = self.instrumentation_key
-        env_cs = self._parse_connection_string(
-            os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING")
-        )
+        env_cs = self._parse_connection_string(os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"))
         env_ikey = os.getenv("APPINSIGHTS_INSTRUMENTATIONKEY")
 
         # The priority of which value takes on the instrumentation key is:
@@ -53,26 +42,18 @@ class ConnectionStringParser:
         # 3. Key from connection string in environment variable
         # 4. Key from instrumentation key in environment variable
         self.instrumentation_key = (
-            code_cs.get(INSTRUMENTATION_KEY) # type: ignore
-            or code_ikey
-            or env_cs.get(INSTRUMENTATION_KEY)
-            or env_ikey
+            code_cs.get(INSTRUMENTATION_KEY) or code_ikey or env_cs.get(INSTRUMENTATION_KEY) or env_ikey  # type: ignore
         )
         # The priority of the endpoints is as follows:
         # 1. The endpoint explicitly passed in connection string
         # 2. The endpoint from the connection string in environment variable
         # 3. The default breeze endpoint
         self.endpoint = (
-            code_cs.get(INGESTION_ENDPOINT)
-            or env_cs.get(INGESTION_ENDPOINT)
-            or "https://dc.services.visualstudio.com"
+            code_cs.get(INGESTION_ENDPOINT) or env_cs.get(INGESTION_ENDPOINT) or "https://dc.services.visualstudio.com"
         )
         self.live_endpoint = (
-            code_cs.get(LIVE_ENDPOINT)
-            or env_cs.get(LIVE_ENDPOINT)
-            or "https://rt.services.visualstudio.com"
+            code_cs.get(LIVE_ENDPOINT) or env_cs.get(LIVE_ENDPOINT) or "https://rt.services.visualstudio.com"
         )
-
 
     def _validate_instrumentation_key(self) -> None:
         """Validates the instrumentation key used for Azure Monitor.
@@ -84,8 +65,7 @@ class ConnectionStringParser:
             raise ValueError("Instrumentation key cannot be none or empty.")
         match = uuid_regex_pattern.match(self.instrumentation_key)
         if not match:
-            raise ValueError(
-                "Invalid instrumentation key. It should be a valid UUID.")
+            raise ValueError("Invalid instrumentation key. It should be a valid UUID.")
 
     def _parse_connection_string(self, connection_string) -> typing.Dict:
         if connection_string is None:
@@ -117,17 +97,13 @@ class ConnectionStringParser:
         # Construct the endpoints if not passed in explicitly
         if result.get(INGESTION_ENDPOINT) is None:
             if endpoint_suffix:
-                result[INGESTION_ENDPOINT] = "https://{0}dc.{1}".format(
-                    location_prefix, endpoint_suffix
-                )
+                result[INGESTION_ENDPOINT] = "https://{0}dc.{1}".format(location_prefix, endpoint_suffix)
             else:
                 # Default to None if cannot construct
                 result[INGESTION_ENDPOINT] = None
         if result.get(LIVE_ENDPOINT) is None:
             if endpoint_suffix:
-                result[LIVE_ENDPOINT] = "https://{0}live.{1}".format(
-                    location_prefix, endpoint_suffix
-                )
+                result[LIVE_ENDPOINT] = "https://{0}live.{1}".format(location_prefix, endpoint_suffix)
             else:
                 result[LIVE_ENDPOINT] = None
 

@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, Awaitable
+from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -26,9 +27,7 @@ from .operations import (
 )
 
 
-class AzureCommunicationCallAutomationService(
-    AzureCommunicationCallAutomationServiceOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class AzureCommunicationCallAutomationService(AzureCommunicationCallAutomationServiceOperationsMixin):
     """Azure Communication Service Call Automation APIs.
 
     :ivar call_connection: CallConnectionOperations operations
@@ -115,7 +114,7 @@ class AzureCommunicationCallAutomationService(
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "AzureCommunicationCallAutomationService":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 
