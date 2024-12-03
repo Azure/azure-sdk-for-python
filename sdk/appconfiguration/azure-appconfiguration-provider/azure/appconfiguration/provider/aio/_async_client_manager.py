@@ -329,13 +329,14 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
                     endpoint, connection_string, user_agent, retry_total, retry_backoff_max, **self._args
                 )
             )
-        if endpoint and credential:
+        elif endpoint and credential:
             self._replica_clients.append(
                 _AsyncConfigurationClientWrapper.from_credential(
                     endpoint, credential, user_agent, retry_total, retry_backoff_max, **self._args
                 )
             )
-        raise ValueError("Please pass either endpoint and credential, or a connection string with a value.")
+        else:
+            raise ValueError("Please pass either endpoint and credential, or a connection string with a value.")
 
     def get_next_client(self) -> Optional[_AsyncConfigurationClientWrapper]:
         """
