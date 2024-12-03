@@ -25,7 +25,8 @@ class TestLoggerUtils:
 
 @pytest.mark.unittest
 class TestLoggingHandler:
-    @patch("azure.ai.ml._telemetry.logging_handler.configure_azure_monitor")
+    # @patch("azure.monitor.opentelemetry.configure_azure_monitor")
+    @patch("azure.ai.ml._telemetry.logging_handler.setup_azure_monitor")
     @patch("azure.ai.ml._telemetry.logging_handler.logging.getLogger")
     def test_logging_enabled(self, mock_get_logger, mock_configure_azure_monitor) -> None:
         mock_logger = MagicMock()

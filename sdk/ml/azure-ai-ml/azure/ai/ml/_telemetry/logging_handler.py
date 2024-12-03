@@ -78,6 +78,15 @@ def in_jupyter_notebook() -> bool:
     return True
 
 
+def setup_azure_monitor(connection_string=None) -> None:
+    from azure.monitor.opentelemetry import configure_azure_monitor
+
+    configure_azure_monitor(
+        connection_string=connection_string,
+        logger_name=AML_INTERNAL_LOGGER_NAMESPACE,
+    )
+
+
 # cspell:ignore overriden
 def set_appinsights_distro(
     user_agent,
@@ -129,12 +138,8 @@ def set_appinsights_distro(
 
         logger.addFilter(CustomDimensionsFilter(custom_properties))
 
-        from azure.monitor.opentelemetry import configure_azure_monitor
+        setup_azure_monitor(connection_string)
 
-        configure_azure_monitor(
-            connection_string=connection_string,
-            logger_name=AML_INTERNAL_LOGGER_NAMESPACE,
-        )
     except Exception:  # pylint: disable=W0718
         # ignore any exceptions, telemetry collection errors shouldn't block an operation
         return
