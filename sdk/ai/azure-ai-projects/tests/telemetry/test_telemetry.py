@@ -24,5 +24,11 @@ class TestTelemetry(TelemetryTestBase):
     @servicePreparerTelemetryTests()
     def test_telemetry_enable_console_tracing(self, **kwargs):
         with self.get_sync_client(**kwargs) as project_client:
+            project_client.telemetry.enable()
+            # TODO: Create inference client and do chat completions. How do I know if traces were emitted?
+
+    @servicePreparerTelemetryTests()
+    def test_telemetry_enable_console_tracing_to_stdout(self, **kwargs):
+        with self.get_sync_client(**kwargs) as project_client:
             project_client.telemetry.enable(destination=sys.stdout)
             # TODO: Create inference client and do chat completions. How do I know if traces were emitted?
