@@ -5,6 +5,7 @@
 ### Bugs Fixed
 - Fixed `[remote]` extra to be needed only when tracking results in Azure AI Studio.
 - Removing `azure-ai-inference` as dependency.
+- Fixed `AttributeError: 'NoneType' object has no attribute 'get'` while running simulator with 1000+ results
 
 ## 1.0.0 (2024-11-13)
 
