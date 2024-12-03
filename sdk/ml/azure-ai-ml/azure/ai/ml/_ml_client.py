@@ -709,6 +709,7 @@ class MLClient:
             _service_client_kwargs=kwargs,
             requests_pipeline=self._requests_pipeline,
             service_client_01_2024_preview=self._service_client_01_2024_preview,
+            service_client_10_2024_preview=self._service_client_10_2024_preview,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.JOB, self._jobs)
@@ -746,7 +747,8 @@ class MLClient:
                 **ops_kwargs,  # type: ignore[arg-type]
             )
             self._operation_container.add(
-                AzureMLResourceType.VIRTUALCLUSTER, self._virtual_clusters  # type: ignore[arg-type]
+                AzureMLResourceType.VIRTUALCLUSTER,
+                self._virtual_clusters,  # type: ignore[arg-type]
             )
         except Exception as ex:  # pylint: disable=broad-except
             module_logger.debug("Virtual Cluster operations could not be initialized due to %s ", ex)

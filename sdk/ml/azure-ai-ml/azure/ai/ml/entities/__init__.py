@@ -52,15 +52,29 @@ from ._component.parallel_component import ParallelComponent
 from ._component.pipeline_component import PipelineComponent
 from ._component.spark_component import SparkComponent
 from ._compute._aml_compute_node_info import AmlComputeNodeInfo
-from ._compute._custom_applications import CustomApplications, EndpointsSettings, ImageSettings, VolumeSettings
+from ._compute._custom_applications import (
+    CustomApplications,
+    EndpointsSettings,
+    ImageSettings,
+    VolumeSettings,
+)
 from ._compute._image_metadata import ImageMetadata
-from ._compute._schedule import ComputePowerAction, ComputeSchedules, ComputeStartStopSchedule, ScheduleState
+from ._compute._schedule import (
+    ComputePowerAction,
+    ComputeSchedules,
+    ComputeStartStopSchedule,
+    ScheduleState,
+)
 from ._compute._setup_scripts import ScriptReference, SetupScripts
 from ._compute._usage import Usage, UsageName
 from ._compute._vm_size import VmSize
 from ._compute.aml_compute import AmlCompute, AmlComputeSshSettings
 from ._compute.compute import Compute, NetworkSettings
-from ._compute.compute_instance import AssignedUserConfiguration, ComputeInstance, ComputeInstanceSshSettings
+from ._compute.compute_instance import (
+    AssignedUserConfiguration,
+    ComputeInstance,
+    ComputeInstanceSshSettings,
+)
 from ._compute.kubernetes_compute import KubernetesCompute
 from ._compute.synapsespark_compute import AutoPauseSettings, AutoScaleSettings, SynapseSparkCompute
 from ._compute.unsupported_compute import UnsupportedCompute
@@ -84,7 +98,11 @@ from ._credentials import (
 from ._data_import.data_import import DataImport
 from ._data_import.schedule import ImportDataSchedule
 from ._datastore.adls_gen1 import AzureDataLakeGen1Datastore
-from ._datastore.azure_storage import AzureBlobDatastore, AzureDataLakeGen2Datastore, AzureFileDatastore
+from ._datastore.azure_storage import (
+    AzureBlobDatastore,
+    AzureDataLakeGen2Datastore,
+    AzureFileDatastore,
+)
 from ._datastore.datastore import Datastore
 from ._datastore.one_lake import OneLakeArtifact, OneLakeDatastore
 from ._deployment.batch_deployment import BatchDeployment
@@ -94,7 +112,11 @@ from ._deployment.container_resource_settings import ResourceSettings
 from ._deployment.data_asset import DataAsset
 from ._deployment.data_collector import DataCollector
 from ._deployment.deployment_collection import DeploymentCollection
-from ._deployment.deployment_settings import BatchRetrySettings, OnlineRequestSettings, ProbeSettings
+from ._deployment.deployment_settings import (
+    BatchRetrySettings,
+    OnlineRequestSettings,
+    ProbeSettings,
+)
 from ._deployment.model_batch_deployment import ModelBatchDeployment
 from ._deployment.model_batch_deployment_settings import ModelBatchDeploymentSettings
 from ._deployment.online_deployment import (
@@ -106,7 +128,11 @@ from ._deployment.online_deployment import (
 from ._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
 from ._deployment.request_logging import RequestLogging
 from ._deployment.resource_requirements_settings import ResourceRequirementsSettings
-from ._deployment.scale_settings import DefaultScaleSettings, OnlineScaleSettings, TargetUtilizationScaleSettings
+from ._deployment.scale_settings import (
+    DefaultScaleSettings,
+    OnlineScaleSettings,
+    TargetUtilizationScaleSettings,
+)
 from ._endpoint.batch_endpoint import BatchEndpoint
 from ._endpoint.endpoint import Endpoint
 from ._endpoint.online_endpoint import (
@@ -136,11 +162,19 @@ from ._indexes import AzureAISearchConfig, GitSource, IndexDataSource, LocalSour
 from ._indexes import ModelConfiguration as IndexModelConfiguration
 from ._job.command_job import CommandJob
 from ._job.compute_configuration import ComputeConfiguration
+from ._job.finetuning.custom_model_finetuning_job import CustomModelFineTuningJob
 from ._job.input_port import InputPort
 from ._job.job import Job
 from ._job.job_limits import CommandJobLimits
+from ._job.job_resources import JobResources
 from ._job.job_resource_configuration import JobResourceConfiguration
-from ._job.job_service import JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService
+from ._job.job_service import (
+    JobService,
+    JupyterLabJobService,
+    SshJobService,
+    TensorBoardJobService,
+    VsCodeJobService,
+)
 from ._job.parallel.parallel_task import ParallelTask
 from ._job.parallel.retry_settings import RetrySettings
 from ._job.parameterized_command import ParameterizedCommand
@@ -156,7 +190,12 @@ from ._job.spark_resource_configuration import SparkResourceConfiguration
 from ._monitoring.alert_notification import AlertNotification
 from ._monitoring.compute import ServerlessSparkCompute
 from ._monitoring.definition import MonitorDefinition
-from ._monitoring.input_data import FixedInputData, MonitorInputData, StaticInputData, TrailingInputData
+from ._monitoring.input_data import (
+    FixedInputData,
+    MonitorInputData,
+    StaticInputData,
+    TrailingInputData,
+)
 from ._monitoring.schedule import MonitorSchedule
 from ._monitoring.signals import (
     BaselineDataRange,
@@ -244,7 +283,11 @@ from ._workspace.networking import (
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.serverless_compute import ServerlessComputeSettings
 from ._workspace.workspace import Workspace
-from ._workspace.workspace_keys import ContainerRegistryCredential, NotebookAccessKeys, WorkspaceKeys
+from ._workspace.workspace_keys import (
+    ContainerRegistryCredential,
+    NotebookAccessKeys,
+    WorkspaceKeys,
+)
 
 __all__ = [
     "Resource",
@@ -258,8 +301,10 @@ __all__ = [
     "SparkJobEntryType",
     "CommandJobLimits",
     "ComputeConfiguration",
+    "CustomModelFineTuningJob",
     "CreatedByType",
     "ResourceConfiguration",
+    "JobResources",
     "JobResourceConfiguration",
     "QueueSettings",
     "JobService",

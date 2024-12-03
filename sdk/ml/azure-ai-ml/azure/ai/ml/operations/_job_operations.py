@@ -39,7 +39,9 @@ from azure.ai.ml._restclient.v2023_04_01_preview import (
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, ListViewType, UserIdentity
 from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_2401
-from azure.ai.ml._restclient.v2024_01_01_preview.models import JobType as RestJobType_20240101
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
+    JobType as RestJobType_20241001Preview,
+)
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -192,6 +194,7 @@ class JobOperations(_ScopeDependentOperations):
         )  # pylint: disable=line-too-long
 
         self.service_client_01_2024_preview = kwargs.pop("service_client_01_2024_preview", None)
+        self.service_client_10_2024_preview = kwargs.pop("service_client_10_2024_preview", None)
         self._kwargs = kwargs
 
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
@@ -744,8 +747,8 @@ class JobOperations(_ScopeDependentOperations):
         self, rest_job_resource: JobBase, **kwargs: Any
     ) -> JobBase:
         service_client_operation = self._operation_2023_02_preview
-        if rest_job_resource.properties.job_type == RestJobType_20240101.FINE_TUNING:
-            service_client_operation = self.service_client_01_2024_preview.jobs
+        if rest_job_resource.properties.job_type == RestJobType_20241001Preview.FINE_TUNING:
+            service_client_operation = self.service_client_10_2024_preview.jobs
         if rest_job_resource.properties.job_type == RestJobType.PIPELINE:
             service_client_operation = self.service_client_01_2024_preview.jobs
         if rest_job_resource.properties.job_type == RestJobType.AUTO_ML:
@@ -1074,12 +1077,27 @@ class JobOperations(_ScopeDependentOperations):
         return uri
 
     def _get_job(self, name: str) -> JobBase:
-        return self.service_client_01_2024_preview.jobs.get(
+        job = self.service_client_01_2024_preview.jobs.get(
             id=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
             **self._kwargs,
         )
+
+        if (
+            hasattr(job, "properties")
+            and job.properties
+            and hasattr(job.properties, "job_type")
+            and job.properties.job_type == RestJobType_20241001Preview.FINE_TUNING
+        ):
+            return self.service_client_10_2024_preview.jobs.get(
+                id=name,
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                **self._kwargs,
+            )
+
+        return job
 
     # Upgrade api from 2023-04-01-preview to 2024-01-01-preview for pipeline job
     # We can remove this function once `_get_job` function has also been upgraded to the same version with pipeline
