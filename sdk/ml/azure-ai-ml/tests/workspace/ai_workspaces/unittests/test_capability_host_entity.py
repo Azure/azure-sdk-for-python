@@ -120,21 +120,30 @@ class TestCapabilityHostEntity:
         capability_host = load_capability_host(
             source="./tests/test_configs/workspace/ai_workspaces/test_capability_host_hub.yml"
         )
-        rest_capability_host = CapabilityHost._to_rest_object_for_hub(capability_host)
+        rest_capability_host = CapabilityHost._to_rest_object(capability_host)
 
         assert isinstance(rest_capability_host, RestCapabilityHost)
         assert rest_capability_host.properties is not None
         assert rest_capability_host.properties.description == "Capability host in hub for unit tests"
         assert rest_capability_host.properties.capability_host_kind == "Agents"
-        assert rest_capability_host.properties.ai_services_connections is None
-        assert rest_capability_host.properties.storage_connections is None
-        assert rest_capability_host.properties.vector_store_connections is None
+        assert (
+            rest_capability_host.properties.ai_services_connections is None
+            or len(rest_capability_host.properties.ai_services_connections) == 0
+        )
+        assert (
+            rest_capability_host.properties.storage_connections is None
+            or len(rest_capability_host.properties.storage_connections) == 0
+        )
+        assert (
+            rest_capability_host.properties.vector_store_connections is None
+            or len(rest_capability_host.properties.vector_store_connections) == 0
+        )
 
     def test_to_rest_object_for_project(self) -> None:
         capability_host = load_capability_host(
             source="./tests/test_configs/workspace/ai_workspaces/test_capability_host_project.yml"
         )
-        rest_capability_host = CapabilityHost._to_rest_object_for_project(capability_host)
+        rest_capability_host = CapabilityHost._to_rest_object(capability_host)
 
         assert isinstance(rest_capability_host, RestCapabilityHost)
         assert rest_capability_host.properties is not None
@@ -176,3 +185,5 @@ class TestCapabilityHostEntity:
         assert "aiservice_connection_1" in file_content
         assert "storage_connection_1" in file_content
         assert "vector_store_connection_1" in file_content
+
+        os.remove(dump_file_name)

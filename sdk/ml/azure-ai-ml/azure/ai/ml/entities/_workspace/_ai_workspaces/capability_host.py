@@ -8,7 +8,6 @@ from typing import (
     List,
     Optional,
     Union,
-    cast,
     IO,
     Any,
     AnyStr,
@@ -52,7 +51,7 @@ class CapabilityHost(Resource):
     :param storage_connections: A list of storage connections. Default storage connection value is
         projectname/workspaceblobstore for project workspace.
     :type storage_connections: Optional[List[str]]
-    :param capability_host_kind: The kind of capability host, either as a string or CapabilityHostKind enum.
+    :param capability_host_kind: The kind of capability host, either as a string or CapabilityHostKind enum. Default is AGENTS.
     :type capability_host_kind: Optional[Union[str, CapabilityHostKind]]
     :param kwargs: Additional keyword arguments.
     :type kwargs: Any
@@ -78,25 +77,6 @@ class CapabilityHost(Resource):
         capability_host_kind: Optional[Union[str, CapabilityHostKind]] = CapabilityHostKind.AGENTS,
         **kwargs: Any,
     ):
-        """Initialize a CapabilityHost instance.
-        Constructor of the CapabilityHost class.
-
-        :param name: The name of the capability host.
-        :type name: str
-        :param description: The description of the capability host.
-        :type description: Optional[str]
-        :param vector_store_connections: A list of vector store  (AI Search) connections.
-        :type vector_store_connections: Optional[List[str]]
-        :param ai_services_connections: A list of OpenAI service connection.
-        :type ai_services_connections: Optional[List[str]]
-        :param storage_connections: A list of storage connections.
-        :type storage_connections: Optional[List[str]]
-        :param capability_host_kind: The kind of capability host, either as a string or CapabilityHostKind enum.
-        :type capability_host_kind: Optional[Union[str, CapabilityHostKind]]
-        :param kwargs: Additional keyword arguments.
-        :type kwargs: Any
-        """
-
         super().__init__(name=name, description=description, **kwargs)
         self.capability_host_kind = capability_host_kind
         self.ai_services_connections = ai_services_connections
@@ -129,8 +109,7 @@ class CapabilityHost(Resource):
         :rtype: Dict
         """
 
-        res: dict = CapabilityHostSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
-        return res
+        return CapabilityHostSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     @classmethod
     def _load(
@@ -161,10 +140,7 @@ class CapabilityHost(Resource):
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        return cls(
-            base_path=cast(Dict, context[BASE_PATH_CONTEXT_KEY]),
-            **load_from_dict(CapabilityHostSchema, data, context, **kwargs),
-        )
+        return cls(**load_from_dict(CapabilityHostSchema, data, context, **kwargs))
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestCapabilityHost) -> "CapabilityHost":
@@ -177,7 +153,7 @@ class CapabilityHost(Resource):
         :return: CapabilityHost object.
         :rtype: ~azure.ai.ml.entities._workspace._ai_workspaces.capability_host.CapabilityHost
         """
-        capability_host = CapabilityHost(
+        capability_host = cls(
             name=str(rest_obj.name),
             description=(rest_obj.properties.description if rest_obj.properties else None),
             ai_services_connections=(rest_obj.properties.ai_services_connections if rest_obj.properties else []),
@@ -189,27 +165,11 @@ class CapabilityHost(Resource):
         )
         return capability_host
 
-    def _to_rest_object_for_hub(self) -> RestCapabilityHost:
+    def _to_rest_object(self) -> RestCapabilityHost:
         """
-        Convert the CapabilityHost instance to a RestCapabilityHost object for a Hub workspace.
+        Convert the CapabilityHost instance to a RestCapabilityHost object.
 
-        :return: A RestCapabilityHost object representing the capability host for a Hub workspace.
-        :rtype: azure.ai.ml._restclient.v2024_10_01_preview.models._models_py3.CapabilityHost
-        """
-
-        properties = RestCapabilityHostProperties(
-            description=self.description, capability_host_kind=self.capability_host_kind
-        )
-        resource = RestCapabilityHost(
-            properties=properties,
-        )
-        return resource
-
-    def _to_rest_object_for_project(self) -> RestCapabilityHost:
-        """
-        Convert the CapabilityHost instance to a RestCapabilityHost object for a Project workspace.
-
-        :return: A RestCapabilityHost object representing the capability host for a Hub workspace.
+        :return: A RestCapabilityHost object representing the capability host for a Hub or Project workspace.
         :rtype: azure.ai.ml._restclient.v2024_10_01_preview.models._models_py3.CapabilityHost
         """
 

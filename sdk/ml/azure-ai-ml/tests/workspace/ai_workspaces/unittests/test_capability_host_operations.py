@@ -69,14 +69,6 @@ class TestCapabilityHostOperation:
             workspace_name=mock_capability_hosts_operation._operation_scope.workspace_name,
         )
 
-    def test_list(self, mock_capability_hosts_operation: CapabilityHostsOperations) -> None:
-        """Test list CapabilityHosts."""
-        mock_capability_hosts_operation.list()
-        mock_capability_hosts_operation._capability_hosts_operations.list.assert_called_once_with(
-            resource_group_name=mock_capability_hosts_operation._operation_scope.resource_group_name,
-            workspace_name=mock_capability_hosts_operation._operation_scope.workspace_name,
-        )
-
     def test_delete(self, mock_capability_hosts_operation: CapabilityHostsOperations) -> None:
         """Test delete CapabilityHost."""
         mock_capability_hosts_operation.begin_delete(name="test_capability_host")
@@ -97,6 +89,6 @@ class TestCapabilityHostOperation:
         with pytest.raises(MlException) as ve:
             mock_invalid_capability_hosts_operation.begin_create_or_update(capability_host=capability_host)
         assert (
-            "Please set hub name or project name in workspacename parameter while initializing MLClient object."
+            "Please pass either a hub name or project name to the workspace_name parameter when initializing an MLClient object."
             in ve.value.args[0]
         )

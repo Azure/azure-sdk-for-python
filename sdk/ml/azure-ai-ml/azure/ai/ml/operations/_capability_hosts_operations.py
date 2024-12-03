@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 # pylint: disable=protected-access
 
-from typing import Any, Iterable, List
+from typing import Any, List
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 from azure.ai.ml._scope_dependent_operations import (
     OperationsContainer,
@@ -89,31 +89,6 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         self._init_kwargs = kwargs
 
     @experimental
-    @monitor_with_activity(ops_logger, "CapabilityHost.List", ActivityType.PUBLICAPI)
-    @distributed_trace
-    def list(self, **kwargs: Any) -> Iterable[CapabilityHost]:
-        """List capability hosts in a Hub or Project workspace.
-
-        :return: List of CapabilityHost objects.
-        :rtype: ~typing.Iterable[~azure.ai.ml.entities._workspace._ai_workspaces.capability_host.CapabilityHost]
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/ml_samples_capability_host.py
-                :start-after: [START capability_host_list_operation]
-                :end-before: [END capability_host_list_operation]
-                :language: python
-                :dedent: 8
-                :caption: List example.
-        """
-
-        return self._capability_hosts_operations.list(
-            resource_group_name=self._resource_group_name,
-            workspace_name=self._workspace_name,
-            **kwargs,
-        )
-
-    @experimental
     @monitor_with_activity(ops_logger, "CapabilityHost.Get", ActivityType.PUBLICAPI)
     @distributed_trace
     def get(self, name: str, **kwargs: Any) -> CapabilityHost:
@@ -139,7 +114,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
                 :caption: Get example.
         """
 
-        self.__validate_workspace_name()
+        self._validate_workspace_name()
 
         rest_obj = self._capability_hosts_operations.get(
             resource_group_name=self._resource_group_name,
@@ -176,31 +151,19 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
                 :caption: Create example.
         """
         try:
-            self.__validate_workspace_name()
+            self._validate_workspace_name()
 
-            workspace = self.__get_workspace()
+            workspace = self._get_workspace()
 
-            self.__validate_properties(capability_host, workspace._kind)
+            self._validate_workspace_kind(workspace._kind)
+
+            self._validate_properties(capability_host, workspace._kind)
 
             if workspace._kind == WorkspaceKind.PROJECT:
                 if capability_host.storage_connections is None or len(capability_host.storage_connections) == 0:
-                    capability_host.storage_connections = self.__get_default_storage_connections()
+                    capability_host.storage_connections = self._get_default_storage_connections()
 
-            capability_host_resource = (
-                capability_host._to_rest_object_for_hub()
-                if workspace._kind == WorkspaceKind.HUB
-                else capability_host._to_rest_object_for_project()
-            )
-
-            # pylint: disable=unused-argument, docstring-missing-param
-            def callback(_: Any, deserialized: Any, args: Any) -> CapabilityHost:
-                """Callback to be called after completion of begin_create_or_update operation
-
-                :return: Deserialized CapabilityHost.
-                :rtype: ~azure.ai.ml.entities._workspace._ai_workspaces.capability_host.CapabilityHost
-                """
-
-                return CapabilityHost._from_rest_object(deserialized)
+            capability_host_resource = capability_host._to_rest_object()
 
             poller = self._capability_hosts_operations.begin_create_or_update(
                 resource_group_name=self._resource_group_name,
@@ -209,7 +172,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
                 body=capability_host_resource,
                 polling=True,
                 **kwargs,
-                cls=callback,
+                cls=lambda response, deserialized, headers: CapabilityHost._from_rest_object(deserialized),
             )
             return poller
 
@@ -251,7 +214,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         )
         return poller
 
-    def __get_default_storage_connections(self) -> List[str]:
+    def _get_default_storage_connections(self) -> List[str]:
         """Retrieve the default storage connections for a capability host.
 
         :return: A list of default storage connections.
@@ -259,23 +222,19 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         """
         return [f"{self._workspace_name}/{DEFAULT_STORAGE_CONNECTION_NAME}"]
 
-    def __validate_properties(self, capability_host: CapabilityHost, workspace_kind: str) -> None:
-        """Validate the properties of the capability host based on the workspace kind.
+    def _validate_workspace_kind(self, workspace_kind: str) -> None:
+        """Validate the workspace kind, it should be either hub or project only.
 
-        :param capability_host: The capability host to validate.
-        :type capability_host: CapabilityHost
         :param workspace_kind: The kind of the workspace, either hub or project only.
         :type workspace_kind: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if workspace kind is not Hub or Project.
-            Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the OpenAI service connection or
-            vector store (AISearch) connection is empty for a Project workspace kind.
             Details will be provided in the error message.
         :return: None, or the result of cls(response)
         :rtype: None
         """
 
-        if not self.__is_valid_kind(workspace_kind):
+        valid_kind = workspace_kind in {WorkspaceKind.HUB, WorkspaceKind.PROJECT}
+        if not valid_kind:
             msg = f"Invalid workspace kind: {workspace_kind}. Workspace kind should be either 'Hub' or 'Project'."
             raise ValidationException(
                 message=msg,
@@ -283,6 +242,20 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
             )
+
+    def _validate_properties(self, capability_host: CapabilityHost, workspace_kind: str) -> None:
+        """Validate the properties of the capability host for project workspace.
+
+        :param capability_host: The capability host to validate.
+        :type capability_host: CapabilityHost
+        :param workspace_kind: The kind of the workspace, Project only.
+        :type workspace_kind: str
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the OpenAI service connection or
+            vector store (AISearch) connection is empty for a Project workspace kind.
+            Details will be provided in the error message.
+        :return: None, or the result of cls(response)
+        :rtype: None
+        """
 
         if workspace_kind == WorkspaceKind.PROJECT:
             if capability_host.ai_services_connections is None or capability_host.vector_store_connections is None:
@@ -294,18 +267,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
                     error_category=ErrorCategory.USER_ERROR,
                 )
 
-    def __is_valid_kind(self, kind: str):
-        """Validate if the provided kind is a valid WorkspaceKind.
-
-        :param kind: The kind of workspace to validate, either hub or project only.
-        :type kind: str
-        :return: True if the kind is valid, False otherwise.
-        :rtype: bool
-        """
-
-        return kind in {WorkspaceKind.HUB, WorkspaceKind.PROJECT}
-
-    def __get_workspace(self) -> Workspace:
+    def _get_workspace(self) -> Workspace:
         """Retrieve the workspace object.
 
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if specified Hub or Project do not exist.
@@ -325,7 +287,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
             )
         return workspace
 
-    def __validate_workspace_name(self) -> None:
+    def _validate_workspace_name(self) -> None:
         """Validates that a hub name or project name is set in the MLClient's workspace name parameter.
 
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if project name or hub name
@@ -336,7 +298,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         """
         workspace_name = self._workspace_name
         if not workspace_name:
-            msg = "Please set hub name or project name in workspacename parameter while initializing MLClient object."
+            msg = "Please pass either a hub name or project name to the workspace_name parameter when initializing an MLClient object."  # pylint: disable=line-too-long
             raise ValidationException(
                 message=msg,
                 target=ErrorTarget.CAPABILITY_HOST,
