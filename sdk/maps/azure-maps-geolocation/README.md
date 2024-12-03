@@ -54,7 +54,52 @@ geolocation_client = MapsGeolocationClient(
 
 #### 2. Authenticate with a SAS Credential
 
-You can authenticate with your generated SAS token.
+Shared access signature (SAS) tokens are authentication tokens created using the JSON Web token (JWT) format and are cryptographically signed to prove authentication for an application to the Azure Maps REST API.
+
+To authenticate with a SAS token in Python, you'll need to generate one using the azure-mgmt-maps package. 
+
+We need to tell user to install `azure-mgmt-maps`: `pip install azure-mgmt-maps`
+
+Here's how you can generate the SAS token using the list_sas method from azure-mgmt-maps:
+
+```python
+from azure.identity import DefaultAzureCredential
+from azure.mgmt.maps import AzureMapsManagementClient
+
+"""
+# PREREQUISITES
+    pip install azure-identity
+    pip install azure-mgmt-maps
+# USAGE
+    python account_list_sas.py
+    Before run the sample, please set the values of the client ID, tenant ID and client secret
+    of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
+    AZURE_CLIENT_SECRET. For more info about how to get the value, please see:
+    https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
+"""
+
+
+def main():
+    client = AzureMapsManagementClient(
+        credential=DefaultAzureCredential(),
+        subscription_id="21a9967a-e8a9-4656-a70b-96ff1c4d05a0",
+    )
+
+    response = client.accounts.list_sas(
+        resource_group_name="myResourceGroup",
+        account_name="myMapsAccount",
+        maps_account_sas_parameters={
+            "expiry": "2017-05-24T11:42:03.1567373Z",
+            "maxRatePerSecond": 500,
+            "principalId": "e917f87b-324d-4728-98ed-e31d311a7d65",
+            "regions": ["eastus"],
+            "signingKey": "primaryKey",
+            "start": "2017-05-24T10:42:03.1567373Z",
+        },
+    )
+    print(response)
+```
+
 Once the SAS token is created, set the value of the token as environment variable: `AZURE_SAS_TOKEN`.
 Then pass an `AZURE_SAS_TOKEN` as the `credential` parameter into an instance of AzureSasCredential.
 
@@ -66,7 +111,7 @@ from azure.maps.geolocation import MapsGeolocationClient
 
 credential = AzureSASCredential(os.environ.get("AZURE_SAS_TOKEN"))
 
-timezone_client = MapsGeolocationClient(
+geolocation_client = MapsGeolocationClient(
     credential=credential,
 )
 ```
