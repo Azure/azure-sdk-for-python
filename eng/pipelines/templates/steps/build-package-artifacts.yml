@@ -59,57 +59,9 @@ steps:
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
-  # now we need to call Save-Package-Properties so that we can filter on it
-  - ${{ if and(eq(variables['Build.Reason'], 'PullRequest'), eq(parameters.ServiceDirectory, 'auto')) }}:
-    - pwsh: |
-        mkdir -p $(Build.ArtifactStagingDirectory)/diff
-      displayName: Create PR Diff Folder
-
-    - pwsh: |
-        $location = Join-Path "$(Build.ArtifactStagingDirectory)" "diff"
-
-        Write-Host "./eng/common/scripts/Generate-PR-Diff.ps1 -TargetPath `"$(Build.SourcesDirectory)`" -ArtifactPath `"$location`""
-        ./eng/common/scripts/Generate-PR-Diff.ps1 -TargetPath "$(Build.SourcesDirectory)" -ArtifactPath "$location"
-      displayName: Generate PR Diff
-
-    - pwsh: |
-        Write-Host "We freshly generated the PR diff, and this is what it sees!"
-        Get-ChildItem -R -Force $(Build.ArtifactStagingDirectory)/diff | % { $_.FullName }
-        cat $(Build.ArtifactStagingDirectory)/diff/diff.json
-      displayName: Dump PR Diff
-
-    - task: Powershell@2
-      inputs:
-        filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
-        arguments: >
-          -PrDiff $(Build.ArtifactStagingDirectory)/diff/diff.json
-          -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
-        pwsh: true
-        workingDirectory: $(Pipeline.Workspace)
-      displayName: Save package properties filtered for PR
-
-  - ${{ else }}:
-    - task: Powershell@2
-      condition: and(succeeded(), eq(variables['SetDevVersion'],'true'))
-      inputs:
-        filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
-        arguments: >
-          -ServiceDirectory ${{parameters.ServiceDirectory}}
-          -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
-          -AddDevVersion
-        pwsh: true
-        workingDirectory: $(Pipeline.Workspace)
-        displayName: Save package properties with dev version
-    - task: Powershell@2
-      condition: and(succeeded(), ne(variables['SetDevVersion'],'true'))
-      inputs:
-        filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
-        arguments: >
-          -ServiceDirectory ${{parameters.ServiceDirectory}}
-          -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
-        pwsh: true
-        workingDirectory: $(Pipeline.Workspace)
-        displayName: Save package properties for service
+  - template: /eng/common/pipelines/templates/steps/save-package-properties.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
   - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
     parameters:
@@ -135,18 +87,6 @@ steps:
       python -m pip freeze --all
     displayName: 'Prep Environment'
     condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
-
-  - task: Powershell@2
-    inputs:
-      filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
-      arguments: >
-        -ServiceDirectory ${{parameters.ServiceDirectory}}
-        -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
-        -AddDevVersion
-      pwsh: true
-      workingDirectory: $(Pipeline.Workspace)
-    displayName: Update package properties with dev version
-    condition: and(succeeded(), eq(variables['SetDevVersion'],'true'), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
 
   - script: |
       sudo apt-get update

@@ -72,18 +72,21 @@ def get_formatted_template(data: dict, annotation_task: str) -> str:
     return user_text.replace("'", '\\"')
 
 
-def get_common_headers(token: str) -> Dict:
+def get_common_headers(token: str, evaluator_name: Optional[str] = None) -> Dict:
     """Get common headers for the HTTP request
 
     :param token: The Azure authentication token.
     :type token: str
+    :param evaluator_name: The evaluator name. Default is None.
+    :type evaluator_name: str
     :return: The common headers.
     :rtype: Dict
     """
+    user_agent = f"{USER_AGENT} (type=evaluator; subtype={evaluator_name})" if evaluator_name else USER_AGENT
     return {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json",
-        "User-Agent": USER_AGENT,
+        "User-Agent": user_agent,
         # Handle "RuntimeError: Event loop is closed" from httpx AsyncClient
         # https://github.com/encode/httpx/discussions/2959
         "Connection": "close",
@@ -175,7 +178,9 @@ def generate_payload(normalized_user_text: str, metric: str, annotation_task: st
     )
 
 
-async def submit_request(data: dict, metric: str, rai_svc_url: str, token: str, annotation_task: str) -> str:
+async def submit_request(
+    data: dict, metric: str, rai_svc_url: str, token: str, annotation_task: str, evaluator_name: str
+) -> str:
     """Submit request to Responsible AI service for evaluation and return operation ID
 
     :param data: The data to evaluate.
@@ -188,6 +193,8 @@ async def submit_request(data: dict, metric: str, rai_svc_url: str, token: str, 
     :type token: str
     :param annotation_task: The annotation task to use.
     :type annotation_task: str
+    :param evaluator_name: The evaluator name.
+    :type evaluator_name: str
     :return: The operation ID.
     :rtype: str
     """
@@ -195,7 +202,7 @@ async def submit_request(data: dict, metric: str, rai_svc_url: str, token: str, 
     payload = generate_payload(normalized_user_text, metric, annotation_task=annotation_task)
 
     url = rai_svc_url + "/submitannotation"
-    headers = get_common_headers(token)
+    headers = get_common_headers(token, evaluator_name)
 
     async with get_async_http_client_with_timeout() as client:
         http_response = await client.post(url, json=payload, headers=headers)
@@ -493,24 +500,26 @@ async def evaluate_with_rai_service(
     credential: TokenCredential,
     annotation_task: str = Tasks.CONTENT_HARM,
     metric_display_name=None,
+    evaluator_name=None,
 ) -> Dict[str, Union[str, float]]:
-    """ "Evaluate the content safety of the response using Responsible AI service
+    """Evaluate the content safety of the response using Responsible AI service
 
-       :param data: The data to evaluate.
-       :type data: dict
-       :param metric_name: The evaluation metric to use.
-       :type metric_name: str
-       :param project_scope: The Azure AI project scope details.
-       :type project_scope: Dict
-       :param credential: The Azure authentication credential.
-       :type credential:
-    ~azure.core.credentials.TokenCredential
-       :param annotation_task: The annotation task to use.
-       :type annotation_task: str
-       :param metric_display_name: The display name of metric to use.
-       :type metric_display_name: str
-       :return: The parsed annotation result.
-       :rtype: Dict[str, Union[str, float]]
+    :param data: The data to evaluate.
+    :type data: dict
+    :param metric_name: The evaluation metric to use.
+    :type metric_name: str
+    :param project_scope: The Azure AI project scope details.
+    :type project_scope: Dict
+    :param credential: The Azure authentication credential.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :param annotation_task: The annotation task to use.
+    :type annotation_task: str
+    :param metric_display_name: The display name of metric to use.
+    :type metric_display_name: str
+    :param evaluator_name: The evaluator name to use.
+    :type evaluator_name: str
+    :return: The parsed annotation result.
+    :rtype: Dict[str, Union[str, float]]
     """
 
     # Get RAI service URL from discovery service and check service availability
@@ -519,7 +528,7 @@ async def evaluate_with_rai_service(
     await ensure_service_availability(rai_svc_url, token, annotation_task)
 
     # Submit annotation request and fetch result
-    operation_id = await submit_request(data, metric_name, rai_svc_url, token, annotation_task)
+    operation_id = await submit_request(data, metric_name, rai_svc_url, token, annotation_task, evaluator_name)
     annotation_response = cast(List[Dict], await fetch_result(operation_id, rai_svc_url, credential, token))
     result = parse_response(annotation_response, metric_name, metric_display_name)
 

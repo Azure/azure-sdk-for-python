@@ -29,7 +29,7 @@ class TestCosmosDBManagementCollectionPartitionRegionOperationsAsync(AzureMgmtRe
             database_rid="str",
             collection_rid="str",
             filter="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-11-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

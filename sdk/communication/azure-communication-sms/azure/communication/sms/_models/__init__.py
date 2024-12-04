@@ -11,6 +11,4 @@ try:
 except (SyntaxError, ImportError):
     from ._models import SmsSendResult  # type: ignore
 
-__all__ = [
-    'SmsSendResult'
-]
+__all__ = ["SmsSendResult"]

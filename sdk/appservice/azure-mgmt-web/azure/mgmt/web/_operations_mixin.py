@@ -34,6 +34,7 @@ class WebSiteManagementClientOperationsMixin(object):
         environment_id: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ResourceNameAvailability:
+        # pylint: disable=line-too-long
         """Check if a resource name is available.
 
         Description for Check if a resource name is available.
@@ -43,7 +44,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :param type: Resource type used for verification. Known values are: "Site", "Slot",
          "HostingEnvironment", "PublishingUser", "Microsoft.Web/sites", "Microsoft.Web/sites/slots",
          "Microsoft.Web/hostingEnvironments", and "Microsoft.Web/publishingUsers". Required.
-        :type type: str or ~azure.mgmt.web.v2023_12_01.models.CheckNameResourceTypes
+        :type type: str or ~azure.mgmt.web.v2024_04_01.models.CheckNameResourceTypes
         :param is_fqdn: Is fully qualified domain name. Default value is None.
         :type is_fqdn: bool
         :param environment_id: Azure Resource Manager ID of the customer's selected Container Apps
@@ -52,7 +53,7 @@ class WebSiteManagementClientOperationsMixin(object):
          Default value is None.
         :type environment_id: str
         :return: ResourceNameAvailability or the result of cls(response)
-        :rtype: ~azure.mgmt.web.v2023_12_01.models.ResourceNameAvailability
+        :rtype: ~azure.mgmt.web.v2024_04_01.models.ResourceNameAvailability
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('check_name_availability')
@@ -80,6 +81,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-12-01':
             from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2024-04-01':
+            from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'check_name_availability'".format(api_version))
         mixin_instance = OperationClass()
@@ -100,7 +103,7 @@ class WebSiteManagementClientOperationsMixin(object):
         Description for Gets publishing user.
 
         :return: User or the result of cls(response)
-        :rtype: ~azure.mgmt.web.v2023_12_01.models.User
+        :rtype: ~azure.mgmt.web.v2024_04_01.models.User
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('get_publishing_user')
@@ -128,6 +131,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-12-01':
             from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2024-04-01':
+            from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_publishing_user'".format(api_version))
         mixin_instance = OperationClass()
@@ -151,7 +156,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :param source_control_type: Type of source control. Required.
         :type source_control_type: str
         :return: SourceControl or the result of cls(response)
-        :rtype: ~azure.mgmt.web.v2023_12_01.models.SourceControl
+        :rtype: ~azure.mgmt.web.v2024_04_01.models.SourceControl
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('get_source_control')
@@ -179,6 +184,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-12-01':
             from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2024-04-01':
+            from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_source_control'".format(api_version))
         mixin_instance = OperationClass()
@@ -199,7 +206,7 @@ class WebSiteManagementClientOperationsMixin(object):
         Description for Gets list of available geo regions plus ministamps.
 
         :return: DeploymentLocations or the result of cls(response)
-        :rtype: ~azure.mgmt.web.v2023_12_01.models.DeploymentLocations
+        :rtype: ~azure.mgmt.web.v2024_04_01.models.DeploymentLocations
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('get_subscription_deployment_locations')
@@ -227,6 +234,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-12-01':
             from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2024-04-01':
+            from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_subscription_deployment_locations'".format(api_version))
         mixin_instance = OperationClass()
@@ -247,7 +256,7 @@ class WebSiteManagementClientOperationsMixin(object):
         Description for get a list of available ASE regions and its supported Skus.
 
         :return: An iterator like instance of either AseRegion or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2023_12_01.models.AseRegion]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2024_04_01.models.AseRegion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_ase_regions')
@@ -255,6 +264,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-12-01':
             from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2024-04-01':
+            from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'list_ase_regions'".format(api_version))
         mixin_instance = OperationClass()
@@ -281,7 +292,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :param os_type: App Service OS type meters used for. Default value is None.
         :type os_type: str
         :return: An iterator like instance of either BillingMeter or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2023_12_01.models.BillingMeter]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2024_04_01.models.BillingMeter]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_billing_meters')
@@ -307,6 +318,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-12-01':
             from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2024-04-01':
+            from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'list_billing_meters'".format(api_version))
         mixin_instance = OperationClass()
@@ -330,7 +343,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :param hostname: Specific hostname. Default value is None.
         :type hostname: str
         :return: An iterator like instance of either CustomHostnameSites or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2023_12_01.models.CustomHostnameSites]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2024_04_01.models.CustomHostnameSites]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_custom_host_name_sites')
@@ -342,6 +355,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-12-01':
             from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2024-04-01':
+            from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'list_custom_host_name_sites'".format(api_version))
         mixin_instance = OperationClass()
@@ -369,7 +384,7 @@ class WebSiteManagementClientOperationsMixin(object):
          "Basic", "Standard", "Premium", "Dynamic", "Isolated", "IsolatedV2", "PremiumV2", "PremiumV3",
          "PremiumContainer", "ElasticPremium", "ElasticIsolated", and "FlexConsumption". Default value
          is None.
-        :type sku: str or ~azure.mgmt.web.v2023_12_01.models.SkuName
+        :type sku: str or ~azure.mgmt.web.v2024_04_01.models.SkuName
         :param linux_workers_enabled: Specify :code:`<code>true</code>` if you want to filter to only
          regions that support Linux workers. Default value is None.
         :type linux_workers_enabled: bool
@@ -380,7 +395,7 @@ class WebSiteManagementClientOperationsMixin(object):
          to only regions that support Linux Consumption Workers. Default value is None.
         :type linux_dynamic_workers_enabled: bool
         :return: An iterator like instance of either GeoRegion or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2023_12_01.models.GeoRegion]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2024_04_01.models.GeoRegion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_geo_regions')
@@ -408,6 +423,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-12-01':
             from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2024-04-01':
+            from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'list_geo_regions'".format(api_version))
         mixin_instance = OperationClass()
@@ -428,7 +445,7 @@ class WebSiteManagementClientOperationsMixin(object):
         Description for List all premier add-on offers.
 
         :return: An iterator like instance of either PremierAddOnOffer or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2023_12_01.models.PremierAddOnOffer]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2024_04_01.models.PremierAddOnOffer]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_premier_add_on_offers')
@@ -456,6 +473,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-12-01':
             from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2024-04-01':
+            from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'list_premier_add_on_offers'".format(api_version))
         mixin_instance = OperationClass()
@@ -478,9 +497,9 @@ class WebSiteManagementClientOperationsMixin(object):
 
         :param name_identifier: Hostname information. Is either a NameIdentifier type or a IO[bytes]
          type. Required.
-        :type name_identifier: ~azure.mgmt.web.v2023_12_01.models.NameIdentifier or IO[bytes]
+        :type name_identifier: ~azure.mgmt.web.v2024_04_01.models.NameIdentifier or IO[bytes]
         :return: An iterator like instance of either Identifier or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2023_12_01.models.Identifier]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2024_04_01.models.Identifier]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_site_identifiers_assigned_to_host_name')
@@ -508,6 +527,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-12-01':
             from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2024-04-01':
+            from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'list_site_identifiers_assigned_to_host_name'".format(api_version))
         mixin_instance = OperationClass()
@@ -528,7 +549,7 @@ class WebSiteManagementClientOperationsMixin(object):
         Description for List all SKUs.
 
         :return: SkuInfos or the result of cls(response)
-        :rtype: ~azure.mgmt.web.v2023_12_01.models.SkuInfos
+        :rtype: ~azure.mgmt.web.v2024_04_01.models.SkuInfos
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_skus')
@@ -556,6 +577,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-12-01':
             from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2024-04-01':
+            from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'list_skus'".format(api_version))
         mixin_instance = OperationClass()
@@ -576,7 +599,7 @@ class WebSiteManagementClientOperationsMixin(object):
         Description for Gets the source controls available for Azure websites.
 
         :return: An iterator like instance of either SourceControl or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2023_12_01.models.SourceControl]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2024_04_01.models.SourceControl]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_source_controls')
@@ -604,6 +627,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-12-01':
             from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2024-04-01':
+            from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'list_source_controls'".format(api_version))
         mixin_instance = OperationClass()
@@ -629,7 +654,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :type resource_group_name: str
         :param move_resource_envelope: Object that represents the resource to move. Is either a
          CsmMoveResourceEnvelope type or a IO[bytes] type. Required.
-        :type move_resource_envelope: ~azure.mgmt.web.v2023_12_01.models.CsmMoveResourceEnvelope or
+        :type move_resource_envelope: ~azure.mgmt.web.v2024_04_01.models.CsmMoveResourceEnvelope or
          IO[bytes]
         :return: None or the result of cls(response)
         :rtype: None
@@ -660,6 +685,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-12-01':
             from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2024-04-01':
+            from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'move'".format(api_version))
         mixin_instance = OperationClass()
@@ -682,9 +709,9 @@ class WebSiteManagementClientOperationsMixin(object):
 
         :param user_details: Details of publishing user. Is either a User type or a IO[bytes] type.
          Required.
-        :type user_details: ~azure.mgmt.web.v2023_12_01.models.User or IO[bytes]
+        :type user_details: ~azure.mgmt.web.v2024_04_01.models.User or IO[bytes]
         :return: User or the result of cls(response)
-        :rtype: ~azure.mgmt.web.v2023_12_01.models.User
+        :rtype: ~azure.mgmt.web.v2024_04_01.models.User
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('update_publishing_user')
@@ -712,6 +739,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-12-01':
             from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2024-04-01':
+            from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'update_publishing_user'".format(api_version))
         mixin_instance = OperationClass()
@@ -737,9 +766,9 @@ class WebSiteManagementClientOperationsMixin(object):
         :type source_control_type: str
         :param request_message: Source control token information. Is either a SourceControl type or a
          IO[bytes] type. Required.
-        :type request_message: ~azure.mgmt.web.v2023_12_01.models.SourceControl or IO[bytes]
+        :type request_message: ~azure.mgmt.web.v2024_04_01.models.SourceControl or IO[bytes]
         :return: SourceControl or the result of cls(response)
-        :rtype: ~azure.mgmt.web.v2023_12_01.models.SourceControl
+        :rtype: ~azure.mgmt.web.v2024_04_01.models.SourceControl
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('update_source_control')
@@ -767,6 +796,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-12-01':
             from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2024-04-01':
+            from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'update_source_control'".format(api_version))
         mixin_instance = OperationClass()
@@ -792,9 +823,9 @@ class WebSiteManagementClientOperationsMixin(object):
         :type resource_group_name: str
         :param validate_request: Request with the resources to validate. Is either a ValidateRequest
          type or a IO[bytes] type. Required.
-        :type validate_request: ~azure.mgmt.web.v2023_12_01.models.ValidateRequest or IO[bytes]
+        :type validate_request: ~azure.mgmt.web.v2024_04_01.models.ValidateRequest or IO[bytes]
         :return: ValidateResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.web.v2023_12_01.models.ValidateResponse
+        :rtype: ~azure.mgmt.web.v2024_04_01.models.ValidateResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('validate')
@@ -822,6 +853,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-12-01':
             from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2024-04-01':
+            from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'validate'".format(api_version))
         mixin_instance = OperationClass()
@@ -881,7 +914,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :type resource_group_name: str
         :param move_resource_envelope: Object that represents the resource to move. Is either a
          CsmMoveResourceEnvelope type or a IO[bytes] type. Required.
-        :type move_resource_envelope: ~azure.mgmt.web.v2023_12_01.models.CsmMoveResourceEnvelope or
+        :type move_resource_envelope: ~azure.mgmt.web.v2024_04_01.models.CsmMoveResourceEnvelope or
          IO[bytes]
         :return: None or the result of cls(response)
         :rtype: None
@@ -912,6 +945,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-12-01':
             from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2024-04-01':
+            from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'validate_move'".format(api_version))
         mixin_instance = OperationClass()
@@ -936,9 +971,9 @@ class WebSiteManagementClientOperationsMixin(object):
 
         :param parameters: VNET information. Is either a VnetParameters type or a IO[bytes] type.
          Required.
-        :type parameters: ~azure.mgmt.web.v2023_12_01.models.VnetParameters or IO[bytes]
+        :type parameters: ~azure.mgmt.web.v2024_04_01.models.VnetParameters or IO[bytes]
         :return: VnetValidationFailureDetails or the result of cls(response)
-        :rtype: ~azure.mgmt.web.v2023_12_01.models.VnetValidationFailureDetails
+        :rtype: ~azure.mgmt.web.v2024_04_01.models.VnetValidationFailureDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('verify_hosting_environment_vnet')
@@ -966,6 +1001,8 @@ class WebSiteManagementClientOperationsMixin(object):
             from .v2023_01_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         elif api_version == '2023-12-01':
             from .v2023_12_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
+        elif api_version == '2024-04-01':
+            from .v2024_04_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'verify_hosting_environment_vnet'".format(api_version))
         mixin_instance = OperationClass()

@@ -1330,7 +1330,8 @@
         "aiservices",
         "OTEL",
         "GENAI",
-        "fspath"
+        "fspath",
+        "azureopenai"
       ]
     },
     {

@@ -239,7 +239,8 @@ def main(generate_input, generate_output):
         try:
             if "resource-manager" in readme_or_tsp:
                 relative_path_readme = str(Path(spec_folder, readme_or_tsp))
-                update_metadata_for_multiapi_package(spec_folder, readme_or_tsp)
+                # we begin to trim package size so don't need opimization to speed SDK generation for now
+                # update_metadata_for_multiapi_package(spec_folder, readme_or_tsp)
                 del_outdated_files(relative_path_readme)
                 config = generate(
                     CONFIG_FILE,

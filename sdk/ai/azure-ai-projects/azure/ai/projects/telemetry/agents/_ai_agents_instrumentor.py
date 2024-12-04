@@ -17,7 +17,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
 from urllib.parse import urlparse
 
 from azure.ai.projects import _types
-from azure.ai.projects.models import AgentRunStream, _models
+from azure.ai.projects.models import AgentRunStream, AsyncAgentRunStream, _models
 from azure.ai.projects.models._enums import AgentsApiResponseFormatMode, MessageRole, RunStepStatus
 from azure.ai.projects.models._models import (
     MessageAttachment,
@@ -33,7 +33,7 @@ from azure.ai.projects.models._models import (
     ToolOutput,
     ToolResources,
 )
-from azure.ai.projects.models._patch import AgentEventHandler, ToolSet
+from azure.ai.projects.models._patch import AgentEventHandler, AsyncAgentEventHandler, ToolSet
 from azure.ai.projects.telemetry.agents._utils import (
     AZ_AI_AGENT_SYSTEM,
     ERROR_TYPE,
@@ -412,7 +412,11 @@ class _AIAgentsInstrumentorPreview:
             usage=step.usage,
         )
 
-        attributes[GEN_AI_EVENT_CONTENT] = json.dumps({"tool_calls": tool_calls})
+        if _trace_agents_content:
+            attributes[GEN_AI_EVENT_CONTENT] = json.dumps({"tool_calls": tool_calls})
+        else:
+            tool_calls_non_recording = self._remove_function_call_names_and_arguments(tool_calls=tool_calls)
+            attributes[GEN_AI_EVENT_CONTENT] = json.dumps({"tool_calls": tool_calls_non_recording})
         span.span_instance.add_event(name="gen_ai.assistant.message", attributes=attributes)
 
     def set_end_run(self, span: "AbstractSpan", run: Optional[ThreadRun]) -> None:
@@ -487,10 +491,16 @@ class _AIAgentsInstrumentorPreview:
         thread_id: Optional[str] = None,
         run_id: Optional[str] = None,
         tool_outputs: Optional[List[ToolOutput]] = None,
-        event_handler: Optional[AgentEventHandler] = None,
+        event_handler: Optional[Union[AgentEventHandler, AsyncAgentEventHandler]] = None,
     ) -> "Optional[AbstractSpan]":
         run_span = event_handler.span if isinstance(event_handler, _AgentEventHandlerTraceWrapper) else None
-        recorded = self._add_tool_message_events(run_span, tool_outputs)
+        if run_span is None:
+            run_span = event_handler.span if isinstance(event_handler, _AsyncAgentEventHandlerTraceWrapper) else None
+
+        if run_span:
+            recorded = self._add_tool_message_events(run_span, tool_outputs)
+        else:
+            recorded = False
 
         span = start_span(OperationName.SUBMIT_TOOL_OUTPUTS, project_name, thread_id=thread_id, run_id=run_id)
         if not recorded:
@@ -502,7 +512,10 @@ class _AIAgentsInstrumentorPreview:
     ) -> bool:
         if span and span.span_instance.is_recording and tool_outputs:
             for tool_output in tool_outputs:
-                body = {"content": tool_output["output"], "id": tool_output["tool_call_id"]}
+                if _trace_agents_content:
+                    body = {"content": tool_output["output"], "id": tool_output["tool_call_id"]}
+                else:
+                    body = {"content": "", "id": tool_output["tool_call_id"]}
                 span.span_instance.add_event("gen_ai.tool.message", {"gen_ai.event.content": json.dumps(body)})
             return True
 
@@ -888,9 +901,9 @@ class _AIAgentsInstrumentorPreview:
                     span.add_attribute(GEN_AI_THREAD_RUN_STATUS, result.status)
                     span.add_attribute(GEN_AI_RESPONSE_MODEL, result.model)
                     if result.usage:
-                        result.add_attribute(GEN_AI_USAGE_INPUT_TOKENS, result.usage.prompt_tokens)
-                        result.add_attribute(GEN_AI_USAGE_OUTPUT_TOKENS, result.usage.completion_tokens)
-                        result.add_attribute(GEN_AI_MESSAGE_ID, result.get("id"))
+                        span.add_attribute(GEN_AI_USAGE_INPUT_TOKENS, result.usage.prompt_tokens)
+                        span.add_attribute(GEN_AI_USAGE_OUTPUT_TOKENS, result.usage.completion_tokens)
+                        span.add_attribute(GEN_AI_MESSAGE_ID, result.get("id"))
             except Exception as exc:
                 # Set the span status to error
                 if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
@@ -972,10 +985,10 @@ class _AIAgentsInstrumentorPreview:
         with span:
             try:
                 if stream:
-                    kwargs["event_handler"] = self.wrap_handler(event_handler, span)
+                    kwargs["event_handler"] = self.wrap_async_handler(event_handler, span)
 
                 result = await function(*args, **kwargs)
-                if not isinstance(result, AgentRunStream):
+                if not isinstance(result, AsyncAgentRunStream):
                     self.set_end_run(span, result)
             except Exception as exc:
                 # Set the span status to error
@@ -1149,7 +1162,7 @@ class _AIAgentsInstrumentorPreview:
         # TODO: dummy span for none
         with span.change_context(span.span_instance):
             try:
-                kwargs["event_handler"] = self.wrap_handler(event_handler, span)
+                kwargs["event_handler"] = self.wrap_async_handler(event_handler, span)
                 result = await function(*args, **kwargs)
             except Exception as exc:
                 # Set the span status to error
@@ -1242,6 +1255,11 @@ class _AIAgentsInstrumentorPreview:
             and agent_run_stream.event_handler.__class__.__name__ == "_AgentEventHandlerTraceWrapper"
         ):
             agent_run_stream.event_handler.__exit__(exc_type, exc_val, exc_tb)
+        elif (
+            agent_run_stream.event_handler
+            and agent_run_stream.event_handler.__class__.__name__ == "_AsyncAgentEventHandlerTraceWrapper"
+        ):
+            agent_run_stream.event_handler.__aexit__(exc_type, exc_val, exc_tb)
 
     def wrap_handler(
         self, handler: "Optional[AgentEventHandler]" = None, span: "Optional[AbstractSpan]" = None
@@ -1251,6 +1269,17 @@ class _AIAgentsInstrumentorPreview:
 
         if span and span.span_instance.is_recording:
             return _AgentEventHandlerTraceWrapper(self, span, handler)
+
+        return handler
+
+    def wrap_async_handler(
+        self, handler: "Optional[AsyncAgentEventHandler]" = None, span: "Optional[AbstractSpan]" = None
+    ) -> "Optional[AsyncAgentEventHandler]":
+        if isinstance(handler, _AsyncAgentEventHandlerTraceWrapper):
+            return handler
+
+        if span and span.span_instance.is_recording:
+            return _AsyncAgentEventHandlerTraceWrapper(self, span, handler)
 
         return handler
 
@@ -1370,15 +1399,17 @@ class _AIAgentsInstrumentorPreview:
             if class_function_name.startswith("AgentsOperations.create_and_process_run"):
                 return await self.trace_create_run_async(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.submit_tool_outputs_to_run"):
-                return await self.trace_submit_tool_outputs_async(function, False, *args, **kwargs)
+                return await self.trace_submit_tool_outputs_async(False, function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.submit_tool_outputs_to_stream"):
-                return await self.trace_submit_tool_outputs_async(function, True, *args, **kwargs)
+                return await self.trace_submit_tool_outputs_async(True, function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations._handle_submit_tool_outputs"):
                 return await self.trace_handle_submit_tool_outputs_async(function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.create_stream"):
                 return await self.trace_create_stream_async(function, *args, **kwargs)
             if class_function_name.startswith("AgentsOperations.list_messages"):
                 return await self.trace_list_messages_async(function, *args, **kwargs)
+            if class_function_name.startswith("AsyncAgentRunStream.__aexit__"):
+                return self.handle_run_stream_exit(function, *args, **kwargs)
             # Handle the default case (if the function name does not match)
             return None  # Ensure all paths return
 
@@ -1491,6 +1522,7 @@ class _AIAgentsInstrumentorPreview:
                 TraceType.AGENTS,
                 "list_messages",
             ),
+            ("azure.ai.projects.models", "AsyncAgentRunStream", "__aexit__", TraceType.AGENTS, "__aexit__"),
         )
         return sync_apis, async_apis
 
@@ -1664,6 +1696,86 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
             self.inner_handler.on_unhandled_event(event_type, event_data)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        if not self.ended:
+            self.ended = True
+            self.instrumentor.set_end_run(self.span, self.last_run)
+
+            if self.last_run and self.last_run.last_error:
+                self.span.set_status(
+                    StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
+                    self.last_run.last_error.message,
+                )
+                self.span.add_attribute(ERROR_TYPE, self.last_run.last_error.code)
+
+            self.span.__exit__(exc_type, exc_val, exc_tb)
+            self.span.finish()
+
+
+class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
+    def __init__(
+        self,
+        instrumentor: _AIAgentsInstrumentorPreview,
+        span: "AbstractSpan",
+        inner_handler: Optional[AsyncAgentEventHandler] = None,
+    ):
+        super().__init__()
+        self.span = span
+        self.inner_handler = inner_handler
+        self.ended = False
+        self.last_run: Optional[ThreadRun] = None
+        self.last_message: Optional[ThreadMessage] = None
+        self.instrumentor = instrumentor
+
+    async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:  # type: ignore[func-returns-value]
+        if self.inner_handler:
+            await self.inner_handler.on_message_delta(delta)
+
+    async def on_thread_message(self, message: "ThreadMessage") -> None:  # type: ignore[func-returns-value]
+        if self.inner_handler:
+            await self.inner_handler.on_thread_message(message)
+
+        if message.status in {"completed", "incomplete"}:
+            self.last_message = message
+
+    async def on_thread_run(self, run: "ThreadRun") -> None:  # type: ignore[func-returns-value]
+        if self.inner_handler:
+            await self.inner_handler.on_thread_run(run)
+        self.last_run = run
+
+    async def on_run_step(self, step: "RunStep") -> None:  # type: ignore[func-returns-value]
+        if self.inner_handler:
+            await self.inner_handler.on_run_step(step)
+
+        if step.status == RunStepStatus.IN_PROGRESS:
+            return
+
+        # todo - report errors for failure statuses here and in run ?
+        if step.type == "tool_calls" and isinstance(step.step_details, RunStepToolCallDetails):
+            self.instrumentor._add_tool_assistant_message_event(  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
+                self.span, step
+            )
+        elif step.type == "message_creation" and step.status == RunStepStatus.COMPLETED:
+            self.instrumentor.add_thread_message_event(self.span, cast(ThreadMessage, self.last_message), step.usage)
+            self.last_message = None
+
+    async def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:  # type: ignore[func-returns-value]
+        if self.inner_handler:
+            await self.inner_handler.on_run_step_delta(delta)
+
+    async def on_error(self, data: str) -> None:  # type: ignore[func-returns-value]
+        if self.inner_handler:
+            await self.inner_handler.on_error(data)
+
+    async def on_done(self) -> None:  # type: ignore[func-returns-value]
+        if self.inner_handler:
+            await self.inner_handler.on_done()
+        # it could be called multiple tines (for each step) __exit__
+
+    async def on_unhandled_event(self, event_type: str, event_data: Any) -> None:  # type: ignore[func-returns-value]
+        if self.inner_handler:
+            await self.inner_handler.on_unhandled_event(event_type, event_data)
+
+    def __aexit__(self, exc_type, exc_val, exc_tb):
         if not self.ended:
             self.ended = True
             self.instrumentor.set_end_run(self.span, self.last_run)

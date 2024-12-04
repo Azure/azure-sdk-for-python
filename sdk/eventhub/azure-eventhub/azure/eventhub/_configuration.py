@@ -29,7 +29,7 @@ class Configuration:  # pylint:disable=too-many-instance-attributes
         retry_backoff_max: int = 120,
         network_tracing: bool = False,
         http_proxy: Optional[Dict[str, Any]] = None,
-        transport_type: TransportType = TransportType.Amqp,
+        transport_type: Optional[TransportType] = None,
         auth_timeout: int = 60,
         prefetch: int = 300,
         max_batch_size: int = 300,
@@ -50,6 +50,8 @@ class Configuration:  # pylint:disable=too-many-instance-attributes
         self.network_tracing = network_tracing
         self.http_proxy = http_proxy
         self.transport_type = TransportType.AmqpOverWebsocket if self.http_proxy else transport_type
+        # if transport_type is not provided, it is None, we will default to Amqp
+        self.transport_type = self.transport_type or TransportType.Amqp
         self.auth_timeout = auth_timeout
         self.prefetch = prefetch
         self.max_batch_size = max_batch_size
@@ -81,9 +83,12 @@ class Configuration:  # pylint:disable=too-many-instance-attributes
             if self.custom_endpoint_address.find("//") == -1:
                 self.custom_endpoint_address = "sb://" + self.custom_endpoint_address
             endpoint = urlparse(self.custom_endpoint_address)
-            self.transport_type = TransportType.AmqpOverWebsocket
+            # this line is to maintain backward compatibility for custom endpoint
+            # if the transport_type is not provided, we will default to AmqpOverWebsocket
+            self.transport_type = transport_type or TransportType.AmqpOverWebsocket
             self.custom_endpoint_hostname = endpoint.hostname
             if amqp_transport.KIND == "pyamqp":
+                # if transport is amqp, we will not append this path to the final endpoint
                 self.custom_endpoint_address += "/$servicebus/websocket"
             # in case proxy and custom endpoint are both provided, we default port to 443 if it's not provided
             self.connection_port = endpoint.port or DEFAULT_AMQP_WSS_PORT
