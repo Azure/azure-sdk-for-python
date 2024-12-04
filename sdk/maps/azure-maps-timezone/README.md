@@ -85,7 +85,7 @@ from azure.mgmt.maps import AzureMapsManagementClient
 def main():
     client = AzureMapsManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="21a9967a-e8a9-4656-a70b-96ff1c4d05a0",
+        subscription_id="your-subscription-id",
     )
 
     response = client.accounts.list_sas(
@@ -94,7 +94,7 @@ def main():
         maps_account_sas_parameters={
             "expiry": "2017-05-24T11:42:03.1567373Z",
             "maxRatePerSecond": 500,
-            "principalId": "e917f87b-324d-4728-98ed-e31d311a7d65",
+            "principalId": "your-principal-id",
             "regions": ["eastus"],
             "signingKey": "primaryKey",
             "start": "2017-05-24T10:42:03.1567373Z",
