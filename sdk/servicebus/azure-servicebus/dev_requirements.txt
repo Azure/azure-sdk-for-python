@@ -1,8 +1,7 @@
 -e ../../core/azure-core
 azure-identity~=1.17.0
 -e ../../../tools/azure-sdk-tools
-azure-mgmt-servicebus~=8.0.0
+azure-mgmt-servicebus
 aiohttp>=3.0
 websocket-client
-azure-mgmt-resource<=16.0.0
-azure-mgmt-core~=1.4.0
+azure-mgmt-resource
