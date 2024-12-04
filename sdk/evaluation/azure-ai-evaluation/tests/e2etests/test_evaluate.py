@@ -23,6 +23,7 @@ from azure.ai.evaluation import (
 )
 from azure.ai.evaluation._common.math import list_mean_nan_safe
 import azure.ai.evaluation._evaluate._utils as ev_utils
+from azure.ai.evaluation._azure._clients import LiteMLClient
 
 
 @pytest.fixture
@@ -87,7 +88,7 @@ def question_evaluator(query):
     return {"length": len(query)}
 
 
-def _get_run_from_run_history(flow_run_id, ml_client, project_scope):
+def _get_run_from_run_history(flow_run_id, azure_ml_client: LiteMLClient, project_scope):
     """Get run info from run history"""
     from azure.identity import DefaultAzureCredential
 
@@ -96,8 +97,8 @@ def _get_run_from_run_history(flow_run_id, ml_client, project_scope):
         "Authorization": token,
         "Content-Type": "application/json",
     }
-    workspace = ml_client.workspaces.get(project_scope["project_name"])
-    endpoint = workspace.discovery_url.split("discovery")[0]
+    workspace = azure_ml_client.workspace_get_info(project_scope["project_name"])
+    endpoint = (workspace.discovery_url or "").split("discovery")[0]
     pattern = (
         f"/subscriptions/{project_scope['subscription_id']}"
         f"/resourceGroups/{project_scope['resource_group_name']}"

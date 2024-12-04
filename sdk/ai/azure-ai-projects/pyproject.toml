@@ -17,7 +17,7 @@ exclude = [
   "sample_chat_completions_with_azure_ai_inference_client_and_console_tracing\\.py",
   "sample_chat_completions_with_azure_ai_inference_client_and_azure_monitor_tracing\\.py",
   "sample_chat_completions_with_azure_ai_inference_client\\.py",
-  "sample_connections.py"
+  "sample_inference_client_from_connection.py"
 ]
 warn_unused_configs = true
 ignore_missing_imports = true

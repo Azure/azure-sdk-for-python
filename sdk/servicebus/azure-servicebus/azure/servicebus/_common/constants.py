@@ -150,7 +150,7 @@ class ServiceBusReceiveMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RECEIVE_AND_DELETE = "receiveanddelete"
 
 
-class ServiceBusMessageState(int, Enum):
+class ServiceBusMessageState(int, Enum, metaclass=CaseInsensitiveEnumMeta):
     ACTIVE = 0
     DEFERRED = 1
     SCHEDULED = 2
