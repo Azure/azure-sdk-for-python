@@ -4,7 +4,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from __future__ import division
 from datetime import datetime, timezone
 import uuid
 
@@ -132,3 +131,9 @@ class AsyncTableTestCase(TableTestCase):
                 pass
 
         self.query_tables = []
+
+    async def _convert_to_list(self, items):
+        list = []
+        async for item in items:
+            list.append(item)
+        return list

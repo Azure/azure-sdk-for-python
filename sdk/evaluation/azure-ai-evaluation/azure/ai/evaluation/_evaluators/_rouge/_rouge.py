@@ -73,7 +73,7 @@ class RougeScoreEvaluator:
             :caption: Initialize and call a RougeScoreEvaluator with a four-gram rouge type.
     """
 
-    id = "rouge"
+    id = "azureml://registries/azureml/models/Rouge-Score-Evaluator/versions/3"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     def __init__(self, rouge_type: RougeType):

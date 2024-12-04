@@ -23,6 +23,7 @@ from azure.core.exceptions import HttpResponseError
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
+
 def reverse_geocode():
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search import MapsSearchClient
@@ -30,10 +31,10 @@ def reverse_geocode():
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = maps_search_client.get_reverse_geocoding(coordinates=[-122.138679, 47.630356])
-        if result.get('features', False):
-            props = result['features'][0].get('properties', {})
-            if props and props.get('address', False):
-                print(props['address'].get('formattedAddress', 'No formatted address found'))
+        if result.get("features", False):
+            props = result["features"][0].get("properties", {})
+            if props and props.get("address", False):
+                print(props["address"].get("formattedAddress", "No formatted address found"))
             else:
                 print("Address is None")
         else:
@@ -44,5 +45,5 @@ def reverse_geocode():
             print(f"Message: {exception.error.message}")
 
 
-if __name__ == '__main__':
-   reverse_geocode()
+if __name__ == "__main__":
+    reverse_geocode()

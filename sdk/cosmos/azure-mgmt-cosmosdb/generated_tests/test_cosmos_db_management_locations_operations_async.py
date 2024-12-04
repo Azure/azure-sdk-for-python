@@ -23,7 +23,7 @@ class TestCosmosDBManagementLocationsOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_list(self, resource_group):
         response = self.client.locations.list(
-            api_version="2024-09-01-preview",
+            api_version="2024-11-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestCosmosDBManagementLocationsOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_get(self, resource_group):
         response = await self.client.locations.get(
             location="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-11-15",
         )
 
         # please add some check logic here by yourself

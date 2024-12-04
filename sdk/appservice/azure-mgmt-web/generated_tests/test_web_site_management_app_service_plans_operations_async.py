@@ -21,9 +21,9 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_app_service_plans_list(self, resource_group):
         response = self.client.app_service_plans.list(
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -31,10 +31,10 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_app_service_plans_list_by_resource_group(self, resource_group):
         response = self.client.app_service_plans.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -42,11 +42,11 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_app_service_plans_get(self, resource_group):
         response = await self.client.app_service_plans.get(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_app_service_plans_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.app_service_plans.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -107,7 +107,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
                     "workerTierName": "str",
                     "zoneRedundant": False,
                 },
-                api_version="2023-12-01",
+                api_version="2024-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -116,11 +116,11 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_app_service_plans_delete(self, resource_group):
         response = await self.client.app_service_plans.delete(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -128,7 +128,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_app_service_plans_update(self, resource_group):
         response = await self.client.app_service_plans.update(
             resource_group_name=resource_group.name,
             name="str",
@@ -161,7 +161,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
                 "workerTierName": "str",
                 "zoneRedundant": False,
             },
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -169,11 +169,11 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_capabilities(self, resource_group):
+    async def test_app_service_plans_list_capabilities(self, resource_group):
         response = await self.client.app_service_plans.list_capabilities(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -181,13 +181,13 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_hybrid_connection(self, resource_group):
+    async def test_app_service_plans_get_hybrid_connection(self, resource_group):
         response = await self.client.app_service_plans.get_hybrid_connection(
             resource_group_name=resource_group.name,
             name="str",
             namespace_name="str",
             relay_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -195,13 +195,13 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete_hybrid_connection(self, resource_group):
+    async def test_app_service_plans_delete_hybrid_connection(self, resource_group):
         response = await self.client.app_service_plans.delete_hybrid_connection(
             resource_group_name=resource_group.name,
             name="str",
             namespace_name="str",
             relay_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -209,13 +209,13 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_hybrid_connection_keys(self, resource_group):
+    async def test_app_service_plans_list_hybrid_connection_keys(self, resource_group):
         response = await self.client.app_service_plans.list_hybrid_connection_keys(
             resource_group_name=resource_group.name,
             name="str",
             namespace_name="str",
             relay_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -223,13 +223,13 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_web_apps_by_hybrid_connection(self, resource_group):
+    async def test_app_service_plans_list_web_apps_by_hybrid_connection(self, resource_group):
         response = self.client.app_service_plans.list_web_apps_by_hybrid_connection(
             resource_group_name=resource_group.name,
             name="str",
             namespace_name="str",
             relay_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -237,11 +237,11 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_hybrid_connection_plan_limit(self, resource_group):
+    async def test_app_service_plans_get_hybrid_connection_plan_limit(self, resource_group):
         response = await self.client.app_service_plans.get_hybrid_connection_plan_limit(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -249,11 +249,11 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_hybrid_connections(self, resource_group):
+    async def test_app_service_plans_list_hybrid_connections(self, resource_group):
         response = self.client.app_service_plans.list_hybrid_connections(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -261,11 +261,11 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_restart_web_apps(self, resource_group):
+    async def test_app_service_plans_restart_web_apps(self, resource_group):
         response = await self.client.app_service_plans.restart_web_apps(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -273,11 +273,11 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_web_apps(self, resource_group):
+    async def test_app_service_plans_list_web_apps(self, resource_group):
         response = self.client.app_service_plans.list_web_apps(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -285,11 +285,11 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_server_farm_skus(self, resource_group):
+    async def test_app_service_plans_get_server_farm_skus(self, resource_group):
         response = await self.client.app_service_plans.get_server_farm_skus(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -297,11 +297,11 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_usages(self, resource_group):
+    async def test_app_service_plans_list_usages(self, resource_group):
         response = self.client.app_service_plans.list_usages(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -309,11 +309,11 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_vnets(self, resource_group):
+    async def test_app_service_plans_list_vnets(self, resource_group):
         response = await self.client.app_service_plans.list_vnets(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -321,12 +321,12 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_vnet_from_server_farm(self, resource_group):
+    async def test_app_service_plans_get_vnet_from_server_farm(self, resource_group):
         response = await self.client.app_service_plans.get_vnet_from_server_farm(
             resource_group_name=resource_group.name,
             name="str",
             vnet_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -334,13 +334,13 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_vnet_gateway(self, resource_group):
+    async def test_app_service_plans_get_vnet_gateway(self, resource_group):
         response = await self.client.app_service_plans.get_vnet_gateway(
             resource_group_name=resource_group.name,
             name="str",
             vnet_name="str",
             gateway_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -348,7 +348,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update_vnet_gateway(self, resource_group):
+    async def test_app_service_plans_update_vnet_gateway(self, resource_group):
         response = await self.client.app_service_plans.update_vnet_gateway(
             resource_group_name=resource_group.name,
             name="str",
@@ -362,7 +362,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
                 "vnetName": "str",
                 "vpnPackageUri": "str",
             },
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -370,12 +370,12 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_routes_for_vnet(self, resource_group):
+    async def test_app_service_plans_list_routes_for_vnet(self, resource_group):
         response = await self.client.app_service_plans.list_routes_for_vnet(
             resource_group_name=resource_group.name,
             name="str",
             vnet_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -383,13 +383,13 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_route_for_vnet(self, resource_group):
+    async def test_app_service_plans_get_route_for_vnet(self, resource_group):
         response = await self.client.app_service_plans.get_route_for_vnet(
             resource_group_name=resource_group.name,
             name="str",
             vnet_name="str",
             route_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -397,7 +397,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update_vnet_route(self, resource_group):
+    async def test_app_service_plans_create_or_update_vnet_route(self, resource_group):
         response = await self.client.app_service_plans.create_or_update_vnet_route(
             resource_group_name=resource_group.name,
             name="str",
@@ -412,7 +412,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
                 "startAddress": "str",
                 "type": "str",
             },
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -420,13 +420,13 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete_vnet_route(self, resource_group):
+    async def test_app_service_plans_delete_vnet_route(self, resource_group):
         response = await self.client.app_service_plans.delete_vnet_route(
             resource_group_name=resource_group.name,
             name="str",
             vnet_name="str",
             route_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -434,7 +434,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update_vnet_route(self, resource_group):
+    async def test_app_service_plans_update_vnet_route(self, resource_group):
         response = await self.client.app_service_plans.update_vnet_route(
             resource_group_name=resource_group.name,
             name="str",
@@ -449,7 +449,7 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
                 "startAddress": "str",
                 "type": "str",
             },
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -457,12 +457,12 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_reboot_worker(self, resource_group):
+    async def test_app_service_plans_reboot_worker(self, resource_group):
         response = await self.client.app_service_plans.reboot_worker(
             resource_group_name=resource_group.name,
             name="str",
             worker_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself

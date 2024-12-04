@@ -22,7 +22,7 @@ from ...models import (
     RouteMatrixQuery,
     RouteMatrixResult,
     BatchRequest,
-    BatchRequestItem
+    BatchRequestItem,
 )
 from ._operations import RouteOperations as RouteOperationsGenerated
 
@@ -36,12 +36,12 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+
+
 class RouteOperations(RouteOperationsGenerated):
     @distributed_trace_async
-    async def get_route_directions( # type: ignore
-        self,
-        route_points: Union[List[LatLongPair], List[Tuple]],
-        **kwargs: Any
+    async def get_route_directions(  # type: ignore
+        self, route_points: Union[List[LatLongPair], List[Tuple]], **kwargs: Any
     ) -> RouteDirections:
         """
         Returns a route between an origin and a destination, passing through waypoints if they are
@@ -269,38 +269,31 @@ class RouteOperations(RouteOperationsGenerated):
                     coordinates.append(f"{route_point[0]},{route_point[1]}")
             query_items = ":".join(coordinates)
 
-        supporting_points = kwargs.pop('supporting_points', None)
-        avoid_vignette = kwargs.pop('avoid_vignette', None)
-        allow_vignette = kwargs.pop('allow_vignette', None)
-        avoid_areas = kwargs.pop('avoid_areas', None)
+        supporting_points = kwargs.pop("supporting_points", None)
+        avoid_vignette = kwargs.pop("avoid_vignette", None)
+        allow_vignette = kwargs.pop("allow_vignette", None)
+        avoid_areas = kwargs.pop("avoid_areas", None)
 
         if supporting_points or avoid_areas or allow_vignette or avoid_vignette:
             route_directions_body = RouteDirectionParameters(
                 supporting_points=supporting_points,
                 avoid_vignette=avoid_vignette,
                 allow_vignette=allow_vignette,
-                avoid_areas=avoid_areas
+                avoid_areas=avoid_areas,
             )
             return await super().get_route_directions_with_additional_parameters(
                 route_direction_parameters=route_directions_body,
                 format=ResponseFormat.JSON,
                 route_points=query_items,
-                **kwargs
+                **kwargs,
             )
-        return await super().get_route_directions(
-            format=ResponseFormat.JSON,
-            route_points=query_items,
-            **kwargs
-        )
+        return await super().get_route_directions(format=ResponseFormat.JSON, route_points=query_items, **kwargs)
 
     # cSpell:disable
     @distributed_trace_async
-    async def get_route_range( # type: ignore
-        self,
-        coordinates: Union[LatLongPair, Tuple[float, float]],
-        **kwargs: Any
+    async def get_route_range(  # type: ignore
+        self, coordinates: Union[LatLongPair, Tuple[float, float]], **kwargs: Any
     ) -> RouteRangeResult:
-
         """**Route Range (Isochrone) API**
 
         This service will calculate a set of locations that can be reached from the origin point based
@@ -461,20 +454,10 @@ class RouteOperations(RouteOperationsGenerated):
         elif isinstance(coordinates, LatLongPair) and coordinates.latitude and coordinates.longitude:
             query = [coordinates.latitude, coordinates.longitude]
 
-        return await super().get_route_range(
-            format=ResponseFormat.JSON,
-            query=query,
-            **kwargs
-        )
-
+        return await super().get_route_range(format=ResponseFormat.JSON, query=query, **kwargs)
 
     @distributed_trace_async
-    async def get_route_directions_batch_sync(
-        self,
-        queries: List[str],
-        **kwargs: Any
-    ) -> RouteDirectionsBatchResult:
-
+    async def get_route_directions_batch_sync(self, queries: List[str], **kwargs: Any) -> RouteDirectionsBatchResult:
         """Sends batches of route directions requests.
         The method return the result directly.
 
@@ -491,15 +474,13 @@ class RouteOperations(RouteOperationsGenerated):
             route_directions_batch_queries=BatchRequest(
                 batch_items=[BatchRequestItem(query=f"?query={query}") for query in queries] if queries else []
             ),
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace_async
-    async def begin_get_route_directions_batch( # type: ignore
-        self,
-        **kwargs: Any
+    async def begin_get_route_directions_batch(  # type: ignore
+        self, **kwargs: Any
     ) -> AsyncLROPoller[RouteDirectionsBatchResult]:
-
         """Sends batches of route direction queries.
         The method returns a poller for retrieving the result later.
 
@@ -520,14 +501,12 @@ class RouteOperations(RouteOperationsGenerated):
         :rtype: ~azure.core.polling.AsyncLROPoller[RouteDirectionsBatchResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        queries=kwargs.pop('queries', None)
-        batch_id=kwargs.pop('batch_id', None)
+        queries = kwargs.pop("queries", None)
+        batch_id = kwargs.pop("batch_id", None)
 
         if batch_id:
             poller = await super().begin_get_route_directions_batch(
-                format=ResponseFormat.JSON,
-                batch_id=batch_id,
-                **kwargs
+                format=ResponseFormat.JSON, batch_id=batch_id, **kwargs
             )
             return poller
 
@@ -536,25 +515,20 @@ class RouteOperations(RouteOperationsGenerated):
             route_directions_batch_queries=BatchRequest(
                 batch_items=[BatchRequestItem(query=f"?query={query}") for query in queries] if queries else []
             ),
-            **kwargs
+            **kwargs,
         )
 
         polling_method = batch_poller.polling_method()
         if hasattr(polling_method, "_operation"):
             operation = polling_method._operation
-            batch_poller.batch_id = operation._location_url.split('/')[-1].split('?')[0]
+            batch_poller.batch_id = operation._location_url.split("/")[-1].split("?")[0]
         else:
             batch_poller.batch_id = None
 
         return batch_poller
 
     @distributed_trace_async
-    async def get_route_matrix(
-        self,
-        query: RouteMatrixQuery,
-        **kwargs: Any
-    ) -> RouteMatrixResult:
-
+    async def get_route_matrix(self, query: RouteMatrixQuery, **kwargs: Any) -> RouteMatrixResult:
         """
         Calculates a matrix of route summaries for a set of routes defined by origin and destination locations.
         The method return the result directly.
@@ -659,18 +633,10 @@ class RouteOperations(RouteOperationsGenerated):
         :rtype: ~azure.maps.route.models.RouteMatrixResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return await super().request_route_matrix_sync(
-            format=ResponseFormat.JSON,
-            route_matrix_query=query,
-            **kwargs
-        )
+        return await super().request_route_matrix_sync(format=ResponseFormat.JSON, route_matrix_query=query, **kwargs)
 
     @distributed_trace_async
-    async def begin_get_route_matrix_batch(
-        self,
-        **kwargs: Any
-    ) -> AsyncLROPoller[RouteMatrixResult]:
-
+    async def begin_get_route_matrix_batch(self, **kwargs: Any) -> AsyncLROPoller[RouteMatrixResult]:
         """
         Calculates a matrix of route summaries for a set of routes defined by origin and destination locations.
         The method returns a poller for retrieving the result later.
@@ -785,18 +751,13 @@ class RouteOperations(RouteOperationsGenerated):
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.maps.route.models.RouteMatrixResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        query=kwargs.pop('query', None)
-        matrix_id = kwargs.pop('matrix_id', None)
+        query = kwargs.pop("query", None)
+        matrix_id = kwargs.pop("matrix_id", None)
 
         if matrix_id:
-            return await super().begin_get_route_matrix(
-                matrix_id=matrix_id,
-                **kwargs
-            )
+            return await super().begin_get_route_matrix(matrix_id=matrix_id, **kwargs)
 
         poller = await super().begin_request_route_matrix(
-            format=ResponseFormat.JSON,
-            route_matrix_query=query,
-            **kwargs
+            format=ResponseFormat.JSON, route_matrix_query=query, **kwargs
         )
         return poller

@@ -137,7 +137,7 @@ def serialize_blob_tags_header(tags=None):
     if tags is None:
         return None
 
-    components = list()
+    components = []
     if tags:
         for key, value in tags.items():
             components.append(quote(key, safe='.-'))
@@ -153,7 +153,7 @@ def serialize_blob_tags_header(tags=None):
 
 def serialize_blob_tags(tags=None):
     # type: (Optional[Dict[str, str]]) -> Union[BlobTags, None]
-    tag_list = list()
+    tag_list = []
     if tags:
         tag_list = [BlobTag(key=k, value=v) for k, v in tags.items()]
     return BlobTags(blob_tag_set=tag_list)

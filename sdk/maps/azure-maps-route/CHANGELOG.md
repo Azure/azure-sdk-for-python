@@ -1,6 +1,10 @@
 # Release History
 
-## 1.0.0b2 (2024-05-15)
+## 1.0.0b2 (2024-11-06)
+
+### Breaking Changes
+
+- Updated `get_route_matrix` to accept a `RouteMatrixQuery` object instead of a dictionary.
 
 ### Other Changes
 

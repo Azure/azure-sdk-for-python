@@ -74,6 +74,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
     :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
      the Service Bus service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
+     Unless specified otherwise, default transport type is TransportType.AmqpOverWebsockets.
      The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
      If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
     :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
@@ -200,6 +201,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
          the Service Bus service, allowing network requests to be routed through any application gateways or
          other paths needed for the host environment. Default is None.
+         Unless specified otherwise, default transport type is TransportType.AmqpOverWebsockets.
          The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
          If port is not specified in the custom_endpoint_address, by default port 443 will be used.
         :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
@@ -224,7 +226,8 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
                 :caption: Create a new instance of the ServiceBusClient from connection string.
 
         """
-        host, policy, key, entity_in_conn_str, token, token_expiry = _parse_conn_str(conn_str)
+        host, policy, key, entity_in_conn_str, token, token_expiry, emulator = _parse_conn_str(conn_str)
+        kwargs["use_tls"] = not emulator
         if token and token_expiry:
             credential = ServiceBusSASTokenCredential(token, token_expiry)
         elif policy and key:
@@ -310,6 +313,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             connection_verify=self._connection_verify,
             ssl_context=self._ssl_context,
             amqp_transport=self._amqp_transport,
+            use_tls=self._config.use_tls,
             **kwargs,
         )
         self._handlers.add(handler)
@@ -431,6 +435,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             connection_verify=self._connection_verify,
             ssl_context=self._ssl_context,
             amqp_transport=self._amqp_transport,
+            use_tls=self._config.use_tls,
             **kwargs,
         )
         self._handlers.add(handler)
@@ -484,6 +489,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             connection_verify=self._connection_verify,
             ssl_context=self._ssl_context,
             amqp_transport=self._amqp_transport,
+            use_tls=self._config.use_tls,
             **kwargs,
         )
         self._handlers.add(handler)
@@ -607,6 +613,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
                 connection_verify=self._connection_verify,
                 ssl_context=self._ssl_context,
                 amqp_transport=self._amqp_transport,
+                use_tls=self._config.use_tls,
                 **kwargs,
             )
         except ValueError:
@@ -636,6 +643,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
                 connection_verify=self._connection_verify,
                 ssl_context=self._ssl_context,
                 amqp_transport=self._amqp_transport,
+                use_tls=self._config.use_tls,
                 **kwargs,
             )
         self._handlers.add(handler)

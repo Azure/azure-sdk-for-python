@@ -60,11 +60,11 @@ async def sample_chat_completions_streaming_azure_openai_async():
         )
 
     else:  # Entra ID authentication
-        from azure.identity import DefaultAzureCredential
+        from azure.identity.aio import DefaultAzureCredential
 
         client = ChatCompletionsClient(
             endpoint=endpoint,
-            credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
+            credential=DefaultAzureCredential(),
             credential_scopes=["https://cognitiveservices.azure.com/.default"],
             api_version="2024-06-01",  # Azure OpenAI api-version. See https://aka.ms/azsdk/azure-ai-inference/azure-openai-api-versions
         )

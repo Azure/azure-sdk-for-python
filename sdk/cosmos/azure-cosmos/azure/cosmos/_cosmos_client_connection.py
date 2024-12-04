@@ -1180,6 +1180,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
             if collection_link in self.__container_properties_cache:
+                # TODO: This will make deep copy. Check if this has any performance impact
                 new_options = dict(options)
                 new_options["containerRID"] = self.__container_properties_cache[collection_link]["_rid"]
                 options = new_options
@@ -3010,6 +3011,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 # This case should be interpreted as an empty array.
                 return []
 
+        # TODO: copy is not needed if query was none, since the header was copied inside of "base.GetHeaders"
         initial_headers = self.default_headers.copy()
         # Copy to make sure that default_headers won't be changed.
         if query is None:
@@ -3144,7 +3146,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                     documents._QueryFeature.OffsetAndLimit + "," +
                                     documents._QueryFeature.OrderBy + "," +
                                     documents._QueryFeature.Top + "," +
-                                    documents._QueryFeature.NonStreamingOrderBy)
+                                    documents._QueryFeature.NonStreamingOrderBy + "," +
+                                    documents._QueryFeature.HybridSearch + "," +
+                                    documents._QueryFeature.CountIf)
         if os.environ.get('AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY', False):
             supported_query_features = (documents._QueryFeature.Aggregate + "," +
                                         documents._QueryFeature.CompositeAggregate + "," +

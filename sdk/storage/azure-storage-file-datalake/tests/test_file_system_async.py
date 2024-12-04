@@ -1144,7 +1144,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         )
         sas_directory_client = FileSystemClient(self.dsc.url, file_system_name,
                                                 credential=token)
-        paths = list()
+        paths = []
         async for path in sas_directory_client.get_paths():
             paths.append(path)
 

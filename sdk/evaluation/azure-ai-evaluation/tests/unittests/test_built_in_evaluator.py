@@ -70,7 +70,7 @@ class TestBuiltInEvaluators:
 
     def test_retrieval_evaluator_keys(self, mock_model_config):
         retrieval_eval = RetrievalEvaluator(model_config=mock_model_config)
-        retrieval_eval._async_evaluator._flow = MagicMock(return_value=quality_response_async_mock())
+        retrieval_eval._flow = MagicMock(return_value=quality_response_async_mock())
         result = retrieval_eval(
             query="What is the value of 2 + 2?",
             context="1 + 2 = 2",
@@ -80,7 +80,7 @@ class TestBuiltInEvaluators:
         assert result["retrieval_reason"]
 
         retrieval_eval = RetrievalEvaluator(model_config=mock_model_config)
-        retrieval_eval._async_evaluator._flow = MagicMock(return_value=quality_response_async_mock())
+        retrieval_eval._flow = MagicMock(return_value=quality_response_async_mock())
         conversation = {
             "messages": [
                 {"role": "user", "content": "What is the value of 2 + 2?"},
@@ -100,7 +100,7 @@ class TestBuiltInEvaluators:
         assert result["retrieval"] == result["gpt_retrieval"] == 1
 
         retrieval_eval = RetrievalEvaluator(model_config=mock_model_config)
-        retrieval_eval._async_evaluator._flow = MagicMock(return_value=quality_response_async_mock())
+        retrieval_eval._flow = MagicMock(return_value=quality_response_async_mock())
         conversation = {
             "messages": [
                 {"role": "user", "content": "What is the value of 2 + 2?"},
@@ -117,22 +117,12 @@ class TestBuiltInEvaluators:
 
     def test_quality_evaluator_missing_input(self, mock_model_config):
         """All evaluators that inherit from EvaluatorBase are covered by this test"""
-        quality_eval = RelevanceEvaluator(model_config=mock_model_config)
+        quality_eval = RetrievalEvaluator(model_config=mock_model_config)
         quality_eval._flow = MagicMock(return_value=quality_response_async_mock())
 
         with pytest.raises(EvaluationException) as exc_info:
-            quality_eval(response="The capital of Japan is Tokyo.")  # Relevance requires "query"
+            quality_eval(response="The capital of Japan is Tokyo.")  # Retrieval requires query and context
 
         assert (
-            "RelevanceEvaluator: Either 'conversation' or individual inputs must be provided." in exc_info.value.args[0]
+            "RetrievalEvaluator: Either 'conversation' or individual inputs must be provided." in exc_info.value.args[0]
         )
-
-    def test_retrieval_evaluator_missing_input(self, mock_model_config):
-        """This test can be removed if RetrievalEvaluator is refactored to be a child of EvaluatorBase"""
-        retrieval_eval = RetrievalEvaluator(model_config=mock_model_config)
-        retrieval_eval._async_evaluator._flow = MagicMock(return_value=quality_response_async_mock())
-
-        with pytest.raises(EvaluationException) as exc_info:
-            retrieval_eval(context="1 + 2 = 2.")  # Retrieval requires "query"
-
-        assert "Either a pair of 'query'/'context' or 'conversation' must be provided." in exc_info.value.args[0]

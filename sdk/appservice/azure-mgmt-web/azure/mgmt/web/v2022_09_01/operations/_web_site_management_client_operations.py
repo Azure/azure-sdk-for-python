@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, Optional, Type, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -33,7 +33,7 @@ from .._vendor import WebSiteManagementClientMixinABC
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -544,7 +544,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         :rtype: ~azure.mgmt.web.v2022_09_01.models.User
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -635,7 +635,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         :rtype: ~azure.mgmt.web.v2022_09_01.models.User
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -707,7 +707,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         )
         cls: ClsType[_models.SourceControlCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -779,7 +779,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         :rtype: ~azure.mgmt.web.v2022_09_01.models.SourceControl
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -889,7 +889,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         :rtype: ~azure.mgmt.web.v2022_09_01.models.SourceControl
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -968,7 +968,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         )
         cls: ClsType[_models.BillingMeterCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1051,7 +1051,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         :rtype: ~azure.mgmt.web.v2022_09_01.models.ResourceNameAvailability
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1122,7 +1122,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         )
         cls: ClsType[_models.CustomHostnameSitesCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1194,7 +1194,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         :rtype: ~azure.mgmt.web.v2022_09_01.models.DeploymentLocations
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1276,7 +1276,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         )
         cls: ClsType[_models.GeoRegionCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1404,7 +1404,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.IdentifierCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1493,7 +1493,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         )
         cls: ClsType[_models.PremierAddOnOfferCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1564,7 +1564,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         :rtype: ~azure.mgmt.web.v2022_09_01.models.SkuInfos
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1664,7 +1664,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         :rtype: ~azure.mgmt.web.v2022_09_01.models.VnetValidationFailureDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1721,7 +1721,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    def move(  # pylint: disable=inconsistent-return-statements
+    def move(
         self,
         resource_group_name: str,
         move_resource_envelope: _models.CsmMoveResourceEnvelope,
@@ -1746,7 +1746,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         """
 
     @overload
-    def move(  # pylint: disable=inconsistent-return-statements
+    def move(
         self,
         resource_group_name: str,
         move_resource_envelope: IO[bytes],
@@ -1791,7 +1791,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1910,7 +1910,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         :rtype: ~azure.mgmt.web.v2022_09_01.models.ValidateResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1967,7 +1967,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    def validate_move(  # pylint: disable=inconsistent-return-statements
+    def validate_move(
         self,
         resource_group_name: str,
         move_resource_envelope: _models.CsmMoveResourceEnvelope,
@@ -1992,7 +1992,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         """
 
     @overload
-    def validate_move(  # pylint: disable=inconsistent-return-statements
+    def validate_move(
         self,
         resource_group_name: str,
         move_resource_envelope: IO[bytes],
@@ -2037,7 +2037,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

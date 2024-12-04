@@ -54,7 +54,7 @@ class SexualEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             :caption: Initialize and call a SexualEvaluator.
     """
 
-    id = "sexual"
+    id = "azureml://registries/azureml/models/Sexual-Content-Evaluator/versions/3"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override

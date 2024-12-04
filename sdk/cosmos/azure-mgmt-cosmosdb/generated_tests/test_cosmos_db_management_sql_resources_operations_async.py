@@ -25,7 +25,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
         response = self.client.sql_resources.list_sql_databases(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-11-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             account_name="str",
             database_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-11-15",
         )
 
         # please add some check logic here by yourself
@@ -63,19 +63,13 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                         },
                     },
                     "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
                     "location": "str",
                     "name": "str",
                     "options": {"autoscaleSettings": {"maxThroughput": 0}, "throughput": 0},
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-09-01-preview",
+                api_version="2024-11-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -90,7 +84,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 resource_group_name=resource_group.name,
                 account_name="str",
                 database_name="str",
-                api_version="2024-09-01-preview",
+                api_version="2024-11-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -104,7 +98,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             account_name="str",
             database_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-11-15",
         )
 
         # please add some check logic here by yourself
@@ -132,18 +126,12 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                         "throughput": 0,
                     },
                     "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
                     "location": "str",
                     "name": "str",
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-09-01-preview",
+                api_version="2024-11-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -158,7 +146,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 resource_group_name=resource_group.name,
                 account_name="str",
                 database_name="str",
-                api_version="2024-09-01-preview",
+                api_version="2024-11-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -173,58 +161,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 resource_group_name=resource_group.name,
                 account_name="str",
                 database_name="str",
-                api_version="2024-09-01-preview",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_list_client_encryption_keys(self, resource_group):
-        response = self.client.sql_resources.list_client_encryption_keys(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            database_name="str",
-            api_version="2024-09-01-preview",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_get_client_encryption_key(self, resource_group):
-        response = await self.client.sql_resources.get_client_encryption_key(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            database_name="str",
-            client_encryption_key_name="str",
-            api_version="2024-09-01-preview",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_begin_create_update_client_encryption_key(self, resource_group):
-        response = await (
-            await self.client.sql_resources.begin_create_update_client_encryption_key(
-                resource_group_name=resource_group.name,
-                account_name="str",
-                database_name="str",
-                client_encryption_key_name="str",
-                create_update_client_encryption_key_parameters={
-                    "resource": {
-                        "encryptionAlgorithm": "str",
-                        "id": "str",
-                        "keyWrapMetadata": {"algorithm": "str", "name": "str", "type": "str", "value": "str"},
-                        "wrappedDataEncryptionKey": bytes("bytes", encoding="utf-8"),
-                    }
-                },
-                api_version="2024-09-01-preview",
+                api_version="2024-11-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -238,7 +175,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             account_name="str",
             database_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-11-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -252,7 +189,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             account_name="str",
             database_name="str",
             container_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-11-15",
         )
 
         # please add some check logic here by yourself
@@ -299,11 +236,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                             ],
                             "indexingMode": "consistent",
                             "spatialIndexes": [{"path": "str", "types": ["str"]}],
-                        },
-                        "materializedViewDefinition": {
-                            "definition": "str",
-                            "sourceCollectionId": "str",
-                            "sourceCollectionRid": "str",
+                            "vectorIndexes": [{"path": "str", "type": "str"}],
                         },
                         "partitionKey": {"kind": "Hash", "paths": ["str"], "systemKey": bool, "version": 0},
                         "restoreParameters": {
@@ -312,21 +245,20 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                             "restoreWithTtlDisabled": bool,
                         },
                         "uniqueKeyPolicy": {"uniqueKeys": [{"paths": ["str"]}]},
+                        "vectorEmbeddingPolicy": {
+                            "vectorEmbeddings": [
+                                {"dataType": "str", "dimensions": 0, "distanceFunction": "str", "path": "str"}
+                            ]
+                        },
                     },
                     "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
                     "location": "str",
                     "name": "str",
                     "options": {"autoscaleSettings": {"maxThroughput": 0}, "throughput": 0},
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-09-01-preview",
+                api_version="2024-11-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -342,40 +274,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 account_name="str",
                 database_name="str",
                 container_name="str",
-                api_version="2024-09-01-preview",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_begin_sql_database_partition_merge(self, resource_group):
-        response = await (
-            await self.client.sql_resources.begin_sql_database_partition_merge(
-                resource_group_name=resource_group.name,
-                account_name="str",
-                database_name="str",
-                merge_parameters={"isDryRun": bool},
-                api_version="2024-09-01-preview",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_begin_list_sql_container_partition_merge(self, resource_group):
-        response = await (
-            await self.client.sql_resources.begin_list_sql_container_partition_merge(
-                resource_group_name=resource_group.name,
-                account_name="str",
-                database_name="str",
-                container_name="str",
-                merge_parameters={"isDryRun": bool},
-                api_version="2024-09-01-preview",
+                api_version="2024-11-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -390,7 +289,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             account_name="str",
             database_name="str",
             container_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-11-15",
         )
 
         # please add some check logic here by yourself
@@ -419,18 +318,12 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                         "throughput": 0,
                     },
                     "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
                     "location": "str",
                     "name": "str",
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-09-01-preview",
+                api_version="2024-11-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -446,7 +339,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 account_name="str",
                 database_name="str",
                 container_name="str",
-                api_version="2024-09-01-preview",
+                api_version="2024-11-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -462,7 +355,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 account_name="str",
                 database_name="str",
                 container_name="str",
-                api_version="2024-09-01-preview",
+                api_version="2024-11-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -471,124 +364,49 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_sql_database_retrieve_throughput_distribution(self, resource_group):
-        response = await (
-            await self.client.sql_resources.begin_sql_database_retrieve_throughput_distribution(
-                resource_group_name=resource_group.name,
-                account_name="str",
-                database_name="str",
-                retrieve_throughput_parameters={
-                    "resource": {"physicalPartitionIds": [{"id": "str"}]},
-                    "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
-                    "location": "str",
-                    "name": "str",
-                    "tags": {"str": "str"},
-                    "type": "str",
-                },
-                api_version="2024-09-01-preview",
-            )
-        ).result()  # call '.result()' to poll until service return final result
+    async def test_list_client_encryption_keys(self, resource_group):
+        response = self.client.sql_resources.list_client_encryption_keys(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            database_name="str",
+            api_version="2024-11-15",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_get_client_encryption_key(self, resource_group):
+        response = await self.client.sql_resources.get_client_encryption_key(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            database_name="str",
+            client_encryption_key_name="str",
+            api_version="2024-11-15",
+        )
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_sql_database_redistribute_throughput(self, resource_group):
+    async def test_begin_create_update_client_encryption_key(self, resource_group):
         response = await (
-            await self.client.sql_resources.begin_sql_database_redistribute_throughput(
+            await self.client.sql_resources.begin_create_update_client_encryption_key(
                 resource_group_name=resource_group.name,
                 account_name="str",
                 database_name="str",
-                redistribute_throughput_parameters={
+                client_encryption_key_name="str",
+                create_update_client_encryption_key_parameters={
                     "resource": {
-                        "sourcePhysicalPartitionThroughputInfo": [{"id": "str", "throughput": 0.0}],
-                        "targetPhysicalPartitionThroughputInfo": [{"id": "str", "throughput": 0.0}],
-                        "throughputPolicy": "str",
-                    },
-                    "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
-                    "location": "str",
-                    "name": "str",
-                    "tags": {"str": "str"},
-                    "type": "str",
+                        "encryptionAlgorithm": "str",
+                        "id": "str",
+                        "keyWrapMetadata": {"algorithm": "str", "name": "str", "type": "str", "value": "str"},
+                        "wrappedDataEncryptionKey": bytes("bytes", encoding="utf-8"),
+                    }
                 },
-                api_version="2024-09-01-preview",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_begin_sql_container_retrieve_throughput_distribution(self, resource_group):
-        response = await (
-            await self.client.sql_resources.begin_sql_container_retrieve_throughput_distribution(
-                resource_group_name=resource_group.name,
-                account_name="str",
-                database_name="str",
-                container_name="str",
-                retrieve_throughput_parameters={
-                    "resource": {"physicalPartitionIds": [{"id": "str"}]},
-                    "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
-                    "location": "str",
-                    "name": "str",
-                    "tags": {"str": "str"},
-                    "type": "str",
-                },
-                api_version="2024-09-01-preview",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_begin_sql_container_redistribute_throughput(self, resource_group):
-        response = await (
-            await self.client.sql_resources.begin_sql_container_redistribute_throughput(
-                resource_group_name=resource_group.name,
-                account_name="str",
-                database_name="str",
-                container_name="str",
-                redistribute_throughput_parameters={
-                    "resource": {
-                        "sourcePhysicalPartitionThroughputInfo": [{"id": "str", "throughput": 0.0}],
-                        "targetPhysicalPartitionThroughputInfo": [{"id": "str", "throughput": 0.0}],
-                        "throughputPolicy": "str",
-                    },
-                    "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
-                    "location": "str",
-                    "name": "str",
-                    "tags": {"str": "str"},
-                    "type": "str",
-                },
-                api_version="2024-09-01-preview",
+                api_version="2024-11-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -603,7 +421,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             account_name="str",
             database_name="str",
             container_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-11-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -618,7 +436,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             database_name="str",
             container_name="str",
             stored_procedure_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-11-15",
         )
 
         # please add some check logic here by yourself
@@ -637,19 +455,13 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 create_update_sql_stored_procedure_parameters={
                     "resource": {"id": "str", "body": "str"},
                     "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
                     "location": "str",
                     "name": "str",
                     "options": {"autoscaleSettings": {"maxThroughput": 0}, "throughput": 0},
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-09-01-preview",
+                api_version="2024-11-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -666,7 +478,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 database_name="str",
                 container_name="str",
                 stored_procedure_name="str",
-                api_version="2024-09-01-preview",
+                api_version="2024-11-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -681,7 +493,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             account_name="str",
             database_name="str",
             container_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-11-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -696,7 +508,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             database_name="str",
             container_name="str",
             user_defined_function_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-11-15",
         )
 
         # please add some check logic here by yourself
@@ -715,19 +527,13 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 create_update_sql_user_defined_function_parameters={
                     "resource": {"id": "str", "body": "str"},
                     "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
                     "location": "str",
                     "name": "str",
                     "options": {"autoscaleSettings": {"maxThroughput": 0}, "throughput": 0},
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-09-01-preview",
+                api_version="2024-11-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -744,7 +550,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 database_name="str",
                 container_name="str",
                 user_defined_function_name="str",
-                api_version="2024-09-01-preview",
+                api_version="2024-11-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -759,7 +565,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             account_name="str",
             database_name="str",
             container_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-11-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -774,7 +580,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             database_name="str",
             container_name="str",
             trigger_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-11-15",
         )
 
         # please add some check logic here by yourself
@@ -793,19 +599,13 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 create_update_sql_trigger_parameters={
                     "resource": {"id": "str", "body": "str", "triggerOperation": "str", "triggerType": "str"},
                     "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
                     "location": "str",
                     "name": "str",
                     "options": {"autoscaleSettings": {"maxThroughput": 0}, "throughput": 0},
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-09-01-preview",
+                api_version="2024-11-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -822,7 +622,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 database_name="str",
                 container_name="str",
                 trigger_name="str",
-                api_version="2024-09-01-preview",
+                api_version="2024-11-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -836,7 +636,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             role_definition_id="str",
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-11-15",
         )
 
         # please add some check logic here by yourself
@@ -856,7 +656,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                     "roleName": "str",
                     "type": "str",
                 },
-                api_version="2024-09-01-preview",
+                api_version="2024-11-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -871,7 +671,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 role_definition_id="str",
                 resource_group_name=resource_group.name,
                 account_name="str",
-                api_version="2024-09-01-preview",
+                api_version="2024-11-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -884,7 +684,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
         response = self.client.sql_resources.list_sql_role_definitions(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-11-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -897,7 +697,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
             role_assignment_id="str",
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-11-15",
         )
 
         # please add some check logic here by yourself
@@ -916,7 +716,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                     "roleDefinitionId": "str",
                     "scope": "str",
                 },
-                api_version="2024-09-01-preview",
+                api_version="2024-11-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -931,7 +731,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 role_assignment_id="str",
                 resource_group_name=resource_group.name,
                 account_name="str",
-                api_version="2024-09-01-preview",
+                api_version="2024-11-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -944,7 +744,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
         response = self.client.sql_resources.list_sql_role_assignments(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-11-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -960,7 +760,7 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
                 database_name="str",
                 container_name="str",
                 location={"location": "str"},
-                api_version="2024-09-01-preview",
+                api_version="2024-11-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 

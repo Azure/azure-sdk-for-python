@@ -11,13 +11,8 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from uuid import uuid4
 
 from azure.communication.identity import CommunicationIdentityClient
-from azure.communication.chat.aio import (
-    ChatClient,
-    CommunicationTokenCredential
-)
-from azure.communication.chat import (
-    ChatParticipant
-)
+from azure.communication.chat.aio import ChatClient, CommunicationTokenCredential
+from azure.communication.chat import ChatParticipant
 from azure.communication.chat._shared.utils import parse_connection_str
 from chat_e2e_helper import get_connection_str
 from _shared.utils import get_http_logging_policy
@@ -38,9 +33,7 @@ class TestChatClientAsync(AzureRecordedTestCase):
 
         # create ChatClient
         self.chat_client = ChatClient(
-            self.endpoint, 
-            CommunicationTokenCredential(self.token), 
-            http_logging_policy=get_http_logging_policy()
+            self.endpoint, CommunicationTokenCredential(self.token), http_logging_policy=get_http_logging_policy()
         )
 
     def teardown_method(self):
@@ -53,16 +46,14 @@ class TestChatClientAsync(AzureRecordedTestCase):
         topic = "test topic"
         share_history_time = datetime.utcnow()
         share_history_time = share_history_time.replace(tzinfo=timezone.utc)
-        participants = [ChatParticipant(
-            identifier=self.user,
-            display_name='name',
-            share_history_time=share_history_time
-        )]
-        create_chat_thread_result = await self.chat_client.create_chat_thread(topic,
-                                                                              thread_participants=participants,
-                                                                              idempotency_token=idempotency_token)
+        participants = [
+            ChatParticipant(identifier=self.user, display_name="name", share_history_time=share_history_time)
+        ]
+        create_chat_thread_result = await self.chat_client.create_chat_thread(
+            topic, thread_participants=participants, idempotency_token=idempotency_token
+        )
         self.thread_id = create_chat_thread_result.chat_thread.id
-    
+
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
     @recorded_by_proxy_async
@@ -90,7 +81,7 @@ class TestChatClientAsync(AzureRecordedTestCase):
             # delete created users and chat threads
             if not self.is_playback():
                 await self.chat_client.delete_chat_thread(create_chat_thread_result.chat_thread.id)
-    
+
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
     @recorded_by_proxy_async
@@ -106,7 +97,6 @@ class TestChatClientAsync(AzureRecordedTestCase):
             # re-create thread
             await self._create_thread(idempotency_token=idempotency_token)
             assert thread_id == self.thread_id
-
 
             # delete created users and chat threads
             if not self.is_playback():

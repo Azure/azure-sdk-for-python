@@ -7,8 +7,6 @@ extends:
       TestTimeoutInMinutes: 200
       MatrixFilters:
         - PythonVersion=3.11.*
-      MatrixReplace:
-        - TestSamples=.*/true
       CloudConfig:
         Public:
           ServiceConnection: azure-sdk-tests-openai

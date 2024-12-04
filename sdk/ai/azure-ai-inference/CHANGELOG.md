@@ -1,6 +1,12 @@
 # Release History
 
-## 1.0.0b6 (2024-11-15)
+## 1.0.0b7 (Unreleased)
+
+### Bugs Fixed
+
+* Fix a bug that would cause an error when tracing was enabled and azure-core-tracing-opentelemetry was not installed and asynchronous chat completion was used.
+
+## 1.0.0b6 (2024-11-11)
 
 ### Features Added
 
@@ -8,6 +14,7 @@
   * Method `AIInferenceInstrumentor().instrument()` updated with an input argument `enable_content_recording`.
   * Calling `AIInferenceInstrumentor().instrument()` twice no longer results in an exception.
   * Added method `AIInferenceInstrumentor().is_content_recording_enabled()`
+* Support [Prompty](https://github.com/microsoft/prompty) and prompt template from string. PromptTemplate class outputs an array of dictionary with OpenAI compatible message format.
 
 ### Bugs Fixed
 

@@ -39,7 +39,7 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
             :caption: Initialize and call a ProtectedMaterialEvaluator.
     """
 
-    id = "protected_material"
+    id = "azureml://registries/azureml/models/Protected-Material-Evaluator/versions/3"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
