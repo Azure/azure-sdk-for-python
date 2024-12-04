@@ -12,6 +12,7 @@ import base64
 import datetime
 import inspect
 import json
+import jsonref
 import logging
 import math
 import re
@@ -504,6 +505,67 @@ class AsyncFunctionTool(BaseFunctionTool):
             # to the function call
             return json.dumps({"error": error_message})
 
+class OpenApiTool(BaseFunctionTool):
+    """
+    A tool created from an OpenAPI spec.
+    """
+    def __init__(self, openapi_spec: Any):
+        """
+        Initialize Tool with a defined openapi spec.
+
+        :param openapi_spec: spec to parse functions definitions from.
+        """
+        self._definitions = self._build_definitions_from_openapi(openapi_spec)
+
+    def _build_definitions_from_openapi(self, openapi_spec: Any) -> List[FunctionToolDefinition]:
+        specs: List[FunctionToolDefinition] = []
+
+        for _, methods in openapi_spec["paths"].items():
+            for _, spec_with_ref in methods.items():
+                # 1. Resolve JSON references.
+                spec = jsonref.replace_refs(spec_with_ref)
+
+                # 2. Extract a name for the functions.
+                function_name = spec.get("operationId")
+
+                # 3. Extract a description and parameters.
+                desc = spec.get("description") or spec.get("summary", "")
+
+                schema = {"type": "object", "properties": {}}
+
+                req_body = (
+                    spec.get("requestBody", {})
+                    .get("content", {})
+                    .get("application/json", {})
+                    .get("schema")
+                )
+                if req_body:
+                    schema["properties"]["requestBody"] = req_body
+
+                params = spec.get("parameters", [])
+                if params:
+                    param_properties = {
+                        param["name"]: param["schema"]
+                        for param in params
+                        if "schema" in param
+                    }
+                    schema["properties"]["parameters"] = {
+                        "type": "object",
+                        "properties": param_properties,
+                    }
+
+                function_def = FunctionDefinition(
+                    name=function_name,
+                    description=desc,
+                    parameters=schema,
+                )
+                tool_def = FunctionToolDefinition(function=function_def)
+                specs.append(tool_def)
+
+        return specs
+
+    def execute(self, tool_call: RequiredFunctionToolCall) -> Any:
+        pass
 
 class AzureAISearchTool(Tool):
     """
