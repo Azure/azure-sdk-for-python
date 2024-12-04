@@ -1096,8 +1096,7 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
                         event = await self._process_event(event_data_str)
                         if event:
                             return event
-                        else:
-                            continue
+                        continue
                 raise
 
             while "\n\n" in self.buffer:

@@ -8,7 +8,6 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import asyncio
 import concurrent.futures
-import inspect
 import uuid
 from os import PathLike
 from pathlib import Path
