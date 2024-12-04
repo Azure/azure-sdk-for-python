@@ -68,7 +68,9 @@ async def analyze_batch_docs():
             model_id="prebuilt-layout",
             analyze_batch_request=request,
         )
-        continuation_token = poller.continuation_token()  # a continuation token that allows to restart the poller later.
+        continuation_token = (
+            poller.continuation_token()
+        )  # a continuation token that allows to restart the poller later.
         poller2 = await document_intelligence_client.get_analyze_batch_result(continuation_token)
         if poller2.done():
             final_result = await poller2.result()

@@ -28,9 +28,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
         client = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential(is_async=True))
         with pytest.raises(ValueError) as e:
             async with client:
-                await client.begin_analyze_document(
-                    model_id=None, analyze_request=b"xx"
-                )
+                await client.begin_analyze_document(model_id=None, analyze_request=b"xx")
         assert "No value for given attribute" in str(e.value)
 
     @DocumentIntelligencePreparer()
@@ -52,9 +50,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
         client = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential(is_async=True))
         with pytest.raises(ResourceNotFoundError) as e:
             async with client:
-                await client.begin_analyze_document(
-                    model_id="", analyze_request=b"xx"
-                )
+                await client.begin_analyze_document(model_id="", analyze_request=b"xx")
         assert "Resource not found" in str(e.value)
 
     @DocumentIntelligencePreparer()
@@ -95,9 +91,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
         with open(self.form_jpg, "rb") as fd:
             my_file = fd.read()
         async with di_client:
-            poller = await di_client.begin_analyze_document(
-                model.model_id, my_file
-            )
+            poller = await di_client.begin_analyze_document(model.model_id, my_file)
             document = await poller.result()
             assert document.model_id == model.model_id
             assert len(document.pages) == 1
@@ -141,9 +135,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
         with open(self.form_jpg, "rb") as fd:
             my_file = fd.read()
         async with di_client:
-            poller = await di_client.begin_analyze_document(
-                model.model_id, my_file
-            )
+            poller = await di_client.begin_analyze_document(model.model_id, my_file)
             continuation_token = poller.continuation_token()
 
         di_client2 = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential(is_async=True))
