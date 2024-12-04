@@ -43,7 +43,7 @@ import os
 # The get_stream_chunks method is defined to return the chunks as strings because the iteration is a string.
 class MyEventHandler(BaseAgentEventHandler[str]):
 
-    def _process_event(self, event_data_str: str) -> Optional[str]:
+    def _process_event(self, event_data_str: str) -> Optional[str]:  # type: ignore[return]
         event_lines = event_data_str.strip().split("\n")
         event_type: Optional[str] = None
         event_data = ""
