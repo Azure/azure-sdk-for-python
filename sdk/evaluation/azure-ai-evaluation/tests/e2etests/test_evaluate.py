@@ -13,7 +13,9 @@ from azure.ai.evaluation import (
     ContentSafetyEvaluator,
     ContentSafetyMultimodalEvaluator,
     SexualMultimodalEvaluator,
+    SexualEvaluator,
     ProtectedMaterialMultimodalEvaluator,
+    ProtectedMaterialEvaluator,
     F1ScoreEvaluator,
     FluencyEvaluator,
     GroundednessEvaluator,
@@ -125,7 +127,6 @@ def _get_run_from_run_history(flow_run_id, ml_client, project_scope):
 
 
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
-@pytest.mark.localtest
 class TestEvaluate:
     @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
     def test_evaluate_with_groundedness_evaluator(self, model_config, data_file):
@@ -250,17 +251,24 @@ class TestEvaluate:
             assert isinstance(files, list), "The result should be a list"
             assert 1 == len(files), "file1.txt should be present in the folder"
 
+    @pytest.mark.parametrize(
+        "evaluator_class",
+        [
+            (ContentSafetyMultimodalEvaluator),
+            (ContentSafetyEvaluator),
+        ],
+    )
     def test_evaluate_with_content_safety_multimodal_evaluator(
-        self, project_scope, azure_cred, multimodal_file_with_imageurls
+        self, project_scope, azure_cred, multimodal_file_with_imageurls, evaluator_class
     ):
         os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "false"
         input_data = pd.read_json(multimodal_file_with_imageurls, lines=True)
-        content_safety_eval = ContentSafetyMultimodalEvaluator(
+        content_safety_eval = evaluator_class(
             azure_ai_project=project_scope, credential=azure_cred, _parallel=False
         )
         result = evaluate(
             evaluation_name=f"test-mm-content-safety-eval-dataset-img-url-{str(uuid.uuid4())}",
-            azure_ai_project=project_scope,
+            # azure_ai_project=project_scope,
             data=multimodal_file_with_imageurls,
             evaluators={"content_safety": content_safety_eval},
             evaluator_config={
@@ -290,19 +298,26 @@ class TestEvaluate:
         assert 0 <= metrics.get("content_safety.self_harm_defect_rate") <= 1
         assert 0 <= metrics.get("content_safety.hate_unfairness_defect_rate") <= 1
 
+    @pytest.mark.parametrize(
+        "evaluator_class",
+        [
+            (ContentSafetyMultimodalEvaluator),
+            (ContentSafetyEvaluator),
+        ],
+    )
     def test_evaluate_with_content_safety_multimodal_evaluator_with_target(
-        self, project_scope, azure_cred, multimodal_file_with_imageurls_with_target
+        self, project_scope, azure_cred, multimodal_file_with_imageurls_with_target, evaluator_class
     ):
         os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "false"
         from .target_fn import target_multimodal_fn1
 
         input_data = pd.read_json(multimodal_file_with_imageurls_with_target, lines=True)
-        content_safety_eval = ContentSafetyMultimodalEvaluator(
+        content_safety_eval = evaluator_class(
             azure_ai_project=project_scope, credential=azure_cred, _parallel=False
         )
         result = evaluate(
             evaluation_name=f"test-mm-eval-dataset-img-url-target-{str(uuid.uuid4())}",
-            azure_ai_project=project_scope,
+            # azure_ai_project=project_scope,
             data=multimodal_file_with_imageurls_with_target,
             target=target_multimodal_fn1,
             evaluators={"content_safety": content_safety_eval},
@@ -333,14 +348,22 @@ class TestEvaluate:
         assert 0 <= metrics.get("content_safety.self_harm_defect_rate") <= 1
         assert 0 <= metrics.get("content_safety.hate_unfairness_defect_rate") <= 1
 
-    def test_evaluate_with_sexual_multimodal_evaluator(self, project_scope, azure_cred, multimodal_file_with_imageurls):
+    @pytest.mark.parametrize(
+        "evaluator_class",
+        [
+            (SexualMultimodalEvaluator),
+            (SexualEvaluator),
+        ],
+    )
+    def test_evaluate_with_sexual_multimodal_evaluator(self, project_scope, azure_cred, 
+                                                       multimodal_file_with_imageurls, evaluator_class):
         os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "false"
         input_data = pd.read_json(multimodal_file_with_imageurls, lines=True)
-        eval = SexualMultimodalEvaluator(azure_ai_project=project_scope, credential=azure_cred)
+        eval = evaluator_class(azure_ai_project=project_scope, credential=azure_cred)
 
         result = evaluate(
             evaluation_name=f"test-mm-sexual-eval-dataset-img-url-{str(uuid.uuid4())}",
-            azure_ai_project=project_scope,
+            # azure_ai_project=project_scope,
             data=multimodal_file_with_imageurls,
             evaluators={"sexual": eval},
             evaluator_config={
@@ -359,15 +382,22 @@ class TestEvaluate:
         assert "sexual.sexual_defect_rate" in metrics.keys()
         assert 0 <= metrics.get("sexual.sexual_defect_rate") <= 1
 
+    @pytest.mark.parametrize(
+        "evaluator_class",
+        [
+            (SexualMultimodalEvaluator),
+            (SexualEvaluator),
+        ],
+    )
     def test_evaluate_with_sexual_multimodal_evaluator_b64_images(
-        self, project_scope, azure_cred, multimodal_file_with_b64_images
+        self, project_scope, azure_cred, multimodal_file_with_b64_images, evaluator_class
     ):
         os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "false"
         input_data = pd.read_json(multimodal_file_with_b64_images, lines=True)
-        eval = SexualMultimodalEvaluator(azure_ai_project=project_scope, credential=azure_cred)
+        eval = evaluator_class(azure_ai_project=project_scope, credential=azure_cred)
         result = evaluate(
             evaluation_name=f"test-mm-sexual-eval-dataset-img-b64-{str(uuid.uuid4())}",
-            azure_ai_project=project_scope,
+            # azure_ai_project=project_scope,
             data=multimodal_file_with_b64_images,
             evaluators={"sexual": eval},
             evaluator_config={
@@ -415,15 +445,22 @@ class TestEvaluate:
         assert "groundedness_pro.groundedness_pro_passing_rate" in convo_metrics.keys()
         assert 0 <= convo_metrics.get("groundedness_pro.groundedness_pro_passing_rate") <= 1
 
+    @pytest.mark.parametrize(
+        "evaluator_class",
+        [
+            (ProtectedMaterialMultimodalEvaluator),
+            (ProtectedMaterialEvaluator),
+        ],
+    )
     def test_evaluate_with_protected_material_multimodal_evaluator(
-        self, project_scope, azure_cred, multimodal_file_with_imageurls
+        self, project_scope, azure_cred, multimodal_file_with_imageurls, evaluator_class
     ):
         os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "false"
         input_data = pd.read_json(multimodal_file_with_imageurls, lines=True)
-        eval = ProtectedMaterialMultimodalEvaluator(azure_ai_project=project_scope, credential=azure_cred)
+        eval = evaluator_class(azure_ai_project=project_scope, credential=azure_cred)
         result = evaluate(
             evaluation_name=f"test-multimodal-protected-material-eval-dataset-{str(uuid.uuid4())}",
-            azure_ai_project=project_scope,
+            # azure_ai_project=project_scope,
             data=multimodal_file_with_imageurls,
             evaluators={"protected_material": eval},
             evaluator_config={
@@ -658,7 +695,7 @@ class TestEvaluate:
         evaluation_name = "test_evaluate_track_in_cloud"
         # run the evaluation with targets
         result = evaluate(
-            azure_ai_project=project_scope,
+            # azure_ai_project=project_scope,
             evaluation_name=evaluation_name,
             data=questions_file,
             target=target_fn,
@@ -698,7 +735,7 @@ class TestEvaluate:
 
         # run the evaluation
         result = evaluate(
-            azure_ai_project=project_scope,
+            # azure_ai_project=project_scope,
             evaluation_name=evaluation_name,
             data=data_file,
             evaluators={"f1_score": f1_score_eval},
