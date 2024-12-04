@@ -294,6 +294,8 @@ class CallAutomationClient:
         callback_url: str,
         *,
         cognitive_services_endpoint: Optional[str] = None,
+        sip_headers: Optional[Dict[str, str]] = None,
+        voip_headers: Optional[Dict[str, str]] = None,
         operation_context: Optional[str] = None,
         media_streaming_configuration: Optional["MediaStreamingConfiguration"] = None,
         transcription_configuration: Optional["TranscriptionConfiguration"] = None,
@@ -310,6 +312,10 @@ class CallAutomationClient:
         :keyword cognitive_services_endpoint:
          The endpoint url of the Azure Cognitive Services resource attached.
         :paramtype cognitive_services_endpoint: str
+        :keyword sip_headers: Sip Headers for PSTN Call
+        :paramtype sip_headers: Dict[str, str] or None
+        :keyword voip_headers: Voip Headers for Voip Call
+        :paramtype voip_headers: Dict[str, str] or None
         :keyword operation_context: The operation context.
         :paramtype operation_context: str
         :keyword media_streaming_configuration: Media Streaming Configuration.
@@ -321,6 +327,10 @@ class CallAutomationClient:
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        user_custom_context = None
+        if sip_headers or voip_headers:
+            user_custom_context = CustomCallingContext(voip_headers=voip_headers, sip_headers=sip_headers)
+
         call_intelligence_options = (
             CallIntelligenceOptions(cognitive_services_endpoint=cognitive_services_endpoint)
             if cognitive_services_endpoint
@@ -340,6 +350,7 @@ class CallAutomationClient:
             ),
             cognitive_services_endpoint=cognitive_services_endpoint,
             operation_context=operation_context,
+            custom_calling_context=user_custom_context
         )
 
         process_repeatability_first_sent(kwargs)
