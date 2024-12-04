@@ -5,6 +5,8 @@
 ### Features Added
 
 * Added objects used to call Azure Functions.
+* Redesigned streaming and event handlers for agents 
+* Add `parallel_tool_calls` parameter to allow parallel tool execution.
 
 ### Bugs Fixed
 

@@ -24,9 +24,12 @@ from typing import (
     Optional,
     Sequence,
     TextIO,
+    Tuple,
+    TypeVar,
     Union,
     cast,
     overload,
+    Generic,
 )
 
 from azure.core.exceptions import ResourceNotFoundError
@@ -1022,6 +1025,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         truncation_strategy: Optional[_models.TruncationObject] = None,
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any,
     ) -> _models.ThreadRun:
@@ -1089,6 +1093,9 @@ class AgentsOperations(AgentsOperationsGenerated):
          AgentsApiResponseFormat Default value is None.
         :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
          or ~azure.ai.projects.models.AgentsApiResponseFormat
+        :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
+         Default value is None.
+        :paramtype parallel_tool_calls: bool
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -1136,6 +1143,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         truncation_strategy: Optional[_models.TruncationObject] = None,
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any,
     ) -> _models.ThreadRun:
@@ -1202,6 +1210,9 @@ class AgentsOperations(AgentsOperationsGenerated):
          AgentsApiResponseFormat Default value is None.
         :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
          or ~azure.ai.projects.models.AgentsApiResponseFormat
+        :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
+         Default value is None.
+        :paramtype parallel_tool_calls: bool
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -1234,6 +1245,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                 truncation_strategy=truncation_strategy,
                 tool_choice=tool_choice,
                 response_format=response_format,
+                parallel_tool_calls=parallel_tool_calls,
                 metadata=metadata,
                 **kwargs,
             )
@@ -1265,6 +1277,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         truncation_strategy: Optional[_models.TruncationObject] = None,
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         sleep_interval: int = 1,
         **kwargs: Any,
@@ -1332,6 +1345,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype response_format: str or str or
          ~azure.ai.projects.models.AgentsApiResponseFormatMode or
          ~azure.ai.projects.models.AgentsApiResponseFormat
+        :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
+         Default value is None.
+        :paramtype parallel_tool_calls: bool
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -1360,6 +1376,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             truncation_strategy=truncation_strategy,
             tool_choice=tool_choice,
             response_format=response_format,
+            parallel_tool_calls=parallel_tool_calls,
             metadata=metadata,
             **kwargs,
         )
@@ -1398,6 +1415,8 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         return run
 
+    _defaultAgentEventHandler = _models.AsyncAgentEventHandler()
+
     @overload
     async def create_stream(
         self,
@@ -1417,10 +1436,11 @@ class AgentsOperations(AgentsOperationsGenerated):
         truncation_strategy: Optional[_models.TruncationObject] = None,
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
-        event_handler: Optional[_models.AsyncAgentEventHandler] = None,
+        event_handler: _models.BaseAsyncAgentEventHandlerT = _defaultAgentEventHandler,  # type: ignore[assignment]
         **kwargs: Any,
-    ) -> _models.AsyncAgentRunStream:
+    ) -> _models.AsyncAgentRunStream[_models.BaseAsyncAgentEventHandlerT]:
         """Creates a new stream for an agent thread.
 
         :param thread_id: Required.
@@ -1485,6 +1505,9 @@ class AgentsOperations(AgentsOperationsGenerated):
          AgentsApiResponseFormat Default value is None.
         :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
          or ~azure.ai.projects.models.AgentsApiResponseFormat
+        :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
+         Default value is None.
+        :paramtype parallel_tool_calls: bool
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -1500,8 +1523,14 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     async def create_stream(
-        self, thread_id: str, body: Union[JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AsyncAgentRunStream:
+        self,
+        thread_id: str,
+        body: Union[JSON, IO[bytes]],
+        *,
+        event_handler: _models.BaseAsyncAgentEventHandlerT = _defaultAgentEventHandler,  # type: ignore[assignment]
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.AsyncAgentRunStream[_models.BaseAsyncAgentEventHandlerT]:
         """Creates a new run for an agent thread.
 
         Terminating when the Run enters a terminal state with a `data: [DONE]` message.
@@ -1510,6 +1539,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type thread_id: str
         :param body: Required.
         :type body: IO[bytes]
+        :keyword event_handler: The event handler to use for processing events during the run. Default
+            value is None.
+        :paramtype event_handler: ~azure.ai.projects.models.AsyncAgentEventHandler
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1537,10 +1569,11 @@ class AgentsOperations(AgentsOperationsGenerated):
         truncation_strategy: Optional[_models.TruncationObject] = None,
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
-        event_handler: Optional[_models.AsyncAgentEventHandler] = None,
+        event_handler: _models.BaseAsyncAgentEventHandlerT = _defaultAgentEventHandler,  # type: ignore[assignment]
         **kwargs: Any,
-    ) -> _models.AsyncAgentRunStream:
+    ) -> _models.AsyncAgentRunStream[_models.BaseAsyncAgentEventHandlerT]:
         """Creates a new run for an agent thread.
 
         Terminating when the Run enters a terminal state with a `data: [DONE]` message.
@@ -1606,6 +1639,9 @@ class AgentsOperations(AgentsOperationsGenerated):
          AgentsApiResponseFormat Default value is None.
         :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
          or ~azure.ai.projects.models.AgentsApiResponseFormat
+        :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
+         Default value is None.
+        :paramtype parallel_tool_calls: bool
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -1641,6 +1677,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                 truncation_strategy=truncation_strategy,
                 tool_choice=tool_choice,
                 response_format=response_format,
+                parallel_tool_calls=parallel_tool_calls,
                 metadata=metadata,
                 **kwargs,
             )
@@ -1687,7 +1724,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         *,
         tool_outputs: List[_models.ToolOutput],
         content_type: str = "application/json",
-        event_handler: Optional[_models.AsyncAgentEventHandler] = None,
         **kwargs: Any,
     ) -> _models.ThreadRun:
         """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
@@ -1780,8 +1816,15 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     async def submit_tool_outputs_to_stream(
-        self, thread_id: str, run_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AsyncAgentRunStream:
+        self,
+        thread_id: str,
+        run_id: str,
+        body: JSON,
+        *,
+        event_handler: _models.BaseAsyncAgentEventHandlerT = _defaultAgentEventHandler,  # type: ignore[assignment]
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.AsyncAgentRunStream[_models.BaseAsyncAgentEventHandlerT]:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
@@ -1792,6 +1835,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type run_id: str
         :param body: Required.
         :type body: JSON
+        :keyword event_handler: The event handler to use for processing events during the run. Default
+            value is None.
+        :paramtype event_handler: ~azure.ai.projects.models.AsyncAgentEventHandler
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1808,9 +1854,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         *,
         tool_outputs: List[_models.ToolOutput],
         content_type: str = "application/json",
-        event_handler: Optional[_models.AsyncAgentEventHandler] = None,
+        event_handler: _models.BaseAsyncAgentEventHandlerT = _defaultAgentEventHandler,  # type: ignore[assignment]
         **kwargs: Any,
-    ) -> _models.AsyncAgentRunStream:
+    ) -> _models.AsyncAgentRunStream[_models.BaseAsyncAgentEventHandlerT]:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
@@ -1834,8 +1880,15 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     async def submit_tool_outputs_to_stream(
-        self, thread_id: str, run_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AsyncAgentRunStream:
+        self,
+        thread_id: str,
+        run_id: str,
+        body: IO[bytes],
+        *,
+        event_handler: _models.BaseAsyncAgentEventHandlerT = _defaultAgentEventHandler,  # type: ignore[assignment]
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.AsyncAgentRunStream[_models.BaseAsyncAgentEventHandlerT]:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.
@@ -1846,6 +1899,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type run_id: str
         :param body: Required.
         :type body: IO[bytes]
+        :keyword event_handler: The event handler to use for processing events during the run. Default
+            value is None.
+        :paramtype event_handler: ~azure.ai.projects.models.AsyncAgentEventHandler
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1862,9 +1918,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         tool_outputs: List[_models.ToolOutput] = _Unset,
-        event_handler: Optional[_models.AsyncAgentEventHandler] = None,
+        event_handler: _models.BaseAsyncAgentEventHandlerT = _defaultAgentEventHandler,  # type: ignore[assignment]
         **kwargs: Any,
-    ) -> _models.AsyncAgentRunStream:
+    ) -> _models.AsyncAgentRunStream[_models.BaseAsyncAgentEventHandlerT]:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
@@ -1905,7 +1961,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         return _models.AsyncAgentRunStream(response_iterator, self._handle_submit_tool_outputs, event_handler)
 
     async def _handle_submit_tool_outputs(
-        self, run: _models.ThreadRun, event_handler: Optional[_models.AsyncAgentEventHandler] = None
+        self,
+        run: _models.ThreadRun,
+        event_handler: _models.BaseAsyncAgentEventHandler = _defaultAgentEventHandler,  # type: ignore[assignment]
     ) -> None:
         if isinstance(run.required_action, _models.SubmitToolOutputsAction):
             tool_calls = run.required_action.submit_tool_outputs.tool_calls

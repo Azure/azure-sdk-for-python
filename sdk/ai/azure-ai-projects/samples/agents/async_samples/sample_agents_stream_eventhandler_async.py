@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity
+    pip install azure-ai-projects azure-identity aiohttp
 
     Set this environment variables with your own values:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
@@ -38,11 +38,12 @@ import os
 
 
 class MyEventHandler(AsyncAgentEventHandler):
+    async def on_message_delta_text_content(self, message_text_content: "MessageDeltaTextContent") -> None:
+        text_value = message_text_content.text.value if message_text_content.text else "No text"
+        print(f"Text content received: {text_value}")
+
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
-        for content_part in delta.delta.content:
-            if isinstance(content_part, MessageDeltaTextContent):
-                text_value = content_part.text.value if content_part.text else "No text"
-                print(f"Text delta received: {text_value}")
+        print(f"MessageDeltaChunk received")
 
     async def on_thread_message(self, message: "ThreadMessage") -> None:
         print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
@@ -59,7 +60,7 @@ class MyEventHandler(AsyncAgentEventHandler):
     async def on_done(self) -> None:
         print("Stream completed.")
 
-    async def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
+    async def on_unhandled_event(self, event_type: str, event_data: str) -> None:
         print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
 
