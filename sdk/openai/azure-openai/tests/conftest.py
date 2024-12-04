@@ -17,9 +17,7 @@ from azure.identity.aio import (
 )
 from ci_tools.variables import in_ci
 from devtools_testutils import get_credential
-import dotenv
 
-dotenv.load_dotenv(dotenv_path="/home/krpratic/azure-sdk-for-python/.env")
 
 # for pytest.parametrize
 GA = "2024-10-21"
