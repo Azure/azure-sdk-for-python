@@ -4,6 +4,7 @@
 
 ### Features Added
 
+* Redesigned streaming and event handlers for agents 
 * Add `parallel_tool_calls` parameter to allow parallel tool execution.
 
 ### Bugs Fixed
