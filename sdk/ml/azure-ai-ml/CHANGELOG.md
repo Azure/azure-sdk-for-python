@@ -4,6 +4,7 @@
 ### Features Added
   - Added support for IP-based access control to default and hub workspaces. 
   - Add support for additional include in spark component.
+  - Adding enterprise agent feature for AI Hub and AI Project. Adding Create, Delete and Get operations.
   - Removing preview tag for following connections type
     - Azure AI Search
     - Azure AI Content Safety
