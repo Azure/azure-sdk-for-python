@@ -59,7 +59,7 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
             queue_settings = RestQueueSettings.from_dict(obj)
             return cls._from_rest_object(queue_settings)
         job_tier = JobTierNames.REST_TO_ENTITY.get(obj.job_tier, None) if obj.job_tier else None
-        priority = JobPriorityValues.REST_TO_ENTITY.get(obj.priority, None) if obj.priority else None
+        priority = JobPriorityValues.REST_TO_ENTITY.get(obj.priority, None) if hasattr(obj, "priority") else None
         return cls(job_tier=job_tier, priority=priority)
 
     def _validate(self) -> None:
