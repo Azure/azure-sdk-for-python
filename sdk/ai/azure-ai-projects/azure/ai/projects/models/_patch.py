@@ -1495,6 +1495,7 @@ __all__: List[str] = [
     "BingGroundingTool",
     "SharepointTool",
     "AzureAISearchTool",
+    "OpenApiTool",
     "SASTokenCredential",
     "Tool",
     "ToolSet",
