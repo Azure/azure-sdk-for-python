@@ -44,7 +44,7 @@ from ._models import (
     AzureFunctionDefinition,
     AzureFunctionStorageQueue,
     AzureFunctionToolDefinition,
-    AzureStorageQueueBinding,
+    AzureFunctionBinding,
     BingGroundingToolDefinition,
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
@@ -576,8 +576,8 @@ class AzureFunctionTool(Tool):
                         description=description,
                         parameters=parameters,
                     ),
-                    input_binding=AzureStorageQueueBinding(storage_queue=input_queue),
-                    output_binding=AzureStorageQueueBinding(storage_queue=output_queue),
+                    input_binding=AzureFunctionBinding(storage_queue=input_queue),
+                    output_binding=AzureFunctionBinding(storage_queue=output_queue),
                 )
             )
         ]

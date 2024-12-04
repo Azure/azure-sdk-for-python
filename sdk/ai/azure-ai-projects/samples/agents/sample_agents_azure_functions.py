@@ -52,11 +52,11 @@ with project_client:
         },
         input_queue=AzureFunctionStorageQueue(
             queue_name="azure-function-foo-input",
-            storage_queue_uri=storage_queue_uri,
+            storage_service_uri=storage_queue_uri,
         ),
         output_queue=AzureFunctionStorageQueue(
             queue_name="azure-function-tool-output",
-            storage_queue_uri=storage_queue_uri,
+            storage_service_uri=storage_queue_uri,
         ),
     )
 

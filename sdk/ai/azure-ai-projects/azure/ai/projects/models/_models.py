@@ -560,25 +560,29 @@ class AzureAISearchToolDefinition(ToolDefinition, discriminator="azure_ai_search
 
 
 class AzureFunctionBinding(_model_base.Model):
-    """The Azure function binding.
+    """The structure for keeping storage queue name and URI.
 
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AzureStorageQueueBinding
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
 
-    :ivar type: The type of binding. Required. Default value is None.
+    :ivar type: The type of binding, which is always 'storage_queue'. Required. Default value is
+     "storage_queue".
     :vartype type: str
+    :ivar storage_queue: Storage queue. Required.
+    :vartype storage_queue: ~azure.ai.projects.models.AzureFunctionStorageQueue
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
-    """The type of binding. Required. Default value is None."""
+    type: Literal["storage_queue"] = rest_field()
+    """The type of binding, which is always 'storage_queue'. Required. Default value is
+     \"storage_queue\"."""
+    storage_queue: "_models.AzureFunctionStorageQueue" = rest_field()
+    """Storage queue. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        type: str,
+        storage_queue: "_models.AzureFunctionStorageQueue",
     ) -> None: ...
 
     @overload
@@ -590,6 +594,7 @@ class AzureFunctionBinding(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+        self.type: Literal["storage_queue"] = "storage_queue"
 
 
 class AzureFunctionDefinition(_model_base.Model):
@@ -600,18 +605,18 @@ class AzureFunctionDefinition(_model_base.Model):
     :vartype function: ~azure.ai.projects.models.FunctionDefinition
     :ivar input_binding: Input storage queue. The queue storage trigger runs a function as messages
      are added to it. Required.
-    :vartype input_binding: ~azure.ai.projects.models.AzureStorageQueueBinding
+    :vartype input_binding: ~azure.ai.projects.models.AzureFunctionBinding
     :ivar output_binding: Output storage queue. The function writes output to this queue when the
      input items are processed. Required.
-    :vartype output_binding: ~azure.ai.projects.models.AzureStorageQueueBinding
+    :vartype output_binding: ~azure.ai.projects.models.AzureFunctionBinding
     """
 
     function: "_models.FunctionDefinition" = rest_field()
     """The definition of azure function and its parameters. Required."""
-    input_binding: "_models.AzureStorageQueueBinding" = rest_field()
+    input_binding: "_models.AzureFunctionBinding" = rest_field()
     """Input storage queue. The queue storage trigger runs a function as messages are added to it.
      Required."""
-    output_binding: "_models.AzureStorageQueueBinding" = rest_field()
+    output_binding: "_models.AzureFunctionBinding" = rest_field()
     """Output storage queue. The function writes output to this queue when the input items are
      processed. Required."""
 
@@ -620,8 +625,8 @@ class AzureFunctionDefinition(_model_base.Model):
         self,
         *,
         function: "_models.FunctionDefinition",
-        input_binding: "_models.AzureStorageQueueBinding",
-        output_binding: "_models.AzureStorageQueueBinding",
+        input_binding: "_models.AzureFunctionBinding",
+        output_binding: "_models.AzureFunctionBinding",
     ) -> None: ...
 
     @overload
@@ -639,14 +644,14 @@ class AzureFunctionStorageQueue(_model_base.Model):
     """The structure for keeping storage queue name and URI.
 
 
-    :ivar storage_queue_uri: URI to the Azure Storage Queue service allowing you to manipulate a
+    :ivar storage_service_uri: URI to the Azure Storage Queue service allowing you to manipulate a
      queue. Required.
-    :vartype storage_queue_uri: str
+    :vartype storage_service_uri: str
     :ivar queue_name: The name of an Azure function storage queue. Required.
     :vartype queue_name: str
     """
 
-    storage_queue_uri: str = rest_field(name="queue_service_uri")
+    storage_service_uri: str = rest_field(name="queue_service_uri")
     """URI to the Azure Storage Queue service allowing you to manipulate a queue. Required."""
     queue_name: str = rest_field()
     """The name of an Azure function storage queue. Required."""
@@ -655,7 +660,7 @@ class AzureFunctionStorageQueue(_model_base.Model):
     def __init__(
         self,
         *,
-        storage_queue_uri: str,
+        storage_service_uri: str,
         queue_name: str,
     ) -> None: ...
 
@@ -704,41 +709,6 @@ class AzureFunctionToolDefinition(ToolDefinition, discriminator="azure_function"
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type="azure_function", **kwargs)
-
-
-class AzureStorageQueueBinding(AzureFunctionBinding, discriminator="storage_queue"):
-    """The definition of input or output queue for Azure function.
-
-
-    :ivar type: The type of binding, which is always 'storage_queue'. Required. Default value is
-     "storage_queue".
-    :vartype type: str
-    :ivar storage_queue: Storage queue. Required.
-    :vartype storage_queue: ~azure.ai.projects.models.AzureFunctionStorageQueue
-    """
-
-    type: Literal["storage_queue"] = rest_discriminator(name="type")  # type: ignore
-    """The type of binding, which is always 'storage_queue'. Required. Default value is
-     \"storage_queue\"."""
-    storage_queue: "_models.AzureFunctionStorageQueue" = rest_field()
-    """Storage queue. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        storage_queue: "_models.AzureFunctionStorageQueue",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="storage_queue", **kwargs)
 
 
 class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"):

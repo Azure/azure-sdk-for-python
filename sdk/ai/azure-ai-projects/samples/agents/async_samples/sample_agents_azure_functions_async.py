@@ -32,75 +32,77 @@ from azure.ai.projects.models import (
     AzureFunctionTool,
 )
 
-project_client = AIProjectClient.from_connection_string(
-    credential=DefaultAzureCredential(exclude_managed_identity_credential=True, exclude_environment_credential=True),
-    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
-)
-
 
 async def main():
-    async with project_client:
 
-        storage_queue_uri = os.environ["STORAGE_QUEUE_URI"]
-        azure_function_tool = AzureFunctionTool(
-            name="foo",
-            description="Get answers from the foo bot.",
-            parameters={
-                "type": "object",
-                "properties": {
-                    "query": {"type": "string", "description": "The question to ask."},
-                    "outputqueueuri": {"type": "string", "description": "The full output queue uri."},
+    async with DefaultAzureCredential(
+        exclude_managed_identity_credential=True, exclude_environment_credential=True
+    ) as creds:
+        async with AIProjectClient.from_connection_string(
+            credential=creds,
+            conn_str=os.environ["PROJECT_CONNECTION_STRING"],
+        ) as project_client:
+
+            storage_queue_uri = os.environ["STORAGE_QUEUE_URI"]
+            azure_function_tool = AzureFunctionTool(
+                name="foo",
+                description="Get answers from the foo bot.",
+                parameters={
+                    "type": "object",
+                    "properties": {
+                        "query": {"type": "string", "description": "The question to ask."},
+                        "outputqueueuri": {"type": "string", "description": "The full output queue uri."},
+                    },
                 },
-            },
-            input_queue=AzureFunctionStorageQueue(
-                queue_name="azure-function-foo-input",
-                storage_queue_uri=storage_queue_uri,
-            ),
-            output_queue=AzureFunctionStorageQueue(
-                queue_name="azure-function-tool-output",
-                storage_queue_uri=storage_queue_uri,
-            ),
-        )
+                input_queue=AzureFunctionStorageQueue(
+                    queue_name="azure-function-foo-input",
+                    storage_service_uri=storage_queue_uri,
+                ),
+                output_queue=AzureFunctionStorageQueue(
+                    queue_name="azure-function-tool-output",
+                    storage_service_uri=storage_queue_uri,
+                ),
+            )
 
-        agent = await project_client.agents.create_agent(
-            model="gpt-4",
-            name="azure-function-agent-foo",
-            instructions=f"You are a helpful support agent. Use the provided function any time the prompt contains the string 'What would foo say?'. When you invoke the function, ALWAYS specify the output queue uri parameter as '{storage_queue_uri}/azure-function-tool-output'. Always responds with \"Foo says\" and then the response from the tool.",
-            tools=azure_function_tool.definitions,
-        )
-        print(f"Created agent, agent ID: {agent.id}")
+            agent = await project_client.agents.create_agent(
+                model="gpt-4",
+                name="azure-function-agent-foo",
+                instructions=f"You are a helpful support agent. Use the provided function any time the prompt contains the string 'What would foo say?'. When you invoke the function, ALWAYS specify the output queue uri parameter as '{storage_queue_uri}/azure-function-tool-output'. Always responds with \"Foo says\" and then the response from the tool.",
+                tools=azure_function_tool.definitions,
+            )
+            print(f"Created agent, agent ID: {agent.id}")
 
-        # Create a thread
-        thread = await project_client.agents.create_thread()
-        print(f"Created thread, thread ID: {thread.id}")
+            # Create a thread
+            thread = await project_client.agents.create_thread()
+            print(f"Created thread, thread ID: {thread.id}")
 
-        # Create a message
-        message = await project_client.agents.create_message(
-            thread_id=thread.id,
-            role="user",
-            content="What is the most prevalent element in the universe? What would foo say?",
-        )
-        print(f"Created message, message ID: {message.id}")
+            # Create a message
+            message = await project_client.agents.create_message(
+                thread_id=thread.id,
+                role="user",
+                content="What is the most prevalent element in the universe? What would foo say?",
+            )
+            print(f"Created message, message ID: {message.id}")
 
-        run = await project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
-        if run.status == "failed":
-            print(f"Run failed: {run.last_error}")
+            run = await project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+            if run.status == "failed":
+                print(f"Run failed: {run.last_error}")
 
-        # Get messages from the thread
-        messages = await project_client.agents.get_messages(thread_id=thread.id)
-        print(f"Messages: {messages}")
+            # Get messages from the thread
+            messages = await project_client.agents.get_messages(thread_id=thread.id)
+            print(f"Messages: {messages}")
 
-        # Get the last message from the sender
-        last_msg = messages.get_last_text_message_by_sender("assistant")
-        if last_msg:
-            print(f"Last Message: {last_msg.text.value}")
+            # Get the last message from the sender
+            last_msg = messages.get_last_text_message_by_sender("assistant")
+            if last_msg:
+                print(f"Last Message: {last_msg.text.value}")
 
-        # Delete the agent once done
-        result = await project_client.agents.delete_agent(agent.id)
-        if result.deleted:
-            print(f"Deleted agent {result.id}")
-        else:
-            print(f"Failed to delete agent {result.id}")
+            # Delete the agent once done
+            result = await project_client.agents.delete_agent(agent.id)
+            if result.deleted:
+                print(f"Deleted agent {result.id}")
+            else:
+                print(f"Failed to delete agent {result.id}")
 
 
 if __name__ == "__main__":

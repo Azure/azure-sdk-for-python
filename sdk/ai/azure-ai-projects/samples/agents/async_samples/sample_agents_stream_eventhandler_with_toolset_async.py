@@ -67,43 +67,44 @@ async def main() -> None:
     # Create an Azure AI Client from a connection string, copied from your AI Studio project.
     # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
     # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
+    async with DefaultAzureCredential() as creds:
+        async with AIProjectClient.from_connection_string(
+            credential=creds, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+        ) as project_client:
 
-    project_client = AIProjectClient.from_connection_string(
-        credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
-    )
+            # Initialize toolset with user functions
+            functions = AsyncFunctionTool(user_async_functions)
+            toolset = AsyncToolSet()
+            toolset.add(functions)
 
-    # Initialize toolset with user functions
-    functions = AsyncFunctionTool(user_async_functions)
-    toolset = AsyncToolSet()
-    toolset.add(functions)
+            agent = await project_client.agents.create_agent(
+                model="gpt-4-1106-preview",
+                name="my-assistant",
+                instructions="You are helpful assistant",
+                toolset=toolset,
+            )
+            print(f"Created agent, agent ID: {agent.id}")
 
-    async with project_client:
+            thread = await project_client.agents.create_thread()
+            print(f"Created thread, thread ID {thread.id}")
 
-        agent = await project_client.agents.create_agent(
-            model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant", toolset=toolset
-        )
-        print(f"Created agent, agent ID: {agent.id}")
+            message = await project_client.agents.create_message(
+                thread_id=thread.id,
+                role="user",
+                content="Hello, send an email with the datetime and weather information in New York? Also let me know the details",
+            )
+            print(f"Created message, message ID {message.id}")
 
-        thread = await project_client.agents.create_thread()
-        print(f"Created thread, thread ID {thread.id}")
+            async with await project_client.agents.create_stream(
+                thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
+            ) as stream:
+                await stream.until_done()
 
-        message = await project_client.agents.create_message(
-            thread_id=thread.id,
-            role="user",
-            content="Hello, send an email with the datetime and weather information in New York? Also let me know the details",
-        )
-        print(f"Created message, message ID {message.id}")
+            await project_client.agents.delete_agent(agent.id)
+            print("Deleted agent")
 
-        async with await project_client.agents.create_stream(
-            thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
-        ) as stream:
-            await stream.until_done()
-
-        await project_client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-
-        messages = await project_client.agents.list_messages(thread_id=thread.id)
-        print(f"Messages: {messages}")
+            messages = await project_client.agents.list_messages(thread_id=thread.id)
+            print(f"Messages: {messages}")
 
 
 if __name__ == "__main__":

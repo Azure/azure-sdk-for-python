@@ -214,17 +214,11 @@ class AIProjectClient(
         self.evaluations = EvaluationsOperations(self._client3, self._config3, self._serialize, self._deserialize)
         self.inference = InferenceOperations(self)
 
-    async def _close_credential_maybe(self):
-        """Close credential if it has close method."""
-        if hasattr(self._credential, "close") and inspect.iscoroutinefunction(self._credential.close):
-            await self._credential.close()
-
     async def close(self) -> None:
         await self._client0.close()
         await self._client1.close()
         await self._client2.close()
         await self._client3.close()
-        await self._close_credential_maybe()
 
     async def __aenter__(self) -> Self:
         await self._client0.__aenter__()
@@ -238,7 +232,6 @@ class AIProjectClient(
         await self._client1.__aexit__(*exc_details)
         await self._client2.__aexit__(*exc_details)
         await self._client3.__aexit__(*exc_details)
-        await self._close_credential_maybe()
 
     @classmethod
     def from_connection_string(cls, conn_str: str, credential: "AsyncTokenCredential", **kwargs) -> Self:
