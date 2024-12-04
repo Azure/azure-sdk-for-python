@@ -331,7 +331,8 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         try:
             expires_on = convert_datetime_to_rfc1123(expires_on)
         except AttributeError:
-            expires_on = str(expires_on)
+            if expires_on is not None:
+                expires_on = str(expires_on)
         await self._datalake_client_for_blob_operation.path.set_expiry(expiry_options, expires_on=expires_on,
                                                                        **kwargs)
 
