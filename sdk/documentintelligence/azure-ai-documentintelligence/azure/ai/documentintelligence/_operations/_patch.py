@@ -529,7 +529,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         if cont_token is None:
             content_type = None
             if isinstance(analyze_request, io.BytesIO):
-                content_type="application/octet-stream"
+                content_type = "application/octet-stream"
             raw_result = self._analyze_document_initial(
                 model_id=model_id,
                 analyze_request=analyze_request,
@@ -620,7 +620,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         """
         content_type = None
         if isinstance(classify_request, io.BytesIO):
-            content_type="application/octet-stream"
+            content_type = "application/octet-stream"
         return super().begin_classify_document(  # type: ignore[arg-type, misc]
             classifier_id=classifier_id,
             classify_request=classify_request,  # type: ignore[arg-type]
@@ -628,7 +628,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
             string_index_type=string_index_type,
             split=split,
             pages=pages,
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace
