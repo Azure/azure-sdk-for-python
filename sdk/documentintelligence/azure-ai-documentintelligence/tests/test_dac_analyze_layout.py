@@ -11,7 +11,7 @@ from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import (
     DocumentAnalysisFeature,
     AnalyzeDocumentRequest,
-    AnalyzeResultOperation,
+    AnalyzeOperation,
     AnalyzeOutputOption,
 )
 from testcase import DocumentIntelligenceTest
@@ -57,7 +57,7 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
             cls=callback,
         )
         raw_response = poller.result()
-        raw_analyze_result = AnalyzeResultOperation._deserialize(raw_response.http_response.json(), []).analyze_result
+        raw_analyze_result = AnalyzeOperation._deserialize(raw_response.http_response.json(), []).analyze_result
 
         poller = client.begin_analyze_document(
             "prebuilt-layout",
@@ -100,7 +100,7 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
             cls=callback,
         )
         raw_response = poller.result()
-        raw_analyze_result = AnalyzeResultOperation._deserialize(raw_response.http_response.json(), []).analyze_result
+        raw_analyze_result = AnalyzeOperation._deserialize(raw_response.http_response.json(), []).analyze_result
 
         poller = client.begin_analyze_document(
             "prebuilt-layout",
@@ -142,7 +142,7 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
             cls=callback,
         )
         raw_response = poller.result()
-        raw_analyze_result = AnalyzeResultOperation._deserialize(raw_response.http_response.json(), []).analyze_result
+        raw_analyze_result = AnalyzeOperation._deserialize(raw_response.http_response.json(), []).analyze_result
 
         poller = client.begin_analyze_document(
             "prebuilt-layout",

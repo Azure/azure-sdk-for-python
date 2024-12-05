@@ -28,7 +28,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
         client = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential(is_async=True))
         with pytest.raises(ValueError) as e:
             async with client:
-                await client.begin_analyze_document(model_id=None, analyze_request=b"xx")
+                await client.begin_analyze_document(model_id="", body=b"xx")
         assert "No value for given attribute" in str(e.value)
 
     @DocumentIntelligencePreparer()
@@ -39,7 +39,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
         with pytest.raises(ValueError) as e:
             async with client:
                 await client.begin_analyze_document(
-                    model_id=None, analyze_request=AnalyzeDocumentRequest(url_source="https://badurl.jpg")
+                    model_id="", body=AnalyzeDocumentRequest(url_source="https://badurl.jpg")
                 )
         assert "No value for given attribute" in str(e.value)
 
@@ -50,7 +50,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
         client = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential(is_async=True))
         with pytest.raises(ResourceNotFoundError) as e:
             async with client:
-                await client.begin_analyze_document(model_id="", analyze_request=b"xx")
+                await client.begin_analyze_document(model_id="", body=b"xx")
         assert "Resource not found" in str(e.value)
 
     @DocumentIntelligencePreparer()
@@ -61,7 +61,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
         with pytest.raises(ResourceNotFoundError) as e:
             async with client:
                 await client.begin_analyze_document(
-                    model_id="", analyze_request=AnalyzeDocumentRequest(url_source="https://badurl.jpg")
+                    model_id="", body=AnalyzeDocumentRequest(url_source="https://badurl.jpg")
                 )
         assert "Resource not found" in str(e.value)
 

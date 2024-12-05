@@ -12,7 +12,7 @@ from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import (
     DocumentAnalysisFeature,
     AnalyzeDocumentRequest,
-    AnalyzeResultOperation,
+    AnalyzeOperation,
     AnalyzeOutputOption,
 )
 from asynctestcase import AsyncDocumentIntelligenceTest
@@ -59,7 +59,7 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
                 cls=callback,
             )
             raw_response = await poller.result()
-            raw_analyze_result = AnalyzeResultOperation._deserialize(
+            raw_analyze_result = AnalyzeOperation._deserialize(
                 raw_response.http_response.json(), []
             ).analyze_result
 
@@ -105,7 +105,7 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
                 cls=callback,
             )
             raw_response = await poller.result()
-            raw_analyze_result = AnalyzeResultOperation._deserialize(
+            raw_analyze_result = AnalyzeOperation._deserialize(
                 raw_response.http_response.json(), []
             ).analyze_result
 
@@ -150,7 +150,7 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
                 cls=callback,
             )
             raw_response = await poller.result()
-            raw_analyze_result = AnalyzeResultOperation._deserialize(
+            raw_analyze_result = AnalyzeOperation._deserialize(
                 raw_response.http_response.json(), []
             ).analyze_result
 
