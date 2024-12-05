@@ -31,9 +31,9 @@ Install the Azure Maps Service Timezone SDK.
 pip install azure-maps-timezone
 ```
 
-### Create and Authenticate the MapsTimezoneClient
+### Create and Authenticate the MapsTimeZoneClient
 
-To create a client object to access the Azure Maps Timezone API, you will need a **credential** object. Azure Maps Timezone client also support two ways to authenticate.
+To create a client object to access the Azure Maps Timezone API, you will need a **credential** object. Azure Maps Timezone client also support three ways to authenticate.
 
 #### 1. Authenticate with a Subscription Key Credential
 
@@ -45,16 +45,81 @@ Then pass an `AZURE_SUBSCRIPTION_KEY` as the `credential` parameter into an inst
 import os
 
 from azure.core.credentials import AzureKeyCredential
-from azure.maps.timezone import MapsTimezoneClient
+from azure.maps.timezone import MapsTimeZoneClient
 
 credential = AzureKeyCredential(os.environ.get("AZURE_SUBSCRIPTION_KEY"))
 
-timezone_client = MapsTimezoneClient(
+timezone_client = MapsTimeZoneClient(
     credential=credential,
 )
 ```
 
-#### 2. Authenticate with an Microsoft Entra ID credential
+#### 2. Authenticate with a SAS Credential
+
+Shared access signature (SAS) tokens are authentication tokens created using the JSON Web token (JWT) format and are cryptographically signed to prove authentication for an application to the Azure Maps REST API.
+
+To authenticate with a SAS token in Python, you'll need to generate one using the azure-mgmt-maps package. 
+
+We need to tell user to install `azure-mgmt-maps`: `pip install azure-mgmt-maps`
+
+Here's how you can generate the SAS token using the list_sas method from azure-mgmt-maps:
+
+```python
+from azure.identity import DefaultAzureCredential
+from azure.mgmt.maps import AzureMapsManagementClient
+
+"""
+# PREREQUISITES
+    pip install azure-identity
+    pip install azure-mgmt-maps
+# USAGE
+    python account_list_sas.py
+
+    Before run the sample, please set the values of the client ID, tenant ID and client secret
+    of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
+    AZURE_CLIENT_SECRET. For more info about how to get the value, please see:
+    https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
+"""
+
+
+def main():
+    client = AzureMapsManagementClient(
+        credential=DefaultAzureCredential(),
+        subscription_id="your-subscription-id",
+    )
+
+    response = client.accounts.list_sas(
+        resource_group_name="myResourceGroup",
+        account_name="myMapsAccount",
+        maps_account_sas_parameters={
+            "expiry": "2017-05-24T11:42:03.1567373Z",
+            "maxRatePerSecond": 500,
+            "principalId": "your-principal-id",
+            "regions": ["eastus"],
+            "signingKey": "primaryKey",
+            "start": "2017-05-24T10:42:03.1567373Z",
+        },
+    )
+    print(response)
+```
+
+Once the SAS token is created, set the value of the token as environment variable: `AZURE_SAS_TOKEN`.
+Then pass an `AZURE_SAS_TOKEN` as the `credential` parameter into an instance of AzureSasCredential.
+
+```python
+import os
+
+from azure.core.credentials import AzureSASCredential
+from azure.maps.timezone import MapsTimeZoneClient
+
+credential = AzureSASCredential(os.environ.get("AZURE_SAS_TOKEN"))
+
+timezone_client = MapsTimeZoneClient(
+    credential=credential,
+)
+```
+
+#### 3. Authenticate with an Microsoft Entra ID credential
 
 You can authenticate with [Microsoft Entra ID credential][maps_authentication_ms_entra_id] using the [Azure Identity library][azure_identity].
 Authentication by using Microsoft Entra ID requires some initial setup:
@@ -74,11 +139,11 @@ You will also need to specify the Azure Maps resource you intend to use by speci
 
 ```python
 import os
-from azure.maps.timezone import MapsTimezoneClient
+from azure.maps.timezone import MapsTimeZoneClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-timezone_client = MapsTimezoneClient(credential=credential)
+timezone_client = MapsTimeZoneClient(credential=credential)
 ```
 
 ## Key concepts
@@ -87,8 +152,8 @@ The Azure Maps Timezone client library for Python allows you to interact with ea
 
 ### Sync Clients
 
-`MapsTimezoneClient` is the primary client for developers using the Azure Maps Timezone client library for Python.
-Once you initialized a `MapsTimezoneClient` class, you can explore the methods on this client object to understand the different features of the Azure Maps Timezone service that you can access.
+`MapsTimeZoneClient` is the primary client for developers using the Azure Maps Timezone client library for Python.
+Once you initialized a `MapsTimeZoneClient` class, you can explore the methods on this client object to understand the different features of the Azure Maps Timezone service that you can access.
 
 ### Async Clients
 
@@ -121,9 +186,9 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def get_timezone_by_id():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.timezone import MapsTimezoneClient
+    from azure.maps.timezone import MapsTimeZoneClient
 
-    timezone_client = MapsTimezoneClient(credential=AzureKeyCredential(subscription_key))
+    timezone_client = MapsTimeZoneClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = timezone_client.get_timezone_by_id(timezone_id="sr-Latn-RS")
         print(result)
@@ -149,9 +214,9 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def get_timezone_by_coordinates():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.timezone import MapsTimezoneClient
+    from azure.maps.timezone import MapsTimeZoneClient
 
-    timezone_client = MapsTimezoneClient(credential=AzureKeyCredential(subscription_key))
+    timezone_client = MapsTimeZoneClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = timezone_client.get_timezone_by_coordinates(coordinates=[25.0338053, 121.5640089])
         print(result)
@@ -177,9 +242,9 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def get_iana_version():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.timezone import MapsTimezoneClient
+    from azure.maps.timezone import MapsTimeZoneClient
 
-    timezone_client = MapsTimezoneClient(credential=AzureKeyCredential(subscription_key))
+    timezone_client = MapsTimeZoneClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = timezone_client.get_iana_version()
         print(result)
@@ -205,9 +270,9 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def get_iana_timezone_ids():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.timezone import MapsTimezoneClient
+    from azure.maps.timezone import MapsTimeZoneClient
 
-    timezone_client = MapsTimezoneClient(credential=AzureKeyCredential(subscription_key))
+    timezone_client = MapsTimeZoneClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = timezone_client.get_iana_timezone_ids()
         print(result)
@@ -233,9 +298,9 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def get_windows_timezone_ids():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.timezone import MapsTimezoneClient
+    from azure.maps.timezone import MapsTimeZoneClient
 
-    timezone_client = MapsTimezoneClient(credential=AzureKeyCredential(subscription_key))
+    timezone_client = MapsTimeZoneClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = timezone_client.get_windows_timezone_ids()
         print(result)
@@ -260,9 +325,9 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def convert_windows_timezone_to_iana():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.timezone import MapsTimezoneClient
+    from azure.maps.timezone import MapsTimeZoneClient
 
-    timezone_client = MapsTimezoneClient(credential=AzureKeyCredential(subscription_key))
+    timezone_client = MapsTimeZoneClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = timezone_client.convert_windows_timezone_to_iana(windows_timezone_id="Pacific Standard Time")
         print(result)
