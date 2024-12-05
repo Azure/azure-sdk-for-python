@@ -145,7 +145,7 @@ class TestNotificationMessageClientForText(MessagesRecordedTestCase):
     @recorded_by_proxy
     def test_download_media(self):
         phone_number: str = "+14254360097"
-        input_media_id: str = "77af35aa-2c17-4c32-8430-53b0559eb920"
+        input_media_id: str = "2a8eb7b8-12cc-4fdb-91b2-df30b75f8bdb"
         raised = False
         message_client: NotificationMessagesClient = self.create_notification_message_client()
         try:
