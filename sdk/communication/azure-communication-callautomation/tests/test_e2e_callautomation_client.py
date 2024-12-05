@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 from datetime import timedelta
 import time
+import pytest
 
 from devtools_testutils import recorded_by_proxy
 
@@ -75,6 +76,8 @@ class TestCallAutomationClientAutomatedLiveTest(CallAutomationRecordedTestCase):
         self.terminate_call(unique_id)
         return
     
+    @pytest.mark.skip(reason="""Playback fails for same event type triggered and test recording code
+                       takes the event type has the dictionary it fails to recording call connected event for the connect api""")
     @recorded_by_proxy
     def test_create_VOIP_call_and_connect_call_then_hangup(self):
         # try to establish the call
@@ -101,7 +104,7 @@ class TestCallAutomationClientAutomatedLiveTest(CallAutomationRecordedTestCase):
             )
 
         # check returned call connected events
-        connect_call_connected_event = self.check_for_event('CallConnected', connect_call_connection.call_connection_id, timedelta(seconds=15))
+        connect_call_connected_event = self.check_for_event('CallConnected', connect_call_connection.call_connection_id, timedelta(seconds=20))
         if connect_call_connected_event is None:
             raise ValueError("Caller CallConnected event is None")
 
