@@ -567,7 +567,7 @@ class TestEvaluate:
             evaluators={"answer": answer_evaluator, "f1": f1_score_eval},
         )
         row_result_df = pd.DataFrame(result["rows"])
-        assert "outputs.answer" in row_result_df.columns
+        assert "outputs.response" in row_result_df.columns
         assert "outputs.answer.length" in row_result_df.columns
         assert list(row_result_df["outputs.answer.length"]) == [28, 76, 22]
         assert "outputs.f1.f1_score" in row_result_df.columns
@@ -609,7 +609,8 @@ class TestEvaluate:
 
         mapping = None
         if evaluation_config:
-            mapping = evaluation_config.get("question_ev", evaluation_config.get("default", None))
+            config = evaluation_config.get("question_ev", evaluation_config.get("default", None))
+            mapping = config.get("column_mapping", config)
         if mapping and ("another_question" in mapping or mapping["query"] == "${data.query}"):
             query = "inputs.query"
         expected = list(row_result_df[query].str.len())
