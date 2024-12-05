@@ -29,20 +29,6 @@ uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
 
 _logger = get_logger(logging.DEBUG)
 
-import logging
-import sys
-from random import randint
-
-log_fmt = logging.Formatter(fmt="%(asctime)s | %(threadName)s | %(levelname)s | %(name)s | %(message)s")
-handler = logging.FileHandler('out8.log')
-handler.setFormatter(log_fmt)
-logger = logging.getLogger('azure.servicebus')
-logger.setLevel(logging.DEBUG)
-logger.addHandler(handler)
-uamqp_logger = logging.getLogger('uamqp')
-uamqp_logger.setLevel(logging.DEBUG)
-uamqp_logger.addHandler(handler)
-
 
 class TestServiceBusTopics(AzureMgmtRecordedTestCase):
     @pytest.mark.liveTest
