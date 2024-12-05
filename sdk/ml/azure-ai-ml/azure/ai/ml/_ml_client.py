@@ -103,6 +103,7 @@ from azure.ai.ml.entities import (
     Workspace,
 )
 from azure.ai.ml.entities._assets import WorkspaceAssetReference
+from azure.ai.ml.entities._workspace._ai_workspaces.capability_host import CapabilityHost
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml.operations import (
     AzureOpenAIDeploymentOperations,
@@ -132,6 +133,7 @@ from azure.ai.ml.operations._feature_store_operations import FeatureStoreOperati
 from azure.ai.ml.operations._local_deployment_helper import _LocalDeploymentHelper
 from azure.ai.ml.operations._local_endpoint_helper import _LocalEndpointHelper
 from azure.ai.ml.operations._schedule_operations import ScheduleOperations
+from azure.ai.ml.operations._capability_hosts_operations import CapabilityHostsOperations
 from azure.ai.ml.operations._workspace_outbound_rule_operations import (
     WorkspaceOutboundRuleOperations,
 )
@@ -560,6 +562,16 @@ class MLClient:
             self._credential,
         )
 
+        self._capability_hosts = CapabilityHostsOperations(
+            self._operation_scope,
+            self._operation_config,
+            self._service_client_10_2024_preview,
+            self._operation_container,
+            self._credential,
+            **kwargs,
+        )
+        self._operation_container.add(AzureMLResourceType.CAPABILITY_HOST, self._capability_hosts)
+
         self._preflight = get_deployments_operation(
             credentials=self._credential,
             subscription_id=self._operation_scope._subscription_id,
@@ -709,6 +721,7 @@ class MLClient:
             _service_client_kwargs=kwargs,
             requests_pipeline=self._requests_pipeline,
             service_client_01_2024_preview=self._service_client_01_2024_preview,
+            service_client_10_2024_preview=self._service_client_10_2024_preview,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.JOB, self._jobs)
@@ -746,7 +759,8 @@ class MLClient:
                 **ops_kwargs,  # type: ignore[arg-type]
             )
             self._operation_container.add(
-                AzureMLResourceType.VIRTUALCLUSTER, self._virtual_clusters  # type: ignore[arg-type]
+                AzureMLResourceType.VIRTUALCLUSTER,
+                self._virtual_clusters,  # type: ignore[arg-type]
             )
         except Exception as ex:  # pylint: disable=broad-except
             module_logger.debug("Virtual Cluster operations could not be initialized due to %s ", ex)
@@ -946,6 +960,16 @@ class MLClient:
         :rtype: ~azure.ai.ml.operations.WorkspaceOperations
         """
         return self._workspaces
+
+    @property
+    @experimental
+    def capability_hosts(self) -> CapabilityHostsOperations:
+        """A collection of capability hosts related operations.
+
+        :return: Capability hosts operations
+        :rtype: ~azure.ai.ml.operations.CapabilityHostsOperations
+        """
+        return self._capability_hosts
 
     @property
     def workspace_outbound_rules(self) -> WorkspaceOutboundRuleOperations:
@@ -1382,6 +1406,12 @@ def _begin_create_or_update(entity, operations, **kwargs):
 def _(entity: Workspace, operations, *args, **kwargs):
     module_logger.debug("Creating or updating workspaces")
     return operations[AzureMLResourceType.WORKSPACE].begin_create(entity, **kwargs)
+
+
+@_begin_create_or_update.register(CapabilityHost)
+def _(entity: CapabilityHost, operations, *args, **kwargs):
+    module_logger.debug("Creating or updating capability hosts")
+    return operations[AzureMLResourceType.CAPABILITY_HOST].begin_create_or_update(entity, **kwargs)
 
 
 @_begin_create_or_update.register(Registry)
