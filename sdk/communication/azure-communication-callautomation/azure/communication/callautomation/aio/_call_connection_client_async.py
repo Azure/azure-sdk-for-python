@@ -964,6 +964,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         operation_callback_url: Optional[str] = None,
         **kwargs) -> None:
         """Stops transcription in the call.
+
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
         :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
@@ -975,7 +976,6 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
         stop_transcription_request = StopTranscriptionRequest(
             operation_context=operation_context,
             operation_callback_uri=operation_callback_url,

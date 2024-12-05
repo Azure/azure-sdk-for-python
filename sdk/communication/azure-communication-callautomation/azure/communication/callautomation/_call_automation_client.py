@@ -704,7 +704,7 @@ class CallAutomationClient:
     ) -> RecordingProperties:
         """Start recording for a ongoing call. Locate the call with call locator.
 
-        :keyword str room_id: The romm ID to locate ongoing call.
+        :keyword str room_id: The room ID to locate ongoing call.
         :keyword recording_state_callback_url: The url to send notifications to.
         :paramtype recording_state_callback_url: str or None
         :keyword recording_content_type: The content type of call recording.
