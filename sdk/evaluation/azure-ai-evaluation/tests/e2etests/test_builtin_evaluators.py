@@ -550,7 +550,9 @@ class TestBuiltInEvaluators:
             (ContentSafetyEvaluator),
         ],
     )
-    def test_multimodal_evaluator_content_safety_json_image_urls_text_image_input_only(self, project_scope, azure_cred, evaluator_class):
+    def test_multimodal_evaluator_content_safety_json_image_urls_text_image_input_only(
+        self, project_scope, azure_cred, evaluator_class
+    ):
         evaluator = evaluator_class(credential=azure_cred, azure_ai_project=project_scope)
         conversation = {
             "messages": [
@@ -821,7 +823,7 @@ class TestBuiltInEvaluators:
         ],
     )
     def test_multimodal_evaluator_violence_json(self, project_scope, azure_cred, evaluator_class):
-        evaluator = evaluator_class(credential=azure_cred, azure_ai_project=project_scope)        
+        evaluator = evaluator_class(credential=azure_cred, azure_ai_project=project_scope)
         conversation = {
             "messages": [
                 {

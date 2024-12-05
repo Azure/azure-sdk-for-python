@@ -82,18 +82,20 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         :return: The evaluation result.
         :rtype: Dict
         """
-        if "query" in eval_input and "response" in eval_input: 
+        if "query" in eval_input and "response" in eval_input:
             return await self._evaluate_query_response(eval_input)
-        else:
-            conversation = eval_input.get("conversation", None)
-            return await self._evaluate_conversation(conversation)
-    
+
+        conversation = eval_input.get("conversation", None)
+        return await self._evaluate_conversation(conversation)
+
     async def _evaluate_conversation(self, conversation: Dict) -> Dict[str, T]:
         """
         Evaluates content according to this evaluator's metric.
         :keyword conversation: The conversation contains list of messages to be evaluated.
             Each message should have "role" and "content" keys.
-        :paramtype conversation: ~azure.ai.evaluation.Conversation
+
+        :param conversation: The conversation to evaluate.
+        :type conversation: ~azure.ai.evaluation.Conversation
         :return: The evaluation score computation based on the Content Safety metric (self.metric).
         :rtype: Dict[str, Union[float, str]]
         """
@@ -108,8 +110,8 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
             credential=self._credential,
         )
         return result
-    
-    async def _evaluate_query_response(self, eval_input: Dict) -> Dict[str, T]: 
+
+    async def _evaluate_query_response(self, eval_input: Dict) -> Dict[str, T]:
         query = eval_input.get("query", None)
         response = eval_input.get("response", None)
         if query is None or response is None:

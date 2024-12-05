@@ -303,13 +303,19 @@ class TestMassEvaluate:
             ("b64_images", ProtectedMaterialEvaluator, ContentSafetyEvaluator),
         ],
     )
-    def test_evaluate_multimodal(self, multi_modal_input_type, pm_evaluator_class, cs_evaluator_class, multimodal_input_selector, azure_cred, project_scope):
+    def test_evaluate_multimodal(
+        self,
+        multi_modal_input_type,
+        pm_evaluator_class,
+        cs_evaluator_class,
+        multimodal_input_selector,
+        azure_cred,
+        project_scope,
+    ):
         # Content safety is removed due to being unstable in playback mode
         evaluators = {
             # "content_safety" : cs_evaluator_class(credential=azure_cred, azure_ai_project=project_scope),
-            "protected_material": pm_evaluator_class(
-                credential=azure_cred, azure_ai_project=project_scope
-            ),
+            "protected_material": pm_evaluator_class(credential=azure_cred, azure_ai_project=project_scope),
         }
 
         evaluator_config = None  # use default normally
