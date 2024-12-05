@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import os
-from typing import Dict, Union
+from typing import Dict
 
 from typing_extensions import overload, override
 
@@ -46,7 +46,7 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
     """
 
     # Constants must be defined within eval's directory to be save/loadable
-    
+
     _PROMPTY_FILE = "similarity.prompty"
     _RESULT_KEY = "similarity"
 
@@ -59,14 +59,13 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
 
-    @overload
-    def __call__(
-        self,
-        *,
-        query: str,
-        response: str,
-        ground_truth: str
-    ) -> Dict[str, float]:
+    # Ignoring a mypy error about having only 1 overload function.
+    # We want to use the overload style for all evals, even single-inputs. This is both to make
+    # refactoring to multi-input styles easier, stylistic consistency consistency across evals,
+    # and due to the fact that non-overloaded syntax now causes various parsing issues that
+    # we don't want to deal with.
+    @overload # type: ignore
+    def __call__(self, *, query: str, response: str, ground_truth: str) -> Dict[str, float]:
         """
         Evaluate similarity.
 
@@ -85,7 +84,7 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
         self,
         *args,
         **kwargs,
-    ) -> Dict[str, Union[str, float]]:
+    ):
         """
         Evaluate similarity.
 
