@@ -25,6 +25,7 @@ import os
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
     CodeInterpreterTool,
+    FileSearchTool,
     MessageAttachment,
     VectorStoreDataSource,
     VectorStoreDataSourceAssetType,
@@ -45,14 +46,11 @@ async def main():
 
     async with project_client:
 
-        code_interpreter = CodeInterpreterTool()
-
         # notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
         agent = await project_client.agents.create_agent(
             model="gpt-4-1106-preview",
             name="my-assistant",
             instructions="You are helpful assistant",
-            tools=code_interpreter.definitions,
         )
         print(f"Created agent, agent ID: {agent.id}")
 
@@ -64,7 +62,12 @@ async def main():
         ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
 
         # create a message with the attachment
-        attachment = MessageAttachment(data_sources=[ds], tools=code_interpreter.definitions)
+        attachment = MessageAttachment(
+            data_source=ds,
+            tools=[
+                FileSearchTool().definitions[0],
+                CodeInterpreterTool().definitions[0],
+            ])
         message = await project_client.agents.create_message(
             thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]
         )
