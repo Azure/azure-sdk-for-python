@@ -33,7 +33,7 @@ class SendWhatsAppMessageSample(object):
     phone_number: str = os.getenv("RECIPIENT_PHONE_NUMBER")  # type: ignore
     channel_id: str = os.getenv("WHATSAPP_CHANNEL_ID")  # type: ignore
 
-    def send_whatappcta_message(self):
+    def send_whatapp_click_to_action_message(self):
 
         from azure.communication.messages import NotificationMessagesClient
         from azure.communication.messages.models import (
@@ -70,4 +70,4 @@ class SendWhatsAppMessageSample(object):
 
 if __name__ == "__main__":
     sample = SendWhatsAppMessageSample()
-    sample.send_whatappcta_message()
+    sample.send_whatapp_click_to_action_message()
