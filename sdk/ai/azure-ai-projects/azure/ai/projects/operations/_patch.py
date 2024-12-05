@@ -23,8 +23,6 @@ from typing import (
     Optional,
     Sequence,
     TextIO,
-    Tuple,
-    TypeVar,
     Union,
     cast,
     overload,
