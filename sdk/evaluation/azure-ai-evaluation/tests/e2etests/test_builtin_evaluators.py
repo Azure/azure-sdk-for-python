@@ -767,6 +767,7 @@ class TestBuiltInEvaluators:
     @pytest.mark.parametrize(
         "evaluator_class",
         [
+            (ContentSafetyMultimodalEvaluator),
             (ContentSafetyEvaluator),
         ],
     )

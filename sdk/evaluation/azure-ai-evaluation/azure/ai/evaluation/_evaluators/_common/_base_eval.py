@@ -324,7 +324,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         if not isinstance(messages, list):
             return False
         for message in messages:
-            if isinstance(message, dict) and "content" in message:
+            if "content" in message:
                 content = message.get("content", "")
                 if isinstance(content, list):
                     if any(item.get("type") == "image_url" and "url" in item.get("image_url", {}) for item in content):

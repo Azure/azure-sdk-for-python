@@ -14,7 +14,9 @@ from devtools_testutils import is_live
 from azure.ai.evaluation import (
     ViolenceEvaluator,
     ContentSafetyMultimodalEvaluator,
+    ContentSafetyEvaluator,
     ProtectedMaterialMultimodalEvaluator,
+    ProtectedMaterialEvaluator,
     evaluate,
 )
 from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
@@ -133,7 +135,14 @@ class TestSimAndEval:
         os.remove(file_name)
 
     @pytest.mark.azuretest
-    def test_protected_material_sim_image_understanding(self, project_scope, azure_cred):
+    @pytest.mark.parametrize(
+        "evaluator_class",
+        [
+            (ProtectedMaterialMultimodalEvaluator),
+            (ProtectedMaterialEvaluator),
+        ],
+    )
+    def test_protected_material_sim_image_understanding(self, evaluator_class, project_scope, azure_cred):
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
             "resource_group_name": project_scope["resource_group_name"],
@@ -183,7 +192,7 @@ class TestSimAndEval:
             file.writelines([json.dumps({"conversation": conversation}) + "\n" for conversation in simulator_output])
 
         # Evaluator simulator output
-        protected_material_eval = ProtectedMaterialMultimodalEvaluator(azure_cred, project_scope)
+        protected_material_eval = evaluator_class(azure_cred, project_scope)
         # run the evaluation
         eval_output = evaluate(
             data=file_name,
@@ -210,7 +219,14 @@ class TestSimAndEval:
         os.remove(file_name)
 
     @pytest.mark.azuretest
-    def test_protected_material_sim_image_gen(self, project_scope, azure_cred):
+    @pytest.mark.parametrize(
+        "evaluator_class",
+        [
+            (ProtectedMaterialMultimodalEvaluator),
+            (ProtectedMaterialEvaluator),
+        ],
+    )
+    def test_protected_material_sim_image_gen(self, evaluator_class, project_scope, azure_cred):
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
             "resource_group_name": project_scope["resource_group_name"],
@@ -261,7 +277,7 @@ class TestSimAndEval:
             file.writelines([json.dumps({"conversation": conversation}) + "\n" for conversation in simulator_output])
 
         # Evaluator simulator output
-        protected_material_eval = ProtectedMaterialMultimodalEvaluator(azure_cred, project_scope)
+        protected_material_eval = evaluator_class(azure_cred, project_scope)
         # run the evaluation
         eval_output = evaluate(
             data=file_name,
@@ -290,7 +306,14 @@ class TestSimAndEval:
         os.remove(file_name)
 
     @pytest.mark.azuretest
-    def test_content_safety_sim_image_gen(self, project_scope, azure_cred):
+    @pytest.mark.parametrize(
+        "evaluator_class",
+        [
+            (ContentSafetyMultimodalEvaluator),
+            (ContentSafetyEvaluator),
+        ],
+    )
+    def test_content_safety_sim_image_gen(self, evaluator_class, project_scope, azure_cred):
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
             "resource_group_name": project_scope["resource_group_name"],
@@ -340,12 +363,12 @@ class TestSimAndEval:
             file.writelines([json.dumps({"conversation": conversation}) + "\n" for conversation in simulator_output])
 
         # Evaluator simulator output
-        content_safety_val = ContentSafetyMultimodalEvaluator(azure_cred, project_scope)
+        content_safety_val = evaluator_class(azure_cred, project_scope)
         # run the evaluation
         result = evaluate(
             data=file_name,
             evaluation_name="sim_image_gen_content_safety_eval",
-            azure_ai_project=project_scope,
+            # azure_ai_project=project_scope,
             evaluators={"content_safety": content_safety_val},
         )
 
