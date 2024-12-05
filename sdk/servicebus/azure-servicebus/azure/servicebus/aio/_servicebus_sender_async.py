@@ -480,7 +480,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         if max_size_in_bytes and max_size_in_bytes > self._max_message_size_on_link:
             raise ValueError(
                 f"Max message size: {max_size_in_bytes} is too large, "
-                "acceptable max batch size is: {self._max_message_size_on_link} bytes."
+                f"acceptable max batch size is: {self._max_message_size_on_link} bytes."
             )
 
         return ServiceBusMessageBatch(

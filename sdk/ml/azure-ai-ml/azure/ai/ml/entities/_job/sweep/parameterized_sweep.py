@@ -43,7 +43,7 @@ SAMPLING_ALGORITHM_CONSTRUCTOR: Dict[SamplingAlgorithmType, Type[SamplingAlgorit
 }
 
 
-class ParameterizedSweep:
+class ParameterizedSweep:  # pylint:disable=too-many-instance-attributes
     """Shared logic for standalone and pipeline sweep job."""
 
     def __init__(
@@ -205,6 +205,7 @@ class ParameterizedSweep:
         :keyword trial_timeout: timeout in seconds for each trial
         :paramtype trial_timeout: int
         """
+        # pylint:disable=attribute-defined-outside-init
         if self._limits is None:
             self._limits = SweepJobLimits(
                 max_concurrent_trials=max_concurrent_trials,

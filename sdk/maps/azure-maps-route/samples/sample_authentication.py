@@ -29,7 +29,7 @@ def authentication_maps_service_client_with_subscription_key_credential():
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.route import MapsRouteClient
 
-    subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+    subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
     maps_route_client = MapsRouteClient(credential=AzureKeyCredential(subscription_key))
     # [END create_maps_route_service_client_with_key]

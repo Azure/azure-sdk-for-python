@@ -5,8 +5,8 @@ This table is to clarify the currently pinned version of tools we run in CI and 
 
 | Tool | Current Version | Next Version | Next Version Merge Date |
 |------|-----------------|--------------|-------------------------|
-Pylint | 3.1.0 | 3.2.5 | 2024-10-14 |
-MyPy | 1.9.0 | 1.10.1 | 2024-10-14 |
-Pyright | 1.1.359 | 1.1.371 | 2024-10-14 |
+Pylint | 3.2.5 | 3.2.7 | 2025-01-13 |
+MyPy | 1.10.1 | TBD | 2025-01-13 |
+Pyright | 1.1.371 | TBD | 2025-01-13 |
 Sphinx | 7.3.7 | N/A | N/A |
 Black | 24.4.0 | N/A | N/A |

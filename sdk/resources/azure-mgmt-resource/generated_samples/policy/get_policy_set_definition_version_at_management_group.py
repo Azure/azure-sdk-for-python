@@ -27,14 +27,13 @@ from azure.mgmt.resource import PolicyClient
 def main():
     client = PolicyClient(
         credential=DefaultAzureCredential(),
-        policy_definition_name="POLICY_DEFINITION_NAME",
-        policy_definition_version="1.2.1",
-        policy_set_definition_name="CostManagement",
         subscription_id="SUBSCRIPTION_ID",
     )
 
     response = client.policy_set_definition_versions.get_at_management_group(
         management_group_name="MyManagementGroup",
+        policy_set_definition_name="CostManagement",
+        policy_definition_version="1.2.1",
     )
     print(response)
 

@@ -46,7 +46,7 @@
             "Skip.Analyze": "true"
         },
         "Emulator Tests Python 3.13": {
-            "PythonVersion": "3.13.0-rc.3",
+            "PythonVersion": "3.13",
             "CoverageArg": "--disablecov",
             "TestSamples": "false",
             "ToxTestEnv": "'whl,sdist'",

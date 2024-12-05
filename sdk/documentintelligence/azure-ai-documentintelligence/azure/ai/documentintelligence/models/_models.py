@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -15,7 +15,6 @@ from .._model_base import rest_discriminator, rest_field
 from ._enums import OperationKind
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -103,10 +102,10 @@ class AddressValue(_model_base.Model):  # pylint: disable=too-many-instance-attr
         suburb: Optional[str] = None,
         house: Optional[str] = None,
         level: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -162,10 +161,10 @@ class AnalyzeBatchDocumentsRequest(_model_base.Model):
         azure_blob_file_list_source: Optional["_models.AzureBlobFileListContentSource"] = None,
         result_prefix: Optional[str] = None,
         overwrite_existing: Optional[bool] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -208,10 +207,10 @@ class AnalyzeBatchOperationDetail(_model_base.Model):
         source_url: str,
         result_url: Optional[str] = None,
         error: Optional["_models.Error"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -252,10 +251,10 @@ class AnalyzeBatchResult(_model_base.Model):
         failed_count: int,
         skipped_count: int,
         details: List["_models.AnalyzeBatchOperationDetail"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -308,10 +307,10 @@ class AnalyzeBatchResultOperation(_model_base.Model):
         percent_completed: Optional[int] = None,
         error: Optional["_models.Error"] = None,
         result: Optional["_models.AnalyzeBatchResult"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -344,10 +343,10 @@ class AnalyzeDocumentRequest(_model_base.Model):
         *,
         url_source: Optional[str] = None,
         bytes_source: Optional[bytes] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -448,10 +447,10 @@ class AnalyzeResult(_model_base.Model):  # pylint: disable=too-many-instance-att
         languages: Optional[List["_models.DocumentLanguage"]] = None,
         documents: Optional[List["_models.Document"]] = None,
         warnings: Optional[List["_models.Warning"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -500,10 +499,10 @@ class AnalyzeResultOperation(_model_base.Model):
         last_updated_date_time: datetime.datetime,
         error: Optional["_models.Error"] = None,
         analyze_result: Optional["_models.AnalyzeResult"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -540,10 +539,10 @@ class AuthorizeClassifierCopyRequest(_model_base.Model):
         classifier_id: str,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -580,10 +579,10 @@ class AuthorizeCopyRequest(_model_base.Model):
         model_id: str,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -614,10 +613,10 @@ class AzureBlobContentSource(_model_base.Model):
         *,
         container_url: str,
         prefix: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -649,10 +648,10 @@ class AzureBlobFileListContentSource(_model_base.Model):
         *,
         container_url: str,
         file_list: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -689,10 +688,10 @@ class BoundingRegion(_model_base.Model):
         *,
         page_number: int,
         polygon: List[float],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -740,10 +739,10 @@ class BuildDocumentClassifierRequest(_model_base.Model):
         description: Optional[str] = None,
         base_classifier_id: Optional[str] = None,
         allow_overwrite: Optional[bool] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -816,10 +815,10 @@ class BuildDocumentModelRequest(_model_base.Model):
         tags: Optional[Dict[str, str]] = None,
         max_training_hours: Optional[float] = None,
         allow_overwrite: Optional[bool] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -876,10 +875,10 @@ class ClassifierCopyAuthorization(_model_base.Model):
         target_classifier_location: str,
         access_token: str,
         expiration_date_time: datetime.datetime,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -929,10 +928,10 @@ class ClassifierDocumentTypeDetails(_model_base.Model):
         source_kind: Optional[Union[str, "_models.ContentSourceKind"]] = None,
         azure_blob_source: Optional["_models.AzureBlobContentSource"] = None,
         azure_blob_file_list_source: Optional["_models.AzureBlobFileListContentSource"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -966,10 +965,10 @@ class ClassifyDocumentRequest(_model_base.Model):
         *,
         url_source: Optional[str] = None,
         bytes_source: Optional[bytes] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1022,10 +1021,10 @@ class ComposeDocumentModelRequest(_model_base.Model):
         description: Optional[str] = None,
         split: Optional[Union[str, "_models.SplitMode"]] = None,
         tags: Optional[Dict[str, str]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1081,10 +1080,10 @@ class CopyAuthorization(_model_base.Model):
         target_model_location: str,
         access_token: str,
         expiration_date_time: datetime.datetime,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1120,10 +1119,10 @@ class CurrencyValue(_model_base.Model):
         amount: float,
         currency_symbol: Optional[str] = None,
         currency_code: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1155,10 +1154,10 @@ class CustomDocumentModelsDetails(_model_base.Model):
         *,
         count: int,
         limit: int,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1204,10 +1203,10 @@ class Document(_model_base.Model):
         confidence: float,
         bounding_regions: Optional[List["_models.BoundingRegion"]] = None,
         fields: Optional[Dict[str, "_models.DocumentField"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1263,10 +1262,10 @@ class DocumentBarcode(_model_base.Model):
         span: "_models.DocumentSpan",
         confidence: float,
         polygon: Optional[List[float]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1307,10 +1306,10 @@ class DocumentCaption(_model_base.Model):
         spans: List["_models.DocumentSpan"],
         bounding_regions: Optional[List["_models.BoundingRegion"]] = None,
         elements: Optional[List[str]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1393,10 +1392,10 @@ class OperationDetails(_model_base.Model):
         api_version: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         error: Optional["_models.Error"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1456,10 +1455,10 @@ class DocumentClassifierBuildOperationDetails(
         tags: Optional[Dict[str, str]] = None,
         error: Optional["_models.Error"] = None,
         result: Optional["_models.DocumentClassifierDetails"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1523,10 +1522,10 @@ class DocumentClassifierCopyToOperationDetails(
         tags: Optional[Dict[str, str]] = None,
         error: Optional["_models.Error"] = None,
         result: Optional["_models.DocumentClassifierDetails"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1589,10 +1588,10 @@ class DocumentClassifierDetails(_model_base.Model):
         expiration_date_time: Optional[datetime.datetime] = None,
         base_classifier_id: Optional[str] = None,
         warnings: Optional[List["_models.Warning"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1721,10 +1720,10 @@ class DocumentField(_model_base.Model):  # pylint: disable=too-many-instance-att
         bounding_regions: Optional[List["_models.BoundingRegion"]] = None,
         spans: Optional[List["_models.DocumentSpan"]] = None,
         confidence: Optional[float] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1775,10 +1774,10 @@ class DocumentFieldSchema(_model_base.Model):
         example: Optional[str] = None,
         items_property: Optional["_models.DocumentFieldSchema"] = None,
         properties: Optional[Dict[str, "_models.DocumentFieldSchema"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1829,10 +1828,10 @@ class DocumentFigure(_model_base.Model):
         caption: Optional["_models.DocumentCaption"] = None,
         footnotes: Optional[List["_models.DocumentFootnote"]] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1873,10 +1872,10 @@ class DocumentFootnote(_model_base.Model):
         spans: List["_models.DocumentSpan"],
         bounding_regions: Optional[List["_models.BoundingRegion"]] = None,
         elements: Optional[List[str]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1928,10 +1927,10 @@ class DocumentFormula(_model_base.Model):
         span: "_models.DocumentSpan",
         confidence: float,
         polygon: Optional[List[float]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1968,10 +1967,10 @@ class DocumentKeyValueElement(_model_base.Model):
         content: str,
         spans: List["_models.DocumentSpan"],
         bounding_regions: Optional[List["_models.BoundingRegion"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2008,10 +2007,10 @@ class DocumentKeyValuePair(_model_base.Model):
         key: "_models.DocumentKeyValueElement",
         confidence: float,
         value: Optional["_models.DocumentKeyValueElement"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2051,10 +2050,10 @@ class DocumentLanguage(_model_base.Model):
         locale: str,
         spans: List["_models.DocumentSpan"],
         confidence: float,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2097,10 +2096,10 @@ class DocumentLine(_model_base.Model):
         content: str,
         spans: List["_models.DocumentSpan"],
         polygon: Optional[List[float]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2160,10 +2159,10 @@ class DocumentModelBuildOperationDetails(
         tags: Optional[Dict[str, str]] = None,
         error: Optional["_models.Error"] = None,
         result: Optional["_models.DocumentModelDetails"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2224,10 +2223,10 @@ class DocumentModelComposeOperationDetails(
         tags: Optional[Dict[str, str]] = None,
         error: Optional["_models.Error"] = None,
         result: Optional["_models.DocumentModelDetails"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2291,10 +2290,10 @@ class DocumentModelCopyToOperationDetails(
         tags: Optional[Dict[str, str]] = None,
         error: Optional["_models.Error"] = None,
         result: Optional["_models.DocumentModelDetails"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2395,10 +2394,10 @@ class DocumentModelDetails(_model_base.Model):  # pylint: disable=too-many-insta
         tags: Optional[Dict[str, str]] = None,
         classifier_id: Optional[str] = None,
         split: Optional[Union[str, "_models.SplitMode"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2480,10 +2479,10 @@ class DocumentPage(_model_base.Model):  # pylint: disable=too-many-instance-attr
         lines: Optional[List["_models.DocumentLine"]] = None,
         barcodes: Optional[List["_models.DocumentBarcode"]] = None,
         formulas: Optional[List["_models.DocumentFormula"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2527,10 +2526,10 @@ class DocumentParagraph(_model_base.Model):
         spans: List["_models.DocumentSpan"],
         role: Optional[Union[str, "_models.ParagraphRole"]] = None,
         bounding_regions: Optional[List["_models.BoundingRegion"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2561,10 +2560,10 @@ class DocumentSection(_model_base.Model):
         *,
         spans: List["_models.DocumentSpan"],
         elements: Optional[List[str]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2613,10 +2612,10 @@ class DocumentSelectionMark(_model_base.Model):
         span: "_models.DocumentSpan",
         confidence: float,
         polygon: Optional[List[float]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2648,10 +2647,10 @@ class DocumentSpan(_model_base.Model):
         *,
         offset: int,
         length: int,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2716,10 +2715,10 @@ class DocumentStyle(_model_base.Model):
         font_weight: Optional[Union[str, "_models.FontWeight"]] = None,
         color: Optional[str] = None,
         background_color: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2775,10 +2774,10 @@ class DocumentTable(_model_base.Model):
         bounding_regions: Optional[List["_models.BoundingRegion"]] = None,
         caption: Optional["_models.DocumentCaption"] = None,
         footnotes: Optional[List["_models.DocumentFootnote"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2846,10 +2845,10 @@ class DocumentTableCell(_model_base.Model):
         column_span: Optional[int] = None,
         bounding_regions: Optional[List["_models.BoundingRegion"]] = None,
         elements: Optional[List[str]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2918,10 +2917,10 @@ class DocumentTypeDetails(_model_base.Model):
         features: Optional[List[Union[str, "_models.DocumentAnalysisFeature"]]] = None,
         query_fields: Optional[List[str]] = None,
         max_documents_to_analyze: Optional[int] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2970,10 +2969,10 @@ class DocumentWord(_model_base.Model):
         span: "_models.DocumentSpan",
         confidence: float,
         polygon: Optional[List[float]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3020,10 +3019,10 @@ class Error(_model_base.Model):
         target: Optional[str] = None,
         details: Optional[List["_models.Error"]] = None,
         innererror: Optional["_models.InnerError"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3049,10 +3048,10 @@ class ErrorResponse(_model_base.Model):
         self,
         *,
         error: "_models.Error",
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3087,10 +3086,10 @@ class InnerError(_model_base.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         innererror: Optional["_models.InnerError"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3117,10 +3116,10 @@ class ResourceDetails(_model_base.Model):
         self,
         *,
         custom_document_models: "_models.CustomDocumentModelsDetails",
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3156,10 +3155,10 @@ class Warning(_model_base.Model):
         code: str,
         message: str,
         target: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]

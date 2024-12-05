@@ -45,42 +45,11 @@ jobs:
           PythonVersion: '3.8'
           Pool: "azsdk-pool-mms-ubuntu-2004-general"
           OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
-          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-          ArmTemplateParameters: $(azureCloudArmParameters)
         ${{ if eq(parameters.Daily, true) }}:
-          Python_27_Linux (AzureCloud):
-            PythonVersion: '2.7'
-            SkipAsyncInstall: true
-            Pool: azsdk-pool-mms-ubuntu-2004-general
-            OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
-            SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-            ArmTemplateParameters: $(azureCloudArmParameters)
           Python_37_Linux (AzureCloud):
             PythonVersion: '3.7'
             Pool: azsdk-pool-mms-ubuntu-2004-general
             OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
-            SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-            ArmTemplateParameters: $(azureCloudArmParameters)
-          Python_38_Linux (AzureCloud Canary):
-            PythonVersion: '3.8'
-            Pool: azsdk-pool-mms-ubuntu-2004-general
-            OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
-            SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
-            ArmTemplateParameters: $(azureCloudArmParameters)
-            Location: 'eastus2euap'
-          Python_38_Linux (AzureUSGovernment):
-            PythonVersion: '3.8'
-            Pool: azsdk-pool-mms-ubuntu-2004-general
-            OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
-            SubscriptionConfiguration: $(sub-config-gov-test-resources)
-            ArmTemplateParameters: $(azureUSGovernmentArmParameters)
-          Python_38_Linux (AzureChinaCloud):
-            PythonVersion: '3.8'
-            Pool: azsdk-pool-mms-ubuntu-2004-general
-            OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
-            SubscriptionConfiguration: $(sub-config-cn-test-resources)
-            Location: 'chinanorth'
-            ArmTemplateParameters: $(azureChinaCloudArmParameters)
 
     pool:
       name: $(Pool)
@@ -89,14 +58,6 @@ jobs:
 
     variables:
       - template: /eng/pipelines/templates/variables/globals.yml
-      - name: Location
-        value: ''
-      - name: azureCloudArmParameters
-        value: "@{ storageEndpointSuffix = 'core.windows.net'; azureCloud = 'AzureCloud'; }"
-      - name: azureUSGovernmentArmParameters
-        value: "@{ storageEndpointSuffix = 'core.usgovcloudapi.net'; azureCloud = 'AzureUSGovernment'; }"
-      - name: azureChinaCloudArmParameters
-        value: "@{ storageEndpointSuffix = 'core.chinacloudapi.cn'; azureCloud = 'AzureChinaCloud'; }"
       - name: requirements
         ${{ if eq(parameters.Daily, true) }}:
           value: $(Build.SourcesDirectory)/common/smoketest/requirements.txt
@@ -122,41 +83,17 @@ jobs:
               PythonVersion: '3.7'
               Pool: azsdk-pool-mms-win-2022-general
               OSVmImage: azsdk-pool-mms-win-2022-1espt
-              SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-              ArmTemplateParameters: $(azureCloudArmParameters)
             Python_38_Windows (AzureCloud):
               PythonVersion: '3.8'
               Pool: azsdk-pool-mms-win-2022-general
               OSVmImage: azsdk-pool-mms-win-2022-1espt
-              SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-              ArmTemplateParameters: $(azureCloudArmParameters)
-            Python_37_Windows (AzureUSGovernment):
-              PythonVersion: '3.7'
-              Pool: azsdk-pool-mms-win-2022-general
-              OSVmImage: azsdk-pool-mms-win-2022-1espt
-              SubscriptionConfiguration: $(sub-config-gov-test-resources)
-              ArmTemplateParameters: $(azureUSGovernmentArmParameters)
-            Python_37_Windows (AzureChinaCloud):
-              PythonVersion: '3.7'
-              Pool: azsdk-pool-mms-win-2022-general
-              OSVmImage: azsdk-pool-mms-win-2022-1espt
-              SubscriptionConfiguration: $(sub-config-cn-test-resources)
-              Location: 'chinanorth'
-              ArmTemplateParameters: $(azureChinaCloudArmParameters)
+
       pool:
         name: $(Pool)
         image: $(OSVmImage)
         os: windows
       variables:
         - template: /eng/pipelines/templates/variables/globals.yml
-        - name: Location
-          value: ''
-        - name: azureCloudArmParameters
-          value: "@{ storageEndpointSuffix = 'core.windows.net'; azureCloud = 'AzureCloud'; }"
-        - name: azureUSGovernmentArmParameters
-          value: "@{ storageEndpointSuffix = 'core.usgovcloudapi.net'; azureCloud = 'AzureUSGovernment'; }"
-        - name: azureChinaCloudArmParameters
-          value: "@{ storageEndpointSuffix = 'core.chinacloudapi.cn'; azureCloud = 'AzureChinaCloud'; }"
         - name: requirements
           ${{ if eq(parameters.Daily, true) }}:
             value: $(Build.SourcesDirectory)/common/smoketest/requirements.txt
@@ -180,14 +117,10 @@ jobs:
               PythonVersion: '3.7'
               Pool: Azure Pipelines
               OSVmImage: macos-latest
-              SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-              ArmTemplateParameters: $(azureCloudArmParameters)
             Python_38_Mac (AzureCloud):
               PythonVersion: '3.8'
               Pool: Azure Pipelines
               OSVmImage: macos-latest
-              SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-              ArmTemplateParameters: $(azureCloudArmParameters)
 
       pool:
         name: $(Pool)
@@ -196,14 +129,6 @@ jobs:
 
       variables:
         - template: /eng/pipelines/templates/variables/globals.yml
-        - name: Location
-          value: ''
-        - name: azureCloudArmParameters
-          value: "@{ storageEndpointSuffix = 'core.windows.net'; azureCloud = 'AzureCloud'; }"
-        - name: azureUSGovernmentArmParameters
-          value: "@{ storageEndpointSuffix = 'core.usgovcloudapi.net'; azureCloud = 'AzureUSGovernment'; }"
-        - name: azureChinaCloudArmParameters
-          value: "@{ storageEndpointSuffix = 'core.chinacloudapi.cn'; azureCloud = 'AzureChinaCloud'; }"
         - name: requirements
           ${{ if eq(parameters.Daily, true) }}:
             value: $(Build.SourcesDirectory)/common/smoketest/requirements.txt

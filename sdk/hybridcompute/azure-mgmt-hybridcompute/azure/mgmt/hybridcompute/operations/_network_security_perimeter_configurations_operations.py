@@ -16,6 +16,8 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.paging import ItemPaged
@@ -29,7 +31,6 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import HybridComputeManagementClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -48,7 +49,7 @@ def build_get_by_private_link_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-10"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -87,7 +88,7 @@ def build_list_by_private_link_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-10"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -120,7 +121,7 @@ def build_reconcile_for_private_link_scope_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-10"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -348,6 +349,7 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
         )
         _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -355,20 +357,24 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
-            response.read()  # Load the body in memory and close the socket
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-        response_headers["Azure-AsyncOperation"] = self._deserialize(
-            "str", response.headers.get("Azure-AsyncOperation")
-        )
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
 
-        deserialized = response.stream_download(self._client._pipeline)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -378,7 +384,7 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
     @distributed_trace
     def begin_reconcile_for_private_link_scope(
         self, resource_group_name: str, scope_name: str, perimeter_name: str, **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.NetworkSecurityPerimeterConfigurationReconcileResult]:
         """Forces the network security perimeter configuration to refresh for a private link scope.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -389,15 +395,17 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
         :param perimeter_name: The name, in the format {perimeterGuid}.{associationName}, of the
          Network Security Perimeter resource. Required.
         :type perimeter_name: str
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either
+         NetworkSecurityPerimeterConfigurationReconcileResult or the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.hybridcompute.models.NetworkSecurityPerimeterConfigurationReconcileResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.NetworkSecurityPerimeterConfigurationReconcileResult] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -415,9 +423,13 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize(
+                "NetworkSecurityPerimeterConfigurationReconcileResult", pipeline_response.http_response
+            )
             if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -426,10 +438,12 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[None].from_continuation_token(
+            return LROPoller[_models.NetworkSecurityPerimeterConfigurationReconcileResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[_models.NetworkSecurityPerimeterConfigurationReconcileResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )

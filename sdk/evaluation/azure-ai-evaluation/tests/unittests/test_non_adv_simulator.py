@@ -7,6 +7,7 @@ import asyncio
 from unittest.mock import AsyncMock, patch
 
 import pytest
+
 from azure.ai.evaluation.simulator import Simulator
 from azure.ai.evaluation.simulator._utils import JsonLineChatProtocol
 

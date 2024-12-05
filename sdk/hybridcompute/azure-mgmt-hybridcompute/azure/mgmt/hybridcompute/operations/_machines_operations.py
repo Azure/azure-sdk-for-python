@@ -17,6 +17,8 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.paging import ItemPaged
@@ -30,7 +32,6 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import HybridComputeManagementClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -49,7 +50,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-10"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -79,12 +80,17 @@ def build_delete_request(
 
 
 def build_get_request(
-    resource_group_name: str, machine_name: str, subscription_id: str, *, expand: Optional[str] = None, **kwargs: Any
+    resource_group_name: str,
+    machine_name: str,
+    subscription_id: str,
+    *,
+    expand: Optional[Union[str, _models.InstanceViewTypes]] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-10"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -121,7 +127,7 @@ def build_assess_patches_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-10"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -152,7 +158,7 @@ def build_install_patches_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-10"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -186,7 +192,7 @@ def build_list_by_resource_group_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-10"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -218,7 +224,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-20-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-10"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -313,7 +319,11 @@ class MachinesOperations:
 
     @distributed_trace
     def get(
-        self, resource_group_name: str, machine_name: str, expand: Optional[str] = None, **kwargs: Any
+        self,
+        resource_group_name: str,
+        machine_name: str,
+        expand: Optional[Union[str, _models.InstanceViewTypes]] = None,
+        **kwargs: Any
     ) -> _models.Machine:
         """Retrieves information about the model view or the instance view of a hybrid machine.
 
@@ -322,8 +332,9 @@ class MachinesOperations:
         :type resource_group_name: str
         :param machine_name: The name of the hybrid machine. Required.
         :type machine_name: str
-        :param expand: The expand expression to apply on the operation. Default value is None.
-        :type expand: str
+        :param expand: The expand expression to apply on the operation. "instanceView" Default value is
+         None.
+        :type expand: str or ~azure.mgmt.hybridcompute.models.InstanceViewTypes
         :return: Machine or the result of cls(response)
         :rtype: ~azure.mgmt.hybridcompute.models.Machine
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -397,6 +408,7 @@ class MachinesOperations:
         )
         _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -405,19 +417,19 @@ class MachinesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            response.read()  # Load the body in memory and close the socket
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        if response.status_code == 200:
-            deserialized = response.stream_download(self._client._pipeline)
-
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-            deserialized = response.stream_download(self._client._pipeline)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -529,6 +541,7 @@ class MachinesOperations:
         )
         _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -537,19 +550,19 @@ class MachinesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            response.read()  # Load the body in memory and close the socket
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        if response.status_code == 200:
-            deserialized = response.stream_download(self._client._pipeline)
-
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-            deserialized = response.stream_download(self._client._pipeline)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore

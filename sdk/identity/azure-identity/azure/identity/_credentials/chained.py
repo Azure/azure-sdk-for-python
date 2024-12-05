@@ -37,8 +37,8 @@ class ChainedTokenCredential:
     """A sequence of credentials that is itself a credential.
 
     Its :func:`get_token` method calls ``get_token`` on each credential in the sequence, in order, returning the first
-    valid token received. For more information, see
-    https://aka.ms/azsdk/python/identity/credential-chains#chainedtokencredential-overview.
+    valid token received. For more information, see `ChainedTokenCredential overview
+    <"https://aka.ms/azsdk/python/identity/credential-chains#chainedtokencredential-overview">`__.
 
     :param credentials: credential instances to form the chain
     :type credentials: ~azure.core.credentials.TokenCredential

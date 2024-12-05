@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `SearchResourceEncryptionKey`.`identity` support.
+
 ### Breaking Changes
 
 ### Bugs Fixed

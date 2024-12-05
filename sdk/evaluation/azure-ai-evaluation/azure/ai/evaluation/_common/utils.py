@@ -10,7 +10,7 @@ import nltk
 from typing_extensions import NotRequired, Required, TypeGuard
 
 from azure.ai.evaluation._constants import AZURE_OPENAI_TYPE, OPENAI_TYPE
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, EvaluationException
 from azure.ai.evaluation._model_configurations import (
     AzureAIProject,
     AzureOpenAIModelConfiguration,
@@ -48,13 +48,19 @@ def get_harm_severity_level(harm_score: int) -> Union[str, float]:
 
 def ensure_nltk_data_downloaded():
     """Download NLTK data packages if not already downloaded."""
+    nltk_data = [
+        ("wordnet", "corpora/wordnet.zip"),
+        ("perluniprops", "misc/perluniprops.zip"),
+        ("punkt", "tokenizers/punkt.zip"),
+        ("punkt_tab", "tokenizers/punkt_tab.zip"),
+    ]
+
     with _nltk_data_download_lock:
-        try:
-            from nltk.tokenize.nist import NISTTokenizer  # pylint: disable=unused-import
-        except LookupError:
-            nltk.download("perluniprops")
-            nltk.download("punkt")
-            nltk.download("punkt_tab")
+        for _id, resource_name in nltk_data:
+            try:
+                nltk.find(resource_name)
+            except LookupError:
+                nltk.download(_id)
 
 
 def nltk_tokenize(text: str) -> List[str]:
@@ -122,24 +128,23 @@ def validate_azure_ai_project(o: object) -> AzureAIProject:
     fields = {"subscription_id": str, "resource_group_name": str, "project_name": str}
 
     if not isinstance(o, dict):
-        msg = "azure_ai_project must be a dictionary"
+        msg = "The 'azure_ai_project' parameter must be a dictionary."
         raise EvaluationException(
             message=msg,
-            internal_message=msg,
-            target=ErrorTarget.DIRECT_ATTACK_SIMULATOR,
-            category=ErrorCategory.MISSING_FIELD,
+            category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
         )
 
     missing_fields = set(fields.keys()) - o.keys()
 
     if missing_fields:
-        msg = "azure_ai_project must contain keys: " + ", ".join(f'"{field}"' for field in missing_fields)
+        msg = (
+            "The 'azure_ai_project' dictionary is missing the following required "
+            f"field(s): {', '.join(f'{field}' for field in missing_fields)}."
+        )
         raise EvaluationException(
             message=msg,
-            internal_message=msg,
-            target=ErrorTarget.DIRECT_ATTACK_SIMULATOR,
-            category=ErrorCategory.MISSING_FIELD,
+            category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
         )
 
@@ -147,13 +152,10 @@ def validate_azure_ai_project(o: object) -> AzureAIProject:
         if isinstance(o[field_name], expected_type):
             continue
 
-        msg = f"Expected azure_ai_project field {field_name!r} to be of type {expected_type}."
-
+        msg = f"Invalid type for field '{field_name}'. Expected {expected_type}, but got {type(o[field_name])}."
         raise EvaluationException(
-            message=f"{msg}. Got {type(o[field_name])}.",
-            internal_message=msg,
-            target=ErrorTarget.DIRECT_ATTACK_SIMULATOR,
-            category=ErrorCategory.MISSING_FIELD,
+            message=msg,
+            category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
         )
 

@@ -1,0 +1,1 @@
+This folder contains a basic `setup.py` scenario where all project metadata is present within the `setup.py` file. This setup.py will not work with an actual build (none of the files/folders are present).

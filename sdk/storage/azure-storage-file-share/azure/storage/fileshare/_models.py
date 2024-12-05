@@ -538,6 +538,10 @@ class ShareProperties(DictMixin):
     """The maximum throughput the file share can support in MiB/s."""
     paid_bursting_iops: Optional[int] = None
     """The maximum IOPS the file share can support."""
+    next_provisioned_iops_downgrade: Optional["datetime"]
+    """The share's next allowed provisioned throughput downgrade time."""
+    next_provisioned_bandwidth_downgrade: Optional["datetime"]
+    """The share's next allowed provisioned bandwidth downgrade time."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.name = None  # type: ignore [assignment]
@@ -565,6 +569,12 @@ class ShareProperties(DictMixin):
         self.paid_bursting_enabled = kwargs.get('x-ms-share-paid-bursting-enabled')
         self.paid_bursting_bandwidth_mibps = kwargs.get('x-ms-share-paid-bursting-max-bandwidth-mibps')
         self.paid_bursting_iops = kwargs.get('x-ms-share-paid-bursting-max-iops')
+        self.included_burst_iops = kwargs.get('x-ms-share-included-burst-iops')
+        self.max_burst_credits_for_iops = kwargs.get('x-ms-share-max-burst-credits-for-iops')
+        self.next_provisioned_iops_downgrade = (  # pylint: disable=name-too-long
+            kwargs.get('x-ms-share-next-allowed-provisioned-iops-downgrade-time'))
+        self.next_provisioned_bandwidth_downgrade = (  # pylint: disable=name-too-long
+            kwargs.get('x-ms-share-next-allowed-provisioned-bandwidth-downgrade-time'))
 
     @classmethod
     def _from_generated(cls, generated):
@@ -593,6 +603,12 @@ class ShareProperties(DictMixin):
         props.paid_bursting_enabled = generated.properties.paid_bursting_enabled
         props.paid_bursting_bandwidth_mibps = generated.properties.paid_bursting_max_bandwidth_mibps
         props.paid_bursting_iops = generated.properties.paid_bursting_max_iops
+        props.included_burst_iops = generated.properties.included_burst_iops
+        props.max_burst_credits_for_iops = generated.properties.max_burst_credits_for_iops
+        props.next_provisioned_iops_downgrade = (  # pylint: disable=name-too-long
+            generated.properties.next_allowed_provisioned_iops_downgrade_time)
+        props.next_provisioned_bandwidth_downgrade = (  # pylint: disable=name-too-long
+            generated.properties.next_allowed_provisioned_bandwidth_downgrade_time)
         return props
 
 

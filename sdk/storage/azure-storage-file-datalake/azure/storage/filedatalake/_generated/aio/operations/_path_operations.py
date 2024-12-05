@@ -95,6 +95,7 @@ class PathOperations:
         cpk_info: Optional[_models.CpkInfo] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Create File | Create Directory | Rename File | Rename Directory.
 
         Create or rename a file or directory.    By default, the destination is overwritten and if the
@@ -198,7 +199,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -344,11 +345,14 @@ class PathOperations:
         group: Optional[str] = None,
         permissions: Optional[str] = None,
         acl: Optional[str] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
         path_http_headers: Optional[_models.PathHTTPHeaders] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> Optional[_models.SetAccessControlRecursiveResponse]:
+        # pylint: disable=line-too-long
         """Append Data | Flush Data | Set Properties | Set Access Control.
 
         Uploads data to be appended to a file, flushes (writes) previously uploaded data to a file,
@@ -454,6 +458,13 @@ class PathOperations:
          scope, a type, a user or group identifier, and permissions in the format
          "[scope:][type]:[id]:[permissions]". Default value is None.
         :type acl: str
+        :param structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :type structured_body_type: str
+        :param structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :type structured_content_length: int
         :param path_http_headers: Parameter group. Default value is None.
         :type path_http_headers: ~azure.storage.filedatalake.models.PathHTTPHeaders
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -464,7 +475,7 @@ class PathOperations:
         :rtype: ~azure.storage.filedatalake.models.SetAccessControlRecursiveResponse or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -534,6 +545,8 @@ class PathOperations:
             if_none_match=_if_none_match,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
+            structured_body_type=structured_body_type,
+            structured_content_length=structured_content_length,
             content_type=content_type,
             version=self._config.version,
             content=_content,
@@ -583,6 +596,9 @@ class PathOperations:
             response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
             response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
             response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+            response_headers["x-ms-structured-body"] = self._deserialize(
+                "str", response.headers.get("x-ms-structured-body")
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -601,6 +617,7 @@ class PathOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Lease Path.
 
         Create and manage a lease to restrict write and delete access to the path. This operation
@@ -644,7 +661,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -740,6 +757,7 @@ class PathOperations:
         cpk_info: Optional[_models.CpkInfo] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
+        # pylint: disable=line-too-long
         """Read File.
 
         Read the contents of a file.  For read operations, range requests are supported. This operation
@@ -776,7 +794,7 @@ class PathOperations:
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -932,6 +950,7 @@ class PathOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Get Properties | Get Status | Get Access Control List.
 
         Get Properties returns all system and user defined properties for a path. Get Status returns
@@ -970,7 +989,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1065,6 +1084,7 @@ class PathOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Delete File | Delete Directory.
 
         Delete the file or directory. This operation supports conditional HTTP requests.  For more
@@ -1102,7 +1122,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1188,6 +1208,7 @@ class PathOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Set the owner, group, permissions, or access control list for a path.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1222,7 +1243,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1306,6 +1327,7 @@ class PathOperations:
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> _models.SetAccessControlRecursiveResponse:
+        # pylint: disable=line-too-long
         """Set the access control list for a path and sub-paths.
 
         :param mode: Mode "set" sets POSIX access control rights on files and directories, "modify"
@@ -1347,7 +1369,7 @@ class PathOperations:
         :rtype: ~azure.storage.filedatalake.models.SetAccessControlRecursiveResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1425,6 +1447,7 @@ class PathOperations:
         cpk_info: Optional[_models.CpkInfo] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Set the owner, group, permissions, or access control list for a path.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1491,7 +1514,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1616,11 +1639,14 @@ class PathOperations:
         proposed_lease_id: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
         flush: Optional[bool] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
         path_http_headers: Optional[_models.PathHTTPHeaders] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Append data to the file.
 
         :param body: Initial data. Required.
@@ -1665,6 +1691,13 @@ class PathOperations:
         :type request_id_parameter: str
         :param flush: If file should be flushed after the append. Default value is None.
         :type flush: bool
+        :param structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :type structured_body_type: str
+        :param structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :type structured_content_length: int
         :param path_http_headers: Parameter group. Default value is None.
         :type path_http_headers: ~azure.storage.filedatalake.models.PathHTTPHeaders
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -1675,7 +1708,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1721,6 +1754,8 @@ class PathOperations:
             encryption_key_sha256=_encryption_key_sha256,
             encryption_algorithm=_encryption_algorithm,  # type: ignore
             flush=flush,
+            structured_body_type=structured_body_type,
+            structured_content_length=structured_content_length,
             action=action,
             content_type=content_type,
             version=self._config.version,
@@ -1761,6 +1796,9 @@ class PathOperations:
             "str", response.headers.get("x-ms-encryption-key-sha256")
         )
         response_headers["x-ms-lease-renewed"] = self._deserialize("bool", response.headers.get("x-ms-lease-renewed"))
+        response_headers["x-ms-structured-body"] = self._deserialize(
+            "str", response.headers.get("x-ms-structured-body")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -1774,6 +1812,7 @@ class PathOperations:
         expires_on: Optional[str] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Sets the time a blob will expire and be deleted.
 
         :param expiry_options: Required. Indicates mode of the expiry time. Known values are:
@@ -1794,7 +1833,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1854,6 +1893,7 @@ class PathOperations:
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Undelete a path that was previously soft deleted.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1872,7 +1912,7 @@ class PathOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

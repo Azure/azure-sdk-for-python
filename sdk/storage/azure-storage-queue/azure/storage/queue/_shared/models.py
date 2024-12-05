@@ -70,6 +70,7 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     # Blob values
     APPEND_POSITION_CONDITION_NOT_MET = "AppendPositionConditionNotMet"
+    BLOB_ACCESS_TIER_NOT_SUPPORTED_FOR_ACCOUNT_TYPE = "BlobAccessTierNotSupportedForAccountType"
     BLOB_ALREADY_EXISTS = "BlobAlreadyExists"
     BLOB_NOT_FOUND = "BlobNotFound"
     BLOB_OVERWRITTEN = "BlobOverwritten"
@@ -154,6 +155,8 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETE_PENDING = "DeletePending"
     DIRECTORY_NOT_EMPTY = "DirectoryNotEmpty"
     FILE_LOCK_CONFLICT = "FileLockConflict"
+    FILE_SHARE_PROVISIONED_BANDWIDTH_DOWNGRADE_NOT_ALLOWED = "FileShareProvisionedBandwidthDowngradeNotAllowed"
+    FILE_SHARE_PROVISIONED_IOPS_DOWNGRADE_NOT_ALLOWED = "FileShareProvisionedIopsDowngradeNotAllowed"
     INVALID_FILE_OR_DIRECTORY_PATH_NAME = "InvalidFileOrDirectoryPathName"
     PARENT_NOT_FOUND = "ParentNotFound"
     READ_ONLY_ATTRIBUTE = "ReadOnlyAttribute"

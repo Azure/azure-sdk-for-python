@@ -63,6 +63,7 @@ class ServiceOperations:
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.FileSystem"]:
+        # pylint: disable=line-too-long
         """List FileSystems.
 
         List filesystems and their properties in given account.
@@ -99,7 +100,7 @@ class ServiceOperations:
         resource: Literal["account"] = kwargs.pop("resource", _params.pop("resource", "account"))
         cls: ClsType[_models.FileSystemList] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

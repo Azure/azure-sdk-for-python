@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.servicelinker import ServiceLinkerManagementClient
 
 """
@@ -34,6 +35,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/servicelinker/resource-manager/Microsoft.ServiceLinker/preview/2023-04-01-preview/examples/DeleteLinker.json
+# x-ms-original-file: specification/servicelinker/resource-manager/Microsoft.ServiceLinker/preview/2024-07-01-preview/examples/DeleteLinker.json
 if __name__ == "__main__":
     main()

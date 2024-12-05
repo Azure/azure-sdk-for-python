@@ -1,18 +1,52 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
+
+## 1.0.0b5 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
+- Renamed environment variable `PF_EVALS_BATCH_USE_ASYNC` to `AI_EVALS_BATCH_USE_ASYNC`.
+- Outputs of `Simulator` and `AdversarialSimulator` previously had `to_eval_qa_json_lines` and now has `to_eval_qr_json_lines`. Where `to_eval_qa_json_lines` had:
+```json 
+{"question": <user_message>, "answer": <assistant_message>}
+```
+`to_eval_qr_json_lines` now has:
+```json 
+{"query": <user_message>, "response": assistant_message}
+```
+
+
+### Bugs Fixed
+- Non adversarial simulator works with `gpt-4o` models using the `json_schema` response format
+- Fixed an issue where the `evaluate` API would fail with "[WinError 32] The process cannot access the file because it is being used by another process" when venv folder and target function file are in the same directory.
+- Fix evaluate API failure when `trace.destination` is set to `none`
+
+### Other Changes
+- Improved error messages for the `evaluate` API by enhancing the validation of input parameters. This update provides more detailed and actionable error descriptions.
+- To align with our support of a diverse set of models, the following evaluators will now have a new key in their result output without the `gpt_` prefix. To maintain backwards compatibility, the old key with the `gpt_` prefix will still be present in the output; however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
+  - `CoherenceEvaluator`
+  - `RelevanceEvaluator`
+  - `FluencyEvaluator`
+  - `GroundednessEvaluator`
+  - `SimilarityEvaluator`
+  - `RetrievalEvaluator`
+
+## 1.0.0b4 (2024-10-16)
+
+### Breaking Changes
 
 - Removed `numpy` dependency. All NaN values returned by the SDK have been changed to from `numpy.nan` to `math.nan`.
-- `credential` is now required to be passed in for all content safety evaluators and `ProtectedMaterialsEvaluator`. `DefaultAzureCredential` will no longer be chosen if a credential is not passed. 
+- `credential` is now required to be passed in for all content safety evaluators and `ProtectedMaterialsEvaluator`. `DefaultAzureCredential` will no longer be chosen if a credential is not passed.
+- Changed package extra name from "pf-azure" to "remote".
 
 ### Bugs Fixed
 - Adversarial Conversation simulations would fail with `Forbidden`. Added logic to re-fetch token in the exponential retry logic to retrive RAI Service response.
+- Fixed an issue where the Evaluate API did not fail due to missing inputs when the target did not return columns required by the evaluators.
 
 ### Other Changes
+- Enhance the error message to provide clearer instruction when required packages for the remote tracking feature are missing.
+- Print the per-evaluator run summary at the end of the Evaluate API call to make troubleshooting row-level failures easier.
 
 ## 1.0.0b3 (2024-10-01)
 
@@ -90,7 +124,7 @@ If `api_key` is not included in the `model_config`, the prompty runtime in `prom
 
 ### Bugs Fixed
 
-- Fixed issue where Entra ID authentication was not working with `AzureOpenAIModelConfiguration` 
+- Fixed issue where Entra ID authentication was not working with `AzureOpenAIModelConfiguration`
 
 ## 1.0.0b2 (2024-09-24)
 
@@ -103,9 +137,9 @@ If `api_key` is not included in the `model_config`, the prompty runtime in `prom
 ### Breaking Changes
 
 - The `synthetic` namespace has been renamed to `simulator`, and sub-namespaces under this module have been removed
-- The `evaluate` and `evaluators` namespaces have been removed, and everything previously exposed in those modules has been added to the root namespace `azure.ai.evaluation`  
+- The `evaluate` and `evaluators` namespaces have been removed, and everything previously exposed in those modules has been added to the root namespace `azure.ai.evaluation`
 - The parameter name `project_scope` in content safety evaluators have been renamed to `azure_ai_project` for consistency with evaluate API and simulators.
-- Model configurations classes are now of type `TypedDict` and are exposed in the `azure.ai.evaluation` module instead of coming from `promptflow.core`.  
+- Model configurations classes are now of type `TypedDict` and are exposed in the `azure.ai.evaluation` module instead of coming from `promptflow.core`.
 - Updated the parameter names for `question` and `answer` in built-in evaluators to more generic terms: `query` and `response`.
 
 ### Features Added

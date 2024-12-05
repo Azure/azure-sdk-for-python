@@ -8,10 +8,10 @@ import pytest
 from devtools_testutils import is_live
 from promptflow.tracing import _start_trace
 
+from azure.ai.evaluation import F1ScoreEvaluator
 from azure.ai.evaluation._evaluate import _utils as ev_utils
 from azure.ai.evaluation._evaluate._eval_run import EvalRun
 from azure.ai.evaluation._evaluate._evaluate import evaluate
-from azure.ai.evaluation import F1ScoreEvaluator
 
 
 @pytest.fixture

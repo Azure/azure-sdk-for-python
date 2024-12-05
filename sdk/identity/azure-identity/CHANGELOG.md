@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `subscription` parameter to `AzureCliCredential` to specify the subscription to use when authenticating with the Azure CLI. ([#37994](https://github.com/Azure/azure-sdk-for-python/pull/37994))
+
 ### Breaking Changes
 
 ### Bugs Fixed

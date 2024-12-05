@@ -31,7 +31,7 @@ async def authentication_maps_service_client_with_subscription_key_credential_as
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.route.aio import MapsRouteClient
 
-    subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+    subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
     maps_route_client = MapsRouteClient(credential=AzureKeyCredential(subscription_key))
     # [END create_maps_route_service_client_with_key_async]
@@ -51,7 +51,7 @@ async def authentication_maps_service_client_with_aad_credential_async():
     from azure.maps.route.aio import MapsRouteClient
 
     credential = DefaultAzureCredential()
-    maps_client_id = os.getenv("AZURE_MAPS_CLIENT_ID")
+    maps_client_id = os.getenv("AZURE_MAPS_CLIENT_ID", "your maps client id")
 
     maps_route_client = MapsRouteClient(client_id=maps_client_id, credential=credential)
     # [END create_maps_route_service_client_with_aad_async]

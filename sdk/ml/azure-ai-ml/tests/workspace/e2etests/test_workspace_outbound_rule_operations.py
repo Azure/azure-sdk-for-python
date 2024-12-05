@@ -7,14 +7,14 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml import MLClient, load_workspace
-from azure.ai.ml.entities._workspace.workspace import Workspace
+from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory
 from azure.ai.ml.entities._workspace.networking import (
     FqdnDestination,
     ManagedNetwork,
     PrivateEndpointDestination,
     ServiceTagDestination,
 )
-from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory
+from azure.ai.ml.entities._workspace.workspace import Workspace
 from azure.core.polling import LROPoller
 
 
@@ -100,8 +100,8 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         assert "applicationGateways/mvnettestappgw" in app_gw_pe_rule.service_resource_id
         assert app_gw_pe_rule.spark_enabled == False
         assert app_gw_pe_rule.subresource_target == "appGwPrivateFrontendIpIPv4"
-        assert "contoso.com" in app_gw_pe_rule.fqdns
-        assert "contoso2.com" in app_gw_pe_rule.fqdns
+        assert "test.1.fake.com" in app_gw_pe_rule.fqdns
+        assert "test.2.fake.com" in app_gw_pe_rule.fqdns
 
         # test adding outbound rules with workspace update from yaml
         params_override = [

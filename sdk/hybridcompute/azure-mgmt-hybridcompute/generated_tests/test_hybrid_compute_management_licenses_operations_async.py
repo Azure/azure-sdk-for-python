@@ -21,6 +21,46 @@ class TestHybridComputeManagementLicensesOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
+    async def test_begin_validate_license(self, resource_group):
+        response = await (
+            await self.client.licenses.begin_validate_license(
+                parameters={
+                    "location": "str",
+                    "id": "str",
+                    "licenseDetails": {
+                        "assignedLicenses": 0,
+                        "edition": "str",
+                        "immutableId": "str",
+                        "processors": 0,
+                        "state": "str",
+                        "target": "str",
+                        "type": "str",
+                        "volumeLicenseDetails": [{"invoiceId": "str", "programYear": "str"}],
+                    },
+                    "licenseType": "str",
+                    "name": "str",
+                    "provisioningState": "str",
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
+                    "tags": {"str": "str"},
+                    "tenantId": "str",
+                    "type": "str",
+                },
+                api_version="2024-07-10",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
     async def test_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.licenses.begin_create_or_update(
@@ -54,7 +94,7 @@ class TestHybridComputeManagementLicensesOperationsAsync(AzureMgmtRecordedTestCa
                     "tenantId": "str",
                     "type": "str",
                 },
-                api_version="2024-05-20-preview",
+                api_version="2024-07-10",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -77,7 +117,7 @@ class TestHybridComputeManagementLicensesOperationsAsync(AzureMgmtRecordedTestCa
                     "target": "str",
                     "type": "str",
                 },
-                api_version="2024-05-20-preview",
+                api_version="2024-07-10",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -90,7 +130,7 @@ class TestHybridComputeManagementLicensesOperationsAsync(AzureMgmtRecordedTestCa
         response = await self.client.licenses.get(
             resource_group_name=resource_group.name,
             license_name="str",
-            api_version="2024-05-20-preview",
+            api_version="2024-07-10",
         )
 
         # please add some check logic here by yourself
@@ -103,7 +143,7 @@ class TestHybridComputeManagementLicensesOperationsAsync(AzureMgmtRecordedTestCa
             await self.client.licenses.begin_delete(
                 resource_group_name=resource_group.name,
                 license_name="str",
-                api_version="2024-05-20-preview",
+                api_version="2024-07-10",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -115,7 +155,7 @@ class TestHybridComputeManagementLicensesOperationsAsync(AzureMgmtRecordedTestCa
     async def test_list_by_resource_group(self, resource_group):
         response = self.client.licenses.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-05-20-preview",
+            api_version="2024-07-10",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -125,7 +165,7 @@ class TestHybridComputeManagementLicensesOperationsAsync(AzureMgmtRecordedTestCa
     @recorded_by_proxy_async
     async def test_list_by_subscription(self, resource_group):
         response = self.client.licenses.list_by_subscription(
-            api_version="2024-05-20-preview",
+            api_version="2024-07-10",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

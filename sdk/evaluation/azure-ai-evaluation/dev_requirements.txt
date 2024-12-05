@@ -6,4 +6,4 @@ pytest-asyncio
 pytest-cov
 pytest-mock
 pytest-xdist
--e ../azure-ai-evaluation[pf-azure]
+-e ../azure-ai-evaluation[remote]

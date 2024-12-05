@@ -72,10 +72,9 @@ setup(
         "azure-identity>=1.16.0",
         "azure-core>=1.30.2",
         "nltk>=3.9.1",
-        "rouge-score>=0.1.2",
     ],
     extras_require={
-        "pf-azure": [
+        "remote": [
             "promptflow-azure<2.0.0,>=1.15.0",
         ],
     },

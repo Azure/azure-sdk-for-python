@@ -320,7 +320,7 @@ class ShareClient(StorageAccountHostsMixin):
             The quota to be allotted.
         :keyword access_tier:
             Specifies the access tier of the share.
-            Possible values: 'TransactionOptimized', 'Hot', 'Cool'
+            Possible values: 'TransactionOptimized', 'Hot', 'Cool', 'Premium'
         :paramtype access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
 
             .. versionadded:: 12.4.0
@@ -341,6 +341,8 @@ class ShareClient(StorageAccountHostsMixin):
         :keyword bool paid_bursting_enabled: This property enables paid bursting.
         :keyword int paid_bursting_bandwidth_mibps: The maximum throughput the file share can support in MiB/s.
         :keyword int paid_bursting_iops: The maximum IOPS the file share can support.
+        :keyword int provisioned_iops: The provisioned IOPS of the share, stored on the share object.
+        :keyword int provisioned_bandwidth_mibps: The provisioned throughput of the share, stored on the share object.
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
 
@@ -361,6 +363,8 @@ class ShareClient(StorageAccountHostsMixin):
         protocols = kwargs.pop('protocols', None)
         paid_bursting_bandwidth_mibps = kwargs.pop('paid_bursting_bandwidth_mibps', None)
         paid_bursting_iops = kwargs.pop('paid_bursting_iops', None)
+        share_provisioned_iops = kwargs.pop('provisioned_iops', None)
+        share_provisioned_bandwidth_mibps = kwargs.pop('provisioned_bandwidth_mibps', None)
         if protocols and protocols not in ['NFS', 'SMB', ShareProtocols.SMB, ShareProtocols.NFS]:
             raise ValueError("The enabled protocol must be set to either SMB or NFS.")
         if root_squash and protocols not in ['NFS', ShareProtocols.NFS]:
@@ -378,6 +382,8 @@ class ShareClient(StorageAccountHostsMixin):
                 enabled_protocols=protocols,
                 paid_bursting_max_bandwidth_mibps=paid_bursting_bandwidth_mibps,
                 paid_bursting_max_iops=paid_bursting_iops,
+                share_provisioned_iops=share_provisioned_iops,
+                share_provisioned_bandwidth_mibps=share_provisioned_bandwidth_mibps,
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs))
@@ -589,7 +595,7 @@ class ShareClient(StorageAccountHostsMixin):
 
         :keyword access_tier:
             Specifies the access tier of the share.
-            Possible values: 'TransactionOptimized', 'Hot', and 'Cool'
+            Possible values: 'TransactionOptimized', 'Hot', 'Cool', 'Premium'
         :paramtype access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
         :keyword int quota:
             Specifies the maximum size of the share, in gigabytes.
@@ -610,6 +616,8 @@ class ShareClient(StorageAccountHostsMixin):
         :keyword bool paid_bursting_enabled: This property enables paid bursting.
         :keyword int paid_bursting_bandwidth_mibps: The maximum throughput the file share can support in MiB/s.
         :keyword int paid_bursting_iops: The maximum IOPS the file share can support.
+        :keyword int provisioned_iops: The provisioned IOPS of the share, stored on the share object.
+        :keyword int provisioned_bandwidth_mibps: The provisioned throughput of the share, stored on the share object.
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
 
@@ -629,6 +637,8 @@ class ShareClient(StorageAccountHostsMixin):
         root_squash = kwargs.pop('root_squash', None)
         paid_bursting_bandwidth_mibps = kwargs.pop('paid_bursting_bandwidth_mibps', None)
         paid_bursting_iops = kwargs.pop('paid_bursting_iops', None)
+        share_provisioned_iops = kwargs.pop('provisioned_iops', None)
+        share_provisioned_bandwidth_mibps = kwargs.pop('provisioned_bandwidth_mibps', None)
         if all(parameter is None for parameter in [access_tier, quota, root_squash]):
             raise ValueError("set_share_properties should be called with at least one parameter.")
         try:
@@ -640,6 +650,8 @@ class ShareClient(StorageAccountHostsMixin):
                 lease_access_conditions=access_conditions,
                 paid_bursting_max_bandwidth_mibps=paid_bursting_bandwidth_mibps,
                 paid_bursting_max_iops=paid_bursting_iops,
+                share_provisioned_iops=share_provisioned_iops,
+                share_provisioned_bandwidth_mibps=share_provisioned_bandwidth_mibps,
                 cls=return_response_headers,
                 **kwargs))
         except HttpResponseError as error:

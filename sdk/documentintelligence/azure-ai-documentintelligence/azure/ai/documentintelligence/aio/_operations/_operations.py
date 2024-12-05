@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,21 +9,7 @@
 from io import IOBase
 import json
 import sys
-from typing import (
-    Any,
-    AsyncIterable,
-    AsyncIterator,
-    Callable,
-    Dict,
-    IO,
-    List,
-    Optional,
-    Type,
-    TypeVar,
-    Union,
-    cast,
-    overload,
-)
+from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -75,7 +61,7 @@ from .._vendor import DocumentIntelligenceAdministrationClientMixinABC, Document
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -97,7 +83,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -452,7 +438,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -809,7 +795,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -877,7 +863,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -940,7 +926,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         pages: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1214,7 +1200,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
     async def _build_document_model_initial(
         self, build_request: Union[_models.BuildDocumentModelRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1404,7 +1390,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
     async def _compose_model_initial(
         self, compose_request: Union[_models.ComposeDocumentModelRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1665,7 +1651,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype: ~azure.ai.documentintelligence.models.CopyAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1728,7 +1714,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
     async def _copy_model_to_initial(
         self, model_id: str, copy_to_request: Union[_models.CopyAuthorization, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1940,7 +1926,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype: ~azure.ai.documentintelligence.models.DocumentModelDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2010,7 +1996,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         cls: ClsType[List[_models.DocumentModelDetails]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2081,9 +2067,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def delete_model(  # pylint: disable=inconsistent-return-statements
-        self, model_id: str, **kwargs: Any
-    ) -> None:
+    async def delete_model(self, model_id: str, **kwargs: Any) -> None:
         """Deletes document model.
 
         :param model_id: Unique document model name. Required.
@@ -2092,7 +2076,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2144,7 +2128,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype: ~azure.ai.documentintelligence.models.ResourceDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2204,7 +2188,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype: ~azure.ai.documentintelligence.models.OperationDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2274,7 +2258,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         cls: ClsType[List[_models.OperationDetails]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2347,7 +2331,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
     async def _build_classifier_initial(
         self, build_request: Union[_models.BuildDocumentClassifierRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2613,7 +2597,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype: ~azure.ai.documentintelligence.models.ClassifierCopyAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2679,7 +2663,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         copy_to_request: Union[_models.ClassifierCopyAuthorization, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2895,7 +2879,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype: ~azure.ai.documentintelligence.models.DocumentClassifierDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2965,7 +2949,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         cls: ClsType[List[_models.DocumentClassifierDetails]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3036,9 +3020,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def delete_classifier(  # pylint: disable=inconsistent-return-statements
-        self, classifier_id: str, **kwargs: Any
-    ) -> None:
+    async def delete_classifier(self, classifier_id: str, **kwargs: Any) -> None:
         """Deletes document classifier.
 
         :param classifier_id: Unique document classifier name. Required.
@@ -3047,7 +3029,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

@@ -22,5 +22,4 @@ __all__ = [
     "DocumentIntelligenceAdministrationClient",
 ]
 
-
 _patch_sdk()

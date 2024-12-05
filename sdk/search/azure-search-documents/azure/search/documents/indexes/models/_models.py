@@ -805,6 +805,11 @@ class SearchResourceEncryptionKey(_serialization.Model):
     :vartype application_id: str
     :ivar application_secret: The authentication key of the specified AAD application.
     :vartype application_secret: str
+    :ivar identity: An explicit managed identity to use for this encryption key. If not specified
+     and the access credentials property is null, the system-assigned managed identity is used. On
+     update to the resource, if the explicit identity is unspecified, it remains unchanged. If
+     "none" is specified, the value of this property is cleared.
+    :vartype identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
     """
 
     def __init__(
@@ -815,6 +820,7 @@ class SearchResourceEncryptionKey(_serialization.Model):
         vault_uri: str,
         application_id: Optional[str] = None,
         application_secret: Optional[str] = None,
+        identity: Optional[SearchIndexerDataIdentity] = None,
         **kwargs
     ):
         super().__init__(**kwargs)
@@ -823,6 +829,7 @@ class SearchResourceEncryptionKey(_serialization.Model):
         self.vault_uri = vault_uri
         self.application_id = application_id
         self.application_secret = application_secret
+        self.identity = identity
 
     def _to_generated(self):
         if self.application_id and self.application_secret:
@@ -837,6 +844,7 @@ class SearchResourceEncryptionKey(_serialization.Model):
             key_version=self.key_version,
             vault_uri=self.vault_uri,
             access_credentials=access_credentials,
+            identity=self.identity,
         )
 
     @classmethod
@@ -855,6 +863,7 @@ class SearchResourceEncryptionKey(_serialization.Model):
             vault_uri=search_resource_encryption_key.vault_uri,
             application_id=application_id,
             application_secret=application_secret,
+            identity=search_resource_encryption_key.identity,
         )
 
     def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:

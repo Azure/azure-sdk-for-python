@@ -27,14 +27,12 @@ from azure.mgmt.resource import PolicyClient
 def main():
     client = PolicyClient(
         credential=DefaultAzureCredential(),
-        policy_definition_name="ResourceNaming",
-        policy_definition_version="POLICY_DEFINITION_VERSION",
-        policy_set_definition_name="POLICY_SET_DEFINITION_NAME",
         subscription_id="SUBSCRIPTION_ID",
     )
 
     response = client.policy_definition_versions.list_by_management_group(
         management_group_name="MyManagementGroup",
+        policy_definition_name="ResourceNaming",
     )
     for item in response:
         print(item)

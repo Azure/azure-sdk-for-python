@@ -15,7 +15,7 @@ from ._client import (
 from ._operations._patch import AnalyzeDocumentLROPoller
 
 
-class DocumentIntelligenceClient(DIClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
+class DocumentIntelligenceClient(DIClientGenerated):
     """DocumentIntelligenceClient.
 
     :param endpoint: The Document Intelligence service endpoint. Required.
@@ -48,9 +48,7 @@ class DocumentIntelligenceClient(DIClientGenerated):  # pylint: disable=client-a
         )
 
 
-class DocumentIntelligenceAdministrationClient(
-    DIAClientGenerated
-):  # pylint: disable=client-accepts-api-version-keyword
+class DocumentIntelligenceAdministrationClient(DIAClientGenerated):
     """DocumentIntelligenceAdministrationClient.
 
     :param endpoint: The Document Intelligence service endpoint. Required.

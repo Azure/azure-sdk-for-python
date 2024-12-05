@@ -524,7 +524,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: An iterable (auto-paging) response of PathProperties.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.PathProperties]
+        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.storage.filedatalake.PathProperties]
 
         .. admonition:: Example:
 
