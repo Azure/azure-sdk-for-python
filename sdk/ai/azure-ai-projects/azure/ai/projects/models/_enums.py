@@ -303,6 +303,14 @@ class MessageStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Event sent before a message is completed. The data of this event is of type ThreadMessage"""
 
 
+class OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of chunking strategy."""
+
+    ANONYMOUS = "anonymous"
+    CONNECTION = "connection"
+    MANAGED_IDENTITY = "managed_identity"
+
+
 class RunStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Possible values for the status of an agent thread run."""
 
