@@ -66,7 +66,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
 ):  # pylint: disable=name-too-long
     @distributed_trace_async
     async def begin_build_classifier(  # type: ignore[override]
-        self, build_request: Union[_models.BuildDocumentClassifierRequest, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.BuildDocumentClassifierRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentClassifierDetails]:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -78,7 +78,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._build_classifier_initial(
-                build_request=build_request,
+                body=body,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -127,7 +127,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
 
     @distributed_trace_async
     async def begin_build_document_model(  # type: ignore[override]
-        self, build_request: Union[_models.BuildDocumentModelRequest, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.BuildDocumentModelRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentModelDetails]:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -139,7 +139,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._build_document_model_initial(
-                build_request=build_request,
+                body=body,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -188,7 +188,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
 
     @distributed_trace_async
     async def begin_compose_model(  # type: ignore[override]
-        self, compose_request: Union[_models.ComposeDocumentModelRequest, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.ComposeDocumentModelRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentModelDetails]:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -200,7 +200,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._compose_model_initial(
-                compose_request=compose_request,
+                body=body,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -249,7 +249,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
 
     @distributed_trace_async
     async def begin_copy_model_to(  # type: ignore[override]
-        self, model_id: str, copy_to_request: Union[_models.ModelCopyAuthorization, JSON, IO[bytes]], **kwargs: Any
+        self, model_id: str, body: Union[_models.ModelCopyAuthorization, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentModelDetails]:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -262,7 +262,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
         if cont_token is None:
             raw_result = await self._copy_model_to_initial(
                 model_id=model_id,
-                copy_to_request=copy_to_request,
+                body=body,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
