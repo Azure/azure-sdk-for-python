@@ -400,7 +400,7 @@ def build_agents_update_message_request(thread_id: str, message_id: str, **kwarg
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_create_run_request(thread_id: str, **kwargs: Any) -> HttpRequest:
+def build_agents_create_run_request(thread_id: str, *, include: List[str], **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -418,6 +418,7 @@ def build_agents_create_run_request(thread_id: str, **kwargs: Any) -> HttpReques
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["include"] = _SERIALIZER.query("include", include, "[str]", div=",")
 
     # Construct headers
     if content_type is not None:
@@ -597,7 +598,14 @@ def build_agents_create_thread_and_run_request(**kwargs: Any) -> HttpRequest:  #
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_get_run_step_request(thread_id: str, run_id: str, step_id: str, **kwargs: Any) -> HttpRequest:
+def build_agents_get_run_step_request(
+    thread_id: str,
+    run_id: str,
+    step_id: str,
+    *,
+    include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -616,6 +624,8 @@ def build_agents_get_run_step_request(thread_id: str, run_id: str, step_id: str,
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if include is not None:
+        _params["include"] = _SERIALIZER.query("include", include, "[str]", div=",")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -627,6 +637,7 @@ def build_agents_list_run_steps_request(
     thread_id: str,
     run_id: str,
     *,
+    include: List[str],
     limit: Optional[int] = None,
     order: Optional[Union[str, _models.ListSortOrder]] = None,
     after: Optional[str] = None,
@@ -650,6 +661,7 @@ def build_agents_list_run_steps_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["include"] = _SERIALIZER.query("include", include, "[str]", div=",")
     if limit is not None:
         _params["limit"] = _SERIALIZER.query("limit", limit, "int")
     if order is not None:
@@ -3209,7 +3221,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def create_run(
-        self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, thread_id: str, body: JSON, *, include: List[str], content_type: str = "application/json", **kwargs: Any
     ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
 
@@ -3217,6 +3229,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type thread_id: str
         :param body: Required.
         :type body: JSON
+        :keyword include: A list of additional fields to include in the response.
+         Currently the only supported value is
+         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
+         content. Required.
+        :paramtype include: list[str]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3230,6 +3247,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         self,
         thread_id: str,
         *,
+        include: List[str],
         assistant_id: str,
         content_type: str = "application/json",
         model: Optional[str] = None,
@@ -3253,6 +3271,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
+        :keyword include: A list of additional fields to include in the response.
+         Currently the only supported value is
+         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
+         content. Required.
+        :paramtype include: list[str]
         :keyword assistant_id: The ID of the agent that should run the thread. Required.
         :paramtype assistant_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -3333,7 +3356,13 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def create_run(
-        self, thread_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        thread_id: str,
+        body: IO[bytes],
+        *,
+        include: List[str],
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
 
@@ -3341,6 +3370,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type thread_id: str
         :param body: Required.
         :type body: IO[bytes]
+        :keyword include: A list of additional fields to include in the response.
+         Currently the only supported value is
+         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
+         content. Required.
+        :paramtype include: list[str]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3355,6 +3389,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         thread_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
+        include: List[str],
         assistant_id: str = _Unset,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
@@ -3379,6 +3414,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type thread_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
+        :keyword include: A list of additional fields to include in the response.
+         Currently the only supported value is
+         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
+         content. Required.
+        :paramtype include: list[str]
         :keyword assistant_id: The ID of the agent that should run the thread. Required.
         :paramtype assistant_id: str
         :keyword model: The overridden model name that the agent should use to run the thread. Default
@@ -3498,6 +3538,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_agents_create_run_request(
             thread_id=thread_id,
+            include=include,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4434,7 +4475,15 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_run_step(self, thread_id: str, run_id: str, step_id: str, **kwargs: Any) -> _models.RunStep:
+    def get_run_step(
+        self,
+        thread_id: str,
+        run_id: str,
+        step_id: str,
+        *,
+        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
+        **kwargs: Any
+    ) -> _models.RunStep:
         """Gets a single run step from a thread run.
 
         :param thread_id: Identifier of the thread. Required.
@@ -4443,6 +4492,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type run_id: str
         :param step_id: Identifier of the run step. Required.
         :type step_id: str
+        :keyword include: A list of additional fields to include in the response.
+         Currently the only supported value is
+         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
+         content. Default value is None.
+        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
         :return: RunStep. The RunStep is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.RunStep
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4464,6 +4518,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             thread_id=thread_id,
             run_id=run_id,
             step_id=step_id,
+            include=include,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4510,6 +4565,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         thread_id: str,
         run_id: str,
         *,
+        include: List[str],
         limit: Optional[int] = None,
         order: Optional[Union[str, _models.ListSortOrder]] = None,
         after: Optional[str] = None,
@@ -4522,6 +4578,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type thread_id: str
         :param run_id: Identifier of the run. Required.
         :type run_id: str
+        :keyword include: A list of additional fields to include in the response.
+         Currently the only supported value is
+         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
+         content. Required.
+        :paramtype include: list[str]
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the default is 20. Default value is None.
         :paramtype limit: int
@@ -4559,6 +4620,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _request = build_agents_list_run_steps_request(
             thread_id=thread_id,
             run_id=run_id,
+            include=include,
             limit=limit,
             order=order,
             after=after,

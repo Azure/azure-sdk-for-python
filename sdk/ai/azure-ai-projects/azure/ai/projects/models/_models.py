@@ -191,19 +191,20 @@ class AgentsApiResponseFormat(_model_base.Model):
     type ``tools`` are allowed to be passed to the Run.
     If ``text`` the model can return text or any value needed.
 
-    :ivar type: Must be one of ``text`` or ``json_object``. Known values are: "text" and
-     "json_object".
-    :vartype type: str or ~azure.ai.projects.models.ApiResponseFormat
+    :ivar type: Must be one of ``text`` or ``json_object``. Is one of the following types: str,
+     Literal["text"], Literal["json_object"], ResponseFormatJsonSchema
+    :vartype type: str or str or str or ~azure.ai.projects.models.ResponseFormatJsonSchema
     """
 
-    type: Optional[Union[str, "_models.ApiResponseFormat"]] = rest_field()
-    """Must be one of ``text`` or ``json_object``. Known values are: \"text\" and \"json_object\"."""
+    type: Optional["_types.ResponseFormat"] = rest_field()
+    """Must be one of ``text`` or ``json_object``. Is one of the following types: str,
+     Literal[\"text\"], Literal[\"json_object\"], ResponseFormatJsonSchema"""
 
     @overload
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "_models.ApiResponseFormat"]] = None,
+        type: Optional["_types.ResponseFormat"] = None,
     ) -> None: ...
 
     @overload
@@ -1089,6 +1090,42 @@ class FileSearchRankingOptions(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class FileSearchToolCallContent(_model_base.Model):
+    """The file search result content object.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar type: The type of the content. Required. Default value is "text".
+    :vartype type: str
+    :ivar text: The text content of the file. Required.
+    :vartype text: str
+    """
+
+    type: Literal["text"] = rest_field()
+    """The type of the content. Required. Default value is \"text\"."""
+    text: str = rest_field()
+    """The text content of the file. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["text"] = "text"
 
 
 class FileSearchToolDefinition(ToolDefinition, discriminator="file_search"):
@@ -3114,6 +3151,48 @@ class RequiredFunctionToolCallDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class ResponseFormatJsonSchema(_model_base.Model):
+    """A description of what the response format is for, used by the model to determine how to respond
+    in the format.
+
+
+    :ivar description: A description of what the response format is for, used by the model to
+     determine how to respond in the format.
+    :vartype description: str
+    :ivar name: The name of a schema. Required.
+    :vartype name: str
+    :ivar schema: The JSON schema object, describing the response format. Required.
+    :vartype schema: any
+    """
+
+    description: Optional[str] = rest_field()
+    """A description of what the response format is for, used by the model to determine how to respond
+     in the format."""
+    name: str = rest_field()
+    """The name of a schema. Required."""
+    schema: Any = rest_field()
+    """The JSON schema object, describing the response format. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        schema: Any,
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class RunCompletionUsage(_model_base.Model):
     """Usage statistics related to the run. This value will be ``null`` if the run is not in a
     terminal state (i.e. ``in_progress``\\ , ``queued``\\ , etc.).
@@ -4357,21 +4436,21 @@ class RunStepFileSearchToolCall(RunStepToolCall, discriminator="file_search"):
     :ivar type: The object type, which is always 'file_search'. Required. Default value is
      "file_search".
     :vartype type: str
-    :ivar file_search: Reserved for future use. Required.
-    :vartype file_search: dict[str, str]
+    :ivar file_search: The results of the file search. Required.
+    :vartype file_search: list[~azure.ai.projects.models.RunStepFileSearchToolCallResults]
     """
 
     type: Literal["file_search"] = rest_discriminator(name="type")  # type: ignore
     """The object type, which is always 'file_search'. Required. Default value is \"file_search\"."""
-    file_search: Dict[str, str] = rest_field()
-    """Reserved for future use. Required."""
+    file_search: List["_models.RunStepFileSearchToolCallResults"] = rest_field()
+    """The results of the file search. Required."""
 
     @overload
     def __init__(
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        file_search: Dict[str, str],
+        file_search: List["_models.RunStepFileSearchToolCallResults"],
     ) -> None: ...
 
     @overload
@@ -4383,6 +4462,53 @@ class RunStepFileSearchToolCall(RunStepToolCall, discriminator="file_search"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type="file_search", **kwargs)
+
+
+class RunStepFileSearchToolCallResults(_model_base.Model):
+    """File search tool call result.
+
+
+    :ivar file_id: The ID of the file that result was found in. Required.
+    :vartype file_id: str
+    :ivar file_name: The name of the file that result was found in. Required.
+    :vartype file_name: str
+    :ivar score: The score of the result. All values must be a floating point number between 0 and
+     1. Required.
+    :vartype score: float
+    :ivar content: The content of the result that was found. The content is only included if
+     requested via the include query parameter.
+    :vartype content: list[~azure.ai.projects.models.FileSearchToolCallContent]
+    """
+
+    file_id: str = rest_field()
+    """The ID of the file that result was found in. Required."""
+    file_name: str = rest_field()
+    """The name of the file that result was found in. Required."""
+    score: float = rest_field()
+    """The score of the result. All values must be a floating point number between 0 and 1. Required."""
+    content: Optional[List["_models.FileSearchToolCallContent"]] = rest_field()
+    """The content of the result that was found. The content is only included if requested via the
+     include query parameter."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        file_id: str,
+        file_name: str,
+        score: float,
+        content: Optional[List["_models.FileSearchToolCallContent"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class RunStepFunctionToolCall(RunStepToolCall, discriminator="function"):
@@ -6132,7 +6258,7 @@ class VectorStoreFileError(_model_base.Model):
 
 
     :ivar code: One of ``server_error`` or ``rate_limit_exceeded``. Required. Known values are:
-     "internal_error", "file_not_found", "parsing_error", and "unhandled_mime_type".
+     "server_error", "invalid_file", and "unsupported_file".
     :vartype code: str or ~azure.ai.projects.models.VectorStoreFileErrorCode
     :ivar message: A human-readable description of the error. Required.
     :vartype message: str
@@ -6140,7 +6266,7 @@ class VectorStoreFileError(_model_base.Model):
 
     code: Union[str, "_models.VectorStoreFileErrorCode"] = rest_field()
     """One of ``server_error`` or ``rate_limit_exceeded``. Required. Known values are:
-     \"internal_error\", \"file_not_found\", \"parsing_error\", and \"unhandled_mime_type\"."""
+     \"server_error\", \"invalid_file\", and \"unsupported_file\"."""
     message: str = rest_field()
     """A human-readable description of the error. Required."""
 
