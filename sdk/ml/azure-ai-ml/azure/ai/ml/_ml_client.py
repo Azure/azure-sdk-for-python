@@ -44,7 +44,7 @@ from azure.ai.ml._restclient.workspace_dataplane import (
     AzureMachineLearningWorkspaces as ServiceClientWorkspaceDataplane,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
-from azure.ai.ml._telemetry.logging_handler import set_appinsights_distro
+from azure.ai.ml._telemetry.logging_handler import configure_appinsights_logging
 from azure.ai.ml._user_agent import USER_AGENT
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._http_utils import HttpPipeline
@@ -282,7 +282,7 @@ class MLClient:
 
         user_agent = kwargs.get("user_agent", None)
 
-        set_appinsights_distro(
+        configure_appinsights_logging(
             user_agent,
             **{"properties": properties},
             enable_telemetry=self._operation_config.enable_telemetry,

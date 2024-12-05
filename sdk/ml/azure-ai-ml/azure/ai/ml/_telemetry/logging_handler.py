@@ -79,6 +79,15 @@ def in_jupyter_notebook() -> bool:
 
 
 def setup_azure_monitor(connection_string=None) -> None:
+    """
+    Set up Azure Monitor distro.
+
+    This function sets up Azure Monitor using the provided connection string and specified logger name.
+
+    :param connection_string: The Application Insights connection string.
+    :type connection_string: str
+    :return: None
+    """
     from azure.monitor.opentelemetry import configure_azure_monitor
 
     configure_azure_monitor(
@@ -88,9 +97,8 @@ def setup_azure_monitor(connection_string=None) -> None:
 
 
 # cspell:ignore overriden
-def set_appinsights_distro(
+def configure_appinsights_logging(
     user_agent,
-    *args,  # pylint: disable=unused-argument
     connection_string=None,
     enable_telemetry=True,
     **kwargs: Any,
@@ -99,12 +107,10 @@ def set_appinsights_distro(
 
     :param user_agent: Information about the user's browser.
     :type user_agent: Dict[str, str]
-    :param args: Optional arguments for formatting messages.
-    :type args: list
-    :keyword connection_string: The Application Insights connection string.
-    :paramtype connection_string: str
-    :keyword enable_telemetry: Whether to enable telemetry. Will be overriden to False if not in a Jupyter Notebook.
-    :paramtype enable_telemetry: bool
+    :param connection_string: The Application Insights connection string.
+    :type connection_string: str
+    :param enable_telemetry: Whether to enable telemetry. Will be overriden to False if not in a Jupyter Notebook.
+    :type enable_telemetry: bool
     :return: None
     """
     try:

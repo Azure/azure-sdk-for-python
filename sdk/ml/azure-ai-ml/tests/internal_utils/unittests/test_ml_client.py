@@ -25,7 +25,7 @@ from azure.ai.ml import (
 )
 from azure.ai.ml._azure_environments import AzureEnvironments, _get_default_cloud_name
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml._telemetry import set_appinsights_distro
+from azure.ai.ml._telemetry import configure_appinsights_logging
 from azure.ai.ml._user_agent import USER_AGENT
 from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
 from azure.ai.ml.exceptions import ValidationException
@@ -553,7 +553,7 @@ class TestMachineLearningClient:
                 "subscription_id": subscription_id,
                 "resource_group_name": resource_group_name,
             }
-            set_appinsights_distro(USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry)
+            configure_appinsights_logging(USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry)
             assert enable_telemetry
             mock_setup_azure_monitor.assert_not_called()
 
@@ -563,7 +563,7 @@ class TestMachineLearningClient:
                 "subscription_id": subscription_id,
                 "resource_group_name": resource_group_name,
             }
-            set_appinsights_distro(USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry)
+            configure_appinsights_logging(USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry)
             assert enable_telemetry
             mock_setup_azure_monitor.assert_called_once()
             mock_setup_azure_monitor.reset_mock()
@@ -587,7 +587,7 @@ class TestMachineLearningClient:
                 "subscription_id": subscription_id,
                 "resource_group_name": resource_group_name,
             }
-            set_appinsights_distro(USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry)
+            configure_appinsights_logging(USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry)
             assert not enable_telemetry
             mock_setup_azure_monitor.assert_not_called()
 
@@ -597,6 +597,6 @@ class TestMachineLearningClient:
                 "subscription_id": subscription_id,
                 "resource_group_name": resource_group_name,
             }
-            set_appinsights_distro(USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry)
+            configure_appinsights_logging(USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry)
             assert not enable_telemetry
             mock_setup_azure_monitor.assert_not_called()
