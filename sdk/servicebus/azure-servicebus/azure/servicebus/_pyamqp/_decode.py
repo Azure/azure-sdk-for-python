@@ -229,10 +229,15 @@ def _decode_described(buffer: memoryview) -> Tuple[memoryview, object]:
 def decode_payload(buffer: memoryview) -> Message:
     message: Dict[str, Union[Properties, Header, Dict, bytes, List]] = {}
     while buffer:
+        _LOGGER.debug("Decoding payload: %r", buffer)
         # Ignore the first two bytes, they will always be the constructors for
         # described type then ulong.
         descriptor = buffer[2]
+        _LOGGER.debug("Descriptor: %r", descriptor)
+        _LOGGER.debug("Decode Buffer: %r", buffer[3])
+        _LOGGER.debug("Decode Buffer Value: %r", buffer[4:])
         buffer, value = _DECODE_BY_CONSTRUCTOR[buffer[3]](buffer[4:])
+        _LOGGER.debug("Value: %r", value)
         if descriptor == 112:
             message["header"] = Header(*value)
         elif descriptor == 113:
