@@ -32,4 +32,3 @@ class SlowEvaluator(EvaluatorBase[str]):
     async def _do_eval(self, eval_input: Dict) -> Dict[str, str]:
         time.sleep(0.5)
         return {"result": "done"}
-
