@@ -1183,7 +1183,7 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
         Iterates through all events until the stream is marked as done.
 
         Calls the provided callback function with each event data.
-        :param yield_callback: The callback tobe called on each event.
+        :param yield_callback: The callback to be called on each event.
         :type yield_callback: Callable[[str, StreamEventData], Awaitable[Optional[T]]]
         :return: The generator object.
         :rtype: AsyncGenerator[T, None]
@@ -1307,7 +1307,7 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData]]):
         Iterates through all events until the stream is marked as done.
 
         Calls the provided callback function with each event data.
-        :param yield_callback: The callback tobe called on each event.
+        :param yield_callback: The callback to be called on each event.
         :type yield_callback: Callable[[str, StreamEventData], Awaitable[Optional[T]]]
         :return: The generator object.
         :rtype: AsyncGenerator[T, None]
