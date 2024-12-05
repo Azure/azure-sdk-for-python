@@ -1387,11 +1387,11 @@ class ThreadMessages:
         ]
         return annotations
 
-    def get_last_message_by_sender(self, sender: str) -> Optional[ThreadMessage]:
+    def get_last_message_by_sender(self, role: MessageRole) -> Optional[ThreadMessage]:
         """Returns the last message from a sender in the specified role.
 
         :param role: The role of the sender.
-        :type sender: str
+        :type role: MessageRole
 
         :return: The last message from a sender in the specified role.
         :rtype: ~azure.ai.projects.models.ThreadMessage
@@ -1405,7 +1405,7 @@ class ThreadMessages:
         """Returns the last text message from a sender in the specified role.
 
         :param role: The role of the sender.
-        :type role: str
+        :type role: MessageRole
 
         :return: The last text message from a sender in the specified role.
         :rtype: ~azure.ai.projects.models.MessageTextContent

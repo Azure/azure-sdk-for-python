@@ -27,8 +27,11 @@ def pytest_collection_modifyitems(items):
             )
         if "tests\\evaluation" in item.fspath.strpath or "tests/evaluation" in item.fspath.strpath:
             item.add_marker(
-                pytest.mark.skip(reason="Skip running Evaluations tests in PR pipeline until we can sort out the failures related to AI Foundry project settings")
+                pytest.mark.skip(
+                    reason="Skip running Evaluations tests in PR pipeline until we can sort out the failures related to AI Foundry project settings"
+                )
             )
+
 
 class SanitizedValues:
     SUBSCRIPTION_ID = "00000000-0000-0000-0000-000000000000"
