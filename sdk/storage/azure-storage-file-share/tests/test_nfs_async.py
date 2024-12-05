@@ -158,7 +158,7 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
-    async def test_download_and_copy_file_nfs(self, **kwargs):
+    async def test_download_and_copy_file(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
 
         await self._setup(storage_account_name)
@@ -223,7 +223,7 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
         hard_link_file_name = self._get_file_name('file2')
         hard_link_file_client = directory_client.get_file_client(hard_link_file_name)
 
-        resp = await hard_link_file_client.create_hard_link(target_file=f"{directory_name}/{source_file_name}")
+        resp = await hard_link_file_client.create_hard_link(target=f"{directory_name}/{source_file_name}")
 
         assert resp is not None
         assert resp['file_file_type'] == 'Regular'
@@ -257,7 +257,7 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
         hard_link_file_client = directory_client.get_file_client(hard_link_file_name)
 
         with pytest.raises(ResourceNotFoundError) as e:
-            await hard_link_file_client.create_hard_link(target_file=source_file_client.url)
+            await hard_link_file_client.create_hard_link(target=source_file_client.url)
 
         assert 'ParentNotFound' in e.value.args[0]
 
