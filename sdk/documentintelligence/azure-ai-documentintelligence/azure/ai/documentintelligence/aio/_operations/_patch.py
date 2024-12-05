@@ -525,8 +525,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            content_type = None
-            if isinstance(analyze_request, io.BytesIO):
+            if content_type is not None and isinstance(analyze_request, io.BytesIO):
                 content_type = "application/octet-stream"
             raw_result = await self._analyze_document_initial(
                 model_id=model_id,
@@ -616,8 +615,9 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        content_type = None
-        if isinstance(classify_request, io.BytesIO):
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
+        if content_type is not None and isinstance(classify_request, io.BytesIO):
             content_type = "application/octet-stream"
         return await super().begin_classify_document(  # type: ignore[arg-type, misc]
             classifier_id=classifier_id,
