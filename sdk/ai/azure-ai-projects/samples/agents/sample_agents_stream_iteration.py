@@ -56,6 +56,7 @@ with project_client:
     message = project_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
     print(f"Created message, message ID {message.id}")
 
+    # [START iterate_stream]
     with project_client.agents.create_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
 
         for event_type, event_data in stream:
@@ -84,6 +85,7 @@ with project_client:
 
             else:
                 print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
+    # [END iterate_stream]
 
     project_client.agents.delete_agent(agent.id)
     print("Deleted agent")

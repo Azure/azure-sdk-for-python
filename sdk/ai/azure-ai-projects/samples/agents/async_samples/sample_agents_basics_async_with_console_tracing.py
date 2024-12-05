@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity opentelemetry-sdk azure-core-tracing-opentelemetry
+    pip install azure-ai-projects azure-identity opentelemetry-sdk azure-core-tracing-opentelemetry aiohttp
 
     If you want to export telemetry to OTLP endpoint (such as Aspire dashboard
     https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/standalone?tabs=bash)
