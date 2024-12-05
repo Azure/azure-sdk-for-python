@@ -61,6 +61,9 @@ from ._models import (
     MessageTextFilePathAnnotation,
     MicrosoftFabricToolDefinition,
     OpenAIPageableListOfThreadMessage,
+    OpenApiAuthDetails,
+    OpenApiToolDefinition,
+    OpenApiFunctionDefinition,
     RequiredFunctionToolCall,
     RunStep,
     RunStepDeltaChunk,
@@ -539,6 +542,40 @@ class AzureAISearchTool(Tool):
     def execute(self, tool_call: Any) -> Any:
         """
         AI Search tool does not execute client-side.
+        """
+
+        pass
+
+class OpenApiTool(Tool):
+    """
+    A tool that retrieves information using an OpenAPI spec.
+    """
+
+    def __init__(self, name: str, description: str, spec: Any, auth: OpenApiAuthDetails ):
+        self._definitions = [OpenApiToolDefinition(openapi=OpenApiFunctionDefinition(name=name, description=description, spec=spec, auth=auth))]
+
+    @property
+    def definitions(self) -> List[ToolDefinition]:
+        """
+        Get the OpenApi tool definitions.
+
+        :return: A list of tool definitions.
+        """
+        return cast(List[ToolDefinition], self._definitions)
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the tool resources for the agent.
+
+        :return: An empty ToolResources as OpenApiTool doesn't have specific resources.
+        :rtype: ToolResources
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> Any:
+        """
+        OpenApiTool does not execute client-side.
         """
 
         pass
@@ -1531,6 +1568,7 @@ __all__: List[str] = [
     "ThreadMessages",
     "FileSearchTool",
     "FunctionTool",
+    "OpenApiTool",
     "BingGroundingTool",
     "StreamEventData",
     "SharepointTool",
