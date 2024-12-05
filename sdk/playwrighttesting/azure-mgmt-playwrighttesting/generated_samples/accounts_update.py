@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.playwrighttesting import PlaywrightTestingMgmtClient
 
 """
@@ -31,12 +32,12 @@ def main():
 
     response = client.accounts.update(
         resource_group_name="dummyrg",
-        name="myPlaywrightAccount",
+        account_name="myPlaywrightAccount",
         properties={"properties": {"regionalAffinity": "Enabled"}, "tags": {"Division": "LT", "Team": "Dev Exp"}},
     )
     print(response)
 
 
-# x-ms-original-file: specification/playwrighttesting/resource-manager/Microsoft.AzurePlaywrightService/preview/2023-10-01-preview/examples/Accounts_Update.json
+# x-ms-original-file: specification/playwrighttesting/resource-manager/Microsoft.AzurePlaywrightService/stable/2024-12-01/examples/Accounts_Update.json
 if __name__ == "__main__":
     main()

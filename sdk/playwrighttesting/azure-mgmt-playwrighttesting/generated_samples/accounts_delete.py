@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.playwrighttesting import PlaywrightTestingMgmtClient
 
 """
@@ -31,10 +32,10 @@ def main():
 
     client.accounts.begin_delete(
         resource_group_name="dummyrg",
-        name="myPlaywrightAccount",
+        account_name="myPlaywrightAccount",
     ).result()
 
 
-# x-ms-original-file: specification/playwrighttesting/resource-manager/Microsoft.AzurePlaywrightService/preview/2023-10-01-preview/examples/Accounts_Delete.json
+# x-ms-original-file: specification/playwrighttesting/resource-manager/Microsoft.AzurePlaywrightService/stable/2024-12-01/examples/Accounts_Delete.json
 if __name__ == "__main__":
     main()

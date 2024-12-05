@@ -16,6 +16,13 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INTERNAL = "Internal"
 
 
+class CheckNameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reason why the given name is not available."""
+
+    INVALID = "Invalid"
+    ALREADY_EXISTS = "AlreadyExists"
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -26,7 +33,11 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class EnablementStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The enablement status of a feature."""
+    """This property sets the connection region for Playwright client workers to cloud-hosted
+    browsers. If enabled, workers connect to browsers in the closest Azure region, ensuring lower
+    latency. If disabled, workers connect to browsers in the Azure region in which the workspace
+    was initially created.
+    """
 
     ENABLED = "Enabled"
     """The feature is Enabled."""
@@ -41,6 +52,23 @@ class FreeTrialState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The free-trial is Active."""
     EXPIRED = "Expired"
     """The free-trial is Expired."""
+    NOT_ELIGIBLE = "NotEligible"
+    """The free-trial is Not Eligible."""
+    NOT_REGISTERED = "NotRegistered"
+    """The free-trial is Not Registered."""
+
+
+class OfferingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Offering type state."""
+
+    NOT_APPLICABLE = "NotApplicable"
+    """The offeringType is NotApplicable."""
+    PRIVATE_PREVIEW = "PrivatePreview"
+    """The offeringType is PrivatePreview."""
+    PUBLIC_PREVIEW = "PublicPreview"
+    """The offeringType is PublicPreview."""
+    GENERAL_AVAILABILITY = "GeneralAvailability"
+    """The offeringType is GeneralAvailability."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -62,10 +90,12 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Resource creation failed."""
     CANCELED = "Canceled"
     """Resource creation was canceled."""
+    CREATING = "Creating"
+    """Creation in progress.."""
     DELETING = "Deleting"
-    """Deletion in progress"""
+    """Deletion in progress.."""
     ACCEPTED = "Accepted"
-    """Change accepted for processing"""
+    """Change accepted for processing.."""
 
 
 class QuotaNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -73,5 +103,9 @@ class QuotaNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SCALABLE_EXECUTION = "ScalableExecution"
     """The quota details for scalable execution feature. When enabled, Playwright client workers can
-    #: connect to cloud-hosted browsers. This can increase the number of parallel workers for a test
-    #: run, significantly minimizing test completion durations."""
+    connect to cloud-hosted browsers. This can increase the number of parallel workers for a test
+    run, significantly minimizing test completion durations."""
+    REPORTING = "Reporting"
+    """The quota details for reporting feature. When enabled, Playwright client will be able to upload
+    and display test results, including artifacts like traces and screenshots, in the Playwright
+    portal. This enables faster and more efficient troubleshooting."""

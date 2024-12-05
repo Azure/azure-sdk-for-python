@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.playwrighttesting import PlaywrightTestingMgmtClient
 
 """
@@ -34,6 +35,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/playwrighttesting/resource-manager/Microsoft.AzurePlaywrightService/preview/2023-10-01-preview/examples/Operations_List.json
+# x-ms-original-file: specification/playwrighttesting/resource-manager/Microsoft.AzurePlaywrightService/stable/2024-12-01/examples/Operations_List.json
 if __name__ == "__main__":
     main()

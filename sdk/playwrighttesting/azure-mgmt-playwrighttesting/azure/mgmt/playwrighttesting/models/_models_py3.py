@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13,7 +13,6 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from .. import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -22,8 +21,8 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -64,10 +63,10 @@ class TrackedResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -113,14 +112,14 @@ class TrackedResource(Resource):
 
 
 class Account(TrackedResource):
-    """An account resource.
+    """A Playwright service account resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -176,10 +175,56 @@ class Account(TrackedResource):
         self.properties = properties
 
 
+class AccountFreeTrialProperties(_serialization.Model):
+    """The Playwright service account quota resource free-trial properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar created_at: The free-trial createdAt utcDateTime. Required.
+    :vartype created_at: ~datetime.datetime
+    :ivar expiry_at: The free-trial expiryAt utcDateTime. Required.
+    :vartype expiry_at: ~datetime.datetime
+    :ivar allocated_value: The free-trial allocated limit value eg. allocated free minutes.
+     Required.
+    :vartype allocated_value: int
+    :ivar used_value: The free-trial used value eg. used free minutes. Required.
+    :vartype used_value: int
+    :ivar percentage_used: The free-trial percentage used. Required.
+    :vartype percentage_used: float
+    """
+
+    _validation = {
+        "created_at": {"required": True, "readonly": True},
+        "expiry_at": {"required": True, "readonly": True},
+        "allocated_value": {"required": True, "readonly": True},
+        "used_value": {"required": True, "readonly": True},
+        "percentage_used": {"required": True, "readonly": True, "maximum": 100, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "expiry_at": {"key": "expiryAt", "type": "iso-8601"},
+        "allocated_value": {"key": "allocatedValue", "type": "int"},
+        "used_value": {"key": "usedValue", "type": "int"},
+        "percentage_used": {"key": "percentageUsed", "type": "float"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.created_at = None
+        self.expiry_at = None
+        self.allocated_value = None
+        self.used_value = None
+        self.percentage_used = None
+
+
 class AccountListResult(_serialization.Model):
     """The response of a Account list operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The Account items on this page. Required.
     :vartype value: list[~azure.mgmt.playwrighttesting.models.Account]
@@ -209,7 +254,7 @@ class AccountListResult(_serialization.Model):
 
 
 class AccountProperties(_serialization.Model):
-    """Account properties.
+    """Account resource properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -228,8 +273,11 @@ class AccountProperties(_serialization.Model):
      results, including artifacts like traces and screenshots, in the Playwright portal. This
      enables faster and more efficient troubleshooting. Known values are: "Enabled" and "Disabled".
     :vartype reporting: str or ~azure.mgmt.playwrighttesting.models.EnablementStatus
+    :ivar local_auth: When enabled, this feature allows the workspace to use local auth(through
+     access key) for authentication of test runs. Known values are: "Enabled" and "Disabled".
+    :vartype local_auth: str or ~azure.mgmt.playwrighttesting.models.EnablementStatus
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
-     "Failed", "Canceled", "Deleting", and "Accepted".
+     "Failed", "Canceled", "Creating", "Deleting", and "Accepted".
     :vartype provisioning_state: str or ~azure.mgmt.playwrighttesting.models.ProvisioningState
     """
 
@@ -243,6 +291,7 @@ class AccountProperties(_serialization.Model):
         "regional_affinity": {"key": "regionalAffinity", "type": "str"},
         "scalable_execution": {"key": "scalableExecution", "type": "str"},
         "reporting": {"key": "reporting", "type": "str"},
+        "local_auth": {"key": "localAuth", "type": "str"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
@@ -252,6 +301,7 @@ class AccountProperties(_serialization.Model):
         regional_affinity: Optional[Union[str, "_models.EnablementStatus"]] = None,
         scalable_execution: Optional[Union[str, "_models.EnablementStatus"]] = None,
         reporting: Optional[Union[str, "_models.EnablementStatus"]] = None,
+        local_auth: Optional[Union[str, "_models.EnablementStatus"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -268,12 +318,143 @@ class AccountProperties(_serialization.Model):
          results, including artifacts like traces and screenshots, in the Playwright portal. This
          enables faster and more efficient troubleshooting. Known values are: "Enabled" and "Disabled".
         :paramtype reporting: str or ~azure.mgmt.playwrighttesting.models.EnablementStatus
+        :keyword local_auth: When enabled, this feature allows the workspace to use local auth(through
+         access key) for authentication of test runs. Known values are: "Enabled" and "Disabled".
+        :paramtype local_auth: str or ~azure.mgmt.playwrighttesting.models.EnablementStatus
         """
         super().__init__(**kwargs)
         self.dashboard_uri = None
         self.regional_affinity = regional_affinity
         self.scalable_execution = scalable_execution
         self.reporting = reporting
+        self.local_auth = local_auth
+        self.provisioning_state = None
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.playwrighttesting.models.SystemData
+    """
+
+
+class AccountQuota(ProxyResource):
+    """A quota resource for a Playwright service account.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.playwrighttesting.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.playwrighttesting.models.AccountQuotaProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "AccountQuotaProperties"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.AccountQuotaProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: The resource-specific properties for this resource.
+        :paramtype properties: ~azure.mgmt.playwrighttesting.models.AccountQuotaProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class AccountQuotaListResult(_serialization.Model):
+    """The response of a AccountQuota list operation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The AccountQuota items on this page. Required.
+    :vartype value: list[~azure.mgmt.playwrighttesting.models.AccountQuota]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[AccountQuota]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: List["_models.AccountQuota"], next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: The AccountQuota items on this page. Required.
+        :paramtype value: list[~azure.mgmt.playwrighttesting.models.AccountQuota]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class AccountQuotaProperties(_serialization.Model):
+    """The Playwright service account quota resource properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar free_trial: The Playwright service account quota resource free-trial properties.
+    :vartype free_trial: ~azure.mgmt.playwrighttesting.models.AccountFreeTrialProperties
+    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+     "Failed", "Canceled", "Creating", "Deleting", and "Accepted".
+    :vartype provisioning_state: str or ~azure.mgmt.playwrighttesting.models.ProvisioningState
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "free_trial": {"key": "freeTrial", "type": "AccountFreeTrialProperties"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(self, *, free_trial: Optional["_models.AccountFreeTrialProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword free_trial: The Playwright service account quota resource free-trial properties.
+        :paramtype free_trial: ~azure.mgmt.playwrighttesting.models.AccountFreeTrialProperties
+        """
+        super().__init__(**kwargs)
+        self.free_trial = free_trial
         self.provisioning_state = None
 
 
@@ -282,7 +463,7 @@ class AccountUpdate(_serialization.Model):
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar properties: The updatable properties of the Account.
+    :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.playwrighttesting.models.AccountUpdateProperties
     """
 
@@ -301,7 +482,7 @@ class AccountUpdate(_serialization.Model):
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword properties: The updatable properties of the Account.
+        :keyword properties: The resource-specific properties for this resource.
         :paramtype properties: ~azure.mgmt.playwrighttesting.models.AccountUpdateProperties
         """
         super().__init__(**kwargs)
@@ -325,12 +506,16 @@ class AccountUpdateProperties(_serialization.Model):
      results, including artifacts like traces and screenshots, in the Playwright portal. This
      enables faster and more efficient troubleshooting. Known values are: "Enabled" and "Disabled".
     :vartype reporting: str or ~azure.mgmt.playwrighttesting.models.EnablementStatus
+    :ivar local_auth: When enabled, this feature allows the workspace to use local auth(through
+     access key) for authentication of test runs. Known values are: "Enabled" and "Disabled".
+    :vartype local_auth: str or ~azure.mgmt.playwrighttesting.models.EnablementStatus
     """
 
     _attribute_map = {
         "regional_affinity": {"key": "regionalAffinity", "type": "str"},
         "scalable_execution": {"key": "scalableExecution", "type": "str"},
         "reporting": {"key": "reporting", "type": "str"},
+        "local_auth": {"key": "localAuth", "type": "str"},
     }
 
     def __init__(
@@ -339,6 +524,7 @@ class AccountUpdateProperties(_serialization.Model):
         regional_affinity: Optional[Union[str, "_models.EnablementStatus"]] = None,
         scalable_execution: Optional[Union[str, "_models.EnablementStatus"]] = None,
         reporting: Optional[Union[str, "_models.EnablementStatus"]] = None,
+        local_auth: Optional[Union[str, "_models.EnablementStatus"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -355,11 +541,82 @@ class AccountUpdateProperties(_serialization.Model):
          results, including artifacts like traces and screenshots, in the Playwright portal. This
          enables faster and more efficient troubleshooting. Known values are: "Enabled" and "Disabled".
         :paramtype reporting: str or ~azure.mgmt.playwrighttesting.models.EnablementStatus
+        :keyword local_auth: When enabled, this feature allows the workspace to use local auth(through
+         access key) for authentication of test runs. Known values are: "Enabled" and "Disabled".
+        :paramtype local_auth: str or ~azure.mgmt.playwrighttesting.models.EnablementStatus
         """
         super().__init__(**kwargs)
         self.regional_affinity = regional_affinity
         self.scalable_execution = scalable_execution
         self.reporting = reporting
+        self.local_auth = local_auth
+
+
+class CheckNameAvailabilityRequest(_serialization.Model):
+    """The check availability request body.
+
+    :ivar name: The name of the resource for which availability needs to be checked.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, type: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: The name of the resource for which availability needs to be checked.
+        :paramtype name: str
+        :keyword type: The resource type.
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.type = type
+
+
+class CheckNameAvailabilityResponse(_serialization.Model):
+    """The check availability result.
+
+    :ivar name_available: Indicates if the resource name is available.
+    :vartype name_available: bool
+    :ivar reason: The reason why the given name is not available. Known values are: "Invalid" and
+     "AlreadyExists".
+    :vartype reason: str or ~azure.mgmt.playwrighttesting.models.CheckNameAvailabilityReason
+    :ivar message: Detailed reason why the given name is available.
+    :vartype message: str
+    """
+
+    _attribute_map = {
+        "name_available": {"key": "nameAvailable", "type": "bool"},
+        "reason": {"key": "reason", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name_available: Optional[bool] = None,
+        reason: Optional[Union[str, "_models.CheckNameAvailabilityReason"]] = None,
+        message: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name_available: Indicates if the resource name is available.
+        :paramtype name_available: bool
+        :keyword reason: The reason why the given name is not available. Known values are: "Invalid"
+         and "AlreadyExists".
+        :paramtype reason: str or ~azure.mgmt.playwrighttesting.models.CheckNameAvailabilityReason
+        :keyword message: Detailed reason why the given name is available.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
+        self.name_available = name_available
+        self.reason = reason
+        self.message = message
 
 
 class ErrorAdditionalInfo(_serialization.Model):
@@ -455,46 +712,26 @@ class ErrorResponse(_serialization.Model):
 
 
 class FreeTrialProperties(_serialization.Model):
-    """The free-trial properties.
+    """The subscription quota resource free-trial properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar account_id: The playwright account id. Required.
+    :ivar account_id: The Playwright service account id. Required.
     :vartype account_id: str
-    :ivar created_at: The free-trial createdAt utcDateTime. Required.
-    :vartype created_at: ~datetime.datetime
-    :ivar expiry_at: The free-trial expiryAt utcDateTime. Required.
-    :vartype expiry_at: ~datetime.datetime
-    :ivar allocated_value: The free-trial allocated limit value eg. allocated free minutes.
-     Required.
-    :vartype allocated_value: int
-    :ivar used_value: The free-trial used value eg. used free minutes. Required.
-    :vartype used_value: int
-    :ivar percentage_used: The free-trial percentage used. Required.
-    :vartype percentage_used: float
-    :ivar state: The free-trial state. Required. Known values are: "Active" and "Expired".
+    :ivar state: The free-trial state. Required. Known values are: "Active", "Expired",
+     "NotEligible", and "NotRegistered".
     :vartype state: str or ~azure.mgmt.playwrighttesting.models.FreeTrialState
     """
 
     _validation = {
         "account_id": {"required": True, "readonly": True},
-        "created_at": {"required": True, "readonly": True},
-        "expiry_at": {"required": True, "readonly": True},
-        "allocated_value": {"required": True, "readonly": True},
-        "used_value": {"required": True, "readonly": True},
-        "percentage_used": {"required": True, "readonly": True, "maximum": 100, "minimum": 0},
         "state": {"required": True, "readonly": True},
     }
 
     _attribute_map = {
         "account_id": {"key": "accountId", "type": "str"},
-        "created_at": {"key": "createdAt", "type": "iso-8601"},
-        "expiry_at": {"key": "expiryAt", "type": "iso-8601"},
-        "allocated_value": {"key": "allocatedValue", "type": "int"},
-        "used_value": {"key": "usedValue", "type": "int"},
-        "percentage_used": {"key": "percentageUsed", "type": "float"},
         "state": {"key": "state", "type": "str"},
     }
 
@@ -502,11 +739,6 @@ class FreeTrialProperties(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.account_id = None
-        self.created_at = None
-        self.expiry_at = None
-        self.allocated_value = None
-        self.used_value = None
-        self.percentage_used = None
         self.state = None
 
 
@@ -631,51 +863,13 @@ class OperationListResult(_serialization.Model):
         self.next_link = None
 
 
-class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
-    tags and a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.playwrighttesting.models.SystemData
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-
-
 class Quota(ProxyResource):
-    """A quota resource.
+    """A subscription quota resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -716,7 +910,7 @@ class Quota(ProxyResource):
 class QuotaListResult(_serialization.Model):
     """The response of a Quota list operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The Quota items on this page. Required.
     :vartype value: list[~azure.mgmt.playwrighttesting.models.Quota]
@@ -746,33 +940,39 @@ class QuotaListResult(_serialization.Model):
 
 
 class QuotaProperties(_serialization.Model):
-    """Quota properties.
+    """The subscription quota resource properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar free_trial: The free-trial quota.
+    :ivar free_trial: The subscription quota resource free-trial properties.
     :vartype free_trial: ~azure.mgmt.playwrighttesting.models.FreeTrialProperties
+    :ivar offering_type: Indicates the offering type for the subscription. Known values are:
+     "NotApplicable", "PrivatePreview", "PublicPreview", and "GeneralAvailability".
+    :vartype offering_type: str or ~azure.mgmt.playwrighttesting.models.OfferingType
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
-     "Failed", "Canceled", "Deleting", and "Accepted".
+     "Failed", "Canceled", "Creating", "Deleting", and "Accepted".
     :vartype provisioning_state: str or ~azure.mgmt.playwrighttesting.models.ProvisioningState
     """
 
     _validation = {
+        "offering_type": {"readonly": True},
         "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
         "free_trial": {"key": "freeTrial", "type": "FreeTrialProperties"},
+        "offering_type": {"key": "offeringType", "type": "str"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
     def __init__(self, *, free_trial: Optional["_models.FreeTrialProperties"] = None, **kwargs: Any) -> None:
         """
-        :keyword free_trial: The free-trial quota.
+        :keyword free_trial: The subscription quota resource free-trial properties.
         :paramtype free_trial: ~azure.mgmt.playwrighttesting.models.FreeTrialProperties
         """
         super().__init__(**kwargs)
         self.free_trial = free_trial
+        self.offering_type = None
         self.provisioning_state = None
 
 
