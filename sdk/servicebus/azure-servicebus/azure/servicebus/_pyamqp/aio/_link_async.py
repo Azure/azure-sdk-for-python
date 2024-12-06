@@ -7,6 +7,7 @@
 from typing import Any, Optional, TYPE_CHECKING
 import uuid
 import logging
+import asyncio
 
 from ..endpoints import Source, Target
 from ..constants import DEFAULT_LINK_CREDIT, SessionState, LinkState, Role, SenderSettleMode, ReceiverSettleMode
@@ -97,6 +98,7 @@ class Link:  # pylint: disable=too-many-instance-attributes
         self._on_attach = kwargs.get("on_attach")
         self._error: Optional[AMQPLinkError] = None
         self.total_link_credit = self.link_credit
+        self._link_lock = asyncio.Lock()
 
     async def __aenter__(self) -> "Link":
         await self.attach()
@@ -225,29 +227,30 @@ class Link:  # pylint: disable=too-many-instance-attributes
             self._is_closed = True
 
     async def _incoming_detach(self, frame) -> None:
-        if self.network_trace:
-            _LOGGER.debug("<- %r", DetachFrame(*frame), extra=self.network_trace_params)
-        if self.state == LinkState.ATTACHED:
-            await self._outgoing_detach(close=frame[1])  # closed
-        elif frame[1] and not self._is_closed and self.state in [LinkState.ATTACH_SENT, LinkState.ATTACH_RCVD]:
-            # Received a closing detach after we sent a non-closing detach.
-            # In this case, we MUST signal that we closed by reattaching and then sending a closing detach.
-            await self._outgoing_attach()
-            await self._outgoing_detach(close=True)
-        # TODO: on_detach_hook
-        if frame[2]:  # error
-            # frame[2][0] is condition, frame[2][1] is description, frame[2][2] is info
-            error_cls = AMQPLinkRedirect if frame[2][0] == ErrorCondition.LinkRedirect else AMQPLinkError
-            self._error = error_cls(condition=frame[2][0], description=frame[2][1], info=frame[2][2])
-            await self._set_state(LinkState.ERROR)
-        else:
-            if self.state != LinkState.DETACH_SENT:
-                # Handle the case of when the remote side detaches without sending an error.
-                # We should detach as per the spec but then retry connecting
-                self._error = AMQPLinkError(
-                    condition=ErrorCondition.UnknownError, description="Link detached unexpectedly.", retryable=True
-                )
-            await self._set_state(LinkState.DETACHED)
+        async with self._link_lock:
+            if self.network_trace:
+                _LOGGER.debug("<- %r", DetachFrame(*frame), extra=self.network_trace_params)
+            if self.state == LinkState.ATTACHED:
+                await self._outgoing_detach(close=frame[1])  # closed
+            elif frame[1] and not self._is_closed and self.state in [LinkState.ATTACH_SENT, LinkState.ATTACH_RCVD]:
+                # Received a closing detach after we sent a non-closing detach.
+                # In this case, we MUST signal that we closed by reattaching and then sending a closing detach.
+                await self._outgoing_attach()
+                await self._outgoing_detach(close=True)
+            # TODO: on_detach_hook
+            if frame[2]:  # error
+                # frame[2][0] is condition, frame[2][1] is description, frame[2][2] is info
+                error_cls = AMQPLinkRedirect if frame[2][0] == ErrorCondition.LinkRedirect else AMQPLinkError
+                self._error = error_cls(condition=frame[2][0], description=frame[2][1], info=frame[2][2])
+                await self._set_state(LinkState.ERROR)
+            else:
+                if self.state != LinkState.DETACH_SENT:
+                    # Handle the case of when the remote side detaches without sending an error.
+                    # We should detach as per the spec but then retry connecting
+                    self._error = AMQPLinkError(
+                        condition=ErrorCondition.UnknownError, description="Link detached unexpectedly.", retryable=True
+                    )
+                await self._set_state(LinkState.DETACHED)
 
     async def attach(self) -> None:
         if self._is_closed:

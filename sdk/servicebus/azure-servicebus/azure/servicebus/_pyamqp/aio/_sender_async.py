@@ -142,21 +142,22 @@ class SenderLink(Link):
         await super()._on_session_state_change()
 
     async def update_pending_deliveries(self):
-        if self.current_link_credit <= 0:
-            self.current_link_credit = self.link_credit
-            await self._outgoing_flow()
-        now = time.time()
-        pending = []
-        for delivery in self._pending_deliveries:
-            if delivery.timeout and (now - delivery.start) >= delivery.timeout:
-                delivery.on_settled(LinkDeliverySettleReason.TIMEOUT, None)
-                continue
-            if not delivery.sent:
-                sent_and_settled = await self._outgoing_transfer(delivery)
-                if sent_and_settled:
+        async with self._link_lock:
+            if self.current_link_credit <= 0:
+                self.current_link_credit = self.link_credit
+                await self._outgoing_flow()
+            now = time.time()
+            pending = []
+            for delivery in self._pending_deliveries:
+                if delivery.timeout and (now - delivery.start) >= delivery.timeout:
+                    delivery.on_settled(LinkDeliverySettleReason.TIMEOUT, None)
                     continue
-            pending.append(delivery)
-        self._pending_deliveries = pending
+                if not delivery.sent:
+                    sent_and_settled = await self._outgoing_transfer(delivery)
+                    if sent_and_settled:
+                        continue
+                pending.append(delivery)
+            self._pending_deliveries = pending
 
     async def send_transfer(self, message, *, send_async=False, **kwargs):
         self._check_if_closed()

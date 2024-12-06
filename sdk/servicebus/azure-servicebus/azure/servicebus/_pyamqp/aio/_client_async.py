@@ -138,6 +138,7 @@ class AMQPClientAsync(AMQPClientSync):
 
     def __init__(self, hostname, **kwargs):
         self._mgmt_link_lock_async = asyncio.Lock()
+        self._lock_async = asyncio.Lock()
         super().__init__(hostname, **kwargs)
 
     async def _keep_alive_async(self):
@@ -231,45 +232,47 @@ class AMQPClientAsync(AMQPClientSync):
         :type connection: ~pyamqp.aio.Connection
         """
         # pylint: disable=protected-access
-        if self._session:
-            return  # already open.
-        if connection:
-            self._connection = connection
-            self._external_connection = True
-        if not self._connection:
-            self._connection = Connection(
-                "amqps://" + self._hostname if self._use_tls else "amqp://" + self._hostname,
-                sasl_credential=self._auth.sasl,
-                ssl_opts=self._ssl_opts,
-                container_id=self._name,
-                max_frame_size=self._max_frame_size,
-                channel_max=self._channel_max,
-                idle_timeout=self._idle_timeout,
-                properties=self._properties,
-                network_trace=self._network_trace,
-                transport_type=self._transport_type,
-                http_proxy=self._http_proxy,
-                custom_endpoint_address=self._custom_endpoint_address,
-                socket_timeout=self._socket_timeout,
-                use_tls=self._use_tls,
-            )
-            await self._connection.open()
-        if not self._session:
-            self._session = self._connection.create_session(
-                incoming_window=self._incoming_window, outgoing_window=self._outgoing_window
-            )
-            await self._session.begin()
-        if self._auth.auth_type == AUTH_TYPE_CBS:
-            self._cbs_authenticator = CBSAuthenticator(
-                session=self._session, auth=self._auth, auth_timeout=self._auth_timeout
-            )
-            await self._cbs_authenticator.open()
-        self._network_trace_params["amqpConnection"] = self._connection._container_id
-        self._network_trace_params["amqpSession"] = self._session.name
-        self._shutdown = False
+        async with self._lock_async:
+            _logger.debug("Opening %r...", self.__class__.__name__, extra=self._network_trace_params)
+            if self._session:
+                return  # already open.
+            if connection:
+                self._connection = connection
+                self._external_connection = True
+            if not self._connection:
+                self._connection = Connection(
+                    "amqps://" + self._hostname if self._use_tls else "amqp://" + self._hostname,
+                    sasl_credential=self._auth.sasl,
+                    ssl_opts=self._ssl_opts,
+                    container_id=self._name,
+                    max_frame_size=self._max_frame_size,
+                    channel_max=self._channel_max,
+                    idle_timeout=self._idle_timeout,
+                    properties=self._properties,
+                    network_trace=self._network_trace,
+                    transport_type=self._transport_type,
+                    http_proxy=self._http_proxy,
+                    custom_endpoint_address=self._custom_endpoint_address,
+                    socket_timeout=self._socket_timeout,
+                    use_tls=self._use_tls,
+                )
+                await self._connection.open()
+            if not self._session:
+                self._session = self._connection.create_session(
+                    incoming_window=self._incoming_window, outgoing_window=self._outgoing_window
+                )
+                await self._session.begin()
+            if self._auth.auth_type == AUTH_TYPE_CBS:
+                self._cbs_authenticator = CBSAuthenticator(
+                    session=self._session, auth=self._auth, auth_timeout=self._auth_timeout
+                )
+                await self._cbs_authenticator.open()
+            self._network_trace_params["amqpConnection"] = self._connection._container_id
+            self._network_trace_params["amqpSession"] = self._session.name
+            self._shutdown = False
 
-        if self._keep_alive_interval:
-            self._keep_alive_thread = asyncio.ensure_future(self._keep_alive_async())
+            if self._keep_alive_interval:
+                self._keep_alive_thread = asyncio.ensure_future(self._keep_alive_async())
 
     async def close_async(self):
         """Close the client asynchronously. This includes closing the Session
@@ -277,23 +280,24 @@ class AMQPClientAsync(AMQPClientSync):
         If the client was opened using an external Connection,
         this will be left intact.
         """
-        self._shutdown = True
-        if not self._session:
-            return  # already closed.
-        await self._close_link_async()
-        if self._cbs_authenticator:
-            await self._cbs_authenticator.close()
-            self._cbs_authenticator = None
-        await self._session.end()
-        self._session = None
-        if not self._external_connection:
-            await self._connection.close()
-            self._connection = None
-        if self._keep_alive_thread:
-            await self._keep_alive_thread
-            self._keep_alive_thread = None
-        self._network_trace_params["amqpConnection"] = ""
-        self._network_trace_params["amqpSession"] = ""
+        async with self._lock_async:
+            self._shutdown = True
+            if not self._session:
+                return  # already closed.
+            await self._close_link_async()
+            if self._cbs_authenticator:
+                await self._cbs_authenticator.close()
+                self._cbs_authenticator = None
+            await self._session.end()
+            self._session = None
+            if not self._external_connection:
+                await self._connection.close()
+                self._connection = None
+            if self._keep_alive_thread:
+                await self._keep_alive_thread
+                self._keep_alive_thread = None
+            self._network_trace_params["amqpConnection"] = ""
+            self._network_trace_params["amqpSession"] = ""
 
     async def auth_complete_async(self):
         """Whether the authentication handshake is complete during

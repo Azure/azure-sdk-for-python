@@ -7,6 +7,7 @@ import time
 import uuid
 import datetime
 import warnings
+import threading
 from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast, Iterable
 
 from ._base_handler import BaseHandler
@@ -193,6 +194,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
         self._handler: Union["pyamqp_SendClientSync", "uamqp_SendClientSync"]
+        self._lock = threading.Lock()
 
     def __enter__(self) -> "ServiceBusSender":
         if self._shutdown.is_set():
@@ -252,11 +254,12 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         )
 
     def _open(self):
-        # pylint: disable=protected-access
-        if self._running:
-            return
-        if self._handler:
-            self._handler.close()
+        with self._lock:
+            # pylint: disable=protected-access
+            if self._running:
+                return
+            if self._handler:
+                self._handler.close()
 
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
