@@ -36,6 +36,7 @@ project_client = AIProjectClient.from_connection_string(
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
+# The Fabric connection id can be found in the Azure AI Foundry project as a property of the Fabric tool
 conn_id = "your-connection-id"
 
 # Initialize agent fabric tool and add the connection id
