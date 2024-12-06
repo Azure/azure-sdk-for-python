@@ -242,7 +242,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             if len(assistant_messages) > 1:
                 raise EvaluationException(
                     message="Conversation can have only one assistant message.",
-                    internal_message=("Conversation can have only one assistant message.",),
+                    internal_message=("Conversation can have only one assistant message."),
                 )
             eval_conv_inputs = []
             for user_msg, assist_msg in zip(user_messages, assistant_messages):
@@ -251,7 +251,6 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                     conv_messages.append(system_messages[0])
                 conv_messages.append(user_msg)
                 conv_messages.append(assist_msg)
-                # eval_conv_inputs.append({ "conversation": { "messages": conv_messages }})
                 eval_conv_inputs.append({"conversation": Conversation(messages=conv_messages)})
             return eval_conv_inputs
 

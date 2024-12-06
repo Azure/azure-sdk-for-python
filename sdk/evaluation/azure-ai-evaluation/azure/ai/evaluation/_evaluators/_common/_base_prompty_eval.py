@@ -10,8 +10,8 @@ from promptflow.core import AsyncPrompty
 from typing_extensions import override
 
 from azure.ai.evaluation._common.constants import PROMPT_BASED_REASON_EVALUATORS
-from ..._common.utils import construct_prompty_model_config, validate_model_config, parse_quality_evaluator_reason_score
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from ..._common.utils import construct_prompty_model_config, validate_model_config, parse_quality_evaluator_reason_score
 from . import EvaluatorBase
 
 try:

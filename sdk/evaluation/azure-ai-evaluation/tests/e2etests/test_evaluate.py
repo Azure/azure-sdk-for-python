@@ -257,7 +257,9 @@ class TestEvaluate:
     ):
         os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "false"
         input_data = pd.read_json(multimodal_file_with_imageurls, lines=True)
-        content_safety_eval = ContentSafetyMultimodalEvaluator(azure_ai_project=project_scope, credential=azure_cred, _parallel=False)
+        content_safety_eval = ContentSafetyMultimodalEvaluator(
+            azure_ai_project=project_scope, credential=azure_cred, _parallel=False
+        )
         result = evaluate(
             evaluation_name=f"test-mm-content-safety-eval-dataset-img-url-{str(uuid.uuid4())}",
             # azure_ai_project=project_scope,
@@ -297,7 +299,9 @@ class TestEvaluate:
         from .target_fn import target_multimodal_fn1
 
         input_data = pd.read_json(multimodal_file_with_imageurls_with_target, lines=True)
-        content_safety_eval = ContentSafetyMultimodalEvaluator(azure_ai_project=project_scope, credential=azure_cred, _parallel=False)
+        content_safety_eval = ContentSafetyMultimodalEvaluator(
+            azure_ai_project=project_scope, credential=azure_cred, _parallel=False
+        )
         result = evaluate(
             evaluation_name=f"test-mm-eval-dataset-img-url-target-{str(uuid.uuid4())}",
             # azure_ai_project=project_scope,
