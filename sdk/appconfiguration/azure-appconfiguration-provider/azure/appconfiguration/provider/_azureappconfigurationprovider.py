@@ -543,7 +543,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                         """
         exception: Exception = RuntimeError(error_message)
         is_failover_request = False
-        client_count = self._replica_client_manager.get_client_count()
+        client_count = self._replica_client_manager.get_client_count() - 1
         try:
             self._replica_client_manager.refresh_clients()
             self._replica_client_manager.find_active_clients()
@@ -612,7 +612,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
     def _load_all(self, **kwargs):
         self._replica_client_manager.find_active_clients()
         is_failover_request = False
-        client_count = self._replica_client_manager.get_client_count()
+        client_count = self._replica_client_manager.get_client_count() - 1
 
         while client := self._replica_client_manager.get_next_client():
             headers = _update_correlation_context_header(
