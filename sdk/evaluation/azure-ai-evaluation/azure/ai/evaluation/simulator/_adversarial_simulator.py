@@ -384,7 +384,7 @@ class AdversarialSimulator:
 
             if scenario in [
                 _UnstableAdversarialScenario.ADVERSARIAL_IMAGE_GEN,
-                _UnstableAdversarialScenario.ADVERSARIAL_IMAGE_UNDERSTANDING,
+                _UnstableAdversarialScenario.ADVERSARIAL_IMAGE_MULTIMODAL,
             ]:
                 return MultiModalConversationBot(
                     callback=target,

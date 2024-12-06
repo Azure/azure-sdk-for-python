@@ -164,7 +164,7 @@ class TestSimAndEval:
         # Run simulator to produce 2 results with 2 conversation turns each (4 messages)
         simulator_output = asyncio.run(
             simulator(
-                scenario=_UnstableAdversarialScenario.ADVERSARIAL_IMAGE_UNDERSTANDING,
+                scenario=_UnstableAdversarialScenario.ADVERSARIAL_IMAGE_MULTIMODAL,
                 max_conversation_turns=1,
                 max_simulation_results=1,
                 target=callback,

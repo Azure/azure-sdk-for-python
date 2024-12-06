@@ -176,7 +176,7 @@ class TestAdvSimulator:
 
         outputs = asyncio.run(
             simulator(
-                scenario=_UnstableAdversarialScenario.ADVERSARIAL_IMAGE_UNDERSTANDING,
+                scenario=_UnstableAdversarialScenario.ADVERSARIAL_IMAGE_MULTIMODAL,
                 max_conversation_turns=1,
                 max_simulation_results=1,
                 target=callback,
