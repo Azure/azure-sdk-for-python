@@ -42,6 +42,7 @@ class TestConfigurationClientManagerLoadBalance(unittest.TestCase):
 
         manager = ConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, False, 0, 0, False)
 
+        manager.refresh_clients()
         manager.find_active_clients()
         assert len(manager._active_clients) == 3
         assert manager._active_clients[0].endpoint == "https://fake.endpoint"

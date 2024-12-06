@@ -81,7 +81,7 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     feature_flag_enabled: bool = False,
     feature_flag_selectors: Optional[List[SettingSelector]] = None,
     feature_flag_refresh_enabled: bool = False,
-    **kwargs
+    **kwargs,
 ) -> "AzureAppConfigurationProvider":
     """
     Loads configuration settings from Azure App Configuration into a Python application.
@@ -142,7 +142,7 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     feature_flag_enabled: bool = False,
     feature_flag_selectors: Optional[List[SettingSelector]] = None,
     feature_flag_refresh_enabled: bool = False,
-    **kwargs
+    **kwargs,
 ) -> "AzureAppConfigurationProvider":
     """
     Loads configuration settings from Azure App Configuration into a Python application.
@@ -493,7 +493,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             min_backoff_sec=min_backoff,
             max_backoff_sec=max_backoff,
             load_balancing_enabled=self._uses_load_balancing,
-            **kwargs
+            **kwargs,
         )
         self._dict: Dict[str, Any] = {}
         self._secret_clients: Dict[str, SecretClient] = {}
@@ -613,11 +613,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         is_failover_request = False
         client_count = self._replica_client_manager.get_client_count()
 
-        while self._replica_client_manager.has_next_client():
-            client = self._replica_client_manager.get_next_client()
-
-            if not client:
-                return
+        while client := self._replica_client_manager.get_next_client():
             headers = _update_correlation_context_header(
                 kwargs.pop("headers", {}),
                 "Startup",

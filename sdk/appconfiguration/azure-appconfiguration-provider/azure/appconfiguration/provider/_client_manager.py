@@ -383,12 +383,12 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
         if failover_endpoints is None:
             # SRV record not found, so we should refresh after a longer interval
             self._next_update_time = time.time() + FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL
-            return False
+            return
 
         if len(failover_endpoints) == 0:
             # No failover endpoints in SRV record.
             self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
-            return False
+            return
 
         updated_endpoints = False
 
@@ -431,7 +431,9 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
         self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
         if updated_endpoints and self._load_balancing_enabled:
             # Reshuffle only if a new client was added and _load_balancing_enabled is enabled
-            random.shuffle(self._replica_clients) # This allways needs to be shuffled, but if load balancing is enabled than the primary endpoint need to be shuffled too.
+            # This allways needs to be shuffled, but if load balancing is enabled than the primary endpoint need to be
+            #  shuffled too.
+            random.shuffle(self._replica_clients)
 
     def backoff(self, client: _ConfigurationClientWrapper):
         client.failed_attempts += 1

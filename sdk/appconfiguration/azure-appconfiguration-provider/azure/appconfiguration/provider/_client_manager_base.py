@@ -3,12 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import time
 import random
 import hashlib
 import base64
 from dataclasses import dataclass
-from typing import Dict, Mapping, Any
+from typing import Dict, Mapping, Any, Optional
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
     FeatureFlagConfigurationSetting,
 )
@@ -99,7 +98,7 @@ class ConfigurationClientManagerBase:  # pylint:disable=too-many-instance-attrib
         self._retry_total = retry_total
         self._retry_backoff_max = retry_backoff_max
         self._replica_discovery_enabled = replica_discovery_enabled
-        self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
+        self._next_update_time: Optional[float] = None
         self._args = dict(kwargs)
         self._min_backoff_sec = min_backoff_sec
         self._max_backoff_sec = max_backoff_sec
