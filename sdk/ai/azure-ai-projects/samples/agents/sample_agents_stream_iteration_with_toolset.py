@@ -24,7 +24,13 @@ USAGE:
 import os
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import AgentStreamEvent, RunStepDeltaChunk
-from azure.ai.projects.models import AgentMessageDeltaChunk, MessageDeltaTextContent, RunStep, AgentThreadMessage, ThreadRun
+from azure.ai.projects.models import (
+    AgentMessageDeltaChunk,
+    MessageDeltaTextContent,
+    RunStep,
+    AgentThreadMessage,
+    ThreadRun,
+)
 from azure.ai.projects.models import FunctionTool, ToolSet
 from azure.ai.projects.operations import AgentsOperations
 from azure.identity import DefaultAzureCredential

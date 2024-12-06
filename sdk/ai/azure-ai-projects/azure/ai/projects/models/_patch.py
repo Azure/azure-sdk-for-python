@@ -65,7 +65,6 @@ from ._models import (
     RunStepDeltaChunk,
     SharepointToolDefinition,
     SubmitToolOutputsAction,
-
     ThreadRun,
     ToolConnection,
     ToolConnectionList,
@@ -135,9 +134,7 @@ def _parse_event(event_data_str: str) -> Tuple[str, StreamEventData]:
         raise ValueError("Event type not specified in the event data.")
 
     try:
-        parsed_data: Union[str, Dict[str, StreamEventData]] = cast(
-            Dict[str, StreamEventData], json.loads(event_data)
-        )
+        parsed_data: Union[str, Dict[str, StreamEventData]] = cast(Dict[str, StreamEventData], json.loads(event_data))
     except json.JSONDecodeError:
         parsed_data = event_data
 
@@ -183,7 +180,7 @@ def _parse_event(event_data_str: str) -> Tuple[str, StreamEventData]:
         event_obj = _safe_instantiate(RunStepDeltaChunk, parsed_data)
     else:
         event_obj = str(parsed_data)
-    
+
     return event_type, event_obj
 
 
@@ -405,34 +402,35 @@ def is_optional(annotation) -> bool:
         return type(None) in args
     return False
 
+
 class AgentMessageDeltaChunk(MessageDeltaChunk):
-    
-    def __init__(self, generated : MessageDeltaChunk):
+
+    def __init__(self, generated: MessageDeltaChunk):
         for prop, value in vars(generated).items():
             setattr(self, prop, value)
-                
-    @property        
+
+    @property
     def text(self) -> str:
         """Get the text content of the delta chunk.
 
         :rtype: str
         """
         if not self.delta or not self.delta.content:
-            return ""        
+            return ""
         return "".join(
             content_part.text.value or ""
             for content_part in self.delta.content
             if isinstance(content_part, MessageDeltaTextContent) and content_part.text
         )
-        
+
 
 class AgentThreadMessage(ThreadMessageGenerated):
-    
-    def __init__(self, generated : ThreadMessageGenerated):
+
+    def __init__(self, generated: ThreadMessageGenerated):
         for prop, value in vars(generated).items():
             setattr(self, prop, value)
-            
-    @property        
+
+    @property
     def text_messages(self) -> List[MessageTextContent]:
         """Returns all text message contents in the messages.
 
@@ -440,10 +438,7 @@ class AgentThreadMessage(ThreadMessageGenerated):
         """
         if not self.content:
             return []
-        return [
-            content
-            for content in self.content if isinstance(content, MessageTextContent)
-        ]
+        return [content for content in self.content if isinstance(content, MessageTextContent)]
 
     @property
     def image_contents(self) -> List[MessageImageFileContent]:
@@ -453,10 +448,7 @@ class AgentThreadMessage(ThreadMessageGenerated):
         """
         if not self.content:
             return []
-        return [
-            content
-            for content in self.content if isinstance(content, MessageImageFileContent)
-        ]
+        return [content for content in self.content if isinstance(content, MessageImageFileContent)]
 
     @property
     def file_citation_annotations(self) -> List[MessageTextFileCitationAnnotation]:
@@ -466,7 +458,7 @@ class AgentThreadMessage(ThreadMessageGenerated):
         """
         if not self.content:
             return []
-        
+
         return [
             annotation
             for content in self.content
@@ -1071,12 +1063,11 @@ class AsyncToolSet(BaseToolSet):
 
         return tool_outputs
 
+
 CustomDataT = TypeVar("CustomDataT")
 T = TypeVar("T")
 BaseAsyncAgentEventHandlerT = TypeVar("BaseAsyncAgentEventHandlerT", bound="BaseAsyncAgentEventHandler")
 BaseAgentEventHandlerT = TypeVar("BaseAgentEventHandlerT", bound="BaseAgentEventHandler")
-
-
 
 
 class BaseAsyncAgentEventHandler(AsyncIterator[T]):
@@ -1086,8 +1077,9 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
     def __init__(self) -> None:
         self.response_iterator: Optional[AsyncIterator[bytes]] = None
         self.event_handler: Optional["BaseAsyncAgentEventHandler[T]"] = None
-        self.submit_tool_outputs: Optional[
-            Callable[[ThreadRun, "BaseAsyncAgentEventHandler[T]"], Awaitable[None]]] = None
+        self.submit_tool_outputs: Optional[Callable[[ThreadRun, "BaseAsyncAgentEventHandler[T]"], Awaitable[None]]] = (
+            None
+        )
 
     def _init(
         self,
@@ -1197,18 +1189,18 @@ class BaseAgentEventHandler(Iterator[T]):
 class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventData, Optional[CustomDataT]]]):
 
     custom_data: Optional[CustomDataT] = None
-    
-    async def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData,  Optional[CustomDataT]]:
+
+    async def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData, Optional[CustomDataT]]:
         event_type, event_data_obj = _parse_event(event_data_str)
-        self.custom_data = None            
+        self.custom_data = None
         if (
             isinstance(event_data_obj, ThreadRun)
             and event_data_obj.status == "requires_action"
             and isinstance(event_data_obj.required_action, SubmitToolOutputsAction)
         ):
-            await cast(
-                Callable[[ThreadRun, "BaseAsyncAgentEventHandler"], Awaitable[None]],
-                self.submit_tool_outputs)(event_data_obj, self)
+            await cast(Callable[[ThreadRun, "BaseAsyncAgentEventHandler"], Awaitable[None]], self.submit_tool_outputs)(
+                event_data_obj, self
+            )
 
         try:
             if isinstance(event_data_obj, AgentMessageDeltaChunk):
@@ -1278,12 +1270,12 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
         :param Any event_data: The event's data.
         """
 
+
 class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Optional[CustomDataT]]]):
 
     custom_data: Optional[CustomDataT] = None
 
     def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData, Optional[CustomDataT]]:
-
 
         event_type, event_data_obj = _parse_event(event_data_str)
         self.custom_data = None
@@ -1292,9 +1284,9 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
             and event_data_obj.status == "requires_action"
             and isinstance(event_data_obj.required_action, SubmitToolOutputsAction)
         ):
-            cast(
-                Callable[[ThreadRun, "BaseAgentEventHandler"], Awaitable[None]],
-                self.submit_tool_outputs)(event_data_obj, self)
+            cast(Callable[[ThreadRun, "BaseAgentEventHandler"], Awaitable[None]], self.submit_tool_outputs)(
+                event_data_obj, self
+            )
 
         try:
             if isinstance(event_data_obj, AgentMessageDeltaChunk):
@@ -1450,9 +1442,7 @@ class ThreadMessages:
 
         :rtype: List[MessageTextContent]
         """
-        texts = [
-            content for msg in self._messages for content in msg.text_messages
-        ]
+        texts = [content for msg in self._messages for content in msg.text_messages]
         return texts
 
     @property
@@ -1461,9 +1451,7 @@ class ThreadMessages:
 
         :rtype: List[MessageImageFileContent]
         """
-        return [
-            content for msg in self._messages for content in msg.image_contents
-        ]
+        return [content for msg in self._messages for content in msg.image_contents]
 
     @property
     def file_citation_annotations(self) -> List[MessageTextFileCitationAnnotation]:
@@ -1471,11 +1459,7 @@ class ThreadMessages:
 
         :rtype: List[MessageTextFileCitationAnnotation]
         """
-        annotations = [
-            annotation
-            for msg in self._messages
-            for annotation in msg.file_citation_annotations
-        ]
+        annotations = [annotation for msg in self._messages for annotation in msg.file_citation_annotations]
         return annotations
 
     @property
@@ -1484,11 +1468,7 @@ class ThreadMessages:
 
         :rtype: List[MessageTextFilePathAnnotation]
         """
-        annotations = [
-            annotation
-            for msg in self._messages
-            for annotation in msg.file_path_annotations
-        ]
+        annotations = [annotation for msg in self._messages for annotation in msg.file_path_annotations]
         return annotations
 
     def get_last_message_by_sender(self, sender: str) -> Optional[AgentThreadMessage]:
@@ -1520,7 +1500,7 @@ class ThreadMessages:
                     if isinstance(content, MessageTextContent):
                         return content
         return None
-    
+
 
 __all__: List[str] = [
     "AgentEventHandler",
@@ -1547,7 +1527,7 @@ __all__: List[str] = [
     "BaseAgentEventHandlerT",
     "AgentThreadMessage",
     "MessageTextFileCitationAnnotation",
-    "AgentMessageDeltaChunk"
+    "AgentMessageDeltaChunk",
 ]  # Add all objects you want publicly available to users at this package level
 
 

@@ -132,7 +132,7 @@ async def main() -> None:
             thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler(functions)
         ) as stream:
             await stream.until_done()
-            
+
         await project_client.agents.delete_agent(agent.id)
         print("Deleted agent")
 

@@ -48,27 +48,27 @@ project_client = AIProjectClient.from_connection_string(
 
 # [START stream_event_handler]
 class MyEventHandler(AgentEventHandler[str]):
-    
+
     def on_message_delta(self, delta: "AgentMessageDeltaChunk") -> None:
         self.custom_data = f"Text delta received: {delta.text}"
-    
+
     def on_thread_message(self, message: "ThreadMessage") -> None:
         self.custom_data = f"ThreadMessage created. ID: {message.id}, Status: {message.status}"
 
     def on_thread_run(self, run: "ThreadRun") -> None:
-        self.custom_data = (f"ThreadRun status: {run.status}")
+        self.custom_data = f"ThreadRun status: {run.status}"
 
     def on_run_step(self, step: "RunStep") -> None:
-        self.custom_data = (f"RunStep type: {step.type}, Status: {step.status}")
+        self.custom_data = f"RunStep type: {step.type}, Status: {step.status}"
 
     def on_error(self, data: str) -> None:
-        self.custom_data = (f"An error occurred. Data: {data}")
+        self.custom_data = f"An error occurred. Data: {data}"
 
     def on_done(self) -> None:
-        self.custom_data = ("Stream completed.")
+        self.custom_data = "Stream completed."
 
     def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
-        self.custom_data = (f"Unhandled Event Type: {event_type}, Data: {event_data}")
+        self.custom_data = f"Unhandled Event Type: {event_type}, Data: {event_data}"
 
 
 # [END stream_event_handler]

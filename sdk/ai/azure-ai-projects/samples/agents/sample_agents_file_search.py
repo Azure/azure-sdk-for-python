@@ -24,7 +24,12 @@ USAGE:
 import os
 from typing import List, cast
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import FileSearchTool, MessageTextContent, MessageTextFileCitationAnnotation, ThreadMessage
+from azure.ai.projects.models import (
+    FileSearchTool,
+    MessageTextContent,
+    MessageTextFileCitationAnnotation,
+    ThreadMessage,
+)
 from azure.identity import DefaultAzureCredential
 
 
@@ -94,7 +99,6 @@ with project_client:
     # Fetch and log all messages
     messages = project_client.agents.get_messages(thread_id=thread.id)
 
-    # Print citations from the messages    
+    # Print citations from the messages
     for citation in messages.file_citation_annotations:
         print(citation)
-    
