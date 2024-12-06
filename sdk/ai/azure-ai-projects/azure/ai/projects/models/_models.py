@@ -1551,8 +1551,8 @@ class MessageAttachment(_model_base.Model):
 
     :ivar file_id: The ID of the file to attach to the message.
     :vartype file_id: str
-    :ivar data_sources: Azure asset ID.
-    :vartype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
+    :ivar data_source: Azure asset ID.
+    :vartype data_source: ~azure.ai.projects.models.VectorStoreDataSource
     :ivar tools: The tools to add to this file. Required.
     :vartype tools: list[~azure.ai.projects.models.CodeInterpreterToolDefinition or
      ~azure.ai.projects.models.FileSearchToolDefinition]
@@ -1560,7 +1560,7 @@ class MessageAttachment(_model_base.Model):
 
     file_id: Optional[str] = rest_field()
     """The ID of the file to attach to the message."""
-    data_sources: Optional[List["_models.VectorStoreDataSource"]] = rest_field()
+    data_source: Optional["_models.VectorStoreDataSource"] = rest_field()
     """Azure asset ID."""
     tools: List["_types.MessageAttachmentToolDefinition"] = rest_field()
     """The tools to add to this file. Required."""
@@ -1571,7 +1571,7 @@ class MessageAttachment(_model_base.Model):
         *,
         tools: List["_types.MessageAttachmentToolDefinition"],
         file_id: Optional[str] = None,
-        data_sources: Optional[List["_models.VectorStoreDataSource"]] = None,
+        data_source: Optional["_models.VectorStoreDataSource"] = None,
     ) -> None: ...
 
     @overload
