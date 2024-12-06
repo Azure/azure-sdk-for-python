@@ -39,7 +39,7 @@ project_client = AIProjectClient.from_connection_string(
 )
 
 with open('./weather_openapi.json', 'r') as f:
-    openapi_spec = jsonref.loads(f.read()) # it's important to load with jsonref, as explained below
+    openapi_spec = jsonref.loads(f.read())
 
 # Create Auth object for the OpenApiTool (note that connection or managed identity auth setup requires additional setup in Azure)
 auth = OpenApiAnonymousAuthDetails()
