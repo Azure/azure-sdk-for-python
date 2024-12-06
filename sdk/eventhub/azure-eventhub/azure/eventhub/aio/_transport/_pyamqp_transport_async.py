@@ -93,7 +93,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         config,
         target: str,
         auth: JWTTokenAuthAsync,  # type: ignore
-        idle_timeout: int,
+        idle_timeout: Optional[int],
         network_trace: bool,
         retry_policy: Any,
         keep_alive_interval: int,
@@ -168,7 +168,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         config,
         source: Source,
         auth: JWTTokenAuthAsync,  # type: ignore
-        idle_timeout: int,
+        idle_timeout: Optional[int],
         network_trace: bool,
         retry_policy: Any,
         client_name: str,
