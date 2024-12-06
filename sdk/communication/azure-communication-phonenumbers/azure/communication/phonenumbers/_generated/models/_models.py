@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13,7 +13,6 @@ from typing import Any, List, Optional, TYPE_CHECKING, Union
 from .. import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -130,19 +129,13 @@ class OfferingsResponse(_serialization.Model):
 class OperatorDetails(_serialization.Model):
     """Represents metadata describing the operator of a phone number.
 
-    All required parameters must be populated in order to send to server.
-
-    :ivar name: Name of the phone operator. Required.
+    :ivar name: Name of the phone operator.
     :vartype name: str
     :ivar mobile_network_code: Mobile Network Code.
     :vartype mobile_network_code: str
     :ivar mobile_country_code: Mobile Country Code.
     :vartype mobile_country_code: str
     """
-
-    _validation = {
-        "name": {"required": True},
-    }
 
     _attribute_map = {
         "name": {"key": "name", "type": "str"},
@@ -153,13 +146,13 @@ class OperatorDetails(_serialization.Model):
     def __init__(
         self,
         *,
-        name: str,
+        name: Optional[str] = None,
         mobile_network_code: Optional[str] = None,
         mobile_country_code: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword name: Name of the phone operator. Required.
+        :keyword name: Name of the phone operator.
         :paramtype name: str
         :keyword mobile_network_code: Mobile Network Code.
         :paramtype mobile_network_code: str

@@ -1,5 +1,10 @@
 # Release History
 
+## 1.2.0 (2025-02-11)
+
+### Features Added
+- API version `2025-02-11` is the default
+
 ## 1.2.0b2 (2024-03-01)
 
 ### Features Added
