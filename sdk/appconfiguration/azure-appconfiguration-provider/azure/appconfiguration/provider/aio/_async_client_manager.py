@@ -386,7 +386,7 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
                 return
 
     async def setup_initial_clients(self):
-        await self._setup_failover_endpoints()
+        await self._update_failover_endpoints()
         if self._load_balancing_enabled:
             random.shuffle(self._replica_clients)
 
@@ -396,7 +396,7 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
         if self._next_update_time > time.time():
             return
 
-        updated_endpoints = await self._setup_failover_endpoints()
+        updated_endpoints = await self._update_failover_endpoints()
         if updated_endpoints and self._load_balancing_enabled:
             # Reshuffle only if a new client was added and _load_balancing_enabled is enabled
             random.shuffle(self._replica_clients)
@@ -404,7 +404,7 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
     def get_client_count(self) -> int:
         return len(self._replica_clients)
 
-    async def _setup_failover_endpoints(self) -> bool:
+    async def _update_failover_endpoints(self) -> bool:
         failover_endpoints = await find_auto_failover_endpoints(
             self._original_endpoint, self._replica_discovery_enabled
         )

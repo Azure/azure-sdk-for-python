@@ -331,9 +331,6 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
             )
         else:
             raise ValueError("Please pass either endpoint and credential, or a connection string with a value.")
-        self._setup_failover_endpoints()
-        if load_balancing_enabled:
-            random.shuffle(self._replica_clients)
 
     def get_next_client(self) -> Optional[_ConfigurationClientWrapper]:
         """
@@ -356,16 +353,6 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
         self._last_active_client_name = next_client.endpoint
         return next_client
 
-    def has_next_client(self) -> bool:
-        """
-        Check if there is another client to be used for the request. find_active_clients needs be called before this
-        method or False will be returned.
-
-        :return: True if there is another client to be used for the request, False otherwise.
-        :rtype: bool
-        """
-        return bool(self._active_clients)
-
     def find_active_clients(self):
         """
         Figures out the current active clients, if _load_balancing_enabled is enabled the start of the list will be the
@@ -382,20 +369,15 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
                 self._active_clients = active_clients[swap_point:] + active_clients[:swap_point]
                 return
 
-    def refresh_clients(self):
-        if not self._replica_discovery_enabled:
-            return
-        if self._next_update_time > time.time():
-            return
-        updated_endpoints = self._setup_failover_endpoints()
-        if updated_endpoints and self._load_balancing_enabled:
-            # Reshuffle only if a new client was added and _load_balancing_enabled is enabled
-            random.shuffle(self._replica_clients)
-
     def get_client_count(self) -> int:
         return len(self._replica_clients)
 
-    def _setup_failover_endpoints(self) -> bool:
+    def refresh_clients(self):
+        if not self._replica_discovery_enabled:
+            return
+        if self._next_update_time and self._next_update_time > time.time():
+            return
+
         failover_endpoints = find_auto_failover_endpoints(self._original_endpoint, self._replica_discovery_enabled)
 
         if failover_endpoints is None:
@@ -447,7 +429,9 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
                     )
         self._replica_clients = new_clients
         self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
-        return updated_endpoints
+        if updated_endpoints and self._load_balancing_enabled:
+            # Reshuffle only if a new client was added and _load_balancing_enabled is enabled
+            random.shuffle(self._replica_clients) # This allways needs to be shuffled, but if load balancing is enabled than the primary endpoint need to be shuffled too.
 
     def backoff(self, client: _ConfigurationClientWrapper):
         client.failed_attempts += 1
