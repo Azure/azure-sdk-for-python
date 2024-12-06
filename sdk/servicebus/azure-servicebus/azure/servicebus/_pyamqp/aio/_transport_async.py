@@ -434,20 +434,8 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
             username = self._http_proxy.get("username", None)
             password = self._http_proxy.get("password", None)
 
-        try:
-            from aiohttp import (  # pylint: disable=networking-import-outside-azure-core-transport
-                ClientSession,
-                ClientConnectorError,
-            )
-            from urllib.parse import urlsplit
-        except ImportError:
-            raise ImportError("Please install aiohttp library to use async websocket transport.") from None
-        if username or password:
-            from aiohttp import BasicAuth  # pylint: disable=networking-import-outside-azure-core-transport
+        from urllib.parse import urlsplit
 
-            http_proxy_auth = BasicAuth(login=username, password=password)
-
-        self.session = ClientSession()
         if self._custom_endpoint:
             url = f"wss://{self._custom_endpoint}" if self._use_tls else f"ws://{self._custom_endpoint}"
         else:
@@ -456,25 +444,17 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
             url = f"{parsed_url.scheme}://{parsed_url.netloc}:{self.port}{parsed_url.path}"
 
         try:
-            # Enabling heartbeat that sends a ping message every n seconds and waits for pong response.
-            # if pong response is not received then close connection. This raises an error when trying
-            # to communicate with the websocket which is no longer active.
-            # We are waiting a bug fix in aiohttp for these 2 bugs where aiohttp ws might hang on network disconnect
-            # and the heartbeat mechanism helps mitigate these two.
-            # https://github.com/aio-libs/aiohttp/pull/5860
-            # https://github.com/aio-libs/aiohttp/issues/2309
+            from ..websockets import AsyncWebSocket
+            from .._exceptions import WebSocketConnectionError
 
-            self.sock = await self.session.ws_connect(
+
+            self.sock = AsyncWebSocket(
                 url=url,
-                timeout=self.socket_timeout,  # timeout for connect
-                protocols=[AMQP_WS_SUBPROTOCOL],
-                autoclose=False,
-                proxy=http_proxy_host,
-                proxy_auth=http_proxy_auth,
-                ssl=self.sslopts if self._use_tls else None,
-                heartbeat=DEFAULT_WEBSOCKET_HEARTBEAT_SECONDS,
+                subprotocols=[AMQP_WS_SUBPROTOCOL],
+                http_proxy=http_proxy_host,
             )
-        except ClientConnectorError as exc:
+            await self.sock.connect()
+        except WebSocketConnectionError as exc:
             _LOGGER.info("Websocket connect failed: %r", exc, extra=self.network_trace_params)
             if self._custom_endpoint:
                 raise AuthenticationException(
@@ -519,7 +499,6 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
         """Do any preliminary work in shutting down the connection."""
         async with self.socket_lock:
             await self.sock.close()
-            await self.session.close()
             self.connected = False
 
     async def _write(self, s):
