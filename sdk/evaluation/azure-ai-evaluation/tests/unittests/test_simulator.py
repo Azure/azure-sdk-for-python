@@ -12,6 +12,7 @@ import pytest
 from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
 
+
 @pytest.fixture()
 def async_callback():
     async def callback(x):

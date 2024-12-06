@@ -148,7 +148,7 @@ class TestAdvSimulator:
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.simulator import AdversarialSimulator
         from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
-        
+
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
             "resource_group_name": project_scope["resource_group_name"],
