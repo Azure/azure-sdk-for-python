@@ -31,7 +31,7 @@ class TestConfigurationClientManagerLoadBalance(unittest.TestCase):
 
         mock_find_auto_failover_endpoints.return_value = []
 
-        with ConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, False, 0, 0, False) as manager:
+        with ConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, True, 0, 0, False) as manager:
             assert manager.get_next_client() is None
 
             manager.find_active_clients()
@@ -40,10 +40,11 @@ class TestConfigurationClientManagerLoadBalance(unittest.TestCase):
         # Multiple endpoint test no load balancing
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint2", "https://fake.endpoint3"]
 
-        manager = ConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, False, 0, 0, False)
-
+        manager = ConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, True, 0, 0, False)
         manager.refresh_clients()
+
         manager.find_active_clients()
+
         assert len(manager._active_clients) == 3
         assert manager._active_clients[0].endpoint == "https://fake.endpoint"
         assert manager._active_clients[1].endpoint == "https://fake.endpoint2"
@@ -52,7 +53,8 @@ class TestConfigurationClientManagerLoadBalance(unittest.TestCase):
         # Single endpoint test load balancing
         mock_find_auto_failover_endpoints.return_value = []
 
-        manager = ConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, False, 0, 0, True)
+        manager = ConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, True, 0, 0, True)
+        manager.refresh_clients()
 
         manager.find_active_clients()
         assert len(manager._active_clients) == 1
@@ -60,7 +62,8 @@ class TestConfigurationClientManagerLoadBalance(unittest.TestCase):
         # Multiple endpoint test load balancing
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint2", "https://fake.endpoint3"]
 
-        manager = ConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, False, 0, 0, True)
+        manager = ConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, True, 0, 0, True)
+        manager.refresh_clients()
 
         manager.find_active_clients()
         assert len(manager._active_clients) == 3
@@ -95,7 +98,7 @@ class TestConfigurationClientManagerLoadBalance(unittest.TestCase):
 
         mock_find_auto_failover_endpoints.return_value = []
 
-        with ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, False, 0, 0, False) as manager:
+        with ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 0, 0, False) as manager:
             assert manager.get_next_client() is None
 
             manager.find_active_clients()
@@ -104,7 +107,8 @@ class TestConfigurationClientManagerLoadBalance(unittest.TestCase):
         # Multiple endpoint test no load balancing
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint2", "https://fake.endpoint3"]
 
-        manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, False, 0, 0, False)
+        manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 0, 0, False)
+        manager.refresh_clients()
 
         manager.find_active_clients()
         assert len(manager._active_clients) == 3
@@ -115,7 +119,8 @@ class TestConfigurationClientManagerLoadBalance(unittest.TestCase):
         # Single endpoint test load balancing
         mock_find_auto_failover_endpoints.return_value = []
 
-        manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, False, 0, 0, True)
+        manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 0, 0, True)
+        manager.refresh_clients()
 
         manager.find_active_clients()
         assert len(manager._active_clients) == 1
@@ -123,7 +128,8 @@ class TestConfigurationClientManagerLoadBalance(unittest.TestCase):
         # Multiple endpoint test load balancing
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint2", "https://fake.endpoint3"]
 
-        manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, False, 0, 0, True)
+        manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 0, 0, True)
+        manager.refresh_clients()
 
         manager.find_active_clients()
         assert len(manager._active_clients) == 3
