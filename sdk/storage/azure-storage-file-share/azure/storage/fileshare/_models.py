@@ -959,10 +959,6 @@ class DirectoryProperties(DictMixin):
         props.change_time = generated.properties.change_time
         props.etag = generated.properties.etag
         props.permission_key = generated.permission_key
-        props.owner = generated.owner
-        props.group = generated.group
-        props.file_mode = generated.file_mode
-        props.nfs_file_type = generated.nfs_file_type
         return props
 
 
@@ -1214,11 +1210,6 @@ class FileProperties(DictMixin):
         props.change_time = generated.properties.change_time
         props.size = generated.properties.content_length
         props.permission_key = generated.permission_key
-        props.owner = generated.owner
-        props.group = generated.group
-        props.file_mode = generated.file_mode
-        props.link_count = generated.link_count
-        props.nfs_file_type = generated.nfs_file_type
         return props
 
 
