@@ -46,7 +46,6 @@ with project_client:
         name="my-assistant",
         instructions="You are a helpful assistant",
         tools=sharepoint.definitions,
-        headers={"x-ms-enable-preview": "true"},
     )
     print(f"Created agent, ID: {agent.id}")
 

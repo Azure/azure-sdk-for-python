@@ -9,7 +9,7 @@ FILE: sample_agents_openapi.py
 DESCRIPTION:
     This sample demonstrates how to use agent operations with the 
     OpenAPI tool from the Azure Agents service using a synchronous client.
-    To learn more about OpenAPI specs, visit https://learn.microsoft.com/azure/search/search-get-started-portal
+    To learn more about OpenAPI specs, visit https://learn.microsoft.com/openapi
 
 USAGE:
     python sample_agents_openapi.py
