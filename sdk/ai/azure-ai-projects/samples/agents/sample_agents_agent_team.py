@@ -35,7 +35,7 @@ project_client = AIProjectClient.from_connection_string(
 )
 
 with project_client:
-    agent_team = AgentTeam()
+    agent_team = AgentTeam("test_team", project_client=project_client)
     agent_team.add_agent(
         model="gpt-4-1106-preview",
         name="Coder",
@@ -46,4 +46,13 @@ with project_client:
         name="Reviewer",
         instructions="You are software engineer who reviews code. Your name is Reviewer.",
     )
-    agent_team.process_request(project_client=project_client, request="Write me a python number guessing game.")
+    agent_team.assemble_team()
+
+    print("A team of agents specialized in software engineering is available for requests.")
+    while True:
+        user_input = input("Input (type 'quit' to exit): ")
+        if user_input.lower() == "quit":
+            break
+        agent_team.process_request(request=user_input)
+
+    agent_team.dismantle_team()
