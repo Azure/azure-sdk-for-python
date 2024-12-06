@@ -74,8 +74,8 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         """
         if "query" not in eval_input and "response" not in eval_input:
             raise EvaluationException(
-                message="Multimodal conversation inputs are not supported.",
-                internal_message="Multimodal conversation inputs are not supported.",
+                message="Only text conversation inputs are supported.",
+                internal_message="Only text conversation inputs are supported.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.INVALID_VALUE,
                 target=ErrorTarget.CONVERSATION,
