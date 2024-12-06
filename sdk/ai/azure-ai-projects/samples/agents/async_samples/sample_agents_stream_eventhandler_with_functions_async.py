@@ -32,7 +32,7 @@ from azure.ai.projects.models import (
     RequiredFunctionToolCall,
     RunStep,
     SubmitToolOutputsAction,
-    ThreadMessage,
+    AgentThreadMessage,
     ThreadRun,
     ToolOutput,
 )
@@ -57,8 +57,8 @@ class MyEventHandler(AsyncAgentEventHandler[str]):
     async def on_message_delta(self, delta: "AgentMessageDeltaChunk") -> None:
         print(f"Text delta received: {delta.text}")
 
-    async def on_thread_message(self, message: "ThreadMessage") -> None:
-        print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
+    async def on_thread_message(self, message: "AgentThreadMessage") -> None:
+        print(f"AgentThreadMessage created. ID: {message.id}, Status: {message.status}")
 
     async def on_thread_run(self, run: "ThreadRun") -> None:
         print(f"ThreadRun status: {run.status}")

@@ -19,15 +19,15 @@ from urllib.parse import urlparse
 from azure.ai.projects import _types
 from azure.ai.projects.models import AgentRunStream, AsyncAgentRunStream, _models
 from azure.ai.projects.models._enums import AgentsApiResponseFormatMode, MessageRole, RunStepStatus
-from azure.ai.projects.models._models import (
+from azure.ai.projects.models import (
     MessageAttachment,
-    MessageDeltaChunk,
+    AgentMessageDeltaChunk,
     MessageIncompleteDetails,
     RunStep,
     RunStepDeltaChunk,
     RunStepFunctionToolCall,
     RunStepToolCallDetails,
-    ThreadMessage,
+    AgentThreadMessage,
     ThreadRun,
     ToolDefinition,
     ToolOutput,
@@ -280,7 +280,7 @@ class _AIAgentsInstrumentorPreview:
         return attrs
 
     def add_thread_message_event(
-        self, span, message: ThreadMessage, usage: Optional[_models.RunStepCompletionUsage] = None
+        self, span, message: AgentThreadMessage, usage: Optional[_models.RunStepCompletionUsage] = None
     ) -> None:
         content_body = {}
         if _trace_agents_content:
@@ -455,7 +455,7 @@ class _AIAgentsInstrumentorPreview:
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
-        additional_messages: Optional[List[ThreadMessage]] = None,
+        additional_messages: Optional[List[AgentThreadMessage]] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         _tools: Optional[List[ToolDefinition]] = None,
@@ -556,7 +556,7 @@ class _AIAgentsInstrumentorPreview:
     def start_create_thread_span(
         self,
         project_name: str,
-        messages: Optional[List[ThreadMessage]] = None,
+        messages: Optional[List[AgentThreadMessage]] = None,
         _tool_resources: Optional[ToolResources] = None,
     ) -> "Optional[AbstractSpan]":
         span = start_span(OperationName.CREATE_THREAD, project_name)
@@ -1643,14 +1643,14 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
         self.inner_handler = inner_handler
         self.ended = False
         self.last_run: Optional[ThreadRun] = None
-        self.last_message: Optional[ThreadMessage] = None
+        self.last_message: Optional[AgentThreadMessage] = None
         self.instrumentor = instrumentor
 
-    def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
+    def on_message_delta(self, delta: "AgentMessageDeltaChunk") -> None:
         if self.inner_handler:
             self.inner_handler.on_message_delta(delta)
 
-    def on_thread_message(self, message: "ThreadMessage") -> None:
+    def on_thread_message(self, message: "AgentThreadMessage") -> None:
         if self.inner_handler:
             self.inner_handler.on_thread_message(message)
 
@@ -1675,7 +1675,9 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
                 self.span, step
             )
         elif step.type == "message_creation" and step.status == RunStepStatus.COMPLETED:
-            self.instrumentor.add_thread_message_event(self.span, cast(ThreadMessage, self.last_message), step.usage)
+            self.instrumentor.add_thread_message_event(
+                self.span, cast(AgentThreadMessage, self.last_message), step.usage
+            )
             self.last_message = None
 
     def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:
@@ -1723,14 +1725,14 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
         self.inner_handler = inner_handler
         self.ended = False
         self.last_run: Optional[ThreadRun] = None
-        self.last_message: Optional[ThreadMessage] = None
+        self.last_message: Optional[AgentThreadMessage] = None
         self.instrumentor = instrumentor
 
-    async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:  # type: ignore[func-returns-value]
+    async def on_message_delta(self, delta: "AgentMessageDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             await self.inner_handler.on_message_delta(delta)
 
-    async def on_thread_message(self, message: "ThreadMessage") -> None:  # type: ignore[func-returns-value]
+    async def on_thread_message(self, message: "AgentThreadMessage") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             await self.inner_handler.on_thread_message(message)
 
@@ -1755,7 +1757,9 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
                 self.span, step
             )
         elif step.type == "message_creation" and step.status == RunStepStatus.COMPLETED:
-            self.instrumentor.add_thread_message_event(self.span, cast(ThreadMessage, self.last_message), step.usage)
+            self.instrumentor.add_thread_message_event(
+                self.span, cast(AgentThreadMessage, self.last_message), step.usage
+            )
             self.last_message = None
 
     async def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:  # type: ignore[func-returns-value]

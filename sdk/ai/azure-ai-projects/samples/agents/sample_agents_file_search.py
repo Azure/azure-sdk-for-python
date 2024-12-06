@@ -22,13 +22,9 @@ USAGE:
 """
 
 import os
-from typing import List, cast
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     FileSearchTool,
-    MessageTextContent,
-    MessageTextFileCitationAnnotation,
-    ThreadMessage,
 )
 from azure.identity import DefaultAzureCredential
 

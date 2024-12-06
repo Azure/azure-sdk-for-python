@@ -27,7 +27,7 @@ from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
     AgentMessageDeltaChunk,
     RunStep,
-    ThreadMessage,
+    AgentThreadMessage,
     ThreadRun,
 )
 from azure.ai.projects.models import AsyncAgentEventHandler
@@ -41,8 +41,8 @@ class MyEventHandler(AsyncAgentEventHandler):
     async def on_message_delta(self, delta: "AgentMessageDeltaChunk") -> None:
         print(f"Text delta received: {delta.text}")
 
-    async def on_thread_message(self, message: "ThreadMessage") -> None:
-        print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
+    async def on_thread_message(self, message: "AgentThreadMessage") -> None:
+        print(f"AgentThreadMessage created. ID: {message.id}, Status: {message.status}")
 
     async def on_thread_run(self, run: "ThreadRun") -> None:
         print(f"ThreadRun status: {run.status}")

@@ -26,9 +26,8 @@ from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import (
     AgentStreamEvent,
-    MessageDeltaTextContent,
     AgentMessageDeltaChunk,
-    ThreadMessage,
+    AgentThreadMessage,
     ThreadRun,
     RunStep,
 )
@@ -63,8 +62,9 @@ with project_client:
 
             if isinstance(event_data, AgentMessageDeltaChunk):
                 print(f"Text delta received: {event_data.text}")
-            elif isinstance(event_data, ThreadMessage):
-                print(f"ThreadMessage created. ID: {event_data.id}, Status: {event_data.status}")
+
+            elif isinstance(event_data, AgentThreadMessage):
+                print(f"AgentThreadMessage created. ID: {event_data.id}, Status: {event_data.status}")
 
             elif isinstance(event_data, ThreadRun):
                 print(f"ThreadRun status: {event_data.status}")

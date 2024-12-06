@@ -22,8 +22,6 @@ from typing import (
     Awaitable,
     Callable,
     Dict,
-    Generator,
-    AsyncGenerator,
     Generic,
     Iterator,
     List,
@@ -71,9 +69,9 @@ from ._models import (
     ToolDefinition,
     ToolResources,
     MessageDeltaTextContent,
+    ThreadMessage,
 )
 
-from ._models import ThreadMessage as ThreadMessageGenerated
 
 logger = logging.getLogger(__name__)
 
@@ -170,7 +168,7 @@ def _parse_event(event_data_str: str) -> Tuple[str, StreamEventData]:
         AgentStreamEvent.THREAD_MESSAGE_COMPLETED.value,
         AgentStreamEvent.THREAD_MESSAGE_INCOMPLETE.value,
     }:
-        thread_message = cast(ThreadMessageGenerated, _safe_instantiate(ThreadMessageGenerated, parsed_data))
+        thread_message = cast(ThreadMessage, _safe_instantiate(ThreadMessage, parsed_data))
         event_obj = AgentThreadMessage(thread_message)
     elif event_type == AgentStreamEvent.THREAD_MESSAGE_DELTA.value:
         message_delta_chunk = cast(MessageDeltaChunk, _safe_instantiate(MessageDeltaChunk, parsed_data))
@@ -404,8 +402,7 @@ def is_optional(annotation) -> bool:
 
 
 class AgentMessageDeltaChunk(MessageDeltaChunk):
-
-    def __init__(self, generated: MessageDeltaChunk):
+    def __init__(self, generated: MessageDeltaChunk):  # pylint: disable=super-init-not-called
         for prop, value in vars(generated).items():
             setattr(self, prop, value)
 
@@ -424,9 +421,9 @@ class AgentMessageDeltaChunk(MessageDeltaChunk):
         )
 
 
-class AgentThreadMessage(ThreadMessageGenerated):
+class AgentThreadMessage(ThreadMessage):
 
-    def __init__(self, generated: ThreadMessageGenerated):
+    def __init__(self, generated: ThreadMessage):  # pylint: disable=super-init-not-called
         for prop, value in vars(generated).items():
             setattr(self, prop, value)
 

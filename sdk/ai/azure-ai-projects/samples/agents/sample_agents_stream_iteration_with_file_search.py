@@ -22,10 +22,9 @@ USAGE:
 """
 
 import os
-from typing import List
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import AgentStreamEvent, FileSearchTool, RunStepDeltaChunk
-from azure.ai.projects.models import MessageDeltaChunk, MessageDeltaTextContent, RunStep, AgentThreadMessage, ThreadRun
+from azure.ai.projects.models import AgentMessageDeltaChunk, RunStep, AgentThreadMessage, ThreadRun
 
 from azure.ai.projects.operations import AgentsOperations
 from azure.identity import DefaultAzureCredential
@@ -73,18 +72,14 @@ with project_client:
 
         for event_type, event_data, _ in stream:
 
-            if isinstance(event_data, MessageDeltaTextContent):
-                text_value = event_data.text.value if event_data.text else "No text"
-                print(f"Text delta received: {text_value}")
-
-            elif isinstance(event_data, MessageDeltaChunk):
-                print(f"Text delta received: {event_data.id}")
+            if isinstance(event_data, AgentMessageDeltaChunk):
+                print(f"Text delta received: {event_data.text}")
 
             elif isinstance(event_data, RunStepDeltaChunk):
                 print(f"RunStepDeltaChunk received. ID: {event_data.id}.")
 
             elif isinstance(event_data, AgentThreadMessage):
-                print(f"ThreadMessage created. ID: {event_data.id}, Status: {event_data.status}")
+                print(f"AgentThreadMessage created. ID: {event_data.id}, Status: {event_data.status}")
                 for annotation in event_data.file_citation_annotations:
                     print(
                         f"Citation {annotation.text} from file ID: {annotation.file_citation.file_id}, start index: {annotation.start_index}, end index: {annotation.end_index}"

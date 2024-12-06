@@ -1412,7 +1412,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         return run
 
-    _defaultAgentEventHandler = _models.AsyncAgentEventHandler()
+    _defaultAgentEventHandler: _models.AsyncAgentEventHandler = _models.AsyncAgentEventHandler()
 
     @overload
     async def create_stream(

@@ -26,13 +26,12 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import AgentStreamEvent, RunStepDeltaChunk
 from azure.ai.projects.models import (
     AgentMessageDeltaChunk,
-    MessageDeltaTextContent,
     RunStep,
     AgentThreadMessage,
     ThreadRun,
 )
 from azure.ai.projects.models import FunctionTool, ToolSet
-from azure.ai.projects.operations import AgentsOperations
+from azure.ai.projects.operations._operations import AgentsOperations
 from azure.identity import DefaultAzureCredential
 from user_functions import user_functions
 
@@ -73,7 +72,7 @@ with project_client:
                 print(f"RunStepDeltaChunk received. ID: {event_data.id}.")
 
             elif isinstance(event_data, AgentThreadMessage):
-                print(f"ThreadMessage created. ID: {event_data.id}, Status: {event_data.status}")
+                print(f"AgentThreadMessage created. ID: {event_data.id}, Status: {event_data.status}")
 
             elif isinstance(event_data, ThreadRun):
                 print(f"ThreadRun status: {event_data.status}")
