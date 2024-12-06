@@ -53,8 +53,7 @@ with project_client:
         model="gpt-4o-mini",
         name="my-assistant",
         instructions="You are a helpful assistant",
-        tools=openapi.definitions,
-        headers={"x-ms-enable-preview": "true"},
+        tools=openapi.definitions
     )
     print(f"Created agent, ID: {agent.id}")
 
