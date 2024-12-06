@@ -18,6 +18,7 @@ from azure.ai.evaluation import (
     evaluate,
 )
 from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
+from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
 from azure.identity import DefaultAzureCredential
 
 
@@ -163,7 +164,7 @@ class TestSimAndEval:
         # Run simulator to produce 2 results with 2 conversation turns each (4 messages)
         simulator_output = asyncio.run(
             simulator(
-                scenario=AdversarialScenario.ADVERSARIAL_IMAGE_UNDERSTANDING,
+                scenario=_UnstableAdversarialScenario.ADVERSARIAL_IMAGE_UNDERSTANDING,
                 max_conversation_turns=1,
                 max_simulation_results=1,
                 target=callback,
@@ -241,7 +242,7 @@ class TestSimAndEval:
         # Run simulator to produce 2 results with 2 conversation turns each (4 messages)
         simulator_output = asyncio.run(
             simulator(
-                scenario=AdversarialScenario.ADVERSARIAL_IMAGE_GEN,
+                scenario=_UnstableAdversarialScenario.ADVERSARIAL_IMAGE_GEN,
                 max_conversation_turns=1,
                 max_simulation_results=1,
                 target=callback,
@@ -320,7 +321,7 @@ class TestSimAndEval:
 
         simulator_output = asyncio.run(
             simulator(
-                scenario=AdversarialScenario.ADVERSARIAL_IMAGE_GEN,
+                scenario=_UnstableAdversarialScenario.ADVERSARIAL_IMAGE_GEN,
                 max_conversation_turns=1,
                 max_simulation_results=1,
                 target=callback,
