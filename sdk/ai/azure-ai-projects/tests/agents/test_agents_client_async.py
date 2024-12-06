@@ -32,6 +32,8 @@ from azure.ai.projects.models import (
     FileSearchToolResource,
     FunctionTool,
     MessageAttachment,
+    MessageRole,
+    RunStatus,
     ThreadMessageOptions,
     ToolResources,
     ToolSet,
@@ -1775,6 +1777,176 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         assert run.id
         print("Created run, run ID", run.id)
 
+        # check that tools are uploaded
+        assert run.tools
+        assert run.tools[0]["function"]["name"] == functions.definitions[0]["function"]["name"]
+        print("Tool successfully submitted:", functions.definitions[0]["function"]["name"])
+
+        # check status
+        assert run.status in [
+            "queued",
+            "in_progress",
+            "requires_action",
+            "cancelling",
+            "cancelled",
+            "failed",
+            "completed",
+            "expired",
+        ]
+        while run.status in ["queued", "in_progress", "requires_action"]:
+            time.sleep(1)
+            run = await client.agents.get_run(thread_id=thread.id, run_id=run.id)
+
+            # check if tools are needed
+            if run.status == "requires_action" and run.required_action.submit_tool_outputs:
+                print("Requires action: submit tool outputs")
+                tool_calls = run.required_action.submit_tool_outputs.tool_calls
+                if not tool_calls:
+                    print(
+                        "No tool calls provided - cancelling run"
+                    )  # TODO how can i make sure that it wants tools? should i have some kind of error message?
+                    await client.agents.cancel_run(thread_id=thread.id, run_id=run.id)
+                    break
+
+                # submit tool outputs to run
+                tool_outputs = toolset.execute_tool_calls(tool_calls)  # TODO issue somewhere here
+                print("Tool outputs:", tool_outputs)
+                if tool_outputs:
+                    await client.agents.submit_tool_outputs_to_run(
+                        thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs
+                    )
+
+            print("Current run status:", run.status)
+
+        print("Run completed with status:", run.status)
+
+        # check that messages used the tool
+        messages = await client.agents.list_messages(thread_id=thread.id, run_id=run.id)
+        tool_message = messages["data"][0]["content"][0]["text"]["value"]
+        hour12 = time.strftime("%H")
+        hour24 = time.strftime("%I")
+        minute = time.strftime("%M")
+        assert hour12 + ":" + minute in tool_message or hour24 + ":" + minute
+        print("Used tool_outputs")
+
+        # delete agent and close client
+        await client.agents.delete_agent(agent.id)
+        print("Deleted agent")
+        await client.close()
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_create_parallel_tool_thread_true(self, **kwargs):
+        """Test creation of parallel runs."""
+        self._do_test_create_parallel_thread_runs(True, True, **kwargs)
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_create_parallel_tool_thread_false(self, **kwargs):
+        """Test creation of parallel runs."""
+        self._do_test_create_parallel_thread_runs(False, True, **kwargs)
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_create_parallel_tool_run_true(self, **kwargs):
+        """Test creation of parallel runs."""
+        self._do_test_create_parallel_thread_runs(True, False, **kwargs)
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_create_parallel_tool_run_false(self, **kwargs):
+        """Test creation of parallel runs."""
+        self._do_test_create_parallel_thread_runs(False, False, **kwargs)
+
+    async def _wait_for_run(self, client, run, timeout=1):
+        """Wait while run will get to terminal state."""
+        while run.status in [RunStatus.QUEUED, RunStatus.IN_PROGRESS, RunStatus.REQUIRES_ACTION]:
+            time.sleep(timeout)
+            run = await client.agents.get_run(thread_id=run.thread_id, run_id=run.id)
+        return run
+
+    async def _do_test_create_parallel_thread_runs(self, use_parallel_runs, create_thread_run, **kwargs):
+        """Test creation of parallel runs."""
+
+        # create client
+        client = self.create_client(
+            **kwargs,
+        )
+        assert isinstance(client, AIProjectClient)
+
+        # Initialize agent tools
+        functions = FunctionTool(functions=user_functions_recording)
+        code_interpreter = CodeInterpreterTool()
+
+        toolset = ToolSet()
+        toolset.add(functions)
+        toolset.add(code_interpreter)
+        agent = client.agents.create_agent(
+            model="gpt-4",
+            name="my-agent",
+            instructions="You are helpful agent",
+            toolset=toolset,
+        )
+        assert agent.id
+
+        message = ThreadMessageOptions(
+            role="user",
+            content="Hello, what time is it?",
+        )
+
+        if create_thread_run:
+            run = await client.agents.create_thread_and_run(
+                assistant_id=agent.id,
+                parallel_tool_calls=use_parallel_runs,
+            )
+            run = await self._wait_for_run(client, run)
+        else:
+            thread = await client.agents.create_thread(messages=[message])
+            assert thread.id
+
+            run = await client.agents.create_and_process_run(
+                thread_id=thread.id,
+                assistant_id=agent.id,
+                parallel_tool_calls=use_parallel_runs,
+            )
+        assert run.id
+        assert run.status == RunStatus.COMPLETED, run.last_error.message
+        assert run.parallel_tool_calls == use_parallel_runs
+
+        assert (await client.agents.delete_agent(agent.id)).deleted, "The agent was not deleted"
+        messages = await client.agents.list_messages(thread_id=run.thread_id)
+        assert len(messages.data), "The data from the agent was not received."
+
+    """
+    # DISABLED: rewrite to ensure run is not complete when cancel_run is called
+    # test cancelling run
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_cancel_run(self, **kwargs):
+        # create client
+        client = self.create_client(**kwargs)
+        assert isinstance(client, AIProjectClient)
+
+        # create agent
+        agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+        assert agent.id
+        print("Created agent, agent ID", agent.id)
+
+        # create thread
+        thread = client.agents.create_thread()
+        assert thread.id
+        print("Created thread, thread ID", thread.id)
+
+        # create message
+        message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, what time is it?")
+        assert message.id
+        print("Created message, message ID", message.id)
+
+        # create run
+        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+        assert run.id
+        print("Created run, run ID", run.id)
+
         # check status and cancel
         assert run.status in ["queued", "in_progress", "requires_action"]
         client.agents.cancel_run(thread_id=thread.id, run_id=run.id)
@@ -2575,6 +2747,49 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         assert len(messages)
         await ai_client.agents.delete_agent(agent.id)
         await ai_client.close()
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_client_with_thread_messages(self, **kwargs):
+        """Test agent with thread messages."""
+        async with self.create_client(**kwargs) as client:
+
+            # [START create_agent]
+            agent = await client.agents.create_agent(
+                model="gpt-4-1106-preview",
+                name="my-assistant",
+                instructions="You are helpful assistant",
+            )
+            assert agent.id, "The agent was not created."
+            thread = await client.agents.create_thread()
+            assert thread.id, "Thread was not created"
+
+            message = await client.agents.create_message(
+                thread_id=thread.id, role="user", content="What is the equation of light energy?"
+            )
+            assert message.id, "The message was not created."
+
+            additional_messages = [
+                ThreadMessageOptions(role=MessageRole.AGENT, content="E=mc^2"),
+                ThreadMessageOptions(role=MessageRole.USER, content="What is the impedance formula?"),
+            ]
+            run = await client.agents.create_run(
+                thread_id=thread.id, assistant_id=agent.id, additional_messages=additional_messages
+            )
+
+            # poll the run as long as run status is queued or in progress
+            while run.status in [RunStatus.QUEUED, RunStatus.IN_PROGRESS]:
+                # wait for a second
+                time.sleep(1)
+                run = await client.agents.get_run(
+                    thread_id=thread.id,
+                    run_id=run.id,
+                )
+            assert run.status in RunStatus.COMPLETED
+
+            assert (await client.agents.delete_agent(agent.id)).deleted, "The agent was not deleted"
+            messages = await client.agents.list_messages(thread_id=thread.id)
+            assert len(messages.data), "The data from the agent was not received."
 
     async def _get_file_id_maybe(self, ai_client: AIProjectClient, **kwargs) -> str:
         """Return file id if kwargs has file path."""

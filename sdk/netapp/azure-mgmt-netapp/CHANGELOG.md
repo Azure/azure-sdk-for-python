@@ -1,5 +1,40 @@
 # Release History
 
+## 13.4.0b1 (2024-11-18)
+
+### Features Added
+
+  - Model `Backup` added property `is_large_volume`
+  - Model `CapacityPool` added property `custom_throughput_mibps`
+  - Model `CapacityPoolPatch` added property `custom_throughput_mibps`
+  - Model `EncryptionIdentity` added property `federated_client_id`
+  - Model `NetAppAccount` added property `nfs_v4_id_domain`
+  - Model `NetAppAccount` added property `is_multi_ad_enabled`
+  - Model `NetAppAccountPatch` added property `nfs_v4_id_domain`
+  - Model `NetAppAccountPatch` added property `is_multi_ad_enabled`
+  - Model `ReplicationObject` added property `destination_replications`
+  - Enum `ServiceLevel` added member `FLEXIBLE`
+  - Model `Volume` added property `accept_grow_capacity_pool_for_short_term_clone_split`
+  - Model `Volume` added property `inherited_size_in_bytes`
+  - Model `Volume` added property `language`
+  - Model `VolumeGroupVolumeProperties` added property `accept_grow_capacity_pool_for_short_term_clone_split`
+  - Model `VolumeGroupVolumeProperties` added property `inherited_size_in_bytes`
+  - Model `VolumeGroupVolumeProperties` added property `language`
+  - Added enum `AcceptGrowCapacityPoolForShortTermCloneSplit`
+  - Added model `ChangeKeyVault`
+  - Added model `DestinationReplication`
+  - Added model `EncryptionTransitionRequest`
+  - Added model `KeyVaultPrivateEndpoint`
+  - Added model `ListQuotaReportResponse`
+  - Added model `QuotaReport`
+  - Added enum `ReplicationType`
+  - Added enum `VolumeLanguage`
+  - Operation group `AccountsOperations` added method `begin_change_key_vault`
+  - Operation group `AccountsOperations` added method `begin_get_change_key_vault_information`
+  - Operation group `AccountsOperations` added method `begin_transition_to_cmk`
+  - Operation group `VolumesOperations` added method `begin_list_quota_report`
+  - Operation group `VolumesOperations` added method `begin_split_clone_from_parent`
+
 ## 13.3.0 (2024-10-21)
 
 ### Features Added

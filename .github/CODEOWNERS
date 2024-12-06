@@ -46,7 +46,7 @@
 # ServiceLabel: %AI
 
 # PRLabel: %AI
-/sdk/ai/                                                             @luigiw @needuv @achauhan-scc @kingernupur @paulshealy1 @singankit @dargilco @jhakulin
+/sdk/ai/                                                             @luigiw @needuv @achauhan-scc @kingernupur @paulshealy1 @singankit @dargilco @jhakulin @jayesh-tanna
 
 # ServiceOwners: @luigiw @needuv @singankit
 # ServiceLabel: %Evaluation
@@ -87,7 +87,7 @@
 # ServiceLabel: %App Configuration Provider
 
 # PRLabel: %App Configuration Provider
-/sdk/appconfiguration/azure-appconfiguration-provider/               @mametcal @albertofori @avanigupta @mrm9084
+/sdk/appconfiguration/azure-appconfiguration-provider/               @albertofori @avanigupta @mrm9084 @rossgrambo
 
 # ServiceLabel: %Attestation
 # PRLabel: %Attestation
@@ -269,14 +269,14 @@
 # ServiceOwners: @azureml-github @Azure/azure-ml-sdk
 
 # PRLabel: %Machine Learning
-/sdk/ml/                                                             @paulshealy1 @achauhan-scc @kingernupur
+/sdk/ml/                                                             @paulshealy1 @achauhan-scc @kingernupur @jayesh-tanna
 
 # PRLabel: %ML-Local Endpoints
 /sdk/ml/azure-ai-ml/azure/ai/ml/_local_endpoints/                    @NonStatic2014 @arunsu @JustinFirsching
 
 # PRLabel: %ML-Jobs
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job*                         @TonyJ1 @wangchao1230 @kingernupur @achauhan-scc
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/                       @TonyJ1 @wangchao1230 @kingernupur @achauhan-scc
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job*                         @TonyJ1 @wangchao1230 @kingernupur @achauhan-scc @jayesh-tanna
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/                       @TonyJ1 @wangchao1230 @kingernupur @achauhan-scc @jayesh-tanna
 /sdk/ml/training-experiences.tests.yml                               @TonyJ1
 
 # PRLabel: %ML-AutoML
@@ -289,20 +289,20 @@
 /sdk/ml/automl.tests.yml                                             @skasturi @rtanase @raduk @PhaniShekhar @sharma-riti @jialiu103 @nick863 @yuanzhuangyuanzhuang @anupsms @MaurisLucis @novaturient95
 
 # PRLabel: %ML-Pipelines
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/pipeline/                    @wangchao1230 @kingernupur @achauhan-scc
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/component/                   @wangchao1230 @kingernupur @achauhan-scc
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/schedule/                    @wangchao1230 @kingernupur @achauhan-scc
-/sdk/ml/azure-ai-ml/azure/ai/ml/dsl/                                 @wangchao1230 @kingernupur @achauhan-scc
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_schedule/                  @wangchao1230 @kingernupur @achauhan-scc
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_component/                 @wangchao1230 @kingernupur @achauhan-scc
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_builders/                  @wangchao1230 @kingernupur @achauhan-scc
-/sdk/ml/azure-ai-ml/azure/ai/ml/_internal/                           @wangchao1230 @kingernupur @achauhan-scc
-/sdk/ml/pipeline.tests.yml                                           @wangchao1230 @eniac871 @kingernupur @achauhan-scc
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/pipeline/                    @wangchao1230 @kingernupur @achauhan-scc @jayesh-tanna
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/component/                   @wangchao1230 @kingernupur @achauhan-scc @jayesh-tanna
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/schedule/                    @wangchao1230 @kingernupur @achauhan-scc @jayesh-tanna
+/sdk/ml/azure-ai-ml/azure/ai/ml/dsl/                                 @wangchao1230 @kingernupur @achauhan-scc @jayesh-tanna
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_schedule/                  @wangchao1230 @kingernupur @achauhan-scc @jayesh-tanna
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_component/                 @wangchao1230 @kingernupur @achauhan-scc @jayesh-tanna
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_builders/                  @wangchao1230 @kingernupur @achauhan-scc @jayesh-tanna
+/sdk/ml/azure-ai-ml/azure/ai/ml/_internal/                           @wangchao1230 @kingernupur @achauhan-scc @jayesh-tanna
+/sdk/ml/pipeline.tests.yml                                           @wangchao1230 @eniac871 @kingernupur @achauhan-scc @jayesh-tanna
 
 # PRLabel: %ML-Workspace
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/                            @seanyao1 @debuggerXi @kingernupur @achauhan-scc
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_workspace/                          @seanyao1 @debuggerXi @kingernupur @achauhan-scc
-/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_workspace_operations.py           @seanyao1 @debuggerXi @kingernupur @achauhan-scc
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/                            @seanyao1 @debuggerXi @kingernupur @achauhan-scc @jayesh-tanna
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_workspace/                          @seanyao1 @debuggerXi @kingernupur @achauhan-scc @jayesh-tanna
+/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_workspace_operations.py           @seanyao1 @debuggerXi @kingernupur @achauhan-scc @jayesh-tanna
 
 # PRLabel: %ML-ImportJob
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job/import_job.py                     @xiongrenyi

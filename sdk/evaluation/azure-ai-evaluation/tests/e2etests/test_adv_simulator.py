@@ -144,6 +144,146 @@ class TestAdvSimulator:
         assert len(outputs) == 1
         assert len(outputs[0]["messages"]) == 4
 
+    def test_adv_conversation_image_understanding_sim_responds_with_responses(self, azure_cred, project_scope):
+        os.environ.pop("RAI_SVC_URL", None)
+        from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
+
+        azure_ai_project = {
+            "subscription_id": project_scope["subscription_id"],
+            "resource_group_name": project_scope["resource_group_name"],
+            "project_name": project_scope["project_name"],
+        }
+
+        async def callback(
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
+        ) -> dict:
+            query = messages["messages"][0]["content"]
+
+            formatted_response = {"content": query, "role": "assistant"}
+            messages["messages"].append(formatted_response)
+            return {
+                "messages": messages["messages"],
+                "stream": stream,
+                "session_state": session_state,
+                "context": context,
+            }
+
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
+
+        outputs = asyncio.run(
+            simulator(
+                scenario=AdversarialScenario.ADVERSARIAL_IMAGE_UNDERSTANDING,
+                max_conversation_turns=1,
+                max_simulation_results=1,
+                target=callback,
+                api_call_retry_limit=3,
+                api_call_retry_sleep_sec=1,
+                api_call_delay_sec=30,
+                concurrent_async_task=1,
+            )
+        )
+        assert len(outputs) == 1
+        assert len(outputs[0]["messages"]) > 0
+        assert outputs[0]["messages"][0]["content"] is not None
+        assert len(outputs[0]["messages"][0]["content"]) > 0
+
+        def has_image_url_with_url(content):
+            return any(
+                isinstance(item, dict) and item.get("type") == "image_url" and "url" in item.get("image_url", {})
+                for item in content
+            )
+
+        assert any(
+            [
+                (
+                    has_image_url_with_url(outputs[0]["messages"][0]["content"])
+                    if len(outputs[0]["messages"]) > 0
+                    else False
+                ),
+                (
+                    has_image_url_with_url(outputs[0]["messages"][1]["content"])
+                    if len(outputs[0]["messages"]) > 1
+                    else False
+                ),
+            ]
+        )
+
+    def test_adv_conversation_image_gen_sim_responds_with_responses(self, azure_cred, project_scope):
+        os.environ.pop("RAI_SVC_URL", None)
+        from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
+
+        azure_ai_project = {
+            "subscription_id": project_scope["subscription_id"],
+            "resource_group_name": project_scope["resource_group_name"],
+            "project_name": project_scope["project_name"],
+        }
+
+        async def callback(
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
+        ) -> dict:
+            query = messages["messages"][0]["content"]
+            content = [
+                {
+                    "type": "image_url",
+                    "image_url": {"url": "http://www.firstaidforfree.com/wp-content/uploads/2017/01/First-Aid-Kit.jpg"},
+                }
+            ]
+
+            formatted_response = {"content": content, "role": "assistant"}
+            messages["messages"].append(formatted_response)
+            return {
+                "messages": messages["messages"],
+                "stream": stream,
+                "session_state": session_state,
+                "context": context,
+            }
+
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
+
+        outputs = asyncio.run(
+            simulator(
+                scenario=AdversarialScenario.ADVERSARIAL_IMAGE_GEN,
+                max_conversation_turns=1,
+                max_simulation_results=1,
+                target=callback,
+                api_call_retry_limit=3,
+                api_call_retry_sleep_sec=1,
+                api_call_delay_sec=30,
+                concurrent_async_task=1,
+            )
+        )
+        assert len(outputs) == 1
+        assert len(outputs[0]["messages"]) > 0
+        assert outputs[0]["messages"][1]["content"] is not None
+        assert len(outputs[0]["messages"][1]["content"]) > 0
+
+        def has_image_url_with_url(content):
+            return any(
+                isinstance(item, dict) and item.get("type") == "image_url" and "url" in item.get("image_url", {})
+                for item in content
+            )
+
+        assert any(
+            [
+                (
+                    has_image_url_with_url(outputs[0]["messages"][0]["content"])
+                    if len(outputs[0]["messages"]) > 0
+                    else False
+                ),
+                (
+                    has_image_url_with_url(outputs[0]["messages"][1]["content"])
+                    if len(outputs[0]["messages"]) > 1
+                    else False
+                ),
+            ]
+        )
+
     def test_adv_summarization_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator

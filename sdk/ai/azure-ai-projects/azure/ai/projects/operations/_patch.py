@@ -13,7 +13,20 @@ import os
 import sys
 import time
 from pathlib import Path
-from typing import IO, TYPE_CHECKING, Any, Dict, Iterator, List, Optional, Sequence, TextIO, Union, cast, overload
+from typing import (
+    IO,
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterator,
+    List,
+    Optional,
+    Sequence,
+    TextIO,
+    Union,
+    cast,
+    overload,
+)
 
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
@@ -87,6 +100,7 @@ class InferenceOperations:
             connection = self._outer_instance.connections.get_default(
                 connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
             )
+        logger.debug("[InferenceOperations.get_chat_completions_client] connection = %s", str(connection))
 
         try:
             from azure.ai.inference import ChatCompletionsClient
@@ -97,11 +111,10 @@ class InferenceOperations:
 
         if use_serverless_connection:
             endpoint = connection.endpoint_url
+            credential_scopes = ["https://ml.azure.com/.default"]
         else:
-            # Be sure to use the Azure resource name here, not the connection name. Connection name is something that
-            # admins can pick when they manually create a new connection (or use bicep). Get the Azure resource name
-            # from the end of the connection id.
-            endpoint = f"https://{connection.id.split('/')[-1]}.services.ai.azure.com/models"
+            endpoint = f"{connection.endpoint_url}/models"
+            credential_scopes = ["https://cognitiveservices.azure.com/.default"]
 
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
@@ -112,12 +125,13 @@ class InferenceOperations:
 
             client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
-            # MaaS models do not yet support EntraID auth
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] "
                 + "Creating ChatCompletionsClient using Entra ID authentication"
             )
-            client = ChatCompletionsClient(endpoint=endpoint, credential=connection.properties.token_credential)
+            client = ChatCompletionsClient(
+                endpoint=endpoint, credential=connection.token_credential, credential_scopes=credential_scopes
+            )
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] "
@@ -161,6 +175,7 @@ class InferenceOperations:
             connection = self._outer_instance.connections.get_default(
                 connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
             )
+        logger.debug("[InferenceOperations.get_embeddings_client] connection = %s", str(connection))
 
         try:
             from azure.ai.inference import EmbeddingsClient
@@ -171,11 +186,10 @@ class InferenceOperations:
 
         if use_serverless_connection:
             endpoint = connection.endpoint_url
+            credential_scopes = ["https://ml.azure.com/.default"]
         else:
-            # Be sure to use the Azure resource name here, not the connection name. Connection name is something that
-            # admins can pick when they manually create a new connection (or use bicep). Get the Azure resource name
-            # from the end of the connection id.
-            endpoint = f"https://{connection.id.split('/')[-1]}.services.ai.azure.com/models"
+            endpoint = f"{connection.endpoint_url}/models"
+            credential_scopes = ["https://cognitiveservices.azure.com/.default"]
 
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
@@ -185,11 +199,12 @@ class InferenceOperations:
 
             client = EmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
-            # MaaS models do not yet support EntraID auth
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using Entra ID authentication"
             )
-            client = EmbeddingsClient(endpoint=endpoint, credential=connection.properties.token_credential)
+            client = EmbeddingsClient(
+                endpoint=endpoint, credential=connection.token_credential, credential_scopes=credential_scopes
+            )
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using SAS authentication"
@@ -225,6 +240,7 @@ class InferenceOperations:
         connection = self._outer_instance.connections.get_default(
             connection_type=ConnectionType.AZURE_OPEN_AI, include_credentials=True, **kwargs
         )
+        logger.debug("[InferenceOperations.get_azure_openai_client] connection = %s", str(connection))
 
         try:
             from openai import AzureOpenAI
@@ -240,18 +256,16 @@ class InferenceOperations:
             client = AzureOpenAI(
                 api_key=connection.key, azure_endpoint=connection.endpoint_url, api_version=api_version
             )
-        elif connection.authentication_type == {AuthenticationType.ENTRA_ID, AuthenticationType.SAS}:
+        elif connection.authentication_type == AuthenticationType.ENTRA_ID:
+            logger.debug(
+                "[InferenceOperations.get_azure_openai_client] " + "Creating AzureOpenAI using Entra ID authentication"
+            )
             try:
                 from azure.identity import get_bearer_token_provider
             except ModuleNotFoundError as e:
                 raise ModuleNotFoundError(
                     "azure.identity package not installed. Please install it using 'pip install azure.identity'"
                 ) from e
-            if connection.authentication_type == AuthenticationType.ENTRA_ID:
-                auth = "Creating AzureOpenAI using Entra ID authentication"
-            else:
-                auth = "Creating AzureOpenAI using SAS authentication"
-            logger.debug("[InferenceOperations.get_azure_openai_client] %s", auth)
             client = AzureOpenAI(
                 # See https://learn.microsoft.com/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider # pylint: disable=line-too-long
                 azure_ad_token_provider=get_bearer_token_provider(
@@ -259,6 +273,13 @@ class InferenceOperations:
                 ),
                 azure_endpoint=connection.endpoint_url,
                 api_version=api_version,
+            )
+        elif connection.authentication_type == AuthenticationType.SAS:
+            logger.debug(
+                "[InferenceOperations.get_azure_openai_client] " + "Creating AzureOpenAI using SAS authentication"
+            )
+            raise ValueError(
+                "Getting an AzureOpenAI client from a connection with SAS authentication is not yet supported"
             )
         else:
             raise ValueError("Unknown authentication type")
@@ -290,16 +311,17 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         if not connection_type:
             raise ValueError("You must specify an connection type")
         # Since there is no notion of default connection at the moment, list all connections in the category
-        # and return the first one
+        # and return the first one (index 0), unless overridden by the environment variable DEFAULT_CONNECTION_INDEX.
         connection_properties_list = self.list(connection_type=connection_type, **kwargs)
         if len(connection_properties_list) > 0:
+            default_connection_index = int(os.getenv("DEFAULT_CONNECTION_INDEX", "0"))
             if include_credentials:
                 return self.get(
-                    connection_name=connection_properties_list[0].name,
+                    connection_name=connection_properties_list[default_connection_index].name,
                     include_credentials=include_credentials,
                     **kwargs,
                 )
-            return connection_properties_list[0]
+            return connection_properties_list[default_connection_index]
         raise ResourceNotFoundError(f"No connection of type {connection_type} found")
 
     @distributed_trace
@@ -1180,7 +1202,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
-        additional_messages: Optional[List[_models.ThreadMessage]] = None,
+        additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
@@ -1189,6 +1211,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         truncation_strategy: Optional[_models.TruncationObject] = None,
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any,
     ) -> _models.ThreadRun:
@@ -1213,7 +1236,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessage]
+        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessageOptions]
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
         :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
@@ -1256,6 +1279,9 @@ class AgentsOperations(AgentsOperationsGenerated):
          AgentsApiResponseFormat Default value is None.
         :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
          or ~azure.ai.projects.models.AgentsApiResponseFormat
+        :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
+         Default value is None.
+        :paramtype parallel_tool_calls: bool
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -1294,7 +1320,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
-        additional_messages: Optional[List[_models.ThreadMessage]] = None,
+        additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
@@ -1303,6 +1329,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         truncation_strategy: Optional[_models.TruncationObject] = None,
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any,
     ) -> _models.ThreadRun:
@@ -1326,7 +1353,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessage]
+        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessageOptions]
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
         :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
@@ -1369,6 +1396,9 @@ class AgentsOperations(AgentsOperationsGenerated):
          AgentsApiResponseFormat Default value is None.
         :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
          or ~azure.ai.projects.models.AgentsApiResponseFormat
+        :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
+         Default value is None.
+        :paramtype parallel_tool_calls: bool
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -1401,6 +1431,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                 truncation_strategy=truncation_strategy,
                 tool_choice=tool_choice,
                 response_format=response_format,
+                parallel_tool_calls=parallel_tool_calls,
                 metadata=metadata,
                 **kwargs,
             )
@@ -1423,7 +1454,11 @@ class AgentsOperations(AgentsOperationsGenerated):
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
+<<<<<<< HEAD
         additional_messages: Optional[List[_models.ThreadMessage]] = None,
+=======
+        additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
+>>>>>>> 483c457ca2bf8c79b7cb99dfd843e335ca9697f7
         toolset: Optional[_models.ToolSet] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
@@ -1432,6 +1467,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         truncation_strategy: Optional[_models.TruncationObject] = None,
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
         sleep_interval: int = 1,
         **kwargs: Any,
@@ -1454,7 +1490,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
          Default value is None.
-        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessage]
+        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessageOptions]
         :keyword toolset: The Collection of tools and resources (alternative to `tools` and
          `tool_resources`). Default value is None.
         :paramtype toolset: ~azure.ai.projects.models.ToolSet
@@ -1499,6 +1535,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype response_format: str or str or
          ~azure.ai.projects.models.AgentsApiResponseFormatMode or
          ~azure.ai.projects.models.AgentsApiResponseFormat
+        :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
+         Default value is None.
+        :paramtype parallel_tool_calls: bool
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -1527,6 +1566,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             truncation_strategy=truncation_strategy,
             tool_choice=tool_choice,
             response_format=response_format,
+            parallel_tool_calls=parallel_tool_calls,
             metadata=metadata,
             **kwargs,
         )
@@ -1565,10 +1605,18 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         return run
 
+    _defaultAgentEventHandler = _models.AgentEventHandler()
+
     @overload
     def create_stream(
-        self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentRunStream:
+        self,
+        thread_id: str,
+        body: JSON,
+        *,
+        event_handler: _models.BaseAgentEventHandlerT = _defaultAgentEventHandler,  # type: ignore[assignment]
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.AgentRunStream[_models.BaseAgentEventHandlerT]:
         """Creates a new stream for an agent thread.
 
         Terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
@@ -1577,6 +1625,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type thread_id: str
         :param body: Required.
         :type body: JSON
+        :keyword event_handler: The event handler to use for processing events during the run. Default
+            value is None.
+        :paramtype event_handler: ~azure.ai.projects.models.AgentEventHandler
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1595,7 +1646,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
-        additional_messages: Optional[List[_models.ThreadMessage]] = None,
+        additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
@@ -1604,10 +1655,11 @@ class AgentsOperations(AgentsOperationsGenerated):
         truncation_strategy: Optional[_models.TruncationObject] = None,
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
-        event_handler: Optional[_models.AgentEventHandler] = None,
+        event_handler: _models.BaseAgentEventHandlerT = _defaultAgentEventHandler,  # type: ignore[assignment]
         **kwargs: Any,
-    ) -> _models.AgentRunStream:
+    ) -> _models.AgentRunStream[_models.BaseAgentEventHandlerT]:
         """Creates a new stream for an agent thread.
 
         :param thread_id: Required.
@@ -1672,6 +1724,9 @@ class AgentsOperations(AgentsOperationsGenerated):
          AgentsApiResponseFormat Default value is None.
         :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
          or ~azure.ai.projects.models.AgentsApiResponseFormat
+        :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
+         Default value is None.
+        :paramtype parallel_tool_calls: bool
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -1687,8 +1742,14 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def create_stream(
-        self, thread_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentRunStream:
+        self,
+        thread_id: str,
+        body: IO[bytes],
+        *,
+        event_handler: _models.BaseAgentEventHandlerT = _defaultAgentEventHandler,  # type: ignore[assignment]
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.AgentRunStream[_models.BaseAgentEventHandlerT]:
         """Creates a new run for an agent thread.
 
         Terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
@@ -1697,6 +1758,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type thread_id: str
         :param body: Required.
         :type body: IO[bytes]
+        :keyword event_handler: The event handler to use for processing events during the run. Default
+            value is None.
+        :paramtype event_handler: ~azure.ai.projects.models.AgentEventHandler
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1715,7 +1779,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
-        additional_messages: Optional[List[_models.ThreadMessage]] = None,
+        additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
@@ -1724,10 +1788,11 @@ class AgentsOperations(AgentsOperationsGenerated):
         truncation_strategy: Optional[_models.TruncationObject] = None,
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
-        event_handler: Optional[_models.AgentEventHandler] = None,
+        event_handler: _models.BaseAgentEventHandlerT = _defaultAgentEventHandler,  # type: ignore[assignment]
         **kwargs: Any,
-    ) -> _models.AgentRunStream:
+    ) -> _models.AgentRunStream[_models.BaseAgentEventHandlerT]:
         """Creates a new run for an agent thread.
 
         Terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
@@ -1793,6 +1858,9 @@ class AgentsOperations(AgentsOperationsGenerated):
          AgentsApiResponseFormat Default value is None.
         :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
          or ~azure.ai.projects.models.AgentsApiResponseFormat
+        :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
+         Default value is None.
+        :paramtype parallel_tool_calls: bool
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -1828,6 +1896,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                 truncation_strategy=truncation_strategy,
                 tool_choice=tool_choice,
                 response_format=response_format,
+                parallel_tool_calls=parallel_tool_calls,
                 metadata=metadata,
                 **kwargs,
             )
@@ -1972,8 +2041,15 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def submit_tool_outputs_to_stream(
-        self, thread_id: str, run_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentRunStream:
+        self,
+        thread_id: str,
+        run_id: str,
+        body: JSON,
+        *,
+        event_handler: _models.BaseAgentEventHandlerT = _defaultAgentEventHandler,  # type: ignore[assignment]
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.AgentRunStream[_models.BaseAgentEventHandlerT]:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
@@ -1984,6 +2060,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type run_id: str
         :param body: Required.
         :type body: JSON
+        :keyword event_handler: The event handler to use for processing events during the run. Default
+            value is None.
+        :paramtype event_handler: ~azure.ai.projects.models.AgentEventHandler
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2000,9 +2079,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         *,
         tool_outputs: List[_models.ToolOutput],
         content_type: str = "application/json",
-        event_handler: Optional[_models.AgentEventHandler] = None,
+        event_handler: _models.BaseAgentEventHandlerT = _defaultAgentEventHandler,  # type: ignore[assignment]
         **kwargs: Any,
-    ) -> _models.AgentRunStream:
+    ) -> _models.AgentRunStream[_models.BaseAgentEventHandlerT]:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
@@ -2026,8 +2105,15 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def submit_tool_outputs_to_stream(
-        self, thread_id: str, run_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentRunStream:
+        self,
+        thread_id: str,
+        run_id: str,
+        body: IO[bytes],
+        *,
+        event_handler: _models.BaseAgentEventHandlerT = _defaultAgentEventHandler,  # type: ignore[assignment]
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.AgentRunStream[_models.BaseAgentEventHandlerT]:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.
@@ -2038,6 +2124,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type run_id: str
         :param body: Required.
         :type body: IO[bytes]
+        :keyword event_handler: The event handler to use for processing events during the run. Default
+            value is None.
+        :paramtype event_handler: ~azure.ai.projects.models.AgentEventHandler
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2054,9 +2143,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         tool_outputs: List[_models.ToolOutput] = _Unset,
-        event_handler: Optional[_models.AgentEventHandler] = None,
+        event_handler: _models.BaseAgentEventHandlerT = _defaultAgentEventHandler,  # type: ignore[assignment]
         **kwargs: Any,
-    ) -> _models.AgentRunStream:
+    ) -> _models.AgentRunStream[_models.BaseAgentEventHandlerT]:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
@@ -2097,7 +2186,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         return _models.AgentRunStream(response_iterator, self._handle_submit_tool_outputs, event_handler)
 
     def _handle_submit_tool_outputs(
-        self, run: _models.ThreadRun, event_handler: Optional[_models.AgentEventHandler] = None
+        self,
+        run: _models.ThreadRun,
+        event_handler: _models.BaseAgentEventHandler = _defaultAgentEventHandler,  # type: ignore[assignment]
     ) -> None:
         if isinstance(run.required_action, _models.SubmitToolOutputsAction):
             tool_calls = run.required_action.submit_tool_outputs.tool_calls

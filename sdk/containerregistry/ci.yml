@@ -30,7 +30,6 @@ extends:
   parameters:
     TestProxy: true
     ServiceDirectory: containerregistry
-    ValidateFormatting: true
     Artifacts:
     - name: azure-mgmt-containerregistry
       safeName: azuremgmtcontainerregistry

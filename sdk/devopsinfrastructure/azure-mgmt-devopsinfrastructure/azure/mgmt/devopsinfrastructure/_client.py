@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
+from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -26,11 +27,10 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class DevOpsInfrastructureMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
+class DevOpsInfrastructureMgmtClient:
     """DevOpsInfrastructureMgmtClient.
 
     :ivar operations: Operations operations
@@ -48,13 +48,12 @@ class DevOpsInfrastructureMgmtClient:  # pylint: disable=client-accepts-api-vers
     :vartype image_versions: azure.mgmt.devopsinfrastructure.operations.ImageVersionsOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service host. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2024-04-04-preview". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Default value is "2024-10-19".
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -67,8 +66,9 @@ class DevOpsInfrastructureMgmtClient:  # pylint: disable=client-accepts-api-vers
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
+        _endpoint = "{endpoint}"
         self._config = DevOpsInfrastructureMgmtClientConfiguration(
-            credential=credential, subscription_id=subscription_id, **kwargs
+            credential=credential, subscription_id=subscription_id, base_url=base_url, **kwargs
         )
         _policies = kwargs.pop("policies", None)
         if _policies is None:
@@ -88,7 +88,7 @@ class DevOpsInfrastructureMgmtClient:  # pylint: disable=client-accepts-api-vers
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -123,13 +123,17 @@ class DevOpsInfrastructureMgmtClient:  # pylint: disable=client-accepts-api-vers
         """
 
         request_copy = deepcopy(request)
-        request_copy.url = self._client.format_url(request_copy.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "DevOpsInfrastructureMgmtClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

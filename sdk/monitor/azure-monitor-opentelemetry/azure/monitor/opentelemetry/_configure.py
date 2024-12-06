@@ -7,7 +7,7 @@ from functools import cached_property
 from logging import getLogger
 from typing import Dict, List, cast
 
-from opentelemetry._events import set_event_logger_provider
+from opentelemetry._events import _set_event_logger_provider
 from opentelemetry._logs import set_logger_provider
 from opentelemetry.instrumentation.dependencies import (
     get_dist_dependency_conflicts,
@@ -115,6 +115,10 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     disable_metrics = configurations[DISABLE_METRICS_ARG]
     enable_live_metrics_config = configurations[ENABLE_LIVE_METRICS_ARG]
 
+    # Setup live metrics
+    if enable_live_metrics_config:
+        _setup_live_metrics(configurations)
+
     # Setup tracing pipeline
     if not disable_tracing:
         _setup_tracing(configurations)
@@ -126,10 +130,6 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     # Setup metrics pipeline
     if not disable_metrics:
         _setup_metrics(configurations)
-
-    # Setup live metrics
-    if enable_live_metrics_config:
-        _setup_live_metrics(configurations)
 
     # Setup instrumentations
     # Instrumentations need to be setup last so to use the global providers
@@ -170,13 +170,17 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     )
     logger_provider.add_log_record_processor(log_record_processor)
     set_logger_provider(logger_provider)
-    handler = LoggingHandler(logger_provider=logger_provider)
     logger_name: str = configurations[LOGGER_NAME_ARG]  # type: ignore
-    getLogger(logger_name).addHandler(handler)
+    logger = getLogger(logger_name)
+    # Only add OpenTelemetry LoggingHandler if logger does not already have the handler
+    # This is to prevent most duplicate logging telemetry
+    if not any(isinstance(handler, LoggingHandler) for handler in logger.handlers):
+        handler = LoggingHandler(logger_provider=logger_provider)
+        logger.addHandler(handler)
 
     # Setup EventLoggerProvider
     event_provider = EventLoggerProvider(logger_provider)
-    set_event_logger_provider(event_provider)
+    _set_event_logger_provider(event_provider, False)
 
 
 def _setup_metrics(configurations: Dict[str, ConfigurationValue]):

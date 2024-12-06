@@ -23,7 +23,7 @@ class TestNetAppManagementNetAppResourceQuotaLimitsOperations(AzureMgmtRecordedT
     def test_list(self, resource_group):
         response = self.client.net_app_resource_quota_limits.list(
             location="str",
-            api_version="2024-07-01",
+            api_version="2024-07-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -35,7 +35,7 @@ class TestNetAppManagementNetAppResourceQuotaLimitsOperations(AzureMgmtRecordedT
         response = self.client.net_app_resource_quota_limits.get(
             location="str",
             quota_limit_name="str",
-            api_version="2024-07-01",
+            api_version="2024-07-01-preview",
         )
 
         # please add some check logic here by yourself

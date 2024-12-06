@@ -1,6 +1,7 @@
 from .__openai_patcher import TestProxyConfig, TestProxyHttpxClientBase  # isort: split
 from . import __pf_service_isolation  # isort: split  # noqa: F401
 
+import os
 import json
 import multiprocessing
 import time
@@ -46,6 +47,7 @@ class SanitizedValues:
     WORKSPACE_NAME = "00000"
     TENANT_ID = "00000000-0000-0000-0000-000000000000"
     USER_OBJECT_ID = "00000000-0000-0000-0000-000000000000"
+    IMAGE_NAME = "00000000.png"
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -93,6 +95,9 @@ def add_sanitizers(
         )
         add_general_regex_sanitizer(
             regex=r"/workspaces/([-\w\._\(\)]+)", value=mock_project_scope["project_name"], group_for_replace="1"
+        )
+        add_general_regex_sanitizer(
+            regex=r"image_understanding/([-\w\._\(\)/]+)", value=mock_project_scope["image_name"], group_for_replace="1"
         )
 
     def openai_stainless_default_headers():
@@ -288,6 +293,7 @@ def mock_project_scope() -> Dict[str, str]:
         "subscription_id": f"{SanitizedValues.SUBSCRIPTION_ID}",
         "resource_group_name": f"{SanitizedValues.RESOURCE_GROUP_NAME}",
         "project_name": f"{SanitizedValues.WORKSPACE_NAME}",
+        "image_name": f"{SanitizedValues.IMAGE_NAME}",
     }
 
 

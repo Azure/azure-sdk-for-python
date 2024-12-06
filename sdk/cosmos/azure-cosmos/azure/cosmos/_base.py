@@ -61,7 +61,8 @@ _COMMON_OPTIONS = {
     'supported_query_features': 'supportedQueryFeatures',
     'query_version': 'queryVersion',
     'priority': 'priorityLevel',
-    'no_response': 'responsePayloadOnWriteDisabled'
+    'no_response': 'responsePayloadOnWriteDisabled',
+    'max_item_count': 'maxItemCount',
 }
 
 # Cosmos resource ID validation regex breakdown:
@@ -170,6 +171,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     # set consistency level. check if set via options, this will override the default
     if options.get("consistencyLevel"):
         consistency_level = options["consistencyLevel"]
+        # TODO: move this line outside of if-else cause to remove the code duplication
         headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
     elif default_client_consistency_level is not None:
         consistency_level = default_client_consistency_level

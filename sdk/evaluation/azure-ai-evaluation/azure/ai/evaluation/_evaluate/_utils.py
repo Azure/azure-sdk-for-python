@@ -91,23 +91,40 @@ def _store_multimodal_content(messages, tmpdir: str):
     for message in messages:
         if isinstance(message.get("content", []), list):
             for content in message.get("content", []):
-                if content.get("type") == "image_url":
-                    image_url = content.get("image_url")
-                    if image_url and "url" in image_url and image_url["url"].startswith("data:image/jpg;base64,"):
-                        # Extract the base64 string
-                        base64image = image_url["url"].replace("data:image/jpg;base64,", "")
+                process_message_content(content, images_folder_path)
 
-                        # Generate a unique filename
-                        image_file_name = f"{str(uuid.uuid4())}.jpg"
-                        image_url["url"] = f"images/{image_file_name}"  # Replace the base64 URL with the file path
 
-                        # Decode the base64 string to binary image data
-                        image_data_binary = base64.b64decode(base64image)
+def process_message_content(content, images_folder_path):
+    if content.get("type", "") == "image_url":
+        image_url = content.get("image_url")
 
-                        # Write the binary image data to the file
-                        image_file_path = os.path.join(images_folder_path, image_file_name)
-                        with open(image_file_path, "wb") as f:
-                            f.write(image_data_binary)
+        if not image_url or "url" not in image_url:
+            return None
+
+        url = image_url["url"]
+        if not url.startswith("data:image/"):
+            return None
+
+        match = re.search("data:image/([^;]+);", url)
+        if not match:
+            return None
+
+        ext = match.group(1)
+        # Extract the base64 string
+        base64image = image_url["url"].replace(f"data:image/{ext};base64,", "")
+
+        # Generate a unique filename
+        image_file_name = f"{str(uuid.uuid4())}.{ext}"
+        image_url["url"] = f"images/{image_file_name}"  # Replace the base64 URL with the file path
+
+        # Decode the base64 string to binary image data
+        image_data_binary = base64.b64decode(base64image)
+
+        # Write the binary image data to the file
+        image_file_path = os.path.join(images_folder_path, image_file_name)
+        with open(image_file_path, "wb") as f:
+            f.write(image_data_binary)
+    return None
 
 
 def _log_metrics_and_instance_results(
