@@ -4,8 +4,8 @@ import os
 import struct
 import enum
 
-from _exceptions import WebSocketPayloadError, WebSocketProtocolError
-from _utils import mask_payload
+from ._exceptions import WebSocketPayloadError, WebSocketProtocolError
+from ._utils import mask_payload
 
 
 class Opcode(enum.IntEnum):

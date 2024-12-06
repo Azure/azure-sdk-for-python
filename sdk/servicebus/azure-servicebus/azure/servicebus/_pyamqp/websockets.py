@@ -1,7 +1,7 @@
 from typing import Dict, Optional, List, Union, TYPE_CHECKING
-from _protocol import WebSocketProtocol, AsyncWebSocketProtocol
-from _exceptions import WebSocketConnectionError
-from _frame import Opcode, CloseReason, Frame
+from ._protocol import WebSocketProtocol, AsyncWebSocketProtocol
+from ._exceptions import WebSocketConnectionError
+from ._frame import Opcode, CloseReason, Frame
 
 if TYPE_CHECKING:
     from ssl import SSLContext
@@ -32,7 +32,7 @@ class WebSocket:
         ) -> None:
         self._url: str = url
         self._is_open: bool = False
-        self._protocol: WebSocketProtocol = WebSocketProtocol(url, headers=headers, subprotocols=subprotocols, http_proxy=http_proxy)
+        self._protocol: WebSocketProtocol = WebSocketProtocol(url, headers=headers, subprotocols=subprotocols, http_proxy=http_proxy, timeout=timeout)
         self._headers = headers
         self._http_proxy = http_proxy
         self._subprotocols = subprotocols

@@ -4,11 +4,11 @@ import socket
 import ssl
 import struct
 from typing import Union
-from _url import parse_url, WebSocketURL
-from _headers import build_request_headers, parse_response_headers, build_key, match_key, parse_proxy_response
-from _constants import EOF, ConnectionStatus
-from _frame import Frame, Opcode, CloseReason
-from _exceptions import WebSocketConnectionError, WebSocketPayloadError, WebSocketProtocolError
+from ._url import parse_url, WebSocketURL
+from ._headers import build_request_headers, parse_response_headers, build_key, match_key, parse_proxy_response
+from ._constants import EOF, ConnectionStatus
+from ._frame import Frame, Opcode, CloseReason
+from ._exceptions import WebSocketConnectionError, WebSocketPayloadError, WebSocketProtocolError
 
 
 class WebSocketMixin:
@@ -28,7 +28,7 @@ class WebSocketMixin:
 
 
 class WebSocketProtocol(WebSocketMixin):
-    def __init__(self, url: str, *, headers = None, http_proxy = {}, subprotocols = None) -> None:
+    def __init__(self, url: str, *, headers = None, http_proxy = {}, subprotocols = None, timeout=None) -> None:
         self._socket: socket.socket
         self._url: str = url
         self._key = build_key()
@@ -37,6 +37,7 @@ class WebSocketProtocol(WebSocketMixin):
         self._http_proxy = http_proxy
         self._subprotocols = subprotocols
         self._ws_url: WebSocketURL = parse_url(self._url)
+        self._timeout = timeout
 
     
     def open_connection(self) -> None:
@@ -45,7 +46,7 @@ class WebSocketProtocol(WebSocketMixin):
         try:
             # TODO: handle proxy support
             if self._http_proxy:
-                self._socket = socket.create_connection((self._http_proxy['host'], self._http_proxy['port']))
+                self._socket = socket.create_connection((self._http_proxy['host'], self._http_proxy['port']), timeout=self._timeout)
                 self._socket.sendall(f'CONNECT {self._ws_url.hostname}:{self._ws_url.port} HTTP/1.1\r\n\r\n'.encode())
                 proxy_response = parse_proxy_response(self._socket.recv(1024))
                 if not proxy_response[0].startswith(b'HTTP/'):
@@ -63,12 +64,12 @@ class WebSocketProtocol(WebSocketMixin):
                 if proxy_response[2] != b'Connection established':
                     raise ConnectionError('Could not connect to the proxy')
             else:
-                self._socket = socket.create_connection((self._ws_url.hostname, self._ws_url.port))
+                self._socket = socket.create_connection((self._ws_url.hostname, self._ws_url.port), timeout=self._timeout)
             if self._ws_url.is_secure:
                 self._socket = self._wrap_socket_sni(self._socket, server_hostname = self._ws_url.hostname)
             # TODO: add logging
             self._socket.setblocking(True)
-            self._socket.settimeout(1)
+            self._socket.settimeout(self._timeout)
         
             # build the headers
             self._headers = build_request_headers(

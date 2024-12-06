@@ -2,7 +2,7 @@ from hashlib import sha1
 import os
 import base64
 from typing import Dict, List, Tuple, Optional
-from _constants import WS_VERSION, WS_KEY
+from ._constants import WS_VERSION, WS_KEY
 
 
 def build_request_headers(resource: str, url: str, host: str, port: int, is_secure: bool, key: bytes, *, subprotocols: Optional[List[str]] = None) -> bytes:
