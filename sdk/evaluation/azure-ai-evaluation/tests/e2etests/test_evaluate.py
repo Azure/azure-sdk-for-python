@@ -127,6 +127,7 @@ def _get_run_from_run_history(flow_run_id, azure_ml_client: LiteMLClient, projec
 
 
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
+@pytest.mark.localtest
 class TestEvaluate:
     @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
     def test_evaluate_with_groundedness_evaluator(self, model_config, data_file):
