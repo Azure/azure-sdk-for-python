@@ -7,7 +7,7 @@ parameters:
   type: boolean
   default: true
 
-  - name: StartMainSDKCIRun
+- name: StartMainSDKCIRun
   displayName: |
     Kick off the main SDK CI docs run when manually running the pipeline
   type: boolean
