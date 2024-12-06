@@ -1,4 +1,4 @@
-Microsoft Azure SDK for Python
+Microsoft Azure SDK for Python Cosmos Diagnostics Handler
 ==============================
 
 .. image:: https://img.shields.io/pypi/v/azure.svg?maxAge=2592000
