@@ -28,8 +28,7 @@ from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
     AsyncAgentEventHandler,
     AsyncFunctionTool,
-    MessageDeltaChunk,
-    MessageDeltaTextContent,
+    AgentMessageDeltaChunk,
     RequiredFunctionToolCall,
     RunStep,
     SubmitToolOutputsAction,
@@ -50,17 +49,13 @@ project_client = AIProjectClient.from_connection_string(
 )
 
 
-class MyEventHandler(AsyncAgentEventHandler):
+class MyEventHandler(AsyncAgentEventHandler[str]):
 
     def __init__(self, functions: AsyncFunctionTool) -> None:
         self.functions = functions
 
-    async def on_message_delta_text_content(self, message_text_content: "MessageDeltaTextContent") -> None:
-        text_value = message_text_content.text.value if message_text_content.text else "No text"
-        print(f"Text content received: {text_value}")
-
-    async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
-        print(f"Text delta received.")
+    async def on_message_delta(self, delta: "AgentMessageDeltaChunk") -> None:
+        print(f"Text delta received: {delta.text}")
 
     async def on_thread_message(self, message: "ThreadMessage") -> None:
         print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
@@ -137,7 +132,7 @@ async def main() -> None:
             thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler(functions)
         ) as stream:
             await stream.until_done()
-
+            
         await project_client.agents.delete_agent(agent.id)
         print("Deleted agent")
 

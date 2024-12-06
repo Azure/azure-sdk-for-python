@@ -22,13 +22,13 @@ USAGE:
 """
 
 import os
+from typing import List
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import AgentStreamEvent, RunStepDeltaChunk
-from azure.ai.projects.models import AgentMessageDeltaChunk, MessageDeltaTextContent, RunStep, AgentThreadMessage, ThreadRun
-from azure.ai.projects.models import FunctionTool, ToolSet
+from azure.ai.projects.models import AgentStreamEvent, FileSearchTool, RunStepDeltaChunk
+from azure.ai.projects.models import MessageDeltaChunk, MessageDeltaTextContent, RunStep, AgentThreadMessage, ThreadRun
+
 from azure.ai.projects.operations import AgentsOperations
 from azure.identity import DefaultAzureCredential
-from user_functions import user_functions
 
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
@@ -39,35 +39,53 @@ project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
 )
 
-
-functions = FunctionTool(user_functions)
-toolset = ToolSet()
-toolset.add(functions)
-
 with project_client:
+    
+    # Upload file and create vector store
+    # [START upload_file_create_vector_store_and_agent_with_file_search_tool]
+    file = project_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose="assistants")
+    print(f"Uploaded file, file ID: {file.id}")
+
+    vector_store = project_client.agents.create_vector_store_and_poll(file_ids=[file.id], name="my_vectorstore")
+    print(f"Created vector store, vector store ID: {vector_store.id}")
+
+    # Create file search tool with resources followed by creating agent
+    file_search = FileSearchTool(vector_store_ids=[vector_store.id])
+
+    
     agent = project_client.agents.create_agent(
-        model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
+        model="gpt-4o",
+        name="my-assistant",
+        instructions="Hello, you are helpful assistant and can search information from uploaded files",
+        tools=file_search.definitions,
+        tool_resources=file_search.resources,
     )
     print(f"Created agent, agent ID: {agent.id}")
 
     thread = project_client.agents.create_thread()
     print(f"Created thread, thread ID {thread.id}")
 
-    message = project_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, what's the time?")
+    message = project_client.agents.create_message(thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?")
     print(f"Created message, message ID {message.id}")
 
     with project_client.agents.create_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
 
         for event_type, event_data, _ in stream:
-
-            if isinstance(event_data, AgentMessageDeltaChunk):
-                print(f"Text delta received: {event_data.text}")
+            
+            if isinstance(event_data, MessageDeltaTextContent):
+                text_value = event_data.text.value if event_data.text else "No text"
+                print(f"Text delta received: {text_value}")
+                
+            elif isinstance(event_data, MessageDeltaChunk):
+                print(f"Text delta received: {event_data.id}")
 
             elif isinstance(event_data, RunStepDeltaChunk):
                 print(f"RunStepDeltaChunk received. ID: {event_data.id}.")
 
             elif isinstance(event_data, AgentThreadMessage):
                 print(f"ThreadMessage created. ID: {event_data.id}, Status: {event_data.status}")
+                for annotation in event_data.file_citation_annotations:
+                    print(f"Citation {annotation.text} from file ID: {annotation.file_citation.file_id}, start index: {annotation.start_index}, end index: {annotation.end_index}")
 
             elif isinstance(event_data, ThreadRun):
                 print(f"ThreadRun status: {event_data.status}")

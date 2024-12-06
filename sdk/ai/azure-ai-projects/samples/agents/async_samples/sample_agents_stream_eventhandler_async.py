@@ -24,9 +24,8 @@ import asyncio
 from typing import Any
 
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models._models import (
-    MessageDeltaChunk,
-    MessageDeltaTextContent,
+from azure.ai.projects.models import (
+    AgentMessageDeltaChunk,
     RunStep,
     ThreadMessage,
     ThreadRun,
@@ -38,12 +37,9 @@ import os
 
 
 class MyEventHandler(AsyncAgentEventHandler):
-    async def on_message_delta_text_content(self, message_text_content: "MessageDeltaTextContent") -> None:
-        text_value = message_text_content.text.value if message_text_content.text else "No text"
-        print(f"Text content received: {text_value}")
 
-    async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
-        print(f"MessageDeltaChunk received")
+    async def on_message_delta(self, delta: "AgentMessageDeltaChunk") -> None:
+        print(f"Text delta received: {delta.text}")
 
     async def on_thread_message(self, message: "ThreadMessage") -> None:
         print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
