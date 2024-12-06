@@ -88,6 +88,7 @@ def setup_azure_monitor(connection_string=None) -> None:
     :type connection_string: str
     :return: None
     """
+    # Dynamically import the azure.monitor.opentelemetry module to avoid dependency issues later on CLI
     from azure.monitor.opentelemetry import configure_azure_monitor
 
     configure_azure_monitor(
