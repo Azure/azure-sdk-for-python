@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from azure.ai.translation.document.models import BatchRequest, SourceInput, StartTranslationDetails
+from azure.ai.translation.document.models import DocumentBatch, SourceInput, StartTranslationDetails
 from devtools_testutils import AzureRecordedTestCase
 from testcase import DocumentTranslationTest, Document
 from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
@@ -116,7 +116,7 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest, AzureRecordedTestCas
         blob_data = Document.create_dummy_docs(docs_count=docs_count)
         source_input = SourceInput(source_url=self.create_source_container(data=blob_data, variables=variables))
         target = TranslationTarget(target_url=self.create_target_container(variables=variables), language=language)
-        batch_request = BatchRequest(source=source_input, targets=[target])
+        batch_request = DocumentBatch(source=source_input, targets=[target])
         start_translation_details = StartTranslationDetails(inputs=[batch_request])
 
         # submit job

@@ -29,7 +29,6 @@ try:
         from ..._common.message import ServiceBusReceivedMessage, ServiceBusMessage, ServiceBusMessageBatch
         from ..._common._configuration import Configuration
 
-
     class UamqpTransportAsync(UamqpTransport, AmqpTransportAsync):
         """
         Class which defines uamqp-based methods used by the sender and receiver.
@@ -47,10 +46,10 @@ try:
             :return: An instance of ConnectionAsync.
             :rtype: ~uamqp.async_ops.ConnectionAsync
             """
-            custom_endpoint_address = kwargs.pop("custom_endpoint_address") # pylint:disable=unused-variable
-            ssl_opts = kwargs.pop("ssl_opts") # pylint:disable=unused-variable
-            transport_type = kwargs.pop("transport_type") # pylint:disable=unused-variable
-            http_proxy = kwargs.pop("http_proxy") # pylint:disable=unused-variable
+            custom_endpoint_address = kwargs.pop("custom_endpoint_address")  # pylint:disable=unused-variable
+            ssl_opts = kwargs.pop("ssl_opts")  # pylint:disable=unused-variable
+            transport_type = kwargs.pop("transport_type")  # pylint:disable=unused-variable
+            http_proxy = kwargs.pop("http_proxy")  # pylint:disable=unused-variable
             return ConnectionAsync(
                 hostname=host,
                 sasl=auth,
@@ -66,9 +65,7 @@ try:
             await connection.destroy_async()
 
         @staticmethod
-        def create_send_client_async(
-            config: "Configuration", **kwargs: Any
-        ) -> "SendClientAsync":
+        def create_send_client_async(config: "Configuration", **kwargs: Any) -> "SendClientAsync":
             """
             Creates and returns the uamqp SendClient.
             :param Configuration config: The configuration.
@@ -95,7 +92,7 @@ try:
                 error_policy=retry_policy,
                 keep_alive_interval=config.keep_alive,
                 encoding=config.encoding,
-                **kwargs
+                **kwargs,
             )
 
         @staticmethod
@@ -104,7 +101,7 @@ try:
             message: Union["ServiceBusMessage", "ServiceBusMessageBatch"],
             logger: "Logger",
             timeout: int,
-            last_exception: Optional[Exception]
+            last_exception: Optional[Exception],
         ) -> None:
             """
             Handles sending of service bus messages.
@@ -125,9 +122,7 @@ try:
                 UamqpTransportAsync.set_msg_timeout(sender, logger, default_timeout, None)
 
         @staticmethod
-        def create_receive_client_async(
-            receiver: "ServiceBusReceiver", **kwargs: Any
-        ) -> "ReceiveClientAsync":
+        def create_receive_client_async(receiver: "ServiceBusReceiver", **kwargs: Any) -> "ReceiveClientAsync":
             """
             Creates and returns the receive client.
             :param ~auzre.servicebus.aio.ServiceBusReceiver receiver: The receiver.
@@ -164,14 +159,13 @@ try:
                 prefetch=link_credit,
                 auto_complete=False,
                 receive_settle_mode=UamqpTransportAsync.ServiceBusToAMQPReceiveModeMap[receive_mode],
-                send_settle_mode=constants.SenderSettleMode.Settled
-                if receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
-                else None,
-                on_attach=functools.partial(
-                    UamqpTransportAsync.on_attach,
-                    receiver
+                send_settle_mode=(
+                    constants.SenderSettleMode.Settled
+                    if receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
+                    else None
                 ),
-                **kwargs
+                on_attach=functools.partial(UamqpTransportAsync.on_attach, receiver),
+                **kwargs,
             )
 
         @staticmethod
@@ -214,7 +208,7 @@ try:
         @staticmethod
         async def iter_next_async(
             receiver: "ServiceBusReceiver", wait_time: Optional[int] = None
-        ) -> "ServiceBusReceivedMessage": # pylint: disable=unused-argument
+        ) -> "ServiceBusReceivedMessage":  # pylint: disable=unused-argument
             # pylint: disable=protected-access
             try:
                 receiver._receive_context.set()
@@ -241,14 +235,11 @@ try:
             # reassigning default _message_received method in ReceiveClient
             # pylint: disable=protected-access
             receiver._handler._message_received = functools.partial(  # type: ignore[assignment]
-                UamqpTransportAsync.enhanced_message_received_async,
-                receiver
+                UamqpTransportAsync.enhanced_message_received_async, receiver
             )
 
         @staticmethod
-        async def reset_link_credit_async(
-            handler: "ReceiveClientAsync", link_credit: int
-        ) -> None:
+        async def reset_link_credit_async(handler: "ReceiveClientAsync", link_credit: int) -> None:
             """
             Resets the link credit on the link.
             :param ReceiveClientAsync handler: Client with link to reset link credit.
@@ -268,21 +259,13 @@ try:
             await get_running_loop().run_in_executor(
                 None,
                 UamqpTransportAsync.settle_message_via_receiver_link_impl(
-                    handler,
-                    message,
-                    settle_operation,
-                    dead_letter_reason,
-                    dead_letter_error_description
+                    handler, message, settle_operation, dead_letter_reason, dead_letter_error_description
                 ),
             )
 
         @staticmethod
         async def create_token_auth_async(
-            auth_uri: str,
-            get_token: Callable,
-            token_type: bytes,
-            config: "Configuration",
-            **kwargs: Any
+            auth_uri: str, get_token: Callable, token_type: bytes, config: "Configuration", **kwargs: Any
         ) -> "JWTTokenAuthAsync":
             """
             Creates the JWTTokenAuth.
@@ -311,7 +294,7 @@ try:
                 custom_endpoint_hostname=config.custom_endpoint_hostname,
                 port=config.connection_port,
                 verify=config.connection_verify,
-                refresh_window=refresh_window
+                refresh_window=refresh_window,
             )
             if update_token:
                 await token_auth.update_token()
@@ -326,7 +309,7 @@ try:
             operation_type: bytes,
             node: bytes,
             timeout: int,
-            callback: Callable
+            callback: Callable,
         ) -> "ServiceBusReceivedMessage":
             """
             Send mgmt request.
@@ -346,7 +329,8 @@ try:
                 op_type=operation_type,
                 node=node,
                 timeout=timeout * UamqpTransportAsync.TIMEOUT_FACTOR if timeout else None,
-                callback=functools.partial(callback, amqp_transport=UamqpTransportAsync)
+                callback=functools.partial(callback, amqp_transport=UamqpTransportAsync),
             )
+
 except ImportError:
     pass

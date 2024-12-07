@@ -72,12 +72,8 @@ setup(
         "azure-identity>=1.16.0",
         "azure-core>=1.30.2",
         "nltk>=3.9.1",
+        "azure-storage-blob>=12.10.0",
     ],
-    extras_require={
-        "remote": [
-            "promptflow-azure<2.0.0,>=1.15.0",
-        ],
-    },
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
         "Source": "https://github.com/Azure/azure-sdk-for-python",
@@ -85,5 +81,6 @@ setup(
     package_data={
         "pytyped": ["py.typed"],
         "azure.ai.evaluation.simulator._prompty": ["*.prompty"],
+        "azure.ai.evaluation.simulator._data_sources": ["*.json"],
     },
 )

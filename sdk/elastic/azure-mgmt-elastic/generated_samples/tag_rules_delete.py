@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.elastic import MicrosoftElastic
 
 """
@@ -29,14 +30,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.tag_rules.begin_delete(
+    client.tag_rules.begin_delete(
         resource_group_name="myResourceGroup",
         monitor_name="myMonitor",
         rule_set_name="default",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/elastic/resource-manager/Microsoft.Elastic/preview/2023-02-01-preview/examples/TagRules_Delete.json
+# x-ms-original-file: specification/elastic/resource-manager/Microsoft.Elastic/preview/2024-06-15-preview/examples/TagRules_Delete.json
 if __name__ == "__main__":
     main()

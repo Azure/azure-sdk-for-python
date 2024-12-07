@@ -42,7 +42,8 @@ MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
 ]
 
 TEST_COMPATIBILITY_MAP = {
-    "azure-ai-ml": ">=3.7, !=3.13.*"
+    "azure-ai-ml": ">=3.7, !=3.13.*",
+    "azure-ai-evaluation": ">=3.7, !=3.13.*"
 }
 TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {
     "azure-storage-blob": "pypy",
@@ -51,6 +52,7 @@ TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {
     "azure-storage-file-share": "pypy",
     "azure-eventhub": "pypy",
     "azure-servicebus": "pypy",
+    "azure-ai-projects": "pypy",
 }
 
 omit_regression = (

@@ -6,7 +6,7 @@
 from os import environ
 from warnings import warn
 
-from opentelemetry.instrumentation.distro import ( # type: ignore
+from opentelemetry.instrumentation.distro import (  # type: ignore
     BaseDistro,
 )
 from opentelemetry.sdk.environment_variables import (
@@ -16,7 +16,9 @@ from opentelemetry.sdk.environment_variables import (
 
 from azure.core.settings import settings
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
-from azure.monitor.opentelemetry.exporter._utils import _is_attach_enabled # pylint: disable=import-error,no-name-in-module
+from azure.monitor.opentelemetry.exporter._utils import (  # pylint: disable=import-error,no-name-in-module
+    _is_attach_enabled,
+)
 from azure.monitor.opentelemetry._constants import (
     _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME,
     _AZURE_SDK_INSTRUMENTATION_NAME,
@@ -43,8 +45,7 @@ class AzureMonitorDistro(BaseDistro):
             _configure_auto_instrumentation()
             AzureStatusLogger.log_status(True)
             AzureDiagnosticLogging.info(
-                "Azure Monitor OpenTelemetry Distro configured successfully.",
-                _ATTACH_SUCCESS_DISTRO
+                "Azure Monitor OpenTelemetry Distro configured successfully.", _ATTACH_SUCCESS_DISTRO
             )
         except Exception as e:
             AzureStatusLogger.log_status(False, reason=str(e))
@@ -56,12 +57,8 @@ class AzureMonitorDistro(BaseDistro):
 
 
 def _configure_auto_instrumentation() -> None:
-    environ.setdefault(
-        _OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED, "true"
-    )
-    environ.setdefault(
-        OTEL_EXPERIMENTAL_RESOURCE_DETECTORS, _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME
-    )
+    environ.setdefault(_OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED, "true")
+    environ.setdefault(OTEL_EXPERIMENTAL_RESOURCE_DETECTORS, _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME)
     otel_disabled_instrumentations = _get_otel_disabled_instrumentations()
     if _AZURE_SDK_INSTRUMENTATION_NAME not in otel_disabled_instrumentations:
         settings.tracing_implementation = OpenTelemetrySpan

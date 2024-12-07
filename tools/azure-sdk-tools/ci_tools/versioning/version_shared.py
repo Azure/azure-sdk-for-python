@@ -69,7 +69,7 @@ def get_packages(
     paths = get_setup_py_paths(args.glob_string, target_dir, additional_excludes)
 
     # Check if package is excluded if a package name param is passed
-    if package_name and not any(filter(lambda x: package_name == os.path.basename(os.path.dirname(x)), paths)):
+    if package_name and not any(filter(lambda x: package_name == os.path.basename(x), paths)):
         logging.info("Package {} is excluded from version update tool".format(package_name))
         exit(0)
 

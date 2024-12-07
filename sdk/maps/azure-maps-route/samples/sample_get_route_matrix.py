@@ -31,7 +31,7 @@ def get_route_matrix():
 
     route_matrix_query = RouteMatrixQuery(
         origins=GeoJsonMultiPoint(coordinates=[[4.85106, 52.36006], [4.85056, 52.36187]]),
-        destinations=GeoJsonMultiPoint(coordinates=[[4.85003, 52.36241], [13.42937, 52.50931]])
+        destinations=GeoJsonMultiPoint(coordinates=[[4.85003, 52.36241], [13.42937, 52.50931]]),
     )
 
     result = maps_route_client.get_route_matrix(query=route_matrix_query)
@@ -40,5 +40,6 @@ def get_route_matrix():
     print(result.summary)
     # [END get_route_matrix]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     get_route_matrix()

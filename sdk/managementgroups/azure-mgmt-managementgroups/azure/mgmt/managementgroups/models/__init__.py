@@ -37,7 +37,6 @@ from ._models_py3 import Operation
 from ._models_py3 import OperationDisplayProperties
 from ._models_py3 import OperationListResult
 from ._models_py3 import OperationResults
-from ._models_py3 import ParentGroupBagInfo
 from ._models_py3 import ParentGroupInfo
 from ._models_py3 import PatchManagementGroupRequest
 from ._models_py3 import SubscriptionUnderManagementGroup
@@ -51,7 +50,7 @@ from ._management_groups_api_enums import Permissions
 from ._management_groups_api_enums import Reason
 from ._management_groups_api_enums import Status
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -86,7 +85,6 @@ __all__ = [
     "OperationDisplayProperties",
     "OperationListResult",
     "OperationResults",
-    "ParentGroupBagInfo",
     "ParentGroupInfo",
     "PatchManagementGroupRequest",
     "SubscriptionUnderManagementGroup",

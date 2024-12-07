@@ -1,0 +1,63 @@
+{% set name = "azure-ai-evaluation" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+source:
+  url: {{ environ.get('EVALUATION_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - pip
+    - python
+    - six
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+    - pandas
+    - promptflow
+  run:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - python
+    - six
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+    - pandas
+    - promptflow
+
+test:
+  imports:
+    - azure.ai.evaluation
+    - azure.ai.evaluation.aio
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/evaluation/azure-ai-evaluation"
+  license: MIT
+  license_family: MIT
+  license_file:
+  summary: "Microsoft Azure AI Evaluation client library for Python"
+  description: |
+    Use Azure AI Evaluation SDK to assess the performance of your generative AI applications.
+    Generative AI application generations are quantitatively measured with mathematical
+    based metrics, AI-assisted quality and safety metrics. Metrics are defined as evaluators.
+    Built-in or custom evaluators can provide comprehensive insights into the application's
+    capabilities and limitations.
+    Please see https://aka.ms/azsdk/conda/releases/evaluation for version details.
+  doc_url:
+  dev_url:
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

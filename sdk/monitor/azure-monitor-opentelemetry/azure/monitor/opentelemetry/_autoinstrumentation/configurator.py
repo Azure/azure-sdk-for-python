@@ -15,8 +15,12 @@ from opentelemetry.environment_variables import (
 )
 from opentelemetry.sdk._configuration import _OTelSDKConfigurator
 
-from azure.monitor.opentelemetry.exporter import ApplicationInsightsSampler # pylint: disable=import-error,no-name-in-module
-from azure.monitor.opentelemetry.exporter._utils import _is_attach_enabled # pylint: disable=import-error,no-name-in-module
+from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error,no-name-in-module
+    ApplicationInsightsSampler,
+)
+from azure.monitor.opentelemetry.exporter._utils import (  # pylint: disable=import-error,no-name-in-module
+    _is_attach_enabled,
+)
 from azure.monitor.opentelemetry._constants import (
     _PREVIEW_ENTRY_POINT_WARNING,
     LOG_EXPORTER_NAMES_ARG,
@@ -54,8 +58,7 @@ class AzureMonitorConfigurator(_OTelSDKConfigurator):
             super()._configure(**kwargs)
             AzureStatusLogger.log_status(True)
             AzureDiagnosticLogging.info(
-                "Azure Monitor Configurator configured successfully.",
-                _ATTACH_SUCCESS_CONFIGURATOR
+                "Azure Monitor Configurator configured successfully.", _ATTACH_SUCCESS_CONFIGURATOR
             )
         except Exception as e:
             AzureDiagnosticLogging.error(

@@ -22,6 +22,7 @@ class JobType(object):
     SPARK = "spark"
     DATA_TRANSFER = "data_transfer"
     FINE_TUNING = "finetuning"
+    DISTILLATION = "distillation"
 
 
 class JobLimitsType(object):

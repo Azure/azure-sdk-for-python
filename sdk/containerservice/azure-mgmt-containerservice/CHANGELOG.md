@@ -1,5 +1,30 @@
 # Release History
 
+## 33.0.0 (2024-11-08)
+
+### Features Added
+
+  - Model AdvancedNetworking has a new parameter enabled
+  - Model AdvancedNetworkingSecurity has a new parameter enabled
+  - Model AgentPool has a new parameter e_tag
+  - Model ContainerServiceNetworkProfile has a new parameter advanced_networking
+  - Model ManagedCluster has a new parameter e_tag
+  - Model ManagedCluster has a new parameter node_resource_group_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter e_tag
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter e_tag
+  - Operation AgentPoolsOperations.begin_create_or_update has a new optional parameter if_match
+  - Operation AgentPoolsOperations.begin_create_or_update has a new optional parameter if_none_match
+  - Operation AgentPoolsOperations.begin_delete has a new optional parameter if_match
+  - Operation ManagedClustersOperations.begin_create_or_update has a new optional parameter if_match
+  - Operation ManagedClustersOperations.begin_create_or_update has a new optional parameter if_none_match
+  - Operation ManagedClustersOperations.begin_delete has a new optional parameter if_match
+  - Operation ManagedClustersOperations.begin_update_tags has a new optional parameter if_match
+
+### Breaking Changes
+
+  - Model AdvancedNetworkingObservability no longer has parameter tls_management
+  - Model AdvancedNetworkingSecurity no longer has parameter fqdn_policy
+
 ## 32.1.0 (2024-10-11)
 
 ### Features Added

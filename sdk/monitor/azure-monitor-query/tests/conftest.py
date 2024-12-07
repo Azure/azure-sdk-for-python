@@ -36,7 +36,7 @@ def add_sanitizers(test_proxy, environment_variables):
         ENV_CLIENT_ID: TEST_ID,
         ENV_CLIENT_SECRET: TEST_ID,
         ENV_TABLE_NAME: TEST_TABLE_NAME,
-        ENV_DCR_ID: TEST_ID
+        ENV_DCR_ID: TEST_ID,
     }
     environment_variables.sanitize_batch(sanitization_mapping)
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")

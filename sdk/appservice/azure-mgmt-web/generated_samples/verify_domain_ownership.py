@@ -36,6 +36,6 @@ def main():
     )
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.CertificateRegistration/stable/2023-12-01/examples/VerifyDomainOwnership.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.CertificateRegistration/stable/2024-04-01/examples/VerifyDomainOwnership.json
 if __name__ == "__main__":
     main()

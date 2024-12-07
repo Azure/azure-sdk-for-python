@@ -22,6 +22,8 @@ class ErrorCategory(Enum):
     * FAILED_EXECUTION -> Execution failed
     * SERVICE_UNAVAILABLE -> Service is unavailable
     * MISSING_PACKAGE -> Required package is missing
+    * FAILED_REMOTE_TRACKING -> Remote tracking failed
+    * PROJECT_ACCESS_ERROR -> Access to project failed
     * UNKNOWN -> Undefined placeholder. Avoid using.
     """
 
@@ -33,6 +35,8 @@ class ErrorCategory(Enum):
     FAILED_EXECUTION = "FAILED_EXECUTION"
     SERVICE_UNAVAILABLE = "SERVICE UNAVAILABLE"
     MISSING_PACKAGE = "MISSING PACKAGE"
+    FAILED_REMOTE_TRACKING = "FAILED REMOTE TRACKING"
+    PROJECT_ACCESS_ERROR = "PROJECT ACCESS ERROR"
     UNKNOWN = "UNKNOWN"
 
 
@@ -59,12 +63,15 @@ class ErrorTarget(Enum):
     RAI_CLIENT = "RAIClient"
     COHERENCE_EVALUATOR = "CoherenceEvaluator"
     CONTENT_SAFETY_CHAT_EVALUATOR = "ContentSafetyEvaluator"
+    CONTENT_SAFETY_MULTIMODAL_EVALUATOR = "ContentSafetyMultimodalEvaluator"
     ECI_EVALUATOR = "ECIEvaluator"
     F1_EVALUATOR = "F1Evaluator"
     GROUNDEDNESS_EVALUATOR = "GroundednessEvaluator"
     PROTECTED_MATERIAL_EVALUATOR = "ProtectedMaterialEvaluator"
     RELEVANCE_EVALUATOR = "RelevanceEvaluator"
     SIMILARITY_EVALUATOR = "SimilarityEvaluator"
+    FLUENCY_EVALUATOR = "FluencyEvaluator"
+    RETRIEVAL_EVALUATOR = "RetrievalEvaluator"
     INDIRECT_ATTACK_EVALUATOR = "IndirectAttackEvaluator"
     INDIRECT_ATTACK_SIMULATOR = "IndirectAttackSimulator"
     ADVERSARIAL_SIMULATOR = "AdversarialSimulator"
@@ -90,6 +97,8 @@ class EvaluationException(AzureError):
     :type category: ~azure.ai.evaluation._exceptions.ErrorCategory
     :param blame: The source of blame for the error, defaults to Unknown.
     :type balance: ~azure.ai.evaluation._exceptions.ErrorBlame
+    :param tsg_link: A link to the TSG page for troubleshooting the error.
+    :type tsg_link: str
     """
 
     def __init__(
@@ -100,10 +109,20 @@ class EvaluationException(AzureError):
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         category: ErrorCategory = ErrorCategory.UNKNOWN,
         blame: ErrorBlame = ErrorBlame.UNKNOWN,
+        tsg_link: Optional[str] = None,
         **kwargs,
     ) -> None:
         self.category = category
         self.target = target
         self.blame = blame
         self.internal_message = internal_message
+        self.tsg_link = tsg_link
         super().__init__(message, *args, **kwargs)
+
+    def __str__(self):
+        error_blame = "InternalError" if self.blame != ErrorBlame.USER_ERROR else "UserError"
+        msg = f"({error_blame}) {super().__str__()}"
+        if self.tsg_link:
+            msg += f"\nVisit {self.tsg_link} to troubleshoot this issue."
+
+        return msg

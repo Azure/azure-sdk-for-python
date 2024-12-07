@@ -14,7 +14,6 @@ from azure.mgmt.core.policies import ARMHttpLoggingPolicy, AsyncARMChallengeAuth
 from .._version import VERSION
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
@@ -30,9 +29,8 @@ class HealthDataAIServicesMgmtClientConfiguration:  # pylint: disable=too-many-i
     :type subscription_id: str
     :param base_url: Service host. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2024-02-28-preview". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Default value is "2024-09-20".
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -43,7 +41,7 @@ class HealthDataAIServicesMgmtClientConfiguration:  # pylint: disable=too-many-i
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-02-28-preview")
+        api_version: str = kwargs.pop("api_version", "2024-09-20")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

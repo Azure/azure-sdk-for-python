@@ -39,22 +39,22 @@ from azure.eventhub.aio import EventHubProducerClient
 from azure.identity.aio import EnvironmentCredential
 
 
-fully_qualified_namespace = os.environ['EVENT_HUB_HOSTNAME']
-eventhub_name = os.environ['EVENT_HUB_NAME']
+fully_qualified_namespace = os.environ["EVENT_HUB_HOSTNAME"]
+eventhub_name = os.environ["EVENT_HUB_NAME"]
 
 
 async def run():
     credential = EnvironmentCredential()
     async with credential:
-        producer = EventHubProducerClient(fully_qualified_namespace=fully_qualified_namespace,
-                                          eventhub_name=eventhub_name,
-                                          credential=credential)
+        producer = EventHubProducerClient(
+            fully_qualified_namespace=fully_qualified_namespace, eventhub_name=eventhub_name, credential=credential
+        )
 
         async with producer:
             event_data_batch = await producer.create_batch()
             while True:
                 try:
-                    event_data_batch.add(EventData('Message inside EventBatchData'))
+                    event_data_batch.add(EventData("Message inside EventBatchData"))
                 except ValueError:
                     # EventDataBatch object reaches max_size.
                     # New EventDataBatch object can be created here to send more data.
@@ -63,4 +63,4 @@ async def run():
 
 
 asyncio.run(run())
-print('Finished sending.')
+print("Finished sending.")

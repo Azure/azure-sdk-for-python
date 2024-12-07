@@ -9,5 +9,5 @@
 from ._azure_monitor_client_operations import AzureMonitorClientOperationsMixin
 
 __all__ = [
-    'AzureMonitorClientOperationsMixin',
+    "AzureMonitorClientOperationsMixin",
 ]

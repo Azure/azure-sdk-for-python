@@ -22,11 +22,13 @@ class TestAppConfigurationManagementOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_check_name_availability(self, resource_group):
         response = self.client.operations.check_name_availability(
-            check_name_availability_parameters={"name": "str", "type": "Microsoft.AppConfiguration/configurationStores"},
+            check_name_availability_parameters={
+                "name": "str",
+                "type": "Microsoft.AppConfiguration/configurationStores",
+            },
         )
 
         assert response
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
@@ -34,14 +36,16 @@ class TestAppConfigurationManagementOperations(AzureMgmtRecordedTestCase):
         response = self.client.operations.list()
         result = [r for r in response]
         assert result
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_regional_check_name_availability(self, resource_group):
         response = self.client.operations.regional_check_name_availability(
             location="eastus",
-            check_name_availability_parameters={"name": "str", "type": "Microsoft.AppConfiguration/configurationStores"},
+            check_name_availability_parameters={
+                "name": "str",
+                "type": "Microsoft.AppConfiguration/configurationStores",
+            },
         )
 
         assert response

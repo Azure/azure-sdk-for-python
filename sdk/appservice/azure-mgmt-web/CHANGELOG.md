@@ -1,5 +1,9 @@
 # Release History
 
+## 0.0.0 (2024-11-18)
+
+change log generation failed!!!
+
 ## 7.3.1 (2024-08-19)
 
 ### Bugs Fixed

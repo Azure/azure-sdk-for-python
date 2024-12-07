@@ -48,9 +48,7 @@ async def sample_single_document_translation_async():
     document_translate_content = DocumentTranslateContent(document=document_content)
 
     async with client:
-        response_stream = await client.document_translate(
-            body=document_translate_content, target_language=target_languages
-        )
+        response_stream = await client.translate(body=document_translate_content, target_language=target_languages)
     translated_response = response_stream.decode("utf-8-sig")  # type: ignore[attr-defined]
     print(f"Translated response: {translated_response}")
 

@@ -10,9 +10,9 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 from typing import Union, Any, List
 
-from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
+from azure.core.pipeline.policies import AzureKeyCredentialPolicy, AzureSasCredentialPolicy
 
 from ._client import MapsRenderClient as MapsRenderClientGenerated
 from .._version import API_VERSION
@@ -28,18 +28,19 @@ def patch_sdk():
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
 
+
 def _authentication_policy(credential):
     authentication_policy = None
     if credential is None:
         raise ValueError("Parameter 'credential' must not be None.")
     if isinstance(credential, AzureKeyCredential):
-        authentication_policy = AzureKeyCredentialPolicy(
-            name="subscription-key", credential=credential
-        )
+        authentication_policy = AzureKeyCredentialPolicy(name="subscription-key", credential=credential)
+    elif isinstance(credential, AzureSasCredential):
+        authentication_policy = AzureSasCredentialPolicy(credential)
     elif credential is not None and not hasattr(credential, "get_token"):
         raise TypeError(
             "Unsupported credential: {}. Use an instance of AzureKeyCredential "
-            "or a token credential from azure.identity".format(type(credential))
+            "or AzureSasCredential or a token credential from azure.identity".format(type(credential))
         )
     return authentication_policy
 
@@ -47,11 +48,10 @@ def _authentication_policy(credential):
 # pylint: disable=C4748
 class MapsRenderClient(MapsRenderClientGenerated):
     def __init__(
-        self,
-        credential: Union[AzureKeyCredential, AsyncTokenCredential],
-        **kwargs: Any
+            self,
+            credential: Union[AzureKeyCredential, AzureSasCredential, AsyncTokenCredential],
+            **kwargs: Any
     ) -> None:
-
         super().__init__(
             credential=credential,  # type: ignore
             api_version=kwargs.pop("api_version", API_VERSION),

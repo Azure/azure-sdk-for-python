@@ -47,13 +47,6 @@ class StorageInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """File storage input type"""
 
 
-class StorageSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Storage Source."""
-
-    AZURE_BLOB = "AzureBlob"
-    """Azure blob storage source"""
-
-
 class TranslationErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enums containing high level error codes."""
 
@@ -71,3 +64,10 @@ class TranslationErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Unauthorized"""
     REQUEST_RATE_TOO_HIGH = "RequestRateTooHigh"
     """RequestRateTooHigh"""
+
+
+class TranslationStorageSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Storage Source."""
+
+    AZURE_BLOB = "AzureBlob"
+    """Azure blob storage source"""

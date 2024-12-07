@@ -49,13 +49,13 @@ ServicePreparerChatCompletions = functools.partial(
 # hosted on Azure OpenAI (AOAI) endpoint.
 # TODO: When we have a MaaS model that supports chat completions with image input,
 # use that instead.
-# AZURE_OPENAI_CHAT_ENDPOINT=https://<endpont-name>.openai.azure.com/openai/deployments/gpt-4o-0806
+# AZURE_OPENAI_CHAT_ENDPOINT=https://<endpont-name>.openai.azure.com/openai/deployments/gpt-4o
 # AZURE_OPENAI_CHAT_KEY=<32-char-api-key>
 #
 ServicePreparerAOAIChatCompletions = functools.partial(
     EnvironmentVariableLoader,
     "azure_openai_chat",
-    azure_openai_chat_endpoint="https://your-deployment-name.openai.azure.com/openai/deployments/gpt-4o-0806",
+    azure_openai_chat_endpoint="https://your-deployment-name.openai.azure.com/openai/deployments/gpt-4o",
     azure_openai_chat_key="00000000000000000000000000000000",
 )
 

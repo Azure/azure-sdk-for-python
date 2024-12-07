@@ -28,21 +28,15 @@ class MonitorDomain(msrest.serialization.Model):
     """
 
     _validation = {
-        'version': {'required': True},
+        "version": {"required": True},
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'version': {'key': 'ver', 'type': 'int'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "version": {"key": "ver", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        version: int = 2,
-        additional_properties: Optional[Dict[str, Any]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, version: int = 2, additional_properties: Optional[Dict[str, Any]] = None, **kwargs):
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -85,26 +79,26 @@ class AvailabilityData(MonitorDomain):
     """
 
     _validation = {
-        'version': {'required': True},
-        'id': {'required': True, 'max_length': 512, 'min_length': 0},
-        'name': {'required': True, 'max_length': 1024, 'min_length': 0},
-        'duration': {'required': True},
-        'success': {'required': True},
-        'run_location': {'max_length': 1024, 'min_length': 0},
-        'message': {'max_length': 8192, 'min_length': 0},
+        "version": {"required": True},
+        "id": {"required": True, "max_length": 512, "min_length": 0},
+        "name": {"required": True, "max_length": 1024, "min_length": 0},
+        "duration": {"required": True},
+        "success": {"required": True},
+        "run_location": {"max_length": 1024, "min_length": 0},
+        "message": {"max_length": 8192, "min_length": 0},
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'version': {'key': 'ver', 'type': 'int'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'duration': {'key': 'duration', 'type': 'str'},
-        'success': {'key': 'success', 'type': 'bool'},
-        'run_location': {'key': 'runLocation', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'measurements': {'key': 'measurements', 'type': '{float}'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "version": {"key": "ver", "type": "int"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "duration": {"key": "duration", "type": "str"},
+        "success": {"key": "success", "type": "bool"},
+        "run_location": {"key": "runLocation", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "measurements": {"key": "measurements", "type": "{float}"},
     }
 
     def __init__(
@@ -180,17 +174,17 @@ class MessageData(MonitorDomain):
     """
 
     _validation = {
-        'version': {'required': True},
-        'message': {'required': True, 'max_length': 32768, 'min_length': 0},
+        "version": {"required": True},
+        "message": {"required": True, "max_length": 32768, "min_length": 0},
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'version': {'key': 'ver', 'type': 'int'},
-        'message': {'key': 'message', 'type': 'str'},
-        'severity_level': {'key': 'severityLevel', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'measurements': {'key': 'measurements', 'type': '{float}'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "version": {"key": "ver", "type": "int"},
+        "message": {"key": "message", "type": "str"},
+        "severity_level": {"key": "severityLevel", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "measurements": {"key": "measurements", "type": "{float}"},
     }
 
     def __init__(
@@ -254,20 +248,20 @@ class MetricDataPoint(msrest.serialization.Model):
     """
 
     _validation = {
-        'namespace': {'max_length': 256, 'min_length': 0},
-        'name': {'required': True, 'max_length': 1024, 'min_length': 0},
-        'value': {'required': True},
+        "namespace": {"max_length": 256, "min_length": 0},
+        "name": {"required": True, "max_length": 1024, "min_length": 0},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'namespace': {'key': 'ns', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'data_point_type': {'key': 'kind', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'float'},
-        'count': {'key': 'count', 'type': 'int'},
-        'min': {'key': 'min', 'type': 'float'},
-        'max': {'key': 'max', 'type': 'float'},
-        'std_dev': {'key': 'stdDev', 'type': 'float'},
+        "namespace": {"key": "ns", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "data_point_type": {"key": "kind", "type": "str"},
+        "value": {"key": "value", "type": "float"},
+        "count": {"key": "count", "type": "int"},
+        "min": {"key": "min", "type": "float"},
+        "max": {"key": "max", "type": "float"},
+        "std_dev": {"key": "stdDev", "type": "float"},
     }
 
     def __init__(
@@ -334,15 +328,15 @@ class MetricsData(MonitorDomain):
     """
 
     _validation = {
-        'version': {'required': True},
-        'metrics': {'required': True},
+        "version": {"required": True},
+        "metrics": {"required": True},
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'version': {'key': 'ver', 'type': 'int'},
-        'metrics': {'key': 'metrics', 'type': '[MetricDataPoint]'},
-        'properties': {'key': 'properties', 'type': '{str}'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "version": {"key": "ver", "type": "int"},
+        "metrics": {"key": "metrics", "type": "[MetricDataPoint]"},
+        "properties": {"key": "properties", "type": "{str}"},
     }
 
     def __init__(
@@ -383,17 +377,11 @@ class MonitorBase(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'base_type': {'key': 'baseType', 'type': 'str'},
-        'base_data': {'key': 'baseData', 'type': 'MonitorDomain'},
+        "base_type": {"key": "baseType", "type": "str"},
+        "base_data": {"key": "baseData", "type": "MonitorDomain"},
     }
 
-    def __init__(
-        self,
-        *,
-        base_type: Optional[str] = None,
-        base_data: Optional["MonitorDomain"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, base_type: Optional[str] = None, base_data: Optional["MonitorDomain"] = None, **kwargs):
         """
         :keyword base_type: Name of item (B section) if any. If telemetry data is derived straight from
          this, this should be null.
@@ -438,23 +426,23 @@ class PageViewData(MonitorDomain):
     """
 
     _validation = {
-        'version': {'required': True},
-        'id': {'required': True, 'max_length': 512, 'min_length': 0},
-        'name': {'required': True, 'max_length': 1024, 'min_length': 0},
-        'url': {'max_length': 2048, 'min_length': 0},
-        'referred_uri': {'max_length': 2048, 'min_length': 0},
+        "version": {"required": True},
+        "id": {"required": True, "max_length": 512, "min_length": 0},
+        "name": {"required": True, "max_length": 1024, "min_length": 0},
+        "url": {"max_length": 2048, "min_length": 0},
+        "referred_uri": {"max_length": 2048, "min_length": 0},
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'version': {'key': 'ver', 'type': 'int'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'url': {'key': 'url', 'type': 'str'},
-        'duration': {'key': 'duration', 'type': 'str'},
-        'referred_uri': {'key': 'referredUri', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'measurements': {'key': 'measurements', 'type': '{float}'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "version": {"key": "ver", "type": "int"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "url": {"key": "url", "type": "str"},
+        "duration": {"key": "duration", "type": "str"},
+        "referred_uri": {"key": "referredUri", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "measurements": {"key": "measurements", "type": "{float}"},
     }
 
     def __init__(
@@ -550,26 +538,26 @@ class PageViewPerfData(MonitorDomain):
     """
 
     _validation = {
-        'version': {'required': True},
-        'id': {'required': True, 'max_length': 512, 'min_length': 0},
-        'name': {'required': True, 'max_length': 1024, 'min_length': 0},
-        'url': {'max_length': 2048, 'min_length': 0},
+        "version": {"required": True},
+        "id": {"required": True, "max_length": 512, "min_length": 0},
+        "name": {"required": True, "max_length": 1024, "min_length": 0},
+        "url": {"max_length": 2048, "min_length": 0},
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'version': {'key': 'ver', 'type': 'int'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'url': {'key': 'url', 'type': 'str'},
-        'duration': {'key': 'duration', 'type': 'str'},
-        'perf_total': {'key': 'perfTotal', 'type': 'str'},
-        'network_connect': {'key': 'networkConnect', 'type': 'str'},
-        'sent_request': {'key': 'sentRequest', 'type': 'str'},
-        'received_response': {'key': 'receivedResponse', 'type': 'str'},
-        'dom_processing': {'key': 'domProcessing', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'measurements': {'key': 'measurements', 'type': '{float}'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "version": {"key": "ver", "type": "int"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "url": {"key": "url", "type": "str"},
+        "duration": {"key": "duration", "type": "str"},
+        "perf_total": {"key": "perfTotal", "type": "str"},
+        "network_connect": {"key": "networkConnect", "type": "str"},
+        "sent_request": {"key": "sentRequest", "type": "str"},
+        "received_response": {"key": "receivedResponse", "type": "str"},
+        "dom_processing": {"key": "domProcessing", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "measurements": {"key": "measurements", "type": "{float}"},
     }
 
     def __init__(
@@ -682,29 +670,29 @@ class RemoteDependencyData(MonitorDomain):
     """
 
     _validation = {
-        'version': {'required': True},
-        'id': {'max_length': 512, 'min_length': 0},
-        'name': {'required': True, 'max_length': 1024, 'min_length': 0},
-        'result_code': {'max_length': 1024, 'min_length': 0},
-        'data': {'max_length': 8192, 'min_length': 0},
-        'type': {'max_length': 1024, 'min_length': 0},
-        'target': {'max_length': 1024, 'min_length': 0},
-        'duration': {'required': True},
+        "version": {"required": True},
+        "id": {"max_length": 512, "min_length": 0},
+        "name": {"required": True, "max_length": 1024, "min_length": 0},
+        "result_code": {"max_length": 1024, "min_length": 0},
+        "data": {"max_length": 8192, "min_length": 0},
+        "type": {"max_length": 1024, "min_length": 0},
+        "target": {"max_length": 1024, "min_length": 0},
+        "duration": {"required": True},
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'version': {'key': 'ver', 'type': 'int'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'result_code': {'key': 'resultCode', 'type': 'str'},
-        'data': {'key': 'data', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'duration': {'key': 'duration', 'type': 'str'},
-        'success': {'key': 'success', 'type': 'bool'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'measurements': {'key': 'measurements', 'type': '{float}'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "version": {"key": "ver", "type": "int"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "result_code": {"key": "resultCode", "type": "str"},
+        "data": {"key": "data", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "duration": {"key": "duration", "type": "str"},
+        "success": {"key": "success", "type": "bool"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "measurements": {"key": "measurements", "type": "{float}"},
     }
 
     def __init__(
@@ -758,7 +746,9 @@ class RemoteDependencyData(MonitorDomain):
         :keyword measurements: Collection of custom measurements.
         :paramtype measurements: dict[str, float]
         """
-        super(RemoteDependencyData, self).__init__(additional_properties=additional_properties, version=version, **kwargs)
+        super(RemoteDependencyData, self).__init__(
+            additional_properties=additional_properties, version=version, **kwargs
+        )
         self.id = id
         self.name = name
         self.result_code = result_code
@@ -808,28 +798,28 @@ class RequestData(MonitorDomain):
     """
 
     _validation = {
-        'version': {'required': True},
-        'id': {'required': True, 'max_length': 512, 'min_length': 0},
-        'name': {'max_length': 1024, 'min_length': 0},
-        'duration': {'required': True},
-        'success': {'required': True},
-        'response_code': {'required': True, 'max_length': 1024, 'min_length': 0},
-        'source': {'max_length': 1024, 'min_length': 0},
-        'url': {'max_length': 2048, 'min_length': 0},
+        "version": {"required": True},
+        "id": {"required": True, "max_length": 512, "min_length": 0},
+        "name": {"max_length": 1024, "min_length": 0},
+        "duration": {"required": True},
+        "success": {"required": True},
+        "response_code": {"required": True, "max_length": 1024, "min_length": 0},
+        "source": {"max_length": 1024, "min_length": 0},
+        "url": {"max_length": 2048, "min_length": 0},
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'version': {'key': 'ver', 'type': 'int'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'duration': {'key': 'duration', 'type': 'str'},
-        'success': {'key': 'success', 'type': 'bool'},
-        'response_code': {'key': 'responseCode', 'type': 'str'},
-        'source': {'key': 'source', 'type': 'str'},
-        'url': {'key': 'url', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'measurements': {'key': 'measurements', 'type': '{float}'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "version": {"key": "ver", "type": "int"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "duration": {"key": "duration", "type": "str"},
+        "success": {"key": "success", "type": "bool"},
+        "response_code": {"key": "responseCode", "type": "str"},
+        "source": {"key": "source", "type": "str"},
+        "url": {"key": "url", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "measurements": {"key": "measurements", "type": "{float}"},
     }
 
     def __init__(
@@ -909,18 +899,18 @@ class StackFrame(msrest.serialization.Model):
     """
 
     _validation = {
-        'level': {'required': True},
-        'method': {'required': True, 'max_length': 1024, 'min_length': 0},
-        'assembly': {'max_length': 1024, 'min_length': 0},
-        'file_name': {'max_length': 1024, 'min_length': 0},
+        "level": {"required": True},
+        "method": {"required": True, "max_length": 1024, "min_length": 0},
+        "assembly": {"max_length": 1024, "min_length": 0},
+        "file_name": {"max_length": 1024, "min_length": 0},
     }
 
     _attribute_map = {
-        'level': {'key': 'level', 'type': 'int'},
-        'method': {'key': 'method', 'type': 'str'},
-        'assembly': {'key': 'assembly', 'type': 'str'},
-        'file_name': {'key': 'fileName', 'type': 'str'},
-        'line': {'key': 'line', 'type': 'int'},
+        "level": {"key": "level", "type": "int"},
+        "method": {"key": "method", "type": "str"},
+        "assembly": {"key": "assembly", "type": "str"},
+        "file_name": {"key": "fileName", "type": "str"},
+        "line": {"key": "line", "type": "int"},
     }
 
     def __init__(
@@ -965,18 +955,13 @@ class TelemetryErrorDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'index': {'key': 'index', 'type': 'int'},
-        'status_code': {'key': 'statusCode', 'type': 'int'},
-        'message': {'key': 'message', 'type': 'str'},
+        "index": {"key": "index", "type": "int"},
+        "status_code": {"key": "statusCode", "type": "int"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        index: Optional[int] = None,
-        status_code: Optional[int] = None,
-        message: Optional[str] = None,
-        **kwargs
+        self, *, index: Optional[int] = None, status_code: Optional[int] = None, message: Optional[str] = None, **kwargs
     ):
         """
         :keyword index: The index in the original payload of the item.
@@ -1012,16 +997,16 @@ class TelemetryEventData(MonitorDomain):
     """
 
     _validation = {
-        'version': {'required': True},
-        'name': {'required': True, 'max_length': 512, 'min_length': 0},
+        "version": {"required": True},
+        "name": {"required": True, "max_length": 512, "min_length": 0},
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'version': {'key': 'ver', 'type': 'int'},
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'measurements': {'key': 'measurements', 'type': '{float}'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "version": {"key": "ver", "type": "int"},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "measurements": {"key": "measurements", "type": "{float}"},
     }
 
     def __init__(
@@ -1080,19 +1065,19 @@ class TelemetryExceptionData(MonitorDomain):
     """
 
     _validation = {
-        'version': {'required': True},
-        'exceptions': {'required': True},
-        'problem_id': {'max_length': 1024, 'min_length': 0},
+        "version": {"required": True},
+        "exceptions": {"required": True},
+        "problem_id": {"max_length": 1024, "min_length": 0},
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'version': {'key': 'ver', 'type': 'int'},
-        'exceptions': {'key': 'exceptions', 'type': '[TelemetryExceptionDetails]'},
-        'severity_level': {'key': 'severityLevel', 'type': 'str'},
-        'problem_id': {'key': 'problemId', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'measurements': {'key': 'measurements', 'type': '{float}'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "version": {"key": "ver", "type": "int"},
+        "exceptions": {"key": "exceptions", "type": "[TelemetryExceptionDetails]"},
+        "severity_level": {"key": "severityLevel", "type": "str"},
+        "problem_id": {"key": "problemId", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "measurements": {"key": "measurements", "type": "{float}"},
     }
 
     def __init__(
@@ -1127,7 +1112,9 @@ class TelemetryExceptionData(MonitorDomain):
         :keyword measurements: Collection of custom measurements.
         :paramtype measurements: dict[str, float]
         """
-        super(TelemetryExceptionData, self).__init__(additional_properties=additional_properties, version=version, **kwargs)
+        super(TelemetryExceptionData, self).__init__(
+            additional_properties=additional_properties, version=version, **kwargs
+        )
         self.exceptions = exceptions
         self.severity_level = severity_level
         self.problem_id = problem_id
@@ -1160,19 +1147,19 @@ class TelemetryExceptionDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'type_name': {'max_length': 1024, 'min_length': 0},
-        'message': {'required': True, 'max_length': 32768, 'min_length': 0},
-        'stack': {'max_length': 32768, 'min_length': 0},
+        "type_name": {"max_length": 1024, "min_length": 0},
+        "message": {"required": True, "max_length": 32768, "min_length": 0},
+        "stack": {"max_length": 32768, "min_length": 0},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'int'},
-        'outer_id': {'key': 'outerId', 'type': 'int'},
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'has_full_stack': {'key': 'hasFullStack', 'type': 'bool'},
-        'stack': {'key': 'stack', 'type': 'str'},
-        'parsed_stack': {'key': 'parsedStack', 'type': '[StackFrame]'},
+        "id": {"key": "id", "type": "int"},
+        "outer_id": {"key": "outerId", "type": "int"},
+        "type_name": {"key": "typeName", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "has_full_stack": {"key": "hasFullStack", "type": "bool"},
+        "stack": {"key": "stack", "type": "str"},
+        "parsed_stack": {"key": "parsedStack", "type": "[StackFrame]"},
     }
 
     def __init__(
@@ -1249,20 +1236,20 @@ class TelemetryItem(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'time': {'required': True},
-        'sequence': {'max_length': 64, 'min_length': 0},
+        "name": {"required": True},
+        "time": {"required": True},
+        "sequence": {"max_length": 64, "min_length": 0},
     }
 
     _attribute_map = {
-        'version': {'key': 'ver', 'type': 'int'},
-        'name': {'key': 'name', 'type': 'str'},
-        'time': {'key': 'time', 'type': 'iso-8601'},
-        'sample_rate': {'key': 'sampleRate', 'type': 'float'},
-        'sequence': {'key': 'seq', 'type': 'str'},
-        'instrumentation_key': {'key': 'iKey', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'data': {'key': 'data', 'type': 'MonitorBase'},
+        "version": {"key": "ver", "type": "int"},
+        "name": {"key": "name", "type": "str"},
+        "time": {"key": "time", "type": "iso-8601"},
+        "sample_rate": {"key": "sampleRate", "type": "float"},
+        "sequence": {"key": "seq", "type": "str"},
+        "instrumentation_key": {"key": "iKey", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "data": {"key": "data", "type": "MonitorBase"},
     }
 
     def __init__(
@@ -1328,9 +1315,9 @@ class TrackResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'items_received': {'key': 'itemsReceived', 'type': 'int'},
-        'items_accepted': {'key': 'itemsAccepted', 'type': 'int'},
-        'errors': {'key': 'errors', 'type': '[TelemetryErrorDetails]'},
+        "items_received": {"key": "itemsReceived", "type": "int"},
+        "items_accepted": {"key": "itemsAccepted", "type": "int"},
+        "errors": {"key": "errors", "type": "[TelemetryErrorDetails]"},
     }
 
     def __init__(

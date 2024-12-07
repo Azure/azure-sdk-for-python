@@ -431,9 +431,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     :ivar server_connection_policies: ServerConnectionPoliciesOperations operations
     :vartype server_connection_policies:
      azure.mgmt.sql.operations.ServerConnectionPoliciesOperations
-    :ivar distributed_availability_groups: DistributedAvailabilityGroupsOperations operations
-    :vartype distributed_availability_groups:
-     azure.mgmt.sql.operations.DistributedAvailabilityGroupsOperations
     :ivar server_trust_certificates: ServerTrustCertificatesOperations operations
     :vartype server_trust_certificates: azure.mgmt.sql.operations.ServerTrustCertificatesOperations
     :ivar endpoint_certificates: EndpointCertificatesOperations operations
@@ -599,6 +596,9 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     :vartype servers: azure.mgmt.sql.operations.ServersOperations
     :ivar replication_links: ReplicationLinksOperations operations
     :vartype replication_links: azure.mgmt.sql.operations.ReplicationLinksOperations
+    :ivar distributed_availability_groups: DistributedAvailabilityGroupsOperations operations
+    :vartype distributed_availability_groups:
+     azure.mgmt.sql.operations.DistributedAvailabilityGroupsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The subscription ID that identifies an Azure subscription. Required.
@@ -885,9 +885,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         self.server_connection_policies = ServerConnectionPoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.distributed_availability_groups = DistributedAvailabilityGroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.server_trust_certificates = ServerTrustCertificatesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -1047,6 +1044,9 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         )
         self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.replication_links = ReplicationLinksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.distributed_availability_groups = DistributedAvailabilityGroupsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

@@ -16,6 +16,9 @@ inputs:
     type: string
   conversation_history:
     type: dict
+  action:
+    type: string
+    default: continue the converasation and make sure the task is completed by asking relevant questions
 
 ---
 system:
@@ -25,8 +28,10 @@ Output must be in JSON format
 Here's a sample output:
 {
   "content": "Here is my follow-up question.",
-  "user": "user"
+  "role": "user"
 }
 
 Output with a json object that continues the conversation, given the conversation history:
 {{ conversation_history }}
+
+{{ action }}

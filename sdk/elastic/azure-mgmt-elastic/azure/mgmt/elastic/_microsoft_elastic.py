@@ -8,9 +8,12 @@
 
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
+from typing_extensions import Self
 
+from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 
 from . import models as _models
 from ._configuration import MicrosoftElasticConfiguration
@@ -18,6 +21,8 @@ from ._serialization import Deserializer, Serializer
 from .operations import (
     AllTrafficFiltersOperations,
     AssociateTrafficFilterOperations,
+    BillingInfoOperations,
+    ConnectedPartnerResourcesOperations,
     CreateAndAssociateIPFilterOperations,
     CreateAndAssociatePLFilterOperations,
     DeploymentInfoOperations,
@@ -28,7 +33,9 @@ from .operations import (
     ListAssociatedTrafficFiltersOperations,
     MonitorOperations,
     MonitoredResourcesOperations,
+    MonitoredSubscriptionsOperations,
     MonitorsOperations,
+    OpenAIOperations,
     Operations,
     OrganizationsOperations,
     TagRulesOperations,
@@ -53,12 +60,22 @@ class MicrosoftElastic:  # pylint: disable=client-accepts-api-version-keyword,to
     :vartype monitors: azure.mgmt.elastic.operations.MonitorsOperations
     :ivar elastic_versions: ElasticVersionsOperations operations
     :vartype elastic_versions: azure.mgmt.elastic.operations.ElasticVersionsOperations
+    :ivar monitored_subscriptions: MonitoredSubscriptionsOperations operations
+    :vartype monitored_subscriptions:
+     azure.mgmt.elastic.operations.MonitoredSubscriptionsOperations
     :ivar monitored_resources: MonitoredResourcesOperations operations
     :vartype monitored_resources: azure.mgmt.elastic.operations.MonitoredResourcesOperations
     :ivar deployment_info: DeploymentInfoOperations operations
     :vartype deployment_info: azure.mgmt.elastic.operations.DeploymentInfoOperations
     :ivar external_user: ExternalUserOperations operations
     :vartype external_user: azure.mgmt.elastic.operations.ExternalUserOperations
+    :ivar billing_info: BillingInfoOperations operations
+    :vartype billing_info: azure.mgmt.elastic.operations.BillingInfoOperations
+    :ivar connected_partner_resources: ConnectedPartnerResourcesOperations operations
+    :vartype connected_partner_resources:
+     azure.mgmt.elastic.operations.ConnectedPartnerResourcesOperations
+    :ivar open_ai: OpenAIOperations operations
+    :vartype open_ai: azure.mgmt.elastic.operations.OpenAIOperations
     :ivar tag_rules: TagRulesOperations operations
     :vartype tag_rules: azure.mgmt.elastic.operations.TagRulesOperations
     :ivar vm_host: VMHostOperations operations
@@ -96,12 +113,11 @@ class MicrosoftElastic:  # pylint: disable=client-accepts-api-version-keyword,to
     :vartype organizations: azure.mgmt.elastic.operations.OrganizationsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The Azure subscription ID. This is a GUID-formatted string (e.g.
-     00000000-0000-0000-0000-000000000000). Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-02-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2024-06-15-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -116,7 +132,25 @@ class MicrosoftElastic:  # pylint: disable=client-accepts-api-version-keyword,to
         **kwargs: Any
     ) -> None:
         self._config = MicrosoftElasticConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
-        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                ARMAutoResourceProviderRegistrationPolicy(),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -127,11 +161,19 @@ class MicrosoftElastic:  # pylint: disable=client-accepts-api-version-keyword,to
         self.elastic_versions = ElasticVersionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.monitored_subscriptions = MonitoredSubscriptionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.monitored_resources = MonitoredResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.deployment_info = DeploymentInfoOperations(self._client, self._config, self._serialize, self._deserialize)
         self.external_user = ExternalUserOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.billing_info = BillingInfoOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.connected_partner_resources = ConnectedPartnerResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.open_ai = OpenAIOperations(self._client, self._config, self._serialize, self._deserialize)
         self.tag_rules = TagRulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.vm_host = VMHostOperations(self._client, self._config, self._serialize, self._deserialize)
         self.vm_ingestion = VMIngestionOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -164,7 +206,7 @@ class MicrosoftElastic:  # pylint: disable=client-accepts-api-version-keyword,to
         self.traffic_filters = TrafficFiltersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.organizations = OrganizationsOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -184,12 +226,12 @@ class MicrosoftElastic:  # pylint: disable=client-accepts-api-version-keyword,to
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "MicrosoftElastic":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

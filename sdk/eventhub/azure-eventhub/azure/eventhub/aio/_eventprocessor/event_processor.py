@@ -45,9 +45,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class EventProcessor(
-    EventProcessorMixin
-):  # pylint:disable=too-many-instance-attributes
+class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-attributes
     """
     An EventProcessor constantly receives events from one or multiple partitions of the Event Hub
     in the context of a given consumer group.
@@ -76,22 +74,14 @@ class EventProcessor(
         owner_level: Optional[int] = None,
         prefetch: Optional[int] = None,
         track_last_enqueued_event_properties: bool = False,
-        error_handler: Optional[
-            Callable[[PartitionContext, Exception], Awaitable[None]]
-        ] = None,
-        partition_initialize_handler: Optional[
-            Callable[[PartitionContext], Awaitable[None]]
-        ] = None,
-        partition_close_handler: Optional[
-            Callable[[PartitionContext, CloseReason], Awaitable[None]]
-        ] = None,
-        loop: Optional[asyncio.AbstractEventLoop] = None
+        error_handler: Optional[Callable[[PartitionContext, Exception], Awaitable[None]]] = None,
+        partition_initialize_handler: Optional[Callable[[PartitionContext], Awaitable[None]]] = None,
+        partition_close_handler: Optional[Callable[[PartitionContext, CloseReason], Awaitable[None]]] = None,
+        loop: Optional[asyncio.AbstractEventLoop] = None,
     ):
         self._consumer_group = consumer_group
         self._eventhub_client = eventhub_client
-        self._namespace = (
-            eventhub_client._address.hostname  # pylint: disable=protected-access
-        )
+        self._namespace = eventhub_client._address.hostname  # pylint: disable=protected-access
         self._eventhub_name = eventhub_client.eventhub_name
         self._partition_id = partition_id
         self._event_handler = event_handler
@@ -110,18 +100,14 @@ class EventProcessor(
             if partition_ownership_expiration_interval is not None
             else self._load_balancing_interval * 6
         )
-        self._load_balancing_strategy = (
-            load_balancing_strategy or LoadBalancingStrategy.GREEDY
-        )
+        self._load_balancing_strategy = load_balancing_strategy or LoadBalancingStrategy.GREEDY
         self._tasks: Dict[str, asyncio.Task] = {}
         self._partition_contexts: Dict[str, PartitionContext] = {}
         self._owner_level = owner_level
         if checkpoint_store and self._owner_level is None:
             self._owner_level = 0
         self._prefetch = prefetch
-        self._track_last_enqueued_event_properties = (
-            track_last_enqueued_event_properties
-        )
+        self._track_last_enqueued_event_properties = track_last_enqueued_event_properties
         self._id = str(uuid.uuid4())
         self._internal_kwargs = get_dict_with_loop_if_needed(loop)
         self._running = False
@@ -142,9 +128,7 @@ class EventProcessor(
     def __repr__(self) -> str:
         return "EventProcessor: id {}".format(self._id)
 
-    async def _cancel_tasks_for_partitions(
-        self, to_cancel_partitions: Iterable[str]
-    ) -> None:
+    async def _cancel_tasks_for_partitions(self, to_cancel_partitions: Iterable[str]) -> None:
         _LOGGER.debug(
             "EventProcessor %r tries to cancel partitions %r",
             self._id,
@@ -159,9 +143,7 @@ class EventProcessor(
                     self._id,
                     partition_id,
                 )
-                if (
-                    partition_id not in self._consumers
-                ):  # task is cancelled before the consumer is created
+                if partition_id not in self._consumers:  # task is cancelled before the consumer is created
                     del self._tasks[partition_id]
 
     def _create_tasks_for_claimed_ownership(
@@ -178,18 +160,14 @@ class EventProcessor(
             if partition_id not in self._tasks or self._tasks[partition_id].done():
                 checkpoint = checkpoints.get(partition_id) if checkpoints else None
                 if self._running:
-                    self._tasks[partition_id] = asyncio.create_task(
-                        self._receive(partition_id, checkpoint)
-                    )
+                    self._tasks[partition_id] = asyncio.create_task(self._receive(partition_id, checkpoint))
                     _LOGGER.info(
                         "EventProcessor %r has claimed partition %r",
                         self._id,
                         partition_id,
                     )
 
-    async def _process_error(
-        self, partition_context: PartitionContext, err: Exception
-    ) -> None:
+    async def _process_error(self, partition_context: PartitionContext, err: Exception) -> None:
         if self._error_handler:
             try:
                 await self._error_handler(partition_context, err)
@@ -204,9 +182,7 @@ class EventProcessor(
                     err_again,
                 )
 
-    async def _close_partition(
-        self, partition_context: PartitionContext, reason: CloseReason
-    ) -> None:
+    async def _close_partition(self, partition_context: PartitionContext, reason: CloseReason) -> None:
         _LOGGER.info(
             "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
             " is being closed. Reason is: %r",
@@ -283,9 +259,7 @@ class EventProcessor(
             partition_context: PartitionContext
             if partition_id in self._partition_contexts:
                 partition_context = self._partition_contexts[partition_id]
-                partition_context._last_received_event = (  # pylint:disable=protected-access
-                    None
-                )
+                partition_context._last_received_event = None  # pylint:disable=protected-access
             else:
                 partition_context = PartitionContext(
                     self._namespace,
@@ -296,9 +270,7 @@ class EventProcessor(
                 )
                 self._partition_contexts[partition_id] = partition_context
 
-            event_received_callback = partial(
-                self._on_event_received, partition_context
-            )
+            event_received_callback = partial(self._on_event_received, partition_context)
             self._consumers[partition_id] = self.create_consumer(  # type: ignore
                 partition_id,
                 initial_event_position,
@@ -323,13 +295,10 @@ class EventProcessor(
 
             while self._running:
                 try:
-                    await self._consumers[partition_id].receive(
-                        self._batch, self._max_batch_size, self._max_wait_time
-                    )
+                    await self._consumers[partition_id].receive(self._batch, self._max_batch_size, self._max_wait_time)
                 except asyncio.CancelledError:
                     _LOGGER.info(
-                        "EventProcessor instance %r of eventhub %r partition %r consumer group %r"
-                        " is cancelled",
+                        "EventProcessor instance %r of eventhub %r partition %r consumer group %r is cancelled",
                         self._id,
                         self._eventhub_name,
                         partition_id,
@@ -365,9 +334,7 @@ class EventProcessor(
                 random_jitter = self._load_balancing_interval * random.random() * 0.2
                 load_balancing_interval = self._load_balancing_interval + random_jitter
                 try:
-                    claimed_partition_ids = (
-                        await self._ownership_manager.claim_ownership()
-                    )
+                    claimed_partition_ids = await self._ownership_manager.claim_ownership()
                     if claimed_partition_ids:
                         existing_pids = set(self._tasks.keys())
                         claimed_pids = set(claimed_partition_ids)
@@ -375,13 +342,9 @@ class EventProcessor(
                         newly_claimed_pids = claimed_pids - existing_pids
                         if newly_claimed_pids:
                             checkpoints = (
-                                await self._ownership_manager.get_checkpoints()
-                                if self._checkpoint_store
-                                else None
+                                await self._ownership_manager.get_checkpoints() if self._checkpoint_store else None
                             )
-                            self._create_tasks_for_claimed_ownership(
-                                newly_claimed_pids, checkpoints
-                            )
+                            self._create_tasks_for_claimed_ownership(newly_claimed_pids, checkpoints)
                     else:
                         _LOGGER.info(
                             "EventProcessor %r hasn't claimed an ownership. It keeps claiming.",

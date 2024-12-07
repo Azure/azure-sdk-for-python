@@ -13,12 +13,13 @@ from azure.core.pipeline.policies import (
 )
 from .._credential.call_automation_policy import CallAutomationHMACCredentialsPolicy
 
+
 def get_call_automation_auth_policy(
     endpoint: str,
     credential: Union[TokenCredential, AsyncTokenCredential, AzureKeyCredential, str],
     acs_url: str,
     decode_url: bool = False,
-    is_async: bool = False
+    is_async: bool = False,
 ):
     """Returns the correct authentication policy based on which credential is being passed.
 
@@ -45,9 +46,7 @@ def get_call_automation_auth_policy(
             return AsyncBearerTokenCredentialPolicy(
                 credential, "https://communication.azure.com//.default"  # type: ignore
             )
-        return BearerTokenCredentialPolicy(
-            credential, "https://communication.azure.com//.default"  # type: ignore
-        )
+        return BearerTokenCredentialPolicy(credential, "https://communication.azure.com//.default")  # type: ignore
     if isinstance(credential, (AzureKeyCredential, str)):
         return CallAutomationHMACCredentialsPolicy(endpoint, acs_url, credential, decode_url=decode_url)
 

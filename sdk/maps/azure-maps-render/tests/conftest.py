@@ -21,6 +21,7 @@ from devtools_testutils import (
 # def start_proxy(test_proxy):
 #     return
 
+
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     subscription_key = os.environ.get("SUBSCRIPTION_KEY", "subscription-key")

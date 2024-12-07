@@ -10,11 +10,11 @@ from opentelemetry.sdk.trace import Span
 class GenAiTraceVerifier:
 
     def check_span_attributes(self, span, attributes):
-        # Convert the list of tuples to a dictionary for easier lookup  
+        # Convert the list of tuples to a dictionary for easier lookup
         attribute_dict = dict(attributes)
-   
+
         for attribute_name in span.attributes.keys():
-            # Check if the attribute name exists in the input attributes  
+            # Check if the attribute name exists in the input attributes
             if attribute_name not in attribute_dict:
                 return False
 
@@ -26,7 +26,7 @@ class GenAiTraceVerifier:
             elif isinstance(attribute_value, tuple):
                 # Check if the attribute value in the span matches the provided list
                 if span.attributes[attribute_name] != attribute_value:
-                    return False                    
+                    return False
             else:
                 # Check if the attribute value matches the provided value
                 if attribute_value == "+":
@@ -62,7 +62,7 @@ class GenAiTraceVerifier:
             return False
         for key, expected_val in expected_dict.items():
             if key not in actual_dict:
-                return False  
+                return False
             actual_val = actual_dict[key]
 
             if self.is_valid_json(expected_val):
@@ -72,17 +72,17 @@ class GenAiTraceVerifier:
                     return False
             elif isinstance(expected_val, dict):
                 if not isinstance(actual_val, dict):
-                    return False  
+                    return False
                 if not self.check_event_attributes(expected_val, actual_val):
                     return False
-            elif isinstance(expected_val, list):  
-                if not isinstance(actual_val, list):  
+            elif isinstance(expected_val, list):
+                if not isinstance(actual_val, list):
                     return False
                 if len(expected_val) != len(actual_val):
                     return False
-                for expected_list, actual_list in zip(expected_val, actual_val):  
-                    if not self.check_event_attributes(expected_list, actual_list):  
-                        return False                 
+                for expected_list, actual_list in zip(expected_val, actual_val):
+                    if not self.check_event_attributes(expected_list, actual_list):
+                        return False
             elif isinstance(expected_val, str) and expected_val == "*":
                 if actual_val == "":
                     return False
@@ -95,8 +95,8 @@ class GenAiTraceVerifier:
 
         for expected_event in expected_events:
             for actual_event in span_events:
-                if expected_event['name'] == actual_event.name:
-                    if not self.check_event_attributes(expected_event['attributes'], actual_event.attributes):
+                if expected_event["name"] == actual_event.name:
+                    if not self.check_event_attributes(expected_event["attributes"], actual_event.attributes):
                         return False
                     span_events.remove(actual_event)  # Remove the matched event from the span_events
                     break

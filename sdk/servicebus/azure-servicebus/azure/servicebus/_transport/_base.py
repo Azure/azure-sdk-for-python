@@ -12,10 +12,12 @@ if TYPE_CHECKING:
     except ImportError:
         pass
 
-class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
+
+class AmqpTransport(ABC):  # pylint: disable=too-many-public-methods
     """
     Abstract class that defines a set of common methods needed by sender and receiver.
     """
+
     KIND: str
 
     # define constants
@@ -157,9 +159,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def send_messages(
-        sender, message, logger, timeout, last_exception
-    ):
+    def send_messages(sender, message, logger, timeout, last_exception):
         """
         Handles sending of service bus messages.
         :param ~azure.servicebus.ServiceBusSender sender: The sender with handler
@@ -216,9 +216,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def iter_contextual_wrapper(
-        receiver, max_wait_time=None
-    ):
+    def iter_contextual_wrapper(receiver, max_wait_time=None):
         """The purpose of this wrapper is to allow both state restoration (for multiple concurrent iteration)
         and per-iter argument passing that requires the former.
         :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver.
@@ -227,9 +225,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def iter_next(
-        receiver, wait_time=None
-    ):
+    def iter_next(receiver, wait_time=None):
         """
         Used to iterate through received messages.
         :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver.
@@ -238,7 +234,9 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def enhanced_message_received(*args, **kwargs) -> None:  # pylint: disable=docstring-missing-param,docstring-should-be-keyword
+    def enhanced_message_received(  # pylint: disable=docstring-missing-param,docstring-should-be-keyword
+        *args, **kwargs
+    ) -> None:
         """
         Releases messages from the internal buffer when there is no active receive call. In PEEKLOCK mode,
         this helps avoid messages from expiring in the buffer and incrementing the delivery count of a message.
@@ -271,9 +269,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def reset_link_credit(
-        handler, link_credit
-    ):
+    def reset_link_credit(handler, link_credit):
         """
         Resets the link credit on the link.
         :param ~uamqp.SendClient or ~pyamqp.SendClient handler: The handler.
@@ -320,9 +316,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_token_auth(
-        auth_uri, get_token, token_type, config, **kwargs
-    ):
+    def create_token_auth(auth_uri, get_token, token_type, config, **kwargs):
         """
         Creates the JWTTokenAuth.
         :param str auth_uri: The auth uri to pass to JWTTokenAuth.
@@ -337,9 +331,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_mgmt_msg(
-        message, application_properties, config, reply_to, **kwargs
-    ):
+    def create_mgmt_msg(message, application_properties, config, reply_to, **kwargs):
         """
         :param message: The message to send in the management request.
         :type message: Any
@@ -351,9 +343,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def mgmt_client_request(
-        mgmt_client, mgmt_msg, *, operation, operation_type, node, timeout, callback
-    ):
+    def mgmt_client_request(mgmt_client, mgmt_msg, *, operation, operation_type, node, timeout, callback):
         """
         Send mgmt request and return result of callback.
         :param AMQPClient mgmt_client: Client to send request with.

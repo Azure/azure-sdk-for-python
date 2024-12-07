@@ -15,6 +15,7 @@ from azure.monitor.opentelemetry.exporter._storage import (
 
 TEST_FOLDER = os.path.abspath(".test.storage")
 
+
 def throw(exc_type, *args, **kwargs):
     def func(*_args, **_kwargs):
         raise exc_type(*args, **kwargs)
@@ -32,7 +33,7 @@ def clean_folder(folder):
                 elif os.path.isdir(file_path):
                     shutil.rmtree(file_path)
             except Exception as e:
-                print('Failed to delete %s. Reason: %s' % (file_path, e))
+                print("Failed to delete %s. Reason: %s" % (file_path, e))
 
 
 # pylint: disable=no-self-use

@@ -39,7 +39,5 @@ extends:
       safeName: azuresynapsemonitoring
     - name: azure-synapse-managedprivateendpoints
       safeName: azuresynapsemanagedprivateendpoints
-    - name: azure-synapse
-      safeName: azuresynapse
     - name: azure-mgmt-synapse
       safeName: azuremgmtsynapse

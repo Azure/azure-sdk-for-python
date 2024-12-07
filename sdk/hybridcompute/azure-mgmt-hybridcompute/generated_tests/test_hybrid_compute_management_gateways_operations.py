@@ -44,7 +44,7 @@ class TestHybridComputeManagementGatewaysOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-05-20-preview",
+            api_version="2024-07-31-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -57,7 +57,7 @@ class TestHybridComputeManagementGatewaysOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             gateway_name="str",
             parameters={"allowedFeatures": ["str"], "tags": {"str": "str"}},
-            api_version="2024-05-20-preview",
+            api_version="2024-07-31-preview",
         )
 
         # please add some check logic here by yourself
@@ -69,7 +69,7 @@ class TestHybridComputeManagementGatewaysOperations(AzureMgmtRecordedTestCase):
         response = self.client.gateways.get(
             resource_group_name=resource_group.name,
             gateway_name="str",
-            api_version="2024-05-20-preview",
+            api_version="2024-07-31-preview",
         )
 
         # please add some check logic here by yourself
@@ -81,7 +81,7 @@ class TestHybridComputeManagementGatewaysOperations(AzureMgmtRecordedTestCase):
         response = self.client.gateways.begin_delete(
             resource_group_name=resource_group.name,
             gateway_name="str",
-            api_version="2024-05-20-preview",
+            api_version="2024-07-31-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -92,7 +92,7 @@ class TestHybridComputeManagementGatewaysOperations(AzureMgmtRecordedTestCase):
     def test_list_by_resource_group(self, resource_group):
         response = self.client.gateways.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-05-20-preview",
+            api_version="2024-07-31-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -102,7 +102,7 @@ class TestHybridComputeManagementGatewaysOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_list_by_subscription(self, resource_group):
         response = self.client.gateways.list_by_subscription(
-            api_version="2024-05-20-preview",
+            api_version="2024-07-31-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

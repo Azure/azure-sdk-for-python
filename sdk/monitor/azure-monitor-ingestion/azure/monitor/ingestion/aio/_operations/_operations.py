@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +7,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -29,15 +28,16 @@ from .._vendor import LogsIngestionClientMixinABC
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
 class LogsIngestionClientOperationsMixin(LogsIngestionClientMixinABC):
+
     @overload
-    async def _upload(  # pylint: disable=inconsistent-return-statements
+    async def _upload(
         self,
         rule_id: str,
         stream: str,
@@ -46,11 +46,9 @@ class LogsIngestionClientOperationsMixin(LogsIngestionClientMixinABC):
         content_encoding: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> None:
-        ...
-
+    ) -> None: ...
     @overload
-    async def _upload(  # pylint: disable=inconsistent-return-statements
+    async def _upload(
         self,
         rule_id: str,
         stream: str,
@@ -59,11 +57,10 @@ class LogsIngestionClientOperationsMixin(LogsIngestionClientMixinABC):
         content_encoding: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @distributed_trace_async
-    async def _upload(  # pylint: disable=inconsistent-return-statements
+    async def _upload(
         self,
         rule_id: str,
         stream: str,
@@ -89,7 +86,7 @@ class LogsIngestionClientOperationsMixin(LogsIngestionClientMixinABC):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -135,8 +132,6 @@ class LogsIngestionClientOperationsMixin(LogsIngestionClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 

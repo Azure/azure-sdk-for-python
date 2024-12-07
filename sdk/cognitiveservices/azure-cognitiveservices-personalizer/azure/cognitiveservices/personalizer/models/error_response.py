@@ -24,16 +24,16 @@ class ErrorResponse(Model):
     """
 
     _validation = {
-        'error': {'required': True},
+        "error": {"required": True},
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'PersonalizerError'},
+        "error": {"key": "error", "type": "PersonalizerError"},
     }
 
     def __init__(self, **kwargs):
         super(ErrorResponse, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+        self.error = kwargs.get("error", None)
 
 
 class ErrorResponseException(HttpOperationError):
@@ -45,4 +45,4 @@ class ErrorResponseException(HttpOperationError):
 
     def __init__(self, deserialize, response, *args):
 
-        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
+        super(ErrorResponseException, self).__init__(deserialize, response, "ErrorResponse", *args)

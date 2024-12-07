@@ -21,6 +21,7 @@ import os
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
+
 def get_copyright_from_bounding_box():
     # [START get_copyright_from_bounding_box]
     from azure.core.credentials import AzureKeyCredential
@@ -37,5 +38,5 @@ def get_copyright_from_bounding_box():
     print(result["generalCopyrights"][0] if len(result.get("generalCopyrights", [])) > 0 else "no copyright")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     get_copyright_from_bounding_box()
