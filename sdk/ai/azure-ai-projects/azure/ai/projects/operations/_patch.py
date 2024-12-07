@@ -1454,11 +1454,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
-<<<<<<< HEAD
-        additional_messages: Optional[List[_models.ThreadMessage]] = None,
-=======
         additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
->>>>>>> 483c457ca2bf8c79b7cb99dfd843e335ca9697f7
         toolset: Optional[_models.ToolSet] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
@@ -2170,7 +2166,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         elif tool_outputs is not _Unset:
             response = super().submit_tool_outputs_to_run(
-                thread_id, run_id, tool_outputs=tool_outputs, stream_parameter=False, stream=False, **kwargs
+                thread_id, run_id, tool_outputs=tool_outputs, stream_parameter=True, stream=True, **kwargs
             )
 
         elif isinstance(body, io.IOBase):
