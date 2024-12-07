@@ -1833,6 +1833,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         await client.agents.delete_agent(agent.id)
         print("Deleted agent")
         await client.close()
+        """
 
     @agentClientPreparer()
     @recorded_by_proxy_async

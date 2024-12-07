@@ -1338,14 +1338,11 @@ class TestAgentClient(AzureRecordedTestCase):
 
         
         # check that messages used the tool
+        print("Messages: ")
         messages = client.agents.list_messages(thread_id=thread.id, run_id=run.id)
         tool_message = messages['data'][0]['content'][0]['text']['value']
         # if user_functions_live is used, the time will be the current time
-        # hour12 = time.strftime("%H")
-        # hour24 = time.strftime("%I")
-        # minute = time.strftime("%M")
-        # assert hour12 + ":" + minute in tool_message or hour24 + ":" + minute
-        # if user_functions_recording is used, the time will be 12:30
+        # since user_functions_recording is used, the time will be 12:30
         assert "12:30" in tool_message
         print("Used tool_outputs")
 
@@ -1394,7 +1391,7 @@ class TestAgentClient(AzureRecordedTestCase):
         assert isinstance(client, AIProjectClient)
 
         # Initialize agent tools
-        functions = FunctionTool(functions=user_functions)
+        functions = FunctionTool(functions=user_functions_recording)
         code_interpreter = CodeInterpreterTool()
 
         toolset = ToolSet()
