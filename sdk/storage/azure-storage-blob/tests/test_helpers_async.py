@@ -5,7 +5,9 @@
 # --------------------------------------------------------------------------
 from io import IOBase, UnsupportedOperation
 from typing import Optional
-
+from azure.core.pipeline.transport import AsyncHttpTransport, AioHttpTransportResponse
+from azure.core.rest import AsyncHttpResponse, HttpRequest
+from aiohttp import ClientResponse
 
 class ProgressTracker:
     def __init__(self, total: int, step: int):
@@ -60,3 +62,40 @@ class AsyncStream:
         self._offset += len(data)
 
         return data
+
+class MockAioHttpClientResponse(ClientResponse):
+    def __init__(self, url, body_bytes, headers=None):
+        self._body = body_bytes
+        self._headers = headers
+        self._cache = {}
+        self.status = 200
+        self.reason = "OK"
+        self._url = url
+        # self._content = b"test content"
+
+class MockStorageTransport(AsyncHttpTransport):
+    async def send(self, request: HttpRequest, **kwargs) -> AsyncHttpResponse:
+        return AioHttpTransportResponse(
+            request,
+            MockAioHttpClientResponse(
+                request.url,
+                b"test content",
+                {
+                    "Content-Type": "application/octet-stream",
+                    "Content-Range": "bytes 0-27/28",
+                    "Content-Length": "28",
+                },
+            ),
+        )
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *args):
+        pass
+
+    async def open(self):
+        pass
+
+    async def close(self):
+        pass

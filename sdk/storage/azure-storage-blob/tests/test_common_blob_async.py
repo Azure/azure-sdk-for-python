@@ -53,7 +53,7 @@ from devtools_testutils.fake_credentials_async import AsyncFakeCredential
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
-from test_helpers_async import AsyncStream
+from test_helpers_async import AsyncStream, MockStorageTransport
 
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
@@ -157,6 +157,27 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         assert blob.remaining_retention_days is None
 
     # -- Common test cases for blobs ----------------------------------------------
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_mocking_transport(self, **kwargs):
+        # TODO:
+        # 1. Get rid of any actual network calls (mock out creds)
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        transport = MockStorageTransport()
+        blob_service_client = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            transport=transport,
+            retry_total=0 # As mentioned by Pamela, this is required to avoid unnecessary network trips
+        )
+
+        # Assert
+        service_properties = await blob_service_client.get_service_properties()
+        assert service_properties is not None
+
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_start_copy_from_url_with_oauth(self, **kwargs):
