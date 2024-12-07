@@ -19,7 +19,7 @@ from typing import (
     Tuple, TypeVar, Union, TYPE_CHECKING
 )
 
-from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError
+from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError, ServiceRequestError
 
 from .._shared.request_handlers import validate_and_format_range_headers
 from .._shared.response_handlers import parse_length_from_content_range, process_storage_error
@@ -46,7 +46,9 @@ T = TypeVar('T', bytes, str)
 async def process_content(data: Any, start_offset: int, end_offset: int, encryption: Dict[str, Any]) -> bytes:
     if data is None:
         raise ValueError("Response cannot be None.")
-    await data.response.read()
+    # Fix Start
+    await data.response.load_body()  # Load the body in memory and close the socket
+    # Fix End
     content = cast(bytes, data.response.content)
     if encryption.get('key') is not None or encryption.get('resolver') is not None:
         try:

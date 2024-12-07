@@ -161,8 +161,6 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
     @pytest.mark.live_test_only
     @BlobPreparer()
     async def test_mocking_transport(self, **kwargs):
-        # TODO:
-        # 1. Get rid of any actual network calls (mock out creds)
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 

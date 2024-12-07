@@ -72,10 +72,11 @@ class MockAioHttpClientResponse(ClientResponse):
         self.reason = "OK"
         self._url = url
         # self._content = b"test content"
+        # self.content = b"test content"
 
 class MockStorageTransport(AsyncHttpTransport):
-    async def send(self, request: HttpRequest, **kwargs) -> AsyncHttpResponse:
-        return AioHttpTransportResponse(
+    async def send(self, request: HttpRequest, **kwargs) -> AioHttpTransportResponse:
+        aiohttp_transport_resp = AioHttpTransportResponse(
             request,
             MockAioHttpClientResponse(
                 request.url,
@@ -87,6 +88,12 @@ class MockStorageTransport(AsyncHttpTransport):
                 },
             ),
         )
+        # Since in async-land, we load the body either in pipeline policy for content validation path, or loads in process_content
+        # So we need to inject it into the upper Response object (AioHttpTransportResponse)
+        # This may not be the correct thing to do.. failing on deserialization
+        # aiohttp_transport_resp._content = b"test content"
+
+        return aiohttp_transport_resp
 
     async def __aenter__(self):
         return self
