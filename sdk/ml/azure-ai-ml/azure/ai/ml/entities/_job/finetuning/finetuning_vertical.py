@@ -6,9 +6,8 @@
 
 from typing import Any, Optional, cast
 
-from azure.ai.ml import Input
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml._restclient.v2024_01_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
     ModelProvider as RestModelProvider,
     FineTuningVertical as RestFineTuningVertical,
     UriFileJobInput,
@@ -16,7 +15,9 @@ from azure.ai.ml._restclient.v2024_01_01_preview.models import (
 )
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml._utils.utils import camel_to_snake
+from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
+
 from azure.ai.ml._utils._experimental import experimental
 
 
@@ -79,13 +80,13 @@ class FineTuningVertical(FineTuningJob):
         """Set the model to be fine-tuned.
 
         :param value: Input object representing the mlflow model to be fine-tuned.
-        :type value: typing.Union[typing.Dict, TabularLimitSettings]
+        :type value: Input
         :raises ValidationException: Expected a mlflow model input.
         """
-        if isinstance(value, Input) and cast(Input, value).type == "mlflow_model":
+        if isinstance(value, Input) and (cast(Input, value).type in ("mlflow_model", "custom_model")):
             self._model = value
         else:
-            msg = "Expected a mlflow model input."
+            msg = "Expected a mlflow model input or custom model input."
             raise ValidationException(
                 message=msg,
                 no_personal_data_message=msg,

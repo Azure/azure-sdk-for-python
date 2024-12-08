@@ -205,8 +205,7 @@ def validate_pipeline_input_key_characters(key: str) -> None:
     # so a valid pipeline key is: ^{single_key}([.]{single_key})*$
     if re.match(IOConstants.VALID_KEY_PATTERN, key) is None:
         msg = (
-            "Pipeline input key name {} must be composed letters, numbers, and underscores with optional "
-            "split by dots."
+            "Pipeline input key name {} must be composed letters, numbers, and underscores with optional split by dots."
         )
         raise ValidationException(
             message=msg.format(key),
@@ -262,7 +261,6 @@ def to_rest_dataset_literal_inputs(
                             uri=input_value.path,
                             mode=(INPUT_MOUNT_MAPPING_TO_REST[input_value.mode.lower()] if input_value.mode else None),
                         )
-
                     else:
                         msg = f"Job input type {input_value.type} is not supported as job input."
                         raise ValidationException(
@@ -415,7 +413,7 @@ def from_rest_data_outputs(outputs: Dict[str, RestJobOutput]) -> Dict[str, Outpu
                 path_on_compute=sourcePathOnCompute,
                 description=output_value.description,
                 name=output_value.asset_name,
-                version=output_value.asset_version,
+                version=(output_value.asset_version if hasattr(output_value, "asset_version") else None),
             )
         else:
             msg = "unsupported JobOutput type: {}".format(output_value.job_output_type)

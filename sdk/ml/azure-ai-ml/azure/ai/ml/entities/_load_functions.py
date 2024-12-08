@@ -46,6 +46,7 @@ from azure.ai.ml.entities._schedule.schedule import Schedule
 from azure.ai.ml.entities._validation import PathAwareSchemaValidatableMixin, ValidationResultBuilder
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 from azure.ai.ml.entities._workspace.workspace import Workspace
+from azure.ai.ml.entities._workspace._ai_workspaces.capability_host import CapabilityHost
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 module_logger = logging.getLogger(__name__)
@@ -803,7 +804,6 @@ def load_batch_endpoint(
     return cast(BatchEndpoint, load_common(BatchEndpoint, source, relative_origin, params_override, **kwargs))
 
 
-@experimental
 def load_connection(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
@@ -1065,3 +1065,41 @@ def load_feature_set_backfill_request(
         FeatureSetBackfillRequest,
         load_common(FeatureSetBackfillRequest, source, relative_origin, params_override, **kwargs),
     )
+
+
+def load_capability_host(
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
+    relative_origin: Optional[str] = None,
+    params_override: Optional[List[Dict]] = None,
+    **kwargs: Any,
+) -> CapabilityHost:
+    """Constructs a CapabilityHost object from a YAML file.
+
+    :param source: A path to a local YAML file or an already-open file object containing a capabilityhost configuration.
+        If the source is a path, it will be opened and read. If the source is an open file, the file will be read
+        directly.
+    :type source: Union[PathLike, str, io.TextIOWrapper]
+    :keyword relative_origin: The root directory for the YAML. This directory will be used as the origin for deducing
+        the relative locations of files referenced in the parsed YAML. Defaults to the same directory as source if
+        source is a file or file path input. Defaults to "./" if the source is a stream input with no name value.
+    :paramtype relative_origin: Optional[str]
+    :keyword params_override: Fields to overwrite on top of the yaml file.
+        Format is [{"field1": "value1"}, {"field2": "value2"}]
+    :paramtype params_override: List[Dict]
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if CapabilityHost cannot be successfully validated.
+        Details will be provided in the error message.
+    :return: Loaded CapabilityHost object.
+    :rtype: ~azure.ai.ml.entities._workspace._ai_workspaces.capability_host.CapabilityHost
+
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_capability_host.py
+            :start-after: [START load_capability_host]
+            :end-before: [END load_capability_host]
+            :language: python
+            :dedent: 8
+            :caption: Loading a capabilityhost from a YAML config file.
+    """
+    return cast(CapabilityHost, load_common(CapabilityHost, source, relative_origin, params_override, **kwargs))

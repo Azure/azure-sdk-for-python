@@ -6,12 +6,14 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from devtools_testutils import is_live
+from ci_tools.variables import in_ci
 from promptflow.tracing import _start_trace
 
 from azure.ai.evaluation import F1ScoreEvaluator
 from azure.ai.evaluation._evaluate import _utils as ev_utils
 from azure.ai.evaluation._evaluate._eval_run import EvalRun
 from azure.ai.evaluation._evaluate._evaluate import evaluate
+from azure.ai.evaluation._azure._clients import LiteMLClient
 
 
 @pytest.fixture
@@ -32,14 +34,18 @@ def questions_file():
     return os.path.join(data_path, "questions.jsonl")
 
 
-@pytest.fixture
-def tracking_uri(azure_ml_client, project_scope):
-    return azure_ml_client.workspaces.get(project_scope["project_name"]).mlflow_tracking_uri
+def _get_tracking_uri(azure_ml_client: LiteMLClient, project_scope: dict) -> str:
+    return azure_ml_client.workspace_get_info(project_scope["project_name"]).ml_flow_tracking_uri or ""
 
 
 @pytest.mark.usefixtures("model_config", "recording_injection", "project_scope", "recorded_test")
 class TestMetricsUpload(object):
     """End to end tests to check how the metrics were uploaded to cloud."""
+
+    # NOTE:
+    # If you are re-recording the tests, remember to disable Promptflow telemetry from the command line using:
+    # pf config set telemetry.enabled=false
+    # Otherwise you will capture telemetry requests in the recording which will cause test playback failures.
 
     def _assert_no_errors_for_module(self, records, module_names):
         """Check there are no errors in the log."""
@@ -53,8 +59,7 @@ class TestMetricsUpload(object):
             assert not error_messages, "\n".join(error_messages)
 
     @pytest.mark.azuretest
-    @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
-    def test_writing_to_run_history(self, caplog, project_scope, azure_ml_client, tracking_uri):
+    def test_writing_to_run_history(self, caplog, project_scope, azure_ml_client: LiteMLClient):
         """Test logging data to RunHistory service."""
         logger = logging.getLogger(EvalRun.__module__)
         # All loggers, having promptflow. prefix will have "promptflow" logger
@@ -66,11 +71,11 @@ class TestMetricsUpload(object):
         mock_response.status_code = 418
         with EvalRun(
             run_name="test",
-            tracking_uri=tracking_uri,
+            tracking_uri=_get_tracking_uri(azure_ml_client, project_scope),
             subscription_id=project_scope["subscription_id"],
             group_name=project_scope["resource_group_name"],
             workspace_name=project_scope["project_name"],
-            ml_client=azure_ml_client,
+            management_client=azure_ml_client,
         ) as ev_run:
             with patch(
                 "azure.ai.evaluation._evaluate._eval_run.EvalRun.request_with_retry", return_value=mock_response
@@ -84,8 +89,7 @@ class TestMetricsUpload(object):
         self._assert_no_errors_for_module(caplog.records, [EvalRun.__module__])
 
     @pytest.mark.azuretest
-    @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
-    def test_logging_metrics(self, caplog, project_scope, azure_ml_client, tracking_uri):
+    def test_logging_metrics(self, caplog, project_scope, azure_ml_client):
         """Test logging metrics."""
         logger = logging.getLogger(EvalRun.__module__)
         # All loggers, having promptflow. prefix will have "promptflow" logger
@@ -94,11 +98,11 @@ class TestMetricsUpload(object):
         logger.parent = logging.root
         with EvalRun(
             run_name="test",
-            tracking_uri=tracking_uri,
+            tracking_uri=_get_tracking_uri(azure_ml_client, project_scope),
             subscription_id=project_scope["subscription_id"],
             group_name=project_scope["resource_group_name"],
             workspace_name=project_scope["project_name"],
-            ml_client=azure_ml_client,
+            management_client=azure_ml_client,
         ) as ev_run:
             mock_response = MagicMock()
             mock_response.status_code = 418
@@ -114,8 +118,7 @@ class TestMetricsUpload(object):
         self._assert_no_errors_for_module(caplog.records, EvalRun.__module__)
 
     @pytest.mark.azuretest
-    @pytest.mark.skipif(not is_live(), reason="This test fails in CI and needs to be investigate. See bug: 3415807")
-    def test_log_artifact(self, project_scope, azure_ml_client, tracking_uri, caplog, tmp_path):
+    def test_log_artifact(self, project_scope, azure_ml_client, caplog, tmp_path):
         """Test uploading artifact to the service."""
         logger = logging.getLogger(EvalRun.__module__)
         # All loggers, having promptflow. prefix will have "promptflow" logger
@@ -124,11 +127,11 @@ class TestMetricsUpload(object):
         logger.parent = logging.root
         with EvalRun(
             run_name="test",
-            tracking_uri=tracking_uri,
+            tracking_uri=_get_tracking_uri(azure_ml_client, project_scope),
             subscription_id=project_scope["subscription_id"],
             group_name=project_scope["resource_group_name"],
             workspace_name=project_scope["project_name"],
-            ml_client=azure_ml_client,
+            management_client=azure_ml_client,
         ) as ev_run:
             mock_response = MagicMock()
             mock_response.status_code = 418
@@ -149,8 +152,11 @@ class TestMetricsUpload(object):
         self._assert_no_errors_for_module(caplog.records, EvalRun.__module__)
 
     @pytest.mark.performance_test
-    @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
-    def test_e2e_run_target_fn(self, caplog, project_scope, questions_answers_file, monkeypatch):
+    @pytest.mark.skipif(
+        in_ci(),
+        reason="There is some weird JSON serialiazation issue that only appears in CI where a \n becomes a \r\n",
+    )
+    def test_e2e_run_target_fn(self, caplog, project_scope, questions_answers_file, monkeypatch, azure_cred):
         """Test evaluation run logging."""
         # Afer re-recording this test, please make sure, that the cassette contains the POST
         # request ending by 00000/rundata and it has status 200.
@@ -182,12 +188,16 @@ class TestMetricsUpload(object):
             target=target_fn,
             evaluators={"f1": f1_score_eval},
             azure_ai_project=project_scope,
+            credential=azure_cred,
         )
         self._assert_no_errors_for_module(caplog.records, (ev_utils.__name__, EvalRun.__module__))
 
     @pytest.mark.performance_test
-    @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
-    def test_e2e_run(self, caplog, project_scope, questions_answers_file, monkeypatch):
+    @pytest.mark.skipif(
+        in_ci(),
+        reason="There is some weird JSON serialiazation issue that only appears in CI where a \n becomes a \r\n",
+    )
+    def test_e2e_run(self, caplog, project_scope, questions_answers_file, monkeypatch, azure_cred):
         """Test evaluation run logging."""
         # Afer re-recording this test, please make sure, that the cassette contains the POST
         # request ending by /BulkRuns/create.
@@ -210,5 +220,6 @@ class TestMetricsUpload(object):
             data=questions_answers_file,
             evaluators={"f1": f1_score_eval},
             azure_ai_project=project_scope,
+            credential=azure_cred,
         )
         self._assert_no_errors_for_module(caplog.records, (ev_utils.__name__, EvalRun.__module__))

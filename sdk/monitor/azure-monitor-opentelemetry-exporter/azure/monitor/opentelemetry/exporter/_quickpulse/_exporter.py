@@ -148,6 +148,7 @@ class _QuickpulseExporter(MetricExporter):
         )
         configuration_etag = _get_quickpulse_etag() or ""
         token = attach(set_value(_SUPPRESS_INSTRUMENTATION_KEY, True))
+        # pylint: disable=R1702
         try:
             post_response = self._client.publish(  # type: ignore
                 endpoint=self._live_endpoint,
@@ -179,7 +180,11 @@ class _QuickpulseExporter(MetricExporter):
                         # Content will only be populated if configuration has changed (etag is different)
                         if config:
                             # Update and apply configuration changes
-                            _update_filter_configuration(etag, config)
+                            try:
+                                _update_filter_configuration(etag, config)
+                            except Exception:  # pylint: disable=broad-except,invalid-name
+                                _logger.exception("Exception occurred while updating filter config.")
+                                result = MetricExportResult.FAILURE
         except Exception:  # pylint: disable=broad-except,invalid-name
             _logger.exception("Exception occurred while publishing live metrics.")
             result = MetricExportResult.FAILURE
@@ -296,7 +301,7 @@ class _QuickpulseMetricReader(MetricReader):
                             # Reset etag to default if not subscribed
                             _set_quickpulse_etag("")
                     except Exception:  # pylint: disable=broad-except,invalid-name
-                        _logger.exception("Exception occurred while pinging live metrics.")
+                        _logger.exception("Exception occurred while reading live metrics ping response.")
                         _set_quickpulse_etag("")
                 # TODO: Implement redirect
                 else:
