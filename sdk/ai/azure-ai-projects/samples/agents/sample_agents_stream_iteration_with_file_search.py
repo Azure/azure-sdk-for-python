@@ -4,14 +4,14 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_stream_iteration_with_toolset.py
+FILE: sample_agents_stream_iteration_with_file_search.py
 
 DESCRIPTION:
-    This sample demonstrates how to use agent operations with toolset and iteration in streaming from
+    This sample demonstrates how to use agent operations with file search tools and iteration in streaming from
     the Azure Agents service using a synchronous client.
 
 USAGE:
-    python sample_agents_stream_iteration_with_toolset.py
+    python sample_agents_stream_iteration_with_file_search.py
 
     Before running the sample:
 
@@ -24,7 +24,7 @@ USAGE:
 import os
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import AgentStreamEvent, FileSearchTool, RunStepDeltaChunk
-from azure.ai.projects.models import AgentMessageDeltaChunk, RunStep, AgentThreadMessage, ThreadRun
+from azure.ai.projects.models import MessageDeltaChunk, RunStep, ThreadMessage, ThreadRun
 
 from azure.ai.projects.operations import AgentsOperations
 from azure.identity import DefaultAzureCredential
@@ -72,14 +72,14 @@ with project_client:
 
         for event_type, event_data, _ in stream:
 
-            if isinstance(event_data, AgentMessageDeltaChunk):
+            if isinstance(event_data, MessageDeltaChunk):
                 print(f"Text delta received: {event_data.text}")
 
             elif isinstance(event_data, RunStepDeltaChunk):
                 print(f"RunStepDeltaChunk received. ID: {event_data.id}.")
 
-            elif isinstance(event_data, AgentThreadMessage):
-                print(f"AgentThreadMessage created. ID: {event_data.id}, Status: {event_data.status}")
+            elif isinstance(event_data, ThreadMessage):
+                print(f"ThreadMessage created. ID: {event_data.id}, Status: {event_data.status}")
                 for annotation in event_data.file_citation_annotations:
                     print(
                         f"Citation {annotation.text} from file ID: {annotation.file_citation.file_id}, start index: {annotation.start_index}, end index: {annotation.end_index}"

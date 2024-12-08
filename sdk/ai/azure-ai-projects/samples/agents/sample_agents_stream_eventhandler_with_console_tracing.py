@@ -34,8 +34,8 @@ from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import (
     AgentEventHandler,
-    AgentMessageDeltaChunk,
-    AgentThreadMessage,
+    MessageDeltaChunk,
+    ThreadMessage,
     ThreadRun,
     RunStep,
 )
@@ -54,17 +54,17 @@ project_client = AIProjectClient.from_connection_string(
 
 
 class MyEventHandler(AgentEventHandler):
-    def on_message_delta(self, delta: "AgentMessageDeltaChunk") -> None:
+    def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         print(f"Text delta received: {delta.text}")
 
-    def on_thread_message(self, message: "AgentThreadMessage") -> None:
+    def on_thread_message(self, message: "ThreadMessage") -> None:
         if len(message.content):
             print(
-                f"AgentThreadMessage created. ID: {message.id}, "
+                f"ThreadMessage created. ID: {message.id}, "
                 f"Status: {message.status}, Content: {message.content[0].as_dict()}"
             )
         else:
-            print(f"AgentThreadMessage created. ID: {message.id}, " f"Status: {message.status}")
+            print(f"ThreadMessage created. ID: {message.id}, " f"Status: {message.status}")
 
     def on_thread_run(self, run: "ThreadRun") -> None:
         print(f"ThreadRun status: {run.status}")

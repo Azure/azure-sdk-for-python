@@ -24,7 +24,7 @@ import asyncio
 from typing import Any
 
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import AgentMessageDeltaChunk, RunStep, AgentThreadMessage, ThreadRun
+from azure.ai.projects.models import MessageDeltaChunk, RunStep, ThreadMessage, ThreadRun
 from azure.ai.projects.models import AsyncAgentEventHandler, AsyncFunctionTool, AsyncToolSet
 from azure.identity.aio import DefaultAzureCredential
 
@@ -35,11 +35,11 @@ from user_async_functions import user_async_functions
 
 class MyEventHandler(AsyncAgentEventHandler):
 
-    async def on_message_delta(self, delta: "AgentMessageDeltaChunk") -> None:
+    async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         print(f"Text delta received: {delta.text}")
 
-    async def on_thread_message(self, message: "AgentThreadMessage") -> None:
-        print(f"AgentThreadMessage created. ID: {message.id}, Status: {message.status}")
+    async def on_thread_message(self, message: "ThreadMessage") -> None:
+        print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
 
     async def on_thread_run(self, run: "ThreadRun") -> None:
         print(f"ThreadRun status: {run.status}")

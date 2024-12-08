@@ -25,9 +25,9 @@ import os
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import AgentStreamEvent, RunStepDeltaChunk
 from azure.ai.projects.models import (
-    AgentMessageDeltaChunk,
+    MessageDeltaChunk,
     RunStep,
-    AgentThreadMessage,
+    ThreadMessage,
     ThreadRun,
 )
 from azure.ai.projects.models import FunctionTool, ToolSet
@@ -65,14 +65,14 @@ with project_client:
 
         for event_type, event_data, _ in stream:
 
-            if isinstance(event_data, AgentMessageDeltaChunk):
+            if isinstance(event_data, MessageDeltaChunk):
                 print(f"Text delta received: {event_data.text}")
 
             elif isinstance(event_data, RunStepDeltaChunk):
                 print(f"RunStepDeltaChunk received. ID: {event_data.id}.")
 
-            elif isinstance(event_data, AgentThreadMessage):
-                print(f"AgentThreadMessage created. ID: {event_data.id}, Status: {event_data.status}")
+            elif isinstance(event_data, ThreadMessage):
+                print(f"ThreadMessage created. ID: {event_data.id}, Status: {event_data.status}")
 
             elif isinstance(event_data, ThreadRun):
                 print(f"ThreadRun status: {event_data.status}")

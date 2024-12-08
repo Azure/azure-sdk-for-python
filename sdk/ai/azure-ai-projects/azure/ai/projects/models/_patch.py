@@ -52,7 +52,6 @@ from ._models import (
     FunctionToolDefinition,
     GetConnectionResponse,
     IndexResource,
-    MessageDeltaChunk,
     MessageImageFileContent,
     MessageTextContent,
     MessageTextFileCitationAnnotation,
@@ -69,13 +68,15 @@ from ._models import (
     ToolDefinition,
     ToolResources,
     MessageDeltaTextContent,
-    ThreadMessage,
 )
+
+from ._models import MessageDeltaChunk as MessageDeltaChunkGenerated
+from ._models import ThreadMessage as ThreadMessageGenerated
 
 
 logger = logging.getLogger(__name__)
 
-StreamEventData = Union["AgentMessageDeltaChunk", "AgentThreadMessage", ThreadRun, RunStep, str]
+StreamEventData = Union["MessageDeltaChunk", "ThreadMessage", ThreadRun, RunStep, str]
 
 
 def _filter_parameters(model_class: Type, parameters: Dict[str, Any]) -> Dict[str, Any]:
@@ -168,11 +169,13 @@ def _parse_event(event_data_str: str) -> Tuple[str, StreamEventData]:
         AgentStreamEvent.THREAD_MESSAGE_COMPLETED.value,
         AgentStreamEvent.THREAD_MESSAGE_INCOMPLETE.value,
     }:
-        thread_message = cast(ThreadMessage, _safe_instantiate(ThreadMessage, parsed_data))
-        event_obj = AgentThreadMessage(thread_message)
+        thread_message = cast(ThreadMessageGenerated, _safe_instantiate(ThreadMessageGenerated, parsed_data))
+        event_obj = ThreadMessage(thread_message)
     elif event_type == AgentStreamEvent.THREAD_MESSAGE_DELTA.value:
-        message_delta_chunk = cast(MessageDeltaChunk, _safe_instantiate(MessageDeltaChunk, parsed_data))
-        event_obj = AgentMessageDeltaChunk(message_delta_chunk)
+        message_delta_chunk = cast(
+            MessageDeltaChunkGenerated, _safe_instantiate(MessageDeltaChunkGenerated, parsed_data)
+        )
+        event_obj = MessageDeltaChunk(message_delta_chunk)
 
     elif event_type == AgentStreamEvent.THREAD_RUN_STEP_DELTA.value:
         event_obj = _safe_instantiate(RunStepDeltaChunk, parsed_data)
@@ -401,8 +404,8 @@ def is_optional(annotation) -> bool:
     return False
 
 
-class AgentMessageDeltaChunk(MessageDeltaChunk):
-    def __init__(self, generated: MessageDeltaChunk):  # pylint: disable=super-init-not-called
+class MessageDeltaChunk(MessageDeltaChunkGenerated):
+    def __init__(self, generated: MessageDeltaChunkGenerated):  # pylint: disable=super-init-not-called
         for prop, value in vars(generated).items():
             setattr(self, prop, value)
 
@@ -421,9 +424,9 @@ class AgentMessageDeltaChunk(MessageDeltaChunk):
         )
 
 
-class AgentThreadMessage(ThreadMessage):
+class ThreadMessage(ThreadMessageGenerated):
 
-    def __init__(self, generated: ThreadMessage):  # pylint: disable=super-init-not-called
+    def __init__(self, generated: ThreadMessageGenerated):  # pylint: disable=super-init-not-called
         for prop, value in vars(generated).items():
             setattr(self, prop, value)
 
@@ -1200,9 +1203,9 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
             )
 
         try:
-            if isinstance(event_data_obj, AgentMessageDeltaChunk):
+            if isinstance(event_data_obj, MessageDeltaChunk):
                 await self.on_message_delta(event_data_obj)
-            elif isinstance(event_data_obj, AgentThreadMessage):
+            elif isinstance(event_data_obj, ThreadMessage):
                 await self.on_thread_message(event_data_obj)
             elif isinstance(event_data_obj, ThreadRun):
                 await self.on_thread_run(event_data_obj)
@@ -1221,16 +1224,16 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
             logging.error("Error in event handler for event '%s': %s", event_type, e)
         return event_type, event_data_obj, self.custom_data
 
-    async def on_message_delta(self, delta: "AgentMessageDeltaChunk") -> None:
+    async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         """Handle message delta events.
 
         :param MessageDeltaChunk delta: The message delta.
         """
 
-    async def on_thread_message(self, message: "AgentThreadMessage") -> None:
+    async def on_thread_message(self, message: "ThreadMessage") -> None:
         """Handle thread message events.
 
-        :param AgentThreadMessage message: The thread message.
+        :param ThreadMessage message: The thread message.
         """
 
     async def on_thread_run(self, run: "ThreadRun") -> None:
@@ -1286,9 +1289,9 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
             )
 
         try:
-            if isinstance(event_data_obj, AgentMessageDeltaChunk):
+            if isinstance(event_data_obj, MessageDeltaChunk):
                 self.on_message_delta(event_data_obj)
-            elif isinstance(event_data_obj, AgentThreadMessage):
+            elif isinstance(event_data_obj, ThreadMessage):
                 self.on_thread_message(event_data_obj)
             elif isinstance(event_data_obj, ThreadRun):
                 self.on_thread_run(event_data_obj)
@@ -1307,16 +1310,16 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
             logging.error("Error in event handler for event '%s': %s", event_type, e)
         return event_type, event_data_obj, self.custom_data
 
-    def on_message_delta(self, delta: "AgentMessageDeltaChunk") -> None:
+    def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         """Handle message delta events.
 
         :param MessageDeltaChunk delta: The message delta.
         """
 
-    def on_thread_message(self, message: "AgentThreadMessage") -> None:
+    def on_thread_message(self, message: "ThreadMessage") -> None:
         """Handle thread message events.
 
-        :param AgentThreadMessage message: The thread message.
+        :param ThreadMessage message: The thread message.
         """
 
     def on_thread_run(self, run: "ThreadRun") -> None:
@@ -1422,14 +1425,14 @@ class ThreadMessages:
     """
 
     def __init__(self, pageable_list: OpenAIPageableListOfThreadMessage):
-        self._messages = [AgentThreadMessage(item) for item in pageable_list.data]
+        self._messages = [ThreadMessage(item) for item in pageable_list.data]
 
     @property
-    def messages(self) -> List[AgentThreadMessage]:
+    def messages(self) -> List[ThreadMessage]:
         """Returns all messages in the messages.
 
 
-        :rtype: List[AgentThreadMessage]
+        :rtype: List[ThreadMessage]
         """
         return self._messages
 
@@ -1468,14 +1471,14 @@ class ThreadMessages:
         annotations = [annotation for msg in self._messages for annotation in msg.file_path_annotations]
         return annotations
 
-    def get_last_message_by_sender(self, sender: str) -> Optional[AgentThreadMessage]:
+    def get_last_message_by_sender(self, sender: str) -> Optional[ThreadMessage]:
         """Returns the last message from the specified sender.
 
         :param sender: The role of the sender.
         :type sender: str
 
         :return: The last message from the specified sender.
-        :rtype: ~azure.ai.projects.models.AgentThreadMessage
+        :rtype: ~azure.ai.projects.models.ThreadMessage
         """
         for msg in self._messages:
             if msg.role == sender:
@@ -1522,9 +1525,9 @@ __all__: List[str] = [
     "ToolSet",
     "BaseAsyncAgentEventHandlerT",
     "BaseAgentEventHandlerT",
-    "AgentThreadMessage",
+    "ThreadMessage",
     "MessageTextFileCitationAnnotation",
-    "AgentMessageDeltaChunk",
+    "MessageDeltaChunk",
 ]  # Add all objects you want publicly available to users at this package level
 
 
