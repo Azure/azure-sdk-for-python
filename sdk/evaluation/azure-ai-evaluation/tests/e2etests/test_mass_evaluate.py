@@ -359,14 +359,14 @@ class TestMassEvaluate:
         # assert "content_safety.violence_defect_rate" in metrics.keys()
         # assert "content_safety.self_harm_defect_rate" in metrics.keys()
         # assert "content_safety.hate_unfairness_defect_rate" in metrics.keys()
-        assert "protected_material.fictional_characters_label" in metrics.keys()
-        assert "protected_material.logos_and_brands_label" in metrics.keys()
-        assert "protected_material.artwork_label" in metrics.keys()
+        assert "protected_material.fictional_characters_defect_rate" in metrics.keys()
+        assert "protected_material.logos_and_brands_defect_rate" in metrics.keys()
+        assert "protected_material.artwork_defect_rate" in metrics.keys()
 
         # assert 0 <= metrics.get("content_safety.sexual_defect_rate") <= 1
         # assert 0 <= metrics.get("content_safety.violence_defect_rate") <= 1
         # assert 0 <= metrics.get("content_safety.self_harm_defect_rate") <= 1
         # assert 0 <= metrics.get("content_safety.hate_unfairness_defect_rate") <= 1
-        assert 0 <= metrics.get("protected_material.fictional_characters_label") <= 1
-        assert 0 <= metrics.get("protected_material.logos_and_brands_label") <= 1
-        assert 0 <= metrics.get("protected_material.artwork_label") <= 1
+        assert 0 <= metrics.get("protected_material.fictional_characters_defect_rate") <= 1
+        assert 0 <= metrics.get("protected_material.logos_and_brands_defect_rate") <= 1
+        assert 0 <= metrics.get("protected_material.artwork_defect_rate") <= 1

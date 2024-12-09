@@ -424,7 +424,7 @@ class TestEvaluate:
         eval = ProtectedMaterialMultimodalEvaluator(azure_ai_project=project_scope, credential=azure_cred)
         result = evaluate(
             evaluation_name=f"test-multimodal-protected-material-eval-dataset-{str(uuid.uuid4())}",
-            azure_ai_project=project_scope,
+            # azure_ai_project=project_scope,
             data=multimodal_file_with_imageurls,
             evaluators={"protected_material": eval},
             evaluator_config={
@@ -446,13 +446,13 @@ class TestEvaluate:
         assert "outputs.protected_material.logos_and_brands_label" in row_result_df.columns.to_list()
         assert "outputs.protected_material.logos_and_brands_reason" in row_result_df.columns.to_list()
 
-        assert "protected_material.fictional_characters_label" in metrics.keys()
-        assert "protected_material.logos_and_brands_label" in metrics.keys()
-        assert "protected_material.artwork_label" in metrics.keys()
+        assert "protected_material.fictional_characters_defect_rate" in metrics.keys()
+        assert "protected_material.logos_and_brands_defect_rate" in metrics.keys()
+        assert "protected_material.artwork_defect_rate" in metrics.keys()
 
-        assert 0 <= metrics.get("protected_material.fictional_characters_label") <= 1
-        assert 0 <= metrics.get("protected_material.logos_and_brands_label") <= 1
-        assert 0 <= metrics.get("protected_material.artwork_label") <= 1
+        assert 0 <= metrics.get("protected_material.fictional_characters_defect_rate") <= 1
+        assert 0 <= metrics.get("protected_material.logos_and_brands_defect_rate") <= 1
+        assert 0 <= metrics.get("protected_material.artwork_defect_rate") <= 1
 
     # @pytest.mark.performance_test
     @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
