@@ -110,11 +110,6 @@ class TestEvaluator(AzureRecordedTestCase):
             client.evaluators.create_or_update(model)
             assert client.evaluators.get(name=model_name, label="latest").version == version
 
-    @pytest.mark.skip(
-        "Skipping test for archive and restore as we have removed it from interface. "
-        "These test will be available when the appropriate API will be enabled at "
-        "GenericAssetService."
-    )
     def test_evaluator_archive_restore_version(self, client: MLClient, randstr: Callable[[], str]) -> None:
         model_name = f"model_{randstr('name')}"
 
@@ -136,7 +131,6 @@ class TestEvaluator(AzureRecordedTestCase):
         client.evaluators.restore(name=model_name, version=version_archived)
         assert version_archived in get_evaluator_list()
 
-    @pytest.mark.skip(reason="Task 1791832: Inefficient, possibly causing testing pipeline to time out.")
     def test_evaluator_archive_restore_container(self, client: MLClient, randstr: Callable[[], str]) -> None:
         model_name = f"model_{randstr('name')}"
         version = "1"
@@ -156,10 +150,6 @@ class TestEvaluator(AzureRecordedTestCase):
         client.evaluators.restore(name=model_name)
         assert model_name in get_evaluator_list()
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="Registry uploads do not record well. Investigate later",
-    )
     def test_create_get_download_evaluator_registry(
         self, registry_client: MLClient, randstr: Callable[[], str]
     ) -> None:
@@ -186,10 +176,6 @@ class TestEvaluator(AzureRecordedTestCase):
         assert os.path.exists(f"{wd}/basic/flow.dag.yaml")
 
     @pytest.mark.parametrize("use_registry", [True, False])
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="Registry uploads do not record well. Investigate later",
-    )
     def test_list_evaluator(
         self,
         registry_client: MLClient,

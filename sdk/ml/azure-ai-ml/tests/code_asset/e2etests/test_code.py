@@ -41,7 +41,6 @@ class TestCode(AzureRecordedTestCase):
         )
         assert code_asset_1.id == code_asset_2.id == arm_id
 
-    @pytest.mark.skip(reason="not raising exception")
     def test_asset_path_update(
         self,
         client: MLClient,
@@ -58,7 +57,6 @@ class TestCode(AzureRecordedTestCase):
             code_entity.path = code_asset_path
             client._code.create_or_update(code_entity)
 
-    @pytest.mark.skipif(condition=not is_live(), reason="registry tests do not record properly. Investigate later.")
     def test_create_and_get_from_registry(
         self,
         registry_client: MLClient,

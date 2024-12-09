@@ -189,7 +189,6 @@ class TestBatchEndpointOperations:
         mock_create_or_update_batch_endpoint.assert_called_once()
         # mock_batch_endpoint_operations.create_or_update.assert_called_once()
 
-    @pytest.mark.skip(reason="invoke is going to change in the next pr until then it is commented")
     @patch.object(BatchEndpoint, "_from_rest_object")
     def test_batch_invoke(
         self,
@@ -229,7 +228,6 @@ class TestBatchEndpointOperations:
         assert mock_batch_endpoint_operations._batch_operation.get.call_count == 2
 
     @patch.object(BatchEndpoint, "_from_rest_object")
-    @pytest.mark.skip(reason="non-functional test")
     def test_batch_invoke_failed(
         self,
         mock_from_rest,

@@ -78,7 +78,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert new_tag_name in updated_job.tags
         assert updated_job.tags[new_tag_name] == new_tag_value
 
-    @pytest.mark.skipif(condition=not is_live(), reason="registry test, may fail in playback mode")
     def test_pipeline_job_create_with_registries(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
@@ -93,7 +92,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert str(job.jobs["a"].component).startswith("azureml://registries/")
         assert str(job.jobs["a"].component).endswith("/components/hello_world_asset/versions/1")
 
-    @pytest.mark.skip("Skipping due to Spark version Upgrade")
     @pytest.mark.parametrize(
         "pipeline_job_path",
         [
@@ -525,7 +523,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             "tabular_input_e2e.yml",
         ],
     )
-    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
     def test_pipeline_job_with_parallel_job(
         self, client: MLClient, randstr: Callable[[str], str], pipeline_job_path: str
     ) -> None:
@@ -550,7 +547,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             "file_component_literal_input_e2e.yml",
         ],
     )
-    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
     def test_pipeline_job_with_parallel_component_job_bind_to_literal_input(
         self, client: MLClient, randstr: Callable[[str], str], pipeline_job_path: str
     ) -> None:
@@ -569,7 +565,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         # assert on the number of converted jobs to make sure we didn't drop the parallel job
         assert len(created_job.jobs.items()) == 1
 
-    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
     def test_pipeline_job_with_parallel_job_with_input_bindings(self, client: MLClient, randstr: Callable[[str], str]):
         yaml_path = "tests/test_configs/pipeline_jobs/pipeline_job_with_parallel_job_with_input_bindings.yml"
 
@@ -581,10 +576,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         created_job = client.jobs.create_or_update(pipeline_job)
         assert created_job.jobs["hello_world"].resources.instance_count == "${{parent.inputs.instance_count}}"
 
-    @pytest.mark.skip(
-        reason="The task for fixing this is tracked by "
-        "https://msdata.visualstudio.com/Vienna/_workitems/edit/2298433"
-    )
     @pytest.mark.parametrize(
         "pipeline_job_path",
         [
@@ -620,7 +611,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         # assert on the number of converted jobs to make sure we didn't drop the parallel job
         assert len(created_job.jobs.items()) == 3
 
-    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
     def test_pipeline_job_with_command_job_with_dataset_short_uri(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
@@ -678,7 +668,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             )
 
     @pytest.mark.disable_mock_code_hash
-    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_pipeline_job_anonymous_component_reuse(
         self,
         client: MLClient,
@@ -739,7 +728,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         created_job = client.jobs.create_or_update(pipeline_job)
         assert created_job.jobs[job_key].component == f"{component_name}:{component_versions[-1]}"
 
-    @pytest.mark.skip("TODO (2370129): Recording fails due to 'Cannot find pipeline run' error")
     def test_sample_job_dump(self, client: MLClient, randstr: Callable[[str], str]):
         job = client.jobs.create_or_update(
             load_job(
@@ -1390,7 +1378,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         # assert pipeline_dict["outputs"] == {"output_path": {"mode": "ReadWriteMount", "job_output_type": "uri_folder"}}
         assert pipeline_dict["settings"] == {"default_compute": "cpu-cluster", "_source": "REMOTE.WORKSPACE.COMPONENT"}
 
-    @pytest.mark.skipif(condition=not is_live(), reason="registry test, may fail in playback mode")
     def test_pipeline_job_create_with_registry_model_as_input(self, client: MLClient, randstr: Callable[[str], str]):
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
@@ -1413,7 +1400,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             == "microsoftsamples_command_component_basic@default"
         )
 
-    @pytest.mark.skip("Skipping due to Spark version Upgrade")
     def test_register_output_yaml(
         self,
         client: MLClient,
@@ -1796,7 +1782,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert pipeline_job.jobs["compare"].outputs.best_model.name == "best_model"
         assert pipeline_job.jobs["compare"].outputs.best_model.version == random_version
 
-    @pytest.mark.skipif(condition=not is_live(), reason="Task 2177353: component version changes across tests.")
     @pytest.mark.parametrize(
         "test_path",
         [
@@ -1895,7 +1880,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             },
         }
 
-    @pytest.mark.skip(reason="Need to create SingularityTestVC cluster.")
     def test_pipeline_job_singularity_short_name(self, client: MLClient) -> None:
         yaml_path = "./tests/test_configs/pipeline_jobs/singularity/pipeline_job_short_name.yml"
         pipeline_job = load_job(yaml_path)
@@ -1908,7 +1892,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert is_singularity_id_for_resource(node_compute)
         assert node_compute.endswith("centeuapvc")
 
-    @pytest.mark.skipif(condition=not is_live(), reason="recording will expose Singularity information")
     def test_pipeline_job_singularity_live(self, client: MLClient, tmp_path: Path, singularity_vc):
         full_name = "azureml://subscriptions/{}/resourceGroups/{}/virtualclusters/{}".format(
             singularity_vc.subscription_id, singularity_vc.resource_group_name, singularity_vc.name
@@ -2076,7 +2059,6 @@ jobs:
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test
-@pytest.mark.skipif(condition=not is_live(), reason="no need to run in playback mode")
 @pytest.mark.timeout(timeout=_PIPELINE_JOB_LONG_RUNNING_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 class TestPipelineJobLongRunning:
     """Long-running tests that require pipeline job completed."""
