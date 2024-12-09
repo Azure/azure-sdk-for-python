@@ -691,8 +691,6 @@ class AzureAISearchTool(Tool):
         AI Search tool does not execute client-side.
         """
 
-        pass
-
 
 class OpenApiTool(Tool):
     """
@@ -729,8 +727,6 @@ class OpenApiTool(Tool):
         """
         OpenApiTool does not execute client-side.
         """
-
-        pass
 
 
 class ConnectionTool(Tool):
