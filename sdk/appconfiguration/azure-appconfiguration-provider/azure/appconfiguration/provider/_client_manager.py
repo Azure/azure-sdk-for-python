@@ -318,17 +318,15 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
         self._active_clients: List[_ConfigurationClientWrapper] = []
 
         if connection_string and endpoint:
-            self._replica_clients.append(
-                _ConfigurationClientWrapper.from_connection_string(
+            self._original_client = _ConfigurationClientWrapper.from_connection_string(
                     endpoint, connection_string, user_agent, retry_total, retry_backoff_max, **self._args
                 )
-            )
+            self._replica_clients.append(self._original_client)
         elif endpoint and credential:
-            self._replica_clients.append(
-                _ConfigurationClientWrapper.from_credential(
+            self._original_client =  _ConfigurationClientWrapper.from_credential(
                     endpoint, credential, user_agent, retry_total, retry_backoff_max, **self._args
                 )
-            )
+            self._replica_clients.append(self._original_client)
         else:
             raise ValueError("Please pass either endpoint and credential, or a connection string with a value.")
 
@@ -392,12 +390,12 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
 
         updated_endpoints = False
 
-        new_clients = [self._replica_clients[0]]  # Keep the original client
+        discovered_clients = []
         for failover_endpoint in failover_endpoints:
             found_client = False
             for client in self._replica_clients:
                 if client.endpoint == failover_endpoint:
-                    new_clients.append(client)
+                    discovered_clients.append(client)
                     found_client = True
                     break
             if not found_client:
@@ -406,7 +404,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
                     failover_connection_string = self._original_connection_string.replace(
                         self._original_endpoint, failover_endpoint
                     )
-                    new_clients.append(
+                    discovered_clients.append(
                         _ConfigurationClientWrapper.from_connection_string(
                             failover_endpoint,
                             failover_connection_string,
@@ -417,7 +415,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
                         )
                     )
                 elif self._credential:
-                    new_clients.append(
+                    discovered_clients.append(
                         _ConfigurationClientWrapper.from_credential(
                             failover_endpoint,
                             self._credential,
@@ -427,7 +425,8 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
                             **self._args
                         )
                     )
-        self._replica_clients = new_clients
+        random.shuffle(discovered_clients)
+        self._replica_clients = [self._original_client] +  discovered_clients
         self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
         if updated_endpoints and self._load_balancing_enabled:
             # Reshuffle only if a new client was added and _load_balancing_enabled is enabled
