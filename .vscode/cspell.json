@@ -527,8 +527,6 @@
         "roups",
         "mltable",
         "wsid",
-        "myindexname",
-        "wttr",
         "runid"
       ]
     },
@@ -1333,6 +1331,8 @@
         "OTEL",
         "GENAI",
         "fspath",
+        "myindexname",
+        "wttr",
         "azureopenai"
       ]
     },
