@@ -12,6 +12,7 @@ from typing_extensions import ParamSpec, TypeAlias, get_overloads
 from azure.ai.evaluation._common.math import list_mean
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._common.utils import remove_optional_singletons
+from azure.ai.evaluation._model_configurations import Conversation
 
 P = ParamSpec("P")
 T = TypeVar("T")
@@ -202,6 +203,59 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
 
         return converter
 
+    def _derive_multi_modal_conversation_converter(self) -> Callable[[Dict], List[Dict[str, Any]]]:
+        """Produce the function that will be used to convert multi-modal conversations to a list of evaluable inputs.
+        This uses the inputs derived from the _derive_singleton_inputs function to determine which
+        aspects of a conversation ought to be extracted.
+
+        :return: The function that will be used to convert conversations to evaluable inputs.
+        :rtype: Callable
+        """
+
+        def multi_modal_converter(conversation: Dict) -> List[Dict[str, Any]]:
+            messages = cast(List[Dict[str, Any]], conversation["messages"])
+            # Extract user messages, assistant messages from conversation
+            user_messages: List[Dict[str, Any]] = []
+            assistant_messages: List[Dict[str, Any]] = []
+            system_messages: List[Dict[str, Any]] = []
+
+            # Convert conversation slice into queries and responses.
+            # Assume that 'user' role is asking queries and 'assistant' role is responding.
+            if self._eval_last_turn and len(messages) > 1:
+                messages = messages[-2:]
+
+            for each_turn in messages:
+                role = each_turn["role"]
+                if role == "user":
+                    user_messages.append(each_turn)
+                elif role == "assistant":
+                    assistant_messages.append(each_turn)
+                elif role == "system":
+                    system_messages.append(each_turn)
+
+            # validation
+            if len(user_messages) != len(assistant_messages):
+                raise EvaluationException(
+                    message="Mismatched number of user and assistant messages.",
+                    internal_message=("Mismatched number of user and assistant messages."),
+                )
+            if len(assistant_messages) > 1:
+                raise EvaluationException(
+                    message="Conversation can have only one assistant message.",
+                    internal_message=("Conversation can have only one assistant message."),
+                )
+            eval_conv_inputs = []
+            for user_msg, assist_msg in zip(user_messages, assistant_messages):
+                conv_messages = []
+                if len(system_messages) == 1:
+                    conv_messages.append(system_messages[0])
+                conv_messages.append(user_msg)
+                conv_messages.append(assist_msg)
+                eval_conv_inputs.append({"conversation": Conversation(messages=conv_messages)})
+            return eval_conv_inputs
+
+        return multi_modal_converter
+
     def _convert_kwargs_to_eval_input(self, **kwargs) -> Union[List[Dict], List[DerivedEvalInput]]:
         """Convert an arbitrary input into a list of inputs for evaluators.
         It is assumed that evaluators generally make use of their inputs in one of two ways.
@@ -210,7 +264,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         values.
 
         The self._singleton_inputs list assigned during initialization is used to find and extract
-        singleton keywords, and self._allow_converssation_input is used to determine if a conversation
+        singleton keywords, and self._allow_conversation_input is used to determine if a conversation
         is a valid input.
 
         If both conversations and singletons are allowed, the function will raise an exception if both
@@ -241,6 +295,8 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             )
         # Handle Conversation
         if conversation is not None:
+            if self.is_multi_modal_conversation(conversation):
+                return self._derive_multi_modal_conversation_converter()(conversation)
             return self._derive_conversation_converter()(conversation)
         # Handle Singletons
         required_singletons = remove_optional_singletons(self, singletons)
@@ -254,6 +310,20 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             category=ErrorCategory.INVALID_VALUE,
             target=ErrorTarget.CONVERSATION,
         )
+
+    def is_multi_modal_conversation(self, conversation: Dict) -> bool:
+        if "messages" not in conversation:
+            return False
+        messages = conversation["messages"]
+        if not isinstance(messages, list):
+            return False
+        for message in messages:
+            if "content" in message:
+                content = message.get("content", "")
+                if isinstance(content, list):
+                    if any(item.get("type") == "image_url" and "url" in item.get("image_url", {}) for item in content):
+                        return True
+        return False
 
     def _aggregate_results(self, per_turn_results: List[DoEvalResult[T_EvalValue]]) -> AggregateResult[T_EvalValue]:
         """Aggregate the evaluation results of each conversation turn into a single result.
