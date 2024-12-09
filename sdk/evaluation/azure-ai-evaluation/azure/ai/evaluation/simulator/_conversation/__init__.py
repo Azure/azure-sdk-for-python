@@ -131,12 +131,15 @@ class ConversationBot:
                 conversation_starter_content = self.persona_template_args["conversation_starter"]
                 if isinstance(conversation_starter_content, dict):
                     self.conversation_starter = conversation_starter_content
+                    self.logger.debug(f"Conversation starter content: {conversation_starter_content}")
                 else:
                     try:
                         self.conversation_starter = jinja2.Template(
                             conversation_starter_content, undefined=jinja2.StrictUndefined
                         )
-                    except jinja2.exceptions.TemplateSyntaxError:  # noqa: F841
+                        self.logger.debug("Successfully created a Jinja2 template for the conversation starter.")
+                    except jinja2.exceptions.TemplateSyntaxError as e:  # noqa: F841
+                        self.logger.warning(f"Template syntax error: {e}. Using raw content.")
                         self.conversation_starter = conversation_starter_content
             else:
                 self.logger.info(
