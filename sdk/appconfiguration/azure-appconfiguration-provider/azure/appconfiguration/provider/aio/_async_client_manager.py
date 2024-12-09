@@ -359,16 +359,6 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
         self._last_active_client_name = next_client.endpoint
         return next_client
 
-    def has_next_client(self) -> bool:
-        """
-        Check if there is another client to be used for the request. find_active_clients needs be called before this
-        method or False will be returned.
-
-        :return: True if there is another client to be used for the request, False otherwise.
-        :rtype: bool
-        """
-        return bool(self._active_clients)
-
     def find_active_clients(self):
         """
         Figures out the current active clients, if _load_balancing_enabled is enabled the start of the list will be the
@@ -376,8 +366,8 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
         """
         active_clients = [client for client in self._replica_clients if client.is_active()]
 
-        if not self._load_balancing_enabled or not self._last_active_client_name:
-            self._active_clients = active_clients
+        self._active_clients = active_clients
+        if not self._load_balancing_enabled or len(self._last_active_client_name) == 0:
             return
         for i, client in enumerate(active_clients):
             if client.endpoint == self._last_active_client_name:
@@ -385,26 +375,15 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
                 self._active_clients = active_clients[swap_point:] + active_clients[:swap_point]
                 return
 
-    async def setup_initial_clients(self):
-        await self._update_failover_endpoints()
-        if self._load_balancing_enabled:
-            random.shuffle(self._replica_clients)
+    def get_client_count(self) -> int:
+        return len(self._replica_clients)
 
     async def refresh_clients(self):
         if not self._replica_discovery_enabled:
             return
-        if self._next_update_time > time.time():
+        if self._next_update_time and self._next_update_time > time.time():
             return
 
-        updated_endpoints = await self._update_failover_endpoints()
-        if updated_endpoints and self._load_balancing_enabled:
-            # Reshuffle only if a new client was added and _load_balancing_enabled is enabled
-            random.shuffle(self._replica_clients)
-
-    def get_client_count(self) -> int:
-        return len(self._replica_clients)
-
-    async def _update_failover_endpoints(self) -> bool:
         failover_endpoints = await find_auto_failover_endpoints(
             self._original_endpoint, self._replica_discovery_enabled
         )
@@ -412,12 +391,12 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
         if failover_endpoints is None:
             # SRV record not found, so we should refresh after a longer interval
             self._next_update_time = time.time() + FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL
-            return False
+            return
 
         if len(failover_endpoints) == 0:
             # No failover endpoints in SRV record.
             self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
-            return False
+            return
 
         updated_endpoints = False
 
@@ -458,7 +437,11 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
                     )
         self._replica_clients = new_clients
         self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
-        return updated_endpoints
+        if updated_endpoints and self._load_balancing_enabled:
+            # Reshuffle only if a new client was added and _load_balancing_enabled is enabled
+            # This allways needs to be shuffled, but if load balancing is enabled than the primary endpoint need to be
+            #  shuffled too.
+            random.shuffle(self._replica_clients)
 
     def backoff(self, client: _AsyncConfigurationClientWrapper):
         client.failed_attempts += 1

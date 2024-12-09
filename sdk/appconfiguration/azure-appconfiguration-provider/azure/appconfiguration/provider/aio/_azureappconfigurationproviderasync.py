@@ -227,8 +227,6 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     )
 
     provider = await _buildprovider(connection_string, endpoint, credential, uses_key_vault=uses_key_vault, **kwargs)
-    # Discovering replicas outside of init as it's async
-    await provider._replica_client_manager.setup_initial_clients()  # pylint:disable=protected-access
 
     try:
         await provider._load_all()  # pylint:disable=protected-access
@@ -390,15 +388,12 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                         """
         exception: Exception = RuntimeError(error_message)
         is_failover_request = False
-        client_count = self._replica_client_manager.get_client_count() - 1
         try:
             await self._replica_client_manager.refresh_clients()
             self._replica_client_manager.find_active_clients()
+            client_count = self._replica_client_manager.get_client_count() - 1
 
-            while self._replica_client_manager.has_next_client():
-                client = self._replica_client_manager.get_next_client()
-                if not client:
-                    return
+            while client := self._replica_client_manager.get_next_client():
                 headers = _update_correlation_context_header(
                     kwargs.pop("headers", {}),
                     "Watch",
@@ -462,15 +457,12 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             self._refresh_lock.release()
 
     async def _load_all(self, **kwargs):
+        await self._replica_client_manager.refresh_clients()
         self._replica_client_manager.find_active_clients()
         is_failover_request = False
         client_count = self._replica_client_manager.get_client_count() - 1
 
-        while self._replica_client_manager.has_next_client():
-            client = self._replica_client_manager.get_next_client()
-
-            if not client:
-                return
+        while client := self._replica_client_manager.get_next_client():
             headers = _update_correlation_context_header(
                 kwargs.pop("headers", {}),
                 "Startup",
