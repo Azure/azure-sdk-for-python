@@ -9,7 +9,7 @@ Installation Instructions
 pip install azure-identity azure-ai-projects azure-ai-ml
 
 # Optionally, you can `pip install azure-ai-evaluation` if you want a code-first experience to fetch evaluator id for built-in evaluators in code
-# refer https://learn.microsoft.com/en-us/azure/ai-studio/how-to/online-evaluation for more details
+# refer to https://learn.microsoft.com/en-us/azure/ai-studio/how-to/online-evaluation for more details
 """
 import pprint
 from azure.ai.projects import AIProjectClient 
@@ -23,7 +23,7 @@ from azure.ai.projects.models import (
 )
 from azure.ai.evaluation import CoherenceEvaluator  
 
-# This sample includes the setup for an online evaluation schedule using the Azure AI Project SDK and Azure AI Evaluation SDK
+# This sample includes the setup for an online evaluation schedule using the Azure AI Projects SDK and Azure AI Evaluation SDK
 # The schedule is configured to run daily over the collected trace data while running two evaluators: CoherenceEvaluator and RelevanceEvaluator
 # This sample can be modified to fit your application's requirements
 
@@ -46,10 +46,10 @@ APPLICATION_INSIGHTS_RESOURCE_ID = "appinsights_resource_id"
 # You can modify it depending on your data schema
 # The KQL query must output these required columns: operation_ID, operation_ParentID, and gen_ai_response_id
 # You can choose which other columns to output as required by the evaluators you are using
-# cspell:ignore maxif
+# cspell:disable-next-line
 KUSTO_QUERY = "let gen_ai_spans=(dependencies | where isnotnull(customDimensions[\"gen_ai.system\"]) | extend response_id = tostring(customDimensions[\"gen_ai.response.id\"]) | project id, operation_Id, operation_ParentId, timestamp, response_id); let gen_ai_events=(traces | where message in (\"gen_ai.choice\", \"gen_ai.user.message\", \"gen_ai.system.message\") or tostring(customDimensions[\"event.name\"]) in (\"gen_ai.choice\", \"gen_ai.user.message\", \"gen_ai.system.message\") | project id= operation_ParentId, operation_Id, operation_ParentId, user_input = iff(message == \"gen_ai.user.message\" or tostring(customDimensions[\"event.name\"]) == \"gen_ai.user.message\", parse_json(iff(message == \"gen_ai.user.message\", tostring(customDimensions[\"gen_ai.event.content\"]), message)).content, \"\"), system = iff(message == \"gen_ai.system.message\" or tostring(customDimensions[\"event.name\"]) == \"gen_ai.system.message\", parse_json(iff(message == \"gen_ai.system.message\", tostring(customDimensions[\"gen_ai.event.content\"]), message)).content, \"\"), llm_response = iff(message == \"gen_ai.choice\", parse_json(tostring(parse_json(tostring(customDimensions[\"gen_ai.event.content\"])).message)).content, iff(tostring(customDimensions[\"event.name\"]) == \"gen_ai.choice\", parse_json(parse_json(message).message).content, \"\")) | summarize operation_ParentId = any(operation_ParentId), Input = maxif(user_input, user_input != \"\"), System = maxif(system, system != \"\"), Output = maxif(llm_response, llm_response != \"\") by operation_Id, id); gen_ai_spans | join kind=inner (gen_ai_events) on id, operation_Id | project Input, System, Output, operation_Id, operation_ParentId, gen_ai_response_id = response_id"
 
-#Connect to Azure AI Studio Project
+# Connect to Azure AI Studio Project
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
     conn_str=PROJECT_CONNECTION_STRING
