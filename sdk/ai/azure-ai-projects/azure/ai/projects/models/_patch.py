@@ -674,6 +674,7 @@ class AzureAISearchTool(Tool):
         Get the Azure AI search tool definitions.
 
         :return: A list of tool definitions.
+        :rtype: List[ToolDefinition]
         """
         return [AzureAISearchToolDefinition()]
 
@@ -683,12 +684,15 @@ class AzureAISearchTool(Tool):
         Get the Azure AI search resources.
 
         :return: ToolResources populated with azure_ai_search associated resources.
+        :rtype: ToolResources
         """
         return ToolResources(azure_ai_search=AzureAISearchResource(index_list=self.index_list))
 
-    def execute(self, tool_call: Any) -> Any:
+    def execute(self, tool_call: Any):
         """
         AI Search tool does not execute client-side.
+
+        :param Any tool_call: The tool call to execute.
         """
 
 
@@ -710,6 +714,7 @@ class OpenApiTool(Tool):
         Get the OpenApi tool definitions.
 
         :return: A list of tool definitions.
+        :rtype: List[ToolDefinition]
         """
         return cast(List[ToolDefinition], self._definitions)
 
@@ -723,9 +728,11 @@ class OpenApiTool(Tool):
         """
         return ToolResources()
 
-    def execute(self, tool_call: Any) -> Any:
+    def execute(self, tool_call: Any):
         """
         OpenApiTool does not execute client-side.
+
+        :param Any tool_call: The tool call to execute.
         """
 
 
