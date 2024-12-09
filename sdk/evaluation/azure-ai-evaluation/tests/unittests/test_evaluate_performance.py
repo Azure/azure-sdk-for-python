@@ -26,7 +26,7 @@ def ten_queries_file():
     return os.path.join(data_path, "ten_queries.jsonl")
 
 
-@pytest.mark.usefixtures("recording_injection", "recorded_test")
+@pytest.mark.unittest
 class TestEvaluatePerformance:
     @pytest.mark.performance_test
     @pytest.mark.parametrize("use_pf_client", [True, False])
