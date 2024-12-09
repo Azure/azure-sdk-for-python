@@ -319,13 +319,13 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
 
         if connection_string and endpoint:
             self._original_client = _ConfigurationClientWrapper.from_connection_string(
-                    endpoint, connection_string, user_agent, retry_total, retry_backoff_max, **self._args
-                )
+                endpoint, connection_string, user_agent, retry_total, retry_backoff_max, **self._args
+            )
             self._replica_clients.append(self._original_client)
         elif endpoint and credential:
-            self._original_client =  _ConfigurationClientWrapper.from_credential(
-                    endpoint, credential, user_agent, retry_total, retry_backoff_max, **self._args
-                )
+            self._original_client = _ConfigurationClientWrapper.from_credential(
+                endpoint, credential, user_agent, retry_total, retry_backoff_max, **self._args
+            )
             self._replica_clients.append(self._original_client)
         else:
             raise ValueError("Please pass either endpoint and credential, or a connection string with a value.")
@@ -426,7 +426,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
                         )
                     )
         random.shuffle(discovered_clients)
-        self._replica_clients = [self._original_client] +  discovered_clients
+        self._replica_clients = [self._original_client] + discovered_clients
         self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
         if updated_endpoints and self._load_balancing_enabled:
             # Reshuffle only if a new client was added and _load_balancing_enabled is enabled

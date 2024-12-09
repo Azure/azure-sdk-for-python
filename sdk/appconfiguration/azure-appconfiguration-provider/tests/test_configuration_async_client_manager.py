@@ -59,9 +59,7 @@ class TestAsyncConfigurationClientManager:
     @patch(
         "azure.appconfiguration.provider.aio._async_client_manager._AsyncConfigurationClientWrapper.from_connection_string"
     )
-    async def test_failover_create_client_manager_connection_string(
-        self, mock_client, mock_update_failover_endpoints
-    ):
+    async def test_failover_create_client_manager_connection_string(self, mock_client, mock_update_failover_endpoints):
         endpoint = "https://fake.endpoint"
         connection_string = "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret"
 
