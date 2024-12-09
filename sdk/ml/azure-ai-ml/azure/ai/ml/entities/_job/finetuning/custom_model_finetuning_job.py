@@ -6,13 +6,18 @@
 
 from typing import Any, Dict
 
-from azure.ai.ml._restclient.v2024_01_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
     ModelProvider as RestModelProvider,
     CustomModelFineTuning as RestCustomModelFineTuningVertical,
     FineTuningJob as RestFineTuningJob,
     JobBase as RestJobBase,
 )
-from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
+from azure.ai.ml.entities._job._input_output_helpers import (
+    from_rest_data_outputs,
+    to_rest_data_outputs,
+)
+from azure.ai.ml.entities._job.job_resources import JobResources
+from azure.ai.ml.entities._job.queue_settings import QueueSettings
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._job.finetuning.finetuning_vertical import FineTuningVertical
@@ -84,11 +89,17 @@ class CustomModelFineTuningJob(FineTuningVertical):
             display_name=self.display_name,
             description=self.description,
             experiment_name=self.experiment_name,
+            services=self.services,
             tags=self.tags,
             properties=self.properties,
+            compute_id=self.compute,
             fine_tuning_details=custom_finetuning_vertical,
             outputs=to_rest_data_outputs(self.outputs),
         )
+        if self.resources:
+            finetuning_job.resources = self.resources._to_rest_object()
+        if self.queue_settings:
+            finetuning_job.queue_settings = self.queue_settings._to_rest_object()
 
         result = RestJobBase(properties=finetuning_job)
         result.name = self.name
@@ -101,7 +112,9 @@ class CustomModelFineTuningJob(FineTuningVertical):
         :return: dictionary representation of the object.
         :rtype: typing.Dict
         """
-        from azure.ai.ml._schema._finetuning.custom_model_finetuning import CustomModelFineTuningSchema
+        from azure.ai.ml._schema._finetuning.custom_model_finetuning import (
+            CustomModelFineTuningSchema,
+        )
 
         schema_dict: dict = {}
         # TODO: Combeback to this later for FineTuningJob in pipeline
@@ -157,12 +170,19 @@ class CustomModelFineTuningJob(FineTuningVertical):
             "description": properties.description,
             "tags": properties.tags,
             "properties": properties.properties,
+            "services": properties.services,
             "experiment_name": properties.experiment_name,
             "status": properties.status,
             "creation_context": obj.system_data,
             "display_name": properties.display_name,
+            "compute": properties.compute_id,
             "outputs": from_rest_data_outputs(properties.outputs),
         }
+
+        if properties.resources:
+            job_args_dict["resources"] = JobResources._from_rest_object(properties.resources)
+        if properties.queue_settings:
+            job_args_dict["queue_settings"] = QueueSettings._from_rest_object(properties.queue_settings)
 
         custom_model_finetuning_job = cls(
             task=finetuning_details.task_type,
@@ -196,7 +216,9 @@ class CustomModelFineTuningJob(FineTuningVertical):
         :return: CustomModelFineTuningJob object.
         :rtype: CustomModelFineTuningJob
         """
-        from azure.ai.ml._schema._finetuning.custom_model_finetuning import CustomModelFineTuningSchema
+        from azure.ai.ml._schema._finetuning.custom_model_finetuning import (
+            CustomModelFineTuningSchema,
+        )
 
         # TODO: Combeback to this later - Pipeline part.
         # from azure.ai.ml._schema.pipeline.automl_node import AutoMLClassificationNodeSchema

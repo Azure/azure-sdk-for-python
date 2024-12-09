@@ -326,13 +326,13 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [evaluate_dataset]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk#evaluate-on-test-dataset-using-evaluate
 [evaluators]: https://learn.microsoft.com/python/api/azure-ai-evaluation/azure.ai.evaluation?view=azure-python-preview
 [evaluate_api]: https://learn.microsoft.com/python/api/azure-ai-evaluation/azure.ai.evaluation?view=azure-python-preview#azure-ai-evaluation-evaluate
-[evaluate_app]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate/evaluate_app
+[evaluate_app]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate/Supported_Evaluation_Targets/Evaluate_App_Endpoint
 [evaluation_tsg]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/evaluation/azure-ai-evaluation/TROUBLESHOOTING.md
 [ai_studio]: https://learn.microsoft.com/azure/ai-studio/what-is-ai-studio
 [ai_project]: https://learn.microsoft.com/azure/ai-studio/how-to/create-projects?tabs=ai-studio
 [azure_openai]: https://learn.microsoft.com/azure/ai-services/openai/
-[evaluate_models]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate/evaluate_endpoints
-[custom_evaluators]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate/evaluate_custom
+[evaluate_models]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate/Supported_Evaluation_Targets/Evaluate_Base_Model_Endpoint
+[custom_evaluators]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate/Supported_Evaluation_Metrics/Custom_Evaluators
 [evaluate_samples]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate
 [evaluation_metrics]: https://learn.microsoft.com/azure/ai-studio/concepts/evaluation-metrics-built-in
 [performance_and_quality_evaluators]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk#performance-and-quality-evaluators
@@ -340,6 +340,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [composite_evaluators]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk#composite-evaluators
 [adversarial_simulation_docs]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/simulator-interaction-data#generate-adversarial-simulations-for-safety-evaluation
 [adversarial_simulation_scenarios]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/simulator-interaction-data#supported-adversarial-simulation-scenarios
-[adversarial_simulation]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate/simulate_adversarial
-[simulate_with_conversation_starter]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate/simulate_conversation_starter
+[adversarial_simulation]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate/Simulators/Simulate_Adversarial_Data
+[simulate_with_conversation_starter]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios/evaluate/Simulators/Simulate_Context-Relevant_Data/Simulate_From_Conversation_Starter
 [adversarial_jailbreak]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/simulator-interaction-data#simulating-jailbreak-attacks

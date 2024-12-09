@@ -10,6 +10,8 @@
 
 - Detect live metrics usage during runtime in addition to on startup
   ([#37694](https://github.com/Azure/azure-sdk-for-python/pull/37694))
+- Remove status code `206` from retry code + only count batch level for statsbeat
+  ([#38647](https://github.com/Azure/azure-sdk-for-python/pull/38647))
 
 ### Other Changes
 

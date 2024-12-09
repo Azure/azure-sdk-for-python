@@ -223,16 +223,16 @@ class AgentsNamedToolChoice(_model_base.Model):
 
     :ivar type: the type of tool. If type is ``function``\\ , the function name must be set.
      Required. Known values are: "function", "code_interpreter", "file_search", "bing_grounding",
-     "microsoft_fabric", "sharepoint_grounding", and "azure_ai_search".
+     "fabric_aiskill", "sharepoint_grounding", and "azure_ai_search".
     :vartype type: str or ~azure.ai.projects.models.AgentsNamedToolChoiceType
     :ivar function: The name of the function to call.
     :vartype function: ~azure.ai.projects.models.FunctionName
     """
 
     type: Union[str, "_models.AgentsNamedToolChoiceType"] = rest_field()
-    """the type of tool. If type is ``function``, the function name must be set. Required. Known
+    """the type of tool. If type is ``function``\ , the function name must be set. Required. Known
      values are: \"function\", \"code_interpreter\", \"file_search\", \"bing_grounding\",
-     \"microsoft_fabric\", \"sharepoint_grounding\", and \"azure_ai_search\"."""
+     \"fabric_aiskill\", \"sharepoint_grounding\", and \"azure_ai_search\"."""
     function: Optional["_models.FunctionName"] = rest_field()
     """The name of the function to call."""
 
@@ -500,7 +500,7 @@ class ToolDefinition(_model_base.Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureAISearchToolDefinition, BingGroundingToolDefinition, CodeInterpreterToolDefinition,
-    FileSearchToolDefinition, FunctionToolDefinition, MicrosoftFabricToolDefinition,
+    MicrosoftFabricToolDefinition, FileSearchToolDefinition, FunctionToolDefinition,
     SharepointToolDefinition
 
 
@@ -631,8 +631,8 @@ class CodeInterpreterToolResource(_model_base.Model):
      be a maximum of 20 files
      associated with the tool.
     :vartype file_ids: list[str]
-    :ivar data_sources: The data sources to be used. This option is mutually exclusive with
-     fileIds.
+    :ivar data_sources: The data sources to be used. This option is mutually exclusive with the
+     ``fileIds`` property.
     :vartype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
     """
 
@@ -641,7 +641,7 @@ class CodeInterpreterToolResource(_model_base.Model):
      20 files
      associated with the tool."""
     data_sources: Optional[List["_models.VectorStoreDataSource"]] = rest_field()
-    """The data sources to be used. This option is mutually exclusive with fileIds."""
+    """The data sources to be used. This option is mutually exclusive with the ``fileIds`` property."""
 
     @overload
     def __init__(
@@ -1173,10 +1173,9 @@ class FileSearchToolResource(_model_base.Model):
      maximum of 1 vector
      store attached to the agent.
     :vartype vector_store_ids: list[str]
-    :ivar vector_stores: The list of vector store configuration objects from Azure. This list is
-     limited to one
-     element. The only element of this list contains
-     the list of azure asset IDs used by the search tool.
+    :ivar vector_stores: The list of vector store configuration objects from Azure.
+     This list is limited to one element.
+     The only element of this list contains the list of azure asset IDs used by the search tool.
     :vartype vector_stores: list[~azure.ai.projects.models.VectorStoreConfigurations]
     """
 
@@ -1184,9 +1183,9 @@ class FileSearchToolResource(_model_base.Model):
     """The ID of the vector store attached to this agent. There can be a maximum of 1 vector
      store attached to the agent."""
     vector_stores: Optional[List["_models.VectorStoreConfigurations"]] = rest_field()
-    """The list of vector store configuration objects from Azure. This list is limited to one
-     element. The only element of this list contains
-     the list of azure asset IDs used by the search tool."""
+    """The list of vector store configuration objects from Azure.
+     This list is limited to one element.
+     The only element of this list contains the list of azure asset IDs used by the search tool."""
 
     @overload
     def __init__(
@@ -2410,28 +2409,28 @@ class MessageTextFilePathDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="microsoft_fabric"):
+class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="fabric_aiskill"):
     """The input definition information for a Microsoft Fabric tool as used to configure an agent.
 
 
-    :ivar type: The object type, which is always 'microsoft_fabric'. Required. Default value is
-     "microsoft_fabric".
+    :ivar type: The object type, which is always 'fabric_aiskill'. Required. Default value is
+     "fabric_aiskill".
     :vartype type: str
-    :ivar microsoft_fabric: The list of connections used by the Microsoft Fabric tool. Required.
-    :vartype microsoft_fabric: ~azure.ai.projects.models.ToolConnectionList
+    :ivar fabric_aiskill: The list of connections used by the Microsoft Fabric tool. Required.
+    :vartype fabric_aiskill: ~azure.ai.projects.models.ToolConnectionList
     """
 
-    type: Literal["microsoft_fabric"] = rest_discriminator(name="type")  # type: ignore
-    """The object type, which is always 'microsoft_fabric'. Required. Default value is
-     \"microsoft_fabric\"."""
-    microsoft_fabric: "_models.ToolConnectionList" = rest_field()
+    type: Literal["fabric_aiskill"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'fabric_aiskill'. Required. Default value is
+     \"fabric_aiskill\"."""
+    fabric_aiskill: "_models.ToolConnectionList" = rest_field()
     """The list of connections used by the Microsoft Fabric tool. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        microsoft_fabric: "_models.ToolConnectionList",
+        fabric_aiskill: "_models.ToolConnectionList",
     ) -> None: ...
 
     @overload
@@ -2442,7 +2441,7 @@ class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="microsoft_fab
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="microsoft_fabric", **kwargs)
+        super().__init__(*args, type="fabric_aiskill", **kwargs)
 
 
 class OpenAIFile(_model_base.Model):
@@ -2963,7 +2962,7 @@ class RequiredAction(_model_base.Model):
 
 
 class RequiredToolCall(_model_base.Model):
-    """An abstract representation a a tool invocation needed by the model to continue a run.
+    """An abstract representation of a tool invocation needed by the model to continue a run.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RequiredFunctionToolCall
@@ -3283,7 +3282,7 @@ class RunStepToolCall(_model_base.Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RunStepAzureAISearchToolCall, RunStepBingGroundingToolCall, RunStepCodeInterpreterToolCall,
-    RunStepFileSearchToolCall, RunStepFunctionToolCall, RunStepMicrosoftFabricToolCall,
+    RunStepMicrosoftFabricToolCall, RunStepFileSearchToolCall, RunStepFunctionToolCall,
     RunStepSharepointToolCall
 
 
@@ -3736,7 +3735,7 @@ class RunStepDeltaCodeInterpreterDetailItemObject(_model_base.Model):  # pylint:
     """The input into the Code Interpreter tool call."""
     outputs: Optional[List["_models.RunStepDeltaCodeInterpreterOutput"]] = rest_field()
     """The outputs from the Code Interpreter tool call. Code Interpreter can output one or more
-     items, including text (``logs``) or images (``image``). Each of these are represented
+     items, including text (\ ``logs``\ ) or images (\ ``image``\ ). Each of these are represented
      by a
      different object type."""
 
@@ -4498,7 +4497,7 @@ class RunStepMessageCreationReference(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="microsoft_fabric"):
+class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="fabric_aiskill"):
     """A record of a call to a Microsoft Fabric tool, issued by the model in evaluation of a defined
     tool, that represents
     executed Microsoft Fabric operations.
@@ -4507,17 +4506,17 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="microsoft_f
     :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
      Required.
     :vartype id: str
-    :ivar type: The object type, which is always 'microsoft_fabric'. Required. Default value is
-     "microsoft_fabric".
+    :ivar type: The object type, which is always 'fabric_aiskill'. Required. Default value is
+     "fabric_aiskill".
     :vartype type: str
     :ivar microsoft_fabric: Reserved for future use. Required.
     :vartype microsoft_fabric: dict[str, str]
     """
 
-    type: Literal["microsoft_fabric"] = rest_discriminator(name="type")  # type: ignore
-    """The object type, which is always 'microsoft_fabric'. Required. Default value is
-     \"microsoft_fabric\"."""
-    microsoft_fabric: Dict[str, str] = rest_field()
+    type: Literal["fabric_aiskill"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'fabric_aiskill'. Required. Default value is
+     \"fabric_aiskill\"."""
+    microsoft_fabric: Dict[str, str] = rest_field(name="fabric_aiskill")
     """Reserved for future use. Required."""
 
     @overload
@@ -4536,7 +4535,7 @@ class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="microsoft_f
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="microsoft_fabric", **kwargs)
+        super().__init__(*args, type="fabric_aiskill", **kwargs)
 
 
 class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint_grounding"):
@@ -4930,9 +4929,9 @@ class ThreadMessageOptions(_model_base.Model):
     """The role of the entity that is creating the message. Allowed values include:
      
      
-     * ``user``: Indicates the message is sent by an actual user and should be used in most
+     * ``user``\ : Indicates the message is sent by an actual user and should be used in most
        cases to represent user-generated messages.
-     * ``assistant``: Indicates the message is generated by the agent. Use this value to insert
+     * ``assistant``\ : Indicates the message is generated by the agent. Use this value to insert
        messages from the agent into the
        conversation. Required. Known values are: \"user\" and \"assistant\"."""
     content: str = rest_field()
@@ -5092,7 +5091,7 @@ class ThreadRun(_model_base.Model):
      Known values are: \"max_completion_tokens\" and \"max_prompt_tokens\"."""
     usage: "_models.RunCompletionUsage" = rest_field()
     """Usage statistics related to the run. This value will be ``null`` if the run is not in a
-     terminal state (i.e. ``in_progress``, ``queued``, etc.). Required."""
+     terminal state (i.e. ``in_progress``\ , ``queued``\ , etc.). Required."""
     temperature: Optional[float] = rest_field()
     """The sampling temperature used for this run. If not set, defaults to 1."""
     top_p: Optional[float] = rest_field()
@@ -5198,7 +5197,7 @@ class ToolConnection(_model_base.Model):
 
 class ToolConnectionList(_model_base.Model):
     """A set of connection resources currently used by either the ``bing_grounding``\\ ,
-    ``microsoft_fabric``\\ , or ``sharepoint_grounding`` tools.
+    ``fabric_aiskill``\\ , or ``sharepoint_grounding`` tools.
 
     :ivar connection_list: The connections attached to this tool. There can be a maximum of 1
      connection
@@ -5271,7 +5270,7 @@ class ToolResources(_model_base.Model):
     ``file_search``
     tool requires a list of vector store IDs.
 
-    :ivar code_interpreter: Resources to be used by the ``code_interpreter tool`` consisting of
+    :ivar code_interpreter: Resources to be used by the ``code_interpreter`` tool consisting of
      file IDs.
     :vartype code_interpreter: ~azure.ai.projects.models.CodeInterpreterToolResource
     :ivar file_search: Resources to be used by the ``file_search`` tool consisting of vector store
@@ -5283,7 +5282,7 @@ class ToolResources(_model_base.Model):
     """
 
     code_interpreter: Optional["_models.CodeInterpreterToolResource"] = rest_field()
-    """Resources to be used by the ``code_interpreter tool`` consisting of file IDs."""
+    """Resources to be used by the ``code_interpreter`` tool consisting of file IDs."""
     file_search: Optional["_models.FileSearchToolResource"] = rest_field()
     """Resources to be used by the ``file_search`` tool consisting of vector store IDs."""
     azure_ai_search: Optional["_models.AzureAISearchResource"] = rest_field()
@@ -5328,9 +5327,9 @@ class TruncationObject(_model_base.Model):
 
     type: Union[str, "_models.TruncationStrategy"] = rest_field()
     """The truncation strategy to use for the thread. The default is ``auto``. If set to
-     ``last_messages``, the thread will
+     ``last_messages``\ , the thread will
      be truncated to the ``lastMessages`` count most recent messages in the thread. When set to
-     ``auto``, messages in the middle of the thread
+     ``auto``\ , messages in the middle of the thread
      will be dropped to fit the context length of the model, ``max_prompt_tokens``. Required. Known
      values are: \"auto\" and \"last_messages\"."""
     last_messages: Optional[int] = rest_field()
@@ -5512,7 +5511,7 @@ class VectorStore(_model_base.Model):
     file_counts: "_models.VectorStoreFileCount" = rest_field()
     """Files count grouped by status processed or being processed by this vector store. Required."""
     status: Union[str, "_models.VectorStoreStatus"] = rest_field()
-    """The status of the vector store, which can be either ``expired``, ``in_progress``, or
+    """The status of the vector store, which can be either ``expired``\ , ``in_progress``\ , or
      ``completed``. A status of ``completed`` indicates that the vector store is ready for use.
      Required. Known values are: \"expired\", \"in_progress\", and \"completed\"."""
     expires_after: Optional["_models.VectorStoreExpirationPolicy"] = rest_field()
@@ -5903,8 +5902,8 @@ class VectorStoreFile(_model_base.Model):
     vector_store_id: str = rest_field()
     """The ID of the vector store that the file is attached to. Required."""
     status: Union[str, "_models.VectorStoreFileStatus"] = rest_field()
-    """The status of the vector store file, which can be either ``in_progress``, ``completed``,
-     ``cancelled``, or ``failed``. The status ``completed`` indicates that the vector store file
+    """The status of the vector store file, which can be either ``in_progress``\ , ``completed``\ ,
+     ``cancelled``\ , or ``failed``. The status ``completed`` indicates that the vector store file
      is ready for use. Required. Known values are: \"in_progress\", \"completed\", \"failed\", and
      \"cancelled\"."""
     last_error: "_models.VectorStoreFileError" = rest_field()
@@ -5973,8 +5972,8 @@ class VectorStoreFileBatch(_model_base.Model):
     vector_store_id: str = rest_field()
     """The ID of the vector store that the file is attached to. Required."""
     status: Union[str, "_models.VectorStoreFileBatchStatus"] = rest_field()
-    """The status of the vector store files batch, which can be either ``in_progress``,
-     ``completed``, ``cancelled`` or ``failed``. Required. Known values are: \"in_progress\",
+    """The status of the vector store files batch, which can be either ``in_progress``\ ,
+     ``completed``\ , ``cancelled`` or ``failed``. Required. Known values are: \"in_progress\",
      \"completed\", \"cancelled\", and \"failed\"."""
     file_counts: "_models.VectorStoreFileCount" = rest_field()
     """Files count grouped by status processed or being processed by this vector store. Required."""
