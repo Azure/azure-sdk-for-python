@@ -218,8 +218,8 @@ class AIProjectClient(
         await self._client1.close()
         await self._client2.close()
         await self._client3.close()
-        if hasattr(self._credential, "close"):
-            await self._credential.close()
+        #if hasattr(self._credential, "close"):
+        #    await self._credential.close()
 
     async def __aenter__(self) -> Self:
         await self._client0.__aenter__()
@@ -233,8 +233,8 @@ class AIProjectClient(
         await self._client1.__aexit__(*exc_details)
         await self._client2.__aexit__(*exc_details)
         await self._client3.__aexit__(*exc_details)
-        if hasattr(self._credential, "close"):
-            await self._credential.close()
+        #if hasattr(self._credential, "close"):
+        #    await self._credential.close()
 
     @classmethod
     def from_connection_string(cls, conn_str: str, credential: "AsyncTokenCredential", **kwargs) -> Self:

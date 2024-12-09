@@ -13,7 +13,7 @@ from setuptools import setup, find_packages
 
 
 PACKAGE_NAME = "azure-ai-projects"
-PACKAGE_PPRINT_NAME = "Azure AI Projects"
+PACKAGE_PPRINT_NAME = "Azure Ai Projects"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")
@@ -35,7 +35,7 @@ setup(
     license="MIT License",
     author="Microsoft Corporation",
     author_email="azpysdkhelp@microsoft.com",
-    url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects",
+    url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk",
     keywords="azure, azure sdk",
     classifiers=[
         "Development Status :: 4 - Beta",
@@ -47,7 +47,6 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
-        "Programming Language :: Python :: 3.13",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
@@ -66,7 +65,7 @@ setup(
     install_requires=[
         "isodate>=0.6.1",
         "azure-core>=1.30.0",
-        "typing-extensions>=4.12.2",
+        "typing-extensions>=4.6.0",
     ],
     python_requires=">=3.8",
 )

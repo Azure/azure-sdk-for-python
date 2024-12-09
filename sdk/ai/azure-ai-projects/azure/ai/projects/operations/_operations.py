@@ -401,7 +401,7 @@ def build_agents_update_message_request(thread_id: str, message_id: str, **kwarg
 
 
 def build_agents_create_run_request(
-    thread_id: str, *, include: List[Union[str, _models.RunAdditionalFieldList]], **kwargs: Any
+    thread_id: str, *, include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -420,7 +420,8 @@ def build_agents_create_run_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    _params["include"] = _SERIALIZER.query("include", include, "[str]", div=",")
+    if include is not None:
+        _params["include"] = _SERIALIZER.query("include", include, "[str]", div=",")
 
     # Construct headers
     if content_type is not None:
@@ -639,7 +640,7 @@ def build_agents_list_run_steps_request(
     thread_id: str,
     run_id: str,
     *,
-    include: List[Union[str, _models.RunAdditionalFieldList]],
+    include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
     limit: Optional[int] = None,
     order: Optional[Union[str, _models.ListSortOrder]] = None,
     after: Optional[str] = None,
@@ -663,7 +664,8 @@ def build_agents_list_run_steps_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    _params["include"] = _SERIALIZER.query("include", include, "[str]", div=",")
+    if include is not None:
+        _params["include"] = _SERIALIZER.query("include", include, "[str]", div=",")
     if limit is not None:
         _params["limit"] = _SERIALIZER.query("limit", limit, "int")
     if order is not None:
@@ -3227,7 +3229,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         thread_id: str,
         body: JSON,
         *,
-        include: List[Union[str, _models.RunAdditionalFieldList]],
+        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ThreadRun:
@@ -3240,7 +3242,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
-         content. Required.
+         content. Default value is None.
         :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -3255,8 +3257,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         self,
         thread_id: str,
         *,
-        include: List[Union[str, _models.RunAdditionalFieldList]],
         assistant_id: str,
+        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         content_type: str = "application/json",
         model: Optional[str] = None,
         instructions: Optional[str] = None,
@@ -3279,13 +3281,13 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
+        :keyword assistant_id: The ID of the agent that should run the thread. Required.
+        :paramtype assistant_id: str
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
-         content. Required.
+         content. Default value is None.
         :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
-        :keyword assistant_id: The ID of the agent that should run the thread. Required.
-        :paramtype assistant_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3368,7 +3370,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         thread_id: str,
         body: IO[bytes],
         *,
-        include: List[Union[str, _models.RunAdditionalFieldList]],
+        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ThreadRun:
@@ -3381,7 +3383,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
-         content. Required.
+         content. Default value is None.
         :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -3397,8 +3399,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         thread_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        include: List[Union[str, _models.RunAdditionalFieldList]],
         assistant_id: str = _Unset,
+        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
@@ -3422,13 +3424,13 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type thread_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
+        :keyword assistant_id: The ID of the agent that should run the thread. Required.
+        :paramtype assistant_id: str
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
-         content. Required.
+         content. Default value is None.
         :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
-        :keyword assistant_id: The ID of the agent that should run the thread. Required.
-        :paramtype assistant_id: str
         :keyword model: The overridden model name that the agent should use to run the thread. Default
          value is None.
         :paramtype model: str
@@ -4573,7 +4575,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         thread_id: str,
         run_id: str,
         *,
-        include: List[Union[str, _models.RunAdditionalFieldList]],
+        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         limit: Optional[int] = None,
         order: Optional[Union[str, _models.ListSortOrder]] = None,
         after: Optional[str] = None,
@@ -4589,7 +4591,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
-         content. Required.
+         content. Default value is None.
         :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the default is 20. Default value is None.

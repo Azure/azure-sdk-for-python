@@ -25,6 +25,7 @@ from azure.ai.projects.models import (
     FunctionTool,
     MessageAttachment,
     MessageRole,
+    RunAdditionalFieldList,
     RunStatus,
     ThreadMessageOptions,
     ToolResources,
@@ -1726,6 +1727,82 @@ class TestagentClientAsync(AzureRecordedTestCase):
             messages = await client.agents.list_messages(thread_id=thread.id)
             assert len(messages.data), "The data from the agent was not received."
 
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_include_file_search_results_no_stream(self, **kwargs):
+        """Test using include_file_search."""
+        await self._do_test_include_file_search_results(use_stream=False, **kwargs)
+    
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_include_file_search_results_stream(self, **kwargs):
+        """Test using include_file_search with streaming."""
+        await self._do_test_include_file_search_results(use_stream=True, **kwargs)
+    
+    async def _do_test_include_file_search_results(self, use_stream, **kwargs):
+        """Run the test with file search results."""
+        async with self.create_client(**kwargs) as ai_client:
+            # ds = [
+            #     VectorStoreDataSource(
+            #         asset_identifier=kwargs["azure_ai_projects_data_path"],
+            #         asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
+            #     )
+            # ]
+            # vector_store = await ai_client.agents.create_vector_store_and_poll(
+            #     file_ids=[], data_sources=ds, name="my_vectorstore"
+            # )
+            vector_store = await ai_client.agents.get_vector_store('vs_M9oxKG7JngORHcYNBGVZ6Iz3')
+            assert vector_store.id
+            
+            file_search = FileSearchTool(vector_store_ids=[vector_store.id])
+            agent = await ai_client.agents.create_agent(
+                model="gpt-4o",
+                name="my-assistant",
+                instructions="Hello, you are helpful assistant and can search information from uploaded files",
+                tools=file_search.definitions,
+                tool_resources=file_search.resources
+            )
+            assert agent.id
+            thread = await ai_client.agents.create_thread()
+            assert thread.id
+            # create message
+            message = await ai_client.agents.create_message(
+                thread_id=thread.id, role="user", content="What does the attachment say?"
+            )
+            assert message.id, "The message was not created."
+    
+            if use_stream:
+                async with ai_client.agents.create_stream(
+                    thread_id=thread.id, assistant_id=agent.id,
+                    include=[RunAdditionalFieldList.FILE_SEARCH_CONTENTS]
+                ) as stream:
+                    stream.until_done()
+                    steps = ai_client.agents.list_run_steps(
+                        thread_id=thread.id,
+                        run_id=stream.response_iterator.id,
+                        include=[RunAdditionalFieldList.FILE_SEARCH_CONTENTS]
+                    )
+            else:
+                run = await ai_client.agents.create_and_process_run(
+                    thread_id=thread.id,
+                    assistant_id=agent.id,
+                    include=[RunAdditionalFieldList.FILE_SEARCH_CONTENTS,RunAdditionalFieldList.FILE_SEARCH_CONTENTS]
+                )
+                assert run.status == RunStatus.COMPLETED
+                steps = ai_client.agents.list_run_steps(
+                    thread_id=thread.id,
+                    run_id=stream.response_iterator.id,
+                    include=[RunAdditionalFieldList.FILE_SEARCH_CONTENTS]
+                )
+            messages = await ai_client.agents.list_messages(thread_id=thread.id)
+            assert len(messages)
+            
+            await ai_client.agents.delete_vector_store(vector_store.id)
+            # delete agent and close client
+            await ai_client.agents.delete_agent(agent.id)
+            print("Deleted agent")
+            await ai_client.close()
+    
     async def _get_file_id_maybe(self, ai_client: AIProjectClient, **kwargs) -> str:
         """Return file id if kwargs has file path."""
         if "file_path" in kwargs:
