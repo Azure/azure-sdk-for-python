@@ -338,7 +338,7 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
         else:
             raise ValueError("Please pass either endpoint and credential, or a connection string with a value.")
 
-    def get_next_client(self) -> Optional[_AsyncConfigurationClientWrapper]:
+    def get_next_active_client(self) -> Optional[_AsyncConfigurationClientWrapper]:
         """
         Get the next client to be used for the request. find_active_clients needs be called before this method or None
         client will be returned. If load_balancing_enabled isn't enabled the first active client will be returned,

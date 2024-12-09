@@ -548,7 +548,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             self._replica_client_manager.find_active_clients()
             client_count = self._replica_client_manager.get_client_count() - 1
 
-            while client := self._replica_client_manager.get_next_client():
+            while client := self._replica_client_manager.get_next_active_client():
                 headers = _update_correlation_context_header(
                     kwargs.pop("headers", {}),
                     "Watch",
@@ -615,7 +615,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         is_failover_request = False
         client_count = self._replica_client_manager.get_client_count() - 1
 
-        while client := self._replica_client_manager.get_next_client():
+        while client := self._replica_client_manager.get_next_active_client():
             headers = _update_correlation_context_header(
                 kwargs.pop("headers", {}),
                 "Startup",
