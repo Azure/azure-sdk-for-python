@@ -297,9 +297,6 @@ class TestMassEvaluate:
     @pytest.mark.parametrize(
         "multi_modal_input_type,pm_evaluator_class,cs_evaluator_class",
         [
-            "imageurls",
-            "imageurls_with_target",
-            "b64_images",
             ("imageurls", ProtectedMaterialMultimodalEvaluator, ContentSafetyMultimodalEvaluator),
             ("imageurls", ProtectedMaterialEvaluator, ContentSafetyEvaluator),
             ("imageurls_with_target", ProtectedMaterialMultimodalEvaluator, ContentSafetyMultimodalEvaluator),
