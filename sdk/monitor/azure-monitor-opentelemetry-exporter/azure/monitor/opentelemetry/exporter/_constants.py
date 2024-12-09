@@ -31,7 +31,6 @@ _REDIRECT_STATUS_CODES = (
 )
 
 _RETRYABLE_STATUS_CODES = (
-    206,  # Partial success
     401,  # Unauthorized
     403,  # Forbidden
     408,  # Request Timeout

@@ -12,6 +12,7 @@ from azure.identity import DefaultAzureCredential
 from acs_sms_test_case import ACSSMSTestCase
 from azure.communication.sms import SmsClient
 
+
 class TestClient(ACSSMSTestCase):
     def setup_method(self):
         super().setUp()
@@ -23,10 +24,7 @@ class TestClient(ACSSMSTestCase):
         sms_client = self.create_client_from_connection_string()
 
         # calling send() with sms values
-        sms_responses = sms_client.send(
-            from_=self.phone_number,
-            to=self.phone_number,
-            message="Hello World via SMS")
+        sms_responses = sms_client.send(from_=self.phone_number, to=self.phone_number, message="Hello World via SMS")
 
         assert len(sms_responses) == 1
         self.verify_successful_sms_response(sms_responses[0])
@@ -41,7 +39,8 @@ class TestClient(ACSSMSTestCase):
             to=[self.phone_number, self.phone_number],
             message="Hello World via SMS",
             enable_delivery_report=True,  # optional property
-            tag="custom-tag")  # optional property
+            tag="custom-tag",
+        )  # optional property
 
         assert len(sms_responses) == 2
 
@@ -54,17 +53,10 @@ class TestClient(ACSSMSTestCase):
             credential = FakeTokenCredential()
         else:
             credential = DefaultAzureCredential()
-        sms_client = SmsClient(
-            self.endpoint,
-            credential,
-            http_logging_policy=get_http_logging_policy()
-        )
+        sms_client = SmsClient(self.endpoint, credential, http_logging_policy=get_http_logging_policy())
 
         # calling send() with sms values
-        sms_responses = sms_client.send(
-            from_=self.phone_number,
-            to=[self.phone_number],
-            message="Hello World via SMS")
+        sms_responses = sms_client.send(from_=self.phone_number, to=[self.phone_number], message="Hello World via SMS")
 
         assert len(sms_responses) == 1
 
@@ -76,13 +68,9 @@ class TestClient(ACSSMSTestCase):
 
         with pytest.raises(HttpResponseError) as ex:
             # calling send() with sms values
-            sms_client.send(
-                from_="+15550000000",
-                to=[self.phone_number],
-                message="Hello World via SMS")
+            sms_client.send(from_="+15550000000", to=[self.phone_number], message="Hello World via SMS")
 
-        assert str(
-            ex.value.status_code) == "401"
+        assert str(ex.value.status_code) == "401"
         assert ex.value.message is not None
 
     @recorded_by_proxy
@@ -91,9 +79,8 @@ class TestClient(ACSSMSTestCase):
 
         with pytest.raises(HttpResponseError) as ex:
             sms_responses = sms_client.send(
-                from_=self.phone_number,
-                to=["Ad155500000000000"],
-                message="Hello World via SMS")
+                from_=self.phone_number, to=["Ad155500000000000"], message="Hello World via SMS"
+            )
 
         assert str(ex.value.status_code == "400")
 
@@ -103,10 +90,7 @@ class TestClient(ACSSMSTestCase):
 
         with pytest.raises(HttpResponseError) as ex:
             # calling send() with sms values
-            sms_client.send(
-                from_="+14255550123",
-                to=[self.phone_number],
-                message="Hello World via SMS")
+            sms_client.send(from_="+14255550123", to=[self.phone_number], message="Hello World via SMS")
 
         assert str(ex.value.status_code) == "401"
         assert ex.value.message is not None
@@ -118,15 +102,13 @@ class TestClient(ACSSMSTestCase):
 
         # calling send() with sms values
         sms_responses_1 = sms_client.send(
-            from_=self.phone_number,
-            to=[self.phone_number],
-            message="Hello World via SMS")
+            from_=self.phone_number, to=[self.phone_number], message="Hello World via SMS"
+        )
 
         # calling send() again with the same sms values
         sms_responses_2 = sms_client.send(
-            from_=self.phone_number,
-            to=[self.phone_number],
-            message="Hello World via SMS")
+            from_=self.phone_number, to=[self.phone_number], message="Hello World via SMS"
+        )
 
         self.verify_successful_sms_response(sms_responses_1[0])
         self.verify_successful_sms_response(sms_responses_2[0])
@@ -142,7 +124,4 @@ class TestClient(ACSSMSTestCase):
         assert sms_response.successful
 
     def create_client_from_connection_string(self):
-        return SmsClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
-        )
+        return SmsClient.from_connection_string(self.connection_str, http_logging_policy=get_http_logging_policy())

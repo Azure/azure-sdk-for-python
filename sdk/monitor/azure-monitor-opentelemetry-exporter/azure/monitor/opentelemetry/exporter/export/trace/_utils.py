@@ -75,6 +75,9 @@ def _get_http_scheme(attributes: Attributes) -> Optional[str]:
     return None
 
 
+# Dependency
+
+
 @no_type_check
 def _get_url_for_http_dependency(attributes: Attributes, scheme: Optional[str] = None) -> Optional[str]:
     url = None
@@ -109,7 +112,7 @@ def _get_url_for_http_dependency(attributes: Attributes, scheme: Optional[str] =
                         peer_port,
                         http_target,
                     )
-    return url  # type: ignore
+    return url
 
 
 @no_type_check
@@ -117,22 +120,21 @@ def _get_target_for_dependency_from_peer(attributes: Attributes) -> Optional[str
     target = ""
     if attributes:
         if SpanAttributes.PEER_SERVICE in attributes:
-            target = attributes[SpanAttributes.PEER_SERVICE]  # type: ignore
+            target = attributes[SpanAttributes.PEER_SERVICE]
         else:
             if SpanAttributes.NET_PEER_NAME in attributes:
-                target = attributes[SpanAttributes.NET_PEER_NAME]  # type: ignore
+                target = attributes[SpanAttributes.NET_PEER_NAME]
             elif SpanAttributes.NET_PEER_IP in attributes:
-                target = attributes[SpanAttributes.NET_PEER_IP]  # type: ignore
+                target = attributes[SpanAttributes.NET_PEER_IP]
             if SpanAttributes.NET_PEER_PORT in attributes:
                 port = attributes[SpanAttributes.NET_PEER_PORT]
                 # TODO: check default port for rpc
                 # This logic assumes default ports never conflict across dependency types
-                # type: ignore
                 if port != _get_default_port_http(
                     str(attributes.get(SpanAttributes.HTTP_SCHEME))
                 ) and port != _get_default_port_db(str(attributes.get(SpanAttributes.DB_SYSTEM))):
                     target = "{}:{}".format(target, port)
-    return target  # type: ignore
+    return target
 
 
 @no_type_check
@@ -213,3 +215,39 @@ def _get_target_for_rpc_dependency(target: Optional[str], attributes: Attributes
             if SpanAttributes.RPC_SYSTEM in attributes:
                 target = str(attributes[SpanAttributes.RPC_SYSTEM])
     return target
+
+
+@no_type_check
+def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
+    url = ""
+    if attributes:
+        if SpanAttributes.HTTP_URL in attributes:
+            return attributes[SpanAttributes.HTTP_URL]
+        scheme = attributes.get(SpanAttributes.HTTP_SCHEME)
+        http_target = attributes.get(SpanAttributes.HTTP_TARGET)
+        if scheme and http_target:
+            if SpanAttributes.HTTP_HOST in attributes:
+                url = "{}://{}{}".format(
+                    scheme,
+                    attributes[SpanAttributes.HTTP_HOST],
+                    http_target,
+                )
+            elif SpanAttributes.NET_HOST_PORT in attributes:
+                host_port = attributes[SpanAttributes.NET_HOST_PORT]
+                if SpanAttributes.HTTP_SERVER_NAME in attributes:
+                    server_name = attributes[SpanAttributes.HTTP_SERVER_NAME]
+                    url = "{}://{}:{}{}".format(
+                        scheme,
+                        server_name,
+                        host_port,
+                        http_target,
+                    )
+                elif SpanAttributes.NET_HOST_NAME in attributes:
+                    host_name = attributes[SpanAttributes.NET_HOST_NAME]
+                    url = "{}://{}:{}{}".format(
+                        scheme,
+                        host_name,
+                        host_port,
+                        http_target,
+                    )
+    return url

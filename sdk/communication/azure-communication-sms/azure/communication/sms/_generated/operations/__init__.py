@@ -9,5 +9,5 @@
 from ._sms_operations import SmsOperations
 
 __all__ = [
-    'SmsOperations',
+    "SmsOperations",
 ]

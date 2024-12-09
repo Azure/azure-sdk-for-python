@@ -11,10 +11,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.rooms._shared.models import CommunicationUserIdentifier
 from azure.communication.rooms.aio import RoomsClient
-from azure.communication.rooms import (
-    ParticipantRole,
-    RoomParticipant
-)
+from azure.communication.rooms import ParticipantRole, RoomParticipant
 from acs_rooms_test_case import ACSRoomsTestCase
 from _shared.utils import get_http_logging_policy
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -30,9 +27,7 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
         sanitizedId3 = "8:acs:sanitized3"
         sanitizedId4 = "8:acs:sanitized4"
         if is_live():
-            self.identity_client = CommunicationIdentityClient.from_connection_string(
-                self.connection_str)
-
+            self.identity_client = CommunicationIdentityClient.from_connection_string(self.connection_str)
 
             self.id1 = self.identity_client.create_user().properties["id"]
             self.id2 = self.identity_client.create_user().properties["id"]
@@ -49,23 +44,19 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
             self.id4 = sanitizedId4
 
         self.rooms_client = RoomsClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy()
+            self.connection_str, http_logging_policy=get_http_logging_policy()
         )
         self.users = {
-                "john" : RoomParticipant(
-                    communication_identifier=CommunicationUserIdentifier(self.id1),
-                    role=ParticipantRole.PRESENTER
-                ),
-                "fred" : RoomParticipant(
-                    communication_identifier=CommunicationUserIdentifier(self.id2),
-                    role=ParticipantRole.CONSUMER
-                ),
-                "chris" : RoomParticipant(
-                    communication_identifier=CommunicationUserIdentifier(self.id3),
-                    role=ParticipantRole.ATTENDEE
-                )
-            }
+            "john": RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id1), role=ParticipantRole.PRESENTER
+            ),
+            "fred": RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id2), role=ParticipantRole.CONSUMER
+            ),
+            "chris": RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id3), role=ParticipantRole.ATTENDEE
+            ),
+        }
 
     @recorded_by_proxy_async
     async def test_create_room_no_attributes_async(self):
@@ -77,10 +68,7 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
     @recorded_by_proxy_async
     async def test_create_room_only_participants_async(self):
         # add john and chris to room
-        participants = [
-            self.users["john"],
-            self.users["chris"]
-        ]
+        participants = [self.users["john"], self.users["chris"]]
 
         async with self.rooms_client:
             response = await self.rooms_client.create_room(participants=participants)
@@ -92,7 +80,7 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
     @recorded_by_proxy_async
     async def test_create_room_validUntil_seven_months_async(self):
         # room attributes
-        valid_from =  datetime.now() + timedelta(days=3)
+        valid_from = datetime.now() + timedelta(days=3)
         valid_until = valid_from + timedelta(weeks=29)
 
         with pytest.raises(HttpResponseError) as ex:
@@ -126,7 +114,7 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
     @recorded_by_proxy_async
     async def test_create_room_correct_timerange_async(self):
         # room attributes
-        valid_from =  datetime.now() + timedelta(days=3)
+        valid_from = datetime.now() + timedelta(days=3)
         valid_until = valid_from + timedelta(weeks=4)
 
         async with self.rooms_client:
@@ -141,10 +129,9 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
         # room attributes
         participants = [
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier("wrong_mri"),
-                role=ParticipantRole.ATTENDEE
+                communication_identifier=CommunicationUserIdentifier("wrong_mri"), role=ParticipantRole.ATTENDEE
             ),
-            self.users["john"]
+            self.users["john"],
         ]
 
         with pytest.raises(HttpResponseError) as ex:
@@ -158,42 +145,42 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
     @recorded_by_proxy_async
     async def test_create_room_all_attributes_async(self):
         # room attributes
-        valid_from =  datetime.now() + timedelta(days=3)
+        valid_from = datetime.now() + timedelta(days=3)
         valid_until = valid_from + timedelta(weeks=4)
         # add john to room
-        participants = [
-            self.users["john"]
-        ]
+        participants = [self.users["john"]]
 
         async with self.rooms_client:
-            response = await self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, participants=participants)
+            response = await self.rooms_client.create_room(
+                valid_from=valid_from, valid_until=valid_until, participants=participants
+            )
 
             # delete created room
             await self.rooms_client.delete_room(room_id=response.id)
-            self.verify_successful_room_response(
-            response=response, valid_from=valid_from, valid_until=valid_until)
+            self.verify_successful_room_response(response=response, valid_from=valid_from, valid_until=valid_until)
 
     @pytest.mark.live_test_only
     @recorded_by_proxy_async
     async def test_get_room_async(self):
         # room attributes
-        valid_from =  datetime.now() + timedelta(days=3)
+        valid_from = datetime.now() + timedelta(days=3)
         valid_until = valid_from + timedelta(weeks=2)
 
         # add john to room
-        participants = [
-            self.users["john"]
-        ]
+        participants = [self.users["john"]]
         async with self.rooms_client:
             # create a room first
-            create_response = await self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, participants=participants)
+            create_response = await self.rooms_client.create_room(
+                valid_from=valid_from, valid_until=valid_until, participants=participants
+            )
 
             get_response = await self.rooms_client.get_room(room_id=create_response.id)
 
             # delete created room
             await self.rooms_client.delete_room(room_id=create_response.id)
             self.verify_successful_room_response(
-                response=get_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id)
+                response=get_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id
+            )
 
     @recorded_by_proxy_async
     async def test_get_invalid_format_roomId_async(self):
@@ -212,11 +199,13 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
             create_response = await self.rooms_client.create_room()
 
             # update room attributes
-            valid_from =  datetime.now() + timedelta(days=3)
-            valid_until =  datetime.now() + timedelta(weeks=29)
+            valid_from = datetime.now() + timedelta(days=3)
+            valid_until = datetime.now() + timedelta(weeks=29)
 
             with pytest.raises(HttpResponseError) as ex:
-                await self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
+                await self.rooms_client.update_room(
+                    room_id=create_response.id, valid_from=valid_from, valid_until=valid_until
+                )
 
                 # delete created room
                 await self.rooms_client.delete_room(room_id=create_response.id)
@@ -231,11 +220,13 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
             create_response = await self.rooms_client.create_room()
 
             # update room attributes
-            valid_from =  datetime.now() - timedelta(days=3)
-            valid_until =  datetime.now() - timedelta(weeks=1)
+            valid_from = datetime.now() - timedelta(days=3)
+            valid_until = datetime.now() - timedelta(weeks=1)
 
             with pytest.raises(HttpResponseError) as ex:
-                await self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
+                await self.rooms_client.update_room(
+                    room_id=create_response.id, valid_from=valid_from, valid_until=valid_until
+                )
 
                 # delete created room
                 await self.rooms_client.delete_room(room_id=create_response.id)
@@ -251,24 +242,29 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
             create_response = await self.rooms_client.create_room()
 
             # update room attributes
-            valid_from =  datetime.now() + timedelta(days=3)
-            valid_until =  datetime.now() + timedelta(weeks=4)
+            valid_from = datetime.now() + timedelta(days=3)
+            valid_until = datetime.now() + timedelta(weeks=4)
 
-            update_response = await self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
+            update_response = await self.rooms_client.update_room(
+                room_id=create_response.id, valid_from=valid_from, valid_until=valid_until
+            )
 
             # delete created room
             await self.rooms_client.delete_room(room_id=create_response.id)
             self.verify_successful_room_response(
-                response=update_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id)
+                response=update_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id
+            )
 
     @recorded_by_proxy_async
     async def test_update_room_invalid_format_roomId_async(self):
         # try to update room with random room_id
         with pytest.raises(HttpResponseError) as ex:
             async with self.rooms_client:
-                valid_from =  datetime.now() + timedelta(days=3)
+                valid_from = datetime.now() + timedelta(days=3)
                 valid_until = valid_from + timedelta(days=4)
-                await self.rooms_client.update_room(room_id="invalid_id", valid_from=valid_from, valid_until=valid_until)
+                await self.rooms_client.update_room(
+                    room_id="invalid_id", valid_from=valid_from, valid_until=valid_until
+                )
 
                 #  assert error is bad request
                 assert str(ex.value.status_code) == "400"
@@ -284,9 +280,11 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
             await self.rooms_client.delete_room(room_id=create_response.id)
 
             with pytest.raises(HttpResponseError) as ex:
-                valid_from =  datetime.now() + timedelta(days=3)
+                valid_from = datetime.now() + timedelta(days=3)
                 valid_until = valid_from + timedelta(days=4)
-                await self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
+                await self.rooms_client.update_room(
+                    room_id=create_response.id, valid_from=valid_from, valid_until=valid_until
+                )
 
                 #  assert error is Resource not found
                 assert str(ex.value.status_code) == "404"
@@ -295,33 +293,26 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
     @recorded_by_proxy_async
     async def test_add_or_update_participant_async(self):
         # add john and chris to room
-        create_participants = [
-            self.users["john"],
-            self.users["chris"]
-        ]
+        create_participants = [self.users["john"], self.users["chris"]]
         # update join to consumer and add fred to room
         self.users["john"].role = ParticipantRole.CONSUMER
-        update_participants = [
-            self.users["john"],
-            self.users["fred"]
-        ]
+        update_participants = [self.users["john"], self.users["fred"]]
         expected_participants = [
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id1),
-                role=ParticipantRole.CONSUMER
+                communication_identifier=CommunicationUserIdentifier(self.id1), role=ParticipantRole.CONSUMER
             ),
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id2),
-                role=ParticipantRole.CONSUMER
+                communication_identifier=CommunicationUserIdentifier(self.id2), role=ParticipantRole.CONSUMER
             ),
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id3),
-                role=ParticipantRole.ATTENDEE
-            )
+                communication_identifier=CommunicationUserIdentifier(self.id3), role=ParticipantRole.ATTENDEE
+            ),
         ]
         async with self.rooms_client:
             create_response = await self.rooms_client.create_room(participants=create_participants)
-            await self.rooms_client.add_or_update_participants(room_id=create_response.id, participants=update_participants)
+            await self.rooms_client.add_or_update_participants(
+                room_id=create_response.id, participants=update_participants
+            )
             update_response = self.rooms_client.list_participants(room_id=create_response.id)
             participants = []
             async for participant in update_response:
@@ -335,32 +326,23 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
     @recorded_by_proxy_async
     async def test_add_or_update_participant_with_null_roles_async(self):
         create_participants = [
+            RoomParticipant(communication_identifier=CommunicationUserIdentifier(self.id1), role=None),
+            RoomParticipant(communication_identifier=CommunicationUserIdentifier(self.id2)),
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id1),
-                role=None
+                communication_identifier=CommunicationUserIdentifier(self.id3), role=ParticipantRole.PRESENTER
             ),
-            RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id2)
-            ),
-            RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id3),
-                role=ParticipantRole.PRESENTER
-            )
         ]
 
         expected_participants = [
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id1),
-                role=ParticipantRole.ATTENDEE
+                communication_identifier=CommunicationUserIdentifier(self.id1), role=ParticipantRole.ATTENDEE
             ),
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id2),
-                role=ParticipantRole.ATTENDEE
+                communication_identifier=CommunicationUserIdentifier(self.id2), role=ParticipantRole.ATTENDEE
             ),
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id3),
-                role=ParticipantRole.PRESENTER
-            )
+                communication_identifier=CommunicationUserIdentifier(self.id3), role=ParticipantRole.PRESENTER
+            ),
         ]
         async with self.rooms_client:
             # Check participants with null roles were added in created room
@@ -375,40 +357,31 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
 
             # Check participants were added or updated properly
             add_or_update_participants = [
+                RoomParticipant(communication_identifier=CommunicationUserIdentifier(self.id1), role=None),
                 RoomParticipant(
-                    communication_identifier=CommunicationUserIdentifier(self.id1),
-                    role=None
+                    communication_identifier=CommunicationUserIdentifier(self.id2), role=ParticipantRole.CONSUMER
                 ),
-                RoomParticipant(
-                    communication_identifier=CommunicationUserIdentifier(self.id2),
-                    role=ParticipantRole.CONSUMER
-                ),
-                RoomParticipant(
-                    communication_identifier=CommunicationUserIdentifier(self.id3)
-                ),
-                RoomParticipant(
-                    communication_identifier=CommunicationUserIdentifier(self.id4)
-                )]
+                RoomParticipant(communication_identifier=CommunicationUserIdentifier(self.id3)),
+                RoomParticipant(communication_identifier=CommunicationUserIdentifier(self.id4)),
+            ]
 
             expected_participants = [
                 RoomParticipant(
-                    communication_identifier=CommunicationUserIdentifier(self.id1),
-                    role=ParticipantRole.ATTENDEE
+                    communication_identifier=CommunicationUserIdentifier(self.id1), role=ParticipantRole.ATTENDEE
                 ),
                 RoomParticipant(
-                    communication_identifier=CommunicationUserIdentifier(self.id2),
-                    role=ParticipantRole.CONSUMER
+                    communication_identifier=CommunicationUserIdentifier(self.id2), role=ParticipantRole.CONSUMER
                 ),
                 RoomParticipant(
-                    communication_identifier=CommunicationUserIdentifier(self.id3),
-                    role=ParticipantRole.ATTENDEE
+                    communication_identifier=CommunicationUserIdentifier(self.id3), role=ParticipantRole.ATTENDEE
                 ),
                 RoomParticipant(
-                    communication_identifier=CommunicationUserIdentifier(self.id4),
-                    role=ParticipantRole.ATTENDEE
-                )
+                    communication_identifier=CommunicationUserIdentifier(self.id4), role=ParticipantRole.ATTENDEE
+                ),
             ]
-            await self.rooms_client.add_or_update_participants(room_id=create_response.id, participants=add_or_update_participants)
+            await self.rooms_client.add_or_update_participants(
+                room_id=create_response.id, participants=add_or_update_participants
+            )
             update_response = self.rooms_client.list_participants(room_id=create_response.id)
             updated_participants = []
             async for participant in update_response:
@@ -427,14 +400,16 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
 
             participants = [
                 RoomParticipant(
-                    communication_identifier=CommunicationUserIdentifier("wrong_mri"),
-                    role=ParticipantRole.ATTENDEE),
-                self.users["john"]
+                    communication_identifier=CommunicationUserIdentifier("wrong_mri"), role=ParticipantRole.ATTENDEE
+                ),
+                self.users["john"],
             ]
 
             # update room attributes
             with pytest.raises(HttpResponseError) as ex:
-                await self.rooms_client.add_or_update_participants(room_id=create_response.id, participants=participants)
+                await self.rooms_client.add_or_update_participants(
+                    room_id=create_response.id, participants=participants
+                )
                 assert str(ex.value.status_code) == "400"
                 assert ex.value.message is not None
 
@@ -445,32 +420,26 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
             create_response = await self.rooms_client.create_room()
 
             participants = [
-                RoomParticipant(
-                    communication_identifier=CommunicationUserIdentifier("chris"),
-                    role='kafka'),
-                self.users["john"]
+                RoomParticipant(communication_identifier=CommunicationUserIdentifier("chris"), role="kafka"),
+                self.users["john"],
             ]
 
             # update room attributes
             with pytest.raises(HttpResponseError) as ex:
-                await self.rooms_client.add_or_update_participants(room_id=create_response.id, participants=participants)
+                await self.rooms_client.add_or_update_participants(
+                    room_id=create_response.id, participants=participants
+                )
                 assert str(ex.value.status_code) == "400"
                 assert ex.value.message is not None
 
     @recorded_by_proxy_async
     async def test_remove_participant_async(self):
         # add john and chris to room
-        create_participants = [
-            self.users["john"],
-            self.users["chris"]
-        ]
-        remove_participants = [
-            self.users["john"].communication_identifier
-        ]
+        create_participants = [self.users["john"], self.users["chris"]]
+        remove_participants = [self.users["john"].communication_identifier]
         expected_participants = [
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id3),
-                role=ParticipantRole.ATTENDEE
+                communication_identifier=CommunicationUserIdentifier(self.id3), role=ParticipantRole.ATTENDEE
             )
         ]
         async with self.rooms_client:
@@ -489,22 +458,15 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
     @recorded_by_proxy_async
     async def test_remove_participant_who_do_not_exist_async(self):
         # add john and chris to room
-        create_participants = [
-            self.users["john"],
-            self.users["chris"]
-        ]
-        remove_participants = [
-            self.users["fred"].communication_identifier
-        ]
+        create_participants = [self.users["john"], self.users["chris"]]
+        remove_participants = [self.users["fred"].communication_identifier]
         expected_participants = [
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id1),
-                role=ParticipantRole.PRESENTER
+                communication_identifier=CommunicationUserIdentifier(self.id1), role=ParticipantRole.PRESENTER
             ),
             RoomParticipant(
-                communication_identifier=CommunicationUserIdentifier(self.id3),
-                role=ParticipantRole.ATTENDEE
-            )
+                communication_identifier=CommunicationUserIdentifier(self.id3), role=ParticipantRole.ATTENDEE
+            ),
         ]
         async with self.rooms_client:
             create_response = await self.rooms_client.create_room(participants=create_participants)
@@ -527,8 +489,8 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
 
             participants = [
                 RoomParticipant(
-                    communication_identifier=CommunicationUserIdentifier("wrong_mri"),
-                    role=ParticipantRole.ATTENDEE)
+                    communication_identifier=CommunicationUserIdentifier("wrong_mri"), role=ParticipantRole.ATTENDEE
+                )
             ]
 
             # update room attributes
@@ -593,31 +555,37 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
             await self.rooms_client.delete_room(room_id=response.id)
             self.verify_successful_room_response(response=response, pstn_dial_out_enabled=True)
 
-
     @pytest.mark.live_test_only
     @recorded_by_proxy_async
     async def test_create_room_timerange_pstn_dial_out_enabled(self):
         # room attributes
-        valid_from =  datetime.now() + timedelta(days=3)
+        valid_from = datetime.now() + timedelta(days=3)
         valid_until = valid_from + timedelta(weeks=4)
 
         async with self.rooms_client:
-            response = await self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, pstn_dial_out_enabled=True)
+            response = await self.rooms_client.create_room(
+                valid_from=valid_from, valid_until=valid_until, pstn_dial_out_enabled=True
+            )
 
             # delete created room
             await self.rooms_client.delete_room(room_id=response.id)
-            self.verify_successful_room_response(response=response, valid_from=valid_from, valid_until=valid_until, pstn_dial_out_enabled=True)
+            self.verify_successful_room_response(
+                response=response, valid_from=valid_from, valid_until=valid_until, pstn_dial_out_enabled=True
+            )
 
-
-    def verify_successful_room_response(self, response, valid_from=None, valid_until=None, room_id=None, pstn_dial_out_enabled=None):
+    def verify_successful_room_response(
+        self, response, valid_from=None, valid_until=None, room_id=None, pstn_dial_out_enabled=None
+    ):
         if room_id is not None:
             assert room_id == response.id
         if valid_from is not None:
             assert valid_from.replace(tzinfo=None) == datetime.strptime(
-                response.valid_from, "%Y-%m-%dT%H:%M:%S.%f%z").replace(tzinfo=None)
+                response.valid_from, "%Y-%m-%dT%H:%M:%S.%f%z"
+            ).replace(tzinfo=None)
         if valid_until is not None:
             assert valid_until.replace(tzinfo=None) == datetime.strptime(
-                response.valid_until, "%Y-%m-%dT%H:%M:%S.%f%z").replace(tzinfo=None)
+                response.valid_until, "%Y-%m-%dT%H:%M:%S.%f%z"
+            ).replace(tzinfo=None)
         if pstn_dial_out_enabled is not None:
             assert pstn_dial_out_enabled == response.pstn_dial_out_enabled
         assert response.created_at is not None
@@ -625,4 +593,3 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
         assert response.valid_from is not None
         assert response.valid_until is not None
         assert response.pstn_dial_out_enabled is not None
-
