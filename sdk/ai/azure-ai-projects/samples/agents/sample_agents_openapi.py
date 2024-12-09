@@ -38,22 +38,21 @@ project_client = AIProjectClient.from_connection_string(
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
-with open('./weather_openapi.json', 'r') as f:
+with open("./weather_openapi.json", "r") as f:
     openapi_spec = jsonref.loads(f.read())
 
 # Create Auth object for the OpenApiTool (note that connection or managed identity auth setup requires additional setup in Azure)
 auth = OpenApiAnonymousAuthDetails()
 
 # Initialize agent OpenApi tool using the read in OpenAPI spec
-openapi = OpenApiTool(name="get_weather", spec=openapi_spec, description="Retrieve weather information for a location", auth=auth)
+openapi = OpenApiTool(
+    name="get_weather", spec=openapi_spec, description="Retrieve weather information for a location", auth=auth
+)
 
 # Create agent with OpenApi tool and process assistant run
 with project_client:
     agent = project_client.agents.create_agent(
-        model="gpt-4o-mini",
-        name="my-assistant",
-        instructions="You are a helpful assistant",
-        tools=openapi.definitions
+        model="gpt-4o-mini", name="my-assistant", instructions="You are a helpful assistant", tools=openapi.definitions
     )
     print(f"Created agent, ID: {agent.id}")
 

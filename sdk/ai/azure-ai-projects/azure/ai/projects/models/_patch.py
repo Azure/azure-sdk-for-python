@@ -693,13 +693,18 @@ class AzureAISearchTool(Tool):
 
         pass
 
+
 class OpenApiTool(Tool):
     """
     A tool that retrieves information using an OpenAPI spec.
     """
 
-    def __init__(self, name: str, description: str, spec: Any, auth: OpenApiAuthDetails ):
-        self._definitions = [OpenApiToolDefinition(openapi=OpenApiFunctionDefinition(name=name, description=description, spec=spec, auth=auth))]
+    def __init__(self, name: str, description: str, spec: Any, auth: OpenApiAuthDetails):
+        self._definitions = [
+            OpenApiToolDefinition(
+                openapi=OpenApiFunctionDefinition(name=name, description=description, spec=spec, auth=auth)
+            )
+        ]
 
     @property
     def definitions(self) -> List[ToolDefinition]:
@@ -726,6 +731,7 @@ class OpenApiTool(Tool):
         """
 
         pass
+
 
 class ConnectionTool(Tool):
     """
@@ -782,6 +788,7 @@ class FabricTool(ConnectionTool):
         :rtype: List[ToolDefinition]
         """
         return [MicrosoftFabricToolDefinition(fabric_aiskill=ToolConnectionList(connection_list=self.connection_ids))]
+
 
 class SharepointTool(ConnectionTool):
     """
