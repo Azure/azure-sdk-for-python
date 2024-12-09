@@ -332,10 +332,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
 
     def get_next_client(self) -> Optional[_ConfigurationClientWrapper]:
         """
-        Get the next client to be used for the request. find_active_clients needs be called before this method or None
-        client will be returned. If load_balancing_enabled isn't enabled the first active client will be returned,
-        which is the provided endpoint unless it has failed. If load_balancing_enabled is enabled the next client in
-        the list will be returned.
+        Get the next active client to be used for the request. if `find_active_clients` has never been invoked, this method returns None.
 
         :return: The next client to be used for the request.
         """
