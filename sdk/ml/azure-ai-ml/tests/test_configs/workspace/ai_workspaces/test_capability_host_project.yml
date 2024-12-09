@@ -1,0 +1,9 @@
+name: test_capability_host_project
+description: "Capability host in project for unit tests"
+vector_store_connections:
+  - "vector_store_connection_1"
+ai_services_connections:
+  - "aiservice_connection_1"
+storage_connections:
+  - "storage_connection_1"
+capability_host_kind: "Agents"
