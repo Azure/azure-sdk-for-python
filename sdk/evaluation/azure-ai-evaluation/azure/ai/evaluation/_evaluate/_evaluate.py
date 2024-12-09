@@ -813,11 +813,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     studio_url = None
     if trace_destination:
         studio_url = _log_metrics_and_instance_results(
-            metrics,
-            result_df,
-            trace_destination,
-            target_run,
-            evaluation_name,
+            metrics, result_df, trace_destination, target_run, evaluation_name, **kwargs
         )
 
     result_df_dict = result_df.to_dict("records")
