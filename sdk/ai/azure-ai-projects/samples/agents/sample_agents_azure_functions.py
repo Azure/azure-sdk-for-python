@@ -19,6 +19,7 @@ USAGE:
  
     Set this environment variables with your own values:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    STORAGE_SERVICE_ENDPONT - the storage service queue endpoint, triggering Azure function.
     Please see Getting Started with Azure Functions page for more information on Azure Functions:
     https://learn.microsoft.com/azure/azure-functions/functions-get-started
 """
@@ -38,7 +39,7 @@ project_client = AIProjectClient.from_connection_string(
 
 with project_client:
 
-    storage_queue_uri = os.environ["STORAGE_QUEUE_URI"]
+    storage_service_endpoint = os.environ["STORAGE_SERVICE_ENDPONT"]
 
     azure_function_tool = AzureFunctionTool(
         name="foo",
@@ -52,18 +53,18 @@ with project_client:
         },
         input_queue=AzureFunctionStorageQueue(
             queue_name="azure-function-foo-input",
-            storage_service_uri=storage_queue_uri,
+            storage_service_endpoint=storage_service_endpoint,
         ),
         output_queue=AzureFunctionStorageQueue(
             queue_name="azure-function-tool-output",
-            storage_service_uri=storage_queue_uri,
+            storage_service_endpoint=storage_service_endpoint,
         ),
     )
 
     agent = project_client.agents.create_agent(
         model="gpt-4",
         name="azure-function-agent-foo",
-        instructions=f"You are a helpful support agent. Use the provided function any time the prompt contains the string 'What would foo say?'. When you invoke the function, ALWAYS specify the output queue uri parameter as '{storage_queue_uri}/azure-function-tool-output'. Always responds with \"Foo says\" and then the response from the tool.",
+        instructions=f"You are a helpful support agent. Use the provided function any time the prompt contains the string 'What would foo say?'. When you invoke the function, ALWAYS specify the output queue uri parameter as '{storage_service_endpoint}/azure-function-tool-output'. Always responds with \"Foo says\" and then the response from the tool.",
         tools=azure_function_tool.definitions,
     )
     print(f"Created agent, agent ID: {agent.id}")

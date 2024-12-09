@@ -17,6 +17,8 @@ from azure.ai.projects.aio import AIProjectClient
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.projects.models import (
+    AzureFunctionTool,
+    AzureFunctionStorageQueue,
     CodeInterpreterTool,
     CodeInterpreterToolResource,
     FilePurpose,
@@ -25,7 +27,6 @@ from azure.ai.projects.models import (
     FunctionTool,
     MessageAttachment,
     MessageRole,
-    RunAdditionalFieldList,
     RunStatus,
     ThreadMessageOptions,
     ToolResources,
@@ -67,6 +68,7 @@ agentClientPreparer = functools.partial(
     "azure_ai_projects",
     azure_ai_projects_connection_string="https://foo.bar.some-domain.ms;00000000-0000-0000-0000-000000000000;rg-resour-cegr-oupfoo1;abcd-abcdabcdabcda-abcdefghijklm",
     azure_ai_projects_data_path="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-resour-cegr-oupfoo1/workspaces/abcd-abcdabcdabcda-abcdefghijklm/datastores/workspaceblobstore/paths/LocalUpload/000000000000/product_info_1.md",
+    azure_ai_projects_storage_queue="https://foobar.queue.core.windows.net",
 )
 """
 agentClientPreparer = functools.partial(
@@ -1683,6 +1685,73 @@ class TestagentClientAsync(AzureRecordedTestCase):
         assert len(messages)
         await ai_client.agents.delete_agent(agent.id)
         await ai_client.close()
+    
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_azure_function_call(self, **kwargs):
+        """Test calling Azure functions."""
+        # create client
+        storage_queue = kwargs["azure_ai_projects_storage_queue"]
+        async with self.create_client(**kwargs) as client:
+            azure_function_tool = AzureFunctionTool(
+                name="foo",
+                description="Get answers from the foo bot.",
+                parameters={
+                    "type": "object",
+                    "properties": {
+                        "query": {"type": "string", "description": "The question to ask."},
+                        "outputqueueuri": {"type": "string", "description": "The full output queue uri."},
+                    },
+                },
+                input_queue=AzureFunctionStorageQueue(
+                    queue_name="azure-function-foo-input",
+                    storage_service_endpoint=storage_queue,
+                ),
+                output_queue=AzureFunctionStorageQueue(
+                    queue_name="azure-function-tool-output",
+                    storage_service_endpoint=storage_queue,
+                ),
+            )
+            agent = await client.agents.create_agent(
+                model="gpt-4",
+                name="azure-function-agent-foo",
+                instructions=(
+                    "You are a helpful support agent. Use the provided function any "
+                    "time the prompt contains the string 'What would foo say?'. When "
+                    "you invoke the function, ALWAYS specify the output queue uri parameter as "
+                    f"'{storage_queue}/azure-function-tool-output'"
+                    '. Always responds with "Foo says" and then the response from the tool.'
+                ),
+                headers={"x-ms-enable-preview": "true"},
+                tools=azure_function_tool.definitions,
+            )
+            assert agent.id, "The agent was not created"
+
+            # Create a thread
+            thread = await client.agents.create_thread()
+            assert thread.id, "The thread was not created."
+
+            # Create a message
+            message = await client.agents.create_message(
+                thread_id=thread.id,
+                role="user",
+                content="What is the most prevalent element in the universe? What would foo say?",
+            )
+            assert message.id, "The message was not created."
+
+            run = await client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+            assert run.status == RunStatus.COMPLETED, f"The run is in {run.status} state."
+
+            # Get messages from the thread
+            messages = await client.agents.get_messages(thread_id=thread.id)
+            assert len(messages.text_messages), "No messages were received."
+
+            # Chech that we have function response in at least one message.
+            assert any("bar" in msg.text.value.lower() for msg in messages.text_messages)
+
+            # Delete the agent once done
+            result = await client.agents.delete_agent(agent.id)
+            assert result.deleted, "The agent was not deleted."
 
     @agentClientPreparer()
     @recorded_by_proxy_async
@@ -1727,82 +1796,6 @@ class TestagentClientAsync(AzureRecordedTestCase):
             messages = await client.agents.list_messages(thread_id=thread.id)
             assert len(messages.data), "The data from the agent was not received."
 
-    @agentClientPreparer()
-    @recorded_by_proxy_async
-    async def test_include_file_search_results_no_stream(self, **kwargs):
-        """Test using include_file_search."""
-        await self._do_test_include_file_search_results(use_stream=False, **kwargs)
-    
-    @agentClientPreparer()
-    @recorded_by_proxy_async
-    async def test_include_file_search_results_stream(self, **kwargs):
-        """Test using include_file_search with streaming."""
-        await self._do_test_include_file_search_results(use_stream=True, **kwargs)
-    
-    async def _do_test_include_file_search_results(self, use_stream, **kwargs):
-        """Run the test with file search results."""
-        async with self.create_client(**kwargs) as ai_client:
-            # ds = [
-            #     VectorStoreDataSource(
-            #         asset_identifier=kwargs["azure_ai_projects_data_path"],
-            #         asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
-            #     )
-            # ]
-            # vector_store = await ai_client.agents.create_vector_store_and_poll(
-            #     file_ids=[], data_sources=ds, name="my_vectorstore"
-            # )
-            vector_store = await ai_client.agents.get_vector_store('vs_M9oxKG7JngORHcYNBGVZ6Iz3')
-            assert vector_store.id
-            
-            file_search = FileSearchTool(vector_store_ids=[vector_store.id])
-            agent = await ai_client.agents.create_agent(
-                model="gpt-4o",
-                name="my-assistant",
-                instructions="Hello, you are helpful assistant and can search information from uploaded files",
-                tools=file_search.definitions,
-                tool_resources=file_search.resources
-            )
-            assert agent.id
-            thread = await ai_client.agents.create_thread()
-            assert thread.id
-            # create message
-            message = await ai_client.agents.create_message(
-                thread_id=thread.id, role="user", content="What does the attachment say?"
-            )
-            assert message.id, "The message was not created."
-    
-            if use_stream:
-                async with ai_client.agents.create_stream(
-                    thread_id=thread.id, assistant_id=agent.id,
-                    include=[RunAdditionalFieldList.FILE_SEARCH_CONTENTS]
-                ) as stream:
-                    stream.until_done()
-                    steps = ai_client.agents.list_run_steps(
-                        thread_id=thread.id,
-                        run_id=stream.response_iterator.id,
-                        include=[RunAdditionalFieldList.FILE_SEARCH_CONTENTS]
-                    )
-            else:
-                run = await ai_client.agents.create_and_process_run(
-                    thread_id=thread.id,
-                    assistant_id=agent.id,
-                    include=["foo", "bar"], #[RunAdditionalFieldList.FILE_SEARCH_CONTENTS]
-                )
-                assert run.status == RunStatus.COMPLETED
-                steps = ai_client.agents.list_run_steps(
-                    thread_id=thread.id,
-                    run_id=stream.response_iterator.id,
-                    include=[RunAdditionalFieldList.FILE_SEARCH_CONTENTS]
-                )
-            messages = await ai_client.agents.list_messages(thread_id=thread.id)
-            assert len(messages)
-            
-            await ai_client.agents.delete_vector_store(vector_store.id)
-            # delete agent and close client
-            await ai_client.agents.delete_agent(agent.id)
-            print("Deleted agent")
-            await ai_client.close()
-    
     async def _get_file_id_maybe(self, ai_client: AIProjectClient, **kwargs) -> str:
         """Return file id if kwargs has file path."""
         if "file_path" in kwargs:

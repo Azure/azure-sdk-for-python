@@ -502,7 +502,7 @@ class ToolDefinition(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureAISearchToolDefinition, AzureFunctionToolDefinition, BingGroundingToolDefinition,
     CodeInterpreterToolDefinition, MicrosoftFabricToolDefinition, FileSearchToolDefinition,
-    FunctionToolDefinition, SharepointToolDefinition
+    FunctionToolDefinition, OpenApiToolDefinition, SharepointToolDefinition
 
 
     :ivar type: The object type. Required. Default value is None.
@@ -645,14 +645,14 @@ class AzureFunctionStorageQueue(_model_base.Model):
     """The structure for keeping storage queue name and URI.
 
 
-    :ivar storage_service_uri: URI to the Azure Storage Queue service allowing you to manipulate a
-     queue. Required.
-    :vartype storage_service_uri: str
+    :ivar storage_service_endpoint: URI to the Azure Storage Queue service allowing you to
+     manipulate a queue. Required.
+    :vartype storage_service_endpoint: str
     :ivar queue_name: The name of an Azure function storage queue. Required.
     :vartype queue_name: str
     """
 
-    storage_service_uri: str = rest_field(name="queue_service_uri")
+    storage_service_endpoint: str = rest_field(name="queue_service_endpoint")
     """URI to the Azure Storage Queue service allowing you to manipulate a queue. Required."""
     queue_name: str = rest_field()
     """The name of an Azure function storage queue. Required."""
@@ -661,7 +661,7 @@ class AzureFunctionStorageQueue(_model_base.Model):
     def __init__(
         self,
         *,
-        storage_service_uri: str,
+        storage_service_endpoint: str,
         queue_name: str,
     ) -> None: ...
 
