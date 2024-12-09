@@ -303,6 +303,19 @@ class MessageStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Event sent before a message is completed. The data of this event is of type ThreadMessage"""
 
 
+class OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """
+    Authentication type for OpenApi endpoint. Allowed types are:
+    - Anonymous (no authentication required)
+    - Connection (requires connection_id to endpoint, as setup in AI Foundry)
+    - Managed_Identity (requires audience for identity based auth)
+    """
+
+    ANONYMOUS = "anonymous"
+    CONNECTION = "connection"
+    MANAGED_IDENTITY = "managed_identity"
+
+
 class RunStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Possible values for the status of an agent thread run."""
 

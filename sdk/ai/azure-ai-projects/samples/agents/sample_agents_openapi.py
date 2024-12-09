@@ -4,29 +4,29 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_azure_ai_search.py
+FILE: sample_agents_openapi.py
 
 DESCRIPTION:
     This sample demonstrates how to use agent operations with the 
-    Azure AI Search tool from the Azure Agents service using a synchronous client.
-    To learn how to set up an Azure AI Search resource,
-    visit https://learn.microsoft.com/azure/search/search-get-started-portal
+    OpenAPI tool from the Azure Agents service using a synchronous client.
+    To learn more about OpenAPI specs, visit https://learn.microsoft.com/openapi
 
 USAGE:
-    python sample_agents_azure_ai_search.py
+    python sample_agents_openapi.py
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity
+    pip install azure-ai-projects azure-identity jsonref
 
     Set this environment variables with your own values:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
 
 import os
+import jsonref
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import AzureAISearchTool
+from azure.ai.projects.models import OpenApiTool, OpenApiAnonymousAuthDetails
 
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
@@ -38,27 +38,22 @@ project_client = AIProjectClient.from_connection_string(
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
-conn_list = project_client.connections.list()
-conn_id = ""
-for conn in conn_list:
-    if conn.connection_type == "CognitiveSearch":
-        conn_id = conn.id
-        break
+with open('./weather_openapi.json', 'r') as f:
+    openapi_spec = jsonref.loads(f.read())
 
-print(conn_id)
+# Create Auth object for the OpenApiTool (note that connection or managed identity auth setup requires additional setup in Azure)
+auth = OpenApiAnonymousAuthDetails()
 
-# Initialize agent AI search tool and add the search index connection id
-ai_search = AzureAISearchTool(index_connection_id=conn_id, index_name="myindexname")
+# Initialize agent OpenApi tool using the read in OpenAPI spec
+openapi = OpenApiTool(name="get_weather", spec=openapi_spec, description="Retrieve weather information for a location", auth=auth)
 
-# Create agent with AI search tool and process assistant run
+# Create agent with OpenApi tool and process assistant run
 with project_client:
     agent = project_client.agents.create_agent(
         model="gpt-4o-mini",
         name="my-assistant",
         instructions="You are a helpful assistant",
-        tools=ai_search.definitions,
-        tool_resources=ai_search.resources,
-        headers={"x-ms-enable-preview": "true"},
+        tools=openapi.definitions
     )
     print(f"Created agent, ID: {agent.id}")
 
@@ -70,7 +65,7 @@ with project_client:
     message = project_client.agents.create_message(
         thread_id=thread.id,
         role="user",
-        content="What inventory is available currently?",
+        content="What's the weather in Seattle?",
     )
     print(f"Created message, ID: {message.id}")
 
