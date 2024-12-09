@@ -33,9 +33,7 @@ class TestDACAnalyzeCustomModel(DocumentIntelligenceTest):
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
         client = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential())
         with pytest.raises(ValueError) as e:
-            client.begin_analyze_document(
-                model_id=None, body=AnalyzeDocumentRequest(url_source="https://badurl.jpg")
-            )
+            client.begin_analyze_document(model_id=None, body=AnalyzeDocumentRequest(url_source="https://badurl.jpg"))
         assert "No value for given attribute" in str(e.value)
 
     @DocumentIntelligencePreparer()
@@ -53,9 +51,7 @@ class TestDACAnalyzeCustomModel(DocumentIntelligenceTest):
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
         client = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential())
         with pytest.raises(ResourceNotFoundError) as e:
-            client.begin_analyze_document(
-                model_id="", body=AnalyzeDocumentRequest(url_source="https://badurl.jpg")
-            )
+            client.begin_analyze_document(model_id="", body=AnalyzeDocumentRequest(url_source="https://badurl.jpg"))
         assert "Resource not found" in str(e.value)
 
     @skip_flaky_test

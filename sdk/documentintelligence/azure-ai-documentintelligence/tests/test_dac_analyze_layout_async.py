@@ -59,9 +59,7 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
                 cls=callback,
             )
             raw_response = await poller.result()
-            raw_analyze_result = AnalyzeOperation._deserialize(
-                raw_response.http_response.json(), []
-            ).analyze_result
+            raw_analyze_result = AnalyzeOperation._deserialize(raw_response.http_response.json(), []).analyze_result
 
             poller = await client.begin_analyze_document(
                 "prebuilt-layout",
@@ -105,9 +103,7 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
                 cls=callback,
             )
             raw_response = await poller.result()
-            raw_analyze_result = AnalyzeOperation._deserialize(
-                raw_response.http_response.json(), []
-            ).analyze_result
+            raw_analyze_result = AnalyzeOperation._deserialize(raw_response.http_response.json(), []).analyze_result
 
             poller = await client.begin_analyze_document(
                 "prebuilt-layout",
@@ -150,9 +146,7 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
                 cls=callback,
             )
             raw_response = await poller.result()
-            raw_analyze_result = AnalyzeOperation._deserialize(
-                raw_response.http_response.json(), []
-            ).analyze_result
+            raw_analyze_result = AnalyzeOperation._deserialize(raw_response.http_response.json(), []).analyze_result
 
             poller = await client.begin_analyze_document(
                 "prebuilt-layout",

@@ -32,7 +32,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._model_base import SdkJSONEncoder, _deserialize
+from ..._model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._operations._operations import (
     build_document_intelligence_administration_authorize_classifier_copy_request,
     build_document_intelligence_administration_authorize_model_copy_request,
@@ -144,7 +144,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -478,7 +478,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -547,7 +547,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -606,7 +606,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -683,7 +683,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1053,7 +1053,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1106,7 +1106,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -1165,7 +1165,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1238,7 +1238,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1503,7 +1503,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1688,7 +1688,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1936,7 +1936,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1999,7 +1999,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2201,7 +2201,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2296,7 +2296,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -2346,7 +2346,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2403,7 +2403,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2465,7 +2465,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2561,7 +2561,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -2617,7 +2617,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2870,7 +2870,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2933,7 +2933,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3137,7 +3137,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3232,7 +3232,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -3282,7 +3282,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

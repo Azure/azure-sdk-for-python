@@ -413,59 +413,6 @@ class AnalyzeDocumentRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalyzeOperation(_model_base.Model):
-    """Status and result of the analyze operation.
-
-
-    :ivar status: Operation status.  notStarted, running, succeeded, or failed. Required. Known
-     values are: "notStarted", "running", "failed", "succeeded", "canceled", and "skipped".
-    :vartype status: str or
-     ~azure.ai.documentintelligence.models.DocumentIntelligenceOperationStatus
-    :ivar created_date_time: Date and time (UTC) when the analyze operation was submitted.
-     Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: Date and time (UTC) when the status was last updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar error: Encountered error during document analysis.
-    :vartype error: ~azure.ai.documentintelligence.models.DocumentIntelligenceError
-    :ivar analyze_result: Document analysis result.
-    :vartype analyze_result: ~azure.ai.documentintelligence.models.AnalyzeResult
-    """
-
-    status: Union[str, "_models.DocumentIntelligenceOperationStatus"] = rest_field()
-    """Operation status.  notStarted, running, succeeded, or failed. Required. Known values are:
-     \"notStarted\", \"running\", \"failed\", \"succeeded\", \"canceled\", and \"skipped\"."""
-    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
-    """Date and time (UTC) when the analyze operation was submitted. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
-    """Date and time (UTC) when the status was last updated. Required."""
-    error: Optional["_models.DocumentIntelligenceError"] = rest_field()
-    """Encountered error during document analysis."""
-    analyze_result: Optional["_models.AnalyzeResult"] = rest_field(name="analyzeResult")
-    """Document analysis result."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        status: Union[str, "_models.DocumentIntelligenceOperationStatus"],
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        error: Optional["_models.DocumentIntelligenceError"] = None,
-        analyze_result: Optional["_models.AnalyzeResult"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class AnalyzeResult(_model_base.Model):
     """Document analysis result.
 
