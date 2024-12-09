@@ -172,9 +172,14 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
             retry_total=0 # As mentioned by Pamela, this is required to avoid unnecessary network trips
         )
 
+        blob_client = BlobClient(
+            blob_service_client.url, container_name='test_cont', blob_name='test_blob', credential=storage_account_key, transport=transport, retry_total=0)
+
         # Assert
-        service_properties = await blob_service_client.get_service_properties()
-        assert service_properties is not None
+        content = await blob_client.download_blob()
+        assert content is not None
+        # service_properties = await blob_service_client.get_service_properties()
+        # assert service_properties is not None
 
     @BlobPreparer()
     @recorded_by_proxy_async

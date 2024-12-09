@@ -88,11 +88,13 @@ class MockStorageTransport(AsyncHttpTransport):
                 },
             ),
         )
-        # Since in async-land, we load the body either in pipeline policy for content validation path, or loads in process_content
-        # So we need to inject it into the upper Response object (AioHttpTransportResponse)
-        # This may not be the correct thing to do.. failing on deserialization
-        # aiohttp_transport_resp._content = b"test content"
 
+        # Everything is working as expected, but AttributeError: 'AioHttpTransportResponse' object has no attribute 'content'
+        # I believe this is because typically in the real REST transport, we would switch to a RestAioHttpTransportResponse in the send()
+        # logic, will which give the 'content' @property, which calls into the intermediary layer to do whatever works needs to be done
+        # to retrieve the response from the underlying internal response.
+
+        # aiohttp_transport_resp.content = aiohttp_transport_resp.internal_response._body
         return aiohttp_transport_resp
 
     async def __aenter__(self):

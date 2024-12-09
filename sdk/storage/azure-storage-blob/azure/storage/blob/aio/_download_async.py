@@ -49,7 +49,7 @@ async def process_content(data: Any, start_offset: int, end_offset: int, encrypt
     # Fix Start
     await data.response.load_body()  # Load the body in memory and close the socket
     # Fix End
-    content = cast(bytes, data.response.content)
+    content = cast(bytes, data.response.body())
     if encryption.get('key') is not None or encryption.get('resolver') is not None:
         try:
             return decrypt_blob(

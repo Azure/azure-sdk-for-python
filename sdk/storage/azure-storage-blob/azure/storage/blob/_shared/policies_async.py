@@ -52,7 +52,7 @@ async def is_checksum_retry(response):
         except (StreamClosedError, StreamConsumedError):
             pass
         computed_md5 = response.http_request.headers.get('content-md5', None) or \
-                       encode_base64(StorageContentValidation.get_content_md5(response.http_response.content))
+                       encode_base64(StorageContentValidation.get_content_md5(response.http_response.body()))
         if response.http_response.headers['content-md5'] != computed_md5:
             return True
     return False
