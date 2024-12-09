@@ -41,7 +41,7 @@ with project_client:
 
     # [START create_agent]
     agent = project_client.agents.create_agent(
-        model="gpt-4-1106-preview",
+        model="gpt-4o",
         name="my-assistant",
         instructions="You are helpful assistant",
     )

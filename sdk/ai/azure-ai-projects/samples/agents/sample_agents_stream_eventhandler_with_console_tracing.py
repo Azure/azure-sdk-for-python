@@ -34,7 +34,6 @@ from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import (
     AgentEventHandler,
-    MessageDeltaTextContent,
     MessageDeltaChunk,
     ThreadMessage,
     ThreadRun,
@@ -56,10 +55,7 @@ project_client = AIProjectClient.from_connection_string(
 
 class MyEventHandler(AgentEventHandler):
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
-        for content_part in delta.delta.content:
-            if isinstance(content_part, MessageDeltaTextContent):
-                text_value = content_part.text.value if content_part.text else "No text"
-                print(f"Text delta received: {text_value}")
+        print(f"Text delta received: {delta.text}")
 
     def on_thread_message(self, message: "ThreadMessage") -> None:
         if len(message.content):

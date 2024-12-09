@@ -27,7 +27,7 @@ import json
 from typing import Generator, Generator, Optional
 
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models._models import (
+from azure.ai.projects.models import (
     MessageDeltaChunk,
     MessageDeltaTextContent,
 )

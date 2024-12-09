@@ -23,7 +23,9 @@ USAGE:
 
 import os
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import FileSearchTool
+from azure.ai.projects.models import (
+    FileSearchTool,
+)
 from azure.identity import DefaultAzureCredential
 
 
@@ -91,5 +93,8 @@ with project_client:
     # [END teardown]
 
     # Fetch and log all messages
-    messages = project_client.agents.list_messages(thread_id=thread.id)
-    print(f"Messages: {messages}")
+    messages = project_client.agents.get_messages(thread_id=thread.id)
+
+    # Print citations from the messages
+    for citation in messages.file_citation_annotations:
+        print(citation)
