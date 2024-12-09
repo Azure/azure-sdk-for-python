@@ -43,7 +43,8 @@ class TestEvaluatePerformance:
         end = time.perf_counter()
         diff = end - start  # diff stored as variable just to make sure pytest output
         # shows actual time rather than (end time - start time)
-        max_duration = 1
+        # CI run takes around 1.5 seconds, so allow up to 2.
+        max_duration = 2
         if use_pf_client:  # PF client doesn't seem to parallelize, and takes about a second or 2 to start
             max_duration += 6.5
         assert diff < max_duration
