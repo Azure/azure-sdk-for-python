@@ -63,7 +63,11 @@ from ._models import (
     MessageTextContent,
     MessageTextFileCitationAnnotation,
     MessageTextFilePathAnnotation,
+    MicrosoftFabricToolDefinition,
     OpenAIPageableListOfThreadMessage,
+    OpenApiAuthDetails,
+    OpenApiToolDefinition,
+    OpenApiFunctionDefinition,
     RequiredFunctionToolCall,
     RunStep,
     RunStepDeltaChunk,
@@ -518,25 +522,15 @@ class AzureAISearchTool(Tool):
     A tool that searches for information using Azure AI Search.
     """
 
-    def __init__(self):
-        self.index_list = []
-
-    def add_index(self, index: str, name: str):
-        """
-        Add an index ID to the list of indices used to search.
-
-        :param str index: The index connection id.
-        :param str name: The index name.
-        """
-        # TODO
-        self.index_list.append(IndexResource(index_connection_id=index, index_name=name))
+    def __init__(self, index_connection_id: str, index_name: str):
+        self.index_list = [IndexResource(index_connection_id=index_connection_id, index_name=index_name)]
 
     @property
     def definitions(self) -> List[ToolDefinition]:
         """
         Get the Azure AI search tool definitions.
 
-        :rtype: List[ToolDefinition]
+        :return: A list of tool definitions.
         """
         return [AzureAISearchToolDefinition()]
 
@@ -545,13 +539,50 @@ class AzureAISearchTool(Tool):
         """
         Get the Azure AI search resources.
 
-        :rtype: ToolResources
+        :return: ToolResources populated with azure_ai_search associated resources.
         """
         return ToolResources(azure_ai_search=AzureAISearchResource(index_list=self.index_list))
 
     def execute(self, tool_call: Any) -> Any:
+        """
+        AI Search tool does not execute client-side.
+        """
+
         pass
 
+class OpenApiTool(Tool):
+    """
+    A tool that retrieves information using an OpenAPI spec.
+    """
+
+    def __init__(self, name: str, description: str, spec: Any, auth: OpenApiAuthDetails ):
+        self._definitions = [OpenApiToolDefinition(openapi=OpenApiFunctionDefinition(name=name, description=description, spec=spec, auth=auth))]
+
+    @property
+    def definitions(self) -> List[ToolDefinition]:
+        """
+        Get the OpenApi tool definitions.
+
+        :return: A list of tool definitions.
+        """
+        return cast(List[ToolDefinition], self._definitions)
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the tool resources for the agent.
+
+        :return: An empty ToolResources as OpenApiTool doesn't have specific resources.
+        :rtype: ToolResources
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> Any:
+        """
+        OpenApiTool does not execute client-side.
+        """
+
+        pass
 
 class AzureFunctionTool(Tool):
     """
@@ -649,6 +680,20 @@ class BingGroundingTool(ConnectionTool):
         """
         return [BingGroundingToolDefinition(bing_grounding=ToolConnectionList(connection_list=self.connection_ids))]
 
+
+class FabricTool(ConnectionTool):
+    """
+    A tool that searches for information using Microsoft Fabric.
+    """
+
+    @property
+    def definitions(self) -> List[ToolDefinition]:
+        """
+        Get the Microsoft Fabric tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return [MicrosoftFabricToolDefinition(fabric_aiskill=ToolConnectionList(connection_list=self.connection_ids))]
 
 class SharepointTool(ConnectionTool):
     """
@@ -1074,6 +1119,12 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
     done = False
     buffer = ""
 
+    def __init__(self) -> None:
+        self.response_iterator: Optional[AsyncIterator[bytes]] = None
+        self.event_handler: Optional["BaseAsyncAgentEventHandler[T]"] = None
+        self.submit_tool_outputs: Optional[
+            Callable[[ThreadRun, "BaseAsyncAgentEventHandler[T]"], Awaitable[None]]] = None
+
     def _init(
         self,
         response_iterator: AsyncIterator[bytes],
@@ -1085,6 +1136,8 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
         self.submit_tool_outputs = submit_tool_outputs
 
     async def __anext__(self) -> T:
+        if self.response_iterator is None:
+            raise ValueError("The response handler was not initialized.")
         while True:
             try:
                 chunk = await self.response_iterator.__anext__()
@@ -1124,17 +1177,24 @@ class BaseAgentEventHandler(Iterator[T]):
     done = False
     buffer = ""
 
+    def __init__(self) -> None:
+        self.response_iterator: Optional[Iterator[bytes]] = None
+        self.event_handler: Optional["BaseAgentEventHandler[T]"] = None
+        self.submit_tool_outputs: Optional[Callable[[ThreadRun, "BaseAgentEventHandler[T]"], Awaitable[None]]] = None
+
     def _init(
         self,
         response_iterator: Iterator[bytes],
         submit_tool_outputs: Callable[[ThreadRun, "BaseAgentEventHandler[T]"], Awaitable[None]],
         event_handler: Optional["BaseAgentEventHandler[T]"] = None,
-    ):
+    ) -> None:
         self.response_iterator = response_iterator
         self.event_handler = event_handler
         self.submit_tool_outputs = submit_tool_outputs
 
     def __next__(self) -> T:
+        if self.response_iterator is None:
+            raise ValueError("The response handler was not initialized.")
         while True:
             try:
                 chunk = self.response_iterator.__next__()
@@ -1146,8 +1206,7 @@ class BaseAgentEventHandler(Iterator[T]):
                         event = self._process_event(event_data_str)
                         if event:
                             return event
-                        else:
-                            continue
+                        continue
                 raise
 
             while "\n\n" in self.buffer:
@@ -1178,8 +1237,11 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
         For each http response from API, this method processes the event_data_str from http response.
         And for each event_data_str, we generate one Tuple except for THREAD_MESSAGE_DELTA event.
         For THREAD_MESSAGE_DELTA event, we generate multiple Tuple for each content part of the message delta.
-        Returns:
-            Tuple[str, StreamEventData]: event type and event data
+        
+        :param event_data_str: The data string generated by event.
+        :type event_data_str: str
+        :returns: event type and event data
+        :rtype: Tuple[str, StreamEventData]
         """
         iterator = ProcessAgentDataEventIterator(event_data_str)
         for event_type, event_data_obj in iterator:
@@ -1188,7 +1250,9 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
                 and event_data_obj.status == "requires_action"
                 and isinstance(event_data_obj.required_action, SubmitToolOutputsAction)
             ):
-                await self.submit_tool_outputs(event_data_obj, self)
+                await cast(
+                    Callable[[ThreadRun, "BaseAsyncAgentEventHandler"], Awaitable[None]],
+                    self.submit_tool_outputs)(event_data_obj, self)
 
             try:
                 if isinstance(event_data_obj, MessageDeltaTextContent):
@@ -1221,7 +1285,12 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
     ) -> AsyncGenerator[T, None]:
         """
         Iterates through all events until the stream is marked as done.
+
         Calls the provided callback function with each event data.
+        :param yield_callback: The callback to be called on each event.
+        :type yield_callback: Callable[[str, StreamEventData], Awaitable[Optional[T]]]
+        :return: The generator object.
+        :rtype: AsyncGenerator[T, None]
         """
         try:
             async for event_type, event_obj in self:
@@ -1289,10 +1358,13 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData]]):
     def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData]:
         """
         For each http response from API, this method processes the event_data_str from http response.
+        
         And for each event_data_str, we generate one Tuple except for THREAD_MESSAGE_DELTA event.
         For THREAD_MESSAGE_DELTA event, we generate multiple Tuple for each content part of the message delta.
-        Returns:
-            Tuple[str, StreamEventData]: event type and event data
+        :param event_data_str: The data string generated by event.
+        :type event_data_str: str
+        :returns: event type and event data
+        :rtype: Tuple[str, StreamEventData]
         """
 
         iterator = ProcessAgentDataEventIterator(event_data_str)
@@ -1302,7 +1374,9 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData]]):
                 and event_data_obj.status == "requires_action"
                 and isinstance(event_data_obj.required_action, SubmitToolOutputsAction)
             ):
-                self.submit_tool_outputs(event_data_obj, self)
+                cast(
+                    Callable[[ThreadRun, "BaseAgentEventHandler"], Awaitable[None]],
+                    self.submit_tool_outputs)(event_data_obj, self)
 
             try:
                 if isinstance(event_data_obj, MessageDeltaTextContent):
@@ -1335,7 +1409,12 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData]]):
     ) -> Generator[T, None, None]:
         """
         Iterates through all events until the stream is marked as done.
+
         Calls the provided callback function with each event data.
+        :param yield_callback: The callback to be called on each event.
+        :type yield_callback: Callable[[str, StreamEventData], Awaitable[Optional[T]]]
+        :return: The generator object.
+        :rtype: AsyncGenerator[T, None]
         """
         try:
             for event_type, event_obj in self:
@@ -1426,9 +1505,6 @@ class AsyncAgentRunStream(Generic[BaseAsyncAgentEventHandlerT]):
             if asyncio.iscoroutine(result):
                 await result
 
-    def __aiter__(self):
-        return self
-
 
 class AgentRunStream(Generic[BaseAgentEventHandlerT]):
     def __init__(
@@ -1455,9 +1531,6 @@ class AgentRunStream(Generic[BaseAgentEventHandlerT]):
         close_method = getattr(self.response_iterator, "close", None)
         if callable(close_method):
             close_method()
-
-    def __iter__(self):
-        return self
 
 
 class ThreadMessages:
@@ -1583,9 +1656,12 @@ __all__: List[str] = [
     "ThreadMessages",
     "FileSearchTool",
     "FunctionTool",
+    "OpenApiTool",
     "BingGroundingTool",
     "StreamEventData",
     "SharepointTool",
+    "FabricTool",
+    "AzureAISearchTool",
     "SASTokenCredential",
     "Tool",
     "ToolSet",

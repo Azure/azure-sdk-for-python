@@ -1489,7 +1489,6 @@ class TestagentClient(AzureRecordedTestCase):
         ai_client.close()
 
     @agentClientPreparer()
-    @pytest.mark.skip("The API is not supported yet.")
     @recorded_by_proxy
     def test_message_attachement_azure(self, **kwargs):
         """Test message attachment with azure ID."""
@@ -1497,7 +1496,7 @@ class TestagentClient(AzureRecordedTestCase):
             asset_identifier=kwargs["azure_ai_projects_data_path"],
             asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
         )
-        self._do_test_message_attachment(data_sources=[ds], **kwargs)
+        self._do_test_message_attachment(data_source=ds, **kwargs)
 
     @agentClientPreparer()
     @recorded_by_proxy
@@ -1527,7 +1526,7 @@ class TestagentClient(AzureRecordedTestCase):
         # Notice that vector store is created temporarily when using attachments with a default expiration policy of seven days.
         attachment = MessageAttachment(
             file_id=file_id,
-            data_sources=kwargs.get("data_sources"),
+            data_source=kwargs.get("data_source"),
             tools=[
                 FileSearchTool().definitions[0],
                 CodeInterpreterTool().definitions[0],
@@ -1725,7 +1724,7 @@ class TestagentClient(AzureRecordedTestCase):
             asset_identifier=kwargs["azure_ai_projects_data_path"],
             asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
         )
-        self._do_test_create_attachment_in_thread_azure(data_sources=[ds], **kwargs)
+        self._do_test_create_attachment_in_thread_azure(data_source=ds, **kwargs)
 
     @agentClientPreparer()
     @recorded_by_proxy
@@ -1742,7 +1741,7 @@ class TestagentClient(AzureRecordedTestCase):
 
         file_search = FileSearchTool()
         agent = ai_client.agents.create_agent(
-            model="gpt-4o",
+            model="gpt-4-1106-preview",
             name="my-assistant",
             instructions="Hello, you are helpful assistant and can search information from uploaded files",
             tools=file_search.definitions,
@@ -1752,7 +1751,7 @@ class TestagentClient(AzureRecordedTestCase):
         # create message
         attachment = MessageAttachment(
             file_id=file_id,
-            data_sources=kwargs.get("data_sources"),
+            data_source=kwargs.get("data_source"),
             tools=[
                 FileSearchTool().definitions[0],
                 CodeInterpreterTool().definitions[0],
