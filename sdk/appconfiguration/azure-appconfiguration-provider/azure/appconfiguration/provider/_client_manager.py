@@ -350,8 +350,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
 
     def find_active_clients(self):
         """
-        Figures out the current active clients, if _load_balancing_enabled is enabled the start of the list will be the
-        one after the last active client used.
+        Return a list of clients that are not in backoff state. If load balancing is enabled, the most recently used client is moved to the end of the list. 
         """
         active_clients = [client for client in self._replica_clients if client.is_active()]
 
