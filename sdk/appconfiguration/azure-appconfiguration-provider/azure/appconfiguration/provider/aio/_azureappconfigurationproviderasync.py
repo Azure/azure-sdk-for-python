@@ -9,8 +9,8 @@ import logging
 from typing import (
     Any,
     Awaitable,
-    Dict,
     Callable,
+    Dict,
     Mapping,
     Optional,
     overload,
@@ -23,9 +23,9 @@ from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
 )
+from azure.core.exceptions import AzureError, HttpResponseError
 from azure.keyvault.secrets.aio import SecretClient
 from azure.keyvault.secrets import KeyVaultSecretIdentifier
-from azure.core.exceptions import AzureError, HttpResponseError
 
 from .._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
 from .._constants import (
@@ -214,17 +214,9 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     provider = await _buildprovider(connection_string, endpoint, credential, uses_key_vault=uses_key_vault, **kwargs)
     # Discovering replicas outside of init as it's async
     await provider._replica_client_manager.setup_initial_clients()  # pylint:disable=protected-access
-    headers = get_headers(
-        kwargs.pop("headers", {}),
-        "Startup",
-        provider._replica_client_manager.get_client_count() - 1,  # pylint:disable=protected-access
-        provider._feature_flag_enabled,  # pylint:disable=protected-access
-        provider._feature_filter_usage,  # pylint:disable=protected-access
-        provider._uses_key_vault,  # pylint:disable=protected-access
-    )
 
     try:
-        await provider._load_all(headers=headers)  # pylint:disable=protected-access
+        await provider._load_all(**kwargs)  # pylint:disable=protected-access
     except Exception as e:
         delay_failure(start_time)
         raise e
@@ -414,11 +406,19 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
     async def _load_all(self, **kwargs):
         active_clients = self._replica_client_manager.get_active_clients()
+        headers = get_headers(
+            kwargs.pop("headers", {}),
+            "Startup",
+            self._replica_client_manager.get_client_count() - 1,
+            self._feature_flag_enabled,
+            self._feature_filter_usage,
+            self._uses_key_vault,
+        )
 
         for client in active_clients:
             try:
                 configuration_settings, sentinel_keys = await client.load_configuration_settings(
-                    self._selects, self._refresh_on, **kwargs
+                    self._selects, self._refresh_on, headers=headers, **kwargs
                 )
                 configuration_settings_processed = {}
                 for config in configuration_settings:
@@ -427,7 +427,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     configuration_settings_processed[key] = value
                 if self._feature_flag_enabled:
                     feature_flags, feature_flag_sentinel_keys, used_filters = await client.load_feature_flags(
-                        self._feature_flag_selectors, self._feature_flag_refresh_enabled, **kwargs
+                        self._feature_flag_selectors, self._feature_flag_refresh_enabled, headers=headers, **kwargs
                     )
                     self._feature_filter_usage = used_filters
                     configuration_settings_processed[FEATURE_MANAGEMENT_KEY] = {}
@@ -436,7 +436,6 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 for (key, label), etag in self._refresh_on.items():
                     if not etag:
                         try:
-                            headers = kwargs.get("headers", {})
                             sentinel = await client.get_configuration_setting(
                                 key, label, headers=headers
                             )  # type:ignore

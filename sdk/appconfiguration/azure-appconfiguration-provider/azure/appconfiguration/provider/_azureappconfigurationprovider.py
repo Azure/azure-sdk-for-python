@@ -41,7 +41,6 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 JSON = Mapping[str, Any]
-logger = logging.getLogger(__name__)
 
 
 @overload
@@ -62,7 +61,7 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     feature_flag_enabled: bool = False,
     feature_flag_selectors: Optional[List[SettingSelector]] = None,
     feature_flag_refresh_enabled: bool = False,
-    **kwargs
+    **kwargs,
 ) -> "AzureAppConfigurationProvider":
     """
     Loads configuration settings from Azure App Configuration into a Python application.
@@ -120,7 +119,7 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     feature_flag_enabled: bool = False,
     feature_flag_selectors: Optional[List[SettingSelector]] = None,
     feature_flag_refresh_enabled: bool = False,
-    **kwargs
+    **kwargs,
 ) -> "AzureAppConfigurationProvider":
     """
     Loads configuration settings from Azure App Configuration into a Python application.
@@ -208,17 +207,9 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     )
 
     provider = _buildprovider(connection_string, endpoint, credential, uses_key_vault=uses_key_vault, **kwargs)
-    headers = get_headers(
-        kwargs.pop("headers", {}),
-        "Startup",
-        provider._replica_client_manager.get_client_count() - 1,  # pylint:disable=protected-access
-        provider._feature_flag_enabled,  # pylint:disable=protected-access
-        provider._feature_filter_usage,  # pylint:disable=protected-access
-        provider._uses_key_vault,  # pylint:disable=protected-access
-    )
 
     try:
-        provider._load_all(headers=headers)  # pylint:disable=protected-access
+        provider._load_all(**kwargs)  # pylint:disable=protected-access
     except Exception as e:
         delay_failure(start_time)
         raise e
@@ -396,11 +387,19 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
     def _load_all(self, **kwargs):
         active_clients = self._replica_client_manager.get_active_clients()
+        headers = get_headers(
+            kwargs.pop("headers", {}),
+            "Startup",
+            self._replica_client_manager.get_client_count() - 1,
+            self._feature_flag_enabled,
+            self._feature_filter_usage,
+            self._uses_key_vault,
+        )
 
         for client in active_clients:
             try:
                 configuration_settings, sentinel_keys = client.load_configuration_settings(
-                    self._selects, self._refresh_on, **kwargs
+                    self._selects, self._refresh_on, headers=headers, **kwargs
                 )
                 configuration_settings_processed = {}
                 for config in configuration_settings:
@@ -409,7 +408,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     configuration_settings_processed[key] = value
                 if self._feature_flag_enabled:
                     feature_flags, feature_flag_sentinel_keys, used_filters = client.load_feature_flags(
-                        self._feature_flag_selectors, self._feature_flag_refresh_enabled, **kwargs
+                        self._feature_flag_selectors, self._feature_flag_refresh_enabled, headers=headers, **kwargs
                     )
                     self._feature_filter_usage = used_filters
                     configuration_settings_processed[FEATURE_MANAGEMENT_KEY] = {}
@@ -418,7 +417,6 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 for (key, label), etag in self._refresh_on.items():
                     if not etag:
                         try:
-                            headers = kwargs.get("headers", {})
                             sentinel = client.get_configuration_setting(key, label, headers=headers)  # type:ignore
                             self._refresh_on[(key, label)] = sentinel.etag  # type:ignore
                         except HttpResponseError as e:
