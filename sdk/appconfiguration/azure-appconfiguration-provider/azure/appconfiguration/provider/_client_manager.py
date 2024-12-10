@@ -332,7 +332,8 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
 
     def get_next_active_client(self) -> Optional[_ConfigurationClientWrapper]:
         """
-        Get the next active client to be used for the request. if `find_active_clients` has never been invoked, this method returns None.
+        Get the next active client to be used for the request. if `find_active_clients` has never been invoked, this
+        method returns None.
 
         :return: The next client to be used for the request.
         """
@@ -350,7 +351,8 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
 
     def find_active_clients(self):
         """
-        Return a list of clients that are not in backoff state. If load balancing is enabled, the most recently used client is moved to the end of the list. 
+        Return a list of clients that are not in backoff state. If load balancing is enabled, the most recently used
+        client is moved to the end of the list.
         """
         active_clients = [client for client in self._replica_clients if client.is_active()]
 
@@ -421,13 +423,15 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
                             **self._args
                         )
                     )
-        random.shuffle(discovered_clients)
-        self._replica_clients = [self._original_client] + discovered_clients
         self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
+        if updated_endpoints and not self._load_balancing_enabled:
+            random.shuffle(discovered_clients)
+            self._replica_clients = [self._original_client] + discovered_clients
         if updated_endpoints and self._load_balancing_enabled:
             # Reshuffle only if a new client was added and _load_balancing_enabled is enabled
             # This allways needs to be shuffled, but if load balancing is enabled than the primary endpoint need to be
             #  shuffled too.
+            self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
             random.shuffle(self._replica_clients)
 
     def backoff(self, client: _ConfigurationClientWrapper):
