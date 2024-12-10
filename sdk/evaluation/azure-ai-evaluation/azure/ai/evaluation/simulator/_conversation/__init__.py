@@ -128,6 +128,7 @@ class ConversationBot:
         self.conversation_starter: Optional[Union[str, jinja2.Template, Dict]] = None
         if role == ConversationRole.USER:
             if "conversation_starter" in self.persona_template_args:
+                print(self.persona_template_args)
                 conversation_starter_content = self.persona_template_args["conversation_starter"]
                 if isinstance(conversation_starter_content, dict):
                     self.conversation_starter = conversation_starter_content
