@@ -23,25 +23,15 @@ from azure.ai.ml._azure_environments import (
     _resource_to_scopes,
 )
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.dataset_dataplane import (
-    AzureMachineLearningWorkspaces as ServiceClientDatasetDataplane,
-)
-from azure.ai.ml._restclient.model_dataplane import (
-    AzureMachineLearningWorkspaces as ServiceClientModelDataplane,
-)
-from azure.ai.ml._restclient.runhistory import (
-    AzureMachineLearningWorkspaces as ServiceClientRunHistory,
-)
+from azure.ai.ml._restclient.dataset_dataplane import AzureMachineLearningWorkspaces as ServiceClientDatasetDataplane
+from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspaces as ServiceClientModelDataplane
+from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as ServiceClientRunHistory
 from azure.ai.ml._restclient.runhistory.models import Run
-from azure.ai.ml._restclient.v2023_04_01_preview import (
-    AzureMachineLearningWorkspaces as ServiceClient022023Preview,
-)
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, ListViewType, UserIdentity
 from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_2401
-from azure.ai.ml._restclient.v2024_10_01_preview.models import (
-    JobType as RestJobType_20241001Preview,
-)
+from azure.ai.ml._restclient.v2024_10_01_preview.models import JobType as RestJobType_20241001Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -115,11 +105,7 @@ from ..entities._job.pipeline._io import InputOutputBase, PipelineInput, _GroupA
 from ._component_operations import ComponentOperations
 from ._compute_operations import ComputeOperations
 from ._dataset_dataplane_operations import DatasetDataplaneOperations
-from ._job_ops_helper import (
-    get_git_properties,
-    get_job_output_uris_from_dataplane,
-    stream_logs_until_completion,
-)
+from ._job_ops_helper import get_git_properties, get_job_output_uris_from_dataplane, stream_logs_until_completion
 from ._local_job_invoker import is_local_run, start_run_if_local
 from ._model_dataplane_operations import ModelDataplaneOperations
 from ._operation_orchestrator import (
@@ -174,7 +160,7 @@ class JobOperations(_ScopeDependentOperations):
         **kwargs: Any,
     ) -> None:
         super(JobOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
 
         self._operation_2023_02_preview = service_client_02_2023_preview.jobs
         self._service_client = service_client_02_2023_preview
