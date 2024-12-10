@@ -223,7 +223,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert_job_cancel(dsl_pipeline, client)
 
     # TODO: Enable this when type fixed on master.
-    @pytest.mark.skip(reason="marshmallow.exceptions.ValidationError: miss required jobs.node.component")
     @pytest.mark.parametrize(
         "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
         PARAMETERS_TO_TEST,
@@ -253,7 +252,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         set_run_settings(dsl_pipeline.settings, pipeline_runsettings_dict)
         assert_job_cancel(dsl_pipeline, client)
 
-    @pytest.mark.skipif(condition=not is_live(), reason="unknown recording error to further investigate")
     def test_pipeline_with_setting_node_output(self, client: MLClient) -> None:
         component_dir = Path(__file__).parent.parent.parent / "test_configs" / "internal" / "command-component"
         tsv_func = load_component(component_dir / "command-linux/one-line-tsv/component.yaml")

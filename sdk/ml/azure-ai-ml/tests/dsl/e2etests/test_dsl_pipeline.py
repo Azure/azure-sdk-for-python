@@ -665,7 +665,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    @pytest.mark.skip("Skipping due to Spark version Upgrade")
     def test_spark_with_optional_inputs(self, randstr: Callable[[str], str], client: MLClient):
         component_yaml = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/component_with_optional_inputs.yml"
         spark_with_optional_inputs_component_func = load_component(source=component_yaml)
@@ -1380,7 +1379,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         # assert "optional_param_with_default" not in next(pipeline_job.jobs.values().__iter__()).inputs
 
     @pytest.mark.disable_mock_code_hash
-    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_component_reuse(self, client: MLClient) -> None:
         path = "./tests/test_configs/components/helloworld_component.yml"
         component_func1 = load_component(source=path)
@@ -1409,7 +1407,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert len(component_ids) == 1, f"Got multiple component id: {component_ids} for same anon component."
 
     @pytest.mark.disable_mock_code_hash
-    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_pipeline_reuse(self, client: MLClient, randstr: Callable[[str], str], randint: Callable) -> None:
         component_yaml = components_dir / "helloworld_component.yml"
         component_func1 = load_component(source=component_yaml, params_override=[{"name": randstr("component_name")}])
@@ -1611,7 +1608,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         job = client.jobs.create_or_update(pipeline, force_rerun=True)
         assert job.settings.force_rerun is True
 
-    @pytest.mark.skip("TODO (2370129): Recording fails due to 'Cannot find pipeline run' error")
     def test_parallel_components_with_tabular_input(self, client: MLClient) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_tabular_input"
 
@@ -1646,7 +1642,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
-    @pytest.mark.skip("TODO (2370129): Recording fails due to 'Cannot find pipeline run' error")
     def test_parallel_components_with_tabular_input_bind_to_literal_input(self, client: MLClient) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_tabular_input"
 
@@ -1685,7 +1680,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
-    @pytest.mark.skip("TODO (2370129): Recording fails due to 'Cannot find pipeline run' error")
     def test_parallel_components_with_file_input(self, client: MLClient) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
 
@@ -1716,7 +1710,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
-    @pytest.mark.skip("TODO (2370129): Recording fails due to 'Cannot find pipeline run' error")
     def test_parallel_run_function(self, client: MLClient):
         data = Input(
             type=AssetTypes.MLTABLE,
@@ -1776,7 +1769,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
-    @pytest.mark.skip("TODO (2370129): Recording fails due to 'Cannot find pipeline run' error")
     def test_parallel_run_function_run_settings_bind_to_literal_input(self, client: MLClient):
         data = Input(
             type=AssetTypes.MLTABLE,
@@ -2161,7 +2153,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO(2177353): investigate why this test fails.")
     def test_dsl_pipeline_with_only_setting_binding_node(self, client: MLClient):
         # Todo: checkout run priority when backend is ready
         from test_configs.dsl_pipeline.pipeline_with_set_binding_output_input.pipeline import (
@@ -2219,7 +2210,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO(2177353): investigate why this test fails.")
     def test_dsl_pipeline_with_setting_binding_node_and_pipeline_level(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.pipeline_with_set_binding_output_input.pipeline import (
             pipeline_with_setting_binding_node_and_pipeline_level,
@@ -2333,7 +2323,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    @pytest.mark.skip("TODO (2375086): Job failing with 'User failed to call SaveUserToken before GetUserToken'")
     def test_spark_components(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/spark_job_in_pipeline"
         add_greeting_column = load_component(str(components_dir / "add_greeting_column_component.yml"))
@@ -2505,7 +2494,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         created_pipeline_job: PipelineJob = client.jobs.get(pipeline_job.name)
         assert created_pipeline_job.jobs["node1"].component == f"{component_name}@default"
 
-    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
     def test_pipeline_node_identity_with_component(self, client: MLClient):
         path = "./tests/test_configs/components/helloworld_component.yml"
         component_func = load_component(path)
@@ -2664,7 +2652,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job.settings.default_compute = "cpu-cluster"
         assert_job_cancel(pipeline_job, client)
 
-    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
     @pytest.mark.disable_mock_code_hash
     def test_register_output_sdk(self, client: MLClient):
         from azure.ai.ml.sweep import (
@@ -2946,7 +2933,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert pipeline_job.jobs["node_3"].outputs.component_out_path.name == "n3_output"
         check_name_and_version(pipeline_job.jobs["sub_node"].outputs.sub_pipeine_a_output, "sub_pipeline", "v1")
 
-    @pytest.mark.skip(reason="KeyError: 'node_2'")
     @pytest.mark.disable_mock_code_hash
     def test_register_output_for_pipeline_component(self, client: MLClient):
         component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
@@ -3237,7 +3223,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert rest_obj.properties.jobs["node"]["computeId"] == mock_singularity_arm_id
         assert rest_obj.properties.jobs["node"]["resources"] == vc_config
 
-    @pytest.mark.skipif(condition=not is_live(), reason="recording will expose Singularity information")
     def test_pipeline_singularity_live(self, client: MLClient, singularity_vc):
         # full name and short name are syntax sugar, SDK will resolve it to Singularity ARM id before request,
         # this needs client to get & search available VCs - that's why we place this test in end-to-end test -

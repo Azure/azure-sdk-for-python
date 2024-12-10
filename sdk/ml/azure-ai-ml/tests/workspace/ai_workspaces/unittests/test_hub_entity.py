@@ -51,7 +51,6 @@ class TestProjectEntity:
     # Note, this test does not ensure as much API correctness as
     # you'd like because of the workspace operation's reliance on ARM
     # template madness.
-    @pytest.mark.skip(reason="Rest conversion is/has always been buggy aparently. Not fixing it yet.")
     def test_hub_rest_conversion(self) -> None:
         original_hub = Hub(
             name="hub_name",

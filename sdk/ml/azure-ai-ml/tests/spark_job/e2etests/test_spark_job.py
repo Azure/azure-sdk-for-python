@@ -9,7 +9,6 @@ from azure.ai.ml.entities._job.spark_job import SparkJob
 
 @pytest.mark.timeout(600)
 @pytest.mark.usefixtures("recorded_test", "mock_asset_name", "mock_code_hash")
-@pytest.mark.skip(reason="user assigned identity not attached to test workspace")
 @pytest.mark.training_experiences_test
 class TestSparkJob(AzureRecordedTestCase):
     @pytest.mark.e2etest

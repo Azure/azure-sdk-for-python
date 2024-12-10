@@ -33,7 +33,6 @@ class TestComponentValidate(AzureRecordedTestCase):
             "command": "Invalid data binding expression: inputs.non_existent, outputs.non_existent",
         }
 
-    @pytest.mark.skip(reason="Enable this test after server-side is ready.")
     def test_component_remote_validate_basic(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         component_path = "./tests/test_configs/components/helloworld_component.yml"
         # we must use a valid component yaml here, or validation error will be raised in load_component

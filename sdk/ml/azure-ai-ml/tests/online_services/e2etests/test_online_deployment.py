@@ -11,9 +11,6 @@ from azure.ai.ml.entities import ManagedOnlineDeployment, ManagedOnlineEndpoint,
 @pytest.mark.e2etest
 @pytest.mark.production_experiences_test
 class TestOnlineDeployment(AzureRecordedTestCase):
-    @pytest.mark.skip(
-        reason="Tests failing in internal automation due to lack of quota. Cannot record or run in live mode."
-    )
     def test_online_deployment(
         self, client: MLClient, rand_online_name: Callable[[], str], rand_online_deployment_name: Callable[[], str]
     ) -> None:
@@ -53,7 +50,6 @@ class TestOnlineDeployment(AzureRecordedTestCase):
         finally:
             client.online_endpoints.begin_delete(name=endpoint.name)
 
-    @pytest.mark.skip(reason="Known failure")
     def test_online_deployment_skip_script_validation(
         self, client: MLClient, rand_online_name: Callable[[], str], rand_online_deployment_name: Callable[[], str]
     ) -> None:

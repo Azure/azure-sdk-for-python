@@ -274,6 +274,7 @@ class TestFeatureStore(AzureRecordedTestCase):
         )
         ws_poller.result()
 
+    
     @pytest.mark.nofixdeploymentname
     @pytest.mark.nofixresourcename
     def test_feature_store_update_delete(

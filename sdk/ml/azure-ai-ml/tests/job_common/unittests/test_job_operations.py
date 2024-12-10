@@ -206,7 +206,6 @@ class TestJobOperations:
         mock_job_operation._stream_logs_until_completion.assert_called_once()
         assert mock_job_operation._runs_operations_client._operation._client._base_url == "TheWorkSpaceUrl"
 
-    @pytest.mark.skip(reason="Mock Job missing properties to complete full test in Feb API")
     @patch.object(Job, "_from_rest_object")
     def test_submit_command_job(self, mock_method, mock_job_operation: JobOperations) -> None:
         mock_method.return_value = Command(component=None)
@@ -240,7 +239,6 @@ class TestJobOperations:
             with pytest.raises(Exception):
                 mock_job_operation.create_or_update(job=job)
 
-    @pytest.mark.skip(reason="Function under test no longer returns Job as output")
     def test_command_job_resolver_with_virtual_cluster(self, mock_job_operation: JobOperations) -> None:
         expected = "/subscriptions/test_subscription/resourceGroups/test_resource_group/providers/Microsoft.MachineLearningServices/virtualclusters/testvcinmaster"
         job = load_job(source="tests/test_configs/command_job/command_job_with_virtualcluster.yaml")

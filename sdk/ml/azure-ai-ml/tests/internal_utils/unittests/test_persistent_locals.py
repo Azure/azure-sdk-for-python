@@ -202,9 +202,6 @@ class TestPersistentLocalsPrivatePreview(TestPersistentLocalsProfiler):
 
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
-@pytest.mark.skipif(
-    condition=sys.version_info >= (3, 11), reason="historical implementation doesn't support Python 3.11+"
-)
 class TestPersistentLocalsHistoricalImplementation(TestPersistentLocalsPrivatePreview):
     """This is to test the implementation of persistent locals function in azuerml-components."""
 

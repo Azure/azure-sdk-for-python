@@ -64,7 +64,6 @@ def mock_run_operations(mock_workspace_scope: OperationScope, mock_aml_services_
     yield RunOperations(mock_workspace_scope, mock_aml_services_run_history)
 
 
-@pytest.mark.skip("TODO 1907352: Relies on a missing VCR.py recording + test suite needs to be reworked")
 @pytest.mark.unittest
 @pytest.mark.training_experiences_test
 class TestJobLogManager:

@@ -23,7 +23,6 @@ from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
 @pytest.mark.automl_test
 @pytest.mark.usefixtures("recorded_test")
-@pytest.mark.skipif(condition=not is_live(), reason="Datasets downloaded by test are too large to record reliably")
 class TestAutoMLImageClassification(AzureRecordedTestCase):
     def _create_jsonl_multiclass(self, client, train_path, val_path):
         src_images = "./fridgeObjects/"

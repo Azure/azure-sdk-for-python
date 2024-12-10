@@ -21,7 +21,6 @@ import uuid
 
 @pytest.mark.automl_test
 @pytest.mark.usefixtures("recorded_test")
-@pytest.mark.skipif(condition=not is_live(), reason="Datasets downloaded by test are too large to record reliably")
 class TestAzureOpenAIFineTuningJob(AzureRecordedTestCase):
     def test_azure_openai_finetuning_job(
         self, text_completion_dataset: Tuple[Input, Input], mlflow_model_gpt4: Input, client: MLClient

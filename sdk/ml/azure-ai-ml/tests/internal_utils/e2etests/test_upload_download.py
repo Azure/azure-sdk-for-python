@@ -95,7 +95,6 @@ def artifact_path_dir(tmpdir_factory, variable_recorder) -> str:  # type: ignore
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
-@pytest.mark.skipif(condition=not is_live(), reason="test are flaky in playback")
 @pytest.mark.core_sdk_test
 class TestUpload(AzureRecordedTestCase):
     def test_upload_file_blob(
@@ -149,7 +148,6 @@ class TestUpload(AzureRecordedTestCase):
             str(upload_dir), show_progress=False, asset_hash=dir_asset_id, name="name", version="version"
         )
 
-    @pytest.mark.skip("File datastores aren't supported by service, so disabling these tests until they're relevant")
     def test_upload_file_fileshare(
         self,
         storage_account_name: str,
@@ -212,7 +210,6 @@ class TestUpload(AzureRecordedTestCase):
 
         assert (name, str(version)) == (artifact_info["name"], artifact_info["version"])
 
-    @pytest.mark.skip(reason="test timing out")
     def test_artifact_blob_dir_upload_and_download(
         self,
         storage_account_name: str,
@@ -248,7 +245,6 @@ class TestUpload(AzureRecordedTestCase):
             blob_storage_client.download(starts_with=upload_info["indicator file"], destination=td)
             assert TEST_ARTIFACT_FILE in os.listdir(td)
 
-    @pytest.mark.skip(reason="test timing out")
     def test_artifact_gen2_dir_upload_download(
         self,
         storage_account_name: str,
@@ -300,7 +296,6 @@ class TestUpload(AzureRecordedTestCase):
             assert dir_name in os.listdir(td)
             assert nested_dir_name.split("/")[-1] in os.listdir(dir_name)  # ensure nested directory was created
 
-    @pytest.mark.skip("File datastores aren't supported by service, so disabling these tests until they're relevant")
     def test_artifact_fileshare_file_upload(
         self,
         storage_account_name: str,
@@ -331,7 +326,6 @@ class TestUpload(AzureRecordedTestCase):
 
         assert (name, str(version)) == (artifact_info["name"], artifact_info["version"])
 
-    @pytest.mark.skip("File datastores aren't supported by service, so disabling these tests until they're relevant")
     def test_arm_id_fileshare_dir_upload(
         self,
         storage_account_name: str,
@@ -476,9 +470,6 @@ class TestUpload(AzureRecordedTestCase):
         metadata = client.get_directory_properties().metadata
         assert metadata.get("version") == UPDATED_VERSION
 
-    @pytest.mark.skip(
-        "Changes to assets to remove datastore param + inability to set default datastore makes this scenario impossible to be auto-tested currently."
-    )
     def test_credentialless_datastore_upload_download(
         self,
         client: MLClient,

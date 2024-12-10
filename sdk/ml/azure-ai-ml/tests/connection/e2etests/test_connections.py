@@ -269,7 +269,6 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
     # Involved test, takes 5+ minutes to run in live mode.
     # Makes use of a lot of hub and lean workspace creation, so changes to those can cause this test to fail.
     @pytest.mark.shareTest
-    @pytest.mark.skipif(condition=True, reason="Resource creation API result inconsistent in uncontrollable way.")
     def test_workspace_connection_is_shared_behavior(self, client: MLClient, randstr: Callable[[], str]) -> None:
         # Create a workspace hub and 2 child lean workspaces
         hub = client.workspaces.begin_create(workspace=Hub(name=f"e2etest_{randstr('hub_name')}")).result()
@@ -377,7 +376,6 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         client.workspace_hubs.begin_delete(name=hub.name, delete_dependent_resources=True)
 
     @pytest.mark.shareTest
-    @pytest.mark.skipif(condition=True, reason="Backend behavior this test relies on has shifted. Need to refactor.")
     def test_workspace_connection_data_connection_listing(
         self,
         client: MLClient,
@@ -580,10 +578,6 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
 
-    @pytest.mark.skipif(
-        condition=True,
-        reason="Backend validation requires valid input data, which I don't want to surface here, or learn to scrub from a recording.",
-    )
     def test_azure_ai_services_crud(
         self,
         client: MLClient,

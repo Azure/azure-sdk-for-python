@@ -140,10 +140,6 @@ def mock_online_deployment_operations(
 @pytest.mark.unittest
 @pytest.mark.production_experiences_test
 class TestOnlineDeploymentOperations:
-    @pytest.mark.skipif(
-        condition=platform.python_implementation() == "PyPy",
-        reason="writing dumped entity back to file does not work on PyPy",
-    )
     def test_online_deployment_k8s_create(
         self,
         mock_online_deployment_operations: OnlineDeploymentOperations,

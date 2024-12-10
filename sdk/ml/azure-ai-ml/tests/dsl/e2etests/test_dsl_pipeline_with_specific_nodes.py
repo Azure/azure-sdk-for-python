@@ -394,7 +394,6 @@ class TestDSLPipelineWithSpecificNodes(AzureRecordedTestCase):
             "component_in_group.sub1.integer": {"job_input_type": "literal", "value": "1"},
         }
 
-    @pytest.mark.skipif(not is_live(), reason="Met some problem in recording")
     def test_dsl_pipeline_component_with_static_local_data_input(self, client: MLClient) -> None:
         path = "./tests/test_configs/components/helloworld_component.yml"
         input_data_path = "./tests/test_configs/data/"

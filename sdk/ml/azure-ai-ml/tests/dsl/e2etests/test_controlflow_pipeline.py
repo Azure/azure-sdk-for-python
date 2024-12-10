@@ -361,7 +361,6 @@ class TestIfElse(TestControlFlowPipeline):
             "type": "if_else",
         }
 
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO(2177353): check why recorded tests failure.")
     def test_if_else_multiple_blocks_subgraph(self, client: MLClient):
         hello_world_component_no_paths = load_component(
             source="./tests/test_configs/components/helloworld_component_no_paths.yml"
@@ -405,10 +404,6 @@ class TestDoWhilePipeline(TestControlFlowPipeline):
     def _basic_component_func(self):
         return load_component("./tests/test_configs/dsl_pipeline/do_while/basic_component/component.yml")
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="TODO (2374610): hash sanitizer is being applied unnecessarily and forcing playback failures",
-    )
     @pytest.mark.usefixtures("mock_anon_component_version")
     def test_do_while_pipeline(self, client: MLClient):
         @pipeline
@@ -548,11 +543,6 @@ class TestDoWhilePipeline(TestControlFlowPipeline):
         assert_job_cancel(pipeline_job, client)
 
 
-@pytest.mark.skipif(
-    condition=is_live(),
-    # TODO: reopen live test when parallel_for deployed to canary
-    reason="parallel_for is not available in canary.",
-)
 class TestParallelForPipeline(TestControlFlowPipeline):
     def test_simple_dsl_parallel_for_pipeline(self, client: MLClient):
         hello_world_component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
