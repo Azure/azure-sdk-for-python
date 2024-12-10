@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13,7 +13,6 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from ... import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -99,7 +98,7 @@ class Actor(_serialization.Model):
 class CallbackConfig(_serialization.Model):
     """The configuration of service URI and custom headers for the webhook.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar service_uri: The service URI for the webhook to post notifications. Required.
     :vartype service_uri: str
@@ -167,7 +166,7 @@ class ProxyResource(_serialization.Model):
         self.system_data = None
 
 
-class ConnectedRegistry(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class ConnectedRegistry(ProxyResource):
     """An object that represents a connected registry for a container registry.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -425,7 +424,7 @@ class ErrorResponse(_serialization.Model):
 class ErrorResponseBody(_serialization.Model):
     """An error response from the Azure Container Registry service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: error code. Required.
     :vartype code: str
@@ -861,7 +860,7 @@ class ExportPipelineListResult(_serialization.Model):
 class ExportPipelineTargetProperties(_serialization.Model):
     """The properties of the export pipeline target.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of target for the export pipeline.
     :vartype type: str
@@ -1071,7 +1070,7 @@ class IdentityProperties(_serialization.Model):
 class ImportImageParameters(_serialization.Model):
     """ImportImageParameters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source: The source of the image. Required.
     :vartype source: ~azure.mgmt.containerregistry.v2021_06_01_preview.models.ImportSource
@@ -1250,7 +1249,7 @@ class ImportPipelineListResult(_serialization.Model):
 class ImportPipelineSourceProperties(_serialization.Model):
     """The properties of the import pipeline source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of source for the import pipeline. "AzureStorageBlobContainer"
     :vartype type: str or
@@ -1303,7 +1302,7 @@ class ImportPipelineSourceProperties(_serialization.Model):
 class ImportSource(_serialization.Model):
     """ImportSource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar resource_id: The resource identifier of the source Azure Container Registry.
     :vartype resource_id: str
@@ -1363,7 +1362,7 @@ class ImportSource(_serialization.Model):
 class ImportSourceCredentials(_serialization.Model):
     """ImportSourceCredentials.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar username: The username to authenticate with the source registry.
     :vartype username: str
@@ -1395,7 +1394,7 @@ class ImportSourceCredentials(_serialization.Model):
 class InnerErrorDescription(_serialization.Model):
     """inner error.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: error code. Required.
     :vartype code: str
@@ -1434,7 +1433,7 @@ class InnerErrorDescription(_serialization.Model):
 class IPRule(_serialization.Model):
     """IP rule with specific IP or IP range in CIDR format.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar action: The action of IP ACL rule. "Allow"
     :vartype action: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.Action
@@ -1583,7 +1582,7 @@ class LoginServerProperties(_serialization.Model):
 class NetworkRuleSet(_serialization.Model):
     """The network rule set for a container registry.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar default_action: The default action of allow or deny when no other rules match. Known
      values are: "Allow" and "Deny".
@@ -1681,7 +1680,7 @@ class OperationDefinition(_serialization.Model):
          ~azure.mgmt.containerregistry.v2021_06_01_preview.models.OperationDisplayDefinition
         :keyword is_data_action: This property indicates if the operation is an action or a data action
          ref:
-         https://docs.microsoft.com/en-us/azure/role-based-access-control/role-definitions#management-and-data-operations.
+         https://docs.microsoft.com/en-us/azure/role-based-access-control/role-definitions#management-and-data-operations.  # pylint: disable=line-too-long
         :paramtype is_data_action: bool
         :keyword service_specification: The definition of Azure Monitoring service.
         :paramtype service_specification:
@@ -1917,7 +1916,7 @@ class OperationServiceSpecificationDefinition(_serialization.Model):
 class ParentProperties(_serialization.Model):
     """The properties of the connected registry parent.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource ID of the parent to which the connected registry will be associated.
     :vartype id: str
@@ -2303,7 +2302,7 @@ class PipelineSourceTriggerDescriptor(_serialization.Model):
 class PipelineSourceTriggerProperties(_serialization.Model):
     """PipelineSourceTriggerProperties.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar status: The current status of the source trigger. Known values are: "Enabled" and
      "Disabled".
@@ -2749,7 +2748,7 @@ class QuarantinePolicy(_serialization.Model):
 class RegenerateCredentialParameters(_serialization.Model):
     """The parameters used to regenerate the login credential.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Specifies name of the password which should be regenerated -- password or
      password2. Required. Known values are: "password" and "password2".
@@ -2779,7 +2778,7 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource ID.
     :vartype id: str
@@ -2830,12 +2829,12 @@ class Resource(_serialization.Model):
         self.system_data = None
 
 
-class Registry(Resource):  # pylint: disable=too-many-instance-attributes
+class Registry(Resource):
     """An object that represents a container registry.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource ID.
     :vartype id: str
@@ -3089,7 +3088,7 @@ class RegistryNameCheckRequest(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the container registry. Required.
     :vartype name: str
@@ -3189,7 +3188,7 @@ class RegistryPassword(_serialization.Model):
         self.value = value
 
 
-class RegistryUpdateParameters(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class RegistryUpdateParameters(_serialization.Model):
     """The parameters for updating a container registry.
 
     :ivar identity: The identity of the container registry.
@@ -3370,7 +3369,7 @@ class Replication(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource ID.
     :vartype id: str
@@ -3752,7 +3751,7 @@ class Sku(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The SKU name of the container registry. Required for registry creation. Required.
      Known values are: "Classic", "Basic", "Standard", and "Premium".
@@ -3893,7 +3892,7 @@ class SyncProperties(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar token_id: The resource ID of the ACR token used to authenticate the connected registry to
      its parent during sync. Required.
@@ -4574,12 +4573,12 @@ class UserIdentityProperties(_serialization.Model):
 class VirtualNetworkRule(_serialization.Model):
     """Virtual network rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar action: The action of virtual network rule. "Allow"
     :vartype action: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.Action
     :ivar virtual_network_resource_id: Resource ID of a subnet, for example:
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.  # pylint: disable=line-too-long
      Required.
     :vartype virtual_network_resource_id: str
     """
@@ -4600,7 +4599,7 @@ class VirtualNetworkRule(_serialization.Model):
         :keyword action: The action of virtual network rule. "Allow"
         :paramtype action: str or ~azure.mgmt.containerregistry.v2021_06_01_preview.models.Action
         :keyword virtual_network_resource_id: Resource ID of a subnet, for example:
-         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.  # pylint: disable=line-too-long
          Required.
         :paramtype virtual_network_resource_id: str
         """
@@ -4614,7 +4613,7 @@ class Webhook(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource ID.
     :vartype id: str
@@ -4706,7 +4705,7 @@ class Webhook(Resource):
 class WebhookCreateParameters(_serialization.Model):
     """The parameters for creating a webhook.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar tags: The tags for the webhook.
     :vartype tags: dict[str, str]
