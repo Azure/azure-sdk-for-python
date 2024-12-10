@@ -51,7 +51,7 @@ class TestConfigurationAsyncClientManagerLoadBalance:
 
         assert len(manager._active_clients) == 3
         assert manager._active_clients[0].endpoint in failover_endpoints + [endpoint]
-        assert manager._active_clients[1].endpoint in  failover_endpoints + [endpoint]
+        assert manager._active_clients[1].endpoint in failover_endpoints + [endpoint]
         assert manager._active_clients[2].endpoint in failover_endpoints + [endpoint]
 
         # Single endpoint test load balancing
@@ -118,7 +118,7 @@ class TestConfigurationAsyncClientManagerLoadBalance:
 
         assert len(manager._active_clients) == 3
         assert manager._active_clients[0].endpoint in failover_endpoints + [endpoint]
-        assert manager._active_clients[1].endpoint in  failover_endpoints + [endpoint]
+        assert manager._active_clients[1].endpoint in failover_endpoints + [endpoint]
         assert manager._active_clients[2].endpoint in failover_endpoints + [endpoint]
 
         # Single endpoint test load balancing

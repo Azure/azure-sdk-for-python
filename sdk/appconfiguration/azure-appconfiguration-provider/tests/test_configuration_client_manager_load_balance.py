@@ -48,7 +48,7 @@ class TestConfigurationClientManagerLoadBalance(unittest.TestCase):
 
         assert len(manager._active_clients) == 3
         assert manager._active_clients[0].endpoint in failover_endpoints + [endpoint]
-        assert manager._active_clients[1].endpoint in  failover_endpoints + [endpoint]
+        assert manager._active_clients[1].endpoint in failover_endpoints + [endpoint]
         assert manager._active_clients[2].endpoint in failover_endpoints + [endpoint]
 
         # Single endpoint test load balancing
@@ -115,8 +115,8 @@ class TestConfigurationClientManagerLoadBalance(unittest.TestCase):
         manager.find_active_clients()
 
         assert len(manager._active_clients) == 3
-        assert manager._active_clients[0].endpoint in  failover_endpoints + [endpoint]
-        assert manager._active_clients[1].endpoint in  failover_endpoints + [endpoint]
+        assert manager._active_clients[0].endpoint in failover_endpoints + [endpoint]
+        assert manager._active_clients[1].endpoint in failover_endpoints + [endpoint]
         assert manager._active_clients[2].endpoint in failover_endpoints + [endpoint]
 
         # Single endpoint test load balancing
