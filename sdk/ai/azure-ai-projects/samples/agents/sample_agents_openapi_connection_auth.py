@@ -29,6 +29,7 @@ USAGE:
     Set this environment variables with your own values:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
     PROJECT_OPENAPI_CONNECTION_NAME - the connection name for the OpenAPI connection authentication
+    MODEL_DEPLOYMENT_NAME - name of the model deployment in the project to use Agents against
 """
 
 import os
@@ -48,20 +49,16 @@ project_client = AIProjectClient.from_connection_string(
 )
 
 connection_name = os.environ["PROJECT_OPENAPI_CONNECTION_NAME"]
-conn_list = project_client.connections.list()
-conn_id = ""
-for conn in conn_list:
-    if conn.name == connection_name:
-        conn_id = conn.id
-        break
+model_name = os.environ["MODEL_DEPLOYMENT_NAME"]
+connection = project_client.connections.get(connection_name=connection_name)
 
-print(conn_id)
+print(connection.id)
 
 with open('./tripadvisor_openapi.json', 'r') as f:
     openapi_spec = jsonref.loads(f.read())
 
 # Create Auth object for the OpenApiTool (note that connection or managed identity auth setup requires additional setup in Azure)
-auth = OpenApiConnectionAuthDetails(security_scheme=OpenApiConnectionSecurityScheme(connection_id=conn_id))
+auth = OpenApiConnectionAuthDetails(security_scheme=OpenApiConnectionSecurityScheme(connection_id=connection.id))
 
 # Initialize agent OpenApi tool using the read in OpenAPI spec
 openapi = OpenApiTool(name="get_weather", spec=openapi_spec, description="Retrieve weather information for a location", auth=auth)
@@ -69,7 +66,7 @@ openapi = OpenApiTool(name="get_weather", spec=openapi_spec, description="Retrie
 # Create agent with OpenApi tool and process assistant run
 with project_client:
     agent = project_client.agents.create_agent(
-        model="gpt-4o-mini",
+        model=model_name,
         name="my-assistant",
         instructions="You are a helpful assistant",
         tools=openapi.definitions
