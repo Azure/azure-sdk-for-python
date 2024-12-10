@@ -144,6 +144,39 @@ def _build_sentinel(setting: Union[str, Tuple[str, str]]) -> Tuple[str, str]:
     return key, label
 
 
+def sdk_allowed_kwargs(kwargs):
+    allowed_kwargs = [
+        "headers",
+        "request_id",
+        "user_agent",
+        "logging_enable",
+        "logger",
+        "response_encoding",
+        "raw_request_hook",
+        "raw_response_hook",
+        "network_span_namer",
+        "tracing_attributes",
+        "permit_redirects",
+        "redirect_max",
+        "retry_total",
+        "retry_connect",
+        "retry_read",
+        "retry_status",
+        "retry_backoff_factor",
+        "retry_backoff_max",
+        "retry_mode",
+        "timeout",
+        "connection_timeout",
+        "read_timeout",
+        "connection_verify",
+        "connection_cert",
+        "proxies",
+        "cookies",
+        "connection_data_block_size",
+    ]
+    return {k: v for k, v in kwargs.items() if k in allowed_kwargs}
+
+
 class _RefreshTimer:
     """
     A timer that tracks the next refresh time and the number of attempts.

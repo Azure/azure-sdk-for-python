@@ -33,6 +33,7 @@ from ._azureappconfigurationproviderbase import (
     get_headers,
     delay_failure,
     is_json_content_type,
+    sdk_allowed_kwargs,
 )
 from ._client_manager import ConfigurationClientManager
 from ._user_agent import USER_AGENT
@@ -207,6 +208,7 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     )
 
     provider = _buildprovider(connection_string, endpoint, credential, uses_key_vault=uses_key_vault, **kwargs)
+    kwargs = sdk_allowed_kwargs(kwargs)
 
     try:
         provider._load_all(**kwargs)  # pylint:disable=protected-access

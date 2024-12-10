@@ -37,6 +37,7 @@ from .._azureappconfigurationproviderbase import (
     get_headers,
     delay_failure,
     is_json_content_type,
+    sdk_allowed_kwargs,
 )
 from ._async_client_manager import AsyncConfigurationClientManager
 from .._user_agent import USER_AGENT
@@ -212,6 +213,7 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     )
 
     provider = await _buildprovider(connection_string, endpoint, credential, uses_key_vault=uses_key_vault, **kwargs)
+    kwargs = sdk_allowed_kwargs(kwargs)
     # Discovering replicas outside of init as it's async
     await provider._replica_client_manager.setup_initial_clients()  # pylint:disable=protected-access
 
@@ -295,7 +297,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        super().__init__(**kwargs)
+        super(AzureAppConfigurationProvider, self).__init__(**kwargs)
 
         if "user_agent" in kwargs:
             user_agent = kwargs.pop("user_agent") + " " + USER_AGENT
