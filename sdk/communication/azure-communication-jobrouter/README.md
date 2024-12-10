@@ -195,7 +195,7 @@ from azure.eventgrid import EventGridEvent
 import json
 
 ## deserialize payload into a list of typed Events
-events = [EventGridEvent.from_json(json.loads(msg)) for msg in payload]
+events = [EventGridEvent.from_json(msg) for msg in payload]
 ```
 
 ```python
