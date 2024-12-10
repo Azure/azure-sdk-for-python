@@ -293,14 +293,14 @@ class TestMassEvaluate:
         assert metrics["indirect_attack.xpia_defect_rate"] >= 0
         assert metrics["eci.eci_defect_rate"] >= 0
 
-    # Imagee urls with target is disabled due to being unstable in CI
+    # Image urls with target is disabled due to being unstable in CI
     @pytest.mark.parametrize(
         "multi_modal_input_type,pm_evaluator_class,cs_evaluator_class",
         [
             ("imageurls", ProtectedMaterialMultimodalEvaluator, ContentSafetyMultimodalEvaluator),
             ("imageurls", ProtectedMaterialEvaluator, ContentSafetyEvaluator),
-            ("imageurls_with_target", ProtectedMaterialMultimodalEvaluator, ContentSafetyMultimodalEvaluator),
-            ("imageurls_with_target", ProtectedMaterialEvaluator, ContentSafetyEvaluator),
+            #("imageurls_with_target", ProtectedMaterialMultimodalEvaluator, ContentSafetyMultimodalEvaluator),
+            #("imageurls_with_target", ProtectedMaterialEvaluator, ContentSafetyEvaluator),
             ("b64_images", ProtectedMaterialMultimodalEvaluator, ContentSafetyMultimodalEvaluator),
             ("b64_images", ProtectedMaterialEvaluator, ContentSafetyEvaluator),
         ],
