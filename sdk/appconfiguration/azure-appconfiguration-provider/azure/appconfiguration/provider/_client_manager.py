@@ -430,7 +430,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
             self._replica_clients = [self._original_client] + discovered_clients
         if updated_endpoints and self._load_balancing_enabled:
             # Reshuffle only if a new client was added and _load_balancing_enabled is enabled
-            # This allways needs to be shuffled, but if load balancing is enabled than the primary endpoint need to be
+            # This allways needs to be shuffled, but if load balancing is enabled, then the primary endpoint needs to be
             #  shuffled too.
             self._replica_clients = [self._original_client] + discovered_clients
             random.shuffle(self._replica_clients)
