@@ -23,10 +23,10 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Optional, cast
+from typing import Any, Optional, cast, Dict
 
 import httpx
-from .._base import _create_connection_config, _handle_non_stream_rest_response
+from .._base import _create_connection_config, _handle_non_stream_rest_response, _get_proxy
 from .._base_async import _handle_non_stream_rest_response as _handle_non_stream_rest_response_async
 from ...exceptions import ServiceRequestError, ServiceResponseError
 from ...rest._httpx import HttpXTransportResponse, AsyncHttpXTransportResponse
@@ -55,12 +55,14 @@ class HttpXTransport(HttpTransport):
         self._client_owner = client_owner
         self._use_env_settings = use_env_settings
 
-    def open(self) -> None:
+    def open(self, *, proxy: Optional[str] = None) -> None:
         if self.client is None:
+            kwargs: Dict[str, Any] = {"proxy": proxy} if proxy is not None else {}
             self.client = httpx.Client(
                 trust_env=self._use_env_settings,
                 verify=self.connection_config.get("connection_verify", True),
                 cert=self.connection_config.get("connection_cert"),
+                **kwargs
             )
 
     def close(self) -> None:
@@ -89,7 +91,13 @@ class HttpXTransport(HttpTransport):
         :return: An HTTPResponse object.
         :rtype: ~corehttp.rest.HttpResponse
         """
-        self.open()
+        # httpx>0.28.0 renamed proxies to proxy, expects a single proxy
+        proxy = kwargs.pop("proxy", None)
+        proxies = kwargs.pop("proxies", None)
+        if proxies and not proxy:
+            proxy = _get_proxy(request, proxies)
+
+        self.open(proxy=proxy)
         connect_timeout = kwargs.pop("connection_timeout", self.connection_config.get("connection_timeout"))
         read_timeout = kwargs.pop("read_timeout", self.connection_config.get("read_timeout"))
         # not needed here as its already handled during init
@@ -148,12 +156,14 @@ class AsyncHttpXTransport(AsyncHttpTransport):
         self._client_owner = client_owner
         self._use_env_settings = use_env_settings
 
-    async def open(self) -> None:
+    async def open(self, *, proxy: Optional[str] = None) -> None:
         if self.client is None:
+            kwargs: Dict[str, Any] = {"proxy": proxy} if proxy is not None else {}
             self.client = httpx.AsyncClient(
                 trust_env=self._use_env_settings,
                 verify=self.connection_config.get("connection_verify", True),
                 cert=self.connection_config.get("connection_cert"),
+                **kwargs,
             )
 
     async def close(self) -> None:
@@ -177,7 +187,13 @@ class AsyncHttpXTransport(AsyncHttpTransport):
         :return: The response object.
         :rtype: ~corehttp.rest.AsyncHttpResponse
         """
-        await self.open()
+        # httpx>0.28.0 renamed proxies to proxy, expects a single proxy
+        proxy = kwargs.pop("proxy", None)
+        proxies = kwargs.pop("proxies", None)
+        if proxies and not proxy:
+            proxy = _get_proxy(request, proxies)
+
+        await self.open(proxy=proxy)
         connect_timeout = kwargs.pop("connection_timeout", self.connection_config.get("connection_timeout"))
         read_timeout = kwargs.pop("read_timeout", self.connection_config.get("read_timeout"))
         # not needed here as its already handled during init

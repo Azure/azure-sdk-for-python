@@ -37,7 +37,7 @@ from ...exceptions import (
     ServiceResponseError,
 )
 from .._base_async import AsyncHttpTransport, _handle_non_stream_rest_response
-from .._base import _create_connection_config
+from .._base import _create_connection_config, _get_proxy
 from ...rest._aiohttp import RestAioHttpTransportResponse
 from ...utils._utils import get_file_items
 
@@ -175,13 +175,7 @@ class AioHttpTransport(AsyncHttpTransport):
 
         proxy = config.pop("proxy", None)
         if proxies and not proxy:
-            # aiohttp needs a single proxy, so iterating until we found the right protocol
-
-            # Sort by longest string first, so "http" is not used for "https" ;-)
-            for protocol in sorted(proxies.keys(), reverse=True):
-                if request.url.startswith(protocol):
-                    proxy = proxies[protocol]
-                    break
+            proxy = _get_proxy(request, proxies)
 
         response: Optional[RestAsyncHttpResponse] = None
         ssl = self._build_ssl_config(
