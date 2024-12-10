@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
 
+from datetime import datetime
 from typing import (
     Any, AnyStr, AsyncIterable, Dict, IO, Iterable, Optional, Union,
     TYPE_CHECKING)
@@ -23,7 +24,6 @@ from ..aio._upload_helper import upload_datalake_file
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
-    from datetime import datetime
     from .._models import ContentSettings
 
 
