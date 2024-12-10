@@ -49,6 +49,9 @@ async def process_content(data: Any, start_offset: int, end_offset: int, encrypt
     # Fix Start
     await data.response.load_body()  # Load the body in memory and close the socket
     # Fix End
+
+    # This is where the content is received. Place a breakpoint on the line below.
+
     content = cast(bytes, data.response.body())
     if encryption.get('key') is not None or encryption.get('resolver') is not None:
         try:

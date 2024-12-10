@@ -63,6 +63,9 @@ class AsyncStream:
 
         return data
 
+# This is the base response that worked fine with my download_blob example.
+# You may or may not need to make more of these containing different information,
+# it just depends on what is expected in the response per request type.
 class MockAioHttpClientResponse(ClientResponse):
     def __init__(self, url, body_bytes, headers=None):
         self._body = body_bytes
@@ -71,11 +74,25 @@ class MockAioHttpClientResponse(ClientResponse):
         self.status = 200
         self.reason = "OK"
         self._url = url
-        # self._content = b"test content"
-        # self.content = b"test content"
 
+# Here we are mocking out the real Storage transport.
+# Instead of it taking our HttpRequest and making a real network roundtrip and returning the response,
+# instead we will mock in the responses.
 class MockStorageTransport(AsyncHttpTransport):
     async def send(self, request: HttpRequest, **kwargs) -> AioHttpTransportResponse:
+
+        # So this is what the response needs to look like for the test-case I've written
+        # (download_blob in test_mocking_transport in test_common_blob_async.py)
+
+        # TODO:
+        # 1. Add in logic to conditionally return different responses based on request type
+        # 2. Add test cases for each of the following:
+        #     - download_blob (with and without content validation, as this hits two different key content loading areas)
+        #     - get properties
+        #     - upload blob (with and without content validation, as this hits two different key content loading areas)
+        #     - delete blob
+        # 3. Duplicate test case to sync
+        # 4. Duplicate work to other packages
         aiohttp_transport_resp = AioHttpTransportResponse(
             request,
             MockAioHttpClientResponse(
@@ -88,13 +105,6 @@ class MockStorageTransport(AsyncHttpTransport):
                 },
             ),
         )
-
-        # Everything is working as expected, but AttributeError: 'AioHttpTransportResponse' object has no attribute 'content'
-        # I believe this is because typically in the real REST transport, we would switch to a RestAioHttpTransportResponse in the send()
-        # logic, will which give the 'content' @property, which calls into the intermediary layer to do whatever works needs to be done
-        # to retrieve the response from the underlying internal response.
-
-        # aiohttp_transport_resp.content = aiohttp_transport_resp.internal_response._body
         return aiohttp_transport_resp
 
     async def __aenter__(self):

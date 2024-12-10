@@ -76,7 +76,7 @@ if TYPE_CHECKING:
 CONTENT_CHUNK_SIZE = 10 * 1024
 _LOGGER = logging.getLogger(__name__)
 
-
+# Here is the real async transport implementation.
 class AioHttpTransport(AsyncHttpTransport):
     """AioHttp HTTP sender implementation.
 
@@ -247,6 +247,7 @@ class AioHttpTransport(AsyncHttpTransport):
         :keyword MutableMapping proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
         """
 
+# This is the real send() on the transport object. This is what we are mocking out
     async def send(
         self,
         request: Union[HttpRequest, RestHttpRequest],
@@ -316,6 +317,7 @@ class AioHttpTransport(AsyncHttpTransport):
             if _is_rest(request):
                 from azure.core.rest._aiohttp import RestAioHttpTransportResponse
 
+# This is where the real response would be built, so we know that we are going to mock this out
                 response = RestAioHttpTransportResponse(
                     request=request,
                     internal_response=result,
