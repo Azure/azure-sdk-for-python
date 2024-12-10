@@ -391,13 +391,13 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         try:
             await self._replica_client_manager.refresh_clients()
             self._replica_client_manager.find_active_clients()
-            client_count = self._replica_client_manager.get_client_count() - 1
+            replica_count = self._replica_client_manager.get_client_count() - 1
 
             while client := self._replica_client_manager.get_next_active_client():
                 headers = _update_correlation_context_header(
                     kwargs.pop("headers", {}),
                     "Watch",
-                    client_count - 1,
+                    replica_count,
                     self._feature_flag_enabled,
                     self._feature_filter_usage,
                     self._uses_key_vault,
@@ -460,13 +460,13 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         await self._replica_client_manager.refresh_clients()
         self._replica_client_manager.find_active_clients()
         is_failover_request = False
-        client_count = self._replica_client_manager.get_client_count() - 1
+        replica_count = self._replica_client_manager.get_client_count() - 1
 
         while client := self._replica_client_manager.get_next_active_client():
             headers = _update_correlation_context_header(
                 kwargs.pop("headers", {}),
                 "Startup",
-                client_count - 1,
+                replica_count,
                 self._feature_flag_enabled,
                 self._feature_filter_usage,
                 self._uses_key_vault,

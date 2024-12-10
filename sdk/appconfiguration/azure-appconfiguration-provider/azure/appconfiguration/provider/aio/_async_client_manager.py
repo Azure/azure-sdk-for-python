@@ -432,9 +432,6 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
             random.shuffle(discovered_clients)
             self._replica_clients = [self._original_client] + discovered_clients
         else:
-            # Reshuffle only if a new client was added and _load_balancing_enabled is enabled
-            # This allways needs to be shuffled, but if load balancing is enabled than the primary endpoint need to be
-            #  shuffled too.
             self._replica_clients = [self._original_client] + discovered_clients
             random.shuffle(self._replica_clients)
 
