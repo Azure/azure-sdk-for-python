@@ -49,7 +49,6 @@ class TestAsyncConfigurationClientManager:
         mock_update_failover_endpoints.return_value = []
         manager = AsyncConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, True, 0, 0, False)
         await manager.refresh_clients()
-        assert manager is not None
         assert len(manager._replica_clients) == 1
         mock_update_failover_endpoints.assert_called_once_with(endpoint, True)
         mock_client.assert_called_once_with(endpoint, connection_string, "", 0, 0)
@@ -147,7 +146,6 @@ class TestAsyncConfigurationClientManager:
         mock_client.return_value = MockClient("https://fake.endpoint", "", "fake-credential", 0, 0)
         mock_update_failover_endpoints.return_value = []
         manager = AsyncConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 0, 0, False)
-        await manager.refresh_clients()
         manager_disabled_refresh = AsyncConfigurationClientManager(
             None, endpoint, "fake-credential", "", 0, 0, False, 0, 0, False
         )
