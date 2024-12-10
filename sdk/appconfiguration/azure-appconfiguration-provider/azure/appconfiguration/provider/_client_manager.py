@@ -385,8 +385,6 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
             self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
             return
 
-        updated_endpoints = False
-
         discovered_clients = []
         for failover_endpoint in failover_endpoints:
             found_client = False
@@ -396,7 +394,6 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
                     found_client = True
                     break
             if not found_client:
-                updated_endpoints = True
                 if self._original_connection_string:
                     failover_connection_string = self._original_connection_string.replace(
                         self._original_endpoint, failover_endpoint
@@ -422,13 +419,11 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
                             **self._args
                         )
                     )
-        if len(discovered_clients) + 1 < len(self._replica_clients):
-            updated_endpoints = True
         self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
-        if updated_endpoints and not self._load_balancing_enabled:
+        if not self._load_balancing_enabled:
             random.shuffle(discovered_clients)
             self._replica_clients = [self._original_client] + discovered_clients
-        if updated_endpoints and self._load_balancing_enabled:
+        else:
             # Reshuffle only if a new client was added and _load_balancing_enabled is enabled
             # This allways needs to be shuffled, but if load balancing is enabled, then the primary endpoint needs to be
             #  shuffled too.
