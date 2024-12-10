@@ -14,7 +14,6 @@
 - Renamed operation `get_resource_info()` to `get_resource_details()`.
 - Renamed model `ContentFormat` to `DocumentContentFormat`.
 - Renamed model `AnalyzeBatchResultOperation` to `AnalyzeBatchOperation`.
-- Renamed model `AnalyzeResultOperation` to `AnalyzeOperation`.
 - Renamed model `CopyAuthorization` to `ModelCopyAuthorization`.
 - Renamed model `Document` to `AnalyzedDocument`.
 - Renamed model `Error` to `DocumentIntelligenceError`.
@@ -27,6 +26,7 @@
 - Renamed property `items_property` in model `DocumentFieldSchema` to `items_schema`.
 - Renamed enum `FontStyle` to `DocumentFontStyle`.
 - Renamed enum `FontWeight` to `DocumentFontWeight`.
+- Removed model `AnalyzeResultOperation`.
 - Removed `GENERATIVE ` in enum `DocumentBuildMode`.
 
 ### Bugs Fixed
