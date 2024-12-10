@@ -3138,7 +3138,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
                                legal_hold=True,
                                overwrite=True)
 
-        blob_list = list()
+        blob_list = []
         async for blob_prop in container_client.list_blobs(include=['immutabilitypolicy', 'legalhold']):
             blob_list.append(blob_prop)
 

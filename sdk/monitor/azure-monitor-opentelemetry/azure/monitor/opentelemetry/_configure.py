@@ -7,7 +7,7 @@ from functools import cached_property
 from logging import getLogger
 from typing import Dict, List, cast
 
-from opentelemetry._events import set_event_logger_provider
+from opentelemetry._events import _set_event_logger_provider
 from opentelemetry._logs import set_logger_provider
 from opentelemetry.instrumentation.dependencies import (
     get_dist_dependency_conflicts,
@@ -63,6 +63,7 @@ from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-err
 )
 from azure.monitor.opentelemetry.exporter._utils import (  # pylint: disable=import-error,no-name-in-module
     _is_attach_enabled,
+    _is_on_functions,
 )
 from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
     _DISTRO_DETECTS_ATTACH,
@@ -115,6 +116,10 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     disable_metrics = configurations[DISABLE_METRICS_ARG]
     enable_live_metrics_config = configurations[ENABLE_LIVE_METRICS_ARG]
 
+    # Setup live metrics
+    if enable_live_metrics_config:
+        _setup_live_metrics(configurations)
+
     # Setup tracing pipeline
     if not disable_tracing:
         _setup_tracing(configurations)
@@ -126,10 +131,6 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     # Setup metrics pipeline
     if not disable_metrics:
         _setup_metrics(configurations)
-
-    # Setup live metrics
-    if enable_live_metrics_config:
-        _setup_live_metrics(configurations)
 
     # Setup instrumentations
     # Instrumentations need to be setup last so to use the global providers
@@ -180,7 +181,7 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
 
     # Setup EventLoggerProvider
     event_provider = EventLoggerProvider(logger_provider)
-    set_event_logger_provider(event_provider)
+    _set_event_logger_provider(event_provider, False)
 
 
 def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
@@ -252,7 +253,7 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
 
 
 def _send_attach_warning():
-    if _is_attach_enabled():
+    if _is_attach_enabled() and not _is_on_functions():
         AzureDiagnosticLogging.warning(
             "Distro detected that automatic attach may have occurred. Check your data to ensure "
             "that telemetry is not being duplicated. This may impact your cost.",
