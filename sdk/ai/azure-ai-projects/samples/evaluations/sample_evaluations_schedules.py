@@ -42,7 +42,7 @@ PROJECT_CONNECTION_STRING = "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<H
 APPLICATION_INSIGHTS_RESOURCE_ID = "appinsights_resource_id"
 
 # Kusto Query Language (KQL) query to query data from Application Insights resource
-# This query is compatible with data logged by the Azure AI Inferencing Tracing SDK (linked in documentation)
+# This query is compatible with data logged by the Azure AI Inference SDK (https://learn.microsoft.com/en-us/azure/ai-studio/how-to/develop/trace-local-sdk?tabs=python)
 # You can modify it depending on your data schema
 # The KQL query must output these required columns: operation_ID, operation_ParentID, and gen_ai_response_id
 # You can choose which other columns to output as required by the evaluators you are using
