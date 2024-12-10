@@ -299,8 +299,8 @@ class TestMassEvaluate:
         [
             ("imageurls", ProtectedMaterialMultimodalEvaluator, ContentSafetyMultimodalEvaluator),
             ("imageurls", ProtectedMaterialEvaluator, ContentSafetyEvaluator),
-            #("imageurls_with_target", ProtectedMaterialMultimodalEvaluator, ContentSafetyMultimodalEvaluator),
-            #("imageurls_with_target", ProtectedMaterialEvaluator, ContentSafetyEvaluator),
+            # ("imageurls_with_target", ProtectedMaterialMultimodalEvaluator, ContentSafetyMultimodalEvaluator),
+            # ("imageurls_with_target", ProtectedMaterialEvaluator, ContentSafetyEvaluator),
             ("b64_images", ProtectedMaterialMultimodalEvaluator, ContentSafetyMultimodalEvaluator),
             ("b64_images", ProtectedMaterialEvaluator, ContentSafetyEvaluator),
         ],
