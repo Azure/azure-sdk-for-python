@@ -175,6 +175,9 @@ class ConversationBot:
                 samples = [self.conversation_starter.render(**self.persona_template_args)]
             else:
                 samples = [self.conversation_starter]
+            jailbreak_string = self.persona_template_args.get("jailbreak_string", None)
+            if jailbreak_string:
+                samples = [f"{jailbreak_string} {samples[0]}"]
             time_taken = 0
 
             finish_reason = ["stop"]
