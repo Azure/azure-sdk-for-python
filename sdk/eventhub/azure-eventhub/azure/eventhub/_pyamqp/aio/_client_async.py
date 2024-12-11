@@ -69,7 +69,7 @@ class AMQPClientAsync(AMQPClientSync):
     :paramtype channel_max: int
     :keyword idle_timeout: Timeout in seconds after which the Connection will close
      if there is no further activity.
-    :paramtype idle_timeout: int
+    :paramtype idle_timeout: Optional[float]
     :keyword auth_timeout: Timeout in seconds for CBS authentication. Otherwise this value will be ignored.
      Default value is 60s.
     :paramtype auth_timeout: int
@@ -426,7 +426,7 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
     :paramtype channel_max: int
     :keyword idle_timeout: Timeout in seconds after which the Connection will close
      if there is no further activity.
-    :paramtype idle_timeout: int
+    :paramtype idle_timeout: Optional[float]
     :keyword auth_timeout: Timeout in seconds for CBS authentication. Otherwise this value will be ignored.
      Default value is 60s.
     :paramtype auth_timeout: int
@@ -635,7 +635,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     :paramtype channel_max: int
     :keyword idle_timeout: Timeout in seconds after which the Connection will close
      if there is no further activity.
-    :paramtype idle_timeout: int
+    :paramtype idle_timeout: Optional[float]
     :keyword auth_timeout: Timeout in seconds for CBS authentication. Otherwise this value will be ignored.
      Default value is 60s.
     :paramtype auth_timeout: int

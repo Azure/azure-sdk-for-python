@@ -62,7 +62,7 @@ class _SharedConnectionManager:  # pylint:disable=too-many-instance-attributes
         http_proxy: Optional[str] = None,
         max_frame_size: int,
         channel_max: int,
-        idle_timeout: float,
+        idle_timeout: Optional[float],
         remote_idle_timeout_empty_frame_send_ratio: float,
         amqp_transport: AmqpTransport,
         **kwargs: Any,

@@ -34,7 +34,7 @@ from .._constants import (
 )
 from .._azureappconfigurationproviderbase import (
     AzureAppConfigurationProviderBase,
-    get_headers,
+    update_correlation_context_header,
     delay_failure,
     is_json_content_type,
     sdk_allowed_kwargs,
@@ -46,6 +46,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 JSON = Mapping[str, Any]
+logger = logging.getLogger(__name__)
 
 
 @overload
@@ -104,6 +105,9 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :keyword replica_discovery_enabled: Optional flag to enable or disable the discovery of replica endpoints. Default
      is True.
     :paramtype replica_discovery_enabled: bool
+    :keyword load_balancing_enabled: Optional flag to enable or disable the load balancing of replica endpoints. Default
+     is False.
+    :paramtype load_balancing_enabled: bool
     """
 
 
@@ -164,6 +168,9 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :keyword replica_discovery_enabled: Optional flag to enable or disable the discovery of replica endpoints. Default
      is True.
     :paramtype replica_discovery_enabled: bool
+    :keyword load_balancing_enabled: Optional flag to enable or disable the load balancing of replica endpoints. Default
+     is False.
+    :paramtype load_balancing_enabled: bool
     """
 
 
@@ -214,11 +221,9 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
 
     provider = await _buildprovider(connection_string, endpoint, credential, uses_key_vault=uses_key_vault, **kwargs)
     kwargs = sdk_allowed_kwargs(kwargs)
-    # Discovering replicas outside of init as it's async
-    await provider._replica_client_manager.setup_initial_clients()  # pylint:disable=protected-access
 
     try:
-        await provider._load_all(**kwargs)  # pylint:disable=protected-access
+        await provider._load_all()  # pylint:disable=protected-access
     except Exception as e:
         delay_failure(start_time)
         raise e
@@ -311,6 +316,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         min_backoff: int = min(kwargs.pop("min_backoff", 30), interval)
         max_backoff: int = min(kwargs.pop("max_backoff", 600), interval)
 
+        self._uses_load_balancing = kwargs.pop("load_balancing_enabled", False)
+
         self._replica_client_manager = AsyncConfigurationClientManager(
             connection_string=kwargs.pop("connection_string", None),
             endpoint=kwargs.pop("endpoint", None),
@@ -321,6 +328,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             replica_discovery_enabled=kwargs.pop("replica_discovery_enabled", True),
             min_backoff_sec=min_backoff,
             max_backoff_sec=max_backoff,
+            load_balancing_enabled=self._uses_load_balancing,
             **kwargs,
         )
         self._secret_clients: Dict[str, SecretClient] = {}
@@ -329,15 +337,15 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             "on_refresh_error", None
         )
 
-    async def refresh(self, **kwargs) -> None:
+    async def refresh(self, **kwargs) -> None:  # pylint: disable=too-many-statements
         if not self._refresh_on and not self._feature_flag_refresh_enabled:
-            logging.debug("Refresh called but no refresh enabled.")
+            logger.debug("Refresh called but no refresh enabled.")
             return
         if not self._refresh_timer.needs_refresh():
-            logging.debug("Refresh called but refresh interval not elapsed.")
+            logger.debug("Refresh called but refresh interval not elapsed.")
             return
         if not self._refresh_lock.acquire(blocking=False):  # pylint: disable= consider-using-with
-            logging.debug("Refresh called but refresh already in progress.")
+            logger.debug("Refresh called but refresh already in progress.")
             return
         success = False
         need_refresh = False
@@ -345,24 +353,29 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                         Failed to refresh configuration settings from Azure App Configuration.
                         """
         exception: Exception = RuntimeError(error_message)
+        is_failover_request = False
         try:
             await self._replica_client_manager.refresh_clients()
-            active_clients = self._replica_client_manager.get_active_clients()
+            self._replica_client_manager.find_active_clients()
+            replica_count = self._replica_client_manager.get_client_count() - 1
 
-            headers = get_headers(
-                kwargs.pop("headers", {}),
-                "Watch",
-                self._replica_client_manager.get_client_count() - 1,
-                self._feature_flag_enabled,
-                self._feature_filter_usage,
-                self._uses_key_vault,
-            )
-            for client in active_clients:
+            while client := self._replica_client_manager.get_next_active_client():
+                headers = update_correlation_context_header(
+                    kwargs.pop("headers", {}),
+                    "Watch",
+                    replica_count,
+                    self._feature_flag_enabled,
+                    self._feature_filter_usage,
+                    self._uses_key_vault,
+                    self._uses_load_balancing,
+                    is_failover_request,
+                )
+
                 try:
                     if self._refresh_on:
                         need_refresh, self._refresh_on, configuration_settings = (
                             await client.refresh_configuration_settings(
-                                self._selects, self._refresh_on, headers, **kwargs
+                                self._selects, self._refresh_on, headers=headers, **kwargs
                             )
                         )
                         configuration_settings_processed = {}
@@ -377,11 +390,13 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                         if need_refresh:
                             self._dict = configuration_settings_processed
                     if self._feature_flag_refresh_enabled:
-                        need_ff_refresh, self._refresh_on_feature_flags, feature_flags, filters_used = (
+                        need_ff_refresh, refresh_on_feature_flags, feature_flags, filters_used = (
                             await client.refresh_feature_flags(
-                                self._refresh_on_feature_flags, self._feature_flag_selectors, headers, **kwargs
+                                self._refresh_on_feature_flags, self._feature_flag_selectors, headers=headers, **kwargs
                             )
                         )
+                        if refresh_on_feature_flags:
+                            self._refresh_on_feature_flags = refresh_on_feature_flags
                         self._feature_filter_usage = filters_used
 
                         if need_refresh or need_ff_refresh:
@@ -393,8 +408,9 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     break
                 except AzureError as e:
                     exception = e
+                    logger.debug("Failed to refresh configurations from endpoint %s", client.endpoint)
                     self._replica_client_manager.backoff(client)
-
+                    is_failover_request = True
             if not success:
                 self._refresh_timer.backoff()
                 if self._on_refresh_error:
@@ -407,17 +423,22 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             self._refresh_lock.release()
 
     async def _load_all(self, **kwargs):
-        active_clients = self._replica_client_manager.get_active_clients()
-        headers = get_headers(
-            kwargs.pop("headers", {}),
-            "Startup",
-            self._replica_client_manager.get_client_count() - 1,
-            self._feature_flag_enabled,
-            self._feature_filter_usage,
-            self._uses_key_vault,
-        )
+        await self._replica_client_manager.refresh_clients()
+        self._replica_client_manager.find_active_clients()
+        is_failover_request = False
+        replica_count = self._replica_client_manager.get_client_count() - 1
 
-        for client in active_clients:
+        while client := self._replica_client_manager.get_next_active_client():
+            headers = update_correlation_context_header(
+                kwargs.pop("headers", {}),
+                "Startup",
+                replica_count,
+                self._feature_flag_enabled,
+                self._feature_filter_usage,
+                self._uses_key_vault,
+                self._uses_load_balancing,
+                is_failover_request,
+            )
             try:
                 configuration_settings, sentinel_keys = await client.load_configuration_settings(
                     self._selects, self._refresh_on, headers=headers, **kwargs
@@ -427,6 +448,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     key = self._process_key_name(config)
                     value = await self._process_key_value(config)
                     configuration_settings_processed[key] = value
+
                 if self._feature_flag_enabled:
                     feature_flags, feature_flag_sentinel_keys, used_filters = await client.load_feature_flags(
                         self._feature_flag_selectors, self._feature_flag_refresh_enabled, headers=headers, **kwargs
@@ -445,7 +467,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                         except HttpResponseError as e:
                             if e.status_code == 404:
                                 # If the sentinel is not found a refresh should be triggered when it is created.
-                                logging.debug(
+                                logger.debug(
                                     """
                                     WatchKey key: %s label %s was configured but not found. Refresh will be triggered
                                     if created.
@@ -461,7 +483,9 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     self._dict = configuration_settings_processed
                 return
             except AzureError:
+                logger.debug("Failed to refresh configurations from endpoint %s", client.endpoint)
                 self._replica_client_manager.backoff(client)
+                is_failover_request = True
         raise RuntimeError(
             "Failed to load configuration settings. No Azure App Configuration stores successfully loaded from."
         )
