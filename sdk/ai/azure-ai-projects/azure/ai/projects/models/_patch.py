@@ -107,7 +107,9 @@ def _filter_parameters(model_class: Type, parameters: Dict[str, Any]) -> Dict[st
     return new_params
 
 
-def _safe_instantiate(model_class: Type, parameters: Union[str, Dict[str, Any]]) -> StreamEventData:
+def _safe_instantiate(
+    model_class: Type, parameters: Union[str, Dict[str, Any]], *, generated_class: Optional[Type] = None
+) -> StreamEventData:
     """
     Instantiate class with the set of parameters from the server.
 
@@ -117,9 +119,11 @@ def _safe_instantiate(model_class: Type, parameters: Union[str, Dict[str, Any]])
     :return: The class of model_class type if parameters is a dictionary, or the parameters themselves otherwise.
     :rtype: Any
     """
+    if not generated_class:
+        generated_class = model_class
     if not isinstance(parameters, dict):
         return parameters
-    return cast(StreamEventData, model_class(**_filter_parameters(model_class, parameters)))
+    return cast(StreamEventData, model_class(**_filter_parameters(generated_class, parameters)))
 
 
 def _parse_event(event_data_str: str) -> Tuple[str, StreamEventData]:
@@ -173,13 +177,9 @@ def _parse_event(event_data_str: str) -> Tuple[str, StreamEventData]:
         AgentStreamEvent.THREAD_MESSAGE_COMPLETED.value,
         AgentStreamEvent.THREAD_MESSAGE_INCOMPLETE.value,
     }:
-        thread_message = cast(ThreadMessageGenerated, _safe_instantiate(ThreadMessageGenerated, parsed_data))
-        event_obj = ThreadMessage(thread_message)
+        event_obj = _safe_instantiate(ThreadMessage, parsed_data, generated_class=ThreadMessageGenerated)
     elif event_type == AgentStreamEvent.THREAD_MESSAGE_DELTA.value:
-        message_delta_chunk = cast(
-            MessageDeltaChunkGenerated, _safe_instantiate(MessageDeltaChunkGenerated, parsed_data)
-        )
-        event_obj = MessageDeltaChunk(message_delta_chunk)
+        event_obj = _safe_instantiate(MessageDeltaChunk, parsed_data, generated_class=MessageDeltaChunkGenerated)
 
     elif event_type == AgentStreamEvent.THREAD_RUN_STEP_DELTA.value:
         event_obj = _safe_instantiate(RunStepDeltaChunk, parsed_data)
@@ -409,10 +409,6 @@ def is_optional(annotation) -> bool:
 
 
 class MessageDeltaChunk(MessageDeltaChunkGenerated):
-    def __init__(self, generated: MessageDeltaChunkGenerated):  # pylint: disable=super-init-not-called
-        for prop, value in vars(generated).items():
-            setattr(self, prop, value)
-
     @property
     def text(self) -> str:
         """Get the text content of the delta chunk.
@@ -429,11 +425,6 @@ class MessageDeltaChunk(MessageDeltaChunkGenerated):
 
 
 class ThreadMessage(ThreadMessageGenerated):
-
-    def __init__(self, generated: ThreadMessageGenerated):  # pylint: disable=super-init-not-called
-        for prop, value in vars(generated).items():
-            setattr(self, prop, value)
-
     @property
     def text_messages(self) -> List[MessageTextContent]:
         """Returns all text message contents in the messages.
