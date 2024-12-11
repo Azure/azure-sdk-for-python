@@ -2012,7 +2012,7 @@ class TestagentClient(AzureRecordedTestCase):
                 print("Deleted file")
 
                 # get messages
-                messages = client.agents.get_messages(thread_id=thread.id)
+                messages = client.agents.list_messages(thread_id=thread.id)
                 print(f"Messages: {messages}")
 
                 last_msg = messages.get_last_text_message_by_sender("assistant")

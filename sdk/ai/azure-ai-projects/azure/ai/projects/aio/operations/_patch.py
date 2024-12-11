@@ -2712,49 +2712,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         return cast(AsyncIterator[bytes], response)
 
     @distributed_trace_async
-    async def get_messages(
-        self,
-        thread_id: str,
-        *,
-        run_id: Optional[str] = None,
-        limit: Optional[int] = None,
-        order: Optional[Union[str, _models.ListSortOrder]] = None,
-        after: Optional[str] = None,
-        before: Optional[str] = None,
-        **kwargs: Any,
-    ) -> _models.ThreadMessages:
-        """Parses the OpenAIPageableListOfThreadMessage response and returns a ThreadMessages object.
-
-        :param thread_id: Identifier of the thread. Required.
-        :type thread_id: str
-        :keyword run_id: Filter messages by the run ID that generated them. Default value is None.
-        :paramtype run_id: str
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the default is 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
-         and desc for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.models.ListSortOrder
-        :keyword after: A cursor for use in pagination. after is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, ending with
-         obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
-         list. Default value is None.
-        :paramtype after: str
-        :keyword before: A cursor for use in pagination. before is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, ending with
-         obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
-         the list. Default value is None.
-        :paramtype before: str
-
-        :return: ThreadMessages. The ThreadMessages is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ThreadMessages
-        """
-        messages = await super().list_messages(
-            thread_id, run_id=run_id, limit=limit, order=order, after=after, before=before, **kwargs
-        )
-        return _models.ThreadMessages(pageable_list=messages)
-
-    @distributed_trace_async
     async def save_file(self, file_id: str, file_name: str, target_dir: Optional[Union[str, Path]] = None) -> None:
         """
         Asynchronously saves file content retrieved using a file identifier to the specified local directory.

@@ -82,7 +82,7 @@ with project_client:
     project_client.agents.delete_file(file.id)
     print("Deleted file")
 
-    messages = project_client.agents.get_messages(thread_id=thread.id)
+    messages = project_client.agents.list_messages(thread_id=thread.id)
     print(f"Messages: {messages}")
 
     last_msg = messages.get_last_text_message_by_sender("assistant")

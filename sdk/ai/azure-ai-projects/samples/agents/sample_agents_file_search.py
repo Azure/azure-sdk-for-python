@@ -93,7 +93,7 @@ with project_client:
     # [END teardown]
 
     # Fetch and log all messages
-    messages = project_client.agents.get_messages(thread_id=thread.id)
+    messages = project_client.agents.list_messages(thread_id=thread.id)
 
     # Print citations from the messages
     for citation in messages.file_citation_annotations:
