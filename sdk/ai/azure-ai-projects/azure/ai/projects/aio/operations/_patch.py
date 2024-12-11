@@ -410,7 +410,7 @@ class TelemetryOperations(TelemetryOperationsGenerated):
             for this project.
         """
         if not self._connection_string:
-            # Get the AI Studio Project properties, including Application Insights resource URL if exists
+            # Get the AI Foundry project properties, including Application Insights resource URL if exists
             get_workspace_response: GetWorkspaceResponse = (
                 await self._outer_instance.connections._get_workspace()  # pylint: disable=protected-access
             )

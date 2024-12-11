@@ -18,7 +18,7 @@ USAGE:
     pip install azure-ai-evaluation
 
     Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
 """
 
 import os
@@ -79,5 +79,5 @@ print("----------------------------------------------------------------")
 print("Created evaluation, evaluation ID: ", get_evaluation_response.id)
 print("Evaluation status: ", get_evaluation_response.status)
 if isinstance(get_evaluation_response.properties, dict):
-    print("AI Studio URI: ", get_evaluation_response.properties["AiStudioEvaluationUri"])
+    print("AI Foundry URI: ", get_evaluation_response.properties["AiStudioEvaluationUri"])
 print("----------------------------------------------------------------")

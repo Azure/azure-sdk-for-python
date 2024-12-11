@@ -14,7 +14,7 @@ USAGE:
     pip install azure-ai-projects azure-identity azure-ai-ml aiohttp
 
     Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
 """
 import asyncio
 import os
@@ -25,7 +25,6 @@ from azure.identity.aio import DefaultAzureCredential
 
 
 async def main():
-
     project_client = AIProjectClient.from_connection_string(
         credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
     )
