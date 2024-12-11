@@ -101,7 +101,6 @@ class TestMassEvaluate:
         result = evaluate(
             data=data_file,
             evaluators=evaluators,
-            _use_pf_client=False,
         )
 
         row_result_df = pd.DataFrame(result["rows"])
