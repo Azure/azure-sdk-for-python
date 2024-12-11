@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_functions_with_azure_monitor_tracing.py
-
 DESCRIPTION:
     This sample demonstrates how to use basic agent operations with function tools from
     the Azure Agents service using a synchronous client with Azure Monitor tracing.
@@ -31,11 +29,6 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import FunctionTool, RequiredFunctionToolCall, SubmitToolOutputsAction, ToolOutput
 from opentelemetry import trace
 from azure.monitor.opentelemetry import configure_azure_monitor
-
-
-# Create an AI Project Client from a connection string, copied from your AI Foundry project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]

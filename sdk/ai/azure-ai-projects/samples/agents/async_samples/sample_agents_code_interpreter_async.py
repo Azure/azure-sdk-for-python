@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_code_interpreter_async.py
-
 DESCRIPTION:
     This sample demonstrates how to use code interpreter tool with agent from
     the Azure Agents service using a asynchronous client.
@@ -32,10 +30,6 @@ import os
 
 
 async def main() -> None:
-
-    # Create an Azure AI Client from a connection string, copied from your AI Foundry project.
-    # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-    # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
     project_client = AIProjectClient.from_connection_string(
         credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]

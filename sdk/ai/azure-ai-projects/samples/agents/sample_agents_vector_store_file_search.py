@@ -3,8 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """
-FILE: sample_agents_vector_store_file_search.py
-
 DESCRIPTION:
     This sample demonstrates how to add files to agent during the vector store creation.
 
@@ -20,19 +18,12 @@ USAGE:
 """
 
 import os
-
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import FileSearchTool, FilePurpose
 from azure.identity import DefaultAzureCredential
 
-
-# Create an Azure AI Client from a connection string, copied from your AI Foundry project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
-
-credential = DefaultAzureCredential()
 project_client = AIProjectClient.from_connection_string(
-    credential=credential, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+    credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
 )
 
 with project_client:

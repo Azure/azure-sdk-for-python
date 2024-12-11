@@ -3,8 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """
-FILE: sample_agents_code_interpreter_attachment_enterprise_search_async.py
-
 DESCRIPTION:
     This sample demonstrates how to use agent operations with code interpreter from
     the Azure Agents service using a synchronous client.
@@ -21,7 +19,6 @@ USAGE:
 """
 import asyncio
 import os
-
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
     CodeInterpreterTool,
@@ -32,15 +29,10 @@ from azure.ai.projects.models import (
 from azure.identity.aio import DefaultAzureCredential
 
 
-# Create an Azure AI Client from a connection string, copied from your AI Foundry project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
-
-
 async def main():
-    credential = DefaultAzureCredential()
+
     project_client = AIProjectClient.from_connection_string(
-        credential=credential, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+        credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
     )
 
     async with project_client:

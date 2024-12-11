@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_basics_async_with_console_tracing.py
-
 DESCRIPTION:
     This sample demonstrates how to use basic agent operations from
     the Azure Agents service using a asynchronous client with tracing to console.
@@ -42,10 +40,6 @@ tracer = trace.get_tracer(__name__)
 
 @tracer.start_as_current_span(__file__)
 async def main() -> None:
-
-    # Create an Azure AI Project Client from a connection string, copied from your AI Foundry project.
-    # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-    # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
     project_client = AIProjectClient.from_connection_string(
         credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]

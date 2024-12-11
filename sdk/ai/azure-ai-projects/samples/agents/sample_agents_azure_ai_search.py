@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_azure_ai_search.py
-
 DESCRIPTION:
     This sample demonstrates how to use agent operations with the 
     Azure AI Search tool from the Azure Agents service using a synchronous client.
@@ -27,11 +25,6 @@ import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import AzureAISearchTool
-
-
-# Create an Azure AI Client from a connection string, copied from your AI Foundry project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
