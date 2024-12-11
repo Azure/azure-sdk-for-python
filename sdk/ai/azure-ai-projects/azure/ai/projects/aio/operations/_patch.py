@@ -24,12 +24,9 @@ from typing import (
     Optional,
     Sequence,
     TextIO,
-    Tuple,
-    TypeVar,
     Union,
     cast,
     overload,
-    Generic,
 )
 
 from azure.core.exceptions import ResourceNotFoundError
@@ -1457,7 +1454,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         return run
 
-    _defaultAgentEventHandler = _models.AsyncAgentEventHandler()
+    _defaultAgentEventHandler: _models.AsyncAgentEventHandler = _models.AsyncAgentEventHandler()
 
     @overload
     async def create_stream(

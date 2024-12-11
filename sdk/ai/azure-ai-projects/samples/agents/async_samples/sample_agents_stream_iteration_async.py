@@ -24,7 +24,7 @@ import asyncio
 
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import AgentStreamEvent
-from azure.ai.projects.models import MessageDeltaChunk, MessageDeltaTextContent, RunStep, ThreadMessage, ThreadRun
+from azure.ai.projects.models import MessageDeltaChunk, RunStep, ThreadMessage, ThreadRun
 from azure.identity.aio import DefaultAzureCredential
 
 import os
@@ -54,13 +54,10 @@ async def main() -> None:
         print(f"Created message, message ID {message.id}")
 
         async with await project_client.agents.create_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
-            async for event_type, event_data in stream:
+            async for event_type, event_data, _ in stream:
 
                 if isinstance(event_data, MessageDeltaChunk):
-                    for content_part in event_data.delta.content:
-                        if isinstance(content_part, MessageDeltaTextContent):
-                            text_value = content_part.text.value if content_part.text else "No text"
-                            print(f"Text delta received: {text_value}")
+                    print(f"Text delta received: {event_data.text}")
 
                 elif isinstance(event_data, ThreadMessage):
                     print(f"ThreadMessage created. ID: {event_data.id}, Status: {event_data.status}")

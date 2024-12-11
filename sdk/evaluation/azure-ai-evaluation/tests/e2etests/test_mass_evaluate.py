@@ -24,7 +24,7 @@ from azure.ai.evaluation import (
     ProtectedMaterialEvaluator,
     IndirectAttackEvaluator,
     RetrievalEvaluator,
-    # ContentSafetyMultimodalEvaluator,
+    ContentSafetyMultimodalEvaluator,
     ProtectedMaterialMultimodalEvaluator,
     RougeType,
     evaluate,
@@ -293,20 +293,29 @@ class TestMassEvaluate:
 
     # Imagee urls with target is disabled due to being unstable in CI
     @pytest.mark.parametrize(
-        "multi_modal_input_type",
+        "multi_modal_input_type,pm_evaluator_class,cs_evaluator_class",
         [
-            "imageurls",
-            # "imageurls_with_target",
-            "b64_images",
+            ("imageurls", ProtectedMaterialMultimodalEvaluator, ContentSafetyMultimodalEvaluator),
+            ("imageurls", ProtectedMaterialEvaluator, ContentSafetyEvaluator),
+            # ("imageurls_with_target", ProtectedMaterialMultimodalEvaluator, ContentSafetyMultimodalEvaluator),
+            # ("imageurls_with_target", ProtectedMaterialEvaluator, ContentSafetyEvaluator),
+            ("b64_images", ProtectedMaterialMultimodalEvaluator, ContentSafetyMultimodalEvaluator),
+            ("b64_images", ProtectedMaterialEvaluator, ContentSafetyEvaluator),
         ],
     )
-    def test_evaluate_multimodal(self, multi_modal_input_type, multimodal_input_selector, azure_cred, project_scope):
+    def test_evaluate_multimodal(
+        self,
+        multi_modal_input_type,
+        pm_evaluator_class,
+        cs_evaluator_class,
+        multimodal_input_selector,
+        azure_cred,
+        project_scope,
+    ):
         # Content safety is removed due to being unstable in playback mode
         evaluators = {
-            # "content_safety" : ContentSafetyMultimodalEvaluator(credential=azure_cred, azure_ai_project=project_scope),
-            "protected_material": ProtectedMaterialMultimodalEvaluator(
-                credential=azure_cred, azure_ai_project=project_scope
-            ),
+            # "content_safety" : cs_evaluator_class(credential=azure_cred, azure_ai_project=project_scope),
+            "protected_material": pm_evaluator_class(credential=azure_cred, azure_ai_project=project_scope),
         }
 
         evaluator_config = None  # use default normally

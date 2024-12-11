@@ -1331,6 +1331,8 @@
         "OTEL",
         "GENAI",
         "fspath",
+        "myindexname",
+        "wttr",
         "azureopenai"
       ]
     },

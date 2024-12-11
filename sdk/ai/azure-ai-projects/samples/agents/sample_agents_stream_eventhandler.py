@@ -27,7 +27,6 @@ from azure.identity import DefaultAzureCredential
 
 from azure.ai.projects.models import (
     AgentEventHandler,
-    MessageDeltaTextContent,
     MessageDeltaChunk,
     ThreadMessage,
     ThreadRun,
@@ -48,30 +47,28 @@ project_client = AIProjectClient.from_connection_string(
 
 
 # [START stream_event_handler]
-class MyEventHandler(AgentEventHandler):
+class MyEventHandler(AgentEventHandler[str]):
+
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
-        for content_part in delta.delta.content:
-            if isinstance(content_part, MessageDeltaTextContent):
-                text_value = content_part.text.value if content_part.text else "No text"
-                print(f"Text delta received: {text_value}")
+        self.custom_data = f"Text delta received: {delta.text}"
 
     def on_thread_message(self, message: "ThreadMessage") -> None:
-        print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
+        self.custom_data = f"ThreadMessage created. ID: {message.id}, Status: {message.status}"
 
     def on_thread_run(self, run: "ThreadRun") -> None:
-        print(f"ThreadRun status: {run.status}")
+        self.custom_data = f"ThreadRun status: {run.status}"
 
     def on_run_step(self, step: "RunStep") -> None:
-        print(f"RunStep type: {step.type}, Status: {step.status}")
+        self.custom_data = f"RunStep type: {step.type}, Status: {step.status}"
 
     def on_error(self, data: str) -> None:
-        print(f"An error occurred. Data: {data}")
+        self.custom_data = f"An error occurred. Data: {data}"
 
     def on_done(self) -> None:
-        print("Stream completed.")
+        self.custom_data = "Stream completed."
 
     def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
-        print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
+        self.custom_data = f"Unhandled Event Type: {event_type}, Data: {event_data}"
 
 
 # [END stream_event_handler]
@@ -94,7 +91,8 @@ with project_client:
     with project_client.agents.create_stream(
         thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
     ) as stream:
-        stream.until_done()
+        for _, _, custom_data in stream:
+            print(custom_data)
     # [END create_stream]
 
     project_client.agents.delete_agent(agent.id)

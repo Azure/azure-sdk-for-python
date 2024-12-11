@@ -23,8 +23,6 @@ from typing import (
     Optional,
     Sequence,
     TextIO,
-    Tuple,
-    TypeVar,
     Union,
     cast,
     overload,
@@ -1645,7 +1643,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         return run
 
-    _defaultAgentEventHandler = _models.AgentEventHandler()
+    _defaultAgentEventHandler: _models.AgentEventHandler = _models.AgentEventHandler()
 
     @overload
     def create_stream(

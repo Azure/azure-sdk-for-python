@@ -4186,6 +4186,10 @@
                 "format": "int32",
                 "maximum": 600,
                 "minimum": 10
+              },
+              "Azure-AsyncOperation": {
+                "description": "URI to poll for asynchronous operation status.",
+                "type": "string"
               }
             }
           },
@@ -4206,7 +4210,7 @@
         },
         "x-ms-long-running-operation": true,
         "x-ms-long-running-operation-options": {
-          "final-state-via": "location"
+          "final-state-via": "azure-async-operation"
         }
       },
       "get": {
