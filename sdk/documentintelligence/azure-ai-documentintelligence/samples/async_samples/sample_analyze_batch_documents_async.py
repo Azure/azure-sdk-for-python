@@ -66,7 +66,7 @@ async def analyze_batch_docs():
         )
         poller = await document_intelligence_client.begin_analyze_batch_documents(
             model_id="prebuilt-layout",
-            analyze_batch_request=request,
+            body=request,
         )
         continuation_token = (
             poller.continuation_token()

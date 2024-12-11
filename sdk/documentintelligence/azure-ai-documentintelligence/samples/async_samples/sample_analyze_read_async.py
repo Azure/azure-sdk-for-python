@@ -74,7 +74,7 @@ async def analyze_read():
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_intelligence_client.begin_analyze_document(
                 "prebuilt-read",
-                analyze_request=f,
+                body=f,
                 features=[DocumentAnalysisFeature.STYLE_FONT],
             )
         result: AnalyzeResult = await poller.result()

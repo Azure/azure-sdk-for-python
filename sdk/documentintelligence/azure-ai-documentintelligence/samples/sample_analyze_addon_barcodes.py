@@ -64,7 +64,7 @@ def analyze_barcodes():
     with open(path_to_sample_documents, "rb") as f:
         poller = document_intelligence_client.begin_analyze_document(
             "prebuilt-layout",
-            analyze_request=f,
+            body=f,
             features=[DocumentAnalysisFeature.BARCODES],
         )
     result: AnalyzeResult = poller.result()
