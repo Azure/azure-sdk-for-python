@@ -90,10 +90,7 @@ async def main():
         message = await project_client.agents.create_message(
             thread_id=thread.id,
             role="user",
-            content=(
-                "The mass of the Mars is 6.4171E23 kg;"
-                "the mass of the Earth is 5.972168E24 kg;"
-            ),
+            content=("The mass of the Mars is 6.4171E23 kg; the mass of the Earth is 5.972168E24 kg;"),
         )
         # [END create_message]
         print(f"Created message, message ID: {message.id}")

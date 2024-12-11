@@ -1919,10 +1919,7 @@ class TestagentClient(AzureRecordedTestCase):
             message = ai_client.agents.create_message(
                 thread_id=thread.id,
                 role="user",
-                content=(
-                    "The mass of the Mars is 6.4171E23 kg;"
-                    "the mass of the Earth is 5.972168E24 kg;"
-                ),
+                content=("The mass of the Mars is 6.4171E23 kg"),
             )
             assert message.id
 
