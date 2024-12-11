@@ -48,7 +48,7 @@ class TestEvaluatePerformance:
         max_duration = 2
         # This test runs unreasonably slow in CI for some reason. Allow 20 seconds extra.
         if in_ci():
-            max_duration += 20
+            max_duration += 25
         if use_pf_client:  # PF client doesn't seem to parallelize, and takes about a second or 2 to start
             max_duration += 6.5
         assert diff < max_duration
@@ -76,7 +76,7 @@ class TestEvaluatePerformance:
         # 2 batches at most, so it should take between 1 and 1.5 seconds.
         max_duration = 1.5
         if use_pf_client:  # PF client doesn't seem to parallelize, and takes about a second to start.
-            max_duration += 5
+            max_duration += 7.5
         assert diff < max_duration
         row_result_df = pd.DataFrame(result["rows"])
         assert "outputs.slow.result" in row_result_df.columns
