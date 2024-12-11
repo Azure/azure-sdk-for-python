@@ -14,6 +14,8 @@ extends:
         AZURE_QUESTIONANSWERING_ENDPOINT: $(qna-uri)
         AZURE_CONVERSATIONS_ENDPOINT: $(clu-uri)
         AZURE_CONVERSATIONS_KEY: $(clu-key)
+        AZURE_DOCUMENTS_ENDPOINT: $(ta-uri)
+        AZURE_DOCUMENTS_KEY: $(ta-key)
         AZURE_CONVERSATIONS_PROJECT_NAME: $(clu-project)
         AZURE_CONVERSATIONS_DEPLOYMENT_NAME: $(clu-project-deployment)
         AZURE_CONVERSATIONS_WORKFLOW_PROJECT_NAME: $(clu-workflow-project)
