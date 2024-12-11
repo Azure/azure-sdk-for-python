@@ -2272,9 +2272,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         tool_outputs: List[_models.ToolOutput] = _Unset,
-        event_handler: Optional[_models.BaseAgentEventHandlerT] = None,
+        event_handler: Optional[_models.BaseAgentEventHandlerT] = None,  # pyright: ignore[reportInconsistentOverload]
         **kwargs: Any,
-    ) -> _models.AgentRunStream[_models.BaseAgentEventHandlerT]:
+    ) -> _models.AgentRunStream[_models.BaseAgentEventHandlerT]:  # pyright: ignore[reportInconsistentOverload]
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
