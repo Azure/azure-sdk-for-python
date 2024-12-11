@@ -6,6 +6,8 @@
 
 * Redesigned streaming and event handlers for agents 
 * Add `parallel_tool_calls` parameter to allow parallel tool execution.
+* Add support for Structured Outputs.
+* Add option to include file contents, when index search is used.
 
 ### Bugs Fixed
 
