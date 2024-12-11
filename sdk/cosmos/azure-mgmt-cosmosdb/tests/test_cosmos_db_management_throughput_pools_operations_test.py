@@ -21,20 +21,15 @@ class TestCosmosDBManagementThroughputPoolsOperations(AzureMgmtRecordedTestCase)
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_throughput_pools_list(self, resource_group):
-        response = self.client.throughput_pools.list(
-            
-        )
+        response = self.client.throughput_pools.list()
         result = [r for r in response]
         assert response
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_throughput_pools_list_by_resource_group(self, resource_group):
         response = self.client.throughput_pools.list_by_resource_group(
             resource_group_name=resource_group.name,
-            
         )
         result = [r for r in response]
         assert result == []
-        

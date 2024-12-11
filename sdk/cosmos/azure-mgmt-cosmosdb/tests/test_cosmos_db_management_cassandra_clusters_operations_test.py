@@ -21,19 +21,15 @@ class TestCosmosDBManagementCassandraClustersOperations(AzureMgmtRecordedTestCas
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_cassandra_clusters_list_by_subscription(self, resource_group):
-        response = self.client.cassandra_clusters.list_by_subscription(
-            
-        )
+        response = self.client.cassandra_clusters.list_by_subscription()
         result = [r for r in response]
         assert response
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_cassandra_clusters_list_by_resource_group(self, resource_group):
         response = self.client.cassandra_clusters.list_by_resource_group(
             resource_group_name=resource_group.name,
-            
         )
         result = [r for r in response]
         assert result == []

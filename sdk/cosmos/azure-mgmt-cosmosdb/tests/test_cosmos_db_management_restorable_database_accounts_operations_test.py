@@ -21,7 +21,6 @@ class TestCosmosDBManagementRestorableDatabaseAccountsOperations(AzureMgmtRecord
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_restorable_database_accounts_list(self, resource_group):
-        response = self.client.restorable_database_accounts.list(
-        )
+        response = self.client.restorable_database_accounts.list()
         result = [r for r in response]
         assert response

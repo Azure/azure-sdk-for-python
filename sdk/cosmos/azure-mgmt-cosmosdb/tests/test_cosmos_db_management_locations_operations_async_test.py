@@ -22,9 +22,6 @@ class TestCosmosDBManagementLocationsOperationsAsync(AzureMgmtRecordedTestCase):
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_locations_list(self, resource_group):
-        response = self.client.locations.list(
-            
-        )
+        response = self.client.locations.list()
         result = [r async for r in response]
         assert result
-        
