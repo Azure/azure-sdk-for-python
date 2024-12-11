@@ -7,7 +7,6 @@
   - Added operation group GalleryInVMAccessControlProfileVersionsOperations
   - Added operation group GalleryInVMAccessControlProfilesOperations
   - Added operation group SoftDeletedResourceOperations
-  - Added operation group TYPE_CHECKING
   - Model Gallery has a new parameter identity
   - Model GalleryImage has a new parameter allow_update_image
   - Model GalleryImageFeature has a new parameter starts_at_version
