@@ -136,7 +136,7 @@ class AIProjectClient(
             resource_group_name=resource_group_name,
             project_name=project_name,
             credential=credential,
-            api_version="2024-07-01-preview",  # TODO: Update me
+            api_version="2024-12-01-preview",
             credential_scopes=["https://ml.azure.com/.default"],
             **kwargs2,
         )
