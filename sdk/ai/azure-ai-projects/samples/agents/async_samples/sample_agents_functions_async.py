@@ -28,6 +28,7 @@ from azure.ai.projects.models import AsyncFunctionTool, RequiredFunctionToolCall
 from azure.identity.aio import DefaultAzureCredential
 from user_async_functions import user_async_functions
 
+
 async def main() -> None:
 
     project_client = AIProjectClient.from_connection_string(

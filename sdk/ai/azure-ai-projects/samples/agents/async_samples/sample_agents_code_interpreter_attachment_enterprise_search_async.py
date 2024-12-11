@@ -28,6 +28,7 @@ from azure.ai.projects.models import (
 )
 from azure.identity.aio import DefaultAzureCredential
 
+
 async def main():
 
     project_client = AIProjectClient.from_connection_string(

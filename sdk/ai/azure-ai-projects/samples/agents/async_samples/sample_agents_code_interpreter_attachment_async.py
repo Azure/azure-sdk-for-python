@@ -26,6 +26,7 @@ from azure.ai.projects.models import FilePurpose
 from azure.ai.projects.models import MessageAttachment
 from azure.identity.aio import DefaultAzureCredential
 
+
 async def main():
     project_client = AIProjectClient.from_connection_string(
         credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]

@@ -68,6 +68,7 @@ class MyEventHandler(BaseAgentEventHandler[str]):
         for chunk in self:
             yield chunk
 
+
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
 )

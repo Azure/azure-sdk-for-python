@@ -38,6 +38,7 @@ project_client = AIProjectClient.from_connection_string(
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
+
 # [START stream_event_handler]
 class MyEventHandler(AgentEventHandler[str]):
 
