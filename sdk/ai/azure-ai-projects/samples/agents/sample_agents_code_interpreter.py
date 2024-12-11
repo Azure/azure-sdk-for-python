@@ -80,7 +80,7 @@ with project_client:
     print("Deleted file")
 
     # [START get_messages_and_save_files]
-    messages = project_client.agents.get_messages(thread_id=thread.id)
+    messages = project_client.agents.list_messages(thread_id=thread.id)
     print(f"Messages: {messages}")
 
     for image_content in messages.image_contents:
