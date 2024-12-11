@@ -135,11 +135,11 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
 
     @distributed_trace
     def load_configuration_settings(
-        self, setting_selectors: List[SettingSelector], refresh_on_keys: Dict[Tuple[str, str], str], **kwargs
+        self, selects: List[SettingSelector], refresh_on: Mapping[Tuple[str, str], Optional[str]], **kwargs
     ) -> Tuple[List[ConfigurationSetting], Dict[Tuple[str, str], str]]:
         configuration_settings = []
-        sentinel_keys = kwargs.pop("sentinel_keys", refresh_on_keys)
-        for select in setting_selectors:
+        sentinel_keys = kwargs.pop("sentinel_keys", refresh_on)
+        for select in selects:
             configurations = self._client.list_configuration_settings(
                 key_filter=select.key_filter, label_filter=select.label_filter, **kwargs
             )
@@ -152,7 +152,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 # Every time we run load_all, we should update the etag of our refresh sentinels
                 # so they stay up-to-date.
                 # Sentinel keys will have unprocessed key names, so we need to use the original key.
-                if (config.key, config.label) in refresh_on_keys:
+                if (config.key, config.label) in refresh_on:
                     sentinel_keys[(config.key, config.label)] = config.etag
         return configuration_settings, sentinel_keys
 
@@ -190,15 +190,15 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
     @distributed_trace
     def refresh_configuration_settings(
         self,
-        setting_selectors: List[SettingSelector],
-        refresh_on: Dict[Tuple[str, str], str],
+        selects: List[SettingSelector],
+        refresh_on: Mapping[Tuple[str, str], Optional[str]],
         headers: Dict[str, str],
         **kwargs
-    ) -> Tuple[bool, Dict[Tuple[str, str], str], List[Any]]:
+    ) -> Tuple[bool, Mapping[Tuple[str, str], Optional[str]], List[Any]]:
         """
         Gets the refreshed configuration settings if they have changed.
 
-        :param List[SettingSelector] setting_selectors: The selectors to use to load configuration settings
+        :param List[SettingSelector] selects: The selectors to use to load configuration settings
         :param List[SettingSelector] refresh_on: The configuration settings to check for changes
         :param Mapping[str, str] headers: The headers to use for the request
 
@@ -219,7 +219,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         # Need to only update once, no matter how many sentinels are updated
         if need_refresh:
             configuration_settings, sentinel_keys = self.load_configuration_settings(
-                setting_selectors, refresh_on, **kwargs
+                selects, refresh_on, **kwargs
             )
             return True, sentinel_keys, configuration_settings
         return False, refresh_on, []
