@@ -6,13 +6,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Literal, TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
     from . import models as _models
-ResponseFormat = Union[str, Literal["text"], Literal["json_object"], "_models.ResponseFormatJsonSchemaType"]
 AgentsApiResponseFormatOption = Union[
-    str, str, "_models.AgentsApiResponseFormatMode", "_models.AgentsApiResponseFormat"
+    str,
+    str,
+    "_models.AgentsApiResponseFormatMode",
+    "_models.AgentsApiResponseFormat",
+    "_models.ResponseFormatJsonSchemaType",
 ]
 MessageAttachmentToolDefinition = Union["_models.CodeInterpreterToolDefinition", "_models.FileSearchToolDefinition"]
 AgentsApiToolChoiceOption = Union[str, str, "_models.AgentsApiToolChoiceOptionMode", "_models.AgentsNamedToolChoice"]

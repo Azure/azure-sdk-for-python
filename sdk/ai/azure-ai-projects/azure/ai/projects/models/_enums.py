@@ -302,6 +302,15 @@ class OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MANAGED_IDENTITY = "managed_identity"
 
 
+class ResponseFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Possible API response formats."""
+
+    TEXT = "text"
+    """``text`` format should be used for requests involving any sort of ToolCall."""
+    JSON_OBJECT = "json_object"
+    """Using ``json_object`` format will limit the usage of ToolCall to only functions."""
+
+
 class RunAdditionalFieldList(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A list of additional fields to include in the response."""
 

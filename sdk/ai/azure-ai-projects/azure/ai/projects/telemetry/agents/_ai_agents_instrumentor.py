@@ -443,8 +443,8 @@ class _AIAgentsInstrumentorPreview:
         if isinstance(response_format, AgentsApiResponseFormatMode):
             return response_format.value
         if isinstance(response_format, _models.AgentsApiResponseFormat):
-            if isinstance(response_format.type, _models.ResponseFormatJsonSchemaType):
-                return response_format.type.type
+            return response_format.type
+        if isinstance(response_format, _models.ResponseFormatJsonSchemaType):
             return response_format.type
         raise ValueError(f"Unknown response format {type(response_format)}")
 

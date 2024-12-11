@@ -1594,9 +1594,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype top_p: float
         :keyword response_format: The response format of the tool calls used by this agent. Is one of
          the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat Default value is None.
+         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
         :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
-         or ~azure.ai.projects.models.AgentsApiResponseFormat
+         or ~azure.ai.projects.models.AgentsApiResponseFormat or
+         ~azure.ai.projects.models.ResponseFormatJsonSchemaType
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -1670,9 +1671,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype top_p: float
         :keyword response_format: The response format of the tool calls used by this agent. Is one of
          the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat Default value is None.
+         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
         :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
-         or ~azure.ai.projects.models.AgentsApiResponseFormat
+         or ~azure.ai.projects.models.AgentsApiResponseFormat or
+         ~azure.ai.projects.models.ResponseFormatJsonSchemaType
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -1991,9 +1993,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype top_p: float
         :keyword response_format: The response format of the tool calls used by this agent. Is one of
          the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat Default value is None.
+         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
         :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
-         or ~azure.ai.projects.models.AgentsApiResponseFormat
+         or ~azure.ai.projects.models.AgentsApiResponseFormat or
+         ~azure.ai.projects.models.ResponseFormatJsonSchemaType
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -2076,9 +2079,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype top_p: float
         :keyword response_format: The response format of the tool calls used by this agent. Is one of
          the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat Default value is None.
+         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
         :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
-         or ~azure.ai.projects.models.AgentsApiResponseFormat
+         or ~azure.ai.projects.models.AgentsApiResponseFormat or
+         ~azure.ai.projects.models.ResponseFormatJsonSchemaType
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -3348,9 +3352,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          or ~azure.ai.projects.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat Default value is None.
+         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
         :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
-         or ~azure.ai.projects.models.AgentsApiResponseFormat
+         or ~azure.ai.projects.models.AgentsApiResponseFormat or
+         ~azure.ai.projects.models.ResponseFormatJsonSchemaType
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -3488,9 +3493,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          or ~azure.ai.projects.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat Default value is None.
+         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
         :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
-         or ~azure.ai.projects.models.AgentsApiResponseFormat
+         or ~azure.ai.projects.models.AgentsApiResponseFormat or
+         ~azure.ai.projects.models.ResponseFormatJsonSchemaType
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -4266,9 +4272,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          or ~azure.ai.projects.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat Default value is None.
+         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
         :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
-         or ~azure.ai.projects.models.AgentsApiResponseFormat
+         or ~azure.ai.projects.models.AgentsApiResponseFormat or
+         ~azure.ai.projects.models.ResponseFormatJsonSchemaType
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool
@@ -4383,9 +4390,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          or ~azure.ai.projects.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-         AgentsApiResponseFormat Default value is None.
+         AgentsApiResponseFormat, ResponseFormatJsonSchemaType Default value is None.
         :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
-         or ~azure.ai.projects.models.AgentsApiResponseFormat
+         or ~azure.ai.projects.models.AgentsApiResponseFormat or
+         ~azure.ai.projects.models.ResponseFormatJsonSchemaType
         :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
          Default value is None.
         :paramtype parallel_tool_calls: bool

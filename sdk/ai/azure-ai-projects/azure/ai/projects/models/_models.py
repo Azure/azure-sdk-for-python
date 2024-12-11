@@ -66,9 +66,10 @@ class Agent(_model_base.Model):
     :vartype top_p: float
     :ivar response_format: The response format of the tool calls used by this agent. Is one of the
      following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-     AgentsApiResponseFormat
+     AgentsApiResponseFormat, ResponseFormatJsonSchemaType
     :vartype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
-     or ~azure.ai.projects.models.AgentsApiResponseFormat
+     or ~azure.ai.projects.models.AgentsApiResponseFormat or
+     ~azure.ai.projects.models.ResponseFormatJsonSchemaType
     :ivar metadata: A set of up to 16 key/value pairs that can be attached to an object, used for
      storing additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required.
@@ -108,7 +109,8 @@ class Agent(_model_base.Model):
      We generally recommend altering this or temperature but not both. Required."""
     response_format: Optional["_types.AgentsApiResponseFormatOption"] = rest_field()
     """The response format of the tool calls used by this agent. Is one of the following types: str,
-     Union[str, \"_models.AgentsApiResponseFormatMode\"], AgentsApiResponseFormat"""
+     Union[str, \"_models.AgentsApiResponseFormatMode\"], AgentsApiResponseFormat,
+     ResponseFormatJsonSchemaType"""
     metadata: Dict[str, str] = rest_field()
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
      additional information about that object in a structured format. Keys may be up to 64
@@ -192,20 +194,19 @@ class AgentsApiResponseFormat(_model_base.Model):
     type ``tools`` are allowed to be passed to the Run.
     If ``text`` the model can return text or any value needed.
 
-    :ivar type: Must be one of ``text`` or ``json_object``. Is one of the following types: str,
-     Literal["text"], Literal["json_object"], ResponseFormatJsonSchemaType
-    :vartype type: str or str or str or ~azure.ai.projects.models.ResponseFormatJsonSchemaType
+    :ivar type: Must be one of ``text`` or ``json_object``. Known values are: "text" and
+     "json_object".
+    :vartype type: str or ~azure.ai.projects.models.ResponseFormat
     """
 
-    type: Optional["_types.ResponseFormat"] = rest_field()
-    """Must be one of ``text`` or ``json_object``. Is one of the following types: str,
-     Literal[\"text\"], Literal[\"json_object\"], ResponseFormatJsonSchemaType"""
+    type: Optional[Union[str, "_models.ResponseFormat"]] = rest_field()
+    """Must be one of ``text`` or ``json_object``. Known values are: \"text\" and \"json_object\"."""
 
     @overload
     def __init__(
         self,
         *,
-        type: Optional["_types.ResponseFormat"] = None,
+        type: Optional[Union[str, "_models.ResponseFormat"]] = None,
     ) -> None: ...
 
     @overload
@@ -801,8 +802,8 @@ class Evaluation(_model_base.Model):
     :vartype id: str
     :ivar data: Data for evaluation. Required.
     :vartype data: ~azure.ai.projects.models.InputData
-    :ivar display_name: Display Name for evaluation. It helps to find evaluation easily in AI
-     Studio. It does not need to be unique.
+    :ivar display_name: Display Name for evaluation. It helps to find the evaluation easily in AI
+     Foundry. It does not need to be unique.
     :vartype display_name: str
     :ivar description: Description of the evaluation. It can be used to store additional
      information about the evaluation and is mutable.
@@ -825,8 +826,8 @@ class Evaluation(_model_base.Model):
     data: "_models.InputData" = rest_field(visibility=["read", "create"])
     """Data for evaluation. Required."""
     display_name: Optional[str] = rest_field(name="displayName")
-    """Display Name for evaluation. It helps to find evaluation easily in AI Studio. It does not need
-     to be unique."""
+    """Display Name for evaluation. It helps to find the evaluation easily in AI Foundry. It does not
+     need to be unique."""
     description: Optional[str] = rest_field()
     """Description of the evaluation. It can be used to store additional information about the
      evaluation and is mutable."""
@@ -5535,9 +5536,10 @@ class ThreadRun(_model_base.Model):
      ~azure.ai.projects.models.AgentsNamedToolChoice
     :ivar response_format: The response format of the tool calls used in this run. Required. Is one
      of the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-     AgentsApiResponseFormat
+     AgentsApiResponseFormat, ResponseFormatJsonSchemaType
     :vartype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
-     or ~azure.ai.projects.models.AgentsApiResponseFormat
+     or ~azure.ai.projects.models.AgentsApiResponseFormat or
+     ~azure.ai.projects.models.ResponseFormatJsonSchemaType
     :ivar metadata: A set of up to 16 key/value pairs that can be attached to an object, used for
      storing additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required.
@@ -5606,7 +5608,8 @@ class ThreadRun(_model_base.Model):
      AgentsNamedToolChoice"""
     response_format: "_types.AgentsApiResponseFormatOption" = rest_field()
     """The response format of the tool calls used in this run. Required. Is one of the following
-     types: str, Union[str, \"_models.AgentsApiResponseFormatMode\"], AgentsApiResponseFormat"""
+     types: str, Union[str, \"_models.AgentsApiResponseFormatMode\"], AgentsApiResponseFormat,
+     ResponseFormatJsonSchemaType"""
     metadata: Dict[str, str] = rest_field()
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
      additional information about that object in a structured format. Keys may be up to 64
