@@ -421,7 +421,7 @@ def build_agents_create_run_request(
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if include is not None:
-        _params["include"] = _SERIALIZER.query("include", include, "[str]", div=",")
+        _params["include[]"] = _SERIALIZER.query("include", include, "[str]", div=",")
 
     # Construct headers
     if content_type is not None:
@@ -628,7 +628,7 @@ def build_agents_get_run_step_request(
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if include is not None:
-        _params["include"] = _SERIALIZER.query("include", include, "[str]", div=",")
+        _params["include[]"] = _SERIALIZER.query("include", include, "[str]", div=",")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -665,7 +665,7 @@ def build_agents_list_run_steps_request(
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if include is not None:
-        _params["include"] = _SERIALIZER.query("include", include, "[str]", div=",")
+        _params["include[]"] = _SERIALIZER.query("include", include, "[str]", div=",")
     if limit is not None:
         _params["limit"] = _SERIALIZER.query("limit", limit, "int")
     if order is not None:

@@ -1131,7 +1131,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         *,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
 

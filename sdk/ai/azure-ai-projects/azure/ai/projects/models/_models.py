@@ -4732,27 +4732,27 @@ class RunStepFileSearchToolCall(RunStepToolCall, discriminator="file_search"):
     executed file search.
 
 
-    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
-     Required.
-    :vartype id: str
     :ivar type: The object type, which is always 'file_search'. Required. Default value is
      "file_search".
     :vartype type: str
-    :ivar file_search: The results of the file search. Required.
-    :vartype file_search: list[~azure.ai.projects.models.RunStepFileSearchToolCallResults]
+    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
+     Required.
+    :vartype id: str
+    :ivar file_search: For now, this is always going to be an empty object. Required.
+    :vartype file_search: ~azure.ai.projects.models.RunStepFileSearchToolCallResults
     """
 
     type: Literal["file_search"] = rest_discriminator(name="type")  # type: ignore
     """The object type, which is always 'file_search'. Required. Default value is \"file_search\"."""
-    file_search: List["_models.RunStepFileSearchToolCallResults"] = rest_field()
-    """The results of the file search. Required."""
+    file_search: "_models.RunStepFileSearchToolCallResults" = rest_field()
+    """For now, this is always going to be an empty object. Required."""
 
     @overload
     def __init__(
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        file_search: List["_models.RunStepFileSearchToolCallResults"],
+        file_search: "_models.RunStepFileSearchToolCallResults",
     ) -> None: ...
 
     @overload
@@ -4766,7 +4766,7 @@ class RunStepFileSearchToolCall(RunStepToolCall, discriminator="file_search"):
         super().__init__(*args, type="file_search", **kwargs)
 
 
-class RunStepFileSearchToolCallResults(_model_base.Model):
+class RunStepFileSearchToolCallResult(_model_base.Model):
     """File search tool call result.
 
 
@@ -4800,6 +4800,40 @@ class RunStepFileSearchToolCallResults(_model_base.Model):
         file_name: str,
         score: float,
         content: Optional[List["_models.FileSearchToolCallContent"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RunStepFileSearchToolCallResults(_model_base.Model):
+    """The results of the file search.
+
+
+    :ivar ranking_options: Ranking options for file search.
+    :vartype ranking_options: ~azure.ai.projects.models.FileSearchRankingOptions
+    :ivar results: The array of a file search results. Required.
+    :vartype results: list[~azure.ai.projects.models.RunStepFileSearchToolCallResult]
+    """
+
+    ranking_options: Optional["_models.FileSearchRankingOptions"] = rest_field()
+    """Ranking options for file search."""
+    results: List["_models.RunStepFileSearchToolCallResult"] = rest_field()
+    """The array of a file search results. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        results: List["_models.RunStepFileSearchToolCallResult"],
+        ranking_options: Optional["_models.FileSearchRankingOptions"] = None,
     ) -> None: ...
 
     @overload
