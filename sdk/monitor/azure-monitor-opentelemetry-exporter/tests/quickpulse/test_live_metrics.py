@@ -3,11 +3,9 @@
 
 # cSpell:disable
 
-import collections
+import json
 import platform
-import psutil
 import unittest
-from datetime import datetime, timedelta
 from unittest import mock
 
 from opentelemetry.sdk.metrics import (
@@ -28,26 +26,38 @@ from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _DEPENDENCY_RATE_NAME,
     _EXCEPTION_RATE_NAME,
     _PROCESS_PHYSICAL_BYTES_NAME,
+    _PROCESSOR_TIME_NAME,
     _PROCESS_TIME_NORMALIZED_NAME,
     _REQUEST_DURATION_NAME,
     _REQUEST_FAILURE_RATE_NAME,
     _REQUEST_RATE_NAME,
 )
+from azure.monitor.opentelemetry.exporter._quickpulse._cpu import (
+    _get_process_memory,
+    _get_process_time_normalized,
+    _get_process_time_normalized_old,
+)
 from azure.monitor.opentelemetry.exporter._quickpulse._exporter import (
     _QuickpulseExporter,
     _QuickpulseMetricReader,
 )
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
+    TelemetryType,
+)
 from azure.monitor.opentelemetry.exporter._quickpulse._live_metrics import (
     enable_live_metrics,
-    _get_process_memory,
-    _get_process_time_normalized,
-    _get_process_time_normalized_old,
     _QuickpulseManager,
+    _derive_metrics_from_telemetry_data,
+    _parse_metric_filter_configuration,
+    _update_filter_configuration,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._state import (
     _get_global_quickpulse_state,
     _set_global_quickpulse_state,
     _QuickpulseState,
+)
+from azure.monitor.opentelemetry.exporter._quickpulse._types import (
+    _DependencyData
 )
 from azure.monitor.opentelemetry.exporter._utils import (
     _get_sdk_version,
@@ -137,6 +147,9 @@ class TestQuickpulseManager(unittest.TestCase):
         self.assertTrue(isinstance(qpm._process_time_gauge, ObservableGauge))
         self.assertEqual(qpm._process_time_gauge.name, _PROCESS_TIME_NORMALIZED_NAME[0])
         self.assertEqual(qpm._process_time_gauge._callbacks, [_get_process_time_normalized])
+        self.assertTrue(isinstance(qpm._process_time_gauge_old, ObservableGauge))
+        self.assertEqual(qpm._process_time_gauge_old.name, _PROCESSOR_TIME_NAME[0])
+        self.assertEqual(qpm._process_time_gauge_old._callbacks, [_get_process_time_normalized_old])
 
     def test_singleton(self):
         resource = Resource.create(
@@ -346,41 +359,113 @@ class TestQuickpulseManager(unittest.TestCase):
         log_doc_mock.assert_called_once_with(log_data_mock)
         append_doc_mock.assert_called_once_with(log_record_doc)
 
-    def test_process_memory(self):
-        with mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.PROCESS") as process_mock:
-            memory = collections.namedtuple("memory", "rss")
-            pmem = memory(rss=40)
-            process_mock.memory_info.return_value = pmem
-            mem = _get_process_memory(None)
-            obs = next(mem)
-            self.assertEqual(obs.value, 40)
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._create_projections")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._check_metric_filters")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._get_quickpulse_derived_metric_infos")
+    def test_derive_metrics_from_telemetry_data(self, get_derived_mock, filter_mock, projection_mock):
+        metric_infos = [mock.Mock]
+        get_derived_mock.return_value = {
+            TelemetryType.DEPENDENCY: metric_infos,
+        }
+        data = _DependencyData(
+            duration=0,
+            success=True,
+            name="test",
+            result_code=200,
+            target="",
+            type="",
+            data="",
+            custom_dimensions={},
+        )
+        filter_mock.return_value = True
+        _derive_metrics_from_telemetry_data(data)
+        get_derived_mock.assert_called_once()
+        filter_mock.assert_called_once_with(metric_infos, data)
+        projection_mock.assert_called_once_with(metric_infos, data)
 
-    def test_process_memory_error(self):
-        with mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.PROCESS") as process_mock:
-            memory = collections.namedtuple("memory", "rss")
-            pmem = memory(rss=40)
-            process_mock.memory_info.return_value = pmem
-            process_mock.memory_info.side_effect = psutil.NoSuchProcess(1)
-            mem = _get_process_memory(None)
-            obs = next(mem)
-            self.assertEqual(obs.value, 0)
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._create_projections")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._check_metric_filters")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._get_quickpulse_derived_metric_infos")
+    def test_derive_metrics_from_telemetry_data_filter_false(self, get_derived_mock, filter_mock, projection_mock):
+        metric_infos = [mock.Mock]
+        get_derived_mock.return_value = {
+            TelemetryType.DEPENDENCY: metric_infos,
+        }
+        data = _DependencyData(
+            duration=0,
+            success=True,
+            name="test",
+            result_code=200,
+            target="",
+            type="",
+            data="",
+            custom_dimensions={},
+        )
+        filter_mock.return_value = False
+        _derive_metrics_from_telemetry_data(data)
+        get_derived_mock.assert_called_once()
+        filter_mock.assert_called_once_with(metric_infos, data)
+        projection_mock.assert_not_called()
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._get_quickpulse_process_elapsed_time")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._get_quickpulse_last_process_time")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.PROCESS")
-    def test_process_time(self, process_mock, process_time_mock, elapsed_time_mock):
-        current = datetime.now()
-        cpu = collections.namedtuple("cpu", ["user", "system"])
-        cpu_times = cpu(user=3.6, system=6.8)
-        process_mock.cpu_times.return_value = cpu_times
-        process_time_mock.return_value = 4.4
-        elapsed_time_mock.return_value = current - timedelta(seconds=5)
-        with mock.patch("datetime.datetime") as datetime_mock:
-            datetime_mock.now.return_value = current
-            time = _get_process_time_normalized_old(None)
-        obs = next(time)
-        num_cpus = psutil.cpu_count()
-        self.assertAlmostEqual(obs.value, 1.2 / num_cpus, delta=1)
+    @mock.patch('azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._clear_quickpulse_projection_map')
+    @mock.patch('azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._parse_metric_filter_configuration')
+    @mock.patch('azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._set_quickpulse_etag')
+    def test_update_filter_configuration(self, mock_set_etag, mock_parse_metric, mock_clear_projection):
+        etag = "new_etag"
+        config = {"key": "value"}
+        config_bytes = json.dumps(config).encode("utf-8")
+        
+        _update_filter_configuration(etag, config_bytes)
+        
+        mock_clear_projection.assert_called_once()
+        mock_parse_metric.assert_called_once_with(config)
+        mock_set_etag.assert_called_once_with(etag)
 
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._set_quickpulse_derived_metric_infos")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._init_derived_metric_projection")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._rename_exception_fields_for_filtering")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._validate_derived_metric_info")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.DerivedMetricInfo")
+    def test_parse_metric_filter_configuration(
+        self, dict_mock, validate_mock, rename_mock,  init_projection_mock, set_metric_info_mock
+    ):
+        test_config_bytes = '{"Metrics":[{"Id":"94.e4b85108","TelemetryType":"Request","FilterGroups":[{"Filters":[]}],"Projection":"Count()","Aggregation":"Sum","BackEndAggregation":"Sum"}]}'.encode()
+        test_config_dict = json.loads(test_config_bytes.decode())
+        metric_info_mock = mock.Mock()
+        filter_group_mock = mock.Mock()
+        metric_info_mock.filter_groups = [filter_group_mock]
+        metric_info_mock.telemetry_type = TelemetryType.REQUEST
+        dict_mock.from_dict.return_value = metric_info_mock
+        validate_mock.return_value = True
+        _parse_metric_filter_configuration(test_config_dict)
+        dict_mock.from_dict.assert_called_once_with(test_config_dict.get("Metrics")[0])
+        validate_mock.assert_called_once_with(metric_info_mock)
+        rename_mock.assert_called_once_with(filter_group_mock)
+        init_projection_mock.assert_called_once_with(metric_info_mock)
+        metric_infos = {}
+        metric_infos[TelemetryType.REQUEST] = [metric_info_mock]
+        set_metric_info_mock.assert_called_once_with(metric_infos)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._set_quickpulse_derived_metric_infos")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._init_derived_metric_projection")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._rename_exception_fields_for_filtering")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._validate_derived_metric_info")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.DerivedMetricInfo")
+    def test_parse_metric_filter_configuration_invalid(
+        self, dict_mock, validate_mock, rename_mock,  init_projection_mock, set_metric_info_mock
+    ):
+        test_config_bytes = '{"Metrics":[{"Id":"94.e4b85108","TelemetryType":"Request","FilterGroups":[{"Filters":[]}],"Projection":"Count()","Aggregation":"Sum","BackEndAggregation":"Sum"}]}'.encode()
+        test_config_dict = json.loads(test_config_bytes.decode())
+        metric_info_mock = mock.Mock()
+        metric_info_mock.telemetry_type = TelemetryType.REQUEST
+        dict_mock.from_dict.return_value = metric_info_mock
+        validate_mock.return_value = False
+        _parse_metric_filter_configuration(test_config_dict)
+        dict_mock.from_dict.assert_called_once_with(test_config_dict.get("Metrics")[0])
+        validate_mock.assert_called_once_with(metric_info_mock)
+        rename_mock.assert_not_called()
+        init_projection_mock.assert_not_called()
+        metric_infos = {}
+        set_metric_info_mock.assert_called_once_with(metric_infos)
 
 # cSpell:enable

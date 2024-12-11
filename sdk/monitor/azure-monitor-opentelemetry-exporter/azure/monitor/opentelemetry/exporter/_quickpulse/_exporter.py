@@ -46,7 +46,6 @@ from azure.monitor.opentelemetry.exporter._quickpulse._state import (
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
     _metric_to_quick_pulse_data_points,
-    _update_filter_configuration,
 )
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._utils import (

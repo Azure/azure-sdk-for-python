@@ -1,14 +1,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 # cSpell:disable
-from datetime import datetime
-from typing import Any, Iterable
+from typing import Any, Dict, List
 
 import logging
+import json
 import platform
 import psutil
 
-from opentelemetry.metrics import CallbackOptions, Observation
 from opentelemetry.sdk._logs import LogData
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.resources import Resource
@@ -31,30 +30,50 @@ from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _REQUEST_FAILURE_RATE_NAME,
     _REQUEST_RATE_NAME,
 )
+from azure.monitor.opentelemetry.exporter._quickpulse._cpu import (
+    _get_process_memory,
+    _get_process_time_normalized,
+    _get_process_time_normalized_old,
+)
 from azure.monitor.opentelemetry.exporter._quickpulse._exporter import (
     _QuickpulseExporter,
     _QuickpulseMetricReader,
 )
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import MonitoringDataPoint
+from azure.monitor.opentelemetry.exporter._quickpulse._filter import (
+    _check_metric_filters,
+    _rename_exception_fields_for_filtering,
+)
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
+    DerivedMetricInfo,
+    MonitoringDataPoint,
+    TelemetryType,
+)
+from azure.monitor.opentelemetry.exporter._quickpulse._projection import (
+    _create_projections,
+    _init_derived_metric_projection,
+)
 from azure.monitor.opentelemetry.exporter._quickpulse._state import (
     _QuickpulseState,
+    _clear_quickpulse_projection_map,
     _is_post_state,
     _append_quickpulse_document,
     _get_quickpulse_derived_metric_infos,
-    _get_quickpulse_last_process_cpu,
-    _get_quickpulse_last_process_time,
-    _get_quickpulse_process_elapsed_time,
+    _set_quickpulse_derived_metric_infos,
+    _set_quickpulse_etag,
     _set_global_quickpulse_state,
-    _set_quickpulse_last_process_cpu,
-    _set_quickpulse_last_process_time,
-    _set_quickpulse_process_elapsed_time,
 )
-from azure.monitor.opentelemetry.exporter._quickpulse._types import _TelemetryData
+from azure.monitor.opentelemetry.exporter._quickpulse._types import (
+    _DependencyData,
+    _ExceptionData,
+    _RequestData,
+    _TelemetryData,
+    _TraceData,
+)
 from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
-    _derive_metrics_from_telemetry_data,
     _get_log_record_document,
     _get_span_document,
 )
+from azure.monitor.opentelemetry.exporter._quickpulse._validate import _validate_derived_metric_info
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     set_statsbeat_live_metrics_feature_set,
 )
@@ -218,43 +237,81 @@ class _QuickpulseManager(metaclass=Singleton):
                 _logger.exception("Exception occurred while recording log record.")
 
 
-# pylint: disable=unused-argument
-def _get_process_memory(options: CallbackOptions) -> Iterable[Observation]:
-    memory = 0
-    try:
-        # rss is non-swapped physical memory a process has used
-        memory = PROCESS.memory_info().rss
-    except (psutil.NoSuchProcess, psutil.AccessDenied):
-        pass
-    yield Observation(memory, {})
+# Filtering
+
+# Called by record_span/record_log when processing a span/log_record
+# Derives metrics from projections if applicable to current filters in config
+def _derive_metrics_from_telemetry_data(data: _TelemetryData):
+    metric_infos_dict = _get_quickpulse_derived_metric_infos()
+    metric_infos = []  # type: ignore
+    if isinstance(data, _RequestData):
+        metric_infos = metric_infos_dict.get(TelemetryType.REQUEST)
+    elif isinstance(data, _DependencyData):
+        metric_infos = metric_infos_dict.get(TelemetryType.DEPENDENCY)
+    elif isinstance(data, _ExceptionData):
+        metric_infos = metric_infos_dict.get(TelemetryType.EXCEPTION)
+    elif isinstance(data, _TraceData):
+        metric_infos = metric_infos_dict.get(TelemetryType.TRACE)
+    if metric_infos and _check_metric_filters(metric_infos, data):
+        # Since this data matches the filter, create projections used to
+        # generate filtered metrics
+        _create_projections(metric_infos, data)
 
 
-# pylint: disable=unused-argument
-def _get_process_time_normalized_old(options: CallbackOptions) -> Iterable[Observation]:
-    normalized_cpu_percentage = 0.0
-    try:
-        cpu_times = PROCESS.cpu_times()
-        # total process time is user + system in s
-        total_time_s = cpu_times.user + cpu_times.system
-        process_time_s = total_time_s - _get_quickpulse_last_process_time()
-        _set_quickpulse_last_process_time(process_time_s)
-        # Find elapsed time in s since last collection
-        current_time = datetime.now()
-        elapsed_time_s = (current_time - _get_quickpulse_process_elapsed_time()).total_seconds()
-        _set_quickpulse_process_elapsed_time(current_time)
-        # Obtain cpu % by dividing by elapsed time
-        cpu_percentage = process_time_s / elapsed_time_s
-        # Normalize by dividing by amount of logical cpus
-        normalized_cpu_percentage = cpu_percentage / NUM_CPUS
-        _set_quickpulse_last_process_cpu(normalized_cpu_percentage)
-    except (psutil.NoSuchProcess, psutil.AccessDenied, ZeroDivisionError):
-        pass
-    yield Observation(normalized_cpu_percentage, {})
+# Apply filter configuration based off response
+# Called on post response from exporter
+def _update_filter_configuration(etag: str, config_bytes: bytes):
+    # Clear projection map
+    _clear_quickpulse_projection_map()
+    # config is a byte string that when decoded is a json
+    config = json.loads(config_bytes.decode("utf-8"))
+    # Process metric filter configuration
+    _parse_metric_filter_configuration(config)
+    # # Process document filter configuration
+    # _parse_document_filter_configuration(config)
+    # Update new etag
+    _set_quickpulse_etag(etag)
 
 
-# pylint: disable=unused-argument
-def _get_process_time_normalized(options: CallbackOptions) -> Iterable[Observation]:
-    yield Observation(_get_quickpulse_last_process_cpu(), {})
+def _parse_metric_filter_configuration(config: Dict[str, Any]) -> None:
+    seen_ids = set()
+    # Process metric filter configuration
+    metric_infos: Dict[TelemetryType, List[DerivedMetricInfo]] = {}
+    for metric_info_dict in config.get("Metrics", []):
+        metric_info = DerivedMetricInfo.from_dict(metric_info_dict)
+        # Skip duplicate ids
+        if metric_info.id in seen_ids:
+            continue
+        if not _validate_derived_metric_info(metric_info):
+            continue
+        # Rename exception fields by parsing out "Exception." portion
+        for filter_group in metric_info.filter_groups:
+            _rename_exception_fields_for_filtering(filter_group)
+        telemetry_type: TelemetryType = TelemetryType(metric_info.telemetry_type)
+        metric_info_list = metric_infos.get(telemetry_type, [])
+        metric_info_list.append(metric_info)
+        metric_infos[telemetry_type] = metric_info_list
+        seen_ids.add(metric_info.id)
+        # Initialize projections from this derived metric info
+        _init_derived_metric_projection(metric_info)
+    _set_quickpulse_derived_metric_infos(metric_infos)
+
+
+# def _parse_document_filter_configuration(config: Dict[str, Any]) -> None:
+#     # Process document filter configuration
+#     doc_infos: Dict[TelemetryType, Dict[str, List[FilterConjunctionGroupInfo]]] = {}
+#     for doc_stream_dict in config.get("document_streams", []):
+#         doc_stream = DocumentStreamInfo.from_dict(doc_stream_dict)
+#         for doc_filter_group in doc_stream.document_filter_groups:
+#             if not _validate_document_filter_group_info(doc_filter_group):
+#                 continue
+#             # TODO: Rename exception fields
+#             telemetry_type: TelemetryType = TelemetryType(doc_filter_group.telemetry_type)
+#             if telemetry_type not in doc_infos:
+#                 doc_infos[telemetry_type] = {}
+#             if doc_stream.id not in doc_infos[telemetry_type]:
+#                 doc_infos[telemetry_type][doc_stream.id] = []
+#             doc_infos[telemetry_type][doc_stream.id].append(doc_filter_group.filters)
 
 
 # cSpell:enable
