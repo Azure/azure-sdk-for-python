@@ -28,7 +28,7 @@ az login
 
 ## Setup up environment variables
 
-Edit the file `azure_ai_projects_tests.env` located in the folder above. Follow the instructions there on how to set up Azure AI Studio projects to be used for testing, and enter appropriate values for the environment variables used for the tests you want to run.
+Edit the file `azure_ai_projects_tests.env` located in the folder above. Follow the instructions there on how to set up Azure AI Foundry projects to be used for testing, and enter appropriate values for the environment variables used for the tests you want to run.
 
 ## Configure test proxy
 

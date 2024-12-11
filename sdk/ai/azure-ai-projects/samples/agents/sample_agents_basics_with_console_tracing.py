@@ -24,7 +24,7 @@ USAGE:
     pip install opentelemetry-exporter-otlp-proto-grpc
 
     Set these environment variables with your own values:
-    * PROJECT_CONNECTION_STRING - The Azure AI Project connection string, as found in your AI Studio Project.
+    * PROJECT_CONNECTION_STRING - The Azure AI Project connection string, as found in your AI Foundry project.
     * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
       messages, which may contain personal data. False by default.
 """
@@ -34,7 +34,7 @@ from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from opentelemetry import trace
 
-# Create an AI Project Client from a connection string, copied from your AI Studio project.
+# Create an AI Project Client from a connection string, copied from your AI Foundry project.
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
 # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 

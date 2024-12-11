@@ -4,8 +4,9 @@
 
 ### Features Added
 
-* Redesigned streaming and event handlers for agents 
+* Redesigned streaming and event handlers for agents.
 * Add `parallel_tool_calls` parameter to allow parallel tool execution.
+* Rename "AI Studio" to "AI Foundry" in package documents and samples, following recent rebranding.
 
 ### Bugs Fixed
 
