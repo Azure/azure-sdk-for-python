@@ -1,6 +1,6 @@
 # Release History
 
-## 10.0.0b5 (2024-12-23)
+## 10.0.0b5 (2024-12-16)
 
 ### Features Added
 
@@ -27,19 +27,14 @@
   - Added model `VectorEmbeddingPolicy`
   - Added model `VectorIndex`
   - Added enum `VectorIndexType`
-  - Model `TableResourcesOperations` added method `begin_create_update_table_role_assignment`
-  - Model `TableResourcesOperations` added method `begin_create_update_table_role_definition`
-  - Model `TableResourcesOperations` added method `begin_delete_table_role_assignment`
-  - Model `TableResourcesOperations` added method `begin_delete_table_role_definition`
-  - Model `TableResourcesOperations` added method `get_table_role_assignment`
-  - Model `TableResourcesOperations` added method `get_table_role_definition`
-  - Model `TableResourcesOperations` added method `list_table_role_assignments`
-  - Model `TableResourcesOperations` added method `list_table_role_definitions`
-  - Method `CassandraClustersOperations.begin_invoke_command_async` has a new overload `def begin_invoke_command_async(self: None, resource_group_name: str, cluster_name: str, body: CommandAsyncPostBody, content_type: str)`
-  - Method `TableResourcesOperations.begin_create_update_table_role_assignment` has a new overload `def begin_create_update_table_role_assignment(self: None, resource_group_name: str, account_name: str, role_assignment_id: str, create_update_table_role_assignment_parameters: TableRoleAssignmentResource, content_type: str)`
-  - Method `TableResourcesOperations.begin_create_update_table_role_assignment` has a new overload `def begin_create_update_table_role_assignment(self: None, resource_group_name: str, account_name: str, role_assignment_id: str, create_update_table_role_assignment_parameters: IO[bytes], content_type: str)`
-  - Method `TableResourcesOperations.begin_create_update_table_role_definition` has a new overload `def begin_create_update_table_role_definition(self: None, resource_group_name: str, account_name: str, role_definition_id: str, create_update_table_role_definition_parameters: TableRoleDefinitionResource, content_type: str)`
-  - Method `TableResourcesOperations.begin_create_update_table_role_definition` has a new overload `def begin_create_update_table_role_definition(self: None, resource_group_name: str, account_name: str, role_definition_id: str, create_update_table_role_definition_parameters: IO[bytes], content_type: str)`
+  - Operation group `TableResourcesOperations` added method `begin_create_update_table_role_assignment`
+  - Operation group `TableResourcesOperations` added method `begin_create_update_table_role_definition`
+  - Operation group `TableResourcesOperations` added method `begin_delete_table_role_assignment`
+  - Operation group `TableResourcesOperations` added method `begin_delete_table_role_definition`
+  - Operation group `TableResourcesOperations` added method `get_table_role_assignment`
+  - Operation group `TableResourcesOperations` added method `get_table_role_definition`
+  - Operation group `TableResourcesOperations` added method `list_table_role_assignments`
+  - Operation group `TableResourcesOperations` added method `list_table_role_definitions`
 
 ### Breaking Changes
 
