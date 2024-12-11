@@ -792,6 +792,9 @@ class TestAdvSimulator:
         outputs3["regular"][0]["messages"][0]["content"] in outputs3["jailbreak"][0]["messages"][0]["content"]
         outputs3["regular"][0]["messages"][0]["content"] != outputs3["jailbreak"][0]["messages"][0]["content"]
 
+    @pytest.mark.skipif(
+        not is_live(), reason="Fails in CI in sdist environment."
+    )
     def test_regular_and_jailbreak_outputs_match(self, azure_cred, project_scope):
         """
         Test to verify that the regular and jailbreak outputs of the simulator have matching categories
