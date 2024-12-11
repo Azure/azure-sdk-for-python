@@ -1,13 +1,11 @@
 # Release History
 
-## 2.1.0b2 (2024-12-23)
+## 2.1.0b2 (2024-12-16)
 
 ### Features Added
 
   - Model `ManagedCluster` added property `allocated_outbound_ports`
-  - Model `NodeTypesOperations` added method `begin_update`
-  - Method `NodeTypesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, cluster_name: str, node_type_name: str, parameters: NodeTypeUpdateParameters, content_type: str)`
-  - Method `NodeTypesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, cluster_name: str, node_type_name: str, parameters: IO[bytes], content_type: str)`
+  - Operation group `NodeTypesOperations` added method `begin_update`
 
 ### Breaking Changes
 
