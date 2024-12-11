@@ -20,7 +20,7 @@ USAGE:
     pip install azure-ai-projects azure-identity aiohttp
 
     Set these environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
 """
 import asyncio
 import json
@@ -73,7 +73,7 @@ class MyEventHandler(BaseAsyncAgentEventHandler[str]):
 
 
 async def main() -> None:
-    # Create an Azure AI Client from a connection string, copied from your AI Studio project.
+    # Create an Azure AI Client from a connection string, copied from your AI Foundry project.
     # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
     # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 

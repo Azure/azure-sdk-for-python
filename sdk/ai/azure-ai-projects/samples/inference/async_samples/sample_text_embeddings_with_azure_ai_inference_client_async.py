@@ -17,8 +17,8 @@ USAGE:
     pip install azure-ai-projects aiohttp azure-identity
 
     Set these environment variables with your own values:
-    * PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
-    * MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Studio Project.
+    * PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
+    * MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Foundry project.
 """
 import asyncio
 import os
