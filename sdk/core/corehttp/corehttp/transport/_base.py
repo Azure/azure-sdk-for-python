@@ -24,12 +24,14 @@
 #
 # --------------------------------------------------------------------------
 from __future__ import annotations
+import os
 import abc
 import logging
 import time
-from typing import Generic, TypeVar, Any, ContextManager, Union, Optional, MutableMapping, TYPE_CHECKING
+from typing import Generic, TypeVar, Any, ContextManager, MutableMapping, TYPE_CHECKING
 
 if TYPE_CHECKING:
+    import ssl
     from ..rest import HttpResponse
 
 HTTPResponseType = TypeVar("HTTPResponseType")
@@ -38,12 +40,46 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 _LOGGER = logging.getLogger(__name__)
 
 
+def _build_ssl_config(
+    cert: str | tuple[str] | None,
+    verify: bool | str,
+) -> bool | ssl.SSLContext:
+    """Build the SSL configuration.
+
+    :param cert: Cert file path or tuple of cert and key file paths
+    :type cert: str or tuple[str]
+    :param verify: SSL verification or path to CA file or directory
+    :type verify: bool or str
+    :rtype: bool or ssl.SSLContext
+    :return: SSL configuration
+    """
+    ssl_ctx = None
+
+    if cert or verify not in (True, False):
+        import ssl
+
+        if verify not in (True, False):
+            if os.path.isdir(verify):
+                ssl_ctx = ssl.create_default_context(capath=verify)
+            ssl_ctx = ssl.create_default_context(cafile=verify)
+        else:
+            ssl_ctx = ssl.create_default_context()
+        if cert:
+            if isinstance(cert, str):
+                ssl_ctx.load_cert_chain(cert)
+            else:
+                ssl_ctx.load_cert_chain(*cert)
+        return ssl_ctx
+    return verify
+
+
+
 def _create_connection_config(  # pylint: disable=unused-argument
     *,
     connection_timeout: float = 300,
     read_timeout: float = 300,
-    connection_verify: Union[bool, str] = True,
-    connection_cert: Optional[str] = None,
+    connection_verify: bool | str = True,
+    connection_cert: str | tuple[str] | None,
     connection_data_block_size: int = 4096,
     **kwargs: Any,
 ) -> MutableMapping[str, Any]:
@@ -54,8 +90,9 @@ def _create_connection_config(  # pylint: disable=unused-argument
     :keyword connection_verify: SSL certificate verification. Enabled by default. Set to False to disable,
      alternatively can be set to the path to a CA_BUNDLE file or directory with certificates of trusted CAs.
     :paramtype connection_verify: bool or str
-    :keyword str connection_cert: Client-side certificates. You can specify a local cert to use as client side
+    :keyword connection_cert: Client-side certificates. You can specify a local cert to use as client side
      certificate, as a single file (containing the private key and the certificate) or as a tuple of both files' paths.
+    :paramtype connection_cert: str or tuple[str]
     :keyword int connection_data_block_size: The block size of data sent over the connection. Defaults to 4096 bytes.
 
     :return: The connection configuration.
