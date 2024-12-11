@@ -1,13 +1,15 @@
 # Release History
 
-## 1.0.0b3 (Unreleased)
+## 1.0.0b3 (2024-12-13)
 
 ### Features Added
 
 * Redesigned streaming and event handlers for agents 
 * Add `parallel_tool_calls` parameter to allow parallel tool execution.
+* Added BingGroundingTool for Agents to use against a Bing API Key connection.
+* Added AzureAiSearchTool for Agents to use against an Azure AI Search resource.
+* Added OpenApiTool for Agents, which creates and executes a REST function defined by an OpenAPI spec.
 
-### Bugs Fixed
 
 ## 1.0.0b2 (2024-12-03)
 
