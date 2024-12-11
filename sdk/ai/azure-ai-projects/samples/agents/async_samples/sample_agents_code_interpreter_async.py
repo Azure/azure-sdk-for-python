@@ -76,7 +76,7 @@ async def main() -> None:
             # Check if you got "Rate limit is exceeded.", then you want to get more quota
             print(f"Run failed: {run.last_error}")
 
-        messages = await project_client.agents.get_messages(thread_id=thread.id)
+        messages = await project_client.agents.list_messages(thread_id=thread.id)
         print(f"Messages: {messages}")
 
         last_msg = messages.get_last_text_message_by_sender("assistant")

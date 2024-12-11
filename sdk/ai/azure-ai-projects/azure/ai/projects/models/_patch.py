@@ -57,7 +57,6 @@ from ._models import (
     MessageTextFileCitationAnnotation,
     MessageTextFilePathAnnotation,
     MicrosoftFabricToolDefinition,
-    OpenAIPageableListOfThreadMessage,
     OpenApiAuthDetails,
     OpenApiToolDefinition,
     OpenApiFunctionDefinition,
@@ -76,7 +75,7 @@ from ._models import (
 
 from ._models import MessageDeltaChunk as MessageDeltaChunkGenerated
 from ._models import ThreadMessage as ThreadMessageGenerated
-
+from ._models import OpenAIPageableListOfThreadMessage as OpenAIPageableListOfThreadMessageGenerated
 
 logger = logging.getLogger(__name__)
 
@@ -1459,28 +1458,7 @@ class AgentRunStream(Generic[BaseAgentEventHandlerT]):
             close_method()
 
 
-class ThreadMessages:
-    """
-    Represents a collection of messages in a thread.
-
-    :param pageable_list: The pageable list of messages.
-    :type pageable_list: ~azure.ai.projects.models.OpenAIPageableListOfThreadMessage
-
-    :return: A collection of messages.
-    :rtype: ~azure.ai.projects.models.ThreadMessages
-    """
-
-    def __init__(self, pageable_list: OpenAIPageableListOfThreadMessage):
-        self._messages = [ThreadMessage(item) for item in pageable_list.data]
-
-    @property
-    def messages(self) -> List[ThreadMessage]:
-        """Returns all messages in the messages.
-
-
-        :rtype: List[ThreadMessage]
-        """
-        return self._messages
+class OpenAIPageableListOfThreadMessage(OpenAIPageableListOfThreadMessageGenerated):
 
     @property
     def text_messages(self) -> List[MessageTextContent]:
@@ -1488,7 +1466,7 @@ class ThreadMessages:
 
         :rtype: List[MessageTextContent]
         """
-        texts = [content for msg in self._messages for content in msg.text_messages]
+        texts = [content for msg in self.data for content in msg.text_messages]
         return texts
 
     @property
@@ -1497,7 +1475,7 @@ class ThreadMessages:
 
         :rtype: List[MessageImageFileContent]
         """
-        return [content for msg in self._messages for content in msg.image_contents]
+        return [content for msg in self.data for content in msg.image_contents]
 
     @property
     def file_citation_annotations(self) -> List[MessageTextFileCitationAnnotation]:
@@ -1505,7 +1483,7 @@ class ThreadMessages:
 
         :rtype: List[MessageTextFileCitationAnnotation]
         """
-        annotations = [annotation for msg in self._messages for annotation in msg.file_citation_annotations]
+        annotations = [annotation for msg in self.data for annotation in msg.file_citation_annotations]
         return annotations
 
     @property
@@ -1514,7 +1492,7 @@ class ThreadMessages:
 
         :rtype: List[MessageTextFilePathAnnotation]
         """
-        annotations = [annotation for msg in self._messages for annotation in msg.file_path_annotations]
+        annotations = [annotation for msg in self.data for annotation in msg.file_path_annotations]
         return annotations
 
     def get_last_message_by_sender(self, sender: str) -> Optional[ThreadMessage]:
@@ -1526,7 +1504,7 @@ class ThreadMessages:
         :return: The last message from the specified sender.
         :rtype: ~azure.ai.projects.models.ThreadMessage
         """
-        for msg in self._messages:
+        for msg in self.data:
             if msg.role == sender:
                 return msg
         return None
@@ -1540,7 +1518,7 @@ class ThreadMessages:
         :return: The last text message from the specified sender.
         :rtype: ~azure.ai.projects.models.MessageTextContent
         """
-        for msg in self._messages:
+        for msg in self.data:
             if msg.role == sender:
                 for content in msg.content:
                     if isinstance(content, MessageTextContent):
@@ -1559,7 +1537,7 @@ __all__: List[str] = [
     "CodeInterpreterTool",
     "ConnectionProperties",
     "AsyncAgentEventHandler",
-    "ThreadMessages",
+    "OpenAIPageableListOfThreadMessage",
     "FileSearchTool",
     "FunctionTool",
     "OpenApiTool",
