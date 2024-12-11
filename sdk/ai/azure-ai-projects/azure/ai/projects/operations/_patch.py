@@ -1868,7 +1868,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         """
 
     @distributed_trace
-    def create_stream(
+    def create_stream(  # pyright: ignore[reportInconsistentOverload]
         self,
         thread_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -1888,9 +1888,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
-        event_handler: Optional[_models.BaseAgentEventHandlerT] = None,  # pyright: reportInconsistentOverload=false
+        event_handler: Optional[_models.BaseAgentEventHandlerT] = None,
         **kwargs: Any,
-    ) -> _models.AgentRunStream[_models.BaseAgentEventHandlerT]:  # pyright: reportInconsistentOverload=false
+    ) -> _models.AgentRunStream[_models.BaseAgentEventHandlerT]:
         """Creates a new run for an agent thread.
 
         Terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
@@ -2265,16 +2265,16 @@ class AgentsOperations(AgentsOperationsGenerated):
         """
 
     @distributed_trace
-    def submit_tool_outputs_to_stream(
+    def submit_tool_outputs_to_stream(  # pyright: ignore[reportInconsistentOverload]
         self,
         thread_id: str,
         run_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         tool_outputs: List[_models.ToolOutput] = _Unset,
-        event_handler: Optional[_models.BaseAgentEventHandlerT] = None,  ## pyright: reportInconsistentOverload=false
+        event_handler: Optional[_models.BaseAgentEventHandlerT] = None,
         **kwargs: Any,
-    ) -> _models.AgentRunStream[_models.BaseAgentEventHandlerT]:  # pyright: reportInconsistentOverload=false
+    ) -> _models.AgentRunStream[_models.BaseAgentEventHandlerT]:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
