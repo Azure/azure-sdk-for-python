@@ -1695,11 +1695,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         metadata: Optional[Dict[str, str]] = None,
         event_handler: Optional[
             _models.BaseAsyncAgentEventHandlerT
-        ] = None,  # pyright: ignore[reportInconsistentOverload]
+        ] = None,  # pyright: reportInconsistentOverload=false
         **kwargs: Any,
-    ) -> _models.AsyncAgentRunStream[
-        _models.BaseAsyncAgentEventHandlerT
-    ]:  # pyright: ignore[reportInconsistentOverload]
+    ) -> _models.AsyncAgentRunStream[_models.BaseAsyncAgentEventHandlerT]:  # pyright: reportInconsistentOverload=false
         """Creates a new run for an agent thread.
 
         Terminating when the Run enters a terminal state with a `data: [DONE]` message.
@@ -2078,11 +2076,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         tool_outputs: List[_models.ToolOutput] = _Unset,
         event_handler: Optional[
             _models.BaseAsyncAgentEventHandlerT
-        ] = None,  # pyright: ignore[reportInconsistentOverload]
+        ] = None,  # pyright: reportInconsistentOverload=false
         **kwargs: Any,
-    ) -> _models.AsyncAgentRunStream[
-        _models.BaseAsyncAgentEventHandlerT
-    ]:  # pyright: ignore[reportInconsistentOverload]
+    ) -> _models.AsyncAgentRunStream[_models.BaseAsyncAgentEventHandlerT]:  # pyright: reportInconsistentOverload=false
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
