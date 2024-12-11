@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_basics_with_console_tracing.py
-
 DESCRIPTION:
     This sample demonstrates how to use basic agent operations from
     the Azure Agents service using a synchronous client with tracing to console.
@@ -33,10 +31,6 @@ import os, sys, time
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from opentelemetry import trace
-
-# Create an AI Project Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),

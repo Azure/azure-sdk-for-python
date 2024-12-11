@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_stream_with_base_override_eventhandler.py
-
 DESCRIPTION:
     This sample demonstrates how to override the base event handler and parse the events and iterate through them
     In your use case, you might not want to write the iteration code similar to sample_agents_stream_iteration_async.py.
@@ -69,11 +67,6 @@ class MyEventHandler(BaseAgentEventHandler[str]):
     def get_stream_chunks(self) -> Generator[str, None, None]:
         for chunk in self:
             yield chunk
-
-
-# Create an Azure AI Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]

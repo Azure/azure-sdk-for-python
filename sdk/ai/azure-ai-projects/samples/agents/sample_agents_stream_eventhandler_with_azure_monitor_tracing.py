@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_stream_eventhandler_with_azure_monitor_tracing.py
-
 DESCRIPTION:
     This sample demonstrates how to use agent operations with an event handler in streaming from
     the Azure Agents service using a synchronous client with Azure Monitor tracing.
@@ -38,10 +36,6 @@ from azure.ai.projects.models import (
 from typing import Any
 from opentelemetry import trace
 from azure.monitor.opentelemetry import configure_azure_monitor
-
-# Create an Azure AI Project Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),

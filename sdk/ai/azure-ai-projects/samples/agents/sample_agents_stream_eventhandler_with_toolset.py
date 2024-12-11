@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_stream_eventhandler_with_toolset.py
-
 DESCRIPTION:
     This sample demonstrates how to use agent operations with an event handler and toolset from
     the Azure Agents service using a synchronous client.
@@ -32,21 +30,13 @@ from azure.ai.projects.models import AgentEventHandler
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import FunctionTool, ToolSet
 
-
 import os
 from typing import Any
-
 from user_functions import user_functions
-
-
-# Create an Azure AI Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
 )
-
 
 # When using FunctionTool with ToolSet in agent creation, the tool call events are handled inside the create_stream
 # method and functions gets automatically called by default.

@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_basics_async.py
-
 DESCRIPTION:
     This sample demonstrates how to use evaluation operations from
     the Azure Evaluation service using a asynchronous client.
