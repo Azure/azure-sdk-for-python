@@ -75,7 +75,7 @@ class TestMassEvaluate:
     """
 
     def test_evaluate_singleton_inputs(self, model_config, azure_cred, project_scope, data_file):
-        # qa fails in playback but ONLY when using the pf proxy for some reason, and 
+        # qa fails in playback but ONLY when using the pf proxy for some reason, and
         # using it without pf proxy causes CI to hang and timeout after 3 hours.
         evaluators = {
             "f1_score": F1ScoreEvaluator(),
@@ -105,7 +105,7 @@ class TestMassEvaluate:
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
 
-        assert len(row_result_df.keys()) == 48 # 63 with qa
+        assert len(row_result_df.keys()) == 48  # 63 with qa
         assert len(row_result_df["inputs.query"]) == 3
         assert len(row_result_df["inputs.context"]) == 3
         assert len(row_result_df["inputs.response"]) == 3
@@ -170,7 +170,7 @@ class TestMassEvaluate:
         # assert len(row_result_df["outputs.qa.similarity"]) == 3
         # assert len(row_result_df["outputs.qa.gpt_similarity"]) == 3
 
-        assert len(metrics.keys()) == 28 # 39 with qa
+        assert len(metrics.keys()) == 28  # 39 with qa
         assert metrics["f1_score.f1_score"] >= 0
         assert metrics["gleu.gleu_score"] >= 0
         assert metrics["bleu.bleu_score"] >= 0
