@@ -4,7 +4,6 @@
 
 ### Features Added
 
-  - Added operation group TYPE_CHECKING
   - Model ConnectedRegistry has a new parameter garbage_collection
   - Model ConnectedRegistryUpdateParameters has a new parameter garbage_collection
   - Model Registry has a new parameter auto_generated_domain_name_label_scope
