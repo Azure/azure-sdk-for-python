@@ -56,7 +56,16 @@ def delay_failure(start_time: datetime.datetime) -> None:
         time.sleep((min_time - (current_time - start_time)).total_seconds())
 
 
-def get_headers(headers, request_type, replica_count, uses_feature_flags, feature_filters_used, uses_key_vault) -> str:
+def update_correlation_context_header(
+    headers,
+    request_type,
+    replica_count,
+    uses_feature_flags,
+    feature_filters_used,
+    uses_key_vault,
+    uses_load_balancing,
+    is_failover_request,
+) -> Dict[str, str]:
     if os.environ.get(REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE, default="").lower() == "true":
         return headers
     correlation_context = "RequestType=" + request_type
@@ -93,6 +102,12 @@ def get_headers(headers, request_type, replica_count, uses_feature_flags, featur
 
     if replica_count > 0:
         correlation_context += ",ReplicaCount=" + str(replica_count)
+
+    if is_failover_request:
+        correlation_context += ",Failover"
+
+    if uses_load_balancing:
+        correlation_context += ",Features=LB"
 
     headers["Correlation-Context"] = correlation_context
     return headers
@@ -258,6 +273,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         self._feature_flag_refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._feature_flag_refresh_enabled = kwargs.pop("feature_flag_refresh_enabled", False)
         self._feature_filter_usage: Mapping[str, bool] = {}
+        self._uses_load_balancing = kwargs.pop("load_balancing_enabled", False)
         self._update_lock = Lock()
         self._refresh_lock = Lock()
 

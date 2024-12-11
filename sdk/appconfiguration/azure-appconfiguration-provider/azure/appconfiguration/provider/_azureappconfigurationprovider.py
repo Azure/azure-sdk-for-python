@@ -303,8 +303,6 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         min_backoff: int = min(kwargs.pop("min_backoff", 30), interval)
         max_backoff: int = min(kwargs.pop("max_backoff", 600), interval)
 
-        self._uses_load_balancing = kwargs.pop("load_balancing_enabled", False)
-
         self._replica_client_manager = ConfigurationClientManager(
             connection_string=kwargs.pop("connection_string", None),
             endpoint=kwargs.pop("endpoint", None),
@@ -315,7 +313,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             replica_discovery_enabled=kwargs.pop("replica_discovery_enabled", True),
             min_backoff_sec=min_backoff,
             max_backoff_sec=max_backoff,
-            load_balancing_enabled=self._uses_load_balancing,
+            load_balancing_enabled=kwargs.pop("load_balancing_enabled", False),
             **kwargs,
         )
         self._secret_clients: Dict[str, SecretClient] = {}
