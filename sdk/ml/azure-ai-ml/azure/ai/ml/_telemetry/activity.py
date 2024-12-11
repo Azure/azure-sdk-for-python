@@ -31,6 +31,8 @@ from azure.core.exceptions import HttpResponseError
 # Get environment variable IS_IN_CI_PIPELINE to decide whether it's in CI test
 IS_IN_CI_PIPELINE = _str_to_bool(os.environ.get("IS_IN_CI_PIPELINE", "False"))
 
+ACTIVITY_SPAN = "activity_span"
+
 
 class ActivityType(object):
     """The type of activity (code) monitored.
@@ -93,10 +95,7 @@ class ActivityLoggerAdapter(logging.LoggerAdapter):
         if "extra" not in kwargs:
             kwargs["extra"] = {}
 
-        if "properties" not in kwargs["extra"]:
-            kwargs["extra"]["properties"] = {}
-
-        kwargs["extra"]["properties"].update(self._activity_info)
+        kwargs["extra"].update(self._activity_info)
 
         return msg, kwargs
 
@@ -282,7 +281,7 @@ def monitor_with_activity(
         def wrapper(*args, **kwargs):
             tracer = logger.package_tracer if isinstance(logger, OpsLogger) else None
             if tracer:
-                with tracer.span():
+                with tracer.start_as_current_span(ACTIVITY_SPAN):
                     with log_activity(
                         logger.package_logger, activity_name or f.__name__, activity_type, custom_dimensions
                     ):
