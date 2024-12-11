@@ -419,7 +419,7 @@
 /sdk/translation/azure-ai-translation-text/                          @MikeyMCZ
 
 # PRLabel: %Cognitive - Language
-/sdk/cognitivelanguage/                                              @kristapratico @quentinRobinson @wangyuantao
+/sdk/cognitivelanguage/                                              @kristapratico @quentinRobinson @wangyuantao @bidisha-c
 
 # PRLabel: %Cognitive - Personalizer
 /sdk/personalizer/                                                   @sharathmalladi
