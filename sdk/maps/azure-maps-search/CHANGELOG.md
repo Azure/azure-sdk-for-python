@@ -6,12 +6,6 @@
 
 - Integrated support for SAS-based authentication
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
-
 ## 2.0.0b1 (2024-08-06)
 
 ### New Features and Enhancements
