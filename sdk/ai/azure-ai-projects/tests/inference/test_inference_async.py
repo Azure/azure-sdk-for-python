@@ -43,10 +43,10 @@ class TestInferenceAsync(InferenceTestBase):
     @servicePreparerInferenceTests()
     @recorded_by_proxy_async
     async def test_inference_get_chat_completions_client_async(self, **kwargs):
-        model = kwargs.pop("azure_ai_projects_inference_tests_aiservices_model_deployment_name")
+        model = kwargs.pop("azure_ai_projects_inference_tests_chat_completions_model_deployment_name")
         async with self.get_async_client(**kwargs) as project_client:
-            async with await project_client.inference.get_chat_completions_client() as azure_ai_inference_client:
-                response = await azure_ai_inference_client.complete(
+            async with await project_client.inference.get_chat_completions_client() as chat_completions_client:
+                response = await chat_completions_client.complete(
                     model=model,
                     messages=[
                         SystemMessage(content="You are a helpful assistant."),
@@ -61,6 +61,24 @@ class TestInferenceAsync(InferenceTestBase):
     @servicePreparerInferenceTests()
     @recorded_by_proxy_async
     async def test_inference_get_embeddings_client_async(self, **kwargs):
+        model = kwargs.pop("azure_ai_projects_inference_tests_embeddings_model_deployment_name")
         async with self.get_async_client(**kwargs) as project_client:
-            # TODO: Add test code here
-            pass
+            async with await project_client.inference.get_embeddings_client() as embeddings_client:
+                response = await embeddings_client.embed(
+                    model=model,
+                    input=["first phrase", "second phrase", "third phrase"]
+                )
+                print("\nEmbeddingsClient response:")
+                for item in response.data:
+                    length = len(item.embedding)
+                    print(
+                        f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "
+                        f"..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
+                    )
+                assert len(response.data) == 3
+                for item in response.data:
+                    assert len(item.embedding) > 0
+                    assert item.embedding[0] != 0
+                    assert item.embedding[-1] != 0
+
+

@@ -16,7 +16,8 @@ servicePreparerInferenceTests = functools.partial(
     azure_ai_projects_inference_tests_project_connection_string="region.api.azureml.ms;00000000-0000-0000-0000-000000000000;rg-name;project-name",
     azure_ai_projects_inference_tests_aoai_api_version="aoai-api-version",
     azure_ai_projects_inference_tests_aoai_model_deployment_name="aoai-model-deployment-name",
-    azure_ai_projects_inference_tests_aiservices_model_deployment_name="aoai-model-deployment-name",
+    azure_ai_projects_inference_tests_chat_completions_model_deployment_name="chat-completions-model-deployment-name",
+    azure_ai_projects_inference_tests_embeddings_model_deployment_name="embeddings-model-deployment-name",
 )
 
 # Set to True to enable SDK logging
