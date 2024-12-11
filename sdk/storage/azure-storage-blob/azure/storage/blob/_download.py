@@ -656,10 +656,6 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         output_stream: Union[BytesIO, StringIO]
         if self._text_mode:
             output_stream = StringIO()
-            if chars is None:
-                size = sys.maxsize
-            if chars < 0:
-                size = sys.maxsize
             size = sys.maxsize if chars is None or chars < 0 else chars
         else:
             output_stream = BytesIO()
