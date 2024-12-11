@@ -750,7 +750,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
     def _analyze_document_initial(
         self,
         model_id: str,
-        body: Optional[Union[_models.AnalyzeDocumentRequest, JSON, IO[bytes]]] = None,
+        body: Union[_models.AnalyzeDocumentRequest, JSON, IO[bytes]],
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
@@ -780,10 +780,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         if isinstance(body, (IOBase, bytes)):
             _content = body
         else:
-            if body is not None:
-                _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-            else:
-                _content = None
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_document_intelligence_analyze_document_request(
             model_id=model_id,
@@ -836,7 +833,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
     def begin_analyze_document(
         self,
         model_id: str,
-        body: Optional[_models.AnalyzeDocumentRequest] = None,
+        body: _models.AnalyzeDocumentRequest,
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
@@ -852,7 +849,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :param body: Analyze request parameters. Default value is None.
+        :param body: Analyze request parameters. Required.
         :type body: ~azure.ai.documentintelligence.models.AnalyzeDocumentRequest
         :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
@@ -888,7 +885,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
     def begin_analyze_document(
         self,
         model_id: str,
-        body: Optional[JSON] = None,
+        body: JSON,
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
@@ -904,7 +901,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :param body: Analyze request parameters. Default value is None.
+        :param body: Analyze request parameters. Required.
         :type body: JSON
         :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
@@ -940,7 +937,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
     def begin_analyze_document(
         self,
         model_id: str,
-        body: Optional[IO[bytes]] = None,
+        body: IO[bytes],
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
@@ -956,7 +953,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :param body: Analyze request parameters. Default value is None.
+        :param body: Analyze request parameters. Required.
         :type body: IO[bytes]
         :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
@@ -992,7 +989,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
     def begin_analyze_document(
         self,
         model_id: str,
-        body: Optional[Union[_models.AnalyzeDocumentRequest, JSON, IO[bytes]]] = None,
+        body: Union[_models.AnalyzeDocumentRequest, JSON, IO[bytes]],
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
@@ -1008,7 +1005,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :param model_id: Unique document model name. Required.
         :type model_id: str
         :param body: Analyze request parameters. Is one of the following types: AnalyzeDocumentRequest,
-         JSON, IO[bytes] Default value is None.
+         JSON, IO[bytes] Required.
         :type body: ~azure.ai.documentintelligence.models.AnalyzeDocumentRequest or JSON or IO[bytes]
         :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
@@ -1290,7 +1287,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
     def _analyze_batch_documents_initial(
         self,
         model_id: str,
-        body: Optional[Union[_models.AnalyzeBatchDocumentsRequest, JSON, IO[bytes]]] = None,
+        body: Union[_models.AnalyzeBatchDocumentsRequest, JSON, IO[bytes]],
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
@@ -1320,10 +1317,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         if isinstance(body, (IOBase, bytes)):
             _content = body
         else:
-            if body is not None:
-                _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-            else:
-                _content = None
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_document_intelligence_analyze_batch_documents_request(
             model_id=model_id,
@@ -1376,7 +1370,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
     def begin_analyze_batch_documents(
         self,
         model_id: str,
-        body: Optional[_models.AnalyzeBatchDocumentsRequest] = None,
+        body: _models.AnalyzeBatchDocumentsRequest,
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
@@ -1392,7 +1386,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :param body: Analyze batch request parameters. Default value is None.
+        :param body: Analyze batch request parameters. Required.
         :type body: ~azure.ai.documentintelligence.models.AnalyzeBatchDocumentsRequest
         :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
@@ -1428,7 +1422,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
     def begin_analyze_batch_documents(
         self,
         model_id: str,
-        body: Optional[JSON] = None,
+        body: JSON,
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
@@ -1444,7 +1438,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :param body: Analyze batch request parameters. Default value is None.
+        :param body: Analyze batch request parameters. Required.
         :type body: JSON
         :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
@@ -1480,7 +1474,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
     def begin_analyze_batch_documents(
         self,
         model_id: str,
-        body: Optional[IO[bytes]] = None,
+        body: IO[bytes],
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
@@ -1496,7 +1490,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :param body: Analyze batch request parameters. Default value is None.
+        :param body: Analyze batch request parameters. Required.
         :type body: IO[bytes]
         :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
@@ -1532,7 +1526,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
     def begin_analyze_batch_documents(
         self,
         model_id: str,
-        body: Optional[Union[_models.AnalyzeBatchDocumentsRequest, JSON, IO[bytes]]] = None,
+        body: Union[_models.AnalyzeBatchDocumentsRequest, JSON, IO[bytes]],
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
@@ -1548,7 +1542,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :param model_id: Unique document model name. Required.
         :type model_id: str
         :param body: Analyze batch request parameters. Is one of the following types:
-         AnalyzeBatchDocumentsRequest, JSON, IO[bytes] Default value is None.
+         AnalyzeBatchDocumentsRequest, JSON, IO[bytes] Required.
         :type body: ~azure.ai.documentintelligence.models.AnalyzeBatchDocumentsRequest or JSON or
          IO[bytes]
         :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
