@@ -200,7 +200,6 @@ class TestAgentsOperations:
             assert project_client.agents._toolset.get(agent_id) is not None
 
     @pytest.mark.asyncio
-    @pytest.mark.skip("Recordings not yet available")
     @patch("azure.ai.projects.aio._patch.AsyncPipelineClient")
     @pytest.mark.parametrize(
         "file_agent_1,file_agent_2",
@@ -276,7 +275,6 @@ class TestAgentsOperations:
             self._assert_toolset_dict(project_client, agent2.id, None)
 
     @pytest.mark.asyncio
-    @pytest.mark.skip("Recordings not yet available")
     @patch("azure.ai.projects.aio._patch.AsyncPipelineClient")
     @pytest.mark.parametrize(
         "file_agent_1,file_agent_2",
@@ -324,7 +322,6 @@ class TestAgentsOperations:
                 self._assert_toolset_dict(project_client, agent1.id, toolset2)
 
     @pytest.mark.asyncio
-    @pytest.mark.skip("Recordings not yet available")
     @patch("azure.ai.projects.aio._patch.AsyncPipelineClient")
     @pytest.mark.parametrize(
         "file_agent_1,file_agent_2",
@@ -387,7 +384,6 @@ class TestAgentsOperations:
             self._assert_toolset_dict(project_client, agent1.id, toolset1)
 
     @pytest.mark.asyncio
-    @pytest.mark.skip("Recordings not yet available")
     @patch("azure.ai.projects.aio._patch.AsyncPipelineClient")
     @pytest.mark.parametrize(
         "file_agent_1,add_azure_fn",
