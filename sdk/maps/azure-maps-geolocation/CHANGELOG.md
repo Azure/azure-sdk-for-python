@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b3 (2024-12-12)
+
+### Features Added
+
+- Integrated support for SAS-based authentication
+
 ## 1.0.0b2 (2024-11-11)
 
 ### Other Changes
