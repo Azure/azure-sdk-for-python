@@ -11,6 +11,7 @@
 
 ### Breaking Changes
 
+- Renamed request body parameters on all methods to `body`.
 - Renamed operation `get_resource_info()` to `get_resource_details()`.
 - Renamed model `ContentFormat` to `DocumentContentFormat`.
 - Renamed model `AnalyzeBatchResultOperation` to `AnalyzeBatchOperation`.
