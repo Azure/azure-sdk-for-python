@@ -218,9 +218,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 updated_sentinel_keys[(key, label)] = updated_sentinel.etag
         # Need to only update once, no matter how many sentinels are updated
         if need_refresh:
-            configuration_settings, sentinel_keys = self.load_configuration_settings(
-                selects, refresh_on, **kwargs
-            )
+            configuration_settings, sentinel_keys = self.load_configuration_settings(selects, refresh_on, **kwargs)
             return True, sentinel_keys, configuration_settings
         return False, refresh_on, []
 
