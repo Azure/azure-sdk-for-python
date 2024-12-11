@@ -298,7 +298,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
     async def begin_copy_classifier_to(  # type: ignore[override]
         self,
         classifier_id: str,
-        copy_to_request: Union[_models.ClassifierCopyAuthorization, JSON, IO[bytes]],
+        body: Union[_models.ClassifierCopyAuthorization, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentClassifierDetails]:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -312,7 +312,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
         if cont_token is None:
             raw_result = await self._copy_classifier_to_initial(
                 classifier_id=classifier_id,
-                copy_to_request=copy_to_request,
+                body=body,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,

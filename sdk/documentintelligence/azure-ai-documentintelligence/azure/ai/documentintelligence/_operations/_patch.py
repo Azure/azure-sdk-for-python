@@ -315,7 +315,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
     def begin_copy_classifier_to(
         self,
         classifier_id: str,
-        copy_to_request: Union[_models.ClassifierCopyAuthorization, JSON, IO[bytes]],
+        body: Union[_models.ClassifierCopyAuthorization, JSON, IO[bytes]],
         **kwargs: Any,
     ) -> LROPoller[_models.DocumentClassifierDetails]:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -329,7 +329,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
         if cont_token is None:
             raw_result = self._copy_classifier_to_initial(
                 classifier_id=classifier_id,
-                copy_to_request=copy_to_request,
+                body=body,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -381,7 +381,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
     def begin_analyze_document(
         self,
         model_id: str,
-        body: Optional[_models.AnalyzeDocumentRequest] = None,
+        body: _models.AnalyzeDocumentRequest,
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
@@ -433,7 +433,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
     def begin_analyze_document(
         self,
         model_id: str,
-        body: Optional[JSON] = None,
+        body: JSON,
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
@@ -485,7 +485,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
     def begin_analyze_document(
         self,
         model_id: str,
-        body: Optional[IO[bytes]] = None,
+        body: IO[bytes],
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
@@ -537,7 +537,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
     def begin_analyze_document(
         self,
         model_id: str,
-        body: Optional[Union[_models.AnalyzeDocumentRequest, JSON, IO[bytes]]] = None,
+        body: Union[_models.AnalyzeDocumentRequest, JSON, IO[bytes]],
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
