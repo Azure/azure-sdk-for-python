@@ -137,7 +137,7 @@ class ContainerSamplesAsync(object):
             # Instantiate a ContainerClient
             container_client = blob_service_client.get_container_client("myaccesscontainerasync")
             if container_client.account_name is None:
-                print("Missing string value: container_client.account_name." + '\n' +
+                print("Connection string did not provide an account name." + '\n' +
                       "Test: container_access_policy_async")
                 sys.exit(1)
 
