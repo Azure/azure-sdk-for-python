@@ -23,10 +23,6 @@ def pytest_collection_modifyitems(items):
     if os.environ.get("AZURE_TEST_RUN_LIVE") == "true":
         return
     for item in items:
-        if "tests\\agents" in item.fspath.strpath or "tests/agents" in item.fspath.strpath:
-            item.add_marker(
-                pytest.mark.skip(reason="Skip running Agents tests in PR pipeline until test recordings are available")
-            )
         if "tests\\evaluation" in item.fspath.strpath or "tests/evaluation" in item.fspath.strpath:
             item.add_marker(
                 pytest.mark.skip(

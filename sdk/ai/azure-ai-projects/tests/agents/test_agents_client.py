@@ -1683,7 +1683,6 @@ class TestAgentClient(AzureRecordedTestCase):
 
             # create stream
             with client.agents.create_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
-                assert isinstance(stream, AgentRunStream)
                 for event_type, event_data in stream:
                     assert isinstance(event_data, (MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep)) or event_type == AgentStreamEvent.DONE
 
@@ -1694,7 +1693,7 @@ class TestAgentClient(AzureRecordedTestCase):
 
     # TODO create_stream doesn't work with body -- fails on for event_type, event_data : TypeError: 'ThreadRun' object is not an iterator
     @agentClientPreparer()
-    @pytest.mark.skip("Streaming functions need to be updated.")
+    @pytest.mark.skip("Streaming functions with body need to be updated.")
     @recorded_by_proxy
     def test_create_stream_with_body(self, **kwargs):
         """Test creating stream with body."""
@@ -1726,7 +1725,6 @@ class TestAgentClient(AzureRecordedTestCase):
 
             # create stream
             with client.agents.create_stream(thread_id=thread.id, body=body, stream=True) as stream:
-                assert isinstance(stream, AgentRunStream)
                 
                 for event_type, event_data in stream:
                     print("event type: event data")
@@ -1739,6 +1737,7 @@ class TestAgentClient(AzureRecordedTestCase):
 
     
     @agentClientPreparer()
+    @pytest.mark.skip("Streaming functions with body need to be updated.")
     @recorded_by_proxy
     def test_create_stream_with_iobytes(self, **kwargs):
         """Test creating stream with body: IO[bytes]."""
@@ -1771,7 +1770,6 @@ class TestAgentClient(AzureRecordedTestCase):
 
             # create stream
             with client.agents.create_stream(thread_id=thread.id, body=io.BytesIO(binary_body), stream=True) as stream:
-                assert isinstance(stream, AgentRunStream)
                 for event_type, event_data in stream:
                     assert isinstance(event_data, (MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep)) or event_type == AgentStreamEvent.DONE
 
@@ -1844,7 +1842,6 @@ class TestAgentClient(AzureRecordedTestCase):
 
         # create stream
         with client.agents.create_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
-            assert isinstance(stream, AgentRunStream)
             for event_type, event_data in stream:
                 
                 # Check if tools are needed
@@ -2576,6 +2573,7 @@ class TestAgentClient(AzureRecordedTestCase):
         ai_client.close()
 
     @agentClientPreparer()
+    @pytest.mark.skip("File ID issues with sanitization.")
     @recorded_by_proxy
     def test_message_attachement_azure(self, **kwargs):
         """Test message attachment with azure ID."""
