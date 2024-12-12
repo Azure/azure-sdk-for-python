@@ -1326,59 +1326,69 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
             logging.error("Error in event handler for event '%s': %s", event_type, e)
         return event_type, event_data_obj, func_rt
 
-    async def on_message_delta(self, delta: "MessageDeltaChunk") -> Optional[EventFunctionReturnT]:
+    async def on_message_delta(
+        self, delta: "MessageDeltaChunk"
+    ) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
         """Handle message delta events.
 
         :param MessageDeltaChunk delta: The message delta.
         """
-        return None
+        pass
 
-    async def on_thread_message(self, message: "ThreadMessage") -> Optional[EventFunctionReturnT]:
+    async def on_thread_message(
+        self, message: "ThreadMessage"
+    ) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
         """Handle thread message events.
 
         :param ThreadMessage message: The thread message.
         """
-        return None
+        pass
 
-    async def on_thread_run(self, run: "ThreadRun") -> Optional[EventFunctionReturnT]:
+    async def on_thread_run(
+        self, run: "ThreadRun"
+    ) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
         """Handle thread run events.
 
         :param ThreadRun run: The thread run.
         """
-        return None
+        pass
 
-    async def on_run_step(self, step: "RunStep") -> Optional[EventFunctionReturnT]:
+    async def on_run_step(self, step: "RunStep") -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
         """Handle run step events.
 
         :param RunStep step: The run step.
         """
-        return None
+        pass
 
-    async def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> Optional[EventFunctionReturnT]:
+    async def on_run_step_delta(
+        self, delta: "RunStepDeltaChunk"
+    ) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
         """Handle run step delta events.
 
         :param RunStepDeltaChunk delta: The run step delta.
         """
-        return None
+        pass
 
-    async def on_error(self, data: str) -> Optional[EventFunctionReturnT]:
+    async def on_error(self, data: str) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
         """Handle error events.
 
         :param str data: The error event's data.
         """
-        return None
+        pass
 
     async def on_done(self) -> Optional[EventFunctionReturnT]:
         """Handle the completion of the stream."""
-        return None
+        pass
 
-    async def on_unhandled_event(self, event_type: str, event_data: str) -> Optional[EventFunctionReturnT]:
+    async def on_unhandled_event(
+        self, event_type: str, event_data: str
+    ) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
         """Handle any unhandled event types.
 
         :param str event_type: The event type.
         :param Any event_data: The event's data.
         """
-        return None
+        pass
 
 
 class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Optional[EventFunctionReturnT]]]):
@@ -1418,59 +1428,67 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
             logging.error("Error in event handler for event '%s': %s", event_type, e)
         return event_type, event_data_obj, func_rt
 
-    def on_message_delta(self, delta: "MessageDeltaChunk") -> Optional[EventFunctionReturnT]:
+    def on_message_delta(
+        self, delta: "MessageDeltaChunk"
+    ) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
         """Handle message delta events.
 
         :param MessageDeltaChunk delta: The message delta.
         """
-        return None
+        pass
 
-    def on_thread_message(self, message: "ThreadMessage") -> Optional[EventFunctionReturnT]:
+    def on_thread_message(
+        self, message: "ThreadMessage"
+    ) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
         """Handle thread message events.
 
         :param ThreadMessage message: The thread message.
         """
-        return None
+        pass
 
-    def on_thread_run(self, run: "ThreadRun") -> Optional[EventFunctionReturnT]:
+    def on_thread_run(self, run: "ThreadRun") -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
         """Handle thread run events.
 
         :param ThreadRun run: The thread run.
         """
-        return None
+        pass
 
-    def on_run_step(self, step: "RunStep") -> Optional[EventFunctionReturnT]:
+    def on_run_step(self, step: "RunStep") -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
         """Handle run step events.
 
         :param RunStep step: The run step.
         """
-        return None
+        pass
 
-    def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> Optional[EventFunctionReturnT]:
+    def on_run_step_delta(
+        self, delta: "RunStepDeltaChunk"
+    ) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
         """Handle run step delta events.
 
         :param RunStepDeltaChunk delta: The run step delta.
         """
-        return None
+        pass
 
-    def on_error(self, data: str) -> Optional[EventFunctionReturnT]:
+    def on_error(self, data: str) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
         """Handle error events.
 
         :param str data: The error event's data.
         """
-        return None
+        pass
 
-    def on_done(self) -> Optional[EventFunctionReturnT]:
+    def on_done(self) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
         """Handle the completion of the stream."""
-        return None
+        pass
 
-    def on_unhandled_event(self, event_type: str, event_data: str) -> Optional[EventFunctionReturnT]:
+    def on_unhandled_event(
+        self, event_type: str, event_data: str
+    ) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
         """Handle any unhandled event types.
 
         :param str event_type: The event type.
         :param Any event_data: The event's data.
         """
-        return None
+        pass
 
 
 class AsyncAgentRunStream(Generic[BaseAsyncAgentEventHandlerT]):
