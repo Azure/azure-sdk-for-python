@@ -1168,7 +1168,7 @@ class AsyncToolSet(BaseToolSet):
         return tool_outputs
 
 
-CustomDataT = TypeVar("CustomDataT")
+EventFunctionReturnT = TypeVar("EventFunctionReturnT")
 T = TypeVar("T")
 BaseAsyncAgentEventHandlerT = TypeVar("BaseAsyncAgentEventHandlerT", bound="BaseAsyncAgentEventHandler")
 BaseAgentEventHandlerT = TypeVar("BaseAgentEventHandlerT", bound="BaseAgentEventHandler")
@@ -1290,13 +1290,10 @@ class BaseAgentEventHandler(Iterator[T]):
             pass
 
 
-class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventData, Optional[CustomDataT]]]):
+class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventData, Optional[EventFunctionReturnT]]]):
 
-    custom_data: Optional[CustomDataT] = None
-
-    async def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData, Optional[CustomDataT]]:
+    async def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData, Optional[EventFunctionReturnT]]:
         event_type, event_data_obj = _parse_event(event_data_str)
-        self.custom_data = None
         if (
             isinstance(event_data_obj, ThreadRun)
             and event_data_obj.status == "requires_action"
@@ -1306,68 +1303,69 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
                 event_data_obj, self
             )
 
+        func_rt: Optional[EventFunctionReturnT] = None
         try:
             if isinstance(event_data_obj, MessageDeltaChunk):
-                await self.on_message_delta(event_data_obj)
+                func_rt = await self.on_message_delta(event_data_obj)
             elif isinstance(event_data_obj, ThreadMessage):
-                await self.on_thread_message(event_data_obj)
+                func_rt = await self.on_thread_message(event_data_obj)
             elif isinstance(event_data_obj, ThreadRun):
-                await self.on_thread_run(event_data_obj)
+                func_rt = await self.on_thread_run(event_data_obj)
             elif isinstance(event_data_obj, RunStep):
-                await self.on_run_step(event_data_obj)
+                func_rt = await self.on_run_step(event_data_obj)
             elif isinstance(event_data_obj, RunStepDeltaChunk):
-                await self.on_run_step_delta(event_data_obj)
+                func_rt = await self.on_run_step_delta(event_data_obj)
             elif event_type == AgentStreamEvent.ERROR:
-                await self.on_error(event_data_obj)
+                func_rt = await self.on_error(event_data_obj)
             elif event_type == AgentStreamEvent.DONE:
-                await self.on_done()
+                func_rt = await self.on_done()
                 self.done = True  # Mark the stream as done
             else:
-                await self.on_unhandled_event(event_type, event_data_obj)
+                func_rt = await self.on_unhandled_event(event_type, event_data_obj)
         except Exception as e:  # pylint: disable=broad-exception-caught
             logging.error("Error in event handler for event '%s': %s", event_type, e)
-        return event_type, event_data_obj, self.custom_data
+        return event_type, event_data_obj, func_rt
 
-    async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
+    async def on_message_delta(self, delta: "MessageDeltaChunk") -> Optional[EventFunctionReturnT]:
         """Handle message delta events.
 
         :param MessageDeltaChunk delta: The message delta.
         """
 
-    async def on_thread_message(self, message: "ThreadMessage") -> None:
+    async def on_thread_message(self, message: "ThreadMessage") -> Optional[EventFunctionReturnT]:
         """Handle thread message events.
 
         :param ThreadMessage message: The thread message.
         """
 
-    async def on_thread_run(self, run: "ThreadRun") -> None:
+    async def on_thread_run(self, run: "ThreadRun") -> Optional[EventFunctionReturnT]:
         """Handle thread run events.
 
         :param ThreadRun run: The thread run.
         """
 
-    async def on_run_step(self, step: "RunStep") -> None:
+    async def on_run_step(self, step: "RunStep") -> Optional[EventFunctionReturnT]:
         """Handle run step events.
 
         :param RunStep step: The run step.
         """
 
-    async def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:
+    async def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> Optional[EventFunctionReturnT]:
         """Handle run step delta events.
 
         :param RunStepDeltaChunk delta: The run step delta.
         """
 
-    async def on_error(self, data: str) -> None:
+    async def on_error(self, data: str) -> Optional[EventFunctionReturnT]:
         """Handle error events.
 
         :param str data: The error event's data.
         """
 
-    async def on_done(self) -> None:
+    async def on_done(self) -> Optional[EventFunctionReturnT]:
         """Handle the completion of the stream."""
 
-    async def on_unhandled_event(self, event_type: str, event_data: str) -> None:
+    async def on_unhandled_event(self, event_type: str, event_data: str) -> Optional[EventFunctionReturnT]:
         """Handle any unhandled event types.
 
         :param str event_type: The event type.
@@ -1375,14 +1373,11 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
         """
 
 
-class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Optional[CustomDataT]]]):
+class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Optional[EventFunctionReturnT]]]):
 
-    custom_data: Optional[CustomDataT] = None
-
-    def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData, Optional[CustomDataT]]:
+    def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData, Optional[EventFunctionReturnT]]:
 
         event_type, event_data_obj = _parse_event(event_data_str)
-        self.custom_data = None
         if (
             isinstance(event_data_obj, ThreadRun)
             and event_data_obj.status == "requires_action"
@@ -1392,68 +1387,69 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
                 event_data_obj, self
             )
 
+        func_rt: Optional[EventFunctionReturnT] = None
         try:
             if isinstance(event_data_obj, MessageDeltaChunk):
-                self.on_message_delta(event_data_obj)
+                func_rt = self.on_message_delta(event_data_obj)
             elif isinstance(event_data_obj, ThreadMessage):
-                self.on_thread_message(event_data_obj)
+                func_rt = self.on_thread_message(event_data_obj)
             elif isinstance(event_data_obj, ThreadRun):
-                self.on_thread_run(event_data_obj)
+                func_rt = self.on_thread_run(event_data_obj)
             elif isinstance(event_data_obj, RunStep):
-                self.on_run_step(event_data_obj)
+                func_rt = self.on_run_step(event_data_obj)
             elif isinstance(event_data_obj, RunStepDeltaChunk):
-                self.on_run_step_delta(event_data_obj)
+                func_rt = self.on_run_step_delta(event_data_obj)
             elif event_type == AgentStreamEvent.ERROR:
-                self.on_error(event_data_obj)
+                func_rt = self.on_error(event_data_obj)
             elif event_type == AgentStreamEvent.DONE:
-                self.on_done()
+                func_rt = self.on_done()
                 self.done = True  # Mark the stream as done
             else:
-                self.on_unhandled_event(event_type, event_data_obj)
+                func_rt = self.on_unhandled_event(event_type, event_data_obj)
         except Exception as e:  # pylint: disable=broad-exception-caught
             logging.error("Error in event handler for event '%s': %s", event_type, e)
-        return event_type, event_data_obj, self.custom_data
+        return event_type, event_data_obj, func_rt
 
-    def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
+    def on_message_delta(self, delta: "MessageDeltaChunk") -> Optional[EventFunctionReturnT]:
         """Handle message delta events.
 
         :param MessageDeltaChunk delta: The message delta.
         """
 
-    def on_thread_message(self, message: "ThreadMessage") -> None:
+    def on_thread_message(self, message: "ThreadMessage") -> Optional[EventFunctionReturnT]:
         """Handle thread message events.
 
         :param ThreadMessage message: The thread message.
         """
 
-    def on_thread_run(self, run: "ThreadRun") -> None:
+    def on_thread_run(self, run: "ThreadRun") -> Optional[EventFunctionReturnT]:
         """Handle thread run events.
 
         :param ThreadRun run: The thread run.
         """
 
-    def on_run_step(self, step: "RunStep") -> None:
+    def on_run_step(self, step: "RunStep") -> Optional[EventFunctionReturnT]:
         """Handle run step events.
 
         :param RunStep step: The run step.
         """
 
-    def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:
+    def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> Optional[EventFunctionReturnT]:
         """Handle run step delta events.
 
         :param RunStepDeltaChunk delta: The run step delta.
         """
 
-    def on_error(self, data: str) -> None:
+    def on_error(self, data: str) -> Optional[EventFunctionReturnT]:
         """Handle error events.
 
         :param str data: The error event's data.
         """
 
-    def on_done(self) -> None:
+    def on_done(self) -> Optional[EventFunctionReturnT]:
         """Handle the completion of the stream."""
 
-    def on_unhandled_event(self, event_type: str, event_data: str) -> None:
+    def on_unhandled_event(self, event_type: str, event_data: str) -> Optional[EventFunctionReturnT]:
         """Handle any unhandled event types.
 
         :param str event_type: The event type.
