@@ -72,11 +72,8 @@ class Command(ABC):
         success = self.execute_azure_cli_command(
             f"account set --subscription {subscription_id}"
         )
-        dir = "C:\Projects\\azure-sdk-for-python\sdk\ml\\azure-ai-ml\\azure\\ai\ml\YAMLsigning"
-        print(working_direcotry, dir)
         success = success and self.execute_azure_cli_command(
-            f"ml data create --name dataSource --path {dir} --type uri_folder -w {workspace} -g {resource_group}"
-            # f"ml folder attach --workspace-name {workspace} --resource-group {resource_group} --debug" # TODO: command modified for v2
+            f"ml data create --name dataSource --path {working_direcotry} --type uri_folder -w {workspace} -g {resource_group}"
         )
         if not success:
             self.register_error(f"Error!! Failed to attach to {workspace_id}!")
@@ -116,7 +113,6 @@ class Command(ABC):
                 f"installing component CLI version {self.config.component_cli_version}."
             )
             cli_install_command = f"extension add --name ml"
-            # cli_install_command = f"extension add --source https://azuremlsdktestpypi.blob.core.windows.net/wheels/componentsdk/azure_cli_ml-{self.config.component_cli_version}-py3-none-any.whl --pip-extra-index-urls https://azuremlsdktestpypi.azureedge.net/componentsdk/{self.config.component_cli_version} --yes" # TODO: command modified for v2
             if self.config.verbose:
                 cli_install_command += " --verbose"
 
@@ -301,20 +297,6 @@ class Command(ABC):
         """
         log.error(error)
         self._errors.append(error)
-
-    # def telemetry_logging(self, command: str) -> None:
-    #     """
-    #     Log the telemetry information in the Azure Application Insights
-    #     """
-    #     telemetry_logger = TelemetryLogger(
-    #         enable_telemetry=not self.config.disable_telemetry
-    #     )
-    #     telemetry_logger.log_trace(
-    #         message=f"shrike.build=={__version__}: {command}",
-    #         properties={
-    #             "custom_dimensions": {"configuration": str(asdict(self.config))}
-    #         },
-    #     )
 
     def run(self) -> None:
         """

@@ -1,6 +1,0 @@
-application:
-  settings:
-    field:
-      default: "**/spec.yaml"
-    anotherField:
-      default: "path/to/another/spec.yaml"

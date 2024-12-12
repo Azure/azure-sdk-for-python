@@ -93,68 +93,15 @@ class Prepare(Command):
                 rv.append(normalized_path)
 
         return rv
-
-    def process_all_components(self, files: List[str], action_type) -> List[str]:  # type: ignore
-        """
-        Depending on the 'action_type' ('build' or 'validate'), run
-        build_each_components() or validate_each_component()
-        in parallel with nb_cores threads.
-        Returns the list of "built" component files, or an empty list
-        in the validate case.
-        """
-        rv = []
-        if files:
-            nb_cores = self.nb_cores
-
-            if nb_cores == 1:
-                for component in files:
-                    if action_type == ActionType.BUILD:
-                        rv.append(self.build_each_components(component))
-                    elif action_type == ActionType.VALIDATE:
-                        self.validate_each_components(component)
-                    else:
-                        log.error(
-                            f"Unknown value for action_type: '{action_type}'. It should be either '{ActionType.BUILD}' or '{ActionType.VALIDATE}'"
-                        )
-            else:
-                log.info(
-                    f"Batch component processing with {nb_cores} threads. Action: '{action_type}'"
-                )
-                pool = multiprocessing.Pool(processes=nb_cores)
-                if action_type == ActionType.BUILD:
-                    rv = pool.map(self.build_each_components, files)
-                elif action_type == ActionType.VALIDATE:
-                    pool.map(self.validate_each_components, files)
-                pool.close()
-                pool.join()
-            return rv  # type: ignore
-
-    def build_each_components(self, component) -> List[str]:
-        """
-        For one of component specification file, run `az ml component build`,
-        and register the status (+ register error if build failed).
-        """
-        path = Path(component)
-        rv = str(path.parent / ".build" / path.name)
-        build_component_success = self.execute_azure_cli_command(
-            f"ml component build --file {component}" # TODO
-        )
-        if build_component_success:
-            log.info(f"Component {component} is built.")
-        else:
-            self.register_error(f"Error when building component {component}.")
-        return rv  # type: ignore
-
+ 
     def find_component_specification_files_using_all(self, dir=None) -> List[str]:
         """
         Find all component specification files in the configured working
         directory matching the configured glob. Return the absolute paths
         of these files in the format of a list of string.
         """
-        import pdb; pdb.set_trace();
         if dir is None:
-            # dir = self.config.working_directory
-            dir = 'C:\Projects\\azure-sdk-for-python\sdk\ml\\azure-ai-ml\\azure\\ai\ml\YAMLsigning\yamlSignTest'
+            dir = self.config.working_directory
         all_spec_yaml_files_absolute_paths = [
             str(p.absolute())
             for p in Path(dir).glob(self.config.component_specification_glob)
@@ -852,38 +799,15 @@ class Prepare(Command):
     def run_with_config(self):
         log.info("Running component preparation logic.")
 
-        # self.telemetry_logging(command="prepare")
 
         component_files = self.find_component_specification_files()
-        # if not self.config.suppress_adding_repo_pr_tags: # TODO
-        #     try:
-        #         component_files = self.add_repo_and_last_pr_to_tags(component_files)
-        #     except StopIteration:
-        #         log.warning(
-        #             "`add_repo_and_last_pr_to_tags` not successful. Please make sure your component files are in Git. Otherwise, please set `suppress_adding_repo_pr_tags` to True."
-        #         )# TODO
-
-        import pdb;pdb.set_trace()
-        # section
-        # print("run catalog creation", component_files)
-        # self.create_catalog_files(component_files)
-        # over
-           
          
         self.ensure_component_cli_installed()
         self.attach_workspace()
-        self.process_all_components(component_files, ActionType.VALIDATE)
-        built_component_files = self.process_all_components(
-            component_files, ActionType.BUILD
-        )
-                      
-        # only call self.create_catalog_files if built_component_files not None
-        if built_component_files:
-            self.create_catalog_files(built_component_files)
-
+        
+        self.create_catalog_files(component_files)
+        
         self._create_dependencies_files(component_files)
-
-        # self.add_conda_to_system_path() # TODO
 
     def validate_each_components(self, component) -> None:
         """

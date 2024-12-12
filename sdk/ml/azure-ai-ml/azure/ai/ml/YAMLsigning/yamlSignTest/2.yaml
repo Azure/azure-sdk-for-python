@@ -1,3 +1,0 @@
-config:
-  field:
-    default: "**/spec.yaml"
