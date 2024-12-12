@@ -668,6 +668,8 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
                 ssl_context=self._ssl_context,
                 amqp_transport=self._amqp_transport,
                 use_tls=self._config.use_tls,
+                client_identifier=client_identifier,
+                socket_timeout=socket_timeout,
                 **kwargs,
             )
         self._handlers.add(handler)
