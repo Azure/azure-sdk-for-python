@@ -125,15 +125,6 @@ class AgentStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Event sent when the stream is done."""
 
 
-class ApiResponseFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Possible API response formats."""
-
-    TEXT = "text"
-    """``text`` format should be used for requests involving any sort of ToolCall."""
-    JSON_OBJECT = "json_object"
-    """Using ``json_object`` format will limit the usage of ToolCall to only functions."""
-
-
 class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Authentication type used by Azure AI service to connect to another service."""
 
@@ -304,16 +295,33 @@ class MessageStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """
-    Authentication type for OpenApi endpoint. Allowed types are:
-    - Anonymous (no authentication required)
-    - Connection (requires connection_id to endpoint, as setup in AI Foundry)
-    - Managed_Identity (requires audience for identity based auth)
+    """Authentication type for OpenApi endpoint. Allowed types are:
+
+
+    * Anonymous (no authentication required)
+    * Connection (requires connection_id to endpoint, as setup in AI Foundry)
+    * Managed_Identity (requires audience for identity based auth).
     """
 
     ANONYMOUS = "anonymous"
     CONNECTION = "connection"
     MANAGED_IDENTITY = "managed_identity"
+
+
+class ResponseFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Possible API response formats."""
+
+    TEXT = "text"
+    """``text`` format should be used for requests involving any sort of ToolCall."""
+    JSON_OBJECT = "json_object"
+    """Using ``json_object`` format will limit the usage of ToolCall to only functions."""
+
+
+class RunAdditionalFieldList(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A list of additional fields to include in the response."""
+
+    FILE_SEARCH_CONTENTS = "step_details.tool_calls[*].file_search.results[*].content"
+    """File search result content."""
 
 
 class RunStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -485,14 +493,12 @@ class VectorStoreFileBatchStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class VectorStoreFileErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Error code variants for vector store file processing."""
 
-    INTERNAL_ERROR = "internal_error"
-    """An internal error occurred."""
-    FILE_NOT_FOUND = "file_not_found"
-    """The file was not found."""
-    PARSING_ERROR = "parsing_error"
-    """The file could not be parsed."""
-    UNHANDLED_MIME_TYPE = "unhandled_mime_type"
-    """The file has an unhandled mime type."""
+    SERVER_ERROR = "server_error"
+    """An server error occurred."""
+    INVALID_FILE = "invalid_file"
+    """The file is not valid."""
+    UNSUPPORTED_FILE = "unsupported_file"
+    """The file is of unsupported type."""
 
 
 class VectorStoreFileStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):

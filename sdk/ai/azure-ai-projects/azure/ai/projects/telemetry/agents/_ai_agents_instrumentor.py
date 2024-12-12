@@ -1,7 +1,4 @@
 # pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -443,6 +440,8 @@ class _AIAgentsInstrumentorPreview:
         if isinstance(response_format, AgentsApiResponseFormatMode):
             return response_format.value
         if isinstance(response_format, _models.AgentsApiResponseFormat):
+            return response_format.type
+        if isinstance(response_format, _models.ResponseFormatJsonSchemaType):
             return response_format.type
         raise ValueError(f"Unknown response format {type(response_format)}")
 

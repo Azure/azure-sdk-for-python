@@ -1175,7 +1175,13 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def create_run(
-        self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        thread_id: str,
+        body: JSON,
+        *,
+        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
 
@@ -1183,6 +1189,11 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type thread_id: str
         :param body: Required.
         :type body: JSON
+        :keyword include: A list of additional fields to include in the response.
+         Currently the only supported value is
+         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
+         content. Default value is None.
+        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1198,6 +1209,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         thread_id: str,
         *,
         assistant_id: str,
+        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         content_type: str = "application/json",
         model: Optional[str] = None,
         instructions: Optional[str] = None,
@@ -1221,6 +1233,11 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type thread_id: str
         :keyword assistant_id: The ID of the agent that should run the thread. Required.
         :paramtype assistant_id: str
+        :keyword include: A list of additional fields to include in the response.
+         Currently the only supported value is
+         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
+         content. Default value is None.
+        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1294,7 +1311,13 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def create_run(
-        self, thread_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        thread_id: str,
+        body: IO[bytes],
+        *,
+        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
 
@@ -1302,6 +1325,11 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type thread_id: str
         :param body: Required.
         :type body: IO[bytes]
+        :keyword include: A list of additional fields to include in the response.
+         Currently the only supported value is
+         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
+         content. Default value is None.
+        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1316,6 +1344,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         thread_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
+        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         assistant_id: str = _Unset,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
@@ -1339,6 +1368,11 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type thread_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
+        :keyword include: A list of additional fields to include in the response.
+         Currently the only supported value is
+         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
+         content. Default value is None.
+        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
         :keyword assistant_id: The ID of the agent that should run the thread. Required.
         :paramtype assistant_id: str
         :keyword model: The overridden model name that the agent should use to run the thread. Default
@@ -1411,11 +1445,12 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         if isinstance(body, dict):  # Handle overload with JSON body.
             content_type = kwargs.get("content_type", "application/json")
-            response = super().create_run(thread_id, body, content_type=content_type, **kwargs)
+            response = super().create_run(thread_id, body, include=include, content_type=content_type, **kwargs)
 
         elif assistant_id is not _Unset:  # Handle overload with keyword arguments.
             response = super().create_run(
                 thread_id,
+                include=include,
                 assistant_id=assistant_id,
                 model=model,
                 instructions=instructions,
@@ -1438,7 +1473,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         elif isinstance(body, io.IOBase):  # Handle overload with binary body.
             content_type = kwargs.get("content_type", "application/json")
-            response = super().create_run(thread_id, body, content_type=content_type, **kwargs)
+            response = super().create_run(thread_id, body, include=include, content_type=content_type, **kwargs)
 
         else:
             raise ValueError("Invalid combination of arguments provided.")
@@ -1451,6 +1486,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         thread_id: str,
         *,
         assistant_id: str,
+        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
@@ -1474,6 +1510,11 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type thread_id: str
         :keyword assistant_id: The ID of the agent that should run the thread. Required.
         :paramtype assistant_id: str
+        :keyword include: A list of additional fields to include in the response.
+         Currently the only supported value is
+         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
+         content. Default value is None.
+        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
         :keyword model: The overridden model name that the agent should use to run the thread.
          Default value is None.
         :paramtype model: str
@@ -1549,6 +1590,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         # Create and initiate the run with additional parameters
         run = self.create_run(
             thread_id=thread_id,
+            include=include,
             assistant_id=assistant_id,
             model=model,
             instructions=instructions,
@@ -1606,6 +1648,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         self,
         thread_id: str,
         *,
+        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         assistant_id: str,
         content_type: str = "application/json",
         model: Optional[str] = None,
@@ -1629,6 +1672,11 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         :param thread_id: Required.
         :type thread_id: str
+        :keyword include: A list of additional fields to include in the response.
+         Currently the only supported value is
+         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
+         content. Default value is None.
+        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
         :keyword assistant_id: The ID of the agent that should run the thread. Required.
         :paramtype assistant_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -1711,6 +1759,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         thread_id: str,
         *,
         assistant_id: str,
+        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         content_type: str = "application/json",
         model: Optional[str] = None,
         instructions: Optional[str] = None,
@@ -1735,6 +1784,11 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type thread_id: str
         :keyword assistant_id: The ID of the agent that should run the thread. Required.
         :paramtype assistant_id: str
+        :keyword include: A list of additional fields to include in the response.
+         Currently the only supported value is
+         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
+         content. Default value is None.
+        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1815,6 +1869,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         thread_id: str,
         body: Union[JSON, IO[bytes]],
         *,
+        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         event_handler: None = None,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -1827,6 +1882,11 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type thread_id: str
         :param body: Required.
         :type body: IO[bytes]
+        :keyword include: A list of additional fields to include in the response.
+         Currently the only supported value is
+         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
+         content. Default value is None.
+        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
         :keyword event_handler: The event handler to use for processing events during the run. Default
             value is None.
         :paramtype event_handler: ~azure.ai.projects.models.AgentEventHandler
@@ -1844,7 +1904,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         thread_id: str,
         body: Union[JSON, IO[bytes]],
         *,
+        e,
         event_handler: _models.BaseAgentEventHandlerT,
+        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> _models.AgentRunStream[_models.BaseAgentEventHandlerT]:
@@ -1856,6 +1918,11 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type thread_id: str
         :param body: Required.
         :type body: IO[bytes]
+        :keyword include: A list of additional fields to include in the response.
+         Currently the only supported value is
+         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
+         content. Default value is None.
+        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
         :keyword event_handler: The event handler to use for processing events during the run. Default
             value is None.
         :paramtype event_handler: ~azure.ai.projects.models.AgentEventHandler
@@ -1873,6 +1940,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         thread_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
+        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         assistant_id: str = _Unset,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
@@ -1899,6 +1967,11 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type thread_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
+        :keyword include: A list of additional fields to include in the response.
+         Currently the only supported value is
+         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
+         content. Default value is None.
+        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
         :keyword assistant_id: The ID of the agent that should run the thread. Required.
         :paramtype assistant_id: str
         :keyword model: The overridden model name that the agent should use to run the thread. Default
@@ -1974,11 +2047,12 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         if isinstance(body, dict):  # Handle overload with JSON body.
             content_type = kwargs.get("content_type", "application/json")
-            response = super().create_run(thread_id, body, content_type=content_type, **kwargs)
+            response = super().create_run(thread_id, body, include=include, content_type=content_type, **kwargs)
 
         elif assistant_id is not _Unset:  # Handle overload with keyword arguments.
             response = super().create_run(
                 thread_id,
+                include=include,
                 assistant_id=assistant_id,
                 model=model,
                 instructions=instructions,
@@ -2001,7 +2075,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         elif isinstance(body, io.IOBase):  # Handle overload with binary body.
             content_type = kwargs.get("content_type", "application/json")
-            response = super().create_run(thread_id, body, content_type=content_type, **kwargs)
+            response = super().create_run(thread_id, body, include=include, content_type=content_type, **kwargs)
 
         else:
             raise ValueError("Invalid combination of arguments provided.")

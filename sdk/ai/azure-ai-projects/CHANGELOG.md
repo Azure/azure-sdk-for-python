@@ -4,8 +4,11 @@
 
 ### Features Added
 
+* Add support for Structured Outputs for Agents.
+* Add option to include file contents, when index search is used for Agents.
+* Added objects to inform Agents about Azure Functions.
 * Redesigned streaming and event handlers for agents.
-* Add `parallel_tool_calls` parameter to allow parallel tool execution.
+* Add `parallel_tool_calls` parameter to allow parallel tool execution for Agents.
 * Added `BingGroundingTool` for Agents to use against a Bing API Key connection.
 * Added `AzureAiSearchTool` for Agents to use against an Azure AI Search resource.
 * Added `OpenApiTool` for Agents, which creates and executes a REST function defined by an OpenAPI spec.
