@@ -77,6 +77,7 @@
     "sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/**",
     "sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_forms/**",
     "sdk/documentintelligence/azure-ai-documentintelligence/tests/sample_forms/**",
+    "sdk/documentintelligence/test-resources.json",
     "sdk/personalizer/azure-ai-personalizer/azure/ai/personalizer/**",
     "sdk/identity/azure-identity/images/**",
     "sdk/identity/azure-identity/tests/pod-identity/**",
