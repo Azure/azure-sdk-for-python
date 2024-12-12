@@ -1683,7 +1683,7 @@ class TestAgentClient(AzureRecordedTestCase):
 
             # create stream
             with client.agents.create_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
-                for event_type, event_data in stream:
+                for event_type, event_data, _ in stream:
                     assert isinstance(event_data, (MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep)) or event_type == AgentStreamEvent.DONE
 
             # delete agent and close client
@@ -1726,7 +1726,7 @@ class TestAgentClient(AzureRecordedTestCase):
             # create stream
             with client.agents.create_stream(thread_id=thread.id, body=body, stream=True) as stream:
                 
-                for event_type, event_data in stream:
+                for event_type, event_data, _ in stream:
                     print("event type: event data")
                     print(event_type, event_data)
                     assert isinstance(event_data, (MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep)) or event_type == AgentStreamEvent.DONE
@@ -1770,7 +1770,7 @@ class TestAgentClient(AzureRecordedTestCase):
 
             # create stream
             with client.agents.create_stream(thread_id=thread.id, body=io.BytesIO(binary_body), stream=True) as stream:
-                for event_type, event_data in stream:
+                for event_type, event_data, _ in stream:
                     assert isinstance(event_data, (MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep)) or event_type == AgentStreamEvent.DONE
 
             # delete agent and close client
