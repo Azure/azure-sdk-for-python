@@ -96,13 +96,12 @@ class MyEventHandler(AsyncAgentEventHandler[str]):
 async def main() -> None:
     async with DefaultAzureCredential() as creds:
         async with AIProjectClient.from_connection_string(
-            credential=creds,
-            conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+            credential=creds, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
         ) as project_client:
-    
+
             # [START create_agent_with_function_tool]
             functions = AsyncFunctionTool(functions=user_async_functions)
-    
+
             agent = await project_client.agents.create_agent(
                 model="gpt-4-1106-preview",
                 name="my-assistant",
@@ -111,25 +110,25 @@ async def main() -> None:
             )
             # [END create_agent_with_function_tool]
             print(f"Created agent, ID: {agent.id}")
-    
+
             thread = await project_client.agents.create_thread()
             print(f"Created thread, thread ID {thread.id}")
-    
+
             message = await project_client.agents.create_message(
                 thread_id=thread.id,
                 role="user",
                 content="Hello, send an email with the datetime and weather information in New York? Also let me know the details.",
             )
             print(f"Created message, message ID {message.id}")
-    
+
             async with await project_client.agents.create_stream(
                 thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler(functions, project_client)
             ) as stream:
                 await stream.until_done()
-    
+
             await project_client.agents.delete_agent(agent.id)
             print("Deleted agent")
-    
+
             messages = await project_client.agents.list_messages(thread_id=thread.id)
             print(f"Messages: {messages}")
 

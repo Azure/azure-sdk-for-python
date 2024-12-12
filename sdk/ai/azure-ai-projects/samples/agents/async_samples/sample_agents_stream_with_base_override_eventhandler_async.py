@@ -81,24 +81,24 @@ async def main() -> None:
                 model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
             )
             print(f"Created agent, agent ID: {agent.id}")
-    
+
             thread = await project_client.agents.create_thread()
             print(f"Created thread, thread ID {thread.id}")
-    
+
             message = await project_client.agents.create_message(
                 thread_id=thread.id, role="user", content="Hello, tell me a joke"
             )
             print(f"Created message, message ID {message.id}")
-    
+
             async with await project_client.agents.create_stream(
                 thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
             ) as stream:
                 async for chunk in stream.get_stream_chunks():
                     print(chunk)
-    
+
             await project_client.agents.delete_agent(agent.id)
             print("Deleted agent")
-    
+
             messages = await project_client.agents.list_messages(thread_id=thread.id)
             print(f"Messages: {messages}")
 

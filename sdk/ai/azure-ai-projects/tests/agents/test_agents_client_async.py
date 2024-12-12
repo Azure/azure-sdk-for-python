@@ -1685,7 +1685,7 @@ class TestagentClientAsync(AzureRecordedTestCase):
         assert len(messages)
         await ai_client.agents.delete_agent(agent.id)
         await ai_client.close()
-    
+
     @agentClientPreparer()
     @recorded_by_proxy_async
     async def test_azure_function_call(self, **kwargs):

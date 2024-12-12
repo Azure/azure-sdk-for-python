@@ -39,9 +39,10 @@ async def main() -> None:
 
     async with DefaultAzureCredential() as creds:
         project_client = AIProjectClient.from_connection_string(
-            credential=creds, conn_str=os.environ["PROJECT_CONNECTION_STRING"])
+            credential=creds, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+        )
 
-        Enable Azure Monitor tracing
+        # Enable Azure Monitor tracing
         application_insights_connection_string = await project_client.telemetry.get_connection_string()
         configure_azure_monitor(connection_string=application_insights_connection_string)
         if not application_insights_connection_string:

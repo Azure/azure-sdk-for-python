@@ -690,7 +690,6 @@ class AzureAISearchTool(Tool):
         """
 
 
-
 class OpenApiTool(Tool):
     """
     A tool that retrieves information using an OpenAPI spec.
@@ -729,7 +728,6 @@ class OpenApiTool(Tool):
 
         :param Any tool_call: The tool call to execute.
         """
-
 
 
 class AzureFunctionTool(Tool):
