@@ -4,6 +4,7 @@
 
 #### Features Added
 * Added change feed mode support in `query_items_change_feed`. See [PR 38105](https://github.com/Azure/azure-sdk-for-python/pull/38105)
+* Added a **Preview Feature** for adding Diagnostics Handler to filter what diagnostics get logged. This feature is subject to change significantly. See [PR 38105](https://github.com/Azure/azure-sdk-for-python/pull/38581)
 
 #### Breaking Changes
 

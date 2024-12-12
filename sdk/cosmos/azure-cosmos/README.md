@@ -928,12 +928,12 @@ However, if you desire to use the CosmosHttpLoggingPolicy to obtain additional i
 client = CosmosClient(URL, credential=KEY, enable_diagnostics_logging=True)
 database = client.create_database(DATABASE_NAME, logger=logger)
 ```
-
-To further customize what gets logged, you can use a diagnostics handler to filter out the logs you don't want to see.
+**NOTICE: The Following is a Preview Feature that is subject to significant change.**
+To further customize what gets logged, you can use a  **PREVIEW** diagnostics handler to filter out the logs you don't want to see.
 There are several ways to use the diagnostics handler, those include the following:
 - Using the "CosmosDiagnosticsHandler" class, which has default behaviour that can be modified.
     **NOTE: The diagnostics handler will only be used if the `enable_diagnostics_logging` argument is passed in at the client constructor.
-      The CosmosDiagnosticsHandler is also a special type of dictionary that is callable and that has immutable keys. The values it expects are functions related to it's relevant diagnostic data. (e.g. ```diagnostics_handler["duration"]``` expects a function that takes in a float and returns a boolean as it relates to the duration of an operation to complete).**
+      The CosmosDiagnosticsHandler is also a special type of dictionary that is callable and that has preset keys. The values it expects are functions related to it's relevant diagnostic data. (e.g. ```diagnostics_handler["duration"]``` expects a function that takes in an int and returns a boolean as it relates to the duration of an operation to complete).**
     ```python
     from azure.cosmos import CosmosClient, CosmosDiagnosticsHandler
     import logging
@@ -962,8 +962,8 @@ There are several ways to use the diagnostics handler, those include the followi
 - Using a function that will replace the should_log function in the CosmosHttpLoggingPolicy which expects certain paramameters and returns a boolean. **Note: the parameters of the custom should_log must match the parameters of the original should_log function as shown in the sample.**
   ```python
   # Custom should_log method
-  def should_log(self, duration=None, status_code=None, sub_status_code=None, verb=None, resource_type=None, is_request=False):
-      return duration and duration > 2000
+  def should_log(self, **kwargs):
+      return kwargs.get('duration') and kwargs['duration'] > 2000
   
   # Initialize the logger
   logger = logging.getLogger('azure.cosmos')

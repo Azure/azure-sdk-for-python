@@ -29,7 +29,6 @@ import time
 from typing import Optional, Union, Dict, Any, TYPE_CHECKING, Callable, Mapping, Sequence
 import types
 
-
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import HttpLoggingPolicy
 
@@ -83,6 +82,11 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
         self.__client_settings = self.__get_client_settings()
         self.__database_account_settings: Optional[DatabaseAccount] = (database_account or
                                                                        self.__get_database_account_settings())
+        self._resource_map = {
+            'docs': 'document',
+            'colls': 'container',
+            'dbs': 'database'
+        }
         super().__init__(logger, **kwargs)
         if self._enable_diagnostics_logging:
             cosmos_disallow_list = ["Authorization", "ProxyAuthorization"]
@@ -95,7 +99,28 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
         verb = request.http_request.method
         if self._enable_diagnostics_logging:
             request.context["start_time"] = time.time()
-            if self._should_log(verb=verb, is_request=True):
+            url = None
+            if self.diagnostics_handler:
+                url = request.http_request.url
+            database_name = None
+            collection_name = None
+            resource_type = None
+            if url:
+                url_parts = url.split('/')
+                if 'dbs' in url_parts:
+                    dbs_index = url_parts.index('dbs')
+                    if dbs_index + 1 < len(url_parts):
+                        database_name = url_parts[url_parts.index('dbs') + 1]
+                    resource_type = self._resource_map['dbs']
+                if 'colls' in url_parts:
+                    colls_index = url_parts.index('colls')
+                    if colls_index + 1 < len(url_parts):
+                        collection_name = url_parts[url_parts.index('colls') + 1]
+                    resource_type = self._resource_map['colls']
+                if 'docs' in url_parts:
+                    resource_type = self._resource_map['docs']
+            if self._should_log(verb=verb,database_name=database_name,collection_name=collection_name,
+                                resource_type=resource_type, is_request=True):
                 self._log_client_settings()
                 self._log_database_account_settings()
                 super().on_request(request)
@@ -111,8 +136,42 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
         sub_status_str = response.http_response.headers.get("x-ms-substatus")
         sub_status_code = int(sub_status_str) if sub_status_str else None
         verb = request.http_request.method
+        http_version_obj = None
+        url = None
+        if self.diagnostics_handler:
+            try:
+                major = response.http_response.internal_response.version.major  # type: ignore[attr-defined]
+                minor = response.http_response.internal_response.version.minor  # type: ignore[attr-defined]
+                http_version_obj = f"{major}."
+                http_version_obj += f"{minor}"
+            except (AttributeError, TypeError):
+                http_version_obj = None
+            try:
+                url = response.http_response.internal_response.url.geturl()  # type: ignore[attr-defined]
+            except AttributeError:
+                url = str(response.http_response.internal_response.url)  # type: ignore[attr-defined]
+        database_name = None
+        collection_name = None
+        resource_type = None
+        if url:
+            url_parts = url.split('/')
+            if 'dbs' in url_parts:
+                dbs_index = url_parts.index('dbs')
+                if dbs_index + 1 < len(url_parts):
+                    database_name = url_parts[url_parts.index('dbs') + 1]
+                resource_type = self._resource_map['dbs']
+            if 'colls' in url_parts:
+                colls_index = url_parts.index('colls')
+                if colls_index + 1 < len(url_parts):
+                    collection_name = url_parts[url_parts.index('colls') + 1]
+                resource_type = self._resource_map['colls']
+            if 'docs' in url_parts:
+                resource_type = self._resource_map['docs']
+
+
         if self._should_log(duration=duration, status_code=status_code, sub_status_code=sub_status_code,
-                            verb=verb, is_request=False):
+                            verb=verb, http_version=http_version_obj, database_name=database_name,
+                            collection_name=collection_name, resource_type=resource_type, is_request=False):
             if not self.__request_already_logged:
                 self._log_client_settings()
                 self._log_database_account_settings()
@@ -136,26 +195,23 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
 
     def _default_should_log(
             self,
-            duration: Optional[int] = None,
-            status_code: Optional[int] = None,
-            sub_status_code: Optional[int] = None,
-            verb: Optional[str] = None,
-            is_request: bool = False
+            **kwargs
     ) -> bool:
         return True
 
-    def _dict_should_log(self, duration: Optional[int] = None,
-                         status_code: Optional[int] = None,
-                         sub_status_code: Optional[int] = None,
-                         verb: Optional[str] = None,
-                         is_request: bool = False) -> bool:
+    def _dict_should_log(self, **kwargs) -> bool:
         params = {
-            'duration': duration,
-            'status code': (status_code, sub_status_code) if status_code else None,
-            'verb': verb
+            'duration': kwargs.get('duration', None),
+            'status code': kwargs.get('status_code', None),
+            'verb': kwargs.get('verb', None),
+            'http version': kwargs.get('http_version', None),
+            'database name': kwargs.get('database_name', None),
+            'collection name': kwargs.get('collection_name', None),
+            'resource type': kwargs.get('resource_type', None)
         }
         for key, param in params.items():
-            if param and isinstance(self.diagnostics_handler, Mapping) and self.diagnostics_handler[key] is not None:
+            if (param and isinstance(self.diagnostics_handler, Mapping) and key in self.diagnostics_handler
+                    and self.diagnostics_handler[key] is not None):
                 if self.diagnostics_handler[key](param):
                     return True
         return False

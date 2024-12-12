@@ -9,6 +9,7 @@ class CosmosDiagnosticsHandler(CIMultiDict):
     # Similarly, you can add or modify conditions for other keys as needed.
     def __init__(self) -> None:
         """
+        A Preview Feature That is subject to significant changes.
         Initializes the CosmosDiagnosticsHandler with preset keys and their corresponding conditions.
         To customize the diagnostic handler, you can modify the conditions in the _preset_keys dictionary.
         For example, to log if the duration is greater than 500 ms, you can set:
@@ -33,7 +34,11 @@ class CosmosDiagnosticsHandler(CIMultiDict):
             'status code': (lambda x: (
                     isinstance(x, (list, tuple)) and x[0] != 200 and (x[1] is None or x[1] != 0)
             ) if isinstance(x, (list, tuple)) else x != 200),  # Log if status code is not 200
-            'verb': None  # No condition for verb
+            'verb': None,  # No condition for verb
+            'http version': None,  # No condition for http_version
+            'database name': None,  # No condition for database_name
+            'collection name': None,  # No condition for collection_name
+            'resource type': None  # No condition for resource_type
         }
         for key, value in self._preset_keys.items():
             self[key] = value
@@ -47,18 +52,16 @@ class CosmosDiagnosticsHandler(CIMultiDict):
     def __delitem__(self, key):
         raise KeyError(f"Cannot delete key: {key}")
 
-    def __call__(
-            self,
-            duration: Optional[int] = None,
-            status_code: Optional[int] = None,
-            sub_status_code: Optional[int] = None,
-            verb: Optional[str] = None,
-            is_request: bool = False
-    ) -> bool:
+    def __call__(self, **kwargs) -> bool:
+        status_code = kwargs.get('status_code')
         params = {
-            'duration': duration,
-            'status code': (status_code, sub_status_code),
-            'verb': verb
+            'duration': kwargs.get('duration'),
+            'status code': (status_code, kwargs.get('sub_status_code')) if status_code else None,
+            'verb': kwargs.get('verb'),
+            'http version': kwargs.get('http_version'),
+            'database name': kwargs.get('database_name'),
+            'collection name': kwargs.get('collection_name'),
+            'resource type': kwargs.get('resource_type')
         }
         for key, param in params.items():
             if param is not None and self[key] is not None:
