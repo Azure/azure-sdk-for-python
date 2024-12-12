@@ -1,4 +1,4 @@
-﻿#-------------------------------------------------------------------------
+﻿# -------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -11,9 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 import base64
-import sys
 
 from ._common_models import (
     _unicode_type,
@@ -38,21 +37,11 @@ def _decode_base64_to_text(data):
     return decoded_bytes.decode('utf-8')
 
 
-if sys.version_info < (3,):
-    def _str(value):
-        if isinstance(value, unicode):
-            return value.encode('utf-8')
-
-        return str(value)
-else:
-    _str = str
-
-
 def _str_or_none(value):
     if value is None:
         return None
 
-    return _str(value)
+    return str(value)
 
 
 def _int_or_none(value):
