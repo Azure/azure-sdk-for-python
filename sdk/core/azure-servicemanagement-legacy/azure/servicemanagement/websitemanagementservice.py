@@ -1,4 +1,4 @@
-﻿#-------------------------------------------------------------------------
+﻿# -------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 from .constants import (
     DEFAULT_HTTP_TIMEOUT,
     MANAGEMENT_HOST,
@@ -28,12 +28,10 @@ from .models import (
 from .servicemanagementclient import (
     _ServiceManagementClient,
 )
-from ._common_conversion import (
-    _str,
-)
 from ._serialization import (
     _XmlSerializer,
 )
+
 
 class WebsiteManagementService(_ServiceManagementClient):
     ''' Note that this class is a preliminary work on WebSite
@@ -285,20 +283,20 @@ class WebsiteManagementService(_ServiceManagementClient):
 
     def _get_sites_details_path(self, webspace_name, website_name):
         return self._get_path('services/webspaces/',
-                              webspace_name) + '/sites/' + _str(website_name)
+                              webspace_name) + '/sites/' + str(website_name)
 
     def _get_restart_path(self, webspace_name, website_name):
         return self._get_path('services/webspaces/',
-                              webspace_name) + '/sites/' + _str(website_name) + '/restart/' 
+                              webspace_name) + '/sites/' + str(website_name) + '/restart/'
 
     def _get_historical_usage_metrics_path(self, webspace_name, website_name):
         return self._get_path('services/webspaces/',
-                              webspace_name) + '/sites/' + _str(website_name) + '/metrics/' 
+                              webspace_name) + '/sites/' + str(website_name) + '/metrics/'
                                
     def _get_metric_definitions_path(self, webspace_name, website_name):
         return self._get_path('services/webspaces/',
-                              webspace_name) + '/sites/' + _str(website_name) + '/metricdefinitions/' 
+                              webspace_name) + '/sites/' + str(website_name) + '/metricdefinitions/'
 
     def _get_publishxml_path(self, webspace_name, website_name):
         return self._get_path('services/webspaces/',
-                              webspace_name) + '/sites/' + _str(website_name) + '/publishxml/' 
+                              webspace_name) + '/sites/' + str(website_name) + '/publishxml/'

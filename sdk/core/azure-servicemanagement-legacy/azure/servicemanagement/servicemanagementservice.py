@@ -52,9 +52,6 @@ from .models import (
     VirtualNetworkSites,
     VMImages,
 )
-from ._common_conversion import (
-    _str,
-)
 from ._common_error import (
     _validate_not_none,
 )
@@ -302,7 +299,7 @@ class ServiceManagementService(_ServiceManagementClient):
         return self._perform_get(
             self._get_storage_service_path() +
             '/operations/isavailable/' +
-            _str(service_name) + '',
+            str(service_name) + '',
             AvailabilityResponse)
 
     #--Operations for hosted services ------------------------------------
@@ -337,7 +334,7 @@ class ServiceManagementService(_ServiceManagementClient):
         return self._perform_get(
             self._get_hosted_service_path(service_name) +
             '?embed-detail=' +
-            _str(embed_detail).lower(),
+            str(embed_detail).lower(),
             HostedService)
 
     def create_hosted_service(self, service_name, label, description=None,
@@ -793,7 +790,7 @@ class ServiceManagementService(_ServiceManagementClient):
         return self._perform_post(
             self._get_deployment_path_using_name(
                 service_name, deployment_name) + \
-                    '/roleinstances/' + _str(role_instance_name) + \
+                    '/roleinstances/' + str(role_instance_name) + \
                     '?comp=reboot',
             '',
             as_async=True)
@@ -816,7 +813,7 @@ class ServiceManagementService(_ServiceManagementClient):
         return self._perform_post(
             self._get_deployment_path_using_name(
                 service_name, deployment_name) + \
-                    '/roleinstances/' + _str(role_instance_name) + \
+                    '/roleinstances/' + str(role_instance_name) + \
                     '?comp=reimage',
             '',
             as_async=True)
@@ -842,7 +839,7 @@ class ServiceManagementService(_ServiceManagementClient):
         return self._perform_post(
             self._get_deployment_path_using_name(
                 service_name, deployment_name) + \
-                    '/roleinstances/' + _str(role_instance_name) + \
+                    '/roleinstances/' + str(role_instance_name) + \
                     '?comp=rebuild&resources=allLocalDrives',
             '',
             as_async=True)
@@ -883,7 +880,7 @@ class ServiceManagementService(_ServiceManagementClient):
         return self._perform_get(
             '/' + self.subscription_id +
             '/services/hostedservices/operations/isavailable/' +
-            _str(service_name) + '',
+            str(service_name) + '',
             AvailabilityResponse)
 
     #--Operations for service certificates -------------------------------
@@ -898,7 +895,7 @@ class ServiceManagementService(_ServiceManagementClient):
         _validate_not_none('service_name', service_name)
         return self._perform_get(
             '/' + self.subscription_id + '/services/hostedservices/' +
-            _str(service_name) + '/certificates',
+            str(service_name) + '/certificates',
             Certificates)
 
     def get_service_certificate(self, service_name, thumbalgorithm, thumbprint):
@@ -918,8 +915,8 @@ class ServiceManagementService(_ServiceManagementClient):
         _validate_not_none('thumbprint', thumbprint)
         return self._perform_get(
             '/' + self.subscription_id + '/services/hostedservices/' +
-            _str(service_name) + '/certificates/' +
-            _str(thumbalgorithm) + '-' + _str(thumbprint) + '',
+            str(service_name) + '/certificates/' +
+            str(thumbalgorithm) + '-' + str(thumbprint) + '',
             Certificate)
 
     def add_service_certificate(self, service_name, data, certificate_format,
@@ -943,7 +940,7 @@ class ServiceManagementService(_ServiceManagementClient):
 
         return self._perform_post(
             '/' + self.subscription_id + '/services/hostedservices/' +
-            _str(service_name) + '/certificates',
+            str(service_name) + '/certificates',
             _XmlSerializer.certificate_file_to_xml(
                 data, certificate_format, password),
             as_async=True)
@@ -966,8 +963,8 @@ class ServiceManagementService(_ServiceManagementClient):
         _validate_not_none('thumbprint', thumbprint)
         return self._perform_delete(
             '/' + self.subscription_id + '/services/hostedservices/' +
-            _str(service_name) + '/certificates/' +
-            _str(thumbalgorithm) + '-' + _str(thumbprint),
+            str(service_name) + '/certificates/' +
+            str(thumbalgorithm) + '-' + str(thumbprint),
             as_async=True)
 
     #--Operations for management certificates ----------------------------
@@ -995,7 +992,7 @@ class ServiceManagementService(_ServiceManagementClient):
         '''
         _validate_not_none('thumbprint', thumbprint)
         return self._perform_get(
-            '/' + self.subscription_id + '/certificates/' + _str(thumbprint),
+            '/' + self.subscription_id + '/certificates/' + str(thumbprint),
             SubscriptionCertificate)
 
     def add_management_certificate(self, public_key, thumbprint, data):
@@ -1036,7 +1033,7 @@ class ServiceManagementService(_ServiceManagementClient):
         '''
         _validate_not_none('thumbprint', thumbprint)
         return self._perform_delete(
-            '/' + self.subscription_id + '/certificates/' + _str(thumbprint))
+            '/' + self.subscription_id + '/certificates/' + str(thumbprint))
 
     #--Operations for affinity groups ------------------------------------
     def list_affinity_groups(self):
@@ -1058,7 +1055,7 @@ class ServiceManagementService(_ServiceManagementClient):
         _validate_not_none('affinity_group_name', affinity_group_name)
         return self._perform_get(
             '/' + self.subscription_id + '/affinitygroups/' +
-            _str(affinity_group_name) + '',
+            str(affinity_group_name) + '',
             AffinityGroup)
 
     def create_affinity_group(self, name, label, location, description=None):
@@ -1106,7 +1103,7 @@ class ServiceManagementService(_ServiceManagementClient):
         _validate_not_none('label', label)
         return self._perform_put(
             '/' + self.subscription_id + '/affinitygroups/' +
-            _str(affinity_group_name),
+            str(affinity_group_name),
             _XmlSerializer.update_affinity_group_to_xml(label, description))
 
     def delete_affinity_group(self, affinity_group_name):
@@ -1119,7 +1116,7 @@ class ServiceManagementService(_ServiceManagementClient):
         _validate_not_none('affinity_group_name', affinity_group_name)
         return self._perform_delete('/' + self.subscription_id + \
                                     '/affinitygroups/' + \
-                                    _str(affinity_group_name))
+                                    str(affinity_group_name))
 
     #--Operations for locations ------------------------------------------
     def list_locations(self):

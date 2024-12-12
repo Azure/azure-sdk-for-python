@@ -25,9 +25,6 @@ from .models import (
     MetricValues,
     MetricRollups,
 )
-from ._common_conversion import (
-    _str,
-)
 from ._common_error import (
     _validate_not_none
 )
@@ -156,7 +153,7 @@ class ServiceBusManagementService(_ServiceManagementClient):
 
         response = self._perform_get(
             self._get_path('services/serviceBus/CheckNamespaceAvailability',
-                           None) + '/?namespace=' + _str(name), None)
+                           None) + '/?namespace=' + str(name), None)
 
         return _ServiceBusManagementXmlSerializer.xml_to_namespace_availability(
             response.body)
@@ -551,29 +548,29 @@ class ServiceBusManagementService(_ServiceManagementClient):
 
     def _get_get_supported_metrics_queue_path(self, namespace_name, queue_name):
         return self._get_path('services/serviceBus/Namespaces/',
-                              namespace_name) + '/Queues/' + _str(queue_name) + '/Metrics'
+                              namespace_name) + '/Queues/' + str(queue_name) + '/Metrics'
 
     def _get_get_supported_metrics_topic_path(self, namespace_name, topic_name):
         return self._get_path('services/serviceBus/Namespaces/',
-                              namespace_name) + '/Topics/' + _str(topic_name) + '/Metrics'
+                              namespace_name) + '/Topics/' + str(topic_name) + '/Metrics'
 
     def _get_get_supported_metrics_hub_path(self, namespace_name, hub_name):
         return self._get_path('services/serviceBus/Namespaces/',
-                              namespace_name) + '/NotificationHubs/' + _str(hub_name) + '/Metrics'
+                              namespace_name) + '/NotificationHubs/' + str(hub_name) + '/Metrics'
 
     def _get_get_supported_metrics_relay_path(self, namespace_name, queue_name):
         return self._get_path('services/serviceBus/Namespaces/',
-                              namespace_name) + '/Relays/' + _str(queue_name) + '/Metrics'
+                              namespace_name) + '/Relays/' + str(queue_name) + '/Metrics'
 
     def _get_get_metrics_data_queue_path(self, namespace_name, queue_name, metric, rollup, filter_expr):
         return "".join([
             self._get_path('services/serviceBus/Namespaces/', namespace_name),
             '/Queues/',
-            _str(queue_name),
+            str(queue_name),
             '/Metrics/',
-            _str(metric),
+            str(metric),
             '/Rollups/',
-            _str(rollup),
+            str(rollup),
             '/Values?',
             filter_expr
         ])
@@ -582,11 +579,11 @@ class ServiceBusManagementService(_ServiceManagementClient):
         return "".join([
             self._get_path('services/serviceBus/Namespaces/', namespace_name),
             '/Topics/',
-            _str(queue_name),
+            str(queue_name),
             '/Metrics/',
-            _str(metric),
+            str(metric),
             '/Rollups/',
-            _str(rollup),
+            str(rollup),
             '/Values?',
             filter_expr
         ])
@@ -595,11 +592,11 @@ class ServiceBusManagementService(_ServiceManagementClient):
         return "".join([
             self._get_path('services/serviceBus/Namespaces/', namespace_name),
             '/NotificationHubs/',
-            _str(queue_name),
+            str(queue_name),
             '/Metrics/',
-            _str(metric),
+            str(metric),
             '/Rollups/',
-            _str(rollup),
+            str(rollup),
             '/Values?',
             filter_expr
         ])
@@ -608,11 +605,11 @@ class ServiceBusManagementService(_ServiceManagementClient):
         return "".join([
             self._get_path('services/serviceBus/Namespaces/', namespace_name),
             '/Relays/',
-            _str(queue_name),
+            str(queue_name),
             '/Metrics/',
-            _str(metric),
+            str(metric),
             '/Rollups/',
-            _str(rollup),
+            str(rollup),
             '/Values?',
             filter_expr
         ])
@@ -621,9 +618,9 @@ class ServiceBusManagementService(_ServiceManagementClient):
         return "".join([
             self._get_path('services/serviceBus/Namespaces/', namespace_name),
             '/Queues/',
-            _str(queue_name),
+            str(queue_name),
             '/Metrics/',
-            _str(metric),
+            str(metric),
             '/Rollups',
         ])
 
@@ -631,9 +628,9 @@ class ServiceBusManagementService(_ServiceManagementClient):
         return "".join([
             self._get_path('services/serviceBus/Namespaces/', namespace_name),
             '/Topics/',
-            _str(queue_name),
+            str(queue_name),
             '/Metrics/',
-            _str(metric),
+            str(metric),
             '/Rollups',
         ])
 
@@ -641,9 +638,9 @@ class ServiceBusManagementService(_ServiceManagementClient):
         return "".join([
             self._get_path('services/serviceBus/Namespaces/', namespace_name),
             '/NotificationHubs/',
-            _str(queue_name),
+            str(queue_name),
             '/Metrics/',
-            _str(metric),
+            str(metric),
             '/Rollups',
         ])
 
@@ -651,8 +648,8 @@ class ServiceBusManagementService(_ServiceManagementClient):
         return "".join([
             self._get_path('services/serviceBus/Namespaces/', namespace_name),
             '/Relays/',
-            _str(queue_name),
+            str(queue_name),
             '/Metrics/',
-            _str(metric),
+            str(metric),
             '/Rollups',
         ])

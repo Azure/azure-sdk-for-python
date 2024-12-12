@@ -31,9 +31,6 @@ from .models import (
     AzureAsyncOperationHttpError,
     Operation,
 )
-from ._common_conversion import (
-    _str,
-)
 from ._common_error import (
     _ERROR_ASYNC_OP_FAILURE,
     _ERROR_ASYNC_OP_TIMEOUT,
@@ -328,7 +325,7 @@ class _ServiceManagementClient(object):
         '''
         _validate_not_none('request_id', request_id)
         return self._perform_get(
-            '/' + self.subscription_id + '/operations/' + _str(request_id),
+            '/' + self.subscription_id + '/operations/' + str(request_id),
             Operation)
 
     #--Helper functions --------------------------------------------------
@@ -400,7 +397,7 @@ class _ServiceManagementClient(object):
     def _get_path(self, resource, name, suffix=None):
         path = '/' + self.subscription_id + '/' + resource
         if name is not None:
-            path += '/' + _str(name)
+            path += '/' + str(name)
         if suffix is not None:
             path += '/' + suffix
         return path
@@ -408,9 +405,9 @@ class _ServiceManagementClient(object):
     def _get_cloud_services_path(self, cloud_service_id, resource=None, name=None):
         path = '/' + self.subscription_id + '/cloudservices/' + cloud_service_id
         if resource is not None:
-            path += '/resources/' + _str(resource)
+            path += '/resources/' + str(resource)
         if name is not None:
-            path += '/' + _str(name)
+            path += '/' + str(name)
         return path
 
 
