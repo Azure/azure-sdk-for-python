@@ -295,7 +295,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             )
         # Handle Conversation
         if conversation is not None:
-            if self.is_multi_modal_conversation(conversation):
+            if self._is_multi_modal_conversation(conversation):
                 return self._derive_multi_modal_conversation_converter()(conversation)
             return self._derive_conversation_converter()(conversation)
         # Handle Singletons
@@ -311,7 +311,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             target=ErrorTarget.CONVERSATION,
         )
 
-    def is_multi_modal_conversation(self, conversation: Dict) -> bool:
+    def _is_multi_modal_conversation(self, conversation: Dict) -> bool:
         if "messages" not in conversation:
             return False
         messages = conversation["messages"]

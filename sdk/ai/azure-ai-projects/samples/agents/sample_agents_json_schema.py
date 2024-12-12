@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_json_schema_async.py
-
 DESCRIPTION:
     This sample demonstrates how to use agents with JSON schema output format.
 

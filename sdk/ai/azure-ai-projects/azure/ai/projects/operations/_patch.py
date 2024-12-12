@@ -600,7 +600,7 @@ class TelemetryOperations(TelemetryOperationsGenerated):
             enabled for this project.
         """
         if not self._connection_string:
-            # Get the AI Studio Project properties, including Application Insights resource URL if exists
+            # Get the AI Foundry project properties, including Application Insights resource URL if exists
             get_workspace_response: GetWorkspaceResponse = (
                 self._outer_instance.connections._get_workspace()  # pylint: disable=protected-access
             )
@@ -1643,38 +1643,111 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         return run
 
-    _defaultAgentEventHandler: _models.AgentEventHandler = _models.AgentEventHandler()
-
     @overload
     def create_stream(
         self,
         thread_id: str,
-        body: JSON,
         *,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
-        event_handler: _models.BaseAgentEventHandlerT = _defaultAgentEventHandler,  # type: ignore[assignment]
+        assistant_id: str,
         content_type: str = "application/json",
+        model: Optional[str] = None,
+        instructions: Optional[str] = None,
+        additional_instructions: Optional[str] = None,
+        additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
+        tools: Optional[List[_models.ToolDefinition]] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        max_prompt_tokens: Optional[int] = None,
+        max_completion_tokens: Optional[int] = None,
+        truncation_strategy: Optional[_models.TruncationObject] = None,
+        tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
+        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        parallel_tool_calls: Optional[bool] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        event_handler: None = None,
         **kwargs: Any,
-    ) -> _models.AgentRunStream[_models.BaseAgentEventHandlerT]:
+    ) -> _models.AgentRunStream[_models.AgentEventHandler]:
         """Creates a new stream for an agent thread.
-
-        Terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
         :param thread_id: Required.
         :type thread_id: str
-        :param body: Required.
-        :type body: JSON
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
         :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
-        :keyword event_handler: The event handler to use for processing events during the run. Default
-            value is None.
-        :paramtype event_handler: ~azure.ai.projects.models.AgentEventHandler
+        :keyword assistant_id: The ID of the agent that should run the thread. Required.
+        :paramtype assistant_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword model: The overridden model name that the agent should use to run the thread. Default
+         value is None.
+        :paramtype model: str
+        :keyword instructions: The overridden system instructions that the agent should use to run the
+         thread. Default value is None.
+        :paramtype instructions: str
+        :keyword additional_instructions: Additional instructions to append at the end of the
+         instructions for the run. This is useful for modifying the behavior
+         on a per-run basis without overriding other instructions. Default value is None.
+        :paramtype additional_instructions: str
+        :keyword additional_messages: Adds additional messages to the thread before creating the run.
+         Default value is None.
+        :paramtype additional_messages: list[~azure.ai.projects.models.ThreadMessage]
+        :keyword tools: The overridden list of enabled tools that the agent should use to run the
+         thread. Default value is None.
+        :paramtype tools: list[~azure.ai.projects.models.ToolDefinition]
+        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
+         will make the output
+         more random, while lower values like 0.2 will make it more focused and deterministic. Default
+         value is None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
+         model
+         considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens
+         comprising the top 10% probability mass are considered.
+
+         We generally recommend altering this or temperature but not both. Default value is None.
+        :paramtype top_p: float
+        :keyword max_prompt_tokens: The maximum number of prompt tokens that may be used over the
+         course of the run. The run will make a best effort to use only
+         the number of prompt tokens specified, across multiple turns of the run. If the run exceeds
+         the number of prompt tokens specified,
+         the run will end with status ``incomplete``. See ``incomplete_details`` for more info. Default
+         value is None.
+        :paramtype max_prompt_tokens: int
+        :keyword max_completion_tokens: The maximum number of completion tokens that may be used over
+         the course of the run. The run will make a best effort
+         to use only the number of completion tokens specified, across multiple turns of the run. If
+         the run exceeds the number of
+         completion tokens specified, the run will end with status ``incomplete``. See
+         ``incomplete_details`` for more info. Default value is None.
+        :paramtype max_completion_tokens: int
+        :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
+         moves forward. Default value is None.
+        :paramtype truncation_strategy: ~azure.ai.projects.models.TruncationObject
+        :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
+         the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
+         AgentsNamedToolChoice Default value is None.
+        :paramtype tool_choice: str or str or ~azure.ai.projects.models.AgentsApiToolChoiceOptionMode or
+         ~azure.ai.projects.models.AgentsNamedToolChoice
+        :keyword response_format: Specifies the format that the model must output. Is one of the
+         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
+         AgentsApiResponseFormat Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
+         or ~azure.ai.projects.models.AgentsApiResponseFormat
+        :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
+         Default value is None.
+        :paramtype parallel_tool_calls: bool
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :keyword event_handler: The event handler to use for processing events during the run. Default
+            value is None.
+        :paramtype event_handler: ~azure.ai.projects.models.AgentEventHandler
         :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
         :rtype: ~azure.ai.projects.models.AgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1702,7 +1775,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
-        event_handler: _models.BaseAgentEventHandlerT = _defaultAgentEventHandler,  # type: ignore[assignment]
+        event_handler: _models.BaseAgentEventHandlerT,
         **kwargs: Any,
     ) -> _models.AgentRunStream[_models.BaseAgentEventHandlerT]:
         """Creates a new stream for an agent thread.
@@ -1794,10 +1867,46 @@ class AgentsOperations(AgentsOperationsGenerated):
     def create_stream(
         self,
         thread_id: str,
-        body: IO[bytes],
+        body: Union[JSON, IO[bytes]],
         *,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
-        event_handler: _models.BaseAgentEventHandlerT = _defaultAgentEventHandler,  # type: ignore[assignment]
+        event_handler: None = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.AgentRunStream[_models.AgentEventHandler]:
+        """Creates a new run for an agent thread.
+
+        Terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
+
+        :param thread_id: Required.
+        :type thread_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword include: A list of additional fields to include in the response.
+         Currently the only supported value is
+         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
+         content. Default value is None.
+        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
+        :keyword event_handler: The event handler to use for processing events during the run. Default
+            value is None.
+        :paramtype event_handler: ~azure.ai.projects.models.AgentEventHandler
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
+        :rtype: ~azure.ai.projects.models.AgentRunStream
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_stream(
+        self,
+        thread_id: str,
+        body: Union[JSON, IO[bytes]],
+        *,
+        e,
+        event_handler: _models.BaseAgentEventHandlerT,
+        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> _models.AgentRunStream[_models.BaseAgentEventHandlerT]:
@@ -1826,7 +1935,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         """
 
     @distributed_trace
-    def create_stream(
+    def create_stream(  # pyright: ignore[reportInconsistentOverload]
         self,
         thread_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -1847,7 +1956,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
-        event_handler: _models.BaseAgentEventHandlerT = _defaultAgentEventHandler,  # type: ignore[assignment]
+        event_handler: Optional[_models.BaseAgentEventHandlerT] = None,
         **kwargs: Any,
     ) -> _models.AgentRunStream[_models.BaseAgentEventHandlerT]:
         """Creates a new run for an agent thread.
@@ -1973,6 +2082,8 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         response_iterator: Iterator[bytes] = cast(Iterator[bytes], response)
 
+        if not event_handler:
+            event_handler = cast(_models.BaseAgentEventHandlerT, _models.AgentEventHandler())
         return _models.AgentRunStream(response_iterator, self._handle_submit_tool_outputs, event_handler)
 
     @overload
@@ -2107,9 +2218,38 @@ class AgentsOperations(AgentsOperationsGenerated):
         self,
         thread_id: str,
         run_id: str,
-        body: JSON,
+        body: Union[JSON, IO[bytes]],
         *,
-        event_handler: _models.BaseAgentEventHandlerT = _defaultAgentEventHandler,  # type: ignore[assignment]
+        event_handler: None = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.AgentRunStream[_models.AgentEventHandler]:
+        """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
+        outputs will have a status of 'requires_action' with a required_action.type of
+        'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
+
+        :param thread_id: Required.
+        :type thread_id: str
+        :param run_id: Required.
+        :type run_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
+        :rtype: ~azure.ai.projects.models.AgentRunStream
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def submit_tool_outputs_to_stream(
+        self,
+        thread_id: str,
+        run_id: str,
+        body: Union[JSON, IO[bytes]],
+        *,
+        event_handler: _models.BaseAgentEventHandlerT,
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> _models.AgentRunStream[_models.BaseAgentEventHandlerT]:
@@ -2121,8 +2261,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type thread_id: str
         :param run_id: Required.
         :type run_id: str
-        :param body: Required.
-        :type body: JSON
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
         :keyword event_handler: The event handler to use for processing events during the run. Default
             value is None.
         :paramtype event_handler: ~azure.ai.projects.models.AgentEventHandler
@@ -2142,9 +2282,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         *,
         tool_outputs: List[_models.ToolOutput],
         content_type: str = "application/json",
-        event_handler: _models.BaseAgentEventHandlerT = _defaultAgentEventHandler,  # type: ignore[assignment]
+        event_handler: None = None,
         **kwargs: Any,
-    ) -> _models.AgentRunStream[_models.BaseAgentEventHandlerT]:
+    ) -> _models.AgentRunStream[_models.AgentEventHandler]:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
@@ -2171,42 +2311,42 @@ class AgentsOperations(AgentsOperationsGenerated):
         self,
         thread_id: str,
         run_id: str,
-        body: IO[bytes],
         *,
-        event_handler: _models.BaseAgentEventHandlerT = _defaultAgentEventHandler,  # type: ignore[assignment]
+        tool_outputs: List[_models.ToolOutput],
         content_type: str = "application/json",
+        event_handler: _models.BaseAgentEventHandlerT,
         **kwargs: Any,
     ) -> _models.AgentRunStream[_models.BaseAgentEventHandlerT]:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
-        'submit_tool_outputs'.
+        'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
         :param thread_id: Required.
         :type thread_id: str
         :param run_id: Required.
         :type run_id: str
-        :param body: Required.
-        :type body: IO[bytes]
+        :keyword tool_outputs: Required.
+        :paramtype tool_outputs: list[~azure.ai.projects.models.ToolOutput]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :keyword event_handler: The event handler to use for processing events during the run. Default
             value is None.
         :paramtype event_handler: ~azure.ai.projects.models.AgentEventHandler
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
         :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
         :rtype: ~azure.ai.projects.models.AgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def submit_tool_outputs_to_stream(
+    def submit_tool_outputs_to_stream(  # pyright: ignore[reportInconsistentOverload]
         self,
         thread_id: str,
         run_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         tool_outputs: List[_models.ToolOutput] = _Unset,
-        event_handler: _models.BaseAgentEventHandlerT = _defaultAgentEventHandler,  # type: ignore[assignment]
+        event_handler: Optional[_models.BaseAgentEventHandlerT] = None,
         **kwargs: Any,
     ) -> _models.AgentRunStream[_models.BaseAgentEventHandlerT]:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
@@ -2246,13 +2386,12 @@ class AgentsOperations(AgentsOperationsGenerated):
         # Cast the response to Iterator[bytes] for type correctness
         response_iterator: Iterator[bytes] = cast(Iterator[bytes], response)
 
+        if not event_handler:
+            event_handler = cast(_models.BaseAgentEventHandlerT, _models.AgentEventHandler())
+
         return _models.AgentRunStream(response_iterator, self._handle_submit_tool_outputs, event_handler)
 
-    def _handle_submit_tool_outputs(
-        self,
-        run: _models.ThreadRun,
-        event_handler: _models.BaseAgentEventHandler = _defaultAgentEventHandler,  # type: ignore[assignment]
-    ) -> None:
+    def _handle_submit_tool_outputs(self, run: _models.ThreadRun, event_handler: _models.BaseAgentEventHandler) -> None:
         if isinstance(run.required_action, _models.SubmitToolOutputsAction):
             tool_calls = run.required_action.submit_tool_outputs.tool_calls
             if not tool_calls:

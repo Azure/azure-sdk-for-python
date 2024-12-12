@@ -802,7 +802,7 @@ class Evaluation(_model_base.Model):
     :vartype id: str
     :ivar data: Data for evaluation. Required.
     :vartype data: ~azure.ai.projects.models.InputData
-    :ivar display_name: Display Name for evaluation. It helps to find the evaluation easily in AI
+    :ivar display_name: Display Name for evaluation. It helps to find evaluation easily in AI
      Foundry. It does not need to be unique.
     :vartype display_name: str
     :ivar description: Description of the evaluation. It can be used to store additional
@@ -826,8 +826,8 @@ class Evaluation(_model_base.Model):
     data: "_models.InputData" = rest_field(visibility=["read", "create"])
     """Data for evaluation. Required."""
     display_name: Optional[str] = rest_field(name="displayName")
-    """Display Name for evaluation. It helps to find the evaluation easily in AI Foundry. It does not
-     need to be unique."""
+    """Display Name for evaluation. It helps to find evaluation easily in AI Foundry. It does not need
+     to be unique."""
     description: Optional[str] = rest_field()
     """Description of the evaluation. It can be used to store additional information about the
      evaluation and is mutable."""
