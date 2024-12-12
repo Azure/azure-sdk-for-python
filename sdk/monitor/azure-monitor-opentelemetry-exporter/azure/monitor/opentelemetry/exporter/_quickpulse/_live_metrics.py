@@ -4,7 +4,6 @@
 from typing import Any
 
 import logging
-import json
 import platform
 import psutil
 
@@ -67,7 +66,6 @@ from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
     _get_log_record_document,
     _get_span_document,
 )
-from azure.monitor.opentelemetry.exporter._quickpulse._validate import _validate_derived_metric_info
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     set_statsbeat_live_metrics_feature_set,
 )
