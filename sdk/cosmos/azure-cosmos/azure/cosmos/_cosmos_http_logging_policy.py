@@ -140,16 +140,16 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
         url = None
         if self.diagnostics_handler:
             try:
-                major = response.http_response.internal_response.version.major  # type: ignore[attr-defined]
-                minor = response.http_response.internal_response.version.minor  # type: ignore[attr-defined]
+                major = response.http_response.internal_response.version.major  # type: ignore[attr-defined, union-attr]
+                minor = response.http_response.internal_response.version.minor  # type: ignore[attr-defined, union-attr]
                 http_version_obj = f"{major}."
                 http_version_obj += f"{minor}"
             except (AttributeError, TypeError):
                 http_version_obj = None
             try:
-                url = response.http_response.internal_response.url.geturl()  # type: ignore[attr-defined]
+                url = response.http_response.internal_response.url.geturl()  # type: ignore[attr-defined, union-attr]
             except AttributeError:
-                url = str(response.http_response.internal_response.url)  # type: ignore[attr-defined]
+                url = str(response.http_response.internal_response.url)  # type: ignore[attr-defined, union-attr]
         database_name = None
         collection_name = None
         resource_type = None
