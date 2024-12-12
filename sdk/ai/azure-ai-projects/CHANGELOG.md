@@ -4,9 +4,9 @@
 
 ### Features Added
 
-* Added objects used to call Azure Functions.
+* Added objects to inform Agents about Azure Functions.
 * Redesigned streaming and event handlers for agents.
-* Add `parallel_tool_calls` parameter to allow parallel tool execution.
+* Add `parallel_tool_calls` parameter to allow parallel tool execution for Agents.
 * Added `BingGroundingTool` for Agents to use against a Bing API Key connection.
 * Added `AzureAiSearchTool` for Agents to use against an Azure AI Search resource.
 * Added `OpenApiTool` for Agents, which creates and executes a REST function defined by an OpenAPI spec.
@@ -26,8 +26,6 @@
 * Fixed bugs that were causing issues with tracing agent asynchronous functionality.
 * Fix a bug causing warning about unclosed session, shown when using asynchronous credentials to create agent.
 * Fix a bug that would cause agent function tool related function names and parameters to be included in traces even when content recording is not enabled.
-
-### Features Added
 
 ## 1.0.0b1 (2024-11-15)
 

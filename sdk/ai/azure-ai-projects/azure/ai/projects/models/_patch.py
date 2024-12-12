@@ -732,7 +732,7 @@ class OpenApiTool(Tool):
 
 class AzureFunctionTool(Tool):
     """
-    A tool that launches the Azure function.
+    A tool that is used to inform agent about available the Azure function.
 
     :param name: The azure function name.
     :param description: The azure function description.

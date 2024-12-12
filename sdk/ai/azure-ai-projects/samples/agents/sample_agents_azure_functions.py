@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_azure_functions.py
- 
 DESCRIPTION:
     This sample demonstrates how to use azure function agent operations from
     the Azure Agents service using a synchronous client.
