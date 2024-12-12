@@ -1781,6 +1781,7 @@ class TestagentClient(AzureRecordedTestCase):
         ai_client.close()
 
     @agentClientPreparer()
+    @pytest.mark.skip("Recordings not yet implemented")
     @recorded_by_proxy
     def test_include_file_search_results_no_stream(self, **kwargs):
         """Test using include_file_search."""
@@ -1788,8 +1789,9 @@ class TestagentClient(AzureRecordedTestCase):
         self._do_test_include_file_search_results(use_stream=False, include_content=False, **kwargs)
 
     @agentClientPreparer()
+    #@pytest.mark.skip("Recordings not yet implemented")
     @recorded_by_proxy
-    async def test_include_file_search_results_stream(self, **kwargs):
+    def test_include_file_search_results_stream(self, **kwargs):
         """Test using include_file_search with streaming."""
         self._do_test_include_file_search_results(use_stream=True, include_content=True, **kwargs)
         self._do_test_include_file_search_results(use_stream=True, include_content=False, **kwargs)
@@ -1835,7 +1837,7 @@ class TestagentClient(AzureRecordedTestCase):
                 with ai_client.agents.create_stream(
                     thread_id=thread.id, assistant_id=agent.id, include=include
                 ) as stream:
-                    for event_type, event_data in stream:
+                    for event_type, event_data, _ in stream:
                         if isinstance(event_data, ThreadRun):
                             run = event_data
                         elif event_type == AgentStreamEvent.DONE:
@@ -1884,6 +1886,7 @@ class TestagentClient(AzureRecordedTestCase):
             assert tool_call.file_search.results[0].content is None
 
     @agentClientPreparer()
+    @pytest.mark.skip("Recordings not yet implemented")
     @recorded_by_proxy
     def test_agents_with_json_schema(self, **kwargs):
         """Test structured output from the agent."""

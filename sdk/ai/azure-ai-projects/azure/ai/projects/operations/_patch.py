@@ -1445,7 +1445,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         if isinstance(body, dict):  # Handle overload with JSON body.
             content_type = kwargs.get("content_type", "application/json")
-            response = super().create_run(thread_id, body, content_type=content_type, **kwargs)
+            response = super().create_run(thread_id, body, include=include, content_type=content_type, **kwargs)
 
         elif assistant_id is not _Unset:  # Handle overload with keyword arguments.
             response = super().create_run(
