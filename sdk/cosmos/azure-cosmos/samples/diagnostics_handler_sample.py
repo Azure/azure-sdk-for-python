@@ -36,7 +36,8 @@ for item in items:
 
 
 # Custom should_log method
-def should_log(self, duration=None, status_code=None, sub_status_code=None, verb=None, resource_type=None, is_request=False):
+def should_log(self, **kwargs):
+    duration = kwargs.get('duration')
     return duration and duration > 100
 
 # Initialize the logger
