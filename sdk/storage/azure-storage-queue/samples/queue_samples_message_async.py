@@ -42,7 +42,7 @@ class QueueMessageSamplesAsync(object):
         queue = QueueClient.from_connection_string(self.connection_string, "myqueue1")
         if queue.account_name is None:
             print("Connection string did not provide an account name." + '\n' +
-                  "Test: set_access_policy")
+                  "Test: set_access_policy_async")
             sys.exit(1)
         # [END async_create_queue_client_from_connection_string]
 
