@@ -77,7 +77,6 @@ class TestDatastore(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.datastores.get(random_name)
 
-    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_blob_store(
         self,
         client: MLClient,
@@ -104,7 +103,6 @@ class TestDatastore(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.datastores.get(random_name)
 
-    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_blob_store_credential_less(
         self,
         client: MLClient,
@@ -127,7 +125,6 @@ class TestDatastore(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.datastores.get(random_name)
 
-    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_file_store(
         self,
         client: MLClient,
@@ -206,7 +203,6 @@ class TestDatastore(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.datastores.get(random_name)
 
-    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_credential_less_adls_gen2_store(
         self,
         client: MLClient,

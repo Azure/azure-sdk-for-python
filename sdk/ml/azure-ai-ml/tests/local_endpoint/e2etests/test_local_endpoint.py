@@ -163,21 +163,18 @@ def test_local_deployment_mir_e2e_byoc_sklearn(
             "tests/test_configs/deployments/model-1/model/sklearn_regression_model.pkl",
             None,
             None,
-            marks=pytest.mark.skip(reason="Registered model covered in full registered assets test."),
         ),
         pytest.param(
             "tests/test_configs/deployments/online/online_deployment_registered_code.yaml",
             None,
             "tests/test_configs/deployments/model-1/onlinescoring/",
             None,
-            marks=pytest.mark.skip(reason="Registered code covered in full registered assets test."),
         ),
         pytest.param(
             "tests/test_configs/deployments/online/online_deployment_registered_env.yaml",
             None,
             None,
             "tests/test_configs/deployments/model-1/environment/conda.yml",
-            marks=pytest.mark.skip(reason="Registered env covered in full registered assets test."),
         ),
         pytest.param(
             "tests/test_configs/deployments/online/online_deployment_registered_artifacts.yaml",
