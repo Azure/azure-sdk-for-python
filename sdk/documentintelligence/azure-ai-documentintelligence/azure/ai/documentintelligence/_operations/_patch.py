@@ -695,7 +695,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         )
 
     @distributed_trace
-    def get_analyze_batch_result(  # type: ignore[override]
+    def get_analyze_batch_result(  # type: ignore[override] # pylint: disable=arguments-differ
         self, continuation_token: str
     ) -> LROPoller[_models.AnalyzeBatchResult]:
         """Gets the result of batch document analysis.
