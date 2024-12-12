@@ -118,7 +118,7 @@ class DataOperations(_ScopeDependentOperations):
         **kwargs: Any,
     ):
         super(DataOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self._operation = service_client.data_versions
         self._container_operation = service_client.data_containers
         self._datastore_operation = datastore_operations

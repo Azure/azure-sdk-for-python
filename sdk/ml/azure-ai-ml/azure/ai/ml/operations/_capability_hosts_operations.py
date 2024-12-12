@@ -4,30 +4,27 @@
 # pylint: disable=protected-access
 
 from typing import Any, List
+
 from marshmallow.exceptions import ValidationError as SchemaValidationError
+
+from azure.ai.ml._exception_helper import log_and_raise_error
+from azure.ai.ml._restclient.v2024_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102024Preview
 from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
     OperationsContainer,
     OperationScope,
     _ScopeDependentOperations,
-    OperationConfig,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview import (
-    AzureMachineLearningWorkspaces as ServiceClient102024Preview,
-)
-from azure.ai.ml.entities._workspace.workspace import Workspace
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._utils._logger_utils import OpsLogger
+from azure.ai.ml.constants._common import DEFAULT_STORAGE_CONNECTION_NAME, WorkspaceKind
+from azure.ai.ml.entities._workspace._ai_workspaces.capability_host import CapabilityHost
+from azure.ai.ml.entities._workspace.workspace import Workspace
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
-from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.entities._workspace._ai_workspaces.capability_host import (
-    CapabilityHost,
-)
-from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
-from azure.ai.ml.constants._common import WorkspaceKind
-from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml.constants._common import DEFAULT_STORAGE_CONNECTION_NAME
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -81,7 +78,7 @@ class CapabilityHostsOperations(_ScopeDependentOperations):
         """
 
         super(CapabilityHostsOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self._all_operations = all_operations
         self._capability_hosts_operations = service_client_10_2024.capability_hosts
         self._workspace_operations = service_client_10_2024.workspaces
