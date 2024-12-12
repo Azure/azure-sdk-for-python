@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_stream_eventhandler_with_functions_async.py
-
 DESCRIPTION:
     This sample demonstrates how to use agent operations with an event handler and toolset from
     the Azure Agents service using a synchronous client.
@@ -18,7 +16,7 @@ USAGE:
     pip install azure-ai-projects azure-identity aiohttp
 
     Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
 """
 import asyncio
 from typing import Any
@@ -29,7 +27,6 @@ from azure.ai.projects.models import (
     AsyncAgentEventHandler,
     AsyncFunctionTool,
     MessageDeltaChunk,
-    MessageDeltaTextContent,
     RequiredFunctionToolCall,
     RunStep,
     SubmitToolOutputsAction,
@@ -40,27 +37,18 @@ from azure.ai.projects.models import (
 from azure.identity.aio import DefaultAzureCredential
 from user_async_functions import user_async_functions
 
-
-# Create an Azure AI Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
-
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
 )
 
 
-class MyEventHandler(AsyncAgentEventHandler):
+class MyEventHandler(AsyncAgentEventHandler[str]):
 
     def __init__(self, functions: AsyncFunctionTool) -> None:
         self.functions = functions
 
-    async def on_message_delta_text_content(self, message_text_content: "MessageDeltaTextContent") -> None:
-        text_value = message_text_content.text.value if message_text_content.text else "No text"
-        print(f"Text content received: {text_value}")
-
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
-        print(f"Text delta received.")
+        print(f"Text delta received: {delta.text}")
 
     async def on_thread_message(self, message: "ThreadMessage") -> None:
         print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")

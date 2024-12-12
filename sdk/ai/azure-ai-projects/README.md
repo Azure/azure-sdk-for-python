@@ -3,9 +3,9 @@
 
 Use the AI Projects client library (in preview) to:
 
-* **Enumerate connections** in your Azure AI Studio project and get connection properties.
+* **Enumerate connections** in your Azure AI Foundry project and get connection properties.
 For example, get the inference endpoint URL and credentials associated with your Azure OpenAI connection.
-* **Get an authenticated Inference client** to do chat completions, for the default Azure OpenAI or AI Services connections in your Azure AI Studio project. Supports the AzureOpenAI client from the `openai` package, or clients from the `azure-ai-inference` package.
+* **Get an authenticated Inference client** to do chat completions, for the default Azure OpenAI or AI Services connections in your Azure AI Foundry project. Supports the AzureOpenAI client from the `openai` package, or clients from the `azure-ai-inference` package.
 * **Develop Agents using the Azure AI Agent Service**, leveraging an extensive ecosystem of models, tools, and capabilities from OpenAI, Microsoft, and other LLM providers. The Azure AI Agent Service enables the building of Agents for a wide range of generative AI use cases. The package is currently in private preview.
 * **Run Evaluations** to assess the performance of generative AI applications using various evaluators and metrics. It includes built-in evaluators for quality, risk, and safety, and allows custom evaluators for specific needs.
 * **Enable OpenTelemetry tracing**.
@@ -72,8 +72,8 @@ For example, get the inference endpoint URL and credentials associated with your
 
 - Python 3.8 or later.
 - An [Azure subscription][azure_sub].
-- A [project in Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/how-to/create-projects?tabs=ai-studio).
-- The project connection string. It can be found in your Azure AI Studio project overview page, under "Project details". Below we will assume the environment variable `PROJECT_CONNECTION_STRING` was defined to hold this value.
+- A [project in Azure AI Foundry](https://learn.microsoft.com/azure/ai-studio/how-to/create-projects).
+- The project connection string. It can be found in your Azure AI Foundry project overview page, under "Project details". Below we will assume the environment variable `PROJECT_CONNECTION_STRING` was defined to hold this value.
 - Entra ID is needed to authenticate the client. Your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
   * The `Contributor` role. Role assigned can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
   * [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installed.
@@ -127,13 +127,13 @@ project_client = AIProjectClient.from_connection_string(
 
 ### Enumerate connections
 
-Your Azure AI Studio project has a "Management center". When you enter it, you will see a tab named "Connected resources" under your project. The `.connections` operations on the client allow you to enumerate the connections and get connection properties. Connection properties include the resource URL and authentication credentials, among other things.
+Your Azure AI Foundry project has a "Management center". When you enter it, you will see a tab named "Connected resources" under your project. The `.connections` operations on the client allow you to enumerate the connections and get connection properties. Connection properties include the resource URL and authentication credentials, among other things.
 
 Below are code examples of the connection operations. Full samples can be found under the "connetions" folder in the [package samples][samples].
 
 #### Get properties of all connections
 
-To list the properties of all the connections in the Azure AI Studio project:
+To list the properties of all the connections in the Azure AI Foundry project:
 
 ```python
 connections = project_client.connections.list()
@@ -184,7 +184,7 @@ print(connection)
 
 ### Get an authenticated ChatCompletionsClient
 
-Your Azure AI Studio project may have one or more AI models deployed that support chat completions. These could be OpenAI models, Microsoft models, or models from other providers. Use the code below to get an already authenticated [ChatCompletionsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.chatcompletionsclient?view=azure-python-preview) from the [azure-ai-inference](https://pypi.org/project/azure-ai-inference/) package, and execute a chat completions call.
+Your Azure AI Foundry project may have one or more AI models deployed that support chat completions. These could be OpenAI models, Microsoft models, or models from other providers. Use the code below to get an already authenticated [ChatCompletionsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.chatcompletionsclient?view=azure-python-preview) from the [azure-ai-inference](https://pypi.org/project/azure-ai-inference/) package, and execute a chat completions call.
 
 First, install the package:
 
@@ -209,7 +209,7 @@ See the "inference" folder in the [package samples][samples] for additional samp
 
 ### Get an authenticated AzureOpenAI client
 
-Your Azure AI Studio project may have one or more OpenAI models deployed that support chat completions. Use the code below to get an already authenticated [AzureOpenAI](https://github.com/openai/openai-python?tab=readme-ov-file#microsoft-azure-openai) from the [openai](https://pypi.org/project/openai/) package, and execute a chat completions call.
+Your Azure AI Foundry project may have one or more OpenAI models deployed that support chat completions. Use the code below to get an already authenticated [AzureOpenAI](https://github.com/openai/openai-python?tab=readme-ov-file#microsoft-azure-openai) from the [openai](https://pypi.org/project/openai/) package, and execute a chat completions call.
 
 First, install the package:
 
@@ -250,7 +250,7 @@ Here is an example of how to create an Agent:
 
 ```python
 agent = project_client.agents.create_agent(
-    model="gpt-4-1106-preview",
+    model="gpt-4o",
     name="my-assistant",
     instructions="You are helpful assistant",
 )
@@ -402,16 +402,16 @@ for conn in conn_list:
 print(conn_id)
 
 # Initialize agent AI search tool and add the search index connection id
-ai_search = AzureAISearchTool()
-ai_search.add_index(conn_id, "sample_index")
+ai_search = AzureAISearchTool(index_connection_id=conn_id, index_name="myindexname")
 
 # Create agent with AI search tool and process assistant run
 with project_client:
     agent = project_client.agents.create_agent(
-        model="gpt-4-1106-preview",
+        model="gpt-4o-mini",
         name="my-assistant",
         instructions="You are a helpful assistant",
         tools=ai_search.definitions,
+        tool_resources=ai_search.resources,
         headers={"x-ms-enable-preview": "true"},
     )
 ```
@@ -613,7 +613,8 @@ Here is an example:
 with project_client.agents.create_stream(
     thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
 ) as stream:
-    stream.until_done()
+    for _, _, custom_data in stream:
+        print(custom_data)
 ```
 
 <!-- END SNIPPET -->
@@ -623,30 +624,28 @@ The event handler is optional.  If you don't provide one, the SDK will use the d
 <!-- SNIPPET:sample_agents_stream_eventhandler.stream_event_handler -->
 
 ```python
-class MyEventHandler(AgentEventHandler):
+class MyEventHandler(AgentEventHandler[str]):
+
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
-        for content_part in delta.delta.content:
-            if isinstance(content_part, MessageDeltaTextContent):
-                text_value = content_part.text.value if content_part.text else "No text"
-                print(f"Text delta received: {text_value}")
+        self.custom_data = f"Text delta received: {delta.text}"
 
     def on_thread_message(self, message: "ThreadMessage") -> None:
-        print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
+        self.custom_data = f"ThreadMessage created. ID: {message.id}, Status: {message.status}"
 
     def on_thread_run(self, run: "ThreadRun") -> None:
-        print(f"ThreadRun status: {run.status}")
+        self.custom_data = f"ThreadRun status: {run.status}"
 
     def on_run_step(self, step: "RunStep") -> None:
-        print(f"RunStep type: {step.type}, Status: {step.status}")
+        self.custom_data = f"RunStep type: {step.type}, Status: {step.status}"
 
     def on_error(self, data: str) -> None:
-        print(f"An error occurred. Data: {data}")
+        self.custom_data = f"An error occurred. Data: {data}"
 
     def on_done(self) -> None:
-        print("Stream completed.")
+        self.custom_data = "Stream completed."
 
     def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
-        print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
+        self.custom_data = f"Unhandled Event Type: {event_type}, Data: {event_data}"
 ```
 
 <!-- END SNIPPET -->
@@ -658,13 +657,10 @@ Within `AgentEventHandler` or `AsyncAgentEventHandler`, the stream content from 
 ```python
 with project_client.agents.create_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
 
-    for event_type, event_data in stream:
+    for event_type, event_data, _ in stream:
 
         if isinstance(event_data, MessageDeltaChunk):
-            for content_part in event_data.delta.content:
-                if isinstance(content_part, MessageDeltaTextContent):
-                    text_value = content_part.text.value if content_part.text else "No text"
-                    print(f"Text delta received: {text_value}")
+            print(f"Text delta received: {event_data.text}")
 
         elif isinstance(event_data, ThreadMessage):
             print(f"ThreadMessage created. ID: {event_data.id}, Status: {event_data.status}")
@@ -708,8 +704,7 @@ for data_point in reversed(messages.data):
 
 <!-- END SNIPPET -->
 
-Depending on the use case, if you expect the Agents to return only text messages, `list_messages` should be sufficient.
-If you are using tools, consider using the `get_messages` function instead. This function classifies the message content and returns properties such as `text_messages`, `image_contents`, `file_citation_annotations`, and `file_path_annotations`.
+In addition, `messages` and `messages.data[]` offer helper properties such as `text_messages`, `image_contents`, `file_citation_annotations`, and `file_path_annotations` to quickly retrieve content from one message or all messages.
 
 ### Retrieve File
 
@@ -720,7 +715,7 @@ Here is an example retrieving file ids from messages and save to the local drive
 <!-- SNIPPET:sample_agents_code_interpreter.get_messages_and_save_files -->
 
 ```python
-messages = project_client.agents.get_messages(thread_id=thread.id)
+messages = project_client.agents.list_messages(thread_id=thread.id)
 print(f"Messages: {messages}")
 
 for image_content in messages.image_contents:
@@ -801,7 +796,7 @@ Evaluation in Azure AI Project client library is designed to assess the performa
 
 Evaluators are custom or prebuilt classes or functions that are designed to measure the quality of the outputs from language models or generative AI applications.
 
-Evaluators are made available via [azure-ai-evaluation][azure_ai_evaluation] SDK for local experience and also in [Evaluator Library][evaluator_library] in Azure AI Studio for using them in the cloud.
+Evaluators are made available via [azure-ai-evaluation][azure_ai_evaluation] SDK for local experience and also in [Evaluator Library][evaluator_library] in Azure AI Foundry for using them in the cloud.
 
 More details on built-in and custom evaluators can be found [here][evaluators].
 
@@ -836,7 +831,7 @@ data_id, _ = project_client.upload_file("<data_file.jsonl>")
 
 ##### [Optional] Azure OpenAI Model
 
-Azure AI Studio project comes with a default Azure Open AI endpoint which can be easily accessed using following code. This gives you the endpoint details for you Azure OpenAI endpoint. Some of the evaluators need model that supports chat completion.
+Azure AI Foundry project comes with a default Azure Open AI endpoint which can be easily accessed using following code. This gives you the endpoint details for you Azure OpenAI endpoint. Some of the evaluators need model that supports chat completion.
 
 ```python
 default_connection = project_client.connections.get_default(connection_type=ConnectionType.AZURE_OPEN_AI)
@@ -900,7 +895,7 @@ print("----------------------------------------------------------------")
 print("Created evaluation, evaluation ID: ", get_evaluation_response.id)
 print("Evaluation status: ", get_evaluation_response.status)
 if isinstance(get_evaluation_response.properties, dict):
-    print("AI Studio URI: ", get_evaluation_response.properties["AiStudioEvaluationUri"])
+    print("AI Foundry URI: ", get_evaluation_response.properties["AiStudioEvaluationUri"])
 print("----------------------------------------------------------------")
 ```
 
@@ -908,7 +903,7 @@ NOTE: For running evaluators locally refer to [Evaluate with the Azure AI Evalua
 
 ### Tracing
 
-You can add an Application Insights Azure resource to your Azure AI Studio project. See the Tracing tab in your studio. If one was enabled, you can get the Application Insights connection string, configure your Agents, and observe the full execution path through Azure Monitor. Typically, you might want to start tracing before you create an Agent.
+You can add an Application Insights Azure resource to your Azure AI Foundry project. See the Tracing tab in your AI Foundry project. If one was enabled, you can get the Application Insights connection string, configure your Agents, and observe the full execution path through Azure Monitor. Typically, you might want to start tracing before you create an Agent.
 
 #### Installation
 
@@ -941,7 +936,7 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 application_insights_connection_string = project_client.telemetry.get_connection_string()
 if not application_insights_connection_string:
     print("Application Insights was not enabled for this project.")
-    print("Enable it via the 'Tracing' tab in your AI Studio project page.")
+    print("Enable it via the 'Tracing' tab in your AI Foundry project page.")
     exit()
 configure_azure_monitor(connection_string=application_insights_connection_string)
 
@@ -1035,7 +1030,7 @@ To report issues with the client library, or request additional features, please
 
 Have a look at the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples) folder, containing fully runnable Python code for synchronous and asynchronous clients.
 
-Explore the [AI Starter Template](https://aka.ms/azsdk/azure-ai-projects/python/ai-starter-template). This template creates an Azure AI Studio hub, project and connected resources including Azure OpenAI Service, AI Search and more. It also deploys a simple chat application to Azure Container Apps.
+Explore the [AI Starter Template](https://aka.ms/azsdk/azure-ai-projects/python/ai-starter-template). This template creates an Azure AI Foundry hub, project and connected resources including Azure OpenAI Service, AI Search and more. It also deploys a simple chat application to Azure Container Apps.
 
 ## Contributing
 

@@ -153,6 +153,7 @@ STORAGE_ACCOUNT_URLS = {
     "AzureDataLakeGen2": "https://{}.dfs.{}",
     "AzureFile": "https://{}.file.{}",
 }
+DEFAULT_STORAGE_CONNECTION_NAME = "workspaceblobstore"
 
 DEFAULT_LABEL_NAME = "default"
 DEFAULT_COMPONENT_VERSION = "azureml_default"
@@ -256,6 +257,8 @@ class AzureMLResourceType:
     """Virtual cluster resource type."""
     WORKSPACE = "workspaces"
     """Workspace resource type."""
+    CAPABILITY_HOST = "capability_hosts"
+    """Capability_Host resource type."""
     CONNECTION = "connections"
     """connection resource type."""
     COMPONENT = "components"
@@ -526,6 +529,7 @@ class YAMLRefDocLinks:
     FEATURE_SET = "https://aka.ms/ml-cli-v2-featureset-yaml-reference"
     FEATURE_STORE_ENTITY = "https://aka.ms/ml-cli-v2-featurestore-entity-yaml-reference"
     HUB = "https://aka.ms/ml-cli-v2-workspace-hub-entity-yaml-reference"
+    CAPABILITY_HOST = "https://aka.ms/ml-cli-v2-capability-host-yaml-reference"
 
 
 class YAMLRefDocSchemaNames:
@@ -580,6 +584,8 @@ class YAMLRefDocSchemaNames:
     """Parallel component."""
     JOB_SCHEDULE = "JobSchedule"
     """Job Schedule."""
+    CAPABILITY_HOST = "CapabilityHost"
+    """Capability host."""
 
 
 class DockerTypes:

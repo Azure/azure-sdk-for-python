@@ -20,7 +20,7 @@ from ._violence import ViolenceEvaluator
 @experimental
 class ContentSafetyEvaluator(EvaluatorBase[Union[str, float]]):
     """
-    Initialize a content safety evaluator configured to evaluate content safetry metrics for QA scenario.
+    Initialize a content safety evaluator configured to evaluate content safety metrics for QA scenario.
 
     :param credential: The credential for connecting to Azure AI project. Required
     :type credential: ~azure.core.credentials.TokenCredential

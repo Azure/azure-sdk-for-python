@@ -2576,7 +2576,6 @@ class TestAgentClient(AzureRecordedTestCase):
         ai_client.close()
 
     @agentClientPreparer()
-    @pytest.mark.skip("The API is not supported yet.")
     @recorded_by_proxy
     def test_message_attachement_azure(self, **kwargs):
         """Test message attachment with azure ID."""
@@ -2584,7 +2583,7 @@ class TestAgentClient(AzureRecordedTestCase):
             asset_identifier=kwargs["azure_ai_projects_agents_tests_data_path"],
             asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
         )
-        self._do_test_message_attachment(data_sources=[ds], **kwargs)
+        self._do_test_message_attachment(data_source=ds, **kwargs)
 
     @agentClientPreparer()
     @pytest.mark.skip("File ID issues with sanitization.")
@@ -2615,7 +2614,7 @@ class TestAgentClient(AzureRecordedTestCase):
         # Notice that vector store is created temporarily when using attachments with a default expiration policy of seven days.
         attachment = MessageAttachment(
             file_id=file_id,
-            data_sources=kwargs.get("data_sources"),
+            data_source=kwargs.get("data_source"),
             tools=[
                 FileSearchTool().definitions[0],
                 CodeInterpreterTool().definitions[0],
@@ -2821,7 +2820,7 @@ class TestAgentClient(AzureRecordedTestCase):
             asset_identifier=kwargs["azure_ai_projects_agents_tests_data_path"],
             asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
         )
-        self._do_test_create_attachment_in_thread_azure(data_sources=[ds], **kwargs)
+        self._do_test_create_attachment_in_thread_azure(data_source=ds, **kwargs)
 
     @agentClientPreparer()
     @pytest.mark.skip("File ID issues with sanitization.")
@@ -2839,7 +2838,7 @@ class TestAgentClient(AzureRecordedTestCase):
 
         file_search = FileSearchTool()
         agent = ai_client.agents.create_agent(
-            model="gpt-4o",
+            model="gpt-4-1106-preview",
             name="my-assistant",
             instructions="Hello, you are helpful assistant and can search information from uploaded files",
             tools=file_search.definitions,
@@ -2849,7 +2848,7 @@ class TestAgentClient(AzureRecordedTestCase):
         # create message
         attachment = MessageAttachment(
             file_id=file_id,
-            data_sources=kwargs.get("data_sources"),
+            data_source=kwargs.get("data_source"),
             tools=[
                 FileSearchTool().definitions[0],
                 CodeInterpreterTool().definitions[0],
@@ -2935,7 +2934,7 @@ class TestAgentClient(AzureRecordedTestCase):
                 print("Deleted file")
 
                 # get messages
-                messages = client.agents.get_messages(thread_id=thread.id)
+                messages = client.agents.list_messages(thread_id=thread.id)
                 print(f"Messages: {messages}")
 
                 last_msg = messages.get_last_text_message_by_sender("assistant")

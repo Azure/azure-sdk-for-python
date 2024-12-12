@@ -15,6 +15,7 @@ from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
 from ._enums import (
     AuthenticationType,
+    OpenApiAuthType,
     RunStepType,
     VectorStoreChunkingStrategyRequestType,
     VectorStoreChunkingStrategyResponseType,
@@ -501,7 +502,7 @@ class ToolDefinition(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureAISearchToolDefinition, BingGroundingToolDefinition, CodeInterpreterToolDefinition,
     MicrosoftFabricToolDefinition, FileSearchToolDefinition, FunctionToolDefinition,
-    SharepointToolDefinition
+    OpenApiToolDefinition, SharepointToolDefinition
 
 
     :ivar type: The object type. Required. Default value is None.
@@ -800,7 +801,7 @@ class Evaluation(_model_base.Model):
     :ivar data: Data for evaluation. Required.
     :vartype data: ~azure.ai.projects.models.InputData
     :ivar display_name: Display Name for evaluation. It helps to find evaluation easily in AI
-     Studio. It does not need to be unique.
+     Foundry. It does not need to be unique.
     :vartype display_name: str
     :ivar description: Description of the evaluation. It can be used to store additional
      information about the evaluation and is mutable.
@@ -823,7 +824,7 @@ class Evaluation(_model_base.Model):
     data: "_models.InputData" = rest_field(visibility=["read", "create"])
     """Data for evaluation. Required."""
     display_name: Optional[str] = rest_field(name="displayName")
-    """Display Name for evaluation. It helps to find evaluation easily in AI Studio. It does not need
+    """Display Name for evaluation. It helps to find evaluation easily in AI Foundry. It does not need
      to be unique."""
     description: Optional[str] = rest_field()
     """Description of the evaluation. It can be used to store additional information about the
@@ -1551,8 +1552,8 @@ class MessageAttachment(_model_base.Model):
 
     :ivar file_id: The ID of the file to attach to the message.
     :vartype file_id: str
-    :ivar data_sources: Azure asset ID.
-    :vartype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
+    :ivar data_source: Azure asset ID.
+    :vartype data_source: ~azure.ai.projects.models.VectorStoreDataSource
     :ivar tools: The tools to add to this file. Required.
     :vartype tools: list[~azure.ai.projects.models.CodeInterpreterToolDefinition or
      ~azure.ai.projects.models.FileSearchToolDefinition]
@@ -1560,7 +1561,7 @@ class MessageAttachment(_model_base.Model):
 
     file_id: Optional[str] = rest_field()
     """The ID of the file to attach to the message."""
-    data_sources: Optional[List["_models.VectorStoreDataSource"]] = rest_field()
+    data_source: Optional["_models.VectorStoreDataSource"] = rest_field()
     """Azure asset ID."""
     tools: List["_types.MessageAttachmentToolDefinition"] = rest_field()
     """The tools to add to this file. Required."""
@@ -1571,7 +1572,7 @@ class MessageAttachment(_model_base.Model):
         *,
         tools: List["_types.MessageAttachmentToolDefinition"],
         file_id: Optional[str] = None,
-        data_sources: Optional[List["_models.VectorStoreDataSource"]] = None,
+        data_source: Optional["_models.VectorStoreDataSource"] = None,
     ) -> None: ...
 
     @overload
@@ -2869,6 +2870,271 @@ class OpenAIPageableListOfVectorStoreFile(_model_base.Model):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.object: Literal["list"] = "list"
+
+
+class OpenApiAuthDetails(_model_base.Model):
+    """authentication details for OpenApiFunctionDefinition.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    OpenApiAnonymousAuthDetails, OpenApiConnectionAuthDetails, OpenApiManagedAuthDetails
+
+
+    :ivar type: The type of authentication, must be anonymous/connection/managed_identity.
+     Required. Known values are: "anonymous", "connection", and "managed_identity".
+    :vartype type: str or ~azure.ai.projects.models.OpenApiAuthType
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    type: str = rest_discriminator(name="type")
+    """The type of authentication, must be anonymous/connection/managed_identity. Required. Known
+     values are: \"anonymous\", \"connection\", and \"managed_identity\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OpenApiAnonymousAuthDetails(OpenApiAuthDetails, discriminator="anonymous"):
+    """Security details for OpenApi anonymous authentication.
+
+
+    :ivar type: The object type, which is always 'anonymous'. Required.
+    :vartype type: str or ~azure.ai.projects.models.ANONYMOUS
+    """
+
+    type: Literal[OpenApiAuthType.ANONYMOUS] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'anonymous'. Required."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type=OpenApiAuthType.ANONYMOUS, **kwargs)
+
+
+class OpenApiConnectionAuthDetails(OpenApiAuthDetails, discriminator="connection"):
+    """Security details for OpenApi connection authentication.
+
+
+    :ivar type: The object type, which is always 'connection'. Required.
+    :vartype type: str or ~azure.ai.projects.models.CONNECTION
+    :ivar security_scheme: Connection auth security details. Required.
+    :vartype security_scheme: ~azure.ai.projects.models.OpenApiConnectionSecurityScheme
+    """
+
+    type: Literal[OpenApiAuthType.CONNECTION] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'connection'. Required."""
+    security_scheme: "_models.OpenApiConnectionSecurityScheme" = rest_field()
+    """Connection auth security details. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        security_scheme: "_models.OpenApiConnectionSecurityScheme",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type=OpenApiAuthType.CONNECTION, **kwargs)
+
+
+class OpenApiConnectionSecurityScheme(_model_base.Model):
+    """Security scheme for OpenApi managed_identity authentication.
+
+
+    :ivar connection_id: Connection id for Connection auth type. Required.
+    :vartype connection_id: str
+    """
+
+    connection_id: str = rest_field()
+    """Connection id for Connection auth type. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OpenApiFunctionDefinition(_model_base.Model):
+    """The input definition information for an openapi function.
+
+
+    :ivar name: The name of the function to be called. Required.
+    :vartype name: str
+    :ivar description: A description of what the function does, used by the model to choose when
+     and how to call the function.
+    :vartype description: str
+    :ivar spec: The openapi function shape, described as a JSON Schema object. Required.
+    :vartype spec: any
+    :ivar auth: Open API authentication details. Required.
+    :vartype auth: ~azure.ai.projects.models.OpenApiAuthDetails
+    """
+
+    name: str = rest_field()
+    """The name of the function to be called. Required."""
+    description: Optional[str] = rest_field()
+    """A description of what the function does, used by the model to choose when and how to call the
+     function."""
+    spec: Any = rest_field()
+    """The openapi function shape, described as a JSON Schema object. Required."""
+    auth: "_models.OpenApiAuthDetails" = rest_field()
+    """Open API authentication details. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        spec: Any,
+        auth: "_models.OpenApiAuthDetails",
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OpenApiManagedAuthDetails(OpenApiAuthDetails, discriminator="managed_identity"):
+    """Security details for OpenApi managed_identity authentication.
+
+
+    :ivar type: The object type, which is always 'managed_identity'. Required.
+    :vartype type: str or ~azure.ai.projects.models.MANAGED_IDENTITY
+    :ivar security_scheme: Connection auth security details. Required.
+    :vartype security_scheme: ~azure.ai.projects.models.OpenApiManagedSecurityScheme
+    """
+
+    type: Literal[OpenApiAuthType.MANAGED_IDENTITY] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'managed_identity'. Required."""
+    security_scheme: "_models.OpenApiManagedSecurityScheme" = rest_field()
+    """Connection auth security details. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        security_scheme: "_models.OpenApiManagedSecurityScheme",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type=OpenApiAuthType.MANAGED_IDENTITY, **kwargs)
+
+
+class OpenApiManagedSecurityScheme(_model_base.Model):
+    """Security scheme for OpenApi managed_identity authentication.
+
+
+    :ivar audience: Authentication scope for managed_identity auth type. Required.
+    :vartype audience: str
+    """
+
+    audience: str = rest_field()
+    """Authentication scope for managed_identity auth type. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        audience: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OpenApiToolDefinition(ToolDefinition, discriminator="openapi"):
+    """The input definition information for an OpenAPI tool as used to configure an agent.
+
+
+    :ivar type: The object type, which is always 'openapi'. Required. Default value is "openapi".
+    :vartype type: str
+    :ivar openapi: The openapi function definition. Required.
+    :vartype openapi: ~azure.ai.projects.models.OpenApiFunctionDefinition
+    """
+
+    type: Literal["openapi"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'openapi'. Required. Default value is \"openapi\"."""
+    openapi: "_models.OpenApiFunctionDefinition" = rest_field()
+    """The openapi function definition. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        openapi: "_models.OpenApiFunctionDefinition",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="openapi", **kwargs)
 
 
 class RecurrenceSchedule(_model_base.Model):

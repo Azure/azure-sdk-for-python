@@ -3,8 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """
-FILE: sample_agents_code_interpreter_attachment_enterprise_search.py
-
 DESCRIPTION:
     This sample demonstrates how to use agent operations with code interpreter from
     the Azure Agents service using a synchronous client.
@@ -17,7 +15,7 @@ USAGE:
     pip install azure-ai-projects azure-identity
 
     Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
 """
 
 import os
@@ -30,14 +28,8 @@ from azure.ai.projects.models import (
 )
 from azure.identity import DefaultAzureCredential
 
-
-# Create an Azure AI Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
-
-credential = DefaultAzureCredential()
 project_client = AIProjectClient.from_connection_string(
-    credential=credential, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+    credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
 )
 
 with project_client:
@@ -62,7 +54,7 @@ with project_client:
     ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
 
     # create a message with the attachment
-    attachment = MessageAttachment(data_sources=[ds], tools=code_interpreter.definitions)
+    attachment = MessageAttachment(data_source=ds, tools=code_interpreter.definitions)
     message = project_client.agents.create_message(
         thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]
     )

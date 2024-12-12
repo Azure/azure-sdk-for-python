@@ -1,7 +1,7 @@
 {
     "target_repo": {
         "url": "https://github.com/MicrosoftDocs/azure-docs-sdk-python",
-        "branch": "%%DailyDocsBranchName%%"
+        "branch": "%%DocsBranchName%%"
     },
     "run_post_toc_script": false 
 }

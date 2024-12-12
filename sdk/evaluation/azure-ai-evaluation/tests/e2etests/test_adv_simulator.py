@@ -146,7 +146,8 @@ class TestAdvSimulator:
 
     def test_adv_conversation_image_understanding_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
-        from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
+        from azure.ai.evaluation.simulator import AdversarialSimulator
+        from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
 
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
@@ -175,7 +176,7 @@ class TestAdvSimulator:
 
         outputs = asyncio.run(
             simulator(
-                scenario=AdversarialScenario.ADVERSARIAL_IMAGE_UNDERSTANDING,
+                scenario=_UnstableAdversarialScenario.ADVERSARIAL_IMAGE_MULTIMODAL,
                 max_conversation_turns=1,
                 max_simulation_results=1,
                 target=callback,
@@ -214,6 +215,7 @@ class TestAdvSimulator:
     def test_adv_conversation_image_gen_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
+        from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
 
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
@@ -248,7 +250,7 @@ class TestAdvSimulator:
 
         outputs = asyncio.run(
             simulator(
-                scenario=AdversarialScenario.ADVERSARIAL_IMAGE_GEN,
+                scenario=_UnstableAdversarialScenario.ADVERSARIAL_IMAGE_GEN,
                 max_conversation_turns=1,
                 max_simulation_results=1,
                 target=callback,
