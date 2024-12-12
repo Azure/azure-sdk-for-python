@@ -57,7 +57,7 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
             cls=callback,
         )
         raw_response = poller.result()
-        raw_analyze_result = AnalyzeResult._deserialize(raw_response.http_response.json(), []).analyze_result
+        raw_analyze_result = AnalyzeResult._deserialize(raw_response.http_response.json(), [])
 
         poller = client.begin_analyze_document(
             "prebuilt-layout",
@@ -100,7 +100,7 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
             cls=callback,
         )
         raw_response = poller.result()
-        raw_analyze_result = AnalyzeResult._deserialize(raw_response.http_response.json(), []).analyze_result
+        raw_analyze_result = AnalyzeResult._deserialize(raw_response.http_response.json(), [])
 
         poller = client.begin_analyze_document(
             "prebuilt-layout",
@@ -142,7 +142,7 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
             cls=callback,
         )
         raw_response = poller.result()
-        raw_analyze_result = AnalyzeResult._deserialize(raw_response.http_response.json(), []).analyze_result
+        raw_analyze_result = AnalyzeResult._deserialize(raw_response.http_response.json(), [])
 
         poller = client.begin_analyze_document(
             "prebuilt-layout",
