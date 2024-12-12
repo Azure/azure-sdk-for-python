@@ -22,58 +22,59 @@ import asyncio
 
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import FilePurpose
-from azure.ai.projects.models import FileSearchTool, MessageAttachment, ToolResources
+from azure.ai.projects.models import FileSearchTool, MessageAttachment
 from azure.identity.aio import DefaultAzureCredential
 
 import os
 
 
 async def main() -> None:
+    async with DefaultAzureCredential() as creds:
+        async with AIProjectClient.from_connection_string(
+            credential=creds, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+        ) as project_client:
+            # upload a file and wait for it to be processed
+            file = await project_client.agents.upload_file_and_poll(
+                file_path="../product_info_1.md", purpose=FilePurpose.AGENTS
+            )
 
-    project_client = AIProjectClient.from_connection_string(
-        credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
-    )
+            # Create agent
+            agent = await project_client.agents.create_agent(
+                model="gpt-4-1106-preview",
+                name="my-assistant",
+                instructions="You are helpful assistant",
+            )
+            print(f"Created agent, agent ID: {agent.id}")
 
-    # upload a file and wait for it to be processed
-    async with project_client:
-        file = await project_client.agents.upload_file_and_poll(
-            file_path="../product_info_1.md", purpose=FilePurpose.AGENTS
-        )
+            thread = await project_client.agents.create_thread()
+            print(f"Created thread, thread ID: {thread.id}")
 
-        # Create agent
-        agent = await project_client.agents.create_agent(
-            model="gpt-4-1106-preview",
-            name="my-assistant",
-            instructions="You are helpful assistant",
-        )
-        print(f"Created agent, agent ID: {agent.id}")
+            # Create a message with the file search attachment
+            # Notice that vector store is created temporarily when using attachments with a default expiration policy of seven days.
+            attachment = MessageAttachment(file_id=file.id, tools=FileSearchTool().definitions)
+            message = await project_client.agents.create_message(
+                thread_id=thread.id,
+                role="user",
+                content="What feature does Smart Eyewear offer?",
+                attachments=[attachment],
+            )
+            print(f"Created message, message ID: {message.id}")
 
-        thread = await project_client.agents.create_thread()
-        print(f"Created thread, thread ID: {thread.id}")
+            run = await project_client.agents.create_and_process_run(
+                thread_id=thread.id, assistant_id=agent.id, sleep_interval=4
+            )
+            print(f"Created run, run ID: {run.id}")
 
-        # Create a message with the file search attachment
-        # Notice that vector store is created temporarily when using attachments with a default expiration policy of seven days.
-        attachment = MessageAttachment(file_id=file.id, tools=FileSearchTool().definitions)
-        message = await project_client.agents.create_message(
-            thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?", attachments=[attachment]
-        )
-        print(f"Created message, message ID: {message.id}")
+            print(f"Run completed with status: {run.status}")
 
-        run = await project_client.agents.create_and_process_run(
-            thread_id=thread.id, assistant_id=agent.id, sleep_interval=4
-        )
-        print(f"Created run, run ID: {run.id}")
+            await project_client.agents.delete_file(file.id)
+            print("Deleted file")
 
-        print(f"Run completed with status: {run.status}")
+            await project_client.agents.delete_agent(agent.id)
+            print("Deleted agent")
 
-        await project_client.agents.delete_file(file.id)
-        print("Deleted file")
-
-        await project_client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-
-        messages = await project_client.agents.list_messages(thread_id=thread.id)
-        print(f"Messages: {messages}")
+            messages = await project_client.agents.list_messages(thread_id=thread.id)
+            print(f"Messages: {messages}")
 
 
 if __name__ == "__main__":

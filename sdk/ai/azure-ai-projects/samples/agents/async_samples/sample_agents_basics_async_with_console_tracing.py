@@ -41,46 +41,46 @@ tracer = trace.get_tracer(__name__)
 @tracer.start_as_current_span(__file__)
 async def main() -> None:
 
-    project_client = AIProjectClient.from_connection_string(
-        credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
-    )
+    async with DefaultAzureCredential() as creds:
+        async with AIProjectClient.from_connection_string(
+            credential=creds, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+        ) as project_client:
 
-    # Enable console tracing
-    # or, if you have local OTLP endpoint running, change it to
-    # project_client.telemetry.enable(destination="http://localhost:4317")
-    project_client.telemetry.enable(destination=sys.stdout)
+            # Enable console tracing
+            # or, if you have local OTLP endpoint running, change it to
+            # project_client.telemetry.enable(destination="http://localhost:4317")
+            project_client.telemetry.enable(destination=sys.stdout)
 
-    async with project_client:
-        agent = await project_client.agents.create_agent(
-            model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
-        )
-        print(f"Created agent, agent ID: {agent.id}")
+            agent = await project_client.agents.create_agent(
+                model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
+            )
+            print(f"Created agent, agent ID: {agent.id}")
 
-        thread = await project_client.agents.create_thread()
-        print(f"Created thread, thread ID: {thread.id}")
+            thread = await project_client.agents.create_thread()
+            print(f"Created thread, thread ID: {thread.id}")
 
-        message = await project_client.agents.create_message(
-            thread_id=thread.id, role="user", content="Hello, tell me a joke"
-        )
-        print(f"Created message, message ID: {message.id}")
+            message = await project_client.agents.create_message(
+                thread_id=thread.id, role="user", content="Hello, tell me a joke"
+            )
+            print(f"Created message, message ID: {message.id}")
 
-        run = await project_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await project_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
 
-        # poll the run as long as run status is queued or in progress
-        while run.status in ["queued", "in_progress", "requires_action"]:
-            # wait for a second
-            time.sleep(1)
-            run = await project_client.agents.get_run(thread_id=thread.id, run_id=run.id)
+            # poll the run as long as run status is queued or in progress
+            while run.status in ["queued", "in_progress", "requires_action"]:
+                # wait for a second
+                time.sleep(1)
+                run = await project_client.agents.get_run(thread_id=thread.id, run_id=run.id)
 
-            print(f"Run status: {run.status}")
+                print(f"Run status: {run.status}")
 
-        print(f"Run completed with status: {run.status}")
+            print(f"Run completed with status: {run.status}")
 
-        await project_client.agents.delete_agent(agent.id)
-        print("Deleted agent")
+            await project_client.agents.delete_agent(agent.id)
+            print("Deleted agent")
 
-        messages = await project_client.agents.list_messages(thread_id=thread.id)
-        print(f"Messages: {messages}")
+            messages = await project_client.agents.list_messages(thread_id=thread.id)
+            print(f"Messages: {messages}")
 
 
 if __name__ == "__main__":

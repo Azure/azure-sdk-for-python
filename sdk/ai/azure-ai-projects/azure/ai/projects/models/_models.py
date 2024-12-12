@@ -502,9 +502,9 @@ class ToolDefinition(_model_base.Model):
     """An abstract representation of an input tool definition that an agent can use.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AzureAISearchToolDefinition, BingGroundingToolDefinition, CodeInterpreterToolDefinition,
-    MicrosoftFabricToolDefinition, FileSearchToolDefinition, FunctionToolDefinition,
-    OpenApiToolDefinition, SharepointToolDefinition
+    AzureAISearchToolDefinition, AzureFunctionToolDefinition, BingGroundingToolDefinition,
+    CodeInterpreterToolDefinition, MicrosoftFabricToolDefinition, FileSearchToolDefinition,
+    FunctionToolDefinition, OpenApiToolDefinition, SharepointToolDefinition
 
 
     :ivar type: The object type. Required. Default value is None.
@@ -560,6 +560,158 @@ class AzureAISearchToolDefinition(ToolDefinition, discriminator="azure_ai_search
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type="azure_ai_search", **kwargs)
+
+
+class AzureFunctionBinding(_model_base.Model):
+    """The structure for keeping storage queue name and URI.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar type: The type of binding, which is always 'storage_queue'. Required. Default value is
+     "storage_queue".
+    :vartype type: str
+    :ivar storage_queue: Storage queue. Required.
+    :vartype storage_queue: ~azure.ai.projects.models.AzureFunctionStorageQueue
+    """
+
+    type: Literal["storage_queue"] = rest_field()
+    """The type of binding, which is always 'storage_queue'. Required. Default value is
+     \"storage_queue\"."""
+    storage_queue: "_models.AzureFunctionStorageQueue" = rest_field()
+    """Storage queue. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        storage_queue: "_models.AzureFunctionStorageQueue",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["storage_queue"] = "storage_queue"
+
+
+class AzureFunctionDefinition(_model_base.Model):
+    """The definition of Azure function.
+
+
+    :ivar function: The definition of azure function and its parameters. Required.
+    :vartype function: ~azure.ai.projects.models.FunctionDefinition
+    :ivar input_binding: Input storage queue. The queue storage trigger runs a function as messages
+     are added to it. Required.
+    :vartype input_binding: ~azure.ai.projects.models.AzureFunctionBinding
+    :ivar output_binding: Output storage queue. The function writes output to this queue when the
+     input items are processed. Required.
+    :vartype output_binding: ~azure.ai.projects.models.AzureFunctionBinding
+    """
+
+    function: "_models.FunctionDefinition" = rest_field()
+    """The definition of azure function and its parameters. Required."""
+    input_binding: "_models.AzureFunctionBinding" = rest_field()
+    """Input storage queue. The queue storage trigger runs a function as messages are added to it.
+     Required."""
+    output_binding: "_models.AzureFunctionBinding" = rest_field()
+    """Output storage queue. The function writes output to this queue when the input items are
+     processed. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        function: "_models.FunctionDefinition",
+        input_binding: "_models.AzureFunctionBinding",
+        output_binding: "_models.AzureFunctionBinding",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AzureFunctionStorageQueue(_model_base.Model):
+    """The structure for keeping storage queue name and URI.
+
+
+    :ivar storage_service_endpoint: URI to the Azure Storage Queue service allowing you to
+     manipulate a queue. Required.
+    :vartype storage_service_endpoint: str
+    :ivar queue_name: The name of an Azure function storage queue. Required.
+    :vartype queue_name: str
+    """
+
+    storage_service_endpoint: str = rest_field(name="queue_service_endpoint")
+    """URI to the Azure Storage Queue service allowing you to manipulate a queue. Required."""
+    queue_name: str = rest_field()
+    """The name of an Azure function storage queue. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        storage_service_endpoint: str,
+        queue_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AzureFunctionToolDefinition(ToolDefinition, discriminator="azure_function"):
+    """The input definition information for a azure function tool as used to configure an agent.
+
+
+    :ivar type: The object type, which is always 'azure_function'. Required. Default value is
+     "azure_function".
+    :vartype type: str
+    :ivar azure_function: The definition of the concrete function that the function tool should
+     call. Required.
+    :vartype azure_function: ~azure.ai.projects.models.AzureFunctionDefinition
+    """
+
+    type: Literal["azure_function"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'azure_function'. Required. Default value is
+     \"azure_function\"."""
+    azure_function: "_models.AzureFunctionDefinition" = rest_field()
+    """The definition of the concrete function that the function tool should call. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        azure_function: "_models.AzureFunctionDefinition",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="azure_function", **kwargs)
 
 
 class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"):
@@ -802,7 +954,7 @@ class Evaluation(_model_base.Model):
     :vartype id: str
     :ivar data: Data for evaluation. Required.
     :vartype data: ~azure.ai.projects.models.InputData
-    :ivar display_name: Display Name for evaluation. It helps to find evaluation easily in AI
+    :ivar display_name: Display Name for evaluation. It helps to find the evaluation easily in AI
      Foundry. It does not need to be unique.
     :vartype display_name: str
     :ivar description: Description of the evaluation. It can be used to store additional
@@ -826,8 +978,8 @@ class Evaluation(_model_base.Model):
     data: "_models.InputData" = rest_field(visibility=["read", "create"])
     """Data for evaluation. Required."""
     display_name: Optional[str] = rest_field(name="displayName")
-    """Display Name for evaluation. It helps to find evaluation easily in AI Foundry. It does not need
-     to be unique."""
+    """Display Name for evaluation. It helps to find the evaluation easily in AI Foundry. It does not
+     need to be unique."""
     description: Optional[str] = rest_field()
     """Description of the evaluation. It can be used to store additional information about the
      evaluation and is mutable."""
