@@ -42,7 +42,7 @@ class TestDACAnalyzeBatchAsync(AsyncDocumentIntelligenceTest):
         )
         poller = await client.begin_analyze_batch_documents(
             model_id=recorded_variables.get("model_id"),
-            analyze_batch_request=request,
+            body=request,
         )
         response = await poller.result()
         assert response.succeeded_count == 6
