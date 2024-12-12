@@ -42,7 +42,7 @@ _CLOSING_STATES = (
 )
 
 
-def get_local_timeout(now: float, idle_timeout: float, last_frame_received_time: float) -> bool:
+def get_local_timeout(now: float, idle_timeout: Optional[float], last_frame_received_time: float) -> bool:
     """Check whether the local timeout has been reached since a new incoming frame was received.
 
     :param float now: The current time to check against.

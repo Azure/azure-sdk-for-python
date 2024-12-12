@@ -118,6 +118,9 @@ try:
         from ..aio._servicebus_sender_async import (
             ServiceBusSender as ServiceBusSenderAsync,
         )
+        from ..aio._servicebus_receiver_async import (
+            ServiceBusReceiver as ServiceBusReceiverAsync,
+        )
         from .._common.message import (
             ServiceBusReceivedMessage,
             ServiceBusMessage,
@@ -658,7 +661,7 @@ try:
 
         @staticmethod
         def on_attach(  # pylint: disable=unused-argument
-            receiver: "ServiceBusReceiver",
+            receiver: Union["ServiceBusReceiver", "ServiceBusReceiverAsync"],
             source: "Source",
             target: "Target",
             properties: Dict[str, Any],
@@ -745,7 +748,7 @@ try:
 
         @staticmethod
         def enhanced_message_received(  # pylint: disable=arguments-differ
-            receiver: "ServiceBusReceiver", message: "Message"
+            receiver: Union["ServiceBusReceiver", "ServiceBusReceiverAsync"], message: "Message"
         ) -> None:
             """
             Releases messages from the internal buffer when there is no active receive call. In PEEKLOCK mode,

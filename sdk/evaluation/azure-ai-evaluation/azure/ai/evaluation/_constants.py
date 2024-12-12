@@ -54,6 +54,7 @@ class EvaluationRunProperties:
 
     RUN_TYPE = "runType"
     EVALUATION_RUN = "_azureml.evaluation_run"
+    EVALUATION_SDK = "_azureml.evaluation_sdk_name"
 
 
 DEFAULT_EVALUATION_RESULTS_FILE_NAME = "evaluation_results.json"

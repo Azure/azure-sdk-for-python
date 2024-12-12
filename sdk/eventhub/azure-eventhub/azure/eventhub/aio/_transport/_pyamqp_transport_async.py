@@ -41,7 +41,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         container_id: Optional[str] = None,
         max_frame_size: int,
         channel_max: int,
-        idle_timeout: float,
+        idle_timeout: Optional[float],
         properties: Optional[Dict[str, Any]] = None,
         remote_idle_timeout_empty_frame_send_ratio: float,
         error_policy: Any,
@@ -93,7 +93,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         config,
         target: str,
         auth: JWTTokenAuthAsync,  # type: ignore
-        idle_timeout: int,
+        idle_timeout: Optional[float],
         network_trace: bool,
         retry_policy: Any,
         keep_alive_interval: int,
@@ -168,7 +168,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         config,
         source: Source,
         auth: JWTTokenAuthAsync,  # type: ignore
-        idle_timeout: int,
+        idle_timeout: Optional[float],
         network_trace: bool,
         retry_policy: Any,
         client_name: str,
