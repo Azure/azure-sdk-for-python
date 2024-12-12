@@ -701,9 +701,8 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         """Gets the result of batch document analysis.
 
         :param str continuation_token: An opaque continuation token. Required.
-        :return: An instance of LROPoller that returns AnalyzeBatchResult. The AnalyzeBatchResult is
-         compatible with MutableMapping
-        :rtype:~azure.core.polling.LROPoller[~azure.ai.documentintelligence.models.AnalyzeBatchResult]
+        :return: An instance of LROPoller that returns AnalyzeBatchResult. The AnalyzeBatchResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.documentintelligence.models.AnalyzeBatchResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self.begin_analyze_batch_documents(  # type: ignore[call-overload]

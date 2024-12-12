@@ -296,10 +296,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
 
     @distributed_trace_async
     async def begin_copy_classifier_to(  # type: ignore[override]
-        self,
-        classifier_id: str,
-        body: Union[_models.ClassifierCopyAuthorization, JSON, IO[bytes]],
-        **kwargs: Any
+        self, classifier_id: str, body: Union[_models.ClassifierCopyAuthorization, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentClassifierDetails]:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
