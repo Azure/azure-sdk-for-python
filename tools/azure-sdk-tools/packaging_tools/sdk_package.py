@@ -89,7 +89,10 @@ def main(generate_input, generate_output):
     with open(generate_output, "w") as writer:
         json.dump(result, writer)
 
-    _LOGGER.info(f"Succeed to build package for {[p['packageName'] for p in result['packages']]}")
+    _LOGGER.info(
+        f"Congratulations! Succeed to build package for {[p['packageName'] for p in result['packages']]}. And you shall be able to see the generated code when running 'git status'."
+    )
+
 
 def generate_main():
     """Main method"""
