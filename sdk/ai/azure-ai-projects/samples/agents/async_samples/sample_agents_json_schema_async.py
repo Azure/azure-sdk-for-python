@@ -8,7 +8,7 @@ DESCRIPTION:
     This sample demonstrates how to use agents with JSON schema output format.
 
 USAGE:
-    python sample_agents_json_schema.py
+    python sample_agents_json_schema_async.py
 
     Before running the sample:
 
