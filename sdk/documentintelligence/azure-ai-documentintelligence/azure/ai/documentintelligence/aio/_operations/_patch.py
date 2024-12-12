@@ -584,7 +584,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
                 query_fields=query_fields,
                 output_content_format=output_content_format,
                 output=output,
-                content_type=content_type,
+                content_type="application/octet-stream",
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -669,7 +669,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         return await super().begin_classify_document(  # type: ignore[arg-type, misc]
             classifier_id=classifier_id,
             body=body,  # type: ignore[arg-type]
-            content_type=content_type,  # type: ignore[arg-type]
+            content_type="application/octet-stream",  # type: ignore[arg-type]
             string_index_type=string_index_type,
             split=split,
             pages=pages,
