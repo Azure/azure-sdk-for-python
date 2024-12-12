@@ -31,6 +31,7 @@ project_client = AIProjectClient.from_connection_string(
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
+# [START create_agent_with_azure_ai_search_tool]
 conn_list = project_client.connections.list()
 conn_id = ""
 for conn in conn_list:
@@ -53,6 +54,7 @@ with project_client:
         tool_resources=ai_search.resources,
         headers={"x-ms-enable-preview": "true"},
     )
+    # [END create_agent_with_azure_ai_search_tool]
     print(f"Created agent, ID: {agent.id}")
 
     # Create thread for communication
