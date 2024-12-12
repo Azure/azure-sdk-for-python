@@ -74,7 +74,7 @@ def flatten(nested_dict, separator="_", root_keys_to_ignore=None, replace_separa
 
     # This global dictionary stores the flattened keys and values and is
     # ultimately returned
-    flattened_dict = dict()
+    flattened_dict = {}
 
     def _flatten(object_, key):
         """
@@ -142,7 +142,7 @@ def flatten_preserve_lists(
 
     # This global dictionary stores the flattened keys and values and is
     # ultimately returned
-    flattened_dict = dict()
+    flattened_dict = {}
 
     def _flatten(object_, key):
         """
@@ -329,7 +329,7 @@ def unflatten(flat_dict, separator="_"):
     _unflatten_asserts(flat_dict, separator)
 
     # This global dictionary is mutated and returned
-    unflattened_dict = dict()
+    unflattened_dict = {}
 
     def _unflatten(dic, keys, value):
         for key in keys[:-1]:

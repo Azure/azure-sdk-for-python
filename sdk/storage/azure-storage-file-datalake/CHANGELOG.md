@@ -1,5 +1,12 @@
 # Release History
 
+## 12.19.0b1 (Unreleased)
+
+### Features Added
+
+### Bugs Fixed
+- Fixed request handler to handle `None` value for `expires_on` keyword to `set_file_expiry` API.
+
 ## 12.18.0 (2024-11-13)
 
 ### Features Added

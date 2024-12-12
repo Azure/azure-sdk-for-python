@@ -58,16 +58,13 @@ class ChatThreadClientSamplesAsync(object):
         from datetime import datetime
         from azure.communication.chat.aio import ChatClient, CommunicationTokenCredential
         from azure.communication.chat import ChatParticipant, CommunicationUserIdentifier
+
         # set `endpoint` to an existing ACS endpoint
         chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
 
         async with chat_client:
             topic = "test topic"
-            participants = [ChatParticipant(
-                identifier=user,
-                display_name='name',
-                share_history_time=datetime.utcnow()
-            )]
+            participants = [ChatParticipant(identifier=user, display_name="name", share_history_time=datetime.utcnow())]
             create_chat_thread_result = await chat_client.create_chat_thread(topic, thread_participants=participants)
             chat_thread_client = chat_client.get_chat_thread_client(create_chat_thread_result.chat_thread.id)
         # [END create_chat_thread_client]
@@ -90,11 +87,14 @@ class ChatThreadClientSamplesAsync(object):
 
             async with chat_thread_client:
                 chat_thread_properties = chat_thread_client.get_properties()
-                print('Expected Thread Id: ', thread_id, ' Actual Value: ', chat_thread_properties.id)
-        # [END get_thread]
-            print("get_chat_thread_properties_async succeeded, thread id: " + chat_thread.id
-                  + ", thread topic: " + chat_thread.topic)
-
+                print("Expected Thread Id: ", thread_id, " Actual Value: ", chat_thread_properties.id)
+            # [END get_thread]
+            print(
+                "get_chat_thread_properties_async succeeded, thread id: "
+                + chat_thread.id
+                + ", thread topic: "
+                + chat_thread.topic
+            )
 
     async def update_topic_async(self):
         thread_id = self._thread_id
@@ -126,28 +126,32 @@ class ChatThreadClientSamplesAsync(object):
 
         # [START send_message]
         from azure.communication.chat import ChatMessageType
+
         async with chat_client:
             chat_thread_client = chat_client.get_chat_thread_client(thread_id=thread_id)
             async with chat_thread_client:
                 # Scenario 1: Send message without specifying chat_message_type
                 send_message_result = await chat_thread_client.send_message(
-                    "Hello! My name is Fred Flinstone",
-                    sender_display_name="Fred Flinstone",
-                    metadata={"tags": "tags"})
+                    "Hello! My name is Fred Flinstone", sender_display_name="Fred Flinstone", metadata={"tags": "tags"}
+                )
                 send_message_result_id = send_message_result.id
 
                 # Scenario 2: Send message specifying chat_message_type
                 send_message_result_w_type = await chat_thread_client.send_message(
                     "Hello! My name is Wilma Flinstone",
                     sender_display_name="Wilma Flinstone",
-                    chat_message_type=ChatMessageType.TEXT)  # equivalent to setting chat_message_type='text'
+                    chat_message_type=ChatMessageType.TEXT,
+                )  # equivalent to setting chat_message_type='text'
                 send_message_result_w_type_id = send_message_result_w_type.id
 
                 # Verify message content
                 chat_message_1 = await chat_thread_client.get_message(send_message_result_id)
                 print("First Message:", chat_message_1.content.message, chat_message_1.metadata)
-                print("Second Message:", (await chat_thread_client.get_message(send_message_result_w_type_id)).content.message)
-        # [END send_message]
+                print(
+                    "Second Message:",
+                    (await chat_thread_client.get_message(send_message_result_w_type_id)).content.message,
+                )
+                # [END send_message]
                 self._message_id = send_message_result_id
             print("send_message succeeded, message id:", self._message_id)
             print("send_message succeeded with type specified, message id:", send_message_result_w_type_id)
@@ -176,6 +180,7 @@ class ChatThreadClientSamplesAsync(object):
 
         # [START list_messages]
         from datetime import datetime, timedelta
+
         async with chat_client:
             # set `thread_id` to an existing thread id
             chat_thread_client = chat_client.get_chat_thread_client(thread_id=thread_id)
@@ -281,7 +286,6 @@ class ChatThreadClientSamplesAsync(object):
         # [END list_participants]
         print("list_participants_async succeeded")
 
-
     async def add_participants_w_check_async(self):
         thread_id = self._thread_id
         chat_client = self._chat_client
@@ -300,10 +304,10 @@ class ChatThreadClientSamplesAsync(object):
             async with chat_thread_client:
                 from azure.communication.chat import ChatParticipant
                 from datetime import datetime
+
                 new_participant = ChatParticipant(
-                        identifier=self.new_user,
-                        display_name='name',
-                        share_history_time=datetime.utcnow())
+                    identifier=self.new_user, display_name="name", share_history_time=datetime.utcnow()
+                )
                 thread_participants = [new_participant]
                 result = await chat_thread_client.add_participants(thread_participants)
 
@@ -335,14 +339,12 @@ class ChatThreadClientSamplesAsync(object):
             async with chat_thread_client:
                 # add user1 and user2 to chat thread
                 participant1 = ChatParticipant(
-                    identifier=user1,
-                    display_name='Fred Flinstone',
-                    share_history_time=datetime.utcnow())
+                    identifier=user1, display_name="Fred Flinstone", share_history_time=datetime.utcnow()
+                )
 
                 participant2 = ChatParticipant(
-                    identifier=user2,
-                    display_name='Wilma Flinstone',
-                    share_history_time=datetime.utcnow())
+                    identifier=user2, display_name="Wilma Flinstone", share_history_time=datetime.utcnow()
+                )
 
                 thread_participants = [participant1, participant2]
                 await chat_thread_client.add_participants(thread_participants)
@@ -353,14 +355,16 @@ class ChatThreadClientSamplesAsync(object):
                 async for chat_thread_participant_page in chat_thread_participants.by_page():
                     async for chat_thread_participant in chat_thread_participant_page:
                         print("ChatParticipant: ", chat_thread_participant)
-                        if chat_thread_participant.identifier.properties['id'] == user1.properties['id']:
+                        if chat_thread_participant.identifier.properties["id"] == user1.properties["id"]:
                             print("Found Fred!")
                             await chat_thread_client.remove_participant(chat_thread_participant.identifier)
                             print("Fred has been removed from the thread...")
                             break
 
                 # Option 2: Directly remove Wilma Flinstone
-                unique_identifier = user2.properties['id']  # in real scenario the identifier would need to be retrieved from elsewhere
+                unique_identifier = user2.properties[
+                    "id"
+                ]  # in real scenario the identifier would need to be retrieved from elsewhere
                 await chat_thread_client.remove_participant(CommunicationUserIdentifier(unique_identifier))
                 print("Wilma has been removed from the thread...")
                 # [END remove_participant]
@@ -405,5 +409,6 @@ async def main():
     await sample.send_typing_notification_async()
     sample.clean_up()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

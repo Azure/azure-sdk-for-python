@@ -43,9 +43,12 @@ from typing import (
     Generic,
     Mapping,
     List,
+    TYPE_CHECKING,
 )
-from azure.core.tracing import AbstractSpan
 from ._azure_clouds import AzureClouds
+
+if TYPE_CHECKING:
+    from azure.core.tracing import AbstractSpan
 
 ValidInputType = TypeVar("ValidInputType")
 ValueType = TypeVar("ValueType")

@@ -1,8 +1,23 @@
 # Release History
 
-## 1.0.0b6 (Unreleased)
+## 1.1.0 (Unreleased)
 
 ### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+- Removed `[remote]` extra. This is no longer needed when tracking results in Azure AI Studio.
+- Fixed `AttributeError: 'NoneType' object has no attribute 'get'` while running simulator with 1000+ results
+
+### Other Changes
+
+## 1.0.1 (2024-11-15)
+
+### Bugs Fixed
+- Removing `azure-ai-inference` as dependency.
+
+## 1.0.0 (2024-11-13)
 
 ### Breaking Changes
 - The `parallel` parameter has been removed from composite evaluators: `QAEvaluator`, `ContentSafetyChatEvaluator`, and `ContentSafetyMultimodalEvaluator`. To control evaluator parallelism, you can now use the `_parallel` keyword argument, though please note that this private parameter may change in the future.

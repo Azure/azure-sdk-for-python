@@ -2,3 +2,4 @@
 type_check_samples = false
 pyright = false
 mypy = true
+black = true

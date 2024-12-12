@@ -79,7 +79,7 @@ class TestHybridComputeManagementLicenseProfilesOperationsAsync(AzureMgmtRecorde
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-07-10",
+                api_version="2024-07-31-preview",
                 license_profile_name="default",
             )
         ).result()  # call '.result()' to poll until service return final result
@@ -102,7 +102,7 @@ class TestHybridComputeManagementLicenseProfilesOperationsAsync(AzureMgmtRecorde
                     "subscriptionStatus": "str",
                     "tags": {"str": "str"},
                 },
-                api_version="2024-07-10",
+                api_version="2024-07-31-preview",
                 license_profile_name="default",
             )
         ).result()  # call '.result()' to poll until service return final result
@@ -116,7 +116,7 @@ class TestHybridComputeManagementLicenseProfilesOperationsAsync(AzureMgmtRecorde
         response = await self.client.license_profiles.get(
             resource_group_name=resource_group.name,
             machine_name="str",
-            api_version="2024-07-10",
+            api_version="2024-07-31-preview",
             license_profile_name="default",
         )
 
@@ -130,7 +130,7 @@ class TestHybridComputeManagementLicenseProfilesOperationsAsync(AzureMgmtRecorde
             await self.client.license_profiles.begin_delete(
                 resource_group_name=resource_group.name,
                 machine_name="str",
-                api_version="2024-07-10",
+                api_version="2024-07-31-preview",
                 license_profile_name="default",
             )
         ).result()  # call '.result()' to poll until service return final result
@@ -144,7 +144,7 @@ class TestHybridComputeManagementLicenseProfilesOperationsAsync(AzureMgmtRecorde
         response = self.client.license_profiles.list(
             resource_group_name=resource_group.name,
             machine_name="str",
-            api_version="2024-07-10",
+            api_version="2024-07-31-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

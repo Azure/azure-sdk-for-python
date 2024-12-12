@@ -265,7 +265,8 @@ class SparkConfigurationOptions(object):
 
         # [START spark_resource_configuration]
         from azure.ai.ml import Input, Output
-        from azure.ai.ml.entities._credentials import AmlTokenConfiguration, SparkJob, SparkResourceConfiguration
+        from azure.ai.ml.entities import SparkJob, SparkResourceConfiguration
+        from azure.ai.ml.entities._credentials import AmlTokenConfiguration
 
         spark_job = SparkJob(
             code="./tests/test_configs/spark_job/basic_spark_job/src",

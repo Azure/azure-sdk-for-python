@@ -43,7 +43,7 @@ class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _PROMPTY_FILE = "fluency.prompty"
     _RESULT_KEY = "fluency"
 
-    id = "azureml://registries/azureml/models/Fluency-Evaluator/versions/3"
+    id = "azureml://registries/azureml/models/Fluency-Evaluator/versions/4"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override

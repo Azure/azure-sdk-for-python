@@ -241,6 +241,9 @@ class _StatsbeatMetrics:
         if get_statsbeat_custom_events_feature_set():
             self._feature |= _StatsbeatFeature.CUSTOM_EVENTS_EXTENSION
             _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = self._feature
+        if get_statsbeat_live_metrics_feature_set():
+            self._feature |= _StatsbeatFeature.LIVE_METRICS
+            _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = self._feature
 
         # Don't send observation if no features enabled
         if self._feature is not _StatsbeatFeature.NONE:

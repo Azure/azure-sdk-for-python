@@ -9,6 +9,7 @@
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.mysqlflexibleservers import MySQLManagementClient
+
 """
 # PREREQUISITES
     pip install azure-identity
@@ -21,6 +22,8 @@ from azure.mgmt.mysqlflexibleservers import MySQLManagementClient
     AZURE_CLIENT_SECRET. For more info about how to get the value, please see:
     https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
 """
+
+
 def main():
     client = MySQLManagementClient(
         credential=DefaultAzureCredential(),
@@ -28,12 +31,11 @@ def main():
     )
 
     response = client.check_name_availability_without_location.execute(
-        name_availability_request={'name': 'name1', 'type': 'Microsoft.DBforMySQL/flexibleServers'},
+        name_availability_request={"name": "name1", "type": "Microsoft.DBforMySQL/flexibleServers"},
     )
     print(response)
 
-# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/ServiceOperations/stable/2023-12-30/examples/CheckNameAvailability.json
+
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/ServiceOperations/preview/2024-10-01-preview/examples/CheckNameAvailability.json
 if __name__ == "__main__":
-    main()
-__main__":
     main()

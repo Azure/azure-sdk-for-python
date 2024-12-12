@@ -326,7 +326,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
         # Act
-        chunk_size_list = list()
+        chunk_size_list = []
         for i in range(0, len(chunk_size_list) - 1):
             assert chunk_size_list[i] == self.MAX_CHUNK_GET_SIZE
 

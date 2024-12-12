@@ -29,12 +29,12 @@ logger.info("info log")
 logger.warning("warning log")
 logger.error("error log")
 
-logger.info("info log")
-logger.warning("warning log")
-logger.error("error log")
+logger_child.info("Child: info log")
+logger_child.warning("Child: warning log")
+logger_child.error("Child: error log")
 
-logger_not_tracked.info("info log2")
-logger_not_tracked.warning("warning log2")
-logger_not_tracked.error("error log2")
+logger_not_tracked.info("Not tracked: info log")
+logger_not_tracked.warning("Not tracked: warning log")
+logger_not_tracked.error("Not tracked: error log")
 
 input()
