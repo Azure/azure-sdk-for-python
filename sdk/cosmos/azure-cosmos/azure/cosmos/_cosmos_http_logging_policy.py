@@ -126,11 +126,12 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                 super().on_request(request)
                 self.__request_already_logged = True
 
+    # pylint: disable=too-many-statements
     def on_response(
         self,
         request: PipelineRequest[HTTPRequestType],
         response: PipelineResponse[HTTPRequestType, HTTPResponseType],  # type: ignore[override]
-    ) -> None:  # pylint: disable=too-many-statements
+    ) -> None:
         duration = time.time() - request.context["start_time"] if "start_time" in request.context else None
         status_code = response.http_response.status_code
         sub_status_str = response.http_response.headers.get("x-ms-substatus")
@@ -193,10 +194,11 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                 except Exception as err:  # pylint: disable=broad-except
                     logger.warning("Failed to log request: %s", repr(err))
 
+    # pylint: disable=unused-argument
     def _default_should_log(
             self,
             **kwargs
-    ) -> bool:  # pylint: disable=unused-argument
+    ) -> bool:
         return True
 
     def _dict_should_log(self, **kwargs) -> bool:
@@ -233,7 +235,8 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             self.logger.info("\tClient Preferred Regions: %s", self.__client_settings["Client Preferred Regions"],
                              exc_info=False)
 
-    def _log_database_account_settings(self) -> None:  # pylint: disable=protected-access
+    # pylint: disable=protected-access
+    def _log_database_account_settings(self) -> None:
         self.logger.info("Database Account Settings:", exc_info=False)
         self.__database_account_settings = self.__get_database_account_settings()
         if self.__database_account_settings and self.__database_account_settings.ConsistencyPolicy:
