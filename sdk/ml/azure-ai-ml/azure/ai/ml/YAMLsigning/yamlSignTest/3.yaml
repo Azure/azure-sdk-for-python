@@ -1,0 +1,5 @@
+fields:
+  - name: field1
+    default: "**/spec.yaml"
+  - name: field2
+    default: "**/spec.yaml"
