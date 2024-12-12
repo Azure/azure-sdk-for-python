@@ -4,6 +4,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 # cSpell:disable
+from typing import Any
+
 import datetime
 import functools
 import json
@@ -19,16 +21,26 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.projects.models import (
     AzureFunctionTool,
     AzureFunctionStorageQueue,
+    AgentStreamEvent,
     CodeInterpreterTool,
     CodeInterpreterToolResource,
     FilePurpose,
     FileSearchTool,
+    FileSearchToolCallContent,
     FileSearchToolResource,
     FunctionTool,
     MessageAttachment,
     MessageRole,
+    MessageTextContent,
+    ResponseFormatJsonSchema,
+    ResponseFormatJsonSchemaType,
+    RunAdditionalFieldList,
+    RunStepFileSearchToolCall,
+    RunStepFileSearchToolCallResult,
+    RunStepFileSearchToolCallResults,
     RunStatus,
     ThreadMessageOptions,
+    ThreadRun,
     ToolResources,
     ToolSet,
     VectorStore,
@@ -1796,6 +1808,177 @@ class TestagentClientAsync(AzureRecordedTestCase):
             assert (await client.agents.delete_agent(agent.id)).deleted, "The agent was not deleted"
             messages = await client.agents.list_messages(thread_id=thread.id)
             assert len(messages.data), "The data from the agent was not received."
+
+    @agentClientPreparer()
+    @pytest.mark.skip("Recordings not yet implemented")
+    @recorded_by_proxy_async
+    async def test_include_file_search_results_no_stream(self, **kwargs):
+        """Test using include_file_search."""
+        await self._do_test_include_file_search_results(use_stream=False, include_content=True, **kwargs)
+        await self._do_test_include_file_search_results(use_stream=False, include_content=False, **kwargs)
+
+    @agentClientPreparer()
+    @pytest.mark.skip("Recordings not yet implemented")
+    @recorded_by_proxy_async
+    async def test_include_file_search_results_stream(self, **kwargs):
+        """Test using include_file_search with streaming."""
+        await self._do_test_include_file_search_results(use_stream=True, include_content=True, **kwargs)
+        await self._do_test_include_file_search_results(use_stream=True, include_content=False, **kwargs)
+
+    async def _do_test_include_file_search_results(self, use_stream, include_content, **kwargs):
+        """Run the test with file search results."""
+        async with self.create_client(**kwargs) as ai_client:
+            ds = [
+                VectorStoreDataSource(
+                    asset_identifier=kwargs["azure_ai_projects_data_path"],
+                    asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
+                )
+            ]
+            vector_store = await ai_client.agents.create_vector_store_and_poll(
+                file_ids=[], data_sources=ds, name="my_vectorstore"
+            )
+            # vector_store = await ai_client.agents.get_vector_store('vs_M9oxKG7JngORHcYNBGVZ6Iz3')
+            assert vector_store.id
+
+            file_search = FileSearchTool(vector_store_ids=[vector_store.id])
+            agent = await ai_client.agents.create_agent(
+                model="gpt-4o",
+                name="my-assistant",
+                instructions="Hello, you are helpful assistant and can search information from uploaded files",
+                tools=file_search.definitions,
+                tool_resources=file_search.resources,
+            )
+            assert agent.id
+            thread = await ai_client.agents.create_thread()
+            assert thread.id
+            # create message
+            message = await ai_client.agents.create_message(
+                thread_id=thread.id,
+                role="user",
+                # content="What does the attachment say?"
+                content="What Contoso Galaxy Innovations produces?",
+            )
+            assert message.id, "The message was not created."
+            include = [RunAdditionalFieldList.FILE_SEARCH_CONTENTS] if include_content else None
+
+            if use_stream:
+                run = None
+                async with await ai_client.agents.create_stream(
+                    thread_id=thread.id, assistant_id=agent.id, include=include
+                ) as stream:
+                    async for event_type, event_data, _ in stream:
+                        if isinstance(event_data, ThreadRun):
+                            run = event_data
+                        elif event_type == AgentStreamEvent.DONE:
+                            print("Stream completed.")
+                            break
+            else:
+                run = await ai_client.agents.create_and_process_run(
+                    thread_id=thread.id, assistant_id=agent.id, include=include
+                )
+                assert run.status == RunStatus.COMPLETED
+            assert run is not None
+            steps = await ai_client.agents.list_run_steps(thread_id=thread.id, run_id=run.id, include=include)
+            # The 1st (not 0th) step is a tool call.
+            step_id = steps.data[1].id
+            one_step = await ai_client.agents.get_run_step(
+                thread_id=thread.id, run_id=run.id, step_id=step_id, include=include
+            )
+            self._assert_file_search_valid(one_step.step_details.tool_calls[0], include_content)
+            self._assert_file_search_valid(steps.data[1].step_details.tool_calls[0], include_content)
+
+            messages = await ai_client.agents.list_messages(thread_id=thread.id)
+            assert len(messages)
+
+            await ai_client.agents.delete_vector_store(vector_store.id)
+            # delete agent and close client
+            await ai_client.agents.delete_agent(agent.id)
+            print("Deleted agent")
+            await ai_client.close()
+
+    def _assert_file_search_valid(self, tool_call: Any, include_content: bool) -> None:
+        """Test that file search result is properly populated."""
+        assert isinstance(tool_call, RunStepFileSearchToolCall), f"Wrong type of tool call: {type(tool_call)}."
+        assert isinstance(
+            tool_call.file_search, RunStepFileSearchToolCallResults
+        ), f"Wrong type of search results: {type(tool_call.file_search)}."
+        assert isinstance(
+            tool_call.file_search.results[0], RunStepFileSearchToolCallResult
+        ), f"Wrong type of search result: {type(tool_call.file_search.results[0])}."
+        assert tool_call.file_search.results
+        if include_content:
+            assert tool_call.file_search.results[0].content
+            assert isinstance(tool_call.file_search.results[0].content[0], FileSearchToolCallContent)
+            assert tool_call.file_search.results[0].content[0].type == "text"
+            assert tool_call.file_search.results[0].content[0].text
+        else:
+            assert tool_call.file_search.results[0].content is None
+
+    @agentClientPreparer()
+    @pytest.mark.skip("Recordings not yet implemented")
+    @recorded_by_proxy_async
+    async def test_agents_with_json_schema(self, **kwargs):
+        """Test structured output from the agent."""
+        async with self.create_client(**kwargs) as ai_client:
+            agent = await ai_client.agents.create_agent(
+                # Note only gpt-4o-mini-2024-07-18 and
+                # gpt-4o-2024-08-06 and later support structured output.
+                model="gpt-4o-mini",
+                name="my-assistant",
+                instructions="Extract the information about planets.",
+                headers={"x-ms-enable-preview": "true"},
+                response_format=ResponseFormatJsonSchemaType(
+                    json_schema=ResponseFormatJsonSchema(
+                        name="planet_mass",
+                        description="Extract planet mass.",
+                        schema={
+                            "$defs": {
+                                "Planets": {"enum": ["Earth", "Mars", "Jupyter"], "title": "Planets", "type": "string"}
+                            },
+                            "properties": {
+                                "planet": {"$ref": "#/$defs/Planets"},
+                                "mass": {"title": "Mass", "type": "number"},
+                            },
+                            "required": ["planet", "mass"],
+                            "title": "Planet",
+                            "type": "object",
+                        },
+                    )
+                ),
+            )
+            assert agent.id
+
+            thread = await ai_client.agents.create_thread()
+            assert thread.id
+
+            message = await ai_client.agents.create_message(
+                thread_id=thread.id,
+                role="user",
+                content=("The mass of the Mars is 6.4171E23 kg"),
+            )
+            assert message.id
+
+            run = await ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+
+            assert run.status == RunStatus.COMPLETED, run.last_error.message
+
+            del_agent = await ai_client.agents.delete_agent(agent.id)
+            assert del_agent.deleted
+
+            messages = await ai_client.agents.list_messages(thread_id=thread.id)
+
+            planet_info = []
+            # The messages are following in the reverse order,
+            # we will iterate them and output only text contents.
+            for data_point in reversed(messages.data):
+                last_message_content = data_point.content[-1]
+                # We will only list agent responses here.
+                if isinstance(last_message_content, MessageTextContent) and data_point.role == MessageRole.AGENT:
+                    planet_info.append(json.loads(last_message_content.text.value))
+            assert len(planet_info) == 1
+            assert len(planet_info[0]) == 2
+            assert planet_info[0].get("mass") == pytest.approx(6.4171e23, 1e22)
+            assert planet_info[0].get("planet") == "Mars"
 
     async def _get_file_id_maybe(self, ai_client: AIProjectClient, **kwargs) -> str:
         """Return file id if kwargs has file path."""

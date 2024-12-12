@@ -441,6 +441,8 @@ class _AIAgentsInstrumentorPreview:
             return response_format.value
         if isinstance(response_format, _models.AgentsApiResponseFormat):
             return response_format.type
+        if isinstance(response_format, _models.ResponseFormatJsonSchemaType):
+            return response_format.type
         raise ValueError(f"Unknown response format {type(response_format)}")
 
     def start_thread_run_span(
