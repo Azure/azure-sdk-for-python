@@ -746,7 +746,7 @@ class WebSocketTransport(_AbstractTransport):
             self.close()
             raise
 
-    def _read(self, n, initial=False, buffer=None, _errnos=None):  # pylint: disable=unused-argument
+    def _read(self, n, initial=False, buffer=None, _errnos=None):
         """Read exactly n bytes from the peer.
 
         :param int n: The number of bytes to read.
