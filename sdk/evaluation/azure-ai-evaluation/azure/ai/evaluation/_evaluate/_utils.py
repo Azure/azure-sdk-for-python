@@ -22,6 +22,7 @@ from azure.ai.evaluation._constants import (
 )
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import AzureAIProject
+from azure.ai.evaluation._version import VERSION
 from azure.ai.evaluation._azure._clients import LiteMLClient
 
 LOGGER = logging.getLogger(__name__)
@@ -190,7 +191,14 @@ def _log_metrics_and_instance_results(
                     properties={
                         EvaluationRunProperties.RUN_TYPE: "eval_run",
                         EvaluationRunProperties.EVALUATION_RUN: "promptflow.BatchRun",
+                        EvaluationRunProperties.EVALUATION_SDK: f"azure-ai-evaluation:{VERSION}",
                         "_azureml.evaluate_artifacts": json.dumps([{"path": artifact_name, "type": "table"}]),
+                    }
+                )
+            else:
+                ev_run.write_properties_to_run_history(
+                    properties={
+                        EvaluationRunProperties.EVALUATION_SDK: f"azure-ai-evaluation:{VERSION}",
                     }
                 )
 
