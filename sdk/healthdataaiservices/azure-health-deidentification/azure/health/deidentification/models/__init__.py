@@ -14,14 +14,14 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
-    CustomizationOptions,
     DeidentificationContent,
+    DeidentificationCustomizationOptions,
+    DeidentificationDocumentDetails,
+    DeidentificationDocumentLocation,
     DeidentificationJob,
+    DeidentificationJobCustomizationOptions,
+    DeidentificationJobSummary,
     DeidentificationResult,
-    DocumentDetails,
-    DocumentLocation,
-    JobCustomizationOptions,
-    JobSummary,
     PhiEntity,
     PhiTaggerResult,
     SourceStorageLocation,
@@ -30,9 +30,9 @@ from ._models import (  # type: ignore
 )
 
 from ._enums import (  # type: ignore
-    JobStatus,
+    DeidentificationJobStatus,
+    DeidentificationOperationType,
     OperationState,
-    OperationType,
     PhiCategory,
 )
 from ._patch import __all__ as _patch_all
@@ -40,22 +40,22 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "CustomizationOptions",
     "DeidentificationContent",
+    "DeidentificationCustomizationOptions",
+    "DeidentificationDocumentDetails",
+    "DeidentificationDocumentLocation",
     "DeidentificationJob",
+    "DeidentificationJobCustomizationOptions",
+    "DeidentificationJobSummary",
     "DeidentificationResult",
-    "DocumentDetails",
-    "DocumentLocation",
-    "JobCustomizationOptions",
-    "JobSummary",
     "PhiEntity",
     "PhiTaggerResult",
     "SourceStorageLocation",
     "StringIndex",
     "TargetStorageLocation",
-    "JobStatus",
+    "DeidentificationJobStatus",
+    "DeidentificationOperationType",
     "OperationState",
-    "OperationType",
     "PhiCategory",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

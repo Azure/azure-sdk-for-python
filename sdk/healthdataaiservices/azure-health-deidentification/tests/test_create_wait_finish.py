@@ -24,8 +24,8 @@ class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
                 location=storage_location,
                 prefix=input_prefix,
             ),
-            target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH),
-            operation=OperationType.SURROGATE,
+            target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH, overwrite=True),
+            operation=DeidentificationOperationType.SURROGATE,
         )
 
         lro: LROPoller = client.begin_deidentify_documents(jobname, job)
@@ -33,9 +33,9 @@ class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
 
         finished_job: DeidentificationJob = lro.result()
 
-        assert finished_job.status == JobStatus.SUCCEEDED
+        assert finished_job.status == DeidentificationJobStatus.SUCCEEDED
         assert finished_job.name == jobname
-        assert finished_job.operation == OperationType.SURROGATE
+        assert finished_job.operation == DeidentificationOperationType.SURROGATE
         assert finished_job.summary is not None
         assert finished_job.summary.total == 3
         assert finished_job.summary.successful == 3
@@ -53,7 +53,7 @@ class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
             assert len(my_file.id) == 36  # GUID
             assert input_prefix in my_file.input.location
             assert my_file.status == OperationState.SUCCEEDED
-            assert my_file.output is not None 
+            assert my_file.output is not None
             assert self.OUTPUT_PATH in my_file.output.location
             count += 1
         assert count == 3, f"Expected 3 files, found {count}"

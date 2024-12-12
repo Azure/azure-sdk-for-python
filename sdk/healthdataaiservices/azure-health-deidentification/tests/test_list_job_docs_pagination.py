@@ -29,9 +29,9 @@ class TestHealthDeidentificationCreateAndListJob(DeidBaseTestCase):
                 location=storage_location,
                 prefix=inputPrefix,
             ),
-            target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH),
-            operation=OperationType.REDACT,
-            customizations=JobCustomizationOptions(redaction_format="[{type}]"),
+            target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH, overwrite=True),
+            operation=DeidentificationOperationType.REDACT,
+            customizations=DeidentificationJobCustomizationOptions(redaction_format="[{type}]"),
         )
 
         lro: LROPoller = client.begin_deidentify_documents(jobname, job)
@@ -56,7 +56,7 @@ class TestHealthDeidentificationCreateAndListJob(DeidBaseTestCase):
         job_ids.extend(item.id for item in first_page_items)
 
         # Verify there are no duplicates
-        assert(len(set(job_ids))) == 2
+        assert len(set(job_ids)) == 2
 
         # Verify the second page has the remaining 1 item
         second_page = next(page_iterator)

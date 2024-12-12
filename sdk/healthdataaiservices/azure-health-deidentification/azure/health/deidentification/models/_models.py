@@ -19,7 +19,50 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class CustomizationOptions(_model_base.Model):
+class DeidentificationContent(_model_base.Model):
+    """Request body for de-identification operation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar input_text: Input text to de-identify. Required.
+    :vartype input_text: str
+    :ivar operation: Operation to perform on the input documents. Known values are: "Redact",
+     "Surrogate", and "Tag".
+    :vartype operation: str or ~azure.health.deidentification.models.DeidentificationOperationType
+    :ivar customizations: Customization parameters to override default service behaviors.
+    :vartype customizations:
+     ~azure.health.deidentification.models.DeidentificationCustomizationOptions
+    """
+
+    input_text: str = rest_field(name="inputText")
+    """Input text to de-identify. Required."""
+    operation: Optional[Union[str, "_models.DeidentificationOperationType"]] = rest_field()
+    """Operation to perform on the input documents. Known values are: \"Redact\", \"Surrogate\", and
+     \"Tag\"."""
+    customizations: Optional["_models.DeidentificationCustomizationOptions"] = rest_field()
+    """Customization parameters to override default service behaviors."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        input_text: str,
+        operation: Optional[Union[str, "_models.DeidentificationOperationType"]] = None,
+        customizations: Optional["_models.DeidentificationCustomizationOptions"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DeidentificationCustomizationOptions(_model_base.Model):
     """Customizations options to override default service behaviors for synchronous usage.
 
     :ivar redaction_format: Format of the redacted output. Only valid when Operation is Redact.
@@ -52,168 +95,7 @@ class CustomizationOptions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DeidentificationContent(_model_base.Model):
-    """Request body for de-identification operation.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar input_text: Input text to de-identify. Required.
-    :vartype input_text: str
-    :ivar operation: Operation to perform on the input documents. Known values are: "Redact",
-     "Surrogate", and "Tag".
-    :vartype operation: str or ~azure.health.deidentification.models.OperationType
-    :ivar customizations: Customization parameters to override default service behaviors.
-    :vartype customizations: ~azure.health.deidentification.models.CustomizationOptions
-    """
-
-    input_text: str = rest_field(name="inputText")
-    """Input text to de-identify. Required."""
-    operation: Optional[Union[str, "_models.OperationType"]] = rest_field()
-    """Operation to perform on the input documents. Known values are: \"Redact\", \"Surrogate\", and
-     \"Tag\"."""
-    customizations: Optional["_models.CustomizationOptions"] = rest_field()
-    """Customization parameters to override default service behaviors."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        input_text: str,
-        operation: Optional[Union[str, "_models.OperationType"]] = None,
-        customizations: Optional["_models.CustomizationOptions"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DeidentificationJob(_model_base.Model):
-    """A job containing a batch of documents to de-identify.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
-    :ivar name: The name of a job. Required.
-    :vartype name: str
-    :ivar operation: Operation to perform on the input documents. Known values are: "Redact",
-     "Surrogate", and "Tag".
-    :vartype operation: str or ~azure.health.deidentification.models.OperationType
-    :ivar source_location: Storage location to perform the operation on. Required.
-    :vartype source_location: ~azure.health.deidentification.models.SourceStorageLocation
-    :ivar target_location: Target location to store output of operation. Required.
-    :vartype target_location: ~azure.health.deidentification.models.TargetStorageLocation
-    :ivar customizations: Customization parameters to override default service behaviors.
-    :vartype customizations: ~azure.health.deidentification.models.JobCustomizationOptions
-    :ivar status: Current status of a job. Required. Known values are: "NotStarted", "Running",
-     "Succeeded", "PartialFailed", "Failed", and "Canceled".
-    :vartype status: str or ~azure.health.deidentification.models.JobStatus
-    :ivar error: Error when job fails in it's entirety.
-    :vartype error: ~azure.core.ODataV4Format
-    :ivar last_updated_at: Date and time when the job was completed.
-
-     If the job is canceled, this is the time when the job was canceled.
-
-     If the job failed, this is the time when the job failed. Required.
-    :vartype last_updated_at: ~datetime.datetime
-    :ivar created_at: Date and time when the job was created. Required.
-    :vartype created_at: ~datetime.datetime
-    :ivar started_at: Date and time when the job was started.
-    :vartype started_at: ~datetime.datetime
-    :ivar summary: Summary of a job. Exists only when the job is completed.
-    :vartype summary: ~azure.health.deidentification.models.JobSummary
-    """
-
-    name: str = rest_field(visibility=["read"])
-    """The name of a job. Required."""
-    operation: Optional[Union[str, "_models.OperationType"]] = rest_field()
-    """Operation to perform on the input documents. Known values are: \"Redact\", \"Surrogate\", and
-     \"Tag\"."""
-    source_location: "_models.SourceStorageLocation" = rest_field(name="sourceLocation")
-    """Storage location to perform the operation on. Required."""
-    target_location: "_models.TargetStorageLocation" = rest_field(name="targetLocation")
-    """Target location to store output of operation. Required."""
-    customizations: Optional["_models.JobCustomizationOptions"] = rest_field()
-    """Customization parameters to override default service behaviors."""
-    status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read"])
-    """Current status of a job. Required. Known values are: \"NotStarted\", \"Running\",
-     \"Succeeded\", \"PartialFailed\", \"Failed\", and \"Canceled\"."""
-    error: Optional[ODataV4Format] = rest_field(visibility=["read"])
-    """Error when job fails in it's entirety."""
-    last_updated_at: datetime.datetime = rest_field(name="lastUpdatedAt", visibility=["read"], format="rfc3339")
-    """Date and time when the job was completed.
-     
-     If the job is canceled, this is the time when the job was canceled.
-     
-     If the job failed, this is the time when the job failed. Required."""
-    created_at: datetime.datetime = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
-    """Date and time when the job was created. Required."""
-    started_at: Optional[datetime.datetime] = rest_field(name="startedAt", visibility=["read"], format="rfc3339")
-    """Date and time when the job was started."""
-    summary: Optional["_models.JobSummary"] = rest_field(visibility=["read"])
-    """Summary of a job. Exists only when the job is completed."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        source_location: "_models.SourceStorageLocation",
-        target_location: "_models.TargetStorageLocation",
-        operation: Optional[Union[str, "_models.OperationType"]] = None,
-        customizations: Optional["_models.JobCustomizationOptions"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DeidentificationResult(_model_base.Model):
-    """Response body for de-identification operation.
-
-    :ivar output_text: Output text after de-identification. Not available for "Tag" operation.
-    :vartype output_text: str
-    :ivar tagger_result: Result of the "Tag" operation. Only available for "Tag" Operation.
-    :vartype tagger_result: ~azure.health.deidentification.models.PhiTaggerResult
-    """
-
-    output_text: Optional[str] = rest_field(name="outputText")
-    """Output text after de-identification. Not available for \"Tag\" operation."""
-    tagger_result: Optional["_models.PhiTaggerResult"] = rest_field(name="taggerResult")
-    """Result of the \"Tag\" operation. Only available for \"Tag\" Operation."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        output_text: Optional[str] = None,
-        tagger_result: Optional["_models.PhiTaggerResult"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DocumentDetails(_model_base.Model):
+class DeidentificationDocumentDetails(_model_base.Model):
     """Details of a single document in a job.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
@@ -222,9 +104,9 @@ class DocumentDetails(_model_base.Model):
     :ivar id: Id of the document details. Required.
     :vartype id: str
     :ivar input: Location for the input. Required.
-    :vartype input: ~azure.health.deidentification.models.DocumentLocation
+    :vartype input: ~azure.health.deidentification.models.DeidentificationDocumentLocation
     :ivar output: Location for the output.
-    :vartype output: ~azure.health.deidentification.models.DocumentLocation
+    :vartype output: ~azure.health.deidentification.models.DeidentificationDocumentLocation
     :ivar status: Status of the document. Required. Known values are: "NotStarted", "Running",
      "Succeeded", "Failed", and "Canceled".
     :vartype status: str or ~azure.health.deidentification.models.OperationState
@@ -234,9 +116,9 @@ class DocumentDetails(_model_base.Model):
 
     id: str = rest_field(visibility=["read"])
     """Id of the document details. Required."""
-    input: "_models.DocumentLocation" = rest_field()
+    input: "_models.DeidentificationDocumentLocation" = rest_field()
     """Location for the input. Required."""
-    output: Optional["_models.DocumentLocation"] = rest_field()
+    output: Optional["_models.DeidentificationDocumentLocation"] = rest_field()
     """Location for the output."""
     status: Union[str, "_models.OperationState"] = rest_field()
     """Status of the document. Required. Known values are: \"NotStarted\", \"Running\", \"Succeeded\",
@@ -248,9 +130,9 @@ class DocumentDetails(_model_base.Model):
     def __init__(
         self,
         *,
-        input: "_models.DocumentLocation",
+        input: "_models.DeidentificationDocumentLocation",
         status: Union[str, "_models.OperationState"],
-        output: Optional["_models.DocumentLocation"] = None,
+        output: Optional["_models.DeidentificationDocumentLocation"] = None,
         error: Optional[ODataV4Format] = None,
     ) -> None: ...
 
@@ -265,7 +147,7 @@ class DocumentDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentLocation(_model_base.Model):
+class DeidentificationDocumentLocation(_model_base.Model):
     """Location of a document.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
@@ -300,7 +182,94 @@ class DocumentLocation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class JobCustomizationOptions(_model_base.Model):
+class DeidentificationJob(_model_base.Model):
+    """A job containing a batch of documents to de-identify.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar name: The name of a job. Required.
+    :vartype name: str
+    :ivar operation: Operation to perform on the input documents. Known values are: "Redact",
+     "Surrogate", and "Tag".
+    :vartype operation: str or ~azure.health.deidentification.models.DeidentificationOperationType
+    :ivar source_location: Storage location to perform the operation on. Required.
+    :vartype source_location: ~azure.health.deidentification.models.SourceStorageLocation
+    :ivar target_location: Target location to store output of operation. Required.
+    :vartype target_location: ~azure.health.deidentification.models.TargetStorageLocation
+    :ivar customizations: Customization parameters to override default service behaviors.
+    :vartype customizations:
+     ~azure.health.deidentification.models.DeidentificationJobCustomizationOptions
+    :ivar status: Current status of a job. Required. Known values are: "NotStarted", "Running",
+     "Succeeded", "PartialFailed", "Failed", and "Canceled".
+    :vartype status: str or ~azure.health.deidentification.models.DeidentificationJobStatus
+    :ivar error: Error when job fails in it's entirety.
+    :vartype error: ~azure.core.ODataV4Format
+    :ivar last_updated_at: Date and time when the job was completed.
+
+     If the job is canceled, this is the time when the job was canceled.
+
+     If the job failed, this is the time when the job failed. Required.
+    :vartype last_updated_at: ~datetime.datetime
+    :ivar created_at: Date and time when the job was created. Required.
+    :vartype created_at: ~datetime.datetime
+    :ivar started_at: Date and time when the job was started.
+    :vartype started_at: ~datetime.datetime
+    :ivar summary: Summary of a job. Exists only when the job is completed.
+    :vartype summary: ~azure.health.deidentification.models.DeidentificationJobSummary
+    """
+
+    name: str = rest_field(visibility=["read"])
+    """The name of a job. Required."""
+    operation: Optional[Union[str, "_models.DeidentificationOperationType"]] = rest_field()
+    """Operation to perform on the input documents. Known values are: \"Redact\", \"Surrogate\", and
+     \"Tag\"."""
+    source_location: "_models.SourceStorageLocation" = rest_field(name="sourceLocation")
+    """Storage location to perform the operation on. Required."""
+    target_location: "_models.TargetStorageLocation" = rest_field(name="targetLocation")
+    """Target location to store output of operation. Required."""
+    customizations: Optional["_models.DeidentificationJobCustomizationOptions"] = rest_field()
+    """Customization parameters to override default service behaviors."""
+    status: Union[str, "_models.DeidentificationJobStatus"] = rest_field(visibility=["read"])
+    """Current status of a job. Required. Known values are: \"NotStarted\", \"Running\",
+     \"Succeeded\", \"PartialFailed\", \"Failed\", and \"Canceled\"."""
+    error: Optional[ODataV4Format] = rest_field(visibility=["read"])
+    """Error when job fails in it's entirety."""
+    last_updated_at: datetime.datetime = rest_field(name="lastUpdatedAt", visibility=["read"], format="rfc3339")
+    """Date and time when the job was completed.
+     
+     If the job is canceled, this is the time when the job was canceled.
+     
+     If the job failed, this is the time when the job failed. Required."""
+    created_at: datetime.datetime = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
+    """Date and time when the job was created. Required."""
+    started_at: Optional[datetime.datetime] = rest_field(name="startedAt", visibility=["read"], format="rfc3339")
+    """Date and time when the job was started."""
+    summary: Optional["_models.DeidentificationJobSummary"] = rest_field(visibility=["read"])
+    """Summary of a job. Exists only when the job is completed."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source_location: "_models.SourceStorageLocation",
+        target_location: "_models.TargetStorageLocation",
+        operation: Optional[Union[str, "_models.DeidentificationOperationType"]] = None,
+        customizations: Optional["_models.DeidentificationJobCustomizationOptions"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DeidentificationJobCustomizationOptions(_model_base.Model):
     """Customizations options to override default service behaviors for job usage.
 
     :ivar redaction_format: Format of the redacted output. Only valid when Operation is Redact.
@@ -333,7 +302,7 @@ class JobCustomizationOptions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class JobSummary(_model_base.Model):
+class DeidentificationJobSummary(_model_base.Model):
     """Summary metrics of a job.
 
 
@@ -369,6 +338,39 @@ class JobSummary(_model_base.Model):
         canceled: int,
         total: int,
         bytes_processed: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DeidentificationResult(_model_base.Model):
+    """Response body for de-identification operation.
+
+    :ivar output_text: Output text after de-identification. Not available for "Tag" operation.
+    :vartype output_text: str
+    :ivar tagger_result: Result of the "Tag" operation. Only available for "Tag" Operation.
+    :vartype tagger_result: ~azure.health.deidentification.models.PhiTaggerResult
+    """
+
+    output_text: Optional[str] = rest_field(name="outputText")
+    """Output text after de-identification. Not available for \"Tag\" operation."""
+    tagger_result: Optional["_models.PhiTaggerResult"] = rest_field(name="taggerResult")
+    """Result of the \"Tag\" operation. Only available for \"Tag\" Operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        output_text: Optional[str] = None,
+        tagger_result: Optional["_models.PhiTaggerResult"] = None,
     ) -> None: ...
 
     @overload

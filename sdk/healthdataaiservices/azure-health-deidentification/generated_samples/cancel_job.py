@@ -31,7 +31,7 @@ def main():
     )
 
     response = client.cancel_job(
-        name="documents_smith_1",
+        name="job_smith_documents_1",
     )
     print(response)
 

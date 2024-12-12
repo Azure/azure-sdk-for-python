@@ -3,7 +3,8 @@ import pytest
 import os
 from devtools_testutils import (
     add_body_key_sanitizer,
-    add_general_string_sanitizer,
+    add_continuation_sanitizer,
+    add_general_regex_sanitizer,
     remove_batch_sanitizers,
     test_proxy,
 )
@@ -44,10 +45,7 @@ def add_sanitizers(test_proxy):
     # $..id
     # uri sanitization in favor of substitution
     remove_batch_sanitizers(["AZSDK3493", "AZSDK3430", "AZSDK4001"])
-    account_name = os.environ.get("HEALTHDATAAISERVICES_STORAGE_ACCOUNT_NAME", "Not Found.")
-    container_name = os.environ.get("HEALTHDATAAISERVICES_STORAGE_CONTAINER_NAME", "Not Found.")
-    # TODO: make sure not to sanitize document detail location
-    add_body_key_sanitizer(
-        json_path="..location",
-        value=f"https://{account_name}.blob.core.windows.net:443/{container_name}",
+    add_general_regex_sanitizer(
+        regex="continuationToken=[^&]*",
+        value="continuationToken=Sanitized"
     )

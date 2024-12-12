@@ -31,7 +31,7 @@ def main():
     )
 
     client.delete_job(
-        name="documents_smith_1",
+        name="job_smith_documents_1",
     )
 
 

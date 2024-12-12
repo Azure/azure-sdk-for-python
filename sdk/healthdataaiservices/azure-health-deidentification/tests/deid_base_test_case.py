@@ -36,24 +36,14 @@ class DeidBaseTestCase(AzureRecordedTestCase):
     def make_client(self, endpoint) -> DeidentificationClient:
         credential = self.get_credential(DeidentificationClient)
         client = self.create_client_from_credential(
-            DeidentificationClient,
-            credential=credential,
-            endpoint=endpoint,
-            # TODO: test-proxy not playing well with SSL verification
-            connection_verify=False,
-            enforce_https=False,
+            DeidentificationClient, credential=credential, endpoint=endpoint, connection_verify=False
         )
         return client
 
     def make_client_async(self, endpoint) -> DeidentificationClientAsync:
         credential = self.get_credential(DeidentificationClientAsync)
         client = self.create_client_from_credential(
-            DeidentificationClientAsync,
-            credential=credential,
-            endpoint=endpoint,
-            # TODO: test-proxy not playing well with SSL verification
-            connection_verify=False,
-            enforce_https=False,
+            DeidentificationClientAsync, credential=credential, endpoint=endpoint, connection_verify=False
         )
         return client
 
@@ -68,6 +58,13 @@ class DeidBaseTestCase(AzureRecordedTestCase):
         container_name: str = kwargs.pop("healthdataaiservices_storage_container_name")
         storage_location = f"https://{storage_name}.blob.core.windows.net/{container_name}"
         sas_uri = os.environ.get("HEALTHDATAAISERVICES_SAS_URI", "")
-        if (sas_uri != ""):
-            return sas_uri
+        if (
+            os.environ.get("AZURE_TEST_RUN_LIVE", "false").lower() == "true"  # Don't override uniquifier by default
+            and os.environ.get("AZURE_SKIP_LIVE_RECORDING", "false").lower() != "true"
+        ):
+            if sas_uri != "" and os.environ:
+                print(f"Using SAS URI: {sas_uri}")
+                return sas_uri
+
+        print(f"Using storage location: {storage_location}")
         return storage_location
