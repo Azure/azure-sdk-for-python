@@ -43,6 +43,10 @@ from ._enums import AgentStreamEvent, ConnectionType
 from ._models import (
     AzureAISearchResource,
     AzureAISearchToolDefinition,
+    AzureFunctionDefinition,
+    AzureFunctionStorageQueue,
+    AzureFunctionToolDefinition,
+    AzureFunctionBinding,
     BingGroundingToolDefinition,
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
@@ -724,6 +728,61 @@ class OpenApiTool(Tool):
 
         :param Any tool_call: The tool call to execute.
         """
+
+
+class AzureFunctionTool(Tool):
+    """
+    A tool that is used to inform agent about available the Azure function.
+
+    :param name: The azure function name.
+    :param description: The azure function description.
+    :param parameters: The description of function parameters.
+    :param input_queue: Input queue used, by azure function.
+    :param output_queue: Output queue used, by azure function.
+    """
+
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        parameters: Dict[str, Any],
+        input_queue: AzureFunctionStorageQueue,
+        output_queue: AzureFunctionStorageQueue,
+    ) -> None:
+        self._definitions = [
+            AzureFunctionToolDefinition(
+                azure_function=AzureFunctionDefinition(
+                    function=FunctionDefinition(
+                        name=name,
+                        description=description,
+                        parameters=parameters,
+                    ),
+                    input_binding=AzureFunctionBinding(storage_queue=input_queue),
+                    output_binding=AzureFunctionBinding(storage_queue=output_queue),
+                )
+            )
+        ]
+
+    @property
+    def definitions(self) -> List[ToolDefinition]:
+        """
+        Get the Azure AI search tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return cast(List[ToolDefinition], self._definitions)
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the Azure AI search resources.
+
+        :rtype: ToolResources
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> Any:
+        pass
 
 
 class ConnectionTool(Tool):
@@ -1532,6 +1591,8 @@ __all__: List[str] = [
     "AsyncAgentRunStream",
     "AsyncFunctionTool",
     "AsyncToolSet",
+    "AzureAISearchTool",
+    "AzureFunctionTool",
     "BaseAsyncAgentEventHandler",
     "BaseAgentEventHandler",
     "CodeInterpreterTool",

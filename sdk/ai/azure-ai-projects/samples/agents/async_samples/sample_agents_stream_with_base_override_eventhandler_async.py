@@ -23,7 +23,7 @@ USAGE:
 """
 import asyncio
 import json
-from typing import AsyncGenerator, Generator, Optional
+from typing import AsyncGenerator, Optional
 
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models._models import (
@@ -73,35 +73,34 @@ class MyEventHandler(BaseAsyncAgentEventHandler[str]):
 
 async def main() -> None:
 
-    project_client = AIProjectClient.from_connection_string(
-        credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
-    )
+    async with DefaultAzureCredential() as creds:
+        async with AIProjectClient.from_connection_string(
+            credential=creds, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+        ) as project_client:
+            agent = await project_client.agents.create_agent(
+                model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
+            )
+            print(f"Created agent, agent ID: {agent.id}")
 
-    async with project_client:
-        agent = await project_client.agents.create_agent(
-            model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
-        )
-        print(f"Created agent, agent ID: {agent.id}")
+            thread = await project_client.agents.create_thread()
+            print(f"Created thread, thread ID {thread.id}")
 
-        thread = await project_client.agents.create_thread()
-        print(f"Created thread, thread ID {thread.id}")
+            message = await project_client.agents.create_message(
+                thread_id=thread.id, role="user", content="Hello, tell me a joke"
+            )
+            print(f"Created message, message ID {message.id}")
 
-        message = await project_client.agents.create_message(
-            thread_id=thread.id, role="user", content="Hello, tell me a joke"
-        )
-        print(f"Created message, message ID {message.id}")
+            async with await project_client.agents.create_stream(
+                thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
+            ) as stream:
+                async for chunk in stream.get_stream_chunks():
+                    print(chunk)
 
-        async with await project_client.agents.create_stream(
-            thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
-        ) as stream:
-            async for chunk in stream.get_stream_chunks():
-                print(chunk)
+            await project_client.agents.delete_agent(agent.id)
+            print("Deleted agent")
 
-        await project_client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-
-        messages = await project_client.agents.list_messages(thread_id=thread.id)
-        print(f"Messages: {messages}")
+            messages = await project_client.agents.list_messages(thread_id=thread.id)
+            print(f"Messages: {messages}")
 
 
 if __name__ == "__main__":
