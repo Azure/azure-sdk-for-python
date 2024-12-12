@@ -1175,8 +1175,6 @@ BaseAgentEventHandlerT = TypeVar("BaseAgentEventHandlerT", bound="BaseAgentEvent
 
 
 class BaseAsyncAgentEventHandler(AsyncIterator[T]):
-    done = False
-    buffer = ""
 
     def __init__(self) -> None:
         self.response_iterator: Optional[AsyncIterator[bytes]] = None
@@ -1184,6 +1182,8 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
         self.submit_tool_outputs: Optional[Callable[[ThreadRun, "BaseAsyncAgentEventHandler[T]"], Awaitable[None]]] = (
             None
         )
+        self.done = False
+        self.buffer = ""
 
     def _init(
         self,
@@ -1234,13 +1234,13 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
 
 
 class BaseAgentEventHandler(Iterator[T]):
-    done = False
-    buffer = ""
 
     def __init__(self) -> None:
         self.response_iterator: Optional[Iterator[bytes]] = None
         self.event_handler: Optional["BaseAgentEventHandler[T]"] = None
         self.submit_tool_outputs: Optional[Callable[[ThreadRun, "BaseAgentEventHandler[T]"], Awaitable[None]]] = None
+        self.done = False
+        self.buffer = ""
 
     def _init(
         self,
