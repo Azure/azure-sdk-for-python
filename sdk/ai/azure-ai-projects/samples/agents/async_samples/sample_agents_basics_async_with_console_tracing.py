@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_basics_async_with_console_tracing.py
-
 DESCRIPTION:
     This sample demonstrates how to use basic agent operations from
     the Azure Agents service using a asynchronous client with tracing to console.
@@ -24,7 +22,7 @@ USAGE:
     pip install opentelemetry-exporter-otlp-proto-grpc
 
     Set these environment variables with your own values:
-    * PROJECT_CONNECTION_STRING - The Azure AI Project connection string, as found in your AI Studio Project.
+    * PROJECT_CONNECTION_STRING - The Azure AI Project connection string, as found in your AI Foundry project.
     * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
       messages, which may contain personal data. False by default.
 """
@@ -42,10 +40,6 @@ tracer = trace.get_tracer(__name__)
 
 @tracer.start_as_current_span(__file__)
 async def main() -> None:
-
-    # Create an Azure AI Project Client from a connection string, copied from your AI Studio project.
-    # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-    # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
     async with DefaultAzureCredential() as creds:
         async with AIProjectClient.from_connection_string(

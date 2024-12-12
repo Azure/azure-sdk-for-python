@@ -3,8 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """
-FILE: sample_agents_vector_store_file_search_async.py
-
 DESCRIPTION:
     This sample demonstrates how to add files to agent during the vector store creation.
 
@@ -16,7 +14,7 @@ USAGE:
     pip install azure-ai-projects azure-identity aiohttp
 
     Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
 """
 import asyncio
 import os
@@ -27,9 +25,6 @@ from azure.identity.aio import DefaultAzureCredential
 
 
 async def main():
-    # Create an Azure AI Client from a connection string, copied from your AI Studio project.
-    # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-    # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
     async with DefaultAzureCredential() as credential:
         async with AIProjectClient.from_connection_string(
             credential=credential, conn_str=os.environ["PROJECT_CONNECTION_STRING"]

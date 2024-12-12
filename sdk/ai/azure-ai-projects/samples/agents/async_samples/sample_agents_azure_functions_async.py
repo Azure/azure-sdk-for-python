@@ -90,7 +90,7 @@ async def main():
                 print(f"Run failed: {run.last_error}")
 
             # Get messages from the thread
-            messages = await project_client.agents.get_messages(thread_id=thread.id)
+            messages = await project_client.agents.list_messages(thread_id=thread.id)
             print(f"Messages: {messages}")
 
             # Get the last message from the sender

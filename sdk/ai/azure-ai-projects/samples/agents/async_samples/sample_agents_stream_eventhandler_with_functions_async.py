@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_stream_eventhandler_with_functions_async.py
-
 DESCRIPTION:
     This sample demonstrates how to use agent operations with an event handler and toolset from
     the Azure Agents service using a synchronous client.
@@ -18,7 +16,7 @@ USAGE:
     pip install azure-ai-projects azure-identity aiohttp
 
     Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
 """
 import asyncio
 from typing import Any
@@ -29,7 +27,6 @@ from azure.ai.projects.models import (
     AsyncAgentEventHandler,
     AsyncFunctionTool,
     MessageDeltaChunk,
-    MessageDeltaTextContent,
     RequiredFunctionToolCall,
     RunStep,
     SubmitToolOutputsAction,
@@ -41,26 +38,14 @@ from azure.identity.aio import DefaultAzureCredential
 from user_async_functions import user_async_functions
 
 
-# Create an Azure AI Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
+class MyEventHandler(AsyncAgentEventHandler[str]):
 
-project_client = AIProjectClient.from_connection_string(
-    credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
-)
-
-
-class MyEventHandler(AsyncAgentEventHandler):
-
-    def __init__(self, functions: AsyncFunctionTool) -> None:
+    def __init__(self, functions: AsyncFunctionTool, project_client: AIProjectClient) -> None:
         self.functions = functions
-
-    async def on_message_delta_text_content(self, message_text_content: "MessageDeltaTextContent") -> None:
-        text_value = message_text_content.text.value if message_text_content.text else "No text"
-        print(f"Text content received: {text_value}")
+        self.project_client = project_client
 
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
-        print(f"Text delta received.")
+        print(f"Text delta received: {delta.text}")
 
     async def on_thread_message(self, message: "ThreadMessage") -> None:
         print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
@@ -90,7 +75,7 @@ class MyEventHandler(AsyncAgentEventHandler):
 
             print(f"Tool outputs: {tool_outputs}")
             if tool_outputs:
-                async with await project_client.agents.submit_tool_outputs_to_stream(
+                async with await self.project_client.agents.submit_tool_outputs_to_stream(
                     thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs, event_handler=self
                 ) as stream:
                     await stream.until_done()
@@ -109,40 +94,44 @@ class MyEventHandler(AsyncAgentEventHandler):
 
 
 async def main() -> None:
-    async with project_client:
-
-        # [START create_agent_with_function_tool]
-        functions = AsyncFunctionTool(functions=user_async_functions)
-
-        agent = await project_client.agents.create_agent(
-            model="gpt-4-1106-preview",
-            name="my-assistant",
-            instructions="You are a helpful assistant",
-            tools=functions.definitions,
-        )
-        # [END create_agent_with_function_tool]
-        print(f"Created agent, ID: {agent.id}")
-
-        thread = await project_client.agents.create_thread()
-        print(f"Created thread, thread ID {thread.id}")
-
-        message = await project_client.agents.create_message(
-            thread_id=thread.id,
-            role="user",
-            content="Hello, send an email with the datetime and weather information in New York? Also let me know the details.",
-        )
-        print(f"Created message, message ID {message.id}")
-
-        async with await project_client.agents.create_stream(
-            thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler(functions)
-        ) as stream:
-            await stream.until_done()
-
-        await project_client.agents.delete_agent(agent.id)
-        print("Deleted agent")
-
-        messages = await project_client.agents.list_messages(thread_id=thread.id)
-        print(f"Messages: {messages}")
+    async with DefaultAzureCredential() as creds:
+        async with AIProjectClient.from_connection_string(
+            credential=creds,
+            conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+        ) as project_client:
+    
+            # [START create_agent_with_function_tool]
+            functions = AsyncFunctionTool(functions=user_async_functions)
+    
+            agent = await project_client.agents.create_agent(
+                model="gpt-4-1106-preview",
+                name="my-assistant",
+                instructions="You are a helpful assistant",
+                tools=functions.definitions,
+            )
+            # [END create_agent_with_function_tool]
+            print(f"Created agent, ID: {agent.id}")
+    
+            thread = await project_client.agents.create_thread()
+            print(f"Created thread, thread ID {thread.id}")
+    
+            message = await project_client.agents.create_message(
+                thread_id=thread.id,
+                role="user",
+                content="Hello, send an email with the datetime and weather information in New York? Also let me know the details.",
+            )
+            print(f"Created message, message ID {message.id}")
+    
+            async with await project_client.agents.create_stream(
+                thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler(functions, project_client)
+            ) as stream:
+                await stream.until_done()
+    
+            await project_client.agents.delete_agent(agent.id)
+            print("Deleted agent")
+    
+            messages = await project_client.agents.list_messages(thread_id=thread.id)
+            print(f"Messages: {messages}")
 
 
 if __name__ == "__main__":

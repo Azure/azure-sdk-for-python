@@ -4,12 +4,10 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_basics_async_with_azure_monitor_tracing.py
-
 DESCRIPTION:
     This sample demonstrates how to use basic agent operations from
     the Azure Agents service using a asynchronous client with Azure Monitor tracing.
-    View the results in the "Tracing" tab in your Azure AI Studio project page.
+    View the results in the "Tracing" tab in your Azure AI Foundry project page.
 
 USAGE:
     python sample_agents_basics_async_with_azure_monitor_tracing.py
@@ -19,7 +17,7 @@ USAGE:
     pip install azure-ai-projects azure-identity opentelemetry-sdk azure-monitor-opentelemetry aiohttp
 
     Set these environment variables with your own values:
-    * PROJECT_CONNECTION_STRING - The Azure AI Project connection string, as found in your AI Studio Project.
+    * PROJECT_CONNECTION_STRING - The Azure AI Project connection string, as found in your AI Foundry project.
     * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
       messages, which may contain personal data. False by default.
 """
@@ -39,20 +37,16 @@ tracer = trace.get_tracer(__name__)
 @tracer.start_as_current_span(__file__)
 async def main() -> None:
 
-    # Create an Azure AI Project Client from a connection string, copied from your AI Studio project.
-    # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-    # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
-
     async with DefaultAzureCredential() as creds:
         project_client = AIProjectClient.from_connection_string(
-            credential=creds, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
-        )
+            credential=creds, conn_str=os.environ["PROJECT_CONNECTION_STRING"])
 
-        # Enable Azure Monitor tracing
+        Enable Azure Monitor tracing
         application_insights_connection_string = await project_client.telemetry.get_connection_string()
+        configure_azure_monitor(connection_string=application_insights_connection_string)
         if not application_insights_connection_string:
             print("Application Insights was not enabled for this project.")
-            print("Enable it via the 'Tracing' tab in your AI Studio project page.")
+            print("Enable it via the 'Tracing' tab in your AI Foundry project page.")
             exit()
         configure_azure_monitor(connection_string=application_insights_connection_string)
 

@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_code_interpreter_async.py
-
 DESCRIPTION:
     This sample demonstrates how to use code interpreter tool with agent from
     the Azure Agents service using a asynchronous client.
@@ -18,7 +16,7 @@ USAGE:
     pip install azure-ai-projects azure-identity aiohttp
 
     Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
 """
 import asyncio
 
@@ -33,9 +31,6 @@ import os
 
 async def main() -> None:
 
-    # Create an Azure AI Client from a connection string, copied from your AI Studio project.
-    # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-    # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
     async with DefaultAzureCredential() as creds:
 
         async with AIProjectClient.from_connection_string(
@@ -75,7 +70,7 @@ async def main() -> None:
                 # Check if you got "Rate limit is exceeded.", then you want to get more quota
                 print(f"Run failed: {run.last_error}")
 
-            messages = await project_client.agents.get_messages(thread_id=thread.id)
+            messages = await project_client.agents.list_messages(thread_id=thread.id)
             print(f"Messages: {messages}")
 
             last_msg = messages.get_last_text_message_by_sender("assistant")

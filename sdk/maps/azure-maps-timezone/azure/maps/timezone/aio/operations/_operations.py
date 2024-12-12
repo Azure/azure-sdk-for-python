@@ -66,8 +66,8 @@ class TimezoneOperations:
         accept_language: Optional[str] = None,
         options: Optional[str] = None,
         time_stamp: Optional[datetime.datetime] = None,
-        daylight_savings_time_from: Optional[datetime.datetime] = None,
-        daylight_savings_time_lasting_years: Optional[int] = None,
+        dst_from: Optional[datetime.datetime] = None,
+        dst_lasting_years: Optional[int] = None,
         **kwargs: Any
     ) -> JSON:
         """Use to get the current, historical, and future time zone information for the specified IANA
@@ -93,14 +93,14 @@ class TimezoneOperations:
         :keyword time_stamp: Alternatively, use alias "stamp", or "s". Reference time, if omitted, the
          API will use the machine time serving the request. Default value is None.
         :paramtype time_stamp: ~datetime.datetime
-        :keyword daylight_savings_time_from: Alternatively, use alias "tf". The start date from which
+        :keyword dst_from: Alternatively, use alias "tf". The start date from which
          daylight savings time (DST) transitions are requested, only applies when "options" = all or
          "options" = transitions. Default value is None.
-        :paramtype daylight_savings_time_from: ~datetime.datetime
-        :keyword daylight_savings_time_lasting_years: Alternatively, use alias "ty". The number of
+        :paramtype dst_from: ~datetime.datetime
+        :keyword dst_lasting_years: Alternatively, use alias "ty". The number of
          years from "transitionsFrom" for which DST transitions are requested, only applies when
          "options" = all or "options" = transitions. Default value is None.
-        :paramtype daylight_savings_time_lasting_years: int
+        :paramtype dst_lasting_years: int
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -157,12 +157,14 @@ class TimezoneOperations:
                     "Version": "str"
                 }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map: MutableMapping[int, Type[HttpResponseError]] = (  # pylint: disable=unsubscriptable-object
+            {  # pylint: disable=unsubscriptable-object
+                401: ClientAuthenticationError,
+                404: ResourceNotFoundError,
+                409: ResourceExistsError,
+                304: ResourceNotModifiedError,
+            }
+        )
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -176,8 +178,8 @@ class TimezoneOperations:
             accept_language=accept_language,
             options=options,
             time_stamp=time_stamp,
-            daylight_savings_time_from=daylight_savings_time_from,
-            daylight_savings_time_lasting_years=daylight_savings_time_lasting_years,
+            dst_from=dst_from,
+            dst_lasting_years=dst_lasting_years,
             client_id=self._config.client_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -215,8 +217,8 @@ class TimezoneOperations:
         accept_language: Optional[str] = None,
         options: Optional[str] = None,
         time_stamp: Optional[datetime.datetime] = None,
-        daylight_savings_time_from: Optional[datetime.datetime] = None,
-        daylight_savings_time_lasting_years: Optional[int] = None,
+        dst_from: Optional[datetime.datetime] = None,
+        dst_lasting_years: Optional[int] = None,
         **kwargs: Any
     ) -> JSON:
         """Use to get the current, historical, and future time zone information for the specified
@@ -246,14 +248,14 @@ class TimezoneOperations:
         :keyword time_stamp: Alternatively, use alias "stamp", or "s". Reference time, if omitted, the
          API will use the machine time serving the request. Default value is None.
         :paramtype time_stamp: ~datetime.datetime
-        :keyword daylight_savings_time_from: Alternatively, use alias "tf". The start date from which
+        :keyword dst_from: Alternatively, use alias "tf". The start date from which
          daylight savings time (DST) transitions are requested, only applies when "options" = all or
          "options" = transitions. Default value is None.
-        :paramtype daylight_savings_time_from: ~datetime.datetime
-        :keyword daylight_savings_time_lasting_years: Alternatively, use alias "ty". The number of
+        :paramtype dst_from: ~datetime.datetime
+        :keyword dst_lasting_years: Alternatively, use alias "ty". The number of
          years from "transitionsFrom" for which DST transitions are requested, only applies when
          "options" = all or "options" = transitions. Default value is None.
-        :paramtype daylight_savings_time_lasting_years: int
+        :paramtype dst_lasting_years: int
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -310,12 +312,14 @@ class TimezoneOperations:
                     "Version": "str"
                 }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map: MutableMapping[int, Type[HttpResponseError]] = (  # pylint: disable=unsubscriptable-object
+            {  # pylint: disable=unsubscriptable-object
+                401: ClientAuthenticationError,
+                404: ResourceNotFoundError,
+                409: ResourceExistsError,
+                304: ResourceNotModifiedError,
+            }
+        )
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -329,8 +333,8 @@ class TimezoneOperations:
             accept_language=accept_language,
             options=options,
             time_stamp=time_stamp,
-            daylight_savings_time_from=daylight_savings_time_from,
-            daylight_savings_time_lasting_years=daylight_savings_time_lasting_years,
+            dst_from=dst_from,
+            dst_lasting_years=dst_lasting_years,
             client_id=self._config.client_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -387,12 +391,14 @@ class TimezoneOperations:
                     }
                 ]
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map: MutableMapping[int, Type[HttpResponseError]] = (  # pylint: disable=unsubscriptable-object
+            {  # pylint: disable=unsubscriptable-object
+                401: ClientAuthenticationError,
+                404: ResourceNotFoundError,
+                409: ResourceExistsError,
+                304: ResourceNotModifiedError,
+            }
+        )
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -458,12 +464,14 @@ class TimezoneOperations:
                     }
                 ]
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map: MutableMapping[int, Type[HttpResponseError]] = (  # pylint: disable=unsubscriptable-object
+            {  # pylint: disable=unsubscriptable-object
+                401: ClientAuthenticationError,
+                404: ResourceNotFoundError,
+                409: ResourceExistsError,
+                304: ResourceNotModifiedError,
+            }
+        )
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -523,12 +531,14 @@ class TimezoneOperations:
                     "Version": "str"
                 }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map: MutableMapping[int, Type[HttpResponseError]] = (  # pylint: disable=unsubscriptable-object
+            {  # pylint: disable=unsubscriptable-object
+                401: ClientAuthenticationError,
+                404: ResourceNotFoundError,
+                409: ResourceExistsError,
+                304: ResourceNotModifiedError,
+            }
+        )
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -606,12 +616,14 @@ class TimezoneOperations:
                     }
                 ]
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map: MutableMapping[int, Type[HttpResponseError]] = (  # pylint: disable=unsubscriptable-object
+            {  # pylint: disable=unsubscriptable-object
+                401: ClientAuthenticationError,
+                404: ResourceNotFoundError,
+                409: ResourceExistsError,
+                304: ResourceNotModifiedError,
+            }
+        )
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}

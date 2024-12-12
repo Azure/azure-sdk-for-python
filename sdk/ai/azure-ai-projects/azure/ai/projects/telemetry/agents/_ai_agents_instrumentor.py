@@ -16,7 +16,7 @@ from urllib.parse import urlparse
 from azure.ai.projects import _types
 from azure.ai.projects.models import AgentRunStream, AsyncAgentRunStream, _models
 from azure.ai.projects.models._enums import AgentsApiResponseFormatMode, MessageRole, RunStepStatus
-from azure.ai.projects.models._models import (
+from azure.ai.projects.models import (
     MessageAttachment,
     MessageDeltaChunk,
     MessageIncompleteDetails,

@@ -94,7 +94,7 @@ _UNAVAIL = {errno.EAGAIN, errno.EINTR, errno.ENOENT, errno.EWOULDBLOCK}
 AMQP_PORT = 5672
 AMQPS_PORT = 5671
 AMQP_FRAME = memoryview(b"AMQP")
-EMPTY_BUFFER = bytes()
+EMPTY_BUFFER = b""
 SIGNED_INT_MAX = 0x7FFFFFFF
 
 # Match things like: [fe80::1]:5432, from RFC 2732
