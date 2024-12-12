@@ -157,7 +157,7 @@ class Simulator:
                 f"You have specified 'num_queries' < len('tasks') ({num_queries} < {len(tasks)}). "
                 f"Only the first {num_queries} lines of the specified tasks will be simulated."
             )
-            
+
         max_conversation_turns *= 2  # account for both user and assistant turns
 
         prompty_model_config = self.model_config
