@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 # cSpell:disable
-from typing import Any, Dict, List
+from typing import Any
 
 import logging
 import json
@@ -41,25 +41,19 @@ from azure.monitor.opentelemetry.exporter._quickpulse._exporter import (
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._filter import (
     _check_metric_filters,
-    _rename_exception_fields_for_filtering,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
-    DerivedMetricInfo,
     MonitoringDataPoint,
     TelemetryType,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._projection import (
     _create_projections,
-    _init_derived_metric_projection,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._state import (
     _QuickpulseState,
-    _clear_quickpulse_projection_map,
     _is_post_state,
     _append_quickpulse_document,
     _get_quickpulse_derived_metric_infos,
-    _set_quickpulse_derived_metric_infos,
-    _set_quickpulse_etag,
     _set_global_quickpulse_state,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._types import (
@@ -256,62 +250,5 @@ def _derive_metrics_from_telemetry_data(data: _TelemetryData):
         # Since this data matches the filter, create projections used to
         # generate filtered metrics
         _create_projections(metric_infos, data)
-
-
-# Apply filter configuration based off response
-# Called on post response from exporter
-def _update_filter_configuration(etag: str, config_bytes: bytes):
-    # Clear projection map
-    _clear_quickpulse_projection_map()
-    # config is a byte string that when decoded is a json
-    config = json.loads(config_bytes.decode("utf-8"))
-    # Process metric filter configuration
-    _parse_metric_filter_configuration(config)
-    # # Process document filter configuration
-    # _parse_document_filter_configuration(config)
-    # Update new etag
-    _set_quickpulse_etag(etag)
-
-
-def _parse_metric_filter_configuration(config: Dict[str, Any]) -> None:
-    seen_ids = set()
-    # Process metric filter configuration
-    metric_infos: Dict[TelemetryType, List[DerivedMetricInfo]] = {}
-    for metric_info_dict in config.get("Metrics", []):
-        metric_info = DerivedMetricInfo.from_dict(metric_info_dict)
-        # Skip duplicate ids
-        if metric_info.id in seen_ids:
-            continue
-        if not _validate_derived_metric_info(metric_info):
-            continue
-        # Rename exception fields by parsing out "Exception." portion
-        for filter_group in metric_info.filter_groups:
-            _rename_exception_fields_for_filtering(filter_group)
-        telemetry_type: TelemetryType = TelemetryType(metric_info.telemetry_type)
-        metric_info_list = metric_infos.get(telemetry_type, [])
-        metric_info_list.append(metric_info)
-        metric_infos[telemetry_type] = metric_info_list
-        seen_ids.add(metric_info.id)
-        # Initialize projections from this derived metric info
-        _init_derived_metric_projection(metric_info)
-    _set_quickpulse_derived_metric_infos(metric_infos)
-
-
-# def _parse_document_filter_configuration(config: Dict[str, Any]) -> None:
-#     # Process document filter configuration
-#     doc_infos: Dict[TelemetryType, Dict[str, List[FilterConjunctionGroupInfo]]] = {}
-#     for doc_stream_dict in config.get("document_streams", []):
-#         doc_stream = DocumentStreamInfo.from_dict(doc_stream_dict)
-#         for doc_filter_group in doc_stream.document_filter_groups:
-#             if not _validate_document_filter_group_info(doc_filter_group):
-#                 continue
-#             # TODO: Rename exception fields
-#             telemetry_type: TelemetryType = TelemetryType(doc_filter_group.telemetry_type)
-#             if telemetry_type not in doc_infos:
-#                 doc_infos[telemetry_type] = {}
-#             if doc_stream.id not in doc_infos[telemetry_type]:
-#                 doc_infos[telemetry_type][doc_stream.id] = []
-#             doc_infos[telemetry_type][doc_stream.id].append(doc_filter_group.filters)
-
 
 # cSpell:enable

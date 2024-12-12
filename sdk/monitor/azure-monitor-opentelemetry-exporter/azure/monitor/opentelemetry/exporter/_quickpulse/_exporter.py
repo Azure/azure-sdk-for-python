@@ -34,7 +34,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
 from azure.monitor.opentelemetry.exporter._quickpulse._generated._configuration import QuickpulseClientConfiguration
 from azure.monitor.opentelemetry.exporter._quickpulse._generated._client import QuickpulseClient
 from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import MonitoringDataPoint
-from azure.monitor.opentelemetry.exporter._quickpulse._live_metrics import _update_filter_configuration
+from azure.monitor.opentelemetry.exporter._quickpulse._filter import _update_filter_configuration
 from azure.monitor.opentelemetry.exporter._quickpulse._policy import _QuickpulseRedirectPolicy
 from azure.monitor.opentelemetry.exporter._quickpulse._state import (
     _get_and_clear_quickpulse_documents,

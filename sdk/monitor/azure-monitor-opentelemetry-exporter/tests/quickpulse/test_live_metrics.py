@@ -3,7 +3,6 @@
 
 # cSpell:disable
 
-import json
 import platform
 import unittest
 from unittest import mock
@@ -48,8 +47,6 @@ from azure.monitor.opentelemetry.exporter._quickpulse._live_metrics import (
     enable_live_metrics,
     _QuickpulseManager,
     _derive_metrics_from_telemetry_data,
-    _parse_metric_filter_configuration,
-    _update_filter_configuration,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._state import (
     _get_global_quickpulse_state,
@@ -112,7 +109,7 @@ class TestQuickpulseManager(unittest.TestCase):
             "4321abcd-5678-4efa-8abc-1234567890ac",
         )
         self.assertEqual(qpm._base_monitoring_data_point.version, _get_sdk_version())
-        self.assertEqual(qpm._base_monitoring_data_point.invariant_version, 2)
+        self.assertEqual(qpm._base_monitoring_data_point.invariant_version, 5)
         self.assertEqual(
             qpm._base_monitoring_data_point.instance, part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE, "")
         )
@@ -406,66 +403,5 @@ class TestQuickpulseManager(unittest.TestCase):
         get_derived_mock.assert_called_once()
         filter_mock.assert_called_once_with(metric_infos, data)
         projection_mock.assert_not_called()
-
-    @mock.patch('azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._clear_quickpulse_projection_map')
-    @mock.patch('azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._parse_metric_filter_configuration')
-    @mock.patch('azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._set_quickpulse_etag')
-    def test_update_filter_configuration(self, mock_set_etag, mock_parse_metric, mock_clear_projection):
-        etag = "new_etag"
-        config = {"key": "value"}
-        config_bytes = json.dumps(config).encode("utf-8")
-        
-        _update_filter_configuration(etag, config_bytes)
-        
-        mock_clear_projection.assert_called_once()
-        mock_parse_metric.assert_called_once_with(config)
-        mock_set_etag.assert_called_once_with(etag)
-
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._set_quickpulse_derived_metric_infos")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._init_derived_metric_projection")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._rename_exception_fields_for_filtering")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._validate_derived_metric_info")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.DerivedMetricInfo")
-    def test_parse_metric_filter_configuration(
-        self, dict_mock, validate_mock, rename_mock,  init_projection_mock, set_metric_info_mock
-    ):
-        test_config_bytes = '{"Metrics":[{"Id":"94.e4b85108","TelemetryType":"Request","FilterGroups":[{"Filters":[]}],"Projection":"Count()","Aggregation":"Sum","BackEndAggregation":"Sum"}]}'.encode()
-        test_config_dict = json.loads(test_config_bytes.decode())
-        metric_info_mock = mock.Mock()
-        filter_group_mock = mock.Mock()
-        metric_info_mock.filter_groups = [filter_group_mock]
-        metric_info_mock.telemetry_type = TelemetryType.REQUEST
-        dict_mock.from_dict.return_value = metric_info_mock
-        validate_mock.return_value = True
-        _parse_metric_filter_configuration(test_config_dict)
-        dict_mock.from_dict.assert_called_once_with(test_config_dict.get("Metrics")[0])
-        validate_mock.assert_called_once_with(metric_info_mock)
-        rename_mock.assert_called_once_with(filter_group_mock)
-        init_projection_mock.assert_called_once_with(metric_info_mock)
-        metric_infos = {}
-        metric_infos[TelemetryType.REQUEST] = [metric_info_mock]
-        set_metric_info_mock.assert_called_once_with(metric_infos)
-
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._set_quickpulse_derived_metric_infos")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._init_derived_metric_projection")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._rename_exception_fields_for_filtering")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._validate_derived_metric_info")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.DerivedMetricInfo")
-    def test_parse_metric_filter_configuration_invalid(
-        self, dict_mock, validate_mock, rename_mock,  init_projection_mock, set_metric_info_mock
-    ):
-        test_config_bytes = '{"Metrics":[{"Id":"94.e4b85108","TelemetryType":"Request","FilterGroups":[{"Filters":[]}],"Projection":"Count()","Aggregation":"Sum","BackEndAggregation":"Sum"}]}'.encode()
-        test_config_dict = json.loads(test_config_bytes.decode())
-        metric_info_mock = mock.Mock()
-        metric_info_mock.telemetry_type = TelemetryType.REQUEST
-        dict_mock.from_dict.return_value = metric_info_mock
-        validate_mock.return_value = False
-        _parse_metric_filter_configuration(test_config_dict)
-        dict_mock.from_dict.assert_called_once_with(test_config_dict.get("Metrics")[0])
-        validate_mock.assert_called_once_with(metric_info_mock)
-        rename_mock.assert_not_called()
-        init_projection_mock.assert_not_called()
-        metric_infos = {}
-        set_metric_info_mock.assert_called_once_with(metric_infos)
 
 # cSpell:enable
