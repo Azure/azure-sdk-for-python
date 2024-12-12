@@ -304,11 +304,12 @@ class MessageStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """
-    Authentication type for OpenApi endpoint. Allowed types are:
-    - Anonymous (no authentication required)
-    - Connection (requires connection_id to endpoint, as setup in AI Foundry)
-    - Managed_Identity (requires audience for identity based auth)
+    """Authentication type for OpenApi endpoint. Allowed types are:
+
+
+    * Anonymous (no authentication required)
+    * Connection (requires connection_id to endpoint, as setup in AI Foundry)
+    * Managed_Identity (requires audience for identity based auth).
     """
 
     ANONYMOUS = "anonymous"
