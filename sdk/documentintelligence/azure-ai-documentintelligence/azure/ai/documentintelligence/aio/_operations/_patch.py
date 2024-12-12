@@ -365,7 +365,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
     async def begin_analyze_document(
         self,
         model_id: str,
-        body: Optional[_models.AnalyzeDocumentRequest] = None,
+        body: _models.AnalyzeDocumentRequest,
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
@@ -381,7 +381,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :param body: Analyze request parameters. Default value is None.
+        :param body: Analyze request parameters. Required.
         :type body: ~azure.ai.documentintelligence.models.AnalyzeDocumentRequest
         :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
@@ -417,7 +417,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
     async def begin_analyze_document(
         self,
         model_id: str,
-        body: Optional[JSON] = None,
+        body: JSON,
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
@@ -433,7 +433,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :param body: Analyze request parameters. Default value is None.
+        :param body: Analyze request parameters. Required.
         :type body: JSON
         :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
@@ -469,7 +469,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
     async def begin_analyze_document(
         self,
         model_id: str,
-        body: Optional[IO[bytes]] = None,
+        body: IO[bytes],
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
@@ -485,7 +485,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :param body: Analyze request parameters. Default value is None.
+        :param body: Analyze request parameters. Required.
         :type body: IO[bytes]
         :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
@@ -521,7 +521,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
     async def begin_analyze_document(  # type: ignore[override]
         self,
         model_id: str,
-        body: Optional[Union[_models.AnalyzeDocumentRequest, JSON, IO[bytes]]] = None,
+        body: Union[_models.AnalyzeDocumentRequest, JSON, IO[bytes]],
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
@@ -537,7 +537,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         :param model_id: Unique document model name. Required.
         :type model_id: str
         :param body: Analyze request parameters. Is one of the following types:
-         AnalyzeDocumentRequest, JSON, IO[bytes] Default value is None.
+         AnalyzeDocumentRequest, JSON, IO[bytes]. Required.
         :type body: ~azure.ai.documentintelligence.models.AnalyzeDocumentRequest or JSON or
          IO[bytes]
         :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
