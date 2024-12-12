@@ -73,7 +73,7 @@ def main(generate_input, generate_output):
                 if "_python.json" in file and package_name in file:
                     package["apiViewArtifact"] = str(Path(package_path, file))
         except Exception as e:
-            _LOGGER.info(f"Fail to generate ApiView token file for {package_name}: {e}")
+            _LOGGER.debug(f"Fail to generate ApiView token file for {package_name}: {e}")
         # Installation package
         package["installInstructions"] = {
             "full": "You can install the use using pip install of the artifacts.",
@@ -89,6 +89,7 @@ def main(generate_input, generate_output):
     with open(generate_output, "w") as writer:
         json.dump(result, writer)
 
+    _LOGGER.info(f"Succeed to build package for {[p['packageName'] for p in result['packages']]}")
 
 def generate_main():
     """Main method"""
