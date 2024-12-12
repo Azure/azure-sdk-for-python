@@ -250,7 +250,7 @@ Here is an example of how to create an Agent:
 
 ```python
 agent = project_client.agents.create_agent(
-    model="gpt-4-1106-preview",
+    model="gpt-4o",
     name="my-assistant",
     instructions="You are helpful assistant",
 )
@@ -402,16 +402,16 @@ for conn in conn_list:
 print(conn_id)
 
 # Initialize agent AI search tool and add the search index connection id
-ai_search = AzureAISearchTool()
-ai_search.add_index(conn_id, "sample_index")
+ai_search = AzureAISearchTool(index_connection_id=conn_id, index_name="myindexname")
 
 # Create agent with AI search tool and process assistant run
 with project_client:
     agent = project_client.agents.create_agent(
-        model="gpt-4-1106-preview",
+        model="gpt-4o-mini",
         name="my-assistant",
         instructions="You are a helpful assistant",
         tools=ai_search.definitions,
+        tool_resources=ai_search.resources,
         headers={"x-ms-enable-preview": "true"},
     )
 ```
@@ -613,7 +613,8 @@ Here is an example:
 with project_client.agents.create_stream(
     thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
 ) as stream:
-    stream.until_done()
+    for _, _, custom_data in stream:
+        print(custom_data)
 ```
 
 <!-- END SNIPPET -->
@@ -623,30 +624,28 @@ The event handler is optional.  If you don't provide one, the SDK will use the d
 <!-- SNIPPET:sample_agents_stream_eventhandler.stream_event_handler -->
 
 ```python
-class MyEventHandler(AgentEventHandler):
+class MyEventHandler(AgentEventHandler[str]):
+
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
-        for content_part in delta.delta.content:
-            if isinstance(content_part, MessageDeltaTextContent):
-                text_value = content_part.text.value if content_part.text else "No text"
-                print(f"Text delta received: {text_value}")
+        self.custom_data = f"Text delta received: {delta.text}"
 
     def on_thread_message(self, message: "ThreadMessage") -> None:
-        print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
+        self.custom_data = f"ThreadMessage created. ID: {message.id}, Status: {message.status}"
 
     def on_thread_run(self, run: "ThreadRun") -> None:
-        print(f"ThreadRun status: {run.status}")
+        self.custom_data = f"ThreadRun status: {run.status}"
 
     def on_run_step(self, step: "RunStep") -> None:
-        print(f"RunStep type: {step.type}, Status: {step.status}")
+        self.custom_data = f"RunStep type: {step.type}, Status: {step.status}"
 
     def on_error(self, data: str) -> None:
-        print(f"An error occurred. Data: {data}")
+        self.custom_data = f"An error occurred. Data: {data}"
 
     def on_done(self) -> None:
-        print("Stream completed.")
+        self.custom_data = "Stream completed."
 
     def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
-        print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
+        self.custom_data = f"Unhandled Event Type: {event_type}, Data: {event_data}"
 ```
 
 <!-- END SNIPPET -->
@@ -658,13 +657,10 @@ Within `AgentEventHandler` or `AsyncAgentEventHandler`, the stream content from 
 ```python
 with project_client.agents.create_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
 
-    for event_type, event_data in stream:
+    for event_type, event_data, _ in stream:
 
         if isinstance(event_data, MessageDeltaChunk):
-            for content_part in event_data.delta.content:
-                if isinstance(content_part, MessageDeltaTextContent):
-                    text_value = content_part.text.value if content_part.text else "No text"
-                    print(f"Text delta received: {text_value}")
+            print(f"Text delta received: {event_data.text}")
 
         elif isinstance(event_data, ThreadMessage):
             print(f"ThreadMessage created. ID: {event_data.id}, Status: {event_data.status}")
@@ -708,8 +704,7 @@ for data_point in reversed(messages.data):
 
 <!-- END SNIPPET -->
 
-Depending on the use case, if you expect the Agents to return only text messages, `list_messages` should be sufficient.
-If you are using tools, consider using the `get_messages` function instead. This function classifies the message content and returns properties such as `text_messages`, `image_contents`, `file_citation_annotations`, and `file_path_annotations`.
+In addition, `messages` and `messages.data[]` offer helper properties such as `text_messages`, `image_contents`, `file_citation_annotations`, and `file_path_annotations` to quickly retrieve content from one message or all messages.
 
 ### Retrieve File
 
@@ -720,7 +715,7 @@ Here is an example retrieving file ids from messages and save to the local drive
 <!-- SNIPPET:sample_agents_code_interpreter.get_messages_and_save_files -->
 
 ```python
-messages = project_client.agents.get_messages(thread_id=thread.id)
+messages = project_client.agents.list_messages(thread_id=thread.id)
 print(f"Messages: {messages}")
 
 for image_content in messages.image_contents:
