@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_azure_ai_search.py
-
 DESCRIPTION:
     This sample demonstrates how to use agent operations with the 
     Azure AI Search tool from the Azure Agents service using a synchronous client.
@@ -20,7 +18,7 @@ USAGE:
     pip install azure-ai-projects azure-identity
 
     Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
 """
 
 import os
@@ -28,16 +26,12 @@ from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import AzureAISearchTool
 
-
-# Create an Azure AI Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
-
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
+# [START create_agent_with_azure_ai_search_tool]
 conn_list = project_client.connections.list()
 conn_id = ""
 for conn in conn_list:
@@ -60,6 +54,7 @@ with project_client:
         tool_resources=ai_search.resources,
         headers={"x-ms-enable-preview": "true"},
     )
+    # [END create_agent_with_azure_ai_search_tool]
     print(f"Created agent, ID: {agent.id}")
 
     # Create thread for communication

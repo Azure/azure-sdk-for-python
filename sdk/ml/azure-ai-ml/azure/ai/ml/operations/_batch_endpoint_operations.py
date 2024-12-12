@@ -98,7 +98,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         **kwargs: Any,
     ):
         super(BatchEndpointOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self._batch_operation = service_client_10_2023.batch_endpoints
         self._batch_deployment_operation = service_client_10_2023.batch_deployments
         self._batch_job_endpoint = kwargs.pop("service_client_09_2020_dataplanepreview").batch_job_endpoint

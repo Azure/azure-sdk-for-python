@@ -3,8 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """
-FILE: sample_agents_vector_store_batch_enterprise_file_search.py
-
 DESCRIPTION:
     This sample demonstrates how to create the vector store with the list of files.
 
@@ -16,7 +14,7 @@ USAGE:
     pip install azure-ai-projects azure-identity azure-ai-ml
 
     Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
 """
 
 import os
@@ -24,14 +22,8 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import FileSearchTool, VectorStoreDataSource, VectorStoreDataSourceAssetType
 from azure.identity import DefaultAzureCredential
 
-
-# Create an Azure AI Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
-
-credential = DefaultAzureCredential()
 project_client = AIProjectClient.from_connection_string(
-    credential=credential, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+    credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
 )
 
 with project_client:

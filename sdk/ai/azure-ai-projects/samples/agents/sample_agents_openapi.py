@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_openapi.py
-
 DESCRIPTION:
     This sample demonstrates how to use agent operations with the 
     OpenAPI tool from the Azure Agents service using a synchronous client.
@@ -19,7 +17,7 @@ USAGE:
     pip install azure-ai-projects azure-identity jsonref
 
     Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
 """
 
 import os
@@ -27,11 +25,6 @@ import jsonref
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import OpenApiTool, OpenApiAnonymousAuthDetails
-
-
-# Create an Azure AI Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),

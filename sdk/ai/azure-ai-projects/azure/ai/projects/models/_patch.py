@@ -57,7 +57,6 @@ from ._models import (
     MessageTextFileCitationAnnotation,
     MessageTextFilePathAnnotation,
     MicrosoftFabricToolDefinition,
-    OpenAIPageableListOfThreadMessage,
     OpenApiAuthDetails,
     OpenApiToolDefinition,
     OpenApiFunctionDefinition,
@@ -76,7 +75,7 @@ from ._models import (
 
 from ._models import MessageDeltaChunk as MessageDeltaChunkGenerated
 from ._models import ThreadMessage as ThreadMessageGenerated
-
+from ._models import OpenAIPageableListOfThreadMessage as OpenAIPageableListOfThreadMessageGenerated
 
 logger = logging.getLogger(__name__)
 
@@ -107,7 +106,9 @@ def _filter_parameters(model_class: Type, parameters: Dict[str, Any]) -> Dict[st
     return new_params
 
 
-def _safe_instantiate(model_class: Type, parameters: Union[str, Dict[str, Any]]) -> StreamEventData:
+def _safe_instantiate(
+    model_class: Type, parameters: Union[str, Dict[str, Any]], *, generated_class: Optional[Type] = None
+) -> StreamEventData:
     """
     Instantiate class with the set of parameters from the server.
 
@@ -117,9 +118,11 @@ def _safe_instantiate(model_class: Type, parameters: Union[str, Dict[str, Any]])
     :return: The class of model_class type if parameters is a dictionary, or the parameters themselves otherwise.
     :rtype: Any
     """
+    if not generated_class:
+        generated_class = model_class
     if not isinstance(parameters, dict):
         return parameters
-    return cast(StreamEventData, model_class(**_filter_parameters(model_class, parameters)))
+    return cast(StreamEventData, model_class(**_filter_parameters(generated_class, parameters)))
 
 
 def _parse_event(event_data_str: str) -> Tuple[str, StreamEventData]:
@@ -173,13 +176,9 @@ def _parse_event(event_data_str: str) -> Tuple[str, StreamEventData]:
         AgentStreamEvent.THREAD_MESSAGE_COMPLETED.value,
         AgentStreamEvent.THREAD_MESSAGE_INCOMPLETE.value,
     }:
-        thread_message = cast(ThreadMessageGenerated, _safe_instantiate(ThreadMessageGenerated, parsed_data))
-        event_obj = ThreadMessage(thread_message)
+        event_obj = _safe_instantiate(ThreadMessage, parsed_data, generated_class=ThreadMessageGenerated)
     elif event_type == AgentStreamEvent.THREAD_MESSAGE_DELTA.value:
-        message_delta_chunk = cast(
-            MessageDeltaChunkGenerated, _safe_instantiate(MessageDeltaChunkGenerated, parsed_data)
-        )
-        event_obj = MessageDeltaChunk(message_delta_chunk)
+        event_obj = _safe_instantiate(MessageDeltaChunk, parsed_data, generated_class=MessageDeltaChunkGenerated)
 
     elif event_type == AgentStreamEvent.THREAD_RUN_STEP_DELTA.value:
         event_obj = _safe_instantiate(RunStepDeltaChunk, parsed_data)
@@ -409,10 +408,6 @@ def is_optional(annotation) -> bool:
 
 
 class MessageDeltaChunk(MessageDeltaChunkGenerated):
-    def __init__(self, generated: MessageDeltaChunkGenerated):  # pylint: disable=super-init-not-called
-        for prop, value in vars(generated).items():
-            setattr(self, prop, value)
-
     @property
     def text(self) -> str:
         """Get the text content of the delta chunk.
@@ -429,11 +424,6 @@ class MessageDeltaChunk(MessageDeltaChunkGenerated):
 
 
 class ThreadMessage(ThreadMessageGenerated):
-
-    def __init__(self, generated: ThreadMessageGenerated):  # pylint: disable=super-init-not-called
-        for prop, value in vars(generated).items():
-            setattr(self, prop, value)
-
     @property
     def text_messages(self) -> List[MessageTextContent]:
         """Returns all text message contents in the messages.
@@ -1468,28 +1458,7 @@ class AgentRunStream(Generic[BaseAgentEventHandlerT]):
             close_method()
 
 
-class ThreadMessages:
-    """
-    Represents a collection of messages in a thread.
-
-    :param pageable_list: The pageable list of messages.
-    :type pageable_list: ~azure.ai.projects.models.OpenAIPageableListOfThreadMessage
-
-    :return: A collection of messages.
-    :rtype: ~azure.ai.projects.models.ThreadMessages
-    """
-
-    def __init__(self, pageable_list: OpenAIPageableListOfThreadMessage):
-        self._messages = [ThreadMessage(item) for item in pageable_list.data]
-
-    @property
-    def messages(self) -> List[ThreadMessage]:
-        """Returns all messages in the messages.
-
-
-        :rtype: List[ThreadMessage]
-        """
-        return self._messages
+class OpenAIPageableListOfThreadMessage(OpenAIPageableListOfThreadMessageGenerated):
 
     @property
     def text_messages(self) -> List[MessageTextContent]:
@@ -1497,7 +1466,7 @@ class ThreadMessages:
 
         :rtype: List[MessageTextContent]
         """
-        texts = [content for msg in self._messages for content in msg.text_messages]
+        texts = [content for msg in self.data for content in msg.text_messages]
         return texts
 
     @property
@@ -1506,7 +1475,7 @@ class ThreadMessages:
 
         :rtype: List[MessageImageFileContent]
         """
-        return [content for msg in self._messages for content in msg.image_contents]
+        return [content for msg in self.data for content in msg.image_contents]
 
     @property
     def file_citation_annotations(self) -> List[MessageTextFileCitationAnnotation]:
@@ -1514,7 +1483,7 @@ class ThreadMessages:
 
         :rtype: List[MessageTextFileCitationAnnotation]
         """
-        annotations = [annotation for msg in self._messages for annotation in msg.file_citation_annotations]
+        annotations = [annotation for msg in self.data for annotation in msg.file_citation_annotations]
         return annotations
 
     @property
@@ -1523,7 +1492,7 @@ class ThreadMessages:
 
         :rtype: List[MessageTextFilePathAnnotation]
         """
-        annotations = [annotation for msg in self._messages for annotation in msg.file_path_annotations]
+        annotations = [annotation for msg in self.data for annotation in msg.file_path_annotations]
         return annotations
 
     def get_last_message_by_sender(self, sender: str) -> Optional[ThreadMessage]:
@@ -1535,7 +1504,7 @@ class ThreadMessages:
         :return: The last message from the specified sender.
         :rtype: ~azure.ai.projects.models.ThreadMessage
         """
-        for msg in self._messages:
+        for msg in self.data:
             if msg.role == sender:
                 return msg
         return None
@@ -1549,7 +1518,7 @@ class ThreadMessages:
         :return: The last text message from the specified sender.
         :rtype: ~azure.ai.projects.models.MessageTextContent
         """
-        for msg in self._messages:
+        for msg in self.data:
             if msg.role == sender:
                 for content in msg.content:
                     if isinstance(content, MessageTextContent):
@@ -1568,7 +1537,7 @@ __all__: List[str] = [
     "CodeInterpreterTool",
     "ConnectionProperties",
     "AsyncAgentEventHandler",
-    "ThreadMessages",
+    "OpenAIPageableListOfThreadMessage",
     "FileSearchTool",
     "FunctionTool",
     "OpenApiTool",
