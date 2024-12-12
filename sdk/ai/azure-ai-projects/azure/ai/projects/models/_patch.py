@@ -1332,8 +1332,9 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
         """Handle message delta events.
 
         :param MessageDeltaChunk delta: The message delta.
+        :rtype: Optional[EventFunctionReturnT]
         """
-        pass
+        return None
 
     async def on_thread_message(
         self, message: "ThreadMessage"
@@ -1341,8 +1342,9 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
         """Handle thread message events.
 
         :param ThreadMessage message: The thread message.
+        :rtype: Optional[EventFunctionReturnT]
         """
-        pass
+        return None
 
     async def on_thread_run(
         self, run: "ThreadRun"
@@ -1350,15 +1352,17 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
         """Handle thread run events.
 
         :param ThreadRun run: The thread run.
+        :rtype: Optional[EventFunctionReturnT]
         """
-        pass
+        return None
 
     async def on_run_step(self, step: "RunStep") -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
         """Handle run step events.
 
         :param RunStep step: The run step.
+        :rtype: Optional[EventFunctionReturnT]
         """
-        pass
+        return None
 
     async def on_run_step_delta(
         self, delta: "RunStepDeltaChunk"
@@ -1366,19 +1370,25 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
         """Handle run step delta events.
 
         :param RunStepDeltaChunk delta: The run step delta.
+        :rtype: Optional[EventFunctionReturnT]
         """
-        pass
+        return None
 
     async def on_error(self, data: str) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
         """Handle error events.
 
         :param str data: The error event's data.
+        :rtype: Optional[EventFunctionReturnT]
         """
-        pass
+        return None
 
-    async def on_done(self) -> Optional[EventFunctionReturnT]:
-        """Handle the completion of the stream."""
-        pass
+    async def on_done(
+        self,
+    ) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
+        """Handle the completion of the stream.
+        :rtype: Optional[EventFunctionReturnT]
+        """
+        return None
 
     async def on_unhandled_event(
         self, event_type: str, event_data: str
@@ -1387,8 +1397,9 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
 
         :param str event_type: The event type.
         :param Any event_data: The event's data.
+        :rtype: Optional[EventFunctionReturnT]
         """
-        pass
+        return None
 
 
 class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Optional[EventFunctionReturnT]]]):
@@ -1434,8 +1445,9 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
         """Handle message delta events.
 
         :param MessageDeltaChunk delta: The message delta.
+        :rtype: Optional[EventFunctionReturnT]
         """
-        pass
+        return None
 
     def on_thread_message(
         self, message: "ThreadMessage"
@@ -1443,22 +1455,25 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
         """Handle thread message events.
 
         :param ThreadMessage message: The thread message.
+        :rtype: Optional[EventFunctionReturnT]
         """
-        pass
+        return None
 
     def on_thread_run(self, run: "ThreadRun") -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
         """Handle thread run events.
 
         :param ThreadRun run: The thread run.
+        :rtype: Optional[EventFunctionReturnT]
         """
-        pass
+        return None
 
     def on_run_step(self, step: "RunStep") -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
         """Handle run step events.
 
         :param RunStep step: The run step.
+        :rtype: Optional[EventFunctionReturnT]
         """
-        pass
+        return None
 
     def on_run_step_delta(
         self, delta: "RunStepDeltaChunk"
@@ -1466,19 +1481,23 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
         """Handle run step delta events.
 
         :param RunStepDeltaChunk delta: The run step delta.
+        :rtype: Optional[EventFunctionReturnT]
         """
-        pass
+        return None
 
     def on_error(self, data: str) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
         """Handle error events.
 
         :param str data: The error event's data.
+        :rtype: Optional[EventFunctionReturnT]
         """
-        pass
+        return None
 
-    def on_done(self) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
+    def on_done(
+        self,
+    ) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
         """Handle the completion of the stream."""
-        pass
+        return None
 
     def on_unhandled_event(
         self, event_type: str, event_data: str
@@ -1488,7 +1507,7 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
         :param str event_type: The event type.
         :param Any event_data: The event's data.
         """
-        pass
+        return None
 
 
 class AsyncAgentRunStream(Generic[BaseAsyncAgentEventHandlerT]):
