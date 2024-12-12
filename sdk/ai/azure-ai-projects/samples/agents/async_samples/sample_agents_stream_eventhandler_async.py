@@ -19,7 +19,7 @@ USAGE:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
 """
 import asyncio
-from typing import Any
+from typing import Any, Optional
 
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
@@ -36,26 +36,26 @@ import os
 
 class MyEventHandler(AsyncAgentEventHandler[str]):
 
-    async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
-        self.custom_data = f"Text delta received: {delta.text}"
+    async def on_message_delta(self, delta: "MessageDeltaChunk") -> Optional[str]:
+        return f"Text delta received: {delta.text}"
 
-    async def on_thread_message(self, message: "ThreadMessage") -> None:
-        self.custom_data = f"ThreadMessage created. ID: {message.id}, Status: {message.status}"
+    async def on_thread_message(self, message: "ThreadMessage") -> Optional[str]:
+        return f"ThreadMessage created. ID: {message.id}, Status: {message.status}"
 
-    async def on_thread_run(self, run: "ThreadRun") -> None:
-        self.custom_data = f"ThreadRun status: {run.status}"
+    async def on_thread_run(self, run: "ThreadRun") -> Optional[str]:
+        return f"ThreadRun status: {run.status}"
 
-    async def on_run_step(self, step: "RunStep") -> None:
-        self.custom_data = f"RunStep type: {step.type}, Status: {step.status}"
+    async def on_run_step(self, step: "RunStep") -> Optional[str]:
+        return f"RunStep type: {step.type}, Status: {step.status}"
 
-    async def on_error(self, data: str) -> None:
-        self.custom_data = f"An error occurred. Data: {data}"
+    async def on_error(self, data: str) -> Optional[str]:
+        return f"An error occurred. Data: {data}"
 
-    async def on_done(self) -> None:
-        self.custom_data = "Stream completed."
+    async def on_done(self) -> Optional[str]:
+        return "Stream completed."
 
-    async def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
-        self.custom_data = f"Unhandled Event Type: {event_type}, Data: {event_data}"
+    async def on_unhandled_event(self, event_type: str, event_data: Any) -> Optional[str]:
+        return f"Unhandled Event Type: {event_type}, Data: {event_data}"
 
 
 async def main() -> None:
@@ -77,11 +77,11 @@ async def main() -> None:
             )
             print(f"Created message, message ID {message.id}")
 
-            async with await project_client.agents.create_stream(
-                thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
-            ) as stream:
-                async for _, _, custom_data in stream:
-                    print(custom_data)
+        async with await project_client.agents.create_stream(
+            thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
+        ) as stream:
+            async for _, _, func_return in stream:
+                print(func_return)
 
             await project_client.agents.delete_agent(agent.id)
             print("Deleted agent")

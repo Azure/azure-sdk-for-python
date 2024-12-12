@@ -603,54 +603,9 @@ run = project_client.agents.create_and_process_run(thread_id=thread.id, assistan
 
 <!-- END SNIPPET -->
 
-With streaming, polling also need not be considered. If `function tools` are provided as `toolset` during the `create_agent` call, they will be invoked by the SDK.
+With streaming, polling need not be considered. If `function tools` are provided as `toolset` during the `create_agent` call, they will be invoked by the SDK.
 
-Here is an example:
-
-<!-- SNIPPET:sample_agents_stream_eventhandler.create_stream -->
-
-```python
-with project_client.agents.create_stream(
-    thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
-) as stream:
-    for _, _, custom_data in stream:
-        print(custom_data)
-```
-
-<!-- END SNIPPET -->
-
-The event handler is optional.  If you don't provide one, the SDK will use the default `AgentEventHandler` or `AsyncAgentEventHandler`. Here is an example:
-
-<!-- SNIPPET:sample_agents_stream_eventhandler.stream_event_handler -->
-
-```python
-class MyEventHandler(AgentEventHandler[str]):
-
-    def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
-        self.custom_data = f"Text delta received: {delta.text}"
-
-    def on_thread_message(self, message: "ThreadMessage") -> None:
-        self.custom_data = f"ThreadMessage created. ID: {message.id}, Status: {message.status}"
-
-    def on_thread_run(self, run: "ThreadRun") -> None:
-        self.custom_data = f"ThreadRun status: {run.status}"
-
-    def on_run_step(self, step: "RunStep") -> None:
-        self.custom_data = f"RunStep type: {step.type}, Status: {step.status}"
-
-    def on_error(self, data: str) -> None:
-        self.custom_data = f"An error occurred. Data: {data}"
-
-    def on_done(self) -> None:
-        self.custom_data = "Stream completed."
-
-    def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
-        self.custom_data = f"Unhandled Event Type: {event_type}, Data: {event_data}"
-```
-
-<!-- END SNIPPET -->
-
-Within `AgentEventHandler` or `AsyncAgentEventHandler`, the stream content from the HTTP response is parsed into event types and data that are iterable as follows:
+Here is an example of streaming:
 
 <!-- SNIPPET:sample_agents_stream_iteration.iterate_stream -->
 
@@ -683,6 +638,55 @@ with project_client.agents.create_stream(thread_id=thread.id, assistant_id=agent
 ```
 
 <!-- END SNIPPET -->
+
+In the code above, because an `event_handler` object is not passed to the `create_stream` function, the SDK will instantiate `AgentEventHandler` or `AsyncAgentEventHandler` as the default event handler and produce an iterable object with `event_type` and `event_data`.  `AgentEventHandler` and `AsyncAgentEventHandler` are overridable.  Here is an example:
+
+<!-- SNIPPET:sample_agents_stream_eventhandler.stream_event_handler -->
+
+```python
+# With AgentEventHandler[str], the return type for each event functions is optional string.
+class MyEventHandler(AgentEventHandler[str]):
+
+    def on_message_delta(self, delta: "MessageDeltaChunk") -> Optional[str]:
+        return f"Text delta received: {delta.text}"
+
+    def on_thread_message(self, message: "ThreadMessage") -> Optional[str]:
+        return f"ThreadMessage created. ID: {message.id}, Status: {message.status}"
+
+    def on_thread_run(self, run: "ThreadRun") -> Optional[str]:
+        return f"ThreadRun status: {run.status}"
+
+    def on_run_step(self, step: "RunStep") -> Optional[str]:
+        return f"RunStep type: {step.type}, Status: {step.status}"
+
+    def on_error(self, data: str) -> Optional[str]:
+        return f"An error occurred. Data: {data}"
+
+    def on_done(self) -> Optional[str]:
+        return "Stream completed."
+
+    def on_unhandled_event(self, event_type: str, event_data: Any) -> Optional[str]:
+        return f"Unhandled Event Type: {event_type}, Data: {event_data}"
+```
+
+<!-- END SNIPPET -->
+
+
+<!-- SNIPPET:sample_agents_stream_eventhandler.create_stream -->
+
+```python
+with project_client.agents.create_stream(
+    thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
+) as stream:
+    for event_type, event_data, func_return in stream:
+        print(f"Received data.")
+        print(f"Streaming receive Event Type: {event_type}")
+        print(f"Event Data: {str(event_data)[:100]}...")
+        print(f"Event Function return: {func_return}\n")
+```
+
+<!-- END SNIPPET -->
+
 As you can see, this SDK parses the events and produces various event types similar to OpenAI assistants. In your use case, you might not be interested in handling all these types and may decide to parse the events on your own. To achieve this, please refer to [override base event handler](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_stream_with_base_override_eventhandler.py).
 
 #### Retrieve Message

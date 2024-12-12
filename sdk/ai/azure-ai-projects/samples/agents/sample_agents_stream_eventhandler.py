@@ -31,7 +31,7 @@ from azure.ai.projects.models import (
     RunStep,
 )
 
-from typing import Any
+from typing import Any, Optional
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
@@ -40,28 +40,29 @@ project_client = AIProjectClient.from_connection_string(
 
 
 # [START stream_event_handler]
+# With AgentEventHandler[str], the return type for each event functions is optional string.
 class MyEventHandler(AgentEventHandler[str]):
 
-    def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
-        self.custom_data = f"Text delta received: {delta.text}"
+    def on_message_delta(self, delta: "MessageDeltaChunk") -> Optional[str]:
+        return f"Text delta received: {delta.text}"
 
-    def on_thread_message(self, message: "ThreadMessage") -> None:
-        self.custom_data = f"ThreadMessage created. ID: {message.id}, Status: {message.status}"
+    def on_thread_message(self, message: "ThreadMessage") -> Optional[str]:
+        return f"ThreadMessage created. ID: {message.id}, Status: {message.status}"
 
-    def on_thread_run(self, run: "ThreadRun") -> None:
-        self.custom_data = f"ThreadRun status: {run.status}"
+    def on_thread_run(self, run: "ThreadRun") -> Optional[str]:
+        return f"ThreadRun status: {run.status}"
 
-    def on_run_step(self, step: "RunStep") -> None:
-        self.custom_data = f"RunStep type: {step.type}, Status: {step.status}"
+    def on_run_step(self, step: "RunStep") -> Optional[str]:
+        return f"RunStep type: {step.type}, Status: {step.status}"
 
-    def on_error(self, data: str) -> None:
-        self.custom_data = f"An error occurred. Data: {data}"
+    def on_error(self, data: str) -> Optional[str]:
+        return f"An error occurred. Data: {data}"
 
-    def on_done(self) -> None:
-        self.custom_data = "Stream completed."
+    def on_done(self) -> Optional[str]:
+        return "Stream completed."
 
-    def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
-        self.custom_data = f"Unhandled Event Type: {event_type}, Data: {event_data}"
+    def on_unhandled_event(self, event_type: str, event_data: Any) -> Optional[str]:
+        return f"Unhandled Event Type: {event_type}, Data: {event_data}"
 
 
 # [END stream_event_handler]
@@ -84,8 +85,11 @@ with project_client:
     with project_client.agents.create_stream(
         thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
     ) as stream:
-        for _, _, custom_data in stream:
-            print(custom_data)
+        for event_type, event_data, func_return in stream:
+            print(f"Received data.")
+            print(f"Streaming receive Event Type: {event_type}")
+            print(f"Event Data: {str(event_data)[:100]}...")
+            print(f"Event Function return: {func_return}\n")
     # [END create_stream]
 
     project_client.agents.delete_agent(agent.id)
