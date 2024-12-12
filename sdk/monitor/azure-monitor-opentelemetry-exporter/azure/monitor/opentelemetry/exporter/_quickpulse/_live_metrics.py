@@ -122,7 +122,7 @@ class _QuickpulseManager(metaclass=Singleton):
         self._base_monitoring_data_point = MonitoringDataPoint(
             version=_get_sdk_version(),
             # Invariant version 5 indicates filtering is supported
-            invariant_version=2,
+            invariant_version=5,
             instance=part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE, ""),
             role_name=part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE, ""),
             machine_name=platform.node(),
@@ -245,13 +245,13 @@ def _derive_metrics_from_telemetry_data(data: _TelemetryData):
     metric_infos_dict = _get_quickpulse_derived_metric_infos()
     metric_infos = []  # type: ignore
     if isinstance(data, _RequestData):
-        metric_infos = metric_infos_dict.get(TelemetryType.REQUEST)
+        metric_infos = metric_infos_dict.get(TelemetryType.REQUEST)  # type: ignore
     elif isinstance(data, _DependencyData):
-        metric_infos = metric_infos_dict.get(TelemetryType.DEPENDENCY)
+        metric_infos = metric_infos_dict.get(TelemetryType.DEPENDENCY)  # type: ignore
     elif isinstance(data, _ExceptionData):
-        metric_infos = metric_infos_dict.get(TelemetryType.EXCEPTION)
+        metric_infos = metric_infos_dict.get(TelemetryType.EXCEPTION)  # type: ignore
     elif isinstance(data, _TraceData):
-        metric_infos = metric_infos_dict.get(TelemetryType.TRACE)
+        metric_infos = metric_infos_dict.get(TelemetryType.TRACE)  # type: ignore
     if metric_infos and _check_metric_filters(metric_infos, data):
         # Since this data matches the filter, create projections used to
         # generate filtered metrics

@@ -92,7 +92,7 @@ def _check_any_field_filter(filter: FilterInfo, data: _TelemetryData) -> bool:
                 if _field_string_compare(str(val), filter.comparand, filter.predicate):
                     return True
         else:
-            val = getattr(data, field.name, None)
+            val = getattr(data, field.name, None)  # type: ignore
             if val is not None:
                 if _field_string_compare(str(val), filter.comparand, filter.predicate):
                     return True

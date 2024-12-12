@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+# cSpell:disable
 import collections
 import psutil
 import unittest
@@ -49,3 +50,5 @@ class TestCpu(unittest.TestCase):
         obs = next(time)
         num_cpus = psutil.cpu_count()
         self.assertAlmostEqual(obs.value, 1.2 / num_cpus, delta=1)
+
+# cSpell:enable

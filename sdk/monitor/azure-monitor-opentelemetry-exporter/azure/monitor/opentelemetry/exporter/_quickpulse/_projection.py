@@ -51,7 +51,7 @@ def _create_projections(metric_infos: List[DerivedMetricInfo], data: _TelemetryD
             value = 1
         elif metric_info.projection == _QUICKPULSE_PROJECTION_DURATION:
             if isinstance(data, (_DependencyData, _RequestData)):
-                value = data.duration
+                value = data.duration  # type: ignore
             else:
                 # Duration only supported for Dependency and Requests
                 continue
@@ -61,7 +61,7 @@ def _create_projections(metric_infos: List[DerivedMetricInfo], data: _TelemetryD
             if dim_value is None:
                 continue
             try:
-                value = float(dim_value)
+                value = float(dim_value)  # type: ignore
             except ValueError:
                 continue
         else:
