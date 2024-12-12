@@ -1,11 +1,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+# cSpell:disable
+
 from datetime import datetime
 from typing import Iterable
 
-# cSpell:disable
 import psutil
-# cSpell:enable
 
 from opentelemetry.metrics import CallbackOptions, Observation
 
@@ -59,3 +59,5 @@ def _get_process_time_normalized_old(options: CallbackOptions) -> Iterable[Obser
 # pylint: disable=unused-argument
 def _get_process_time_normalized(options: CallbackOptions) -> Iterable[Observation]:
     yield Observation(_get_quickpulse_last_process_cpu(), {})
+
+# cSpell:enable

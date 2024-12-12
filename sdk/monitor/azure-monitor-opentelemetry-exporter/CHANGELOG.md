@@ -16,7 +16,7 @@
 ### Other Changes
 
 - Refactored live metrics filtering modules
-  ([#37694](https://github.com/Azure/azure-sdk-for-python/pull/37694))
+  ([#38837](https://github.com/Azure/azure-sdk-for-python/pull/38837))
 
 ## 1.0.0b32 (2024-11-04)
 
