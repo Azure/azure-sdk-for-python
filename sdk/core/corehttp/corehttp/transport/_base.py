@@ -55,10 +55,10 @@ def _build_ssl_config(
     """
     ssl_ctx = None
 
-    if cert or verify not in (True, False):
+    if cert or not isinstance(verify, bool):
         import ssl
 
-        if verify not in (True, False):
+        if not isinstance(verify, bool):
             if os.path.isdir(verify):
                 ssl_ctx = ssl.create_default_context(capath=verify)
             ssl_ctx = ssl.create_default_context(cafile=verify)
@@ -73,13 +73,12 @@ def _build_ssl_config(
     return verify
 
 
-
 def _create_connection_config(  # pylint: disable=unused-argument
     *,
     connection_timeout: float = 300,
     read_timeout: float = 300,
     connection_verify: bool | str = True,
-    connection_cert: str | tuple[str] | None,
+    connection_cert: str | tuple[str] | None = None,
     connection_data_block_size: int = 4096,
     **kwargs: Any,
 ) -> MutableMapping[str, Any]:
