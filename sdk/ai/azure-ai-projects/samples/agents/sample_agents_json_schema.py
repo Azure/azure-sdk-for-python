@@ -8,7 +8,7 @@ DESCRIPTION:
     This sample demonstrates how to use agents with JSON schema output format.
 
 USAGE:
-    python sample_agents_json_schema_async.py
+    python sample_agents_json_schema.py
 
     Before running the sample:
 
@@ -31,10 +31,6 @@ from azure.ai.projects.models import (
     ResponseFormatJsonSchemaType,
     RunStatus,
 )
-
-# Create an Azure AI Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
 # [START create_project_client]
 project_client = AIProjectClient.from_connection_string(
