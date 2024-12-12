@@ -26,7 +26,7 @@
 import json
 import logging
 import time
-from typing import Optional, Union, Dict, Any, TYPE_CHECKING, Callable, Mapping, Sequence
+from typing import Optional, Union, Dict, Any, TYPE_CHECKING, Callable, Mapping
 import types
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
@@ -130,7 +130,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
         self,
         request: PipelineRequest[HTTPRequestType],
         response: PipelineResponse[HTTPRequestType, HTTPResponseType],  # type: ignore[override]
-    ) -> None:
+    ) -> None:  # pylint: disable=too-many-statements
         duration = time.time() - request.context["start_time"] if "start_time" in request.context else None
         status_code = response.http_response.status_code
         sub_status_str = response.http_response.headers.get("x-ms-substatus")
@@ -196,7 +196,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
     def _default_should_log(
             self,
             **kwargs
-    ) -> bool:
+    ) -> bool:  # pylint: disable=unused-argument
         return True
 
     def _dict_should_log(self, **kwargs) -> bool:
@@ -220,31 +220,29 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
         # Place any client settings we want to log here
         if self.__global_endpoint_manager:
             return {"Client Preferred Regions": self.__global_endpoint_manager.PreferredLocations}
-        else:
-            return None
+        return None
 
     def __get_database_account_settings(self) -> Optional[DatabaseAccount]:
         if self.__global_endpoint_manager:
-            return self.__global_endpoint_manager._database_account_cache
-        else:
-            return None
+            return self.__global_endpoint_manager._database_account_cache  # pylint: disable=protected-access
+        return None
 
     def _log_client_settings(self) -> None:
         self.logger.info("Client Settings:", exc_info=False)
         if self.__client_settings and isinstance(self.__client_settings, dict):
-            self.logger.info("\tClient Preferred Regions: {}".format(self.__client_settings["Client Preferred Regions"])
-                                        , exc_info=False)
+            self.logger.info("\tClient Preferred Regions: %s", self.__client_settings["Client Preferred Regions"],
+                             exc_info=False)
 
-    def _log_database_account_settings(self) -> None:
+    def _log_database_account_settings(self) -> None:  # pylint: disable=protected-access
         self.logger.info("Database Account Settings:", exc_info=False)
         self.__database_account_settings = self.__get_database_account_settings()
         if self.__database_account_settings and self.__database_account_settings.ConsistencyPolicy:
-            self.logger.info("\tConsistency Level: {}".format(self.__database_account_settings.
-                                                              ConsistencyPolicy.get("defaultConsistencyLevel"))
-                             , exc_info=False)
-            self.logger.info("\tWritable Locations: {}".format(self.__database_account_settings.WritableLocations)
-                             , exc_info=False)
-            self.logger.info("\tReadable Locations: {}".format(self.__database_account_settings.ReadableLocations)
-                             , exc_info=False)
-            self.logger.info("\tMulti-Region Writes: {}".format(self.__database_account_settings.
-                                                                _EnableMultipleWritableLocations), exc_info=False)
+            self.logger.info("\tConsistency Level: %s",
+                             self.__database_account_settings.ConsistencyPolicy.get("defaultConsistencyLevel"),
+                             exc_info=False)
+            self.logger.info("\tWritable Locations: %s", self.__database_account_settings.WritableLocations,
+                             exc_info=False)
+            self.logger.info("\tReadable Locations: %s", self.__database_account_settings.ReadableLocations,
+                             exc_info=False)
+            self.logger.info("\tMulti-Region Writes: %s",
+                             self.__database_account_settings._EnableMultipleWritableLocations, exc_info=False)

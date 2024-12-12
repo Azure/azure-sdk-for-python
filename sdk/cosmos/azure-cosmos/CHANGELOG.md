@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.9.1 (Unreleased)
+### 4.9.1b1 (2024-12-12)
 
 #### Features Added
 * Added change feed mode support in `query_items_change_feed`. See [PR 38105](https://github.com/Azure/azure-sdk-for-python/pull/38105)
