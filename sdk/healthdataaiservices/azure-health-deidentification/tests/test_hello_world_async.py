@@ -15,7 +15,9 @@ class TestHealthDeidentificationHelloWorld(DeidBaseTestCase):
         client = self.make_client_async(healthdataaiservices_deid_service_endpoint)
         assert client is not None
 
-        content = DeidentificationContent(input_text="Hello, my name is John Smith.", operation=OperationType.SURROGATE)
+        content = DeidentificationContent(
+            input_text="Hello, my name is John Smith.", operation=DeidentificationOperationType.SURROGATE
+        )
 
         result: DeidentificationResult = await client.deidentify_text(content)
 

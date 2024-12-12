@@ -10,7 +10,7 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class DeidentificationJobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """List of statuses a job can have."""
 
     NOT_STARTED = "NotStarted"
@@ -27,6 +27,18 @@ class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Job has been canceled after user request."""
 
 
+class DeidentificationOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum of supported Operation Types."""
+
+    REDACT = "Redact"
+    """Redact Operation will remove all entities of PHI and replace them with a placeholder value."""
+    SURROGATE = "Surrogate"
+    """Surrogation Operation will replace all entities of PHI with a surrogate value."""
+    TAG = "Tag"
+    """Tag Operation will detect all entities of PHI, their type, and return their locations in the
+    document."""
+
+
 class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum describing allowed operation states."""
 
@@ -40,18 +52,6 @@ class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation has failed."""
     CANCELED = "Canceled"
     """The operation has been canceled by the user."""
-
-
-class OperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum of supported Operation Types."""
-
-    REDACT = "Redact"
-    """Redact Operation will remove all entities of PHI and replace them with a placeholder value."""
-    SURROGATE = "Surrogate"
-    """Surrogation Operation will replace all entities of PHI with a surrogate value."""
-    TAG = "Tag"
-    """Tag Operation will detect all entities of PHI, their type, and return their locations in the
-    document."""
 
 
 class PhiCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):

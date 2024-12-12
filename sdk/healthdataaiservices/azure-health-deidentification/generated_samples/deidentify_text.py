@@ -32,7 +32,7 @@ def main():
 
     response = client.deidentify_text(
         body={
-            "customizations": {"redactionFormat": "[{type}]", "surrogateLocale": "en-US"},
+            "customizations": {"redactionFormat": "[{type}]"},
             "inputText": "Hello my name is John Smith.",
             "operation": "Redact",
         },

@@ -427,7 +427,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
     @distributed_trace
     def _list_job_documents_internal(
         self, job_name: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.DocumentDetails"]:
+    ) -> AsyncIterable["_models.DeidentificationDocumentDetails"]:
         """List processed documents within a job.
 
         The most basic operation.
@@ -437,16 +437,16 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         :keyword continuation_token_parameter: Token to continue a previous query. Default value is
          None.
         :paramtype continuation_token_parameter: str
-        :return: An iterator like instance of DocumentDetails
+        :return: An iterator like instance of DeidentificationDocumentDetails
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.health.deidentification.models.DocumentDetails]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.health.deidentification.models.DeidentificationDocumentDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.DocumentDetails]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.DeidentificationDocumentDetails]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -498,7 +498,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DocumentDetails], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.DeidentificationDocumentDetails], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)

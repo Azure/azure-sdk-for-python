@@ -31,27 +31,15 @@ def main():
     )
 
     response = client.begin_deidentify_documents(
-        name="documents_smith_1",
+        name="job_smith_documents_1",
         resource={
-            "customizations": {"redactionFormat": "[{type}]", "surrogateLocale": "en-US"},
-            "error": {
-                "code": "FileNotFound",
-                "details": [],
-                "message": "File was moved after job started.",
-                "target": "SourceFile",
-            },
+            "customizations": {"redactionFormat": "[{type}]"},
             "operation": "Redact",
-            "sourceLocation": {
-                "extensions": ["*"],
-                "location": "https://blobtest.blob.core.windows.net/container",
-                "prefix": "/documents",
-            },
-            "status": "NotStarted",
-            "summary": {"bytesProcessed": 4096, "canceled": 0, "failed": 0, "successful": 10, "total": 10},
+            "sourceLocation": {"location": "https://blobtest.blob.core.windows.net/container", "prefix": "documents/"},
             "targetLocation": {
                 "location": "https://blobtest.blob.core.windows.net/container",
                 "overwrite": True,
-                "prefix": "/documents",
+                "prefix": "_output/",
             },
         },
     ).result()
