@@ -1853,6 +1853,7 @@ class TestagentClient(AzureRecordedTestCase):
             assert output_file_exist
 
     @agentClientPreparer()
+    @pytest.mark.skip("New test, will need recording in future.")
     @recorded_by_proxy
     def test_azure_function_call(self, **kwargs):
         """Test calling Azure functions."""

@@ -1687,6 +1687,7 @@ class TestagentClientAsync(AzureRecordedTestCase):
         await ai_client.close()
 
     @agentClientPreparer()
+    @pytest.mark.skip("New test, will need recording in future.")
     @recorded_by_proxy_async
     async def test_azure_function_call(self, **kwargs):
         """Test calling Azure functions."""
