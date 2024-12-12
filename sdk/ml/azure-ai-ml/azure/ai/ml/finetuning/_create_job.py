@@ -10,8 +10,10 @@ from azure.ai.ml.entities._job.finetuning.custom_model_finetuning_job import (
 )
 from azure.ai.ml.entities._job.job_resources import JobResources
 from azure.ai.ml.entities._job.queue_settings import QueueSettings
+from azure.ai.ml._utils._experimental import experimental
 
 
+@experimental
 def create_finetuning_job(
     *,
     model: str,
