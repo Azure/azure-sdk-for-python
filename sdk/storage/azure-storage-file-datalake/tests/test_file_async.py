@@ -1137,12 +1137,17 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
             content_disposition='inline')
         expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
         file_client = await directory_client.create_file("newfile", metadata=metadata, content_settings=content_settings)
+
+        # Act / Assert
         await file_client.set_file_expiry("Absolute", expires_on=expiry_time)
         properties = await file_client.get_file_properties()
-
-        # Assert
         assert properties
         assert properties.expiry_time is not None
+
+        await file_client.set_file_expiry("NeverExpire")
+        properties = await file_client.get_file_properties()
+        assert properties
+        assert properties.expiry_time is None
 
         return variables
 

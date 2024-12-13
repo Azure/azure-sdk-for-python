@@ -6,6 +6,10 @@
 
 ### Breaking Changes
 
+### Features Added
+
+* Added support for load balancing between replicas.
+
 ### Bugs Fixed
 
 ### Other Changes
