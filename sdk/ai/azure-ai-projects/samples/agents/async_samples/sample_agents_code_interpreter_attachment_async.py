@@ -32,7 +32,7 @@ async def main():
         async with AIProjectClient.from_connection_string(
             credential=creds, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
         ) as project_client:
-            # upload a file and wait for it to be processed
+            # Upload a file and wait for it to be processed
             file = await project_client.agents.upload_file_and_poll(
                 file_path="../product_info_1.md", purpose=FilePurpose.AGENTS
             )
@@ -40,7 +40,7 @@ async def main():
 
             code_interpreter = CodeInterpreterTool()
 
-            # notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
+            # Notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
             agent = await project_client.agents.create_agent(
                 model="gpt-4-1106-preview",
                 name="my-assistant",
@@ -52,7 +52,7 @@ async def main():
             thread = await project_client.agents.create_thread()
             print(f"Created thread, thread ID: {thread.id}")
 
-            # create a message with the attachment
+            # Create a message with the attachment
             attachment = MessageAttachment(file_id=file.id, tools=code_interpreter.definitions)
             message = await project_client.agents.create_message(
                 thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]

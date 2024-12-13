@@ -29,7 +29,7 @@ project_client = AIProjectClient.from_connection_string(
 
 with project_client:
 
-    # upload a file and wait for it to be processed
+    # Upload a file and wait for it to be processed
     file = project_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose=FilePurpose.AGENTS)
     print(f"Uploaded file, file ID: {file.id}")
 

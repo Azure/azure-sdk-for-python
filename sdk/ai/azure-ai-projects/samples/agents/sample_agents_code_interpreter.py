@@ -32,7 +32,7 @@ project_client = AIProjectClient.from_connection_string(
 
 with project_client:
 
-    # upload a file and wait for it to be processed
+    # Upload a file and wait for it to be processed
     # [START upload_file_and_create_agent_with_code_interpreter]
     file = project_client.agents.upload_file_and_poll(
         file_path="nifty_500_quarterly_results.csv", purpose=FilePurpose.AGENTS
@@ -41,7 +41,7 @@ with project_client:
 
     code_interpreter = CodeInterpreterTool(file_ids=[file.id])
 
-    # create agent with code interpreter tool and tools_resources
+    # Create agent with code interpreter tool and tools_resources
     agent = project_client.agents.create_agent(
         model="gpt-4-1106-preview",
         name="my-assistant",
@@ -55,7 +55,7 @@ with project_client:
     thread = project_client.agents.create_thread()
     print(f"Created thread, thread ID: {thread.id}")
 
-    # create a message
+    # Create a message
     message = project_client.agents.create_message(
         thread_id=thread.id,
         role="user",

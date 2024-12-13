@@ -39,6 +39,7 @@ with project_client:
 
     storage_service_endpoint = os.environ["STORAGE_SERVICE_ENDPONT"]
 
+    # [START create_agent_with_azure_function_tool]
     azure_function_tool = AzureFunctionTool(
         name="foo",
         description="Get answers from the foo bot.",
@@ -66,6 +67,7 @@ with project_client:
         tools=azure_function_tool.definitions,
     )
     print(f"Created agent, agent ID: {agent.id}")
+    # [END create_agent_with_azure_function_tool]
 
     # Create a thread
     thread = project_client.agents.create_thread()

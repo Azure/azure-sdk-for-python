@@ -28,18 +28,18 @@ project_client = AIProjectClient.from_connection_string(
 
 with project_client:
 
-    # upload a file and wait for it to be processed
+    # Upload a file and wait for it to be processed
     file = project_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose=FilePurpose.AGENTS)
     print(f"Uploaded file, file ID: {file.id}")
 
-    # create a vector store with no file and wait for it to be processed
+    # Create a vector store with no file and wait for it to be processed
     vector_store = project_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
     print(f"Created vector store, vector store ID: {vector_store.id}")
 
-    # create a file search tool
+    # Create a file search tool
     file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
 
-    # notices that FileSearchTool as tool and tool_resources must be added or the assistant unable to search the file
+    # Notices that FileSearchTool as tool and tool_resources must be added or the assistant unable to search the file
     agent = project_client.agents.create_agent(
         model="gpt-4-1106-preview",
         name="my-assistant",

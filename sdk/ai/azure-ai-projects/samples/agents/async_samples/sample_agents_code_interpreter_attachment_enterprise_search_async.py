@@ -37,7 +37,7 @@ async def main():
 
             code_interpreter = CodeInterpreterTool()
 
-            # notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
+            # Notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
             agent = await project_client.agents.create_agent(
                 model="gpt-4-1106-preview",
                 name="my-assistant",
@@ -53,7 +53,7 @@ async def main():
             _, asset_uri = project_client.upload_file("../product_info_1.md")
             ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
 
-            # create a message with the attachment
+            # Create a message with the attachment
             attachment = MessageAttachment(data_source=ds, tools=code_interpreter.definitions)
             message = await project_client.agents.create_message(
                 thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]

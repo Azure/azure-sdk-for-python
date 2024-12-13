@@ -31,28 +31,28 @@ async def main() -> None:
         async with AIProjectClient.from_connection_string(
             credential=creds, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
         ) as project_client:
-            # upload a file and wait for it to be processed
+            # Upload a file and wait for it to be processed
             file = await project_client.agents.upload_file_and_poll(
                 file_path="../product_info_1.md", purpose=FilePurpose.AGENTS
             )
             print(f"Uploaded file, file ID: {file.id}")
 
-            # create a vector store with no file and wait for it to be processed
+            # Create a vector store with no file and wait for it to be processed
             vector_store = await project_client.agents.create_vector_store_and_poll(
                 file_ids=[], name="sample_vector_store"
             )
             print(f"Created vector store, vector store ID: {vector_store.id}")
 
-            # add the file to the vector store or you can supply file ids in the vector store creation
+            # Add the file to the vector store or you can supply file ids in the vector store creation
             vector_store_file_batch = await project_client.agents.create_vector_store_file_batch_and_poll(
                 vector_store_id=vector_store.id, file_ids=[file.id]
             )
             print(f"Created vector store file batch, vector store file batch ID: {vector_store_file_batch.id}")
 
-            # create a file search tool
+            # Create a file search tool
             file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
 
-            # notices that FileSearchTool as tool and tool_resources must be added or the assistant unable to search the file
+            # Notices that FileSearchTool as tool and tool_resources must be added or the assistant unable to search the file
             agent = await project_client.agents.create_agent(
                 model="gpt-4-1106-preview",
                 name="my-assistant",

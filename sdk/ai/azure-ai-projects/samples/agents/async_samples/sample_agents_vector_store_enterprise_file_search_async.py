@@ -37,10 +37,10 @@ async def main():
             )
             print(f"Created vector store, vector store ID: {vector_store.id}")
 
-            # create a file search tool
+            # Create a file search tool
             file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
 
-            # notices that FileSearchTool as tool and tool_resources must be added or the assistant unable to search the file
+            # Notices that FileSearchTool as tool and tool_resources must be added or the assistant unable to search the file
             agent = await project_client.agents.create_agent(
                 model="gpt-4-1106-preview",
                 name="my-assistant",

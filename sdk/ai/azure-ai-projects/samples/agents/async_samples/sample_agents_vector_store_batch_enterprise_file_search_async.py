@@ -46,16 +46,16 @@ async def main():
             )
             print(f"Created vector store, vector store ID: {vector_store.id}")
 
-            # add the file to the vector store or you can supply file ids in the vector store creation
+            # Add the file to the vector store or you can supply file ids in the vector store creation
             vector_store_file_batch = await project_client.agents.create_vector_store_file_batch_and_poll(
                 vector_store_id=vector_store.id, data_sources=[ds]
             )
             print(f"Created vector store file batch, vector store file batch ID: {vector_store_file_batch.id}")
 
-            # create a file search tool
+            # Create a file search tool
             file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
 
-            # notices that FileSearchTool as tool and tool_resources must be added or the assistant unable to search the file
+            # Notices that FileSearchTool as tool and tool_resources must be added or the assistant unable to search the file
             agent = await project_client.agents.create_agent(
                 model="gpt-4-1106-preview",
                 name="my-assistant",
