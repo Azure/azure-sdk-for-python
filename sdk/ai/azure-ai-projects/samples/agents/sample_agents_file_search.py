@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_file_search.py
-
 DESCRIPTION:
     This sample demonstrates how to use agent operations with file searching from
     the Azure Agents service using a synchronous client.
@@ -18,18 +16,15 @@ USAGE:
     pip install azure-ai-projects azure-identity
 
     Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
 """
 
 import os
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import FileSearchTool
+from azure.ai.projects.models import (
+    FileSearchTool,
+)
 from azure.identity import DefaultAzureCredential
-
-
-# Create an Azure AI Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
@@ -92,4 +87,7 @@ with project_client:
 
     # Fetch and log all messages
     messages = project_client.agents.list_messages(thread_id=thread.id)
-    print(f"Messages: {messages}")
+
+    # Print citations from the messages
+    for citation in messages.file_citation_annotations:
+        print(citation)

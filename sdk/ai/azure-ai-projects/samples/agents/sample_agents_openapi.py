@@ -5,46 +5,58 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to use agent operations with toolset from
-    the Azure Agents service using a synchronous client.
+    This sample demonstrates how to use agent operations with the 
+    OpenAPI tool from the Azure Agents service using a synchronous client.
+    To learn more about OpenAPI specs, visit https://learn.microsoft.com/openapi
 
 USAGE:
-    python sample_agents_run_with_toolset.py
+    python sample_agents_openapi.py
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity
+    pip install azure-ai-projects azure-identity jsonref
 
     Set this environment variables with your own values:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
 """
 
 import os
+import jsonref
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import FunctionTool, ToolSet, CodeInterpreterTool
-from user_functions import user_functions
+from azure.ai.projects.models import OpenApiTool, OpenApiAnonymousAuthDetails
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
+# [START create_agent_with_openapi]
 
-# Create agent with toolset and process assistant run
+with open("./weather_openapi.json", "r") as f:
+    openapi_spec = jsonref.loads(f.read())
+
+# Create Auth object for the OpenApiTool (note that connection or managed identity auth setup requires additional setup in Azure)
+auth = OpenApiAnonymousAuthDetails()
+
+# Initialize agent OpenApi tool using the read in OpenAPI spec
+openapi = OpenApiTool(
+    name="get_weather",
+    spec=openapi_spec,
+    description="Retrieve weather information for a location",
+    auth=auth
+)
+
+# Create agent with OpenApi tool and process assistant run
 with project_client:
-    # Initialize agent toolset with user functions and code interpreter
-    # [START create_agent_toolset]
-    functions = FunctionTool(user_functions)
-    code_interpreter = CodeInterpreterTool()
-
-    toolset = ToolSet()
-    toolset.add(functions)
-    toolset.add(code_interpreter)
-
     agent = project_client.agents.create_agent(
-        model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
+        model="gpt-4o-mini",
+        name="my-assistant",
+        instructions="You are a helpful assistant",
+        tools=openapi.definitions
     )
-    # [END create_agent_toolset]
+
+# [END create_agent_with_openapi]
+    
     print(f"Created agent, ID: {agent.id}")
 
     # Create thread for communication
@@ -55,14 +67,12 @@ with project_client:
     message = project_client.agents.create_message(
         thread_id=thread.id,
         role="user",
-        content="Hello, send an email with the datetime and weather information in New York?",
+        content="What's the weather in Seattle?",
     )
     print(f"Created message, ID: {message.id}")
 
     # Create and process agent run in thread with tools
-    # [START create_and_process_run]
     run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
-    # [END create_and_process_run]
     print(f"Run finished with status: {run.status}")
 
     if run.status == "failed":
