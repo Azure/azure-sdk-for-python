@@ -23,15 +23,33 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Optional, cast, Dict
+from typing import Any, Optional, cast, Union, MutableMapping
 
 import httpx
-from .._base import _create_connection_config, _handle_non_stream_rest_response, _get_proxy
+from .._base import _create_connection_config, _handle_non_stream_rest_response
 from .._base_async import _handle_non_stream_rest_response as _handle_non_stream_rest_response_async
 from ...exceptions import ServiceRequestError, ServiceResponseError
 from ...rest._httpx import HttpXTransportResponse, AsyncHttpXTransportResponse
 from ...transport import HttpTransport, AsyncHttpTransport
 from ...rest import HttpRequest, HttpResponse, AsyncHttpResponse
+
+
+def _init_proxy_config(
+    config: MutableMapping[str, Any],
+    proxies: Optional[MutableMapping[str, str]],
+    transport: Union[httpx.HTTPTransport, httpx.AsyncHTTPTransport]
+) -> None:
+    if not proxies:
+        return
+
+    if len(proxies) == 1:
+        config["proxy"] = proxies.popitem()[1]
+    else:
+        config["mounts"] = {
+            protocol: transport(proxy=proxy, **config)
+            for protocol, proxy
+            in proxies.items()
+        }
 
 
 class HttpXTransport(HttpTransport):
@@ -55,14 +73,16 @@ class HttpXTransport(HttpTransport):
         self._client_owner = client_owner
         self._use_env_settings = use_env_settings
 
-    def open(self, *, proxy: Optional[str] = None) -> None:
+    def open(self, *, proxies: Optional[MutableMapping[str, str]] = None) -> None:
         if self.client is None:
-            kwargs: Dict[str, Any] = {"proxy": proxy} if proxy is not None else {}
+            config = {
+                "trust_env": self._use_env_settings,
+                "verify": self.connection_config.get("connection_verify", True),
+                "cert": self.connection_config.get("connection_cert"),
+            }
+            _init_proxy_config(config, proxies, transport=httpx.HTTPTransport)
             self.client = httpx.Client(
-                trust_env=self._use_env_settings,
-                verify=self.connection_config.get("connection_verify", True),
-                cert=self.connection_config.get("connection_cert"),
-                **kwargs
+                **config
             )
 
     def close(self) -> None:
@@ -76,7 +96,6 @@ class HttpXTransport(HttpTransport):
             self.client = None
 
     def __enter__(self) -> "HttpXTransport":
-        self.open()
         return self
 
     def __exit__(self, *args) -> None:
@@ -91,13 +110,8 @@ class HttpXTransport(HttpTransport):
         :return: An HTTPResponse object.
         :rtype: ~corehttp.rest.HttpResponse
         """
-        # httpx>0.28.0 renamed proxies to proxy, expects a single proxy
-        proxy = kwargs.pop("proxy", None)
         proxies = kwargs.pop("proxies", None)
-        if proxies and not proxy:
-            proxy = _get_proxy(request, proxies)
-
-        self.open(proxy=proxy)
+        self.open(proxies=proxies)
         connect_timeout = kwargs.pop("connection_timeout", self.connection_config.get("connection_timeout"))
         read_timeout = kwargs.pop("read_timeout", self.connection_config.get("read_timeout"))
         # not needed here as its already handled during init
@@ -156,14 +170,16 @@ class AsyncHttpXTransport(AsyncHttpTransport):
         self._client_owner = client_owner
         self._use_env_settings = use_env_settings
 
-    async def open(self, *, proxy: Optional[str] = None) -> None:
+    async def open(self, *, proxies: Optional[MutableMapping[str, str]] = None) -> None:
         if self.client is None:
-            kwargs: Dict[str, Any] = {"proxy": proxy} if proxy is not None else {}
+            config = {
+                "trust_env": self._use_env_settings,
+                "verify": self.connection_config.get("connection_verify", True),
+                "cert": self.connection_config.get("connection_cert"),
+            }
+            _init_proxy_config(config, proxies, transport=httpx.AsyncHTTPTransport)
             self.client = httpx.AsyncClient(
-                trust_env=self._use_env_settings,
-                verify=self.connection_config.get("connection_verify", True),
-                cert=self.connection_config.get("connection_cert"),
-                **kwargs,
+                **config,
             )
 
     async def close(self) -> None:
@@ -172,7 +188,6 @@ class AsyncHttpXTransport(AsyncHttpTransport):
             self.client = None
 
     async def __aenter__(self) -> "AsyncHttpXTransport":
-        await self.open()
         return self
 
     async def __aexit__(self, *args) -> None:
@@ -187,13 +202,8 @@ class AsyncHttpXTransport(AsyncHttpTransport):
         :return: The response object.
         :rtype: ~corehttp.rest.AsyncHttpResponse
         """
-        # httpx>0.28.0 renamed proxies to proxy, expects a single proxy
-        proxy = kwargs.pop("proxy", None)
         proxies = kwargs.pop("proxies", None)
-        if proxies and not proxy:
-            proxy = _get_proxy(request, proxies)
-
-        await self.open(proxy=proxy)
+        await self.open(proxies=proxies)
         connect_timeout = kwargs.pop("connection_timeout", self.connection_config.get("connection_timeout"))
         read_timeout = kwargs.pop("read_timeout", self.connection_config.get("read_timeout"))
         # not needed here as its already handled during init

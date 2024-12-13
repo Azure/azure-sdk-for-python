@@ -30,28 +30,12 @@ import time
 from typing import Generic, TypeVar, Any, ContextManager, Union, Optional, MutableMapping, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ..rest import HttpResponse, HttpRequest
+    from ..rest import HttpResponse
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 
 _LOGGER = logging.getLogger(__name__)
-
-
-def _get_proxy(request: HttpRequest, proxies: MutableMapping[str, str]) -> Optional[str]:
-    """"Our core libraries document a proxies mapping for user config; however, 
-    aiohttp and httpx need a single proxy, so iterating until we found the right protocol.
-    Sort by longest string first, so "http" is not used for "https" ;-)
-
-    :param request: The request to get the proxy for.
-    :type request: ~corehttp.rest.HttpRequest
-    :param proxies: The proxies to get the proxy from.
-    :type proxies: MutableMapping[str, str]
-    """
-    for protocol in sorted(proxies.keys(), reverse=True):
-        if request.url.startswith(protocol):
-            proxy = proxies[protocol]
-            return proxy
 
 
 def _create_connection_config(  # pylint: disable=unused-argument

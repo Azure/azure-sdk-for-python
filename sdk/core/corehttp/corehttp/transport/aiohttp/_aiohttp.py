@@ -175,7 +175,13 @@ class AioHttpTransport(AsyncHttpTransport):
 
         proxy = config.pop("proxy", None)
         if proxies and not proxy:
-            proxy = _get_proxy(request, proxies)
+            # aiohttp needs a single proxy, so iterating until we found the right protocol
+
+            # Sort by longest string first, so "http" is not used for "https" ;-)
+            for protocol in sorted(proxies.keys(), reverse=True):
+                if request.url.startswith(protocol):
+                    proxy = proxies[protocol]
+                    break
 
         response: Optional[RestAsyncHttpResponse] = None
         ssl = self._build_ssl_config(

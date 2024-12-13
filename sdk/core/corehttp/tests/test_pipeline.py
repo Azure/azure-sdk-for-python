@@ -21,12 +21,13 @@ from corehttp.runtime.policies import (
     UserAgentPolicy,
     RetryPolicy,
     HTTPPolicy,
+    ProxyPolicy,
 )
 from corehttp.runtime._base import PipelineClientBase, _format_url_section
 from corehttp.transport import HttpTransport
 from corehttp.transport.requests import RequestsTransport
 from corehttp.transport.httpx import HttpXTransport
-from corehttp.exceptions import BaseError
+from corehttp.exceptions import BaseError, ServiceRequestError
 
 from utils import SYNC_TRANSPORTS
 
@@ -428,3 +429,13 @@ def test_httpx_separate_session(port):
     transport.close()
     assert transport.client
     transport.client.close()
+
+
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_proxies(transport):
+    policies = [ProxyPolicy(proxies={"https": "https://fakeproxy:3333"})]
+    request = HttpRequest("GET", "https://www.bing.com")
+
+    with Pipeline(transport(), policies=policies) as pipeline:
+        with pytest.raises(ServiceRequestError):
+            pipeline.run(request)
