@@ -1713,7 +1713,7 @@ class Deserializer(object):
 
         :param str data: The response string to be deserialized.
         :param str data_type: The type to deserialize to.
-        :raises SerializationError: if serialization fails.
+        :raises DeserializationError: if deserialization fails.
         :return: Deserialized object.
         :rtype: object
         """
