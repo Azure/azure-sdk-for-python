@@ -1502,7 +1502,7 @@ class Deserializer(object):
 
         :param str target_obj: Target data type to deserialize to.
         :param object data: Object to deserialize.
-        :raises SerializationError: if serialization fails.
+        :raises DeserializationError: if deserialization fails.
         :return: Deserialized object.
         :rtype: object
         """
