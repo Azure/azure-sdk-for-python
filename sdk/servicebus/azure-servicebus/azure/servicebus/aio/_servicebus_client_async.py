@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 # pylint: disable=client-method-missing-tracing-decorator
-from typing import Any, Union, Optional, TYPE_CHECKING
+from typing import Any, Union, Optional, TYPE_CHECKING, Type
 import logging
 from weakref import WeakSet
 from typing_extensions import Literal
@@ -110,7 +110,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         **kwargs: Any,
     ) -> None:
         uamqp_transport = kwargs.pop("uamqp_transport", False)
-        amqp_transport = PyamqpTransportAsync
+        amqp_transport: Union[Type[PyamqpTransportAsync], Type[UamqpTransportAsync]] = PyamqpTransportAsync
 
         if uamqp_transport:
             try:
