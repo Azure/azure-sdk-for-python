@@ -221,11 +221,14 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
     def __get_client_settings(self) -> Optional[Dict[str, Any]]:
         # Place any client settings we want to log here
         if self.__global_endpoint_manager:
-            return {"Client Preferred Regions": self.__global_endpoint_manager.PreferredLocations}
+            if hasattr(self.__global_endpoint_manager, 'PreferredLocations'):
+                return {"Client Preferred Regions": self.__global_endpoint_manager.PreferredLocations}
+            else:
+                return {"Client Preferred Regions": []}
         return None
 
     def __get_database_account_settings(self) -> Optional[DatabaseAccount]:
-        if self.__global_endpoint_manager:
+        if self.__global_endpoint_manager and hasattr(self.__global_endpoint_manager, '_database_account_cache'):
             return self.__global_endpoint_manager._database_account_cache  # pylint: disable=protected-access
         return None
 
