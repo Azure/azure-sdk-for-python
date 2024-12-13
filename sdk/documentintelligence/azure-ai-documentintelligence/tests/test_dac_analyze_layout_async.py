@@ -59,7 +59,7 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
                 cls=callback,
             )
             raw_response = await poller.result()
-            raw_analyze_result = AnalyzeResult._deserialize(raw_response.http_response.json(), [])
+            raw_analyze_result = AnalyzeResult._deserialize(raw_response.http_response.json()["analyzeResult"], [])
 
             poller = await client.begin_analyze_document(
                 "prebuilt-layout",
@@ -103,7 +103,7 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
                 cls=callback,
             )
             raw_response = await poller.result()
-            raw_analyze_result = AnalyzeResult._deserialize(raw_response.http_response.json(), [])
+            raw_analyze_result = AnalyzeResult._deserialize(raw_response.http_response.json()["analyzeResult"], [])
 
             poller = await client.begin_analyze_document(
                 "prebuilt-layout",
@@ -133,24 +133,26 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
     @DocumentIntelligenceClientPreparer()
     @recorded_by_proxy_async
     async def test_layout_multipage_transform(self, client):
+        with open(self.multipage_invoice_pdf, "rb") as fd:
+            document = fd.read()
+
         def callback(raw_response, _, headers):
             return raw_response
 
         async with client:
-            with open(self.multipage_invoice_pdf, "rb") as document:
-                poller = await client.begin_analyze_document(
-                    "prebuilt-layout",
-                    document,
-                    cls=callback,
-                )
-                raw_response = await poller.result()
-                raw_analyze_result = AnalyzeResult._deserialize(raw_response.http_response.json(), [])
+            poller = await client.begin_analyze_document(
+                "prebuilt-layout",
+                document,
+                cls=callback,
+            )
+            raw_response = await poller.result()
+            raw_analyze_result = AnalyzeResult._deserialize(raw_response.http_response.json()["analyzeResult"], [])
 
-                poller = await client.begin_analyze_document(
-                    "prebuilt-layout",
-                    document,
-                )
-                returned_model = await poller.result()
+            poller = await client.begin_analyze_document(
+                "prebuilt-layout",
+                document,
+            )
+            returned_model = await poller.result()
 
         assert returned_model.model_id == raw_analyze_result.model_id
         assert returned_model.api_version == raw_analyze_result.api_version
