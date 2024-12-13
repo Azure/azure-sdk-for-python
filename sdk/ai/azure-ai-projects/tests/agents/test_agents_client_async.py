@@ -2412,7 +2412,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         await ai_client.close()
 
     @agentClientPreparer()
-    @pytest.mark.skip("The API is not supported yet.")
+    @pytest.mark.skip("File ID issues with sanitization.")
     @recorded_by_proxy_async
     async def test_message_attachement_azure(self, **kwargs):
         """Test message attachment with azure ID."""

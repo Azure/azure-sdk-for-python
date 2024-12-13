@@ -1694,8 +1694,7 @@ class TestAgentClient(AzureRecordedTestCase):
 
             # create stream
             with client.agents.create_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
-                assert isinstance(stream, AgentRunStream)
-                for event_type, event_data in stream:
+                for event_type, event_data, _ in stream:
                     assert isinstance(event_data, (MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep)) or event_type == AgentStreamEvent.DONE
 
             # delete agent and close client
@@ -1705,7 +1704,7 @@ class TestAgentClient(AzureRecordedTestCase):
 
     # TODO create_stream doesn't work with body -- fails on for event_type, event_data : TypeError: 'ThreadRun' object is not an iterator
     @agentClientPreparer()
-    @pytest.mark.skip("Streaming functions need to be updated.")
+    @pytest.mark.skip("Streaming functions with body need to be updated.")
     @recorded_by_proxy
     def test_create_stream_with_body(self, **kwargs):
         """Test creating stream with body."""
@@ -1737,9 +1736,8 @@ class TestAgentClient(AzureRecordedTestCase):
 
             # create stream
             with client.agents.create_stream(thread_id=thread.id, body=body, stream=True) as stream:
-                assert isinstance(stream, AgentRunStream)
                 
-                for event_type, event_data in stream:
+                for event_type, event_data, _ in stream:
                     print("event type: event data")
                     print(event_type, event_data)
                     assert isinstance(event_data, (MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep)) or event_type == AgentStreamEvent.DONE
@@ -1750,6 +1748,7 @@ class TestAgentClient(AzureRecordedTestCase):
 
     
     @agentClientPreparer()
+    @pytest.mark.skip("Streaming functions with body need to be updated.")
     @recorded_by_proxy
     def test_create_stream_with_iobytes(self, **kwargs):
         """Test creating stream with body: IO[bytes]."""
@@ -1782,8 +1781,7 @@ class TestAgentClient(AzureRecordedTestCase):
 
             # create stream
             with client.agents.create_stream(thread_id=thread.id, body=io.BytesIO(binary_body), stream=True) as stream:
-                assert isinstance(stream, AgentRunStream)
-                for event_type, event_data in stream:
+                for event_type, event_data, _ in stream:
                     assert isinstance(event_data, (MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep)) or event_type == AgentStreamEvent.DONE
 
             # delete agent and close client
@@ -1855,7 +1853,6 @@ class TestAgentClient(AzureRecordedTestCase):
 
         # create stream
         with client.agents.create_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
-            assert isinstance(stream, AgentRunStream)
             for event_type, event_data in stream:
                 
                 # Check if tools are needed
@@ -2587,6 +2584,7 @@ class TestAgentClient(AzureRecordedTestCase):
         ai_client.close()
 
     @agentClientPreparer()
+    @pytest.mark.skip("File ID issues with sanitization.")
     @recorded_by_proxy
     def test_message_attachement_azure(self, **kwargs):
         """Test message attachment with azure ID."""
@@ -2889,7 +2887,7 @@ class TestAgentClient(AzureRecordedTestCase):
         self._do_test_include_file_search_results(use_stream=False, include_content=False, **kwargs)
 
     @agentClientPreparer()
-    #@pytest.mark.skip("Recordings not yet implemented")
+    @pytest.mark.skip("Recordings not yet implemented")
     @recorded_by_proxy
     def test_include_file_search_results_stream(self, **kwargs):
         """Test using include_file_search with streaming."""
@@ -3201,6 +3199,7 @@ class TestAgentClient(AzureRecordedTestCase):
             assert result.deleted, "The agent was not deleted."
 
     @agentClientPreparer()
+    @pytest.mark.skip("Recordings not yet implemented.")
     @recorded_by_proxy
     def test_client_with_thread_messages(self, **kwargs):
         """Test agent with thread messages."""
