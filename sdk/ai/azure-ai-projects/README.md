@@ -597,7 +597,7 @@ OpenAPI specifications describe REST operations against a specific endpoint. Age
 
 Here is an example creating an OpenAPI tool (using anonymous authentication):
 
-<!-- SNIPPET:sample_agents_azure_ai_search.create_agent_with_openapi -->
+<!-- SNIPPET:sample_agents_openapi.create_agent_with_openapi -->
 
 ```python
 
