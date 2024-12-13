@@ -11,7 +11,7 @@ from logging.handlers import TimedRotatingFileHandler
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 
 
-def get_base_logger(log_filename, logger_name, level=logging.ERROR, print_console=False, log_format=None, rotating_logs=False):
+def get_base_logger(log_filename, logger_name, level=logging.ERROR, print_console=False, log_format=None, rotating_logs=True):
     logger = logging.getLogger(logger_name)
     logger.setLevel(level)
     formatter = log_format or logging.Formatter(
@@ -30,8 +30,8 @@ def get_base_logger(log_filename, logger_name, level=logging.ERROR, print_consol
                 time = 30
             else:
                 time = 60
-            file_handler = TimedRotatingFileHandler(log_filename, when='M', interval=time, utc=True)
             if not logger.handlers:
+                file_handler = TimedRotatingFileHandler(log_filename, when='M', interval=time, utc=True)
                 file_handler.setFormatter(formatter)
                 logger.addHandler(file_handler)
         else:
@@ -42,7 +42,7 @@ def get_base_logger(log_filename, logger_name, level=logging.ERROR, print_consol
     return logger
 
 
-def get_logger(log_filename, logger_name, level=logging.ERROR, print_console=False, log_format=None, rotating_logs=False):
+def get_logger(log_filename, logger_name, level=logging.ERROR, print_console=False, log_format=None, rotating_logs=True):
     stress_logger = logging.getLogger(logger_name)
     stress_logger.setLevel(level)
     servicebus_logger = logging.getLogger("azure.servicebus")
@@ -60,11 +60,17 @@ def get_logger(log_filename, logger_name, level=logging.ERROR, print_console=Fal
             time = 30
         else:
             time = 60
-        file_handler = TimedRotatingFileHandler(log_filename, when='M', interval=time, utc=True)
-        file_handler.setFormatter(formatter)
-        servicebus_logger.addHandler(file_handler)
-        pyamqp_logger.addHandler(file_handler)
-        stress_logger.addHandler(file_handler)
+        
+        # If any do not have handlers, create a new file handler and add.
+        if not servicebus_logger.handlers or not pyamqp_logger.handlers or not stress_logger.handlers:
+            file_handler = TimedRotatingFileHandler(log_filename, when='M', interval=time, utc=True)
+            file_handler.setFormatter(formatter)
+            if not servicebus_logger.handlers:
+                servicebus_logger.addHandler(file_handler)
+            if not pyamqp_logger.handlers:
+                pyamqp_logger.addHandler(file_handler)
+            if not stress_logger.handlers:
+                stress_logger.addHandler(file_handler)
     else:
         console_handler = logging.FileHandler(log_filename)
         console_handler.setFormatter(formatter)
