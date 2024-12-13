@@ -382,43 +382,6 @@ file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
 
 <!-- END SNIPPET -->
 
-We also can use Enterprise File Search without creation of a vector store. In this scenario we initialize the agent with `CodeInterpreterTool` definitions as shown below:
-
-<!-- SNIPPET:sample_agents_vector_store_batch_enterprise_file_search.create_agent -->
-
-```python
-code_interpreter = CodeInterpreterTool()
-
-# Notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
-agent = project_client.agents.create_agent(
-    model="gpt-4-1106-preview",
-    name="my-assistant",
-    instructions="You are helpful assistant",
-    tools=code_interpreter.definitions,
-)
-```
-
-<!-- END SNIPPET -->
-
-Then we create `VectorStoreDataSource` and use it in `MessageAttachment` constructor. This class is used to create a message.
-
-<!-- SNIPPET:sample_agents_vector_store_batch_enterprise_file_search.upload_file_and_create_message_with_code_interpreter -->
-
-```python
-# We will upload the local file to Azure and will use it for vector store creation.
-_, asset_uri = project_client.upload_file("./product_info_1.md")
-ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
-
-# Create a message with the attachment
-attachment = MessageAttachment(data_source=ds, tools=code_interpreter.definitions)
-message = project_client.agents.create_message(
-    thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]
-)
-```
-
-<!-- END SNIPPET -->
-
-
 #### Create Agent with Code Interpreter
 
 Here is an example to upload a file and use it for code interpreter by an Agent:
@@ -729,6 +692,24 @@ message = project_client.agents.create_message(
     role="user",
     content="Could you please create bar chart in TRANSPORTATION sector for the operating profit from the uploaded csv file and provide file to me?",
     attachments=[attachment],
+)
+```
+
+<!-- END SNIPPET -->
+
+Azure blob storage can be used as a message attachment. In this case `VectorStoreDataSource` have to be useed as a data source:
+
+<!-- SNIPPET:sample_agents_vector_store_batch_enterprise_file_search.upload_file_and_create_message_with_code_interpreter -->
+
+```python
+# We will upload the local file to Azure and will use it for vector store creation.
+_, asset_uri = project_client.upload_file("./product_info_1.md")
+ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
+
+# Create a message with the attachment
+attachment = MessageAttachment(data_source=ds, tools=code_interpreter.definitions)
+message = project_client.agents.create_message(
+    thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]
 )
 ```
 
