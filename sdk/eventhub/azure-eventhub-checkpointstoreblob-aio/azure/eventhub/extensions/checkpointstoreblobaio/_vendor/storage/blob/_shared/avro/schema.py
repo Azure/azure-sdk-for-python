@@ -25,7 +25,7 @@ A schema may be one of:
  - Null.
 """
 
-from abc import ABC, abstractmethod
+from abc import ABCMeta, abstractmethod
 import json
 import logging
 import re
@@ -132,7 +132,7 @@ class SchemaParseException(AvroException):
     """Error while parsing a JSON schema descriptor."""
 
 
-class Schema(metaclass=ABC):
+class Schema(metaclass=ABCMeta):
     """Abstract base class for all Schema classes."""
 
     def __init__(self, data_type, other_props=None):
