@@ -332,7 +332,7 @@ agent = project_client.agents.create_agent(
 
 #### Create Agent with Enterprise File Search
 
-We can upload file to Azure as it is shown in the example, or use the existing Blob. In the code below we demonstrate how this can be achieved. First we are upload file to azure and create `VectorStoreDataSource`, which then is used to create vector store. This vector sore is then given to the `FileSearchTool` constructor.
+We can upload file to Azure as it is shown in the example, or use the existing Azure blob storage. In the code below we demonstrate how this can be achieved. First we upload file to azure and create `VectorStoreDataSource`, which then is used to create vector store. This vector store is then given to the `FileSearchTool` constructor.
 
 <!-- SNIPPET:sample_agents_enterprise_file_search.upload_file_and_create_agent_with_file_search -->
 
@@ -340,15 +340,15 @@ We can upload file to Azure as it is shown in the example, or use the existing B
 # We will upload the local file to Azure and will use it for vector store creation.
 _, asset_uri = project_client.upload_file("./product_info_1.md")
 
-# create a vector store with no file and wait for it to be processed
+# Create a vector store with no file and wait for it to be processed
 ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
 vector_store = project_client.agents.create_vector_store_and_poll(data_sources=[ds], name="sample_vector_store")
 print(f"Created vector store, vector store ID: {vector_store.id}")
 
-# create a file search tool
+# Create a file search tool
 file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
 
-# notices that FileSearchTool as tool and tool_resources must be added or the assistant unable to search the file
+# Notices that FileSearchTool as tool and tool_resources must be added or the assistant unable to search the file
 agent = project_client.agents.create_agent(
     model="gpt-4-1106-preview",
     name="my-assistant",
@@ -360,23 +360,23 @@ agent = project_client.agents.create_agent(
 
 <!-- END SNIPPET -->
 
-We also can attach files to the existing vector vector store. In the code snippet below, we first create empty vector store and add file to it.
+We also can attach files to the existing vector vector store. In the code snippet below, we first create an empty vector store and add file to it.
 
 <!-- SNIPPET:sample_agents_vector_store_batch_enterprise_file_search.attach_files_to_store -->
 
 ```python
-# create a vector store with no file and wait for it to be processed
+# Create a vector store with no file and wait for it to be processed
 vector_store = project_client.agents.create_vector_store_and_poll(data_sources=[], name="sample_vector_store")
 print(f"Created vector store, vector store ID: {vector_store.id}")
 
 ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
-# add the file to the vector store or you can supply data sources in the vector store creation
+# Add the file to the vector store or you can supply data sources in the vector store creation
 vector_store_file_batch = project_client.agents.create_vector_store_file_batch_and_poll(
     vector_store_id=vector_store.id, data_sources=[ds]
 )
 print(f"Created vector store file batch, vector store file batch ID: {vector_store_file_batch.id}")
 
-# create a file search tool
+# Create a file search tool
 file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
 ```
 
@@ -389,7 +389,7 @@ We also can use Enterprise File Search without creation of a vector store. In th
 ```python
 code_interpreter = CodeInterpreterTool()
 
-# notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
+# Notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
 agent = project_client.agents.create_agent(
     model="gpt-4-1106-preview",
     name="my-assistant",
@@ -400,7 +400,7 @@ agent = project_client.agents.create_agent(
 
 <!-- END SNIPPET -->
 
-Then we create `VectorStoreDataSource` and use it in `MessageAttachment` constructor. This class is used to create message.
+Then we create `VectorStoreDataSource` and use it in `MessageAttachment` constructor. This class is used to create a message.
 
 <!-- SNIPPET:sample_agents_vector_store_batch_enterprise_file_search.upload_file_and_create_message_with_code_interpreter -->
 
@@ -409,7 +409,7 @@ Then we create `VectorStoreDataSource` and use it in `MessageAttachment` constru
 _, asset_uri = project_client.upload_file("./product_info_1.md")
 ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
 
-# create a message with the attachment
+# Create a message with the attachment
 attachment = MessageAttachment(data_source=ds, tools=code_interpreter.definitions)
 message = project_client.agents.create_message(
     thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]
@@ -555,7 +555,7 @@ agent = await project_client.agents.create_agent(
 
 #### Create Agent With Azure Function Call
 
-The agent can handle Azure Functions on the service side and return the result of the call. To use the function we need to create the `AzureFunctionTool`, which contains the input and output queues of azure function and the description of input parameters. Please note that in the prompt we are asking model to invoke queue when the specific question ("What would foo say?") is being asked. 
+The agent can handle Azure Function calls on the service side and return the result of the call. To use the function we need to create the `AzureFunctionTool`, which contains the input and output queues of azure function and the description of input parameters. Please note that in the prompt we are asking the model to invoke queue when the specific question ("What would foo say?") is being asked. 
 
 <!-- SNIPPET sample_agents_azure_functions.create_agent_with_azure_function_tool -->
 

@@ -33,7 +33,7 @@ async def main() -> None:
         async with AIProjectClient.from_connection_string(
             credential=creds, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
         ) as project_client:
-            # upload a file and wait for it to be processed
+            # Upload a file and wait for it to be processed
             file = await project_client.agents.upload_file_and_poll(
                 file_path="../product_info_1.md", purpose=FilePurpose.AGENTS
             )

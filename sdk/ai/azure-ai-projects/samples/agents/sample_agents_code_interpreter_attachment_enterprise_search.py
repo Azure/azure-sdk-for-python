@@ -55,7 +55,7 @@ with project_client:
     _, asset_uri = project_client.upload_file("./product_info_1.md")
     ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
 
-    # create a message with the attachment
+    # Create a message with the attachment
     attachment = MessageAttachment(data_source=ds, tools=code_interpreter.definitions)
     message = project_client.agents.create_message(
         thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]

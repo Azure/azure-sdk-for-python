@@ -65,9 +65,9 @@ with tracer.start_as_current_span(scenario):
 
         run = project_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
 
-        # poll the run as long as run status is queued or in progress
+        # Poll the run as long as run status is queued or in progress
         while run.status in ["queued", "in_progress", "requires_action"]:
-            # wait for a second
+            # Wait for a second
             time.sleep(1)
             run = project_client.agents.get_run(thread_id=thread.id, run_id=run.id)
 
