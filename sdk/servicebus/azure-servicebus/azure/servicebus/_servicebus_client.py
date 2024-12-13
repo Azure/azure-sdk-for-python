@@ -117,12 +117,16 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         **kwargs: Any,
     ) -> None:
         uamqp_transport = kwargs.pop("uamqp_transport", False)
+        amqp_transport = PyamqpTransport
+
         if uamqp_transport:
             try:
                 from ._transport._uamqp_transport import UamqpTransport
+                amqp_transport = UamqpTransport
             except ImportError:
                 raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.3,<2.0.0`.") from None
-        self._amqp_transport = UamqpTransport if uamqp_transport else PyamqpTransport # pylint:disable=possibly-used-before-assignment
+
+        self._amqp_transport = amqp_transport
 
         # If the user provided http:// or sb://, let's be polite and strip that.
         self.fully_qualified_namespace: str = strip_protocol_from_uri(fully_qualified_namespace.strip())

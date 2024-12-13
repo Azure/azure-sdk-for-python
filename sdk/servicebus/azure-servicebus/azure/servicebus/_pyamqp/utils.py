@@ -48,9 +48,9 @@ class UTC(datetime.tzinfo):
 try:
     from datetime import timezone
 
-    TZ_UTC = timezone.utc  # type: ignore
+    TZ_UTC: timezone = timezone.utc
 except ImportError:
-    TZ_UTC = UTC()  # type: ignore
+    TZ_UTC: timezone = UTC()  # type: ignore
 
 
 def utc_from_timestamp(timestamp):
