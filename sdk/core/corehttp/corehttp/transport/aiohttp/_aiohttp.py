@@ -37,7 +37,7 @@ from ...exceptions import (
     ServiceResponseError,
 )
 from .._base_async import AsyncHttpTransport, _handle_non_stream_rest_response
-from .._base import _create_connection_config, _get_proxy
+from .._base import _create_connection_config
 from ...rest._aiohttp import RestAioHttpTransportResponse
 from ...utils._utils import get_file_items
 
