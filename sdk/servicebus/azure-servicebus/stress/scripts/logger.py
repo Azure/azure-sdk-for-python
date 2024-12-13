@@ -53,6 +53,7 @@ def get_logger(log_filename, logger_name, level=logging.ERROR, print_console=Fal
     formatter = log_format or logging.Formatter(
         "%(asctime)s - [%(thread)d.%(threadName)s] - %(name)-12s %(levelname)-8s %(funcName)s(%(lineno)d) %(message)s"
     )
+    # TODO: fix memory leak from rotating logs
     if rotating_logs:
         # rotated hourly if small file, o/w rotated bi-hourly
         if level == logging.DEBUG or level == logging.INFO:
