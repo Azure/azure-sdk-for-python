@@ -67,6 +67,7 @@ def mock_run_operations(mock_workspace_scope: OperationScope, mock_aml_services_
 @pytest.mark.unittest
 @pytest.mark.training_experiences_test
 class TestJobLogManager:
+    @pytest.mark.skip("TODO 1907352: Relies on a missing VCR.py recording + test suite needs to be reworked")
     def test_wait_for_completion_with_output(self, mock_run_operations):
         dummy_job = DummyJob()
         with patch.object(
@@ -80,6 +81,7 @@ class TestJobLogManager:
             stream_logs_until_completion(mock_run_operations, dummy_job)
             get_run_mock.assert_called()
 
+    @pytest.mark.skip("TODO 1907352: Relies on a missing VCR.py recording + test suite needs to be reworked")
     def test_wait_for_completion_with_error_silent(self, mock_run_operations):
         dummy_job = DummyJob()
         with patch.object(
@@ -90,6 +92,7 @@ class TestJobLogManager:
             stream_logs_until_completion(mock_run_operations, dummy_job, None, False)
             get_run_mock.assert_called_once()
 
+    @pytest.mark.skip("TODO 1907352: Relies on a missing VCR.py recording + test suite needs to be reworked")
     def test_wait_for_completion_with_error_raise(self, mock_run_operations):
         dummy_job = DummyJob()
         with patch.object(RunOperations, "get_run_details", return_value=RunDetails(status="Failed")) as get_run_mock:
@@ -144,6 +147,7 @@ class TestJobLogManager:
     # Method to create a RunDetails based on the provided status,
     # the number of streamable files to include, and if whether to add or not
     # non-streamable log files
+    @pytest.mark.skip("TODO 1907352: Relies on a missing VCR.py recording + test suite needs to be reworked")
     def _get_run_details_dto(
         self, status="Finalizing", number_of_streamable_log_files=0, include_additional_log_files=False
     ) -> RunDetails:
@@ -170,6 +174,7 @@ class TestJobLogManager:
     # Helper method to test that logs will be streamed comprehensively
     # and in predictable order independently of the sequence of run details.
     # Logs could be delivered at different pace after subsequent calls to get details
+    @pytest.mark.skip("TODO 1907352: Relies on a missing VCR.py recording + test suite needs to be reworked")
     def _test_stream_logs_helper(self, mock_run_operations, run_details_sequence=[]) -> None:
         my_vcr = vcr.VCR(before_record=before_record_cb)
 
@@ -203,6 +208,7 @@ class TestJobLogManager:
             # Check there were no duplicates
             assert len(list_of_logs) == len(set(list_of_logs))
 
+    @pytest.mark.skip("TODO 1907352: Relies on a missing VCR.py recording + test suite needs to be reworked")
     def test_list_logs(self, mock_run_operations) -> None:
         with patch.object(
             RunOperations,
@@ -215,6 +221,7 @@ class TestJobLogManager:
 
     # Method to test the golden path, a new log was added on each call to get run details
     @pytest.mark.vcr()
+    @pytest.mark.skip("TODO 1907352: Relies on a missing VCR.py recording + test suite needs to be reworked")
     def test_stream_logs_golden_path(self, mock_run_operations) -> None:
         run_details_sequence = [
             self._get_run_details_dto(status="Running"),
@@ -231,6 +238,7 @@ class TestJobLogManager:
 
     # Method to test when all the logs were available at the same time
     @pytest.mark.vcr()
+    @pytest.mark.skip("TODO 1907352: Relies on a missing VCR.py recording + test suite needs to be reworked")
     def test_stream_logs_arriving_all_together(self, mock_run_operations) -> None:
         run_details_sequence = [
             self._get_run_details_dto(status="Running"),
@@ -244,6 +252,7 @@ class TestJobLogManager:
 
     # Method to test when the logs became available in batches of 2
     @pytest.mark.vcr()
+    @pytest.mark.skip("TODO 1907352: Relies on a missing VCR.py recording + test suite needs to be reworked")
     def test_stream_logs_arriving_in_batches(self, mock_run_operations) -> None:
         run_details_sequence = [
             self._get_run_details_dto(status="Running"),

@@ -39,6 +39,9 @@ TEST_PARAMS = {"a_param": "1", "another_param": "2"}
 )
 @pytest.mark.training_experiences_test
 class TestCommandJob(AzureRecordedTestCase):
+    @pytest.mark.skip(
+        "Investigate The network connectivity issue encountered for 'Microsoft.MachineLearningServices'; cannot fulfill the request."
+    )
     @pytest.mark.e2etest
     def test_command_job(self, randstr: Callable[[], str], client: MLClient) -> None:
         # TODO: need to create a workspace under a e2e-testing-only subscription and resource group
@@ -180,6 +183,7 @@ class TestCommandJob(AzureRecordedTestCase):
         assert command_job_2.compute == "testCompute"
         check_tid_in_url(client, command_job_2)
 
+    @pytest.mark.skip("https://dev.azure.com/msdata/Vienna/_workitems/edit/2009659")
     @pytest.mark.e2etest
     def test_command_job_builder(self, data_with_2_versions: str, client: MLClient) -> None:
         inputs = {
@@ -253,6 +257,7 @@ class TestCommandJob(AzureRecordedTestCase):
         assert command_job.environment_variables[COMMON_RUNTIME_ENV_VAR] == "true"
 
     @pytest.mark.e2etest
+    @pytest.mark.skip("TODO: 1210641- Re-enable when we switch to runner-style tests")
     def test_command_job_with_params(self, randstr: Callable[[], str], client: MLClient) -> None:
         job_name = randstr("job_name")
         params_override = [{"name": job_name}]
@@ -267,6 +272,7 @@ class TestCommandJob(AzureRecordedTestCase):
         client.jobs.stream(job_name)
         assert client.jobs.get(job_name).parameters
 
+    @pytest.mark.skip("https://dev.azure.com/msdata/Vienna/_workitems/edit/2009659")
     @pytest.mark.e2etest
     def test_command_job_with_modified_environment(self, randstr: Callable[[], str], client: MLClient) -> None:
         job_name = randstr("job_name")
@@ -286,6 +292,7 @@ class TestCommandJob(AzureRecordedTestCase):
         assert job.environment == "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
 
     @pytest.mark.e2etest
+    @pytest.mark.skip("Investigate why cancel does not record some upload requests of code assets")
     def test_command_job_cancel(self, randstr: Callable[[], str], client: MLClient) -> None:
         job_name = randstr("job_name")
         print(f"Creating job to validate the cancel job operation: {job_name}")
@@ -356,6 +363,7 @@ class TestCommandJob(AzureRecordedTestCase):
         assert command_job_resource.inputs.testdata.path == f"{data_name}:{data_versions[-1]}"
 
     @pytest.mark.e2etest
+    @pytest.mark.skip(reason="Task 1791832: Inefficient, causing testing pipeline to time out.")
     def test_command_job_archive_restore(self, randstr: Callable[[], str], client: MLClient) -> None:
         job_name = randstr("job_name")
         print(f"Creating job {job_name}")
@@ -380,6 +388,7 @@ class TestCommandJob(AzureRecordedTestCase):
         client.jobs.restore(name=name)
         assert name in get_job_list()
 
+    @pytest.mark.skip(reason="Task 1791832: Inefficient, causing testing pipeline to time out.")
     @pytest.mark.e2etest
     def test_command_job_download(self, tmp_path: Path, randstr: Callable[[], str], client: MLClient) -> None:
         client: MLClient = client
@@ -401,6 +410,7 @@ class TestCommandJob(AzureRecordedTestCase):
         assert output_dir.exists()
         assert next(output_dir.iterdir(), None), "No artifacts were downloaded"
 
+    @pytest.mark.skip(reason="Task 1791832: Inefficient, causing testing pipeline to time out.")
     @pytest.mark.timeout(900)
     @pytest.mark.e2etest
     def test_command_job_local_run_download(self, tmp_path: Path, randstr: Callable[[], str], client: MLClient) -> None:

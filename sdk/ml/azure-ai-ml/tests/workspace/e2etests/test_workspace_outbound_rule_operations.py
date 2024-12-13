@@ -26,6 +26,10 @@ from azure.core.polling import LROPoller
 class TestWorkspaceOutboundRules(AzureRecordedTestCase):
     @pytest.mark.e2etest
     @pytest.mark.mlc
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="ARM template makes playback complex, so the test is flaky when run against recording",
+    )
     def test_workspace_create_with_managed_network_list_show_remove_rules(
         self, client: MLClient, randstr: Callable[[], str], location: str
     ) -> None:
@@ -193,6 +197,10 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     @pytest.mark.mlc
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="ARM template makes playback complex, so the test is flaky when run against recording",
+    )
     def test_workspace_create_with_managed_network_provision_network(
         self, client: MLClient, randstr: Callable[[], str], location: str
     ) -> None:

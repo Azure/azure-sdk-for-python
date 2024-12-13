@@ -21,6 +21,7 @@ VALIDATION_DATA_PATH = TEST_DATASET_PATH + "/validation.jsonl"
 TEACHER_MODEL_ENDPOINT_NAME = "Llama-3-1-405B-Instruct-BASE"
 
 
+@pytest.mark.skipif(condition=not is_live(), reason="This test requires a live endpoint")
 @pytest.mark.usefixtures("recorded_test")
 class TestDistillationJob(AzureRecordedTestCase):
     def test_distillation_job(self, client: MLClient) -> None:

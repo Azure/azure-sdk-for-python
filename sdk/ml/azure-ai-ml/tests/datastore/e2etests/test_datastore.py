@@ -21,6 +21,7 @@ def b64read(p):
 @pytest.mark.usefixtures("recorded_test")
 @pytest.mark.data_experiences_test
 class TestDatastore(AzureRecordedTestCase):
+    @pytest.mark.skip(reason="Disable until preview release")
     def test_hdfs_pw(
         self,
         client: MLClient,
@@ -47,6 +48,7 @@ class TestDatastore(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.datastores.get(random_name)
 
+    @pytest.mark.skip(reason="Disable until preview release")
     def test_hdfs_keytab(
         self,
         client: MLClient,
@@ -77,6 +79,7 @@ class TestDatastore(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.datastores.get(random_name)
 
+    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_blob_store(
         self,
         client: MLClient,
@@ -103,6 +106,7 @@ class TestDatastore(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.datastores.get(random_name)
 
+    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_blob_store_credential_less(
         self,
         client: MLClient,
@@ -125,6 +129,7 @@ class TestDatastore(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.datastores.get(random_name)
 
+    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_file_store(
         self,
         client: MLClient,
@@ -151,6 +156,9 @@ class TestDatastore(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.datastores.get(random_name)
 
+    @pytest.mark.skip(
+        reason="Will reenable once we have a service principal: https://msdata.visualstudio.com/Vienna/_workitems/edit/1071904/"
+    )
     def test_adls_gen_1_store(
         self,
         client: MLClient,
@@ -168,6 +176,9 @@ class TestDatastore(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.datastores.get(random_name)
 
+    @pytest.mark.skip(
+        reason="Will reenable once service been fixed: Bug 1423343: [DPv2 - Data] Credential-less datastore creation fails for ADLS Gen1 datastores"
+    )
     def test_credential_less_adls_gen_1_store(
         self,
         client: MLClient,
@@ -186,6 +197,9 @@ class TestDatastore(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.datastores.get(random_name)
 
+    @pytest.mark.skip(
+        reason="Will reenable once we have a service principal: https://msdata.visualstudio.com/Vienna/_workitems/edit/1071904/"
+    )
     def test_adls_gen2_store(
         self,
         client: MLClient,
@@ -203,6 +217,7 @@ class TestDatastore(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.datastores.get(random_name)
 
+    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_credential_less_adls_gen2_store(
         self,
         client: MLClient,

@@ -67,6 +67,7 @@ class TestBatchEndpoint(AzureRecordedTestCase):
 
         raise Exception(f"Batch endpoint {name} is supposed to be deleted.")
 
+    @pytest.mark.skip("TODO (2349930) SSL Certificate error")
     def test_batch_invoke(
         self, client: MLClient, rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]
     ) -> None:
@@ -104,6 +105,10 @@ class TestBatchEndpoint(AzureRecordedTestCase):
         )
         assert batchjob_input
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="Update operation is not valid. If we use the same endpoint/deployment this will throw an error",
+    )
     def test_batch_component(
         self, client: MLClient, rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]
     ) -> None:
@@ -138,6 +143,7 @@ class TestBatchEndpoint(AzureRecordedTestCase):
         )
         assert job
 
+    @pytest.mark.skip("TODO (2349930) SSL Certificate error")
     def test_batch_invoke_outputs(
         self,
         client: MLClient,

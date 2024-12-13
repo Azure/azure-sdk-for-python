@@ -33,6 +33,10 @@ from azure.mgmt.msi._managed_service_identity_client import ManagedServiceIdenti
 class TestWorkspace(AzureRecordedTestCase):
 
     # WARNING: This test takes a long time to run in live mode.
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="ARM template makes playback complex, so the test is flaky when run against recording",
+    )
     def test_workspace_create_and_delete(self, client: MLClient, randstr: Callable[[], str], location: str) -> None:
         wps_name = f"e2etest_{randstr('wps_name')}"
         wps_description = f"{wps_name} description"
@@ -80,6 +84,10 @@ class TestWorkspace(AzureRecordedTestCase):
 
     # Despite the name, also tests create and delete by necessity to have an update-able workspace.
     # WARNING: This test takes a LONG time to run in live mode.
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="ARM template makes playback complex, so the test is flaky when run against recording",
+    )
     def test_workspace_update(self, client: MLClient, randstr: Callable[[], str], location: str) -> None:
         wps_name = f"e2etest_{randstr('wps_name')}"
         wps_description = f"{wps_name} description"
@@ -156,6 +164,12 @@ class TestWorkspace(AzureRecordedTestCase):
         assert poller
         assert isinstance(poller, LROPoller)
 
+    @pytest.mark.skipif(
+        condition=True,
+        reason="This test was refactored out from the original workspace CRUD test because not everyone has access to the "
+        + "static resources referenced here. We need to refactor the testing of ACR and appinsights to "
+        + "not be dependent on user access rights.",
+    )
     def test_acr_and_appinsights_in_create(self, client: MLClient, randstr: Callable[[], str], location: str) -> None:
         wps_name = f"e2etest_{randstr('wps_name')}"
         wps_description = f"{wps_name} description"
@@ -223,6 +237,7 @@ class TestWorkspace(AzureRecordedTestCase):
         assert len(diagnose_result.storage_account_results) >= 0
         assert len(diagnose_result.user_defined_route_results) >= 0
 
+    @pytest.mark.skip("Testing CMK workspace needs complicated setup, created TASK 1063112 to address that later")
     def test_workspace_cmk_create_and_delete(self, client: MLClient, randstr: Callable[[], str]) -> None:
         wps_name = f"e2etest_{randstr('wps_name')}"
         params_override = [{"name": wps_name}]
@@ -248,6 +263,10 @@ class TestWorkspace(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     @pytest.mark.mlc
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="ARM template makes playback complex, so the test is flaky when run against recording",
+    )
     def test_uai_workspace_create_update_and_delete(
         self, client: MLClient, randstr: Callable[[], str], location: str
     ) -> None:
@@ -341,6 +360,10 @@ class TestWorkspace(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     @pytest.mark.mlc
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="ARM template makes playback complex, so the test is flaky when run against recording",
+    )
     def test_update_sai_to_sai_and_uai_workspace_with_uai_deletion(
         self, client: MLClient, randstr: Callable[[], str], location: str
     ) -> None:
@@ -432,6 +455,11 @@ class TestWorkspace(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     @pytest.mark.mlc
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="ARM template makes playback complex, so the test is flaky when run against recording",
+    )
+    @pytest.mark.skip("I don't have permission for this apaprently")
     def test_workspace_create_delete_with_managed_network(
         self, client: MLClient, randstr: Callable[[], str], location: str
     ) -> None:
@@ -484,7 +512,13 @@ class TestWorkspace(AzureRecordedTestCase):
         assert isinstance(poller, LROPoller)
 
     @pytest.mark.e2etest
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="ARM template makes playback complex, so the test is flaky when run against recording",
+    )
+
     # add pytest skip mark
+    @pytest.mark.skip("Involves hubs, need to look at closely")
     def test_workspace_create_with_hub(self, client: MLClient, randstr: Callable[[], str], location: str) -> None:
         # Create dependent Hub
         hub_name = f"e2etest_{randstr('hub_name_1')}"

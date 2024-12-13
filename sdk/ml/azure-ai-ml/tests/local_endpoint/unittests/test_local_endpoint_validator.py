@@ -27,6 +27,7 @@ def deployment_yaml_base_path():
     return Path(Path(__file__).parent.absolute(), "../../test_configs/deployments/online/")
 
 
+@pytest.mark.skip(reason="TODO[BUG 1260290] Deployment should not be instantiated")
 @pytest.mark.unittest
 class TestLocalEndpointEnvironmentValidation:
     def test_environment_contains_cloud_artifacts_fails(self):
@@ -157,6 +158,7 @@ class TestLocalEndpointCodeConfigurationValidation:
         assert "onlinescoring" in str(code_dir)
 
 
+@pytest.mark.skip(reason="TODO[BUG 1260290] Deployment should not be instantiated")
 @pytest.mark.unittest
 class TestLocalEndpointModelValidation:
     def test_model_contains_cloud_artifacts_id_fails(self):

@@ -22,6 +22,7 @@ def assert_pipeline_job_cancel(client: MLClient, score_func, pipeline_model_inpu
     assert_job_cancel(pipeline_job, client)
 
 
+@pytest.mark.skipif(condition=not is_live(), reason="registry test, may fail in playback mode")
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features", "recorded_test")
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest

@@ -487,6 +487,7 @@ class TestComponent(AzureRecordedTestCase):
         assert component_resource.display_name == display_name
 
     @pytest.mark.disable_mock_code_hash
+    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_component_create_twice_same_code_arm_id(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         component_path = "./tests/test_configs/components/component_for_reuse_test/component.yml"
         component_name = randstr("component_name")
@@ -497,6 +498,7 @@ class TestComponent(AzureRecordedTestCase):
         # the code arm id should be the same
         assert component_resource1.code == component_resource2.code
 
+    @pytest.mark.skipif(condition=not is_live(), reason="non-deterministic upload fails in playback on CI")
     def test_component_update_code(self, client: MLClient, randstr: Callable[[str], str], tmp_path: Path) -> None:
         component_name = randstr("component_name")
         path = "./tests/test_configs/components/basic_component_code_local_path.yml"
@@ -649,6 +651,7 @@ class TestComponent(AzureRecordedTestCase):
         assert next_component_asset._auto_increment_version is False
 
     @pytest.mark.disable_mock_code_hash
+    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_anonymous_component_reuse(self, client: MLClient, variable_recorder) -> None:
         # component with different name will be created as different instance;
         # therefore component reuse will not work as component name differs
@@ -764,6 +767,7 @@ class TestComponent(AzureRecordedTestCase):
         client.components.restore(name=name, version=version_archived)
         assert version_archived in get_component_list()
 
+    @pytest.mark.skipif(condition=not is_live(), reason="target to verify service-side behavior")
     def test_component_archive_restore_container(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         name = randstr("name")
         create_component(client, name)
@@ -796,6 +800,10 @@ class TestComponent(AzureRecordedTestCase):
         component_resource = client.components.create_or_update(component)
         assert component_resource.version == "3"
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="registry test, may fail in playback mode during retrieving registry client",
+    )
     def test_component_create_get_list_from_registry(
         self, pipelines_registry_client: MLClient, randstr: Callable[[str], str]
     ) -> None:
@@ -930,6 +938,7 @@ class TestComponent(AzureRecordedTestCase):
         rest_component = client.components.create_or_update(component)
         assert rest_component.name == name
 
+    @pytest.mark.skipif(condition=not is_live(), reason="registry test, target to verify service-side behavior")
     def test_component_with_default_label(
         self,
         client: MLClient,
@@ -1000,6 +1009,9 @@ class TestComponent(AzureRecordedTestCase):
         # TODO(2037030): verify when backend ready
         # assert previous_dict == current_dict
 
+    @pytest.mark.skip(
+        reason="TODO (2349965): Message: User/tenant/subscription is not allowed to access registry UnsecureTest-hello-world"
+    )
     @pytest.mark.usefixtures("enable_private_preview_schema_features")
     def test_ipp_component_create(self, ipp_registry_client: MLClient, randstr: Callable[[str], str]):
         component_path = "./tests/test_configs/components/component_ipp.yml"
@@ -1210,6 +1222,7 @@ class TestComponent(AzureRecordedTestCase):
 
         assert component._get_origin_code_value() == created_component._get_origin_code_value()
 
+    @pytest.mark.live_test_only("Needs re-recording to work with new test proxy sanitizers")
     def test_load_component_from_flow_in_registry(self, registry_client: MLClient, randstr):
         target_path: str = "./tests/test_configs/flows/runs/with_environment.yml"
         component = load_component(

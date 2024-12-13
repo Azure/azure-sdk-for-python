@@ -46,6 +46,13 @@ class TestDSLPipeline(AzureRecordedTestCase):
     #       has been assigned the 'test-msi-id' ID
     # - 4 datastores connected to the aforementioned storage containers named silo_datastore1/2/3 and
     #       agg_datastore.
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason=(
+            "TODO (2235034) The critical call to `client.jobs.create_or_update` seems to make different"
+            + "API calls in playback mode compared to recording mode"
+        ),
+    )
     def test_fl_pipeline(
         self,
         client: MLClient,

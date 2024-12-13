@@ -74,6 +74,7 @@ class TestComponentHash(AzureRecordedTestCase):
         ) as base_dir:
             self._assert_recreated_component_no_change(base_dir, client, randstr)
 
+    @pytest.mark.skip(reason="seems that this still can't trigger the automatic Windows path shortening")
     def test_component_recreate_with_long_path(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         long_dir_name = os.path.join(*(["a" * 50] * 10))
         with build_temp_folder(

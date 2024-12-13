@@ -280,6 +280,10 @@ class TestCommandComponentEntity:
 
         _try_resolve_code_for_component(component, mock_get_arm_id_and_fill_back)
 
+    @pytest.mark.skipif(
+        sys.version_info[1] == 11,
+        reason=f"This test is not compatible with Python 3.11, skip in CI.",
+    )
     def test_command_component_version_as_a_function(self):
         expected_rest_component = {
             "componentId": "fake_component",

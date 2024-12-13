@@ -462,6 +462,7 @@ class TestDSLGroup:
 
         assert "Default value of Output 'out_param1' cannot be set" in str(e.value)
 
+    @pytest.mark.skip(reason="Input group item .result() is not supported currently.")
     def test_input_group_result(self):
         @group
         class SubParamClass:

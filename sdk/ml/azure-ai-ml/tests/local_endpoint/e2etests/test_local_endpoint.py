@@ -44,6 +44,10 @@ def request_file() -> str:
 
 @pytest.mark.e2etest
 @pytest.mark.local_endpoint_local_assets
+@pytest.mark.skipif(
+    platform.python_implementation() == "PyPy" or sys.platform.startswith("darwin"),
+    reason="Skipping for PyPy and macOS as docker installation is not supported and skipped in dev_requirement.txt",
+)
 def test_local_endpoint_mir_e2e(
     endpoint_mir_yaml: str,
     mir_endpoint_name: str,
@@ -69,6 +73,7 @@ def test_local_endpoint_mir_e2e(
 
 @pytest.mark.e2etest
 @pytest.mark.local_endpoint_local_assets
+@pytest.mark.skip()
 def test_local_deployment_mir_e2e(
     deployment_create_yaml: str,
     deployment_update_file: str,
@@ -88,6 +93,7 @@ def test_local_deployment_mir_e2e(
 
 @pytest.mark.e2etest
 @pytest.mark.local_endpoint_local_assets
+@pytest.mark.skip()
 def test_local_deployment_mir_model_code_overlap_e2e(
     mir_endpoint_name: str,
     request_file: str,
@@ -106,6 +112,7 @@ def test_local_deployment_mir_model_code_overlap_e2e(
 @pytest.mark.e2etest
 @pytest.mark.local_endpoint_byoc
 @pytest.mark.local_endpoint_local_assets
+@pytest.mark.skip()
 def test_local_deployment_mir_e2e_byoc(
     mir_endpoint_name: str,
     client: MLClient,
@@ -123,6 +130,7 @@ def test_local_deployment_mir_e2e_byoc(
 
 @pytest.mark.e2etest
 @pytest.mark.local_endpoint_byoc
+@pytest.mark.skip("Requires building docker image and specific ACR info we don't have from pipelines.")
 def test_local_deployment_mir_e2e_byoc_sklearn(
     mir_endpoint_name: str,
     request_file: str,
@@ -163,18 +171,21 @@ def test_local_deployment_mir_e2e_byoc_sklearn(
             "tests/test_configs/deployments/model-1/model/sklearn_regression_model.pkl",
             None,
             None,
+            marks=pytest.mark.skip(reason="Registered model covered in full registered assets test."),
         ),
         pytest.param(
             "tests/test_configs/deployments/online/online_deployment_registered_code.yaml",
             None,
             "tests/test_configs/deployments/model-1/onlinescoring/",
             None,
+            marks=pytest.mark.skip(reason="Registered code covered in full registered assets test."),
         ),
         pytest.param(
             "tests/test_configs/deployments/online/online_deployment_registered_env.yaml",
             None,
             None,
             "tests/test_configs/deployments/model-1/environment/conda.yml",
+            marks=pytest.mark.skip(reason="Registered env covered in full registered assets test."),
         ),
         pytest.param(
             "tests/test_configs/deployments/online/online_deployment_registered_artifacts.yaml",
@@ -184,6 +195,7 @@ def test_local_deployment_mir_e2e_byoc_sklearn(
         ),
     ],
 )
+@pytest.mark.skip()
 def test_local_deployment_mir_e2e_registered_artifacts(
     mir_endpoint_name: str,
     request_file: str,

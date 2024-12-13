@@ -43,6 +43,10 @@ class TestWorkspace(AzureRecordedTestCase):
                 matches_found += 1
         assert matches_found == len(expected_workspaces)
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="ARM template makes playback complex, so the test is flaky when run against recording",
+    )
     def test_ai_workspace_operations(self, client: MLClient, randstr: Callable[[], str], location: str) -> None:
         # declare values for finally-block cleanup
         created_hub = None

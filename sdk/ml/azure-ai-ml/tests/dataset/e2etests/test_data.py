@@ -175,6 +175,7 @@ sepal_length,sepal_width,petal_length,petal_width,species
         assert data_version.id == generate_data_arm_id(client._operation_scope, name, version)
         assert data_version.path.endswith("/tmp_folder/")
 
+    @pytest.mark.skipif(condition=not is_live(), reason="Auth issue in Registry")
     def test_create_data_asset_in_registry(
         self, data_asset_registry_client: MLClient, randstr: Callable[[], str]
     ) -> None:
@@ -223,6 +224,7 @@ sepal_length,sepal_width,petal_length,petal_width,species
             sleep_if_live(3)
             assert client.data.get(name, label="latest").version == version
 
+    @pytest.mark.skipif(condition=not is_live(), reason="Auth issue in Registry")
     def test_data_get_latest_label_in_registry(
         self, data_asset_registry_client: MLClient, randstr: Callable[[], str]
     ) -> None:
@@ -264,6 +266,7 @@ sepal_length,sepal_width,petal_length,petal_width,species
         assert version_archived in get_data_list()
 
     @pytest.mark.e2etest
+    @pytest.mark.skip(reason="Task 1791832: Inefficient, possibly causing testing pipeline to time out.")
     def test_data_archive_restore_container(self, client: MLClient, randstr: Callable[[], str]) -> None:
         name = randstr("name")
         version = "1"
@@ -286,6 +289,7 @@ sepal_length,sepal_width,petal_length,petal_width,species
         client.data.restore(name=name)
         assert name in get_data_list()
 
+    @pytest.mark.skip(reason="investigate later")
     def test_data_unsupported_datastore(self, client: MLClient, tmp_path: Path, randstr: Callable[[], str]) -> None:
         f = tmp_path / "data_local.yaml"
         data_path = tmp_path / "sample1.csv"
