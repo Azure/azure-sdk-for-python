@@ -15,7 +15,7 @@ from azure.mgmt.network import NetworkManagementClient
     pip install azure-identity
     pip install azure-mgmt-network
 # USAGE
-    python network_manager_default_admin_rule_put.py
+    python bastion_host_get_with_private_only.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -27,20 +27,16 @@ from azure.mgmt.network import NetworkManagementClient
 def main():
     client = NetworkManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="00000000-0000-0000-0000-000000000000",
+        subscription_id="subid",
     )
 
-    response = client.admin_rules.create_or_update(
+    response = client.bastion_hosts.get(
         resource_group_name="rg1",
-        network_manager_name="testNetworkManager",
-        configuration_name="myTestSecurityConfig",
-        rule_collection_name="testRuleCollection",
-        rule_name="SampleDefaultAdminRule",
-        admin_rule={"kind": "Default", "properties": {"flag": "AllowVnetInbound"}},
+        bastion_host_name="bastionhosttenant",
     )
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-03-01/examples/NetworkManagerDefaultAdminRulePut.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-05-01/examples/BastionHostGetWithPrivateOnly.json
 if __name__ == "__main__":
     main()

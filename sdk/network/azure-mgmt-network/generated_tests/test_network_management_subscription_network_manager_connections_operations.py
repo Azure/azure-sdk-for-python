@@ -20,7 +20,7 @@ class TestNetworkManagementSubscriptionNetworkManagerConnectionsOperations(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_subscription_network_manager_connections_create_or_update(self, resource_group):
         response = self.client.subscription_network_manager_connections.create_or_update(
             network_manager_connection_name="str",
             parameters={
@@ -40,7 +40,7 @@ class TestNetworkManagementSubscriptionNetworkManagerConnectionsOperations(Azure
                 },
                 "type": "str",
             },
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -48,10 +48,10 @@ class TestNetworkManagementSubscriptionNetworkManagerConnectionsOperations(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_subscription_network_manager_connections_get(self, resource_group):
         response = self.client.subscription_network_manager_connections.get(
             network_manager_connection_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -59,10 +59,10 @@ class TestNetworkManagementSubscriptionNetworkManagerConnectionsOperations(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_subscription_network_manager_connections_delete(self, resource_group):
         response = self.client.subscription_network_manager_connections.delete(
             network_manager_connection_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -70,9 +70,9 @@ class TestNetworkManagementSubscriptionNetworkManagerConnectionsOperations(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_subscription_network_manager_connections_list(self, resource_group):
         response = self.client.subscription_network_manager_connections.list(
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

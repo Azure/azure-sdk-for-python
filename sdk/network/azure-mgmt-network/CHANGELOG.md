@@ -1,5 +1,98 @@
 # Release History
 
+## 28.1.0 (2024-12-22)
+
+### Features Added
+
+  - Client `NetworkManagementClient` added operation group `ipam_pools`
+  - Client `NetworkManagementClient` added operation group `static_cidrs`
+  - Client `NetworkManagementClient` added operation group `reachability_analysis_intents`
+  - Client `NetworkManagementClient` added operation group `reachability_analysis_runs`
+  - Client `NetworkManagementClient` added operation group `verifier_workspaces`
+  - Enum `AddressPrefixType` added member `NETWORK_GROUP`
+  - Model `AddressSpace` added property `ipam_pool_prefix_allocations`
+  - Model `BastionHost` added property `enable_private_only_bastion`
+  - Enum `FirewallPolicyIDPSSignatureDirection` added member `FIVE`
+  - Model `NetworkInterface` added property `default_outbound_connectivity_enabled`
+  - Enum `ProvisioningState` added member `CANCELED`
+  - Enum `ProvisioningState` added member `CREATING`
+  - Model `SecurityAdminConfiguration` added property `network_group_address_space_aggregation_option`
+  - Model `Subnet` added property `ipam_pool_prefix_allocations`
+  - Added enum `AddressSpaceAggregationOption`
+  - Added model `CommonErrorAdditionalInfo`
+  - Added model `CommonErrorDetail`
+  - Added model `CommonErrorResponse`
+  - Added model `CommonProxyResource`
+  - Added model `CommonResource`
+  - Added model `CommonTrackedResource`
+  - Added model `ExpressRouteFailoverCircuitResourceDetails`
+  - Added model `ExpressRouteFailoverConnectionResourceDetails`
+  - Added model `ExpressRouteFailoverRedundantRoute`
+  - Added model `ExpressRouteFailoverSingleTestDetails`
+  - Added model `ExpressRouteFailoverStopApiParameters`
+  - Added model `ExpressRouteFailoverTestDetails`
+  - Added model `FailoverConnectionDetails`
+  - Added enum `FailoverConnectionStatus`
+  - Added enum `FailoverTestStatus`
+  - Added enum `FailoverTestStatusForSingleTest`
+  - Added enum `FailoverTestType`
+  - Added model `IPTraffic`
+  - Added model `IntentContent`
+  - Added enum `IpType`
+  - Added model `IpamPool`
+  - Added model `IpamPoolList`
+  - Added model `IpamPoolPrefixAllocation`
+  - Added model `IpamPoolProperties`
+  - Added model `IpamPoolUpdate`
+  - Added model `IpamPoolUpdateProperties`
+  - Added model `LoadBalancerHealthPerRule`
+  - Added model `LoadBalancerHealthPerRulePerBackendAddress`
+  - Added enum `NetworkProtocol`
+  - Added model `PoolAssociation`
+  - Added model `PoolAssociationList`
+  - Added model `PoolUsage`
+  - Added model `ReachabilityAnalysisIntent`
+  - Added model `ReachabilityAnalysisIntentListResult`
+  - Added model `ReachabilityAnalysisIntentProperties`
+  - Added model `ReachabilityAnalysisRun`
+  - Added model `ReachabilityAnalysisRunListResult`
+  - Added model `ReachabilityAnalysisRunProperties`
+  - Added model `ResourceBasics`
+  - Added model `StaticCidr`
+  - Added model `StaticCidrList`
+  - Added model `StaticCidrProperties`
+  - Added model `VerifierWorkspace`
+  - Added model `VerifierWorkspaceListResult`
+  - Added model `VerifierWorkspaceProperties`
+  - Added model `VerifierWorkspaceUpdate`
+  - Added model `VerifierWorkspaceUpdateProperties`
+  - Model `LoadBalancerLoadBalancingRulesOperations` added method `begin_health`
+  - Model `VirtualNetworkGatewaysOperations` added method `begin_get_failover_all_test_details`
+  - Model `VirtualNetworkGatewaysOperations` added method `begin_get_failover_single_test_details`
+  - Model `VirtualNetworkGatewaysOperations` added method `begin_start_express_route_site_failover_simulation`
+  - Model `VirtualNetworkGatewaysOperations` added method `begin_stop_express_route_site_failover_simulation`
+  - Added model `IpamPoolsOperations`
+  - Added model `ReachabilityAnalysisIntentsOperations`
+  - Added model `ReachabilityAnalysisRunsOperations`
+  - Added model `StaticCidrsOperations`
+  - Added model `VerifierWorkspacesOperations`
+  - Method `VirtualNetworkGatewaysOperations.begin_stop_express_route_site_failover_simulation` has a new overload `def begin_stop_express_route_site_failover_simulation(self: None, resource_group_name: str, virtual_network_gateway_name: str, stop_parameters: ExpressRouteFailoverStopApiParameters, content_type: str)`
+  - Method `VirtualNetworkGatewaysOperations.begin_stop_express_route_site_failover_simulation` has a new overload `def begin_stop_express_route_site_failover_simulation(self: None, resource_group_name: str, virtual_network_gateway_name: str, stop_parameters: IO[bytes], content_type: str)`
+  - Method `IpamPoolsOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, network_manager_name: str, pool_name: str, body: IpamPool, content_type: str)`
+  - Method `IpamPoolsOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, network_manager_name: str, pool_name: str, body: IO[bytes], content_type: str)`
+  - Method `IpamPoolsOperations.update` has a new overload `def update(self: None, resource_group_name: str, network_manager_name: str, pool_name: str, body: Optional[IpamPoolUpdate], content_type: str)`
+  - Method `IpamPoolsOperations.update` has a new overload `def update(self: None, resource_group_name: str, network_manager_name: str, pool_name: str, body: Optional[IO[bytes]], content_type: str)`
+  - Method `ReachabilityAnalysisIntentsOperations.create` has a new overload `def create(self: None, resource_group_name: str, network_manager_name: str, workspace_name: str, reachability_analysis_intent_name: str, body: ReachabilityAnalysisIntent, content_type: str)`
+  - Method `ReachabilityAnalysisIntentsOperations.create` has a new overload `def create(self: None, resource_group_name: str, network_manager_name: str, workspace_name: str, reachability_analysis_intent_name: str, body: IO[bytes], content_type: str)`
+  - Method `ReachabilityAnalysisRunsOperations.create` has a new overload `def create(self: None, resource_group_name: str, network_manager_name: str, workspace_name: str, reachability_analysis_run_name: str, body: ReachabilityAnalysisRun, content_type: str)`
+  - Method `ReachabilityAnalysisRunsOperations.create` has a new overload `def create(self: None, resource_group_name: str, network_manager_name: str, workspace_name: str, reachability_analysis_run_name: str, body: IO[bytes], content_type: str)`
+  - Method `StaticCidrsOperations.create` has a new overload `def create(self: None, resource_group_name: str, network_manager_name: str, pool_name: str, static_cidr_name: str, body: Optional[StaticCidr], content_type: str)`
+  - Method `StaticCidrsOperations.create` has a new overload `def create(self: None, resource_group_name: str, network_manager_name: str, pool_name: str, static_cidr_name: str, body: Optional[IO[bytes]], content_type: str)`
+  - Method `VerifierWorkspacesOperations.create` has a new overload `def create(self: None, resource_group_name: str, network_manager_name: str, workspace_name: str, body: VerifierWorkspace, content_type: str)`
+  - Method `VerifierWorkspacesOperations.create` has a new overload `def create(self: None, resource_group_name: str, network_manager_name: str, workspace_name: str, body: IO[bytes], content_type: str)`
+  - Method `VerifierWorkspacesOperations.update` has a new overload `def update(self: None, resource_group_name: str, network_manager_name: str, workspace_name: str, body: Optional[VerifierWorkspaceUpdate], content_type: str)`
+  - Method `VerifierWorkspacesOperations.update` has a new overload `def update(self: None, resource_group_name: str, network_manager_name: str, workspace_name: str, body: Optional[IO[bytes]], content_type: str)`
+
 ## 28.0.0 (2024-11-01)
 
 ### Breaking Changes
