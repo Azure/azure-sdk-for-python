@@ -1983,8 +1983,8 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
                 ]
             ]
         }
-
-        custom_logger = logging.getLogger("CustomLogger")
+        # TODO: Custom Logger passed into create container
+        # custom_logger = logging.getLogger("CustomLogger") was used here and passed in the create_container method
         created_container = db.create_container(
             id='composite_index_spatial_index' + str(uuid.uuid4()),
             indexing_policy=indexing_policy,
@@ -1993,9 +1993,9 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
             user_agent="blah",
             user_agent_overwrite=True,
             logging_enable=True,
-            logger=custom_logger,
         )
-        created_properties = created_container.read(logger=custom_logger)
+        # TODO: check on why Custom_logger was passed into the read here before
+        created_properties = created_container.read()
         read_indexing_policy = created_properties['indexingPolicy']
 
         if 'localhost' in self.host or '127.0.0.1' in self.host:  # TODO: Differing result between live and emulator
