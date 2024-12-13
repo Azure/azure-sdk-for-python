@@ -591,7 +591,7 @@ print(f"Created agent, agent ID: {agent.id}")
 
 <!-- END SNIPPET -->
 
-#### Create Agent with OpenAPI specification
+#### Create Agent With OpenAPI
 
 OpenAPI specifications describe REST operations against a specific endpoint. Agents SDK can read an OpenAPI spec, create a function from it, and call that function against the REST endpoint without additional client-side execution.
 
