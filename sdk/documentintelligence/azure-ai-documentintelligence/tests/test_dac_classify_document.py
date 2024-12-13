@@ -24,7 +24,7 @@ DocumentModelAdministrationClientPreparer = functools.partial(
 )
 
 
-class TestDACClassifyDocumentAsync(DocumentIntelligenceTest):
+class TestDACClassifyDocument(DocumentIntelligenceTest):
     @skip_flaky_test
     @DocumentIntelligencePreparer()
     @recorded_by_proxy

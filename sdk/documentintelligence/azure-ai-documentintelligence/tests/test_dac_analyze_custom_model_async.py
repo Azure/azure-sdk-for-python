@@ -28,7 +28,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
         client = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential(is_async=True))
         with pytest.raises(ValueError) as e:
             async with client:
-                await client.begin_analyze_document(model_id="", body=b"xx")
+                await client.begin_analyze_document(model_id=None, body=b"xx")
         assert "No value for given attribute" in str(e.value)
 
     @DocumentIntelligencePreparer()
@@ -39,7 +39,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
         with pytest.raises(ValueError) as e:
             async with client:
                 await client.begin_analyze_document(
-                    model_id="", body=AnalyzeDocumentRequest(url_source="https://badurl.jpg")
+                    model_id=None, body=AnalyzeDocumentRequest(url_source="https://badurl.jpg")
                 )
         assert "No value for given attribute" in str(e.value)
 
@@ -96,7 +96,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
             assert document.model_id == model.model_id
             assert len(document.pages) == 1
             assert len(document.tables) == 2
-            assert len(document.paragraphs) == 52
+            assert len(document.paragraphs) == 42
             assert len(document.styles) == 1
             assert document.string_index_type == "textElements"
             assert document.content_format == "text"
@@ -146,7 +146,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
             assert document.model_id == model.model_id
             assert len(document.pages) == 1
             assert len(document.tables) == 2
-            assert len(document.paragraphs) == 52
+            assert len(document.paragraphs) == 42
             assert len(document.styles) == 1
             assert document.string_index_type == "textElements"
             assert document.content_format == "text"

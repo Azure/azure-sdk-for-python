@@ -81,7 +81,7 @@ class TestDACAnalyzeCustomModel(DocumentIntelligenceTest):
         assert document.model_id == model.model_id
         assert len(document.pages) == 1
         assert len(document.tables) == 2
-        assert len(document.paragraphs) == 52
+        assert len(document.paragraphs) == 42
         assert len(document.styles) == 1
         assert document.string_index_type == "textElements"
         assert document.content_format == "text"
@@ -122,7 +122,7 @@ class TestDACAnalyzeCustomModel(DocumentIntelligenceTest):
         assert document.model_id == model.model_id
         assert len(document.pages) == 1
         assert len(document.tables) == 2
-        assert len(document.paragraphs) == 52
+        assert len(document.paragraphs) == 42
         assert len(document.styles) == 1
         assert document.string_index_type == "textElements"
         assert document.content_format == "text"
