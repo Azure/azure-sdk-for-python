@@ -11,7 +11,7 @@ from logging.handlers import TimedRotatingFileHandler
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 
 
-def get_base_logger(log_filename, logger_name, level=logging.ERROR, print_console=False, log_format=None):
+def get_base_logger(log_filename, logger_name, level=logging.ERROR, print_console=False, log_format=None, rotating_logs=False):
     logger = logging.getLogger(logger_name)
     logger.setLevel(level)
     formatter = log_format or logging.Formatter(
@@ -24,20 +24,25 @@ def get_base_logger(log_filename, logger_name, level=logging.ERROR, print_consol
             console_handler.setFormatter(formatter)
             logger.addHandler(console_handler)
     else:
-        # rotated hourly if small file, o/w rotated bi-hourly
-        if level == logging.DEBUG or level == logging.INFO:
-            time = 30
+        if rotating_logs:
+            # rotated hourly if small file, o/w rotated bi-hourly
+            if level == logging.DEBUG or level == logging.INFO:
+                time = 30
+            else:
+                time = 60
+            file_handler = TimedRotatingFileHandler(log_filename, when='M', interval=time, utc=True)
+            if not logger.handlers:
+                file_handler.setFormatter(formatter)
+                logger.addHandler(file_handler)
         else:
-            time = 60
-        file_handler = TimedRotatingFileHandler(log_filename, when="M", interval=time, utc=True)
-        if not logger.handlers:
+            file_handler = logging.FileHandler(log_filename)
             file_handler.setFormatter(formatter)
             logger.addHandler(file_handler)
 
     return logger
 
 
-def get_logger(log_filename, logger_name, level=logging.ERROR, print_console=False, log_format=None):
+def get_logger(log_filename, logger_name, level=logging.ERROR, print_console=False, log_format=None, rotating_logs=False):
     stress_logger = logging.getLogger(logger_name)
     stress_logger.setLevel(level)
     servicebus_logger = logging.getLogger("azure.servicebus")
@@ -48,16 +53,23 @@ def get_logger(log_filename, logger_name, level=logging.ERROR, print_console=Fal
     formatter = log_format or logging.Formatter(
         "%(asctime)s - [%(thread)d.%(threadName)s] - %(name)-12s %(levelname)-8s %(funcName)s(%(lineno)d) %(message)s"
     )
-    # rotated hourly if small file, o/w rotated bi-hourly
-    if level == logging.DEBUG or level == logging.INFO:
-        time = 30
+    if rotating_logs:
+        # rotated hourly if small file, o/w rotated bi-hourly
+        if level == logging.DEBUG or level == logging.INFO:
+            time = 30
+        else:
+            time = 60
+        file_handler = TimedRotatingFileHandler(log_filename, when='M', interval=time, utc=True)
+        file_handler.setFormatter(formatter)
+        servicebus_logger.addHandler(file_handler)
+        pyamqp_logger.addHandler(file_handler)
+        stress_logger.addHandler(file_handler)
     else:
-        time = 60
-    file_handler = TimedRotatingFileHandler(log_filename, when="M", interval=time, utc=True)
-    file_handler.setFormatter(formatter)
-    servicebus_logger.addHandler(file_handler)
-    pyamqp_logger.addHandler(file_handler)
-    stress_logger.addHandler(file_handler)
+        console_handler = logging.FileHandler(log_filename)
+        console_handler.setFormatter(formatter)
+        servicebus_logger.addHandler(console_handler)
+        pyamqp_logger.addHandler(console_handler)
+        stress_logger.addHandler(console_handler)
 
     return stress_logger
 
