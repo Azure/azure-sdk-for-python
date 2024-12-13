@@ -697,7 +697,7 @@ message = project_client.agents.create_message(
 
 <!-- END SNIPPET -->
 
-Azure blob storage can be used as a message attachment. In this case `VectorStoreDataSource` have to be useed as a data source:
+Azure blob storage can be used as a message attachment. In this case `VectorStoreDataSource` have to be used as a data source:
 
 <!-- SNIPPET:sample_agents_vector_store_batch_enterprise_file_search.upload_file_and_create_message_with_code_interpreter -->
 
