@@ -77,7 +77,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
         elif isinstance(self.diagnostics_handler, Mapping):
             self._should_log = self._dict_should_log  # type: ignore
         else:
-            self._should_log = types.MethodType(self._default_should_log, self)
+            self._should_log = self._default_should_log # type: ignore
         self.__global_endpoint_manager = global_endpoint_manager
         self.__client_settings = self.__get_client_settings()
         self.__database_account_settings: Optional[DatabaseAccount] = (database_account or
