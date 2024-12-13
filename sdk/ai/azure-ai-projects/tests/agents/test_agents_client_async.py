@@ -57,6 +57,7 @@ from azure.ai.projects.models import (
     VectorStoreDataSource,
     VectorStoreDataSourceAssetType,
 )
+
 # TODO clean this up / get rid of anything not in use
 
 """
@@ -88,6 +89,7 @@ agentClientPreparer = functools.partial(
     azure_ai_projects_agents_tests_data_path="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-resour-cegr-oupfoo1/workspaces/abcd-abcdabcdabcda-abcdefghijklm/datastores/workspaceblobstore/paths/LocalUpload/000000000000/product_info_1.md",
     azure_ai_projects_agents_tests_storage_queue="https://foobar.queue.core.windows.net",
 )
+
 
 # create tool for agent use
 def fetch_current_datetime_live():
@@ -203,7 +205,6 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             # delete agent and close client
             await client.agents.delete_agent(agent.id)
             print("Deleted agent")
-            
 
     # test agent creation with tools
     @agentClientPreparer()
@@ -219,26 +220,17 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             # create agent with tools
             agent = await client.agents.create_agent(
-                model="gpt-4o", 
-                name="my-agent", 
-                instructions="You are helpful agent", 
-                tools=functions.definitions
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=functions.definitions
             )
             assert agent.id
             print("Created agent, agent ID", agent.id)
             assert agent.tools
-            assert (
-                agent.tools[0]["function"]["name"] 
-                == functions.definitions[0]["function"]["name"]
-            )
-            print(
-                "Tool successfully submitted:", functions.definitions[0]["function"]["name"]
-            )
+            assert agent.tools[0]["function"]["name"] == functions.definitions[0]["function"]["name"]
+            print("Tool successfully submitted:", functions.definitions[0]["function"]["name"])
 
             # delete agent and close client
             await client.agents.delete_agent(agent.id)
             print("Deleted agent")
-            
 
     # test update agent without body: JSON
     @agentClientPreparer()
@@ -250,11 +242,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create body for agent
-            body = {
-                "name": "my-agent",
-                "model": "gpt-4o",
-                "instructions": "You are helpful agent"
-            }
+            body = {"name": "my-agent", "model": "gpt-4o", "instructions": "You are helpful agent"}
 
             # create agent
             agent = await client.agents.create_agent(body=body)
@@ -271,7 +259,6 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Deleted agent")
         await client.close()
 
-    
     # test update agent with body: JSON
     @agentClientPreparer()
     @pytest.mark.skip("Overload performs inconsistently.")
@@ -282,11 +269,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # create body for agent
-            body = {
-                "name": "my-agent",
-                "model": "gpt-4o",
-                "instructions": "You are helpful agent"
-            }
+            body = {"name": "my-agent", "model": "gpt-4o", "instructions": "You are helpful agent"}
 
             # create agent
             agent = await client.agents.create_agent(body=body)
@@ -294,10 +277,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created agent, agent ID", agent.id)
 
             # create body for agent
-            body2 = {
-                "name": "my-agent2",
-                "instructions": "You are helpful agent"
-            }
+            body2 = {"name": "my-agent2", "instructions": "You are helpful agent"}
 
             # update agent and confirm changes went through
             agent = await client.agents.update_agent(agent.id, body=body2)
@@ -326,10 +306,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             assert agent.id
 
             # create body for agent
-            body = {
-                "name": "my-agent2",
-                "instructions": "You are helpful agent"
-            }
+            body = {"name": "my-agent2", "instructions": "You are helpful agent"}
             binary_body = json.dumps(body).encode("utf-8")
 
             # update agent and confirm changes went through
@@ -406,7 +383,6 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             # delete agent and close client
             await client.agents.delete_agent(agent.id)
             print("Deleted agent")
-            
 
     # test creating thread with no body
     @agentClientPreparer()
@@ -421,7 +397,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             # create thread
             thread = await client.agents.create_thread(metadata=metadata)
-            assert isinstance(thread, AgentThread) 
+            assert isinstance(thread, AgentThread)
             assert thread.id
             print("Created thread, thread ID", thread.id)
             assert thread.metadata == {"key1": "value1", "key2": "value2"}
@@ -445,7 +421,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             # create thread
             thread = await client.agents.create_thread(body=body)
-            assert isinstance(thread, AgentThread) 
+            assert isinstance(thread, AgentThread)
             assert thread.id
             print("Created thread, thread ID", thread.id)
             assert thread.metadata == {"key1": "value1", "key2": "value2"}
@@ -470,7 +446,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             # create thread
             thread = await client.agents.create_thread(body=io.BytesIO(binary_body))
-            assert isinstance(thread, AgentThread) 
+            assert isinstance(thread, AgentThread)
             assert thread.id
             print("Created thread, thread ID", thread.id)
             assert thread.metadata == {"key1": "value1", "key2": "value2"}
@@ -508,9 +484,8 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             # delete agent and close client
             await client.agents.delete_agent(agent.id)
             print("Deleted agent")
-        
 
-    # test updating thread  
+    # test updating thread
     @agentClientPreparer()
     @recorded_by_proxy_async
     async def test_update_thread(self, **kwargs):
@@ -529,18 +504,17 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             thread = await client.agents.create_thread()
             assert thread.id
             print("Created thread, thread ID", thread.id)
-            
+
             # update thread
             thread = await client.agents.update_thread(thread.id, metadata={"key1": "value1", "key2": "value2"})
             assert thread.metadata == {"key1": "value1", "key2": "value2"}
-            
+
             # delete agent and close client
             await client.agents.delete_agent(agent.id)
             print("Deleted agent")
         await client.close()
 
-        
-    # test updating thread without body 
+    # test updating thread without body
     @agentClientPreparer()
     @recorded_by_proxy_async
     async def test_update_thread_with_metadata(self, **kwargs):
@@ -566,7 +540,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         # close client
         await client.close()
 
-    # test updating thread with body: JSON 
+    # test updating thread with body: JSON
     @agentClientPreparer()
     @recorded_by_proxy_async
     async def test_update_thread_with_body(self, **kwargs):
@@ -580,9 +554,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # set metadata
-            body = {
-                "metadata": {"key1": "value1", "key2": "value2"}
-            }
+            body = {"metadata": {"key1": "value1", "key2": "value2"}}
 
             # update thread
             thread = await client.agents.update_thread(thread.id, body=body)
@@ -591,7 +563,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         # close client
         await client.close()
 
-    # test updating thread with body: IO[bytes] 
+    # test updating thread with body: IO[bytes]
     @agentClientPreparer()
     @recorded_by_proxy_async
     async def test_update_thread_with_iobytes(self, **kwargs):
@@ -605,9 +577,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # set metadata
-            body = {
-                "metadata": {"key1": "value1", "key2": "value2"}
-            }
+            body = {"metadata": {"key1": "value1", "key2": "value2"}}
             binary_body = json.dumps(body).encode("utf-8")
 
             # update thread
@@ -617,7 +587,6 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         # close client
         await client.close()
 
-    
     # test deleting thread
     @agentClientPreparer()
     @recorded_by_proxy_async
@@ -649,7 +618,6 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             await client.agents.delete_agent(agent.id)
             print("Deleted agent")
         await client.close()
-    
 
     # # **********************************************************************************
     # #
@@ -689,7 +657,6 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Deleted agent")
         await client.close()
 
-
     # test creating message in a thread with body: JSON
     @agentClientPreparer()
     @recorded_by_proxy_async
@@ -704,10 +671,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create body for message
-            body = {
-                "role": "user",
-                "content": "Hello, tell me a joke"
-            }
+            body = {"role": "user", "content": "Hello, tell me a joke"}
 
             # create message
             message = await client.agents.create_message(thread_id=thread.id, body=body)
@@ -731,10 +695,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create body for message
-            body = {
-                "role": "user",
-                "content": "Hello, tell me a joke"
-            }
+            body = {"role": "user", "content": "Hello, tell me a joke"}
             binary_body = json.dumps(body).encode("utf-8")
 
             # create message
@@ -829,9 +790,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created message, message ID", message2.id)
             messages2 = await client.agents.list_messages(thread_id=thread.id)
             assert messages2.data.__len__() == 2
-            assert (
-                messages2.data[0].id == message2.id or messages2.data[1].id == message2.id
-            )
+            assert messages2.data[0].id == message2.id or messages2.data[1].id == message2.id
 
             message3 = await client.agents.create_message(
                 thread_id=thread.id, role="user", content="Hello, tell me a third joke"
@@ -879,9 +838,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created message, message ID", message.id)
 
             # get message
-            message2 = await client.agents.get_message(
-                thread_id=thread.id, message_id=message.id
-            )
+            message2 = await client.agents.get_message(thread_id=thread.id, message_id=message.id)
             assert message2.id
             assert message.id == message2.id
             print("Got message, message ID", message.id)
@@ -912,9 +869,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             # update message
             message = await client.agents.update_message(
-                thread_id=thread.id, 
-                message_id=message.id, 
-                metadata={"key1": "value1", "key2": "value2"}
+                thread_id=thread.id, message_id=message.id, metadata={"key1": "value1", "key2": "value2"}
             )
             assert message.metadata == {"key1": "value1", "key2": "value2"}
 
@@ -942,14 +897,10 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created message, message ID", message.id)
 
             # create body for message
-            body = {
-                "metadata": {"key1": "value1", "key2": "value2"}
-            }
+            body = {"metadata": {"key1": "value1", "key2": "value2"}}
 
             # update message
-            message = await client.agents.update_message(
-                thread_id=thread.id, message_id=message.id, body=body
-            )
+            message = await client.agents.update_message(thread_id=thread.id, message_id=message.id, body=body)
             assert message.metadata == {"key1": "value1", "key2": "value2"}
 
         # close client
@@ -976,9 +927,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created message, message ID", message.id)
 
             # create body for message
-            body = {
-                "metadata": {"key1": "value1", "key2": "value2"}
-            }
+            body = {"metadata": {"key1": "value1", "key2": "value2"}}
             binary_body = json.dumps(body).encode("utf-8")
 
             # update message
@@ -989,7 +938,6 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
         # close client
         await client.close()
-    
 
     # # **********************************************************************************
     # #
@@ -1027,7 +975,6 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Deleted agent")
         await client.close()
 
-
     # test creating run without body
     @agentClientPreparer()
     @recorded_by_proxy_async
@@ -1049,7 +996,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create run
-            run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id, metadata={"key1": "value1", "key2": "value2"})
+            run = await client.agents.create_run(
+                thread_id=thread.id, assistant_id=agent.id, metadata={"key1": "value1", "key2": "value2"}
+            )
             assert run.id
             assert run.metadata == {"key1": "value1", "key2": "value2"}
             print("Created run, run ID", run.id)
@@ -1080,10 +1029,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create body for run
-            body = {
-                "assistant_id": agent.id,
-                "metadata": {"key1": "value1", "key2": "value2"}
-            }
+            body = {"assistant_id": agent.id, "metadata": {"key1": "value1", "key2": "value2"}}
 
             # create run
             run = await client.agents.create_run(thread_id=thread.id, body=body)
@@ -1096,7 +1042,6 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Deleted agent")
         await client.close()
 
-    
     # test creating run with body: IO[bytes]
     @agentClientPreparer()
     @recorded_by_proxy_async
@@ -1118,10 +1063,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create body for run
-            body = {
-                "assistant_id": agent.id,
-                "metadata": {"key1": "value1", "key2": "value2"}
-            }
+            body = {"assistant_id": agent.id, "metadata": {"key1": "value1", "key2": "value2"}}
             binary_body = json.dumps(body).encode("utf-8")
 
             # create run
@@ -1171,8 +1113,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Deleted agent")
         await client.close()
 
-    
-    # test sucessful run status 
+    # test sucessful run status
     @agentClientPreparer()
     @recorded_by_proxy_async
     async def test_run_status(self, **kwargs):
@@ -1278,7 +1219,6 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         await client.close()
     """
 
-    
     # test updating run
     @agentClientPreparer()
     @recorded_by_proxy_async
@@ -1308,7 +1248,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             while run.status in ["queued", "in_progress"]:
                 time.sleep(5)
                 run = await client.agents.get_run(thread_id=thread.id, run_id=run.id)
-            run = await client.agents.update_run(thread_id=thread.id, run_id=run.id, metadata={"key1": "value1", "key2": "value2"})
+            run = await client.agents.update_run(
+                thread_id=thread.id, run_id=run.id, metadata={"key1": "value1", "key2": "value2"}
+            )
             assert run.metadata == {"key1": "value1", "key2": "value2"}
 
             # delete agent and close client
@@ -1337,7 +1279,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create run
-            run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id, metadata={"key1": "value1", "key2": "value2"})
+            run = await client.agents.create_run(
+                thread_id=thread.id, assistant_id=agent.id, metadata={"key1": "value1", "key2": "value2"}
+            )
             assert run.id
             assert run.metadata == {"key1": "value1", "key2": "value2"}
             print("Created run, run ID", run.id)
@@ -1346,7 +1290,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             while run.status in ["queued", "in_progress"]:
                 time.sleep(5)
                 run = await client.agents.get_run(thread_id=thread.id, run_id=run.id)
-            run = await client.agents.update_run(thread_id=thread.id, run_id=run.id, metadata={"key1": "value1", "key2": "newvalue2"})
+            run = await client.agents.update_run(
+                thread_id=thread.id, run_id=run.id, metadata={"key1": "value1", "key2": "newvalue2"}
+            )
             assert run.metadata == {"key1": "value1", "key2": "newvalue2"}
 
             # delete agent and close client
@@ -1375,15 +1321,15 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create run
-            run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id, metadata={"key1": "value1", "key2": "value2"})
+            run = await client.agents.create_run(
+                thread_id=thread.id, assistant_id=agent.id, metadata={"key1": "value1", "key2": "value2"}
+            )
             assert run.id
             assert run.metadata == {"key1": "value1", "key2": "value2"}
             print("Created run, run ID", run.id)
 
             # create body for run
-            body = {
-                "metadata": {"key1": "value1", "key2": "newvalue2"}
-            }
+            body = {"metadata": {"key1": "value1", "key2": "newvalue2"}}
 
             # update run
             while run.status in ["queued", "in_progress"]:
@@ -1418,15 +1364,15 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create run
-            run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id, metadata={"key1": "value1", "key2": "value2"})
+            run = await client.agents.create_run(
+                thread_id=thread.id, assistant_id=agent.id, metadata={"key1": "value1", "key2": "value2"}
+            )
             assert run.id
             assert run.metadata == {"key1": "value1", "key2": "value2"}
             print("Created run, run ID", run.id)
 
             # create body for run
-            body = {
-                "metadata": {"key1": "value1", "key2": "newvalue2"}
-            }
+            body = {"metadata": {"key1": "value1", "key2": "newvalue2"}}
             binary_body = json.dumps(body).encode("utf-8")
 
             # update run
@@ -1450,7 +1396,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # Initialize agent tools
-            functions = FunctionTool(user_functions_recording) 
+            functions = FunctionTool(user_functions_recording)
             # TODO add files for code interpreter tool
             # code_interpreter = CodeInterpreterTool()
 
@@ -1460,10 +1406,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             # create agent
             agent = await client.agents.create_agent(
-                model="gpt-4o", 
-                name="my-agent", 
-                instructions="You are helpful agent", 
-                toolset=toolset
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset
             )
             assert agent.id
             print("Created agent, agent ID", agent.id)
@@ -1487,10 +1430,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             # check that tools are uploaded
             assert run.tools
-            assert (
-                run.tools[0]["function"]["name"]
-                == functions.definitions[0]["function"]["name"]
-            )
+            assert run.tools[0]["function"]["name"] == functions.definitions[0]["function"]["name"]
             print("Tool successfully submitted:", functions.definitions[0]["function"]["name"])
 
             # check status
@@ -1509,21 +1449,16 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                 run = await client.agents.get_run(thread_id=thread.id, run_id=run.id)
 
                 # check if tools are needed
-                if (
-                    run.status == "requires_action"
-                    and run.required_action.submit_tool_outputs
-                ):
+                if run.status == "requires_action" and run.required_action.submit_tool_outputs:
                     print("Requires action: submit tool outputs")
                     tool_calls = run.required_action.submit_tool_outputs.tool_calls
                     if not tool_calls:
-                        print(
-                            "No tool calls provided - cancelling run"
-                        )
+                        print("No tool calls provided - cancelling run")
                         await client.agents.cancel_run(thread_id=thread.id, run_id=run.id)
                         break
 
                     # submit tool outputs to run
-                    tool_outputs = toolset.execute_tool_calls(tool_calls) 
+                    tool_outputs = toolset.execute_tool_calls(tool_calls)
                     print("Tool outputs:", tool_outputs)
                     if tool_outputs:
                         await client.agents.submit_tool_outputs_to_run(
@@ -1557,16 +1492,13 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created client")
 
             # Initialize agent tools
-            functions = FunctionTool(user_functions_recording) 
+            functions = FunctionTool(user_functions_recording)
             toolset = ToolSet()
             toolset.add(functions)
 
             # create agent
             agent = await client.agents.create_agent(
-                model="gpt-4o", 
-                name="my-agent", 
-                instructions="You are helpful agent", 
-                toolset=toolset
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset
             )
             assert agent.id
             print("Created agent, agent ID", agent.id)
@@ -1590,10 +1522,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             # check that tools are uploaded
             assert run.tools
-            assert (
-                run.tools[0]["function"]["name"]
-                == functions.definitions[0]["function"]["name"]
-            )
+            assert run.tools[0]["function"]["name"] == functions.definitions[0]["function"]["name"]
             print("Tool successfully submitted:", functions.definitions[0]["function"]["name"])
 
             # check status
@@ -1612,29 +1541,20 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                 run = await client.agents.get_run(thread_id=thread.id, run_id=run.id)
 
                 # check if tools are needed
-                if (
-                    run.status == "requires_action"
-                    and run.required_action.submit_tool_outputs
-                ):
+                if run.status == "requires_action" and run.required_action.submit_tool_outputs:
                     print("Requires action: submit tool outputs")
                     tool_calls = run.required_action.submit_tool_outputs.tool_calls
                     if not tool_calls:
-                        print(
-                            "No tool calls provided - cancelling run"
-                        )
+                        print("No tool calls provided - cancelling run")
                         await client.agents.cancel_run(thread_id=thread.id, run_id=run.id)
                         break
 
                     # submit tool outputs to run
-                    tool_outputs = toolset.execute_tool_calls(tool_calls) 
+                    tool_outputs = toolset.execute_tool_calls(tool_calls)
                     print("Tool outputs:", tool_outputs)
                     if tool_outputs:
-                        body = {
-                            "tool_outputs": tool_outputs
-                        }
-                        await client.agents.submit_tool_outputs_to_run(
-                            thread_id=thread.id, run_id=run.id, body=body
-                        )
+                        body = {"tool_outputs": tool_outputs}
+                        await client.agents.submit_tool_outputs_to_run(thread_id=thread.id, run_id=run.id, body=body)
 
                 print("Current run status:", run.status)
 
@@ -1671,10 +1591,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             # create agent
             agent = await client.agents.create_agent(
-                model="gpt-4o", 
-                name="my-agent", 
-                instructions="You are helpful agent", 
-                toolset=toolset
+                model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset
             )
             assert agent.id
             print("Created agent, agent ID", agent.id)
@@ -1698,11 +1615,20 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             # check that tools are uploaded
             assert run.tools
-            assert run.tools[0]['function']['name'] == functions.definitions[0]['function']['name']
-            print("Tool successfully submitted:", functions.definitions[0]['function']['name'])
+            assert run.tools[0]["function"]["name"] == functions.definitions[0]["function"]["name"]
+            print("Tool successfully submitted:", functions.definitions[0]["function"]["name"])
 
             # check status
-            assert run.status in  ["queued", "in_progress", "requires_action", "cancelling", "cancelled", "failed", "completed", "expired"]
+            assert run.status in [
+                "queued",
+                "in_progress",
+                "requires_action",
+                "cancelling",
+                "cancelled",
+                "failed",
+                "completed",
+                "expired",
+            ]
             while run.status in ["queued", "in_progress", "requires_action"]:
                 time.sleep(1)
                 run = await client.agents.get_run(thread_id=thread.id, run_id=run.id)
@@ -1720,9 +1646,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                     tool_outputs = toolset.execute_tool_calls(tool_calls)
                     print("Tool outputs:", tool_outputs)
                     if tool_outputs:
-                        body = {
-                            "tool_outputs": tool_outputs
-                        }
+                        body = {"tool_outputs": tool_outputs}
                         binary_body = json.dumps(body).encode("utf-8")
                         await client.agents.submit_tool_outputs_to_run(
                             thread_id=thread.id, run_id=run.id, body=io.BytesIO(binary_body)
@@ -1732,10 +1656,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             print("Run completed with status:", run.status)
 
-            
             # check that messages used the tool
             messages = await client.agents.list_messages(thread_id=thread.id, run_id=run.id)
-            tool_message = messages['data'][0]['content'][0]['text']['value']
+            tool_message = messages["data"][0]["content"][0]["text"]["value"]
             # hour12 = time.strftime("%H")
             # hour24 = time.strftime("%I")
             # minute = time.strftime("%M")
@@ -1747,7 +1670,6 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             # delete agent and close client
             await client.agents.delete_agent(agent.id)
             print("Deleted agent")
-        
 
     """
     # DISABLED: rewrite to ensure run is not complete when cancel_run is called
@@ -2024,7 +1946,6 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             # delete agent and close client
             await client.agents.delete_agent(agent.id)
             print("Deleted agent")
-        
 
     # test create thread and run with body: JSON
     @agentClientPreparer()
@@ -2061,7 +1982,16 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # check status
-            assert run.status in  ["queued", "in_progress", "requires_action", "cancelling", "cancelled", "failed", "completed", "expired"]
+            assert run.status in [
+                "queued",
+                "in_progress",
+                "requires_action",
+                "cancelling",
+                "cancelled",
+                "failed",
+                "completed",
+                "expired",
+            ]
             while run.status in ["queued", "in_progress", "requires_action"]:
                 # wait for a second
                 time.sleep(1)
@@ -2113,7 +2043,16 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # check status
-            assert run.status in  ["queued", "in_progress", "requires_action", "cancelling", "cancelled", "failed", "completed", "expired"]
+            assert run.status in [
+                "queued",
+                "in_progress",
+                "requires_action",
+                "cancelling",
+                "cancelled",
+                "failed",
+                "completed",
+                "expired",
+            ]
             while run.status in ["queued", "in_progress", "requires_action"]:
                 # wait for a second
                 time.sleep(1)
@@ -2254,9 +2193,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             steps = await client.agents.list_run_steps(thread_id=thread.id, run_id=run.id)
             assert steps["data"].__len__() > 0
             step = steps["data"][0]
-            get_step = await client.agents.get_run_step(
-                thread_id=thread.id, run_id=run.id, step_id=step.id
-            )
+            get_step = await client.agents.get_run_step(thread_id=thread.id, run_id=run.id, step_id=step.id)
             assert step == get_step
 
             # delete agent and close client
@@ -3054,7 +2991,6 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         if file_id:
             await ai_client.agents.delete_file(file_id)
 
-
     # # **********************************************************************************
     # #
     # #                      HAPPY PATH SERVICE TESTS - Streaming APIs
@@ -3065,7 +3001,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
     # # **********************************************************************************
     # #
-    # #         NEGATIVE TESTS 
+    # #         NEGATIVE TESTS
     # #
     # # **********************************************************************************
 
