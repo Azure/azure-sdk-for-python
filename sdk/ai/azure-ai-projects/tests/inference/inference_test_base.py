@@ -43,9 +43,7 @@ class InferenceTestBase(AzureRecordedTestCase):
         f"Connection {NON_EXISTING_CONNECTION_NAME} can't be found in this workspace"
     )
 
-    EXPECTED_EXCEPTION_MESSAGE_FOR_EMPTY_CONNECTION_NAME = (
-        f"Connection name cannot be empty"
-    )
+    EXPECTED_EXCEPTION_MESSAGE_FOR_EMPTY_CONNECTION_NAME = f"Connection name cannot be empty"
 
     def get_sync_client(self, **kwargs) -> AIProjectClient:
         conn_str = kwargs.pop("azure_ai_projects_inference_tests_project_connection_string")

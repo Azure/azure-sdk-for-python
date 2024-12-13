@@ -67,10 +67,12 @@ class InferenceOperations:
         self._outer_instance = outer_instance
 
     @distributed_trace_async
-    async def get_chat_completions_client(self, *, connection_name: Optional[str] = None, **kwargs) -> "ChatCompletionsClient":
+    async def get_chat_completions_client(
+        self, *, connection_name: Optional[str] = None, **kwargs
+    ) -> "ChatCompletionsClient":
         """Get an authenticated asynchronous ChatCompletionsClient (from the package azure-ai-inference) for the default
         Azure AI Services connected resource (if `connection_name` is not specificed), or from the Azure AI
-        Services resource given by its connection name. 
+        Services resource given by its connection name.
 
         At least one AI model that supports chat completions must be deployed in this resource.
 
@@ -248,7 +250,9 @@ class InferenceOperations:
         return client
 
     @distributed_trace_async
-    async def get_azure_openai_client(self, *, api_version: Optional[str] = None, connection_name: Optional[str] = None, **kwargs) -> "AsyncAzureOpenAI":
+    async def get_azure_openai_client(
+        self, *, api_version: Optional[str] = None, connection_name: Optional[str] = None, **kwargs
+    ) -> "AsyncAzureOpenAI":
         """Get an authenticated AsyncAzureOpenAI client (from the `openai` package) for the default
         Azure OpenAI connection (if `connection_name` is not specificed), or from the Azure OpenAI
         resource given by its connection name.

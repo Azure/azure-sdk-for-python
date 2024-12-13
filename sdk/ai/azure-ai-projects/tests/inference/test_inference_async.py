@@ -74,7 +74,9 @@ class TestInferenceAsync(InferenceTestBase):
     async def test_inference_get_aoai_client_with_empty_connection_name_async(self, **kwargs):
         async with self.get_async_client(**kwargs) as project_client:
             try:
-                async with await project_client.inference.get_azure_openai_client(connection_name="") as azure_openai_client:
+                async with await project_client.inference.get_azure_openai_client(
+                    connection_name=""
+                ) as azure_openai_client:
                     assert False
             except ValueError as e:
                 print(e)
@@ -86,7 +88,9 @@ class TestInferenceAsync(InferenceTestBase):
         if is_live_and_not_recording():
             async with self.get_async_client(**kwargs) as project_client:
                 try:
-                    async with await project_client.inference.get_azure_openai_client(connection_name=InferenceTestBase.NON_EXISTING_CONNECTION_NAME) as azure_openai_client:
+                    async with await project_client.inference.get_azure_openai_client(
+                        connection_name=InferenceTestBase.NON_EXISTING_CONNECTION_NAME
+                    ) as azure_openai_client:
                         assert False
                 except ResourceNotFoundError as e:
                     print(e)
@@ -95,7 +99,7 @@ class TestInferenceAsync(InferenceTestBase):
             print("Skipped chat completions call with AOAI client, because it cannot be recorded.")
             pass
 
-#----------------------------------------------------------------------------------------------------------------------
+    # ----------------------------------------------------------------------------------------------------------------------
 
     @servicePreparerInferenceTests()
     @recorded_by_proxy_async
@@ -121,7 +125,9 @@ class TestInferenceAsync(InferenceTestBase):
         connection_name = kwargs.pop("azure_ai_projects_inference_tests_aiservices_connection_name")
         model = kwargs.pop("azure_ai_projects_inference_tests_chat_completions_model_deployment_name")
         async with self.get_async_client(**kwargs) as project_client:
-            async with await project_client.inference.get_chat_completions_client(connection_name=connection_name) as chat_completions_client:
+            async with await project_client.inference.get_chat_completions_client(
+                connection_name=connection_name
+            ) as chat_completions_client:
                 response = await chat_completions_client.complete(
                     model=model,
                     messages=[
@@ -138,7 +144,9 @@ class TestInferenceAsync(InferenceTestBase):
     async def test_inference_get_chat_completions_client_with_empty_connection_name_async(self, **kwargs):
         async with self.get_async_client(**kwargs) as project_client:
             try:
-                async with await project_client.inference.get_chat_completions_client(connection_name="") as chat_completions_client:
+                async with await project_client.inference.get_chat_completions_client(
+                    connection_name=""
+                ) as chat_completions_client:
                     assert False
             except ValueError as e:
                 print(e)
@@ -149,13 +157,15 @@ class TestInferenceAsync(InferenceTestBase):
     async def test_inference_get_chat_completions_client_with_nonexisting_connection_name_async(self, **kwargs):
         async with self.get_async_client(**kwargs) as project_client:
             try:
-                async with await project_client.inference.get_chat_completions_client(connection_name=InferenceTestBase.NON_EXISTING_CONNECTION_NAME) as chat_completions_client:
+                async with await project_client.inference.get_chat_completions_client(
+                    connection_name=InferenceTestBase.NON_EXISTING_CONNECTION_NAME
+                ) as chat_completions_client:
                     assert False
             except ResourceNotFoundError as e:
                 print(e)
                 assert InferenceTestBase.EXPECTED_EXCEPTION_MESSAGE_FOR_NON_EXISTING_CONNECTION_NAME in e.message
 
-#----------------------------------------------------------------------------------------------------------------------
+    # ----------------------------------------------------------------------------------------------------------------------
 
     @servicePreparerInferenceTests()
     @recorded_by_proxy_async
@@ -164,8 +174,7 @@ class TestInferenceAsync(InferenceTestBase):
         async with self.get_async_client(**kwargs) as project_client:
             async with await project_client.inference.get_embeddings_client() as embeddings_client:
                 response = await embeddings_client.embed(
-                    model=model,
-                    input=["first phrase", "second phrase", "third phrase"]
+                    model=model, input=["first phrase", "second phrase", "third phrase"]
                 )
                 print("\nEmbeddingsClient response:")
                 for item in response.data:
@@ -186,10 +195,11 @@ class TestInferenceAsync(InferenceTestBase):
         connection_name = kwargs.pop("azure_ai_projects_inference_tests_aiservices_connection_name")
         model = kwargs.pop("azure_ai_projects_inference_tests_embeddings_model_deployment_name")
         async with self.get_async_client(**kwargs) as project_client:
-            async with await project_client.inference.get_embeddings_client(connection_name=connection_name) as embeddings_client:
+            async with await project_client.inference.get_embeddings_client(
+                connection_name=connection_name
+            ) as embeddings_client:
                 response = await embeddings_client.embed(
-                    model=model,
-                    input=["first phrase", "second phrase", "third phrase"]
+                    model=model, input=["first phrase", "second phrase", "third phrase"]
                 )
                 print("\nEmbeddingsClient response:")
                 for item in response.data:
@@ -208,7 +218,9 @@ class TestInferenceAsync(InferenceTestBase):
     async def test_inference_get_embeddings_client_with_empty_connection_name_async(self, **kwargs):
         async with self.get_async_client(**kwargs) as project_client:
             try:
-                async with await project_client.inference.get_embeddings_client(connection_name="") as embeddings_client:
+                async with await project_client.inference.get_embeddings_client(
+                    connection_name=""
+                ) as embeddings_client:
                     assert False
             except ValueError as e:
                 print(e)
@@ -219,7 +231,9 @@ class TestInferenceAsync(InferenceTestBase):
     async def test_inference_get_embeddings_client_with_nonexisting_connection_name_async(self, **kwargs):
         async with self.get_async_client(**kwargs) as project_client:
             try:
-                async with await project_client.inference.get_embeddings_client(connection_name=InferenceTestBase.NON_EXISTING_CONNECTION_NAME) as embeddings_client:
+                async with await project_client.inference.get_embeddings_client(
+                    connection_name=InferenceTestBase.NON_EXISTING_CONNECTION_NAME
+                ) as embeddings_client:
                     assert False
             except ResourceNotFoundError as e:
                 print(e)

@@ -72,7 +72,9 @@ class InferenceOperations:
         self._outer_instance = outer_instance
 
     @distributed_trace
-    def get_chat_completions_client(self, *, connection_name: Optional[str] = None, **kwargs) -> "ChatCompletionsClient":
+    def get_chat_completions_client(
+        self, *, connection_name: Optional[str] = None, **kwargs
+    ) -> "ChatCompletionsClient":
         """Get an authenticated ChatCompletionsClient (from the package azure-ai-inference) for the default
         Azure AI Services connected resource (if `connection_name` is not specificed), or from the Azure AI
         Services resource given by its connection name.
@@ -258,7 +260,9 @@ class InferenceOperations:
         return client
 
     @distributed_trace
-    def get_azure_openai_client(self, *, api_version: Optional[str] = None, connection_name: Optional[str] = None, **kwargs) -> "AzureOpenAI":
+    def get_azure_openai_client(
+        self, *, api_version: Optional[str] = None, connection_name: Optional[str] = None, **kwargs
+    ) -> "AzureOpenAI":
         """Get an authenticated AzureOpenAI client (from the `openai` package) for the default
         Azure OpenAI connection (if `connection_name` is not specificed), or from the Azure OpenAI
         resource given by its connection name.
