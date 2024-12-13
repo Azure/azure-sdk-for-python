@@ -58,10 +58,8 @@ class SearchQuery(_QueryBase):
 
         :param fields: A list of fields for the query result to be ordered by.
         :type fields: str or list[str]
-        :raises: ValueError
+        :raises ValueError: If no fields are provided.
         """
-        if not fields:
-            raise ValueError("At least one field must be provided")
         if not fields:
             raise ValueError("At least one field must be provided")
         selects = []
@@ -78,7 +76,7 @@ class SearchQuery(_QueryBase):
 
         :param fields: A list of fields for the query result to return.
         :type fields: str or list[str]
-        :raises: ValueError
+        :raises ValueError: If no fields are provided.
         """
         if not fields:
             raise ValueError("At least one field must be provided")
@@ -104,10 +102,8 @@ class SuggestQuery(_QueryBase):
 
         :param fields: A list of fields for the query result to be ordered by.
         :type fields: str or list[str]
-        :raises: ValueError
+        :raises ValueError: If no fields are provided.
         """
-        if not fields:
-            raise ValueError("At least one field must be provided")
         if not fields:
             raise ValueError("At least one field must be provided")
         selects = []
@@ -124,7 +120,7 @@ class SuggestQuery(_QueryBase):
 
         :param fields: A list of fields for the query result to return.
         :type fields: str or list[str]
-        :raises: ValueError
+        :raises ValueError: If no fields are provided.
         """
         if not fields:
             raise ValueError("At least one field must be provided")

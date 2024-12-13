@@ -289,7 +289,7 @@ Here is an example to use `tools` and `tool_resources`:
 ```python
 file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
 
-# notices that FileSearchTool as tool and tool_resources must be added or the assistant unable to search the file
+# Notices that FileSearchTool as tool and tool_resources must be added or the assistant unable to search the file
 agent = project_client.agents.create_agent(
     model="gpt-4-1106-preview",
     name="my-assistant",
@@ -396,7 +396,7 @@ print(f"Uploaded file, file ID: {file.id}")
 
 code_interpreter = CodeInterpreterTool(file_ids=[file.id])
 
-# create agent with code interpreter tool and tools_resources
+# Create agent with code interpreter tool and tools_resources
 agent = project_client.agents.create_agent(
     model="gpt-4-1106-preview",
     name="my-assistant",
@@ -432,6 +432,7 @@ with project_client:
         name="my-assistant",
         instructions="You are a helpful assistant",
         tools=bing.definitions,
+        headers={"x-ms-enable-preview": "true"},
     )
 ```
 
@@ -466,6 +467,7 @@ with project_client:
         instructions="You are a helpful assistant",
         tools=ai_search.definitions,
         tool_resources=ai_search.resources,
+        headers={"x-ms-enable-preview": "true"},
     )
 ```
 
@@ -510,7 +512,10 @@ toolset = AsyncToolSet()
 toolset.add(functions)
 
 agent = await project_client.agents.create_agent(
-    model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
+    model="gpt-4-1106-preview",
+    name="my-assistant",
+    instructions="You are a helpful assistant",
+    toolset=toolset,
 )
 ```
 
@@ -572,21 +577,14 @@ auth = OpenApiAnonymousAuthDetails()
 
 # Initialize agent OpenApi tool using the read in OpenAPI spec
 openapi = OpenApiTool(
-    name="get_weather",
-    spec=openapi_spec,
-    description="Retrieve weather information for a location",
-    auth=auth
+    name="get_weather", spec=openapi_spec, description="Retrieve weather information for a location", auth=auth
 )
 
 # Create agent with OpenApi tool and process assistant run
 with project_client:
     agent = project_client.agents.create_agent(
-        model="gpt-4o-mini",
-        name="my-assistant",
-        instructions="You are a helpful assistant",
-        tools=openapi.definitions
+        model="gpt-4o-mini", name="my-assistant", instructions="You are a helpful assistant", tools=openapi.definitions
     )
-
 ```
 
 <!-- END SNIPPET -->
@@ -670,7 +668,7 @@ Here is an example to pass `CodeInterpreterTool` as tool:
 <!-- SNIPPET:sample_agents_with_code_interpreter_file_attachment.create_agent_and_message_with_code_interpreter_file_attachment -->
 
 ```python
-# notice that CodeInterpreter must be enabled in the agent creation,
+# Notice that CodeInterpreter must be enabled in the agent creation,
 # otherwise the agent will not be able to see the file attachment for code interpretation
 agent = project_client.agents.create_agent(
     model="gpt-4-1106-preview",
@@ -683,10 +681,10 @@ print(f"Created agent, agent ID: {agent.id}")
 thread = project_client.agents.create_thread()
 print(f"Created thread, thread ID: {thread.id}")
 
-# create an attachment
+# Create an attachment
 attachment = MessageAttachment(file_id=file.id, tools=CodeInterpreterTool().definitions)
 
-# create a message
+# Create a message
 message = project_client.agents.create_message(
     thread_id=thread.id,
     role="user",
@@ -697,23 +695,6 @@ message = project_client.agents.create_message(
 
 <!-- END SNIPPET -->
 
-Azure blob storage can be used as a message attachment. In this case `VectorStoreDataSource` have to be used as a data source:
-
-<!-- SNIPPET:sample_agents_vector_store_batch_enterprise_file_search.upload_file_and_create_message_with_code_interpreter -->
-
-```python
-# We will upload the local file to Azure and will use it for vector store creation.
-_, asset_uri = project_client.upload_file("./product_info_1.md")
-ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
-
-# Create a message with the attachment
-attachment = MessageAttachment(data_source=ds, tools=code_interpreter.definitions)
-message = project_client.agents.create_message(
-    thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]
-)
-```
-
-<!-- END SNIPPET -->
 
 #### Create Run, Run_and_Process, or Stream
 
@@ -728,9 +709,9 @@ Here is an example of `create_run` and poll until the run is completed:
 ```python
 run = project_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
 
-# poll the run as long as run status is queued or in progress
+# Poll the run as long as run status is queued or in progress
 while run.status in ["queued", "in_progress", "requires_action"]:
-    # wait for a second
+    # Wait for a second
     time.sleep(1)
     run = project_client.agents.get_run(thread_id=thread.id, run_id=run.id)
 ```
