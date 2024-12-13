@@ -1321,14 +1321,16 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
                 func_rt = await self.on_done()
                 self.done = True  # Mark the stream as done
             else:
-                func_rt = await self.on_unhandled_event(event_type, event_data_obj)
+                func_rt = await self.on_unhandled_event(
+                    event_type, event_data_obj
+                )  # pylint: disable=assignment-from-none
         except Exception as e:  # pylint: disable=broad-exception-caught
             logging.error("Error in event handler for event '%s': %s", event_type, e)
         return event_type, event_data_obj, func_rt
 
     async def on_message_delta(
-        self, delta: "MessageDeltaChunk"
-    ) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
+        self, delta: "MessageDeltaChunk"  # pylint: disable=unused-argument
+    ) -> Optional[EventFunctionReturnT]:
         """Handle message delta events.
 
         :param MessageDeltaChunk delta: The message delta.
@@ -1337,8 +1339,8 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
         return None
 
     async def on_thread_message(
-        self, message: "ThreadMessage"
-    ) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
+        self, message: "ThreadMessage"  # pylint: disable=unused-argument
+    ) -> Optional[EventFunctionReturnT]:
         """Handle thread message events.
 
         :param ThreadMessage message: The thread message.
@@ -1347,8 +1349,8 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
         return None
 
     async def on_thread_run(
-        self, run: "ThreadRun"
-    ) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
+        self, run: "ThreadRun"  # pylint: disable=unused-argument
+    ) -> Optional[EventFunctionReturnT]:
         """Handle thread run events.
 
         :param ThreadRun run: The thread run.
@@ -1365,8 +1367,8 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
         return None
 
     async def on_run_step_delta(
-        self, delta: "RunStepDeltaChunk"
-    ) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
+        self, delta: "RunStepDeltaChunk"  # pylint: disable=unused-argument
+    ) -> Optional[EventFunctionReturnT]:
         """Handle run step delta events.
 
         :param RunStepDeltaChunk delta: The run step delta.
@@ -1384,15 +1386,15 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
 
     async def on_done(
         self,
-    ) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
+    ) -> Optional[EventFunctionReturnT]:
         """Handle the completion of the stream.
         :rtype: Optional[EventFunctionReturnT]
         """
         return None
 
     async def on_unhandled_event(
-        self, event_type: str, event_data: str
-    ) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
+        self, event_type: str, event_data: str  # pylint: disable=unused-argument
+    ) -> Optional[EventFunctionReturnT]:
         """Handle any unhandled event types.
 
         :param str event_type: The event type.
@@ -1419,29 +1421,29 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
         func_rt: Optional[EventFunctionReturnT] = None
         try:
             if isinstance(event_data_obj, MessageDeltaChunk):
-                func_rt = self.on_message_delta(event_data_obj)
+                func_rt = self.on_message_delta(event_data_obj)  # pylint: disable=assignment-from-none
             elif isinstance(event_data_obj, ThreadMessage):
-                func_rt = self.on_thread_message(event_data_obj)
+                func_rt = self.on_thread_message(event_data_obj)  # pylint: disable=assignment-from-none
             elif isinstance(event_data_obj, ThreadRun):
-                func_rt = self.on_thread_run(event_data_obj)
+                func_rt = self.on_thread_run(event_data_obj)  # pylint: disable=assignment-from-none
             elif isinstance(event_data_obj, RunStep):
-                func_rt = self.on_run_step(event_data_obj)
+                func_rt = self.on_run_step(event_data_obj)  # pylint: disable=assignment-from-none
             elif isinstance(event_data_obj, RunStepDeltaChunk):
-                func_rt = self.on_run_step_delta(event_data_obj)
+                func_rt = self.on_run_step_delta(event_data_obj)  # pylint: disable=assignment-from-none
             elif event_type == AgentStreamEvent.ERROR:
-                func_rt = self.on_error(event_data_obj)
+                func_rt = self.on_error(event_data_obj)  # pylint: disable=assignment-from-none
             elif event_type == AgentStreamEvent.DONE:
-                func_rt = self.on_done()
+                func_rt = self.on_done()  # pylint: disable=assignment-from-none
                 self.done = True  # Mark the stream as done
             else:
-                func_rt = self.on_unhandled_event(event_type, event_data_obj)
+                func_rt = self.on_unhandled_event(event_type, event_data_obj)  # pylint: disable=assignment-from-none
         except Exception as e:  # pylint: disable=broad-exception-caught
             logging.error("Error in event handler for event '%s': %s", event_type, e)
         return event_type, event_data_obj, func_rt
 
     def on_message_delta(
-        self, delta: "MessageDeltaChunk"
-    ) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
+        self, delta: "MessageDeltaChunk"  # pylint: disable=unused-argument
+    ) -> Optional[EventFunctionReturnT]:
         """Handle message delta events.
 
         :param MessageDeltaChunk delta: The message delta.
@@ -1450,8 +1452,8 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
         return None
 
     def on_thread_message(
-        self, message: "ThreadMessage"
-    ) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
+        self, message: "ThreadMessage"  # pylint: disable=unused-argument
+    ) -> Optional[EventFunctionReturnT]:
         """Handle thread message events.
 
         :param ThreadMessage message: The thread message.
@@ -1476,8 +1478,8 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
         return None
 
     def on_run_step_delta(
-        self, delta: "RunStepDeltaChunk"
-    ) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
+        self, delta: "RunStepDeltaChunk"  # pylint: disable=unused-argument
+    ) -> Optional[EventFunctionReturnT]:
         """Handle run step delta events.
 
         :param RunStepDeltaChunk delta: The run step delta.
@@ -1495,13 +1497,13 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
 
     def on_done(
         self,
-    ) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
+    ) -> Optional[EventFunctionReturnT]:
         """Handle the completion of the stream."""
         return None
 
     def on_unhandled_event(
-        self, event_type: str, event_data: str
-    ) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
+        self, event_type: str, event_data: str  # pylint: disable=unused-argument
+    ) -> Optional[EventFunctionReturnT]:
         """Handle any unhandled event types.
 
         :param str event_type: The event type.
