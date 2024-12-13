@@ -75,13 +75,13 @@ class InferenceOperations:
     def get_chat_completions_client(self, *, connection_name: Optional[str] = None, **kwargs) -> "ChatCompletionsClient":
         """Get an authenticated ChatCompletionsClient (from the package azure-ai-inference) for the default
         Azure AI Services connected resource (if `connection_name` is not specificed), or from the Azure AI
-        Services resource given by its connection name. 
+        Services resource given by its connection name.
+
         At least one AI model that supports chat completions must be deployed in this resource.
-        The package `azure-ai-inference` must be installed prior to calling this method.
-        Raises ~azure.core.exceptions.ResourceNotFoundError exception if an Azure AI Services connection
-        does not exist.
-        Raises ~azure.core.exceptions.ModuleNotFoundError exception if the `azure-ai-inference` package
-        is not installed.
+
+        .. note::
+
+            The package `azure-ai-inference` must be installed prior to calling this method.
 
         :keyword connection_name: The name of a connection to an Azure AI Services resource in your AI Foundry project.
           resource. Optional. If not provided, the default Azure AI Services connection will be used.
@@ -89,10 +89,12 @@ class InferenceOperations:
 
         :return: An authenticated chat completions client, or `None` if no Azure AI Services connection is found.
         :rtype: ~azure.ai.inference.models.ChatCompletionsClient
-        :raises ~azure.core.exceptions.ResourceNotFoundError:
-        :raises ~azure.core.exceptions.ModuleNotFoundError:
+        :raises ~azure.core.exceptions.ResourceNotFoundError: if an Azure AI Services connection
+        does not exist.
+        :raises ~azure.core.exceptions.ModuleNotFoundError: if the `azure-ai-inference` package
+        is not installed.
+        :raises ValueError: if the connection name is an empty string.
         :raises ~azure.core.exceptions.HttpResponseError:
-        :raises ValueError
         """
         kwargs.setdefault("merge_span", True)
 
@@ -167,8 +169,13 @@ class InferenceOperations:
         """Get an authenticated EmbeddingsClient (from the package azure-ai-inference) for the default
         Azure AI Services connected resource (if `connection_name` is not specificed), or from the Azure AI
         Services resource given by its connection name.
-        At least one AI model that supports text embeddings must be deployed
-        in this resource. The package `azure-ai-inference` must be installed prior to calling this method.
+
+        At least one AI model that supports text embeddings must be deployed in this resource.
+
+        .. note::
+
+            The package `azure-ai-inference` must be installed prior to calling this method.
+
         Raises ~azure.core.exceptions.ResourceNotFoundError exception if an Azure AI Services connection
         does not exist.
         Raises ~azure.core.exceptions.ModuleNotFoundError exception if the `azure-ai-inference` package
@@ -180,10 +187,12 @@ class InferenceOperations:
 
         :return: An authenticated chat completions client
         :rtype: ~azure.ai.inference.models.EmbeddingsClient
-        :raises ~azure.core.exceptions.ResourceNotFoundError:
-        :raises ~azure.core.exceptions.ModuleNotFoundError:
+        :raises ~azure.core.exceptions.ResourceNotFoundError: if an Azure AI Services connection
+        does not exist.
+        :raises ~azure.core.exceptions.ModuleNotFoundError: if the `azure-ai-inference` package
+        is not installed.
+        :raises ValueError: if the connection name is an empty string.
         :raises ~azure.core.exceptions.HttpResponseError:
-        :raises ValueError
         """
         kwargs.setdefault("merge_span", True)
 
@@ -251,11 +260,12 @@ class InferenceOperations:
     @distributed_trace
     def get_azure_openai_client(self, *, api_version: Optional[str] = None, connection_name: Optional[str] = None, **kwargs) -> "AzureOpenAI":
         """Get an authenticated AzureOpenAI client (from the `openai` package) for the default
-        Azure OpenAI connection. The package `openai` must be installed prior to calling this method.
-        Raises ~azure.core.exceptions.ResourceNotFoundError exception if an Azure OpenAI connection
-        does not exist.
-        Raises ~azure.core.exceptions.ModuleNotFoundError exception if the `openai` package
-        is not installed.
+        Azure OpenAI connection (if `connection_name` is not specificed), or from the Azure OpenAI
+        resource given by its connection name.
+
+        .. note::
+
+            The package `openai` must be installed prior to calling this method.
 
         :keyword api_version: The Azure OpenAI api-version to use when creating the client. Optional.
          See "Data plane - Inference" row in the table at
@@ -268,8 +278,11 @@ class InferenceOperations:
 
         :return: An authenticated AzureOpenAI client
         :rtype: ~openai.AzureOpenAI
-        :raises ~azure.core.exceptions.ResourceNotFoundError:
-        :raises ~azure.core.exceptions.ModuleNotFoundError:
+        :raises ~azure.core.exceptions.ResourceNotFoundError: if an Azure OpenAI connection
+        does not exist.
+        :raises ~azure.core.exceptions.ModuleNotFoundError: if the `openai` package
+        is not installed.
+        :raises ValueError: if the connection name is an empty string.
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)

@@ -90,6 +90,8 @@ class TestInference(InferenceTestBase):
             print("Skipped chat completions call with AOAI client, because it cannot be recorded.")
             pass
 
+#----------------------------------------------------------------------------------------------------------------------
+
     @servicePreparerInferenceTests()
     @recorded_by_proxy
     def test_inference_get_chat_completions_client_key_auth(self, **kwargs):
@@ -147,6 +149,8 @@ class TestInference(InferenceTestBase):
             except ResourceNotFoundError as e:
                 print(e)
                 assert InferenceTestBase.EXPECTED_EXCEPTION_MESSAGE_FOR_NON_EXISTING_CONNECTION_NAME in e.message
+
+#----------------------------------------------------------------------------------------------------------------------
 
     @servicePreparerInferenceTests()
     @recorded_by_proxy
