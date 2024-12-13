@@ -223,8 +223,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
         if self.__global_endpoint_manager:
             if hasattr(self.__global_endpoint_manager, 'PreferredLocations'):
                 return {"Client Preferred Regions": self.__global_endpoint_manager.PreferredLocations}
-            else:
-                return {"Client Preferred Regions": []}
+            return {"Client Preferred Regions": []}
         return None
 
     def __get_database_account_settings(self) -> Optional[DatabaseAccount]:
