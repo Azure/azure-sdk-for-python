@@ -230,7 +230,7 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
     @recorded_by_proxy
     def test_polling_interval(self, documentintelligence_endpoint, **kwargs):
         client = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential())
-        assert client._config.polling_interval == 1
+        assert client._config.polling_interval == 5
 
         client = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential(), polling_interval=7)
         assert client._config.polling_interval == 7
