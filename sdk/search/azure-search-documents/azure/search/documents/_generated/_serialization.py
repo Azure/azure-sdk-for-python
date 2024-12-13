@@ -1488,7 +1488,7 @@ class Deserializer(object):
         :param str target_obj: Target data type to deserialize to.
         :param requests.Response response_data: REST response object.
         :param str content_type: Swagger "produces" if available.
-        :raises SerializationError: if serialization fails.
+        :raises DeserializationError: if deserialization fails.
         :return: Deserialized object.
         :rtype: object
         """
