@@ -41,6 +41,7 @@ For example, get the inference endpoint URL and credentials associated with your
       - [Azure AI Search](#create-agent-with-azure-ai-search)
       - [Function call](#create-agent-with-function-call)
       - [Azure Function Call](#create-agent-with-azure-function-call)
+      - [OpenAPI](https://aka.ms/azsdk/azure-ai-projects/custom-key-setup)
     - [Create thread](#create-thread) with
       - [Tool resource](#create-thread-with-tool-resource)
     - [Create message](#create-message) with:
