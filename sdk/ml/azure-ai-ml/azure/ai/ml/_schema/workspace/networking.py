@@ -7,6 +7,7 @@
 from marshmallow import EXCLUDE, fields
 from marshmallow.decorators import post_load, pre_dump
 
+from azure.ai.ml._schema import ExperimentalField
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake
@@ -185,14 +186,14 @@ class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
         ),
         allow_none=True,
     )
-    firewall_sku = StringTransformedEnum(
+    firewall_sku = ExperimentalField(StringTransformedEnum(
         allowed_values=[
             FirewallSku.STANDARD,
             FirewallSku.BASIC,
         ],
         casing_transform=camel_to_snake,
         metadata={"description": "Firewall sku for FQDN rules in AllowOnlyApprovedOutbound mode"},
-    )
+    ))
     network_id = fields.Str(required=False, dump_only=True)
     status = NestedField(ManagedNetworkStatusSchema, allow_none=False, unknown=EXCLUDE)
 
