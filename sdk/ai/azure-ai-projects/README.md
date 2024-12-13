@@ -35,10 +35,12 @@ For example, get the inference endpoint URL and credentials associated with your
   - [Agents (Private Preview)](#agents-private-preview)
     - [Create an Agent](#create-agent) with:
       - [File Search](#create-agent-with-file-search)
+      - [Enterprise File Search](#create-agent-with-enterprise-file-search)
       - [Code interpreter](#create-agent-with-code-interpreter)
       - [Bing grounding](#create-agent-with-bing-grounding)
       - [Azure AI Search](#create-agent-with-azure-ai-search)
       - [Function call](#create-agent-with-function-call)
+      - [Azure Function Call](#create-agent-with-azure-function-call)
     - [Create thread](#create-thread) with
       - [Tool resource](#create-thread-with-tool-resource)
     - [Create message](#create-message) with:
@@ -327,6 +329,95 @@ agent = project_client.agents.create_agent(
 
 <!-- END SNIPPET -->
 
+#### Create Agent with Enterprise File Search
+
+We can upload file to Azure as it is shown in the example, or use the existing Blob. In the code below we demonstrate how this can be achieved. First we are upload file to azure and create `VectorStoreDataSource`, which then is used to create vector store. This vector sore is then given to the `FileSearchTool` constructor.
+
+<!-- SNIPPET:sample_agents_enterprise_file_search.upload_file_and_create_agent_with_file_search -->
+
+```python
+# We will upload the local file to Azure and will use it for vector store creation.
+_, asset_uri = project_client.upload_file("./product_info_1.md")
+
+# create a vector store with no file and wait for it to be processed
+ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
+vector_store = project_client.agents.create_vector_store_and_poll(data_sources=[ds], name="sample_vector_store")
+print(f"Created vector store, vector store ID: {vector_store.id}")
+
+# create a file search tool
+file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
+
+# notices that FileSearchTool as tool and tool_resources must be added or the assistant unable to search the file
+agent = project_client.agents.create_agent(
+    model="gpt-4-1106-preview",
+    name="my-assistant",
+    instructions="You are helpful assistant",
+    tools=file_search_tool.definitions,
+    tool_resources=file_search_tool.resources,
+)
+```
+
+<!-- END SNIPPET -->
+
+We also can attach files to the existing vector vector store. In the code snippet below, we first create empty vector store and add file to it.
+
+<!-- SNIPPET:sample_agents_vector_store_batch_enterprise_file_search.attach_files_to_store -->
+
+```python
+# create a vector store with no file and wait for it to be processed
+vector_store = project_client.agents.create_vector_store_and_poll(data_sources=[], name="sample_vector_store")
+print(f"Created vector store, vector store ID: {vector_store.id}")
+
+ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
+# add the file to the vector store or you can supply data sources in the vector store creation
+vector_store_file_batch = project_client.agents.create_vector_store_file_batch_and_poll(
+    vector_store_id=vector_store.id, data_sources=[ds]
+)
+print(f"Created vector store file batch, vector store file batch ID: {vector_store_file_batch.id}")
+
+# create a file search tool
+file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
+```
+
+<!-- END SNIPPET -->
+
+We also can use Enterprise File Search without creation of a vector store. In this scenario we initialize the agent with `CodeInterpreterTool` definitions as shown below:
+
+<!-- SNIPPET:sample_agents_vector_store_batch_enterprise_file_search.create_agent -->
+
+```python
+code_interpreter = CodeInterpreterTool()
+
+# notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
+agent = project_client.agents.create_agent(
+    model="gpt-4-1106-preview",
+    name="my-assistant",
+    instructions="You are helpful assistant",
+    tools=code_interpreter.definitions,
+)
+```
+
+<!-- END SNIPPET -->
+
+Then we create `VectorStoreDataSource` and use it in `MessageAttachment` constructor. This class is used to create message.
+
+<!-- SNIPPET:sample_agents_vector_store_batch_enterprise_file_search.upload_file_and_create_message_with_code_interpreter -->
+
+```python
+# We will upload the local file to Azure and will use it for vector store creation.
+_, asset_uri = project_client.upload_file("./product_info_1.md")
+ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
+
+# create a message with the attachment
+attachment = MessageAttachment(data_source=ds, tools=code_interpreter.definitions)
+message = project_client.agents.create_message(
+    thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]
+)
+```
+
+<!-- END SNIPPET -->
+
+
 #### Create Agent with Code Interpreter
 
 Here is an example to upload a file and use it for code interpreter by an Agent:
@@ -459,6 +550,44 @@ toolset.add(functions)
 agent = await project_client.agents.create_agent(
     model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
 )
+```
+
+<!-- END SNIPPET -->
+
+#### Create Agent With Azure Function Call
+
+The agent can handle Azure Functions on the service side and return the result of the call. To use the function we need to create the `AzureFunctionTool`, which contains the input and output queues of azure function and the description of input parameters. Please note that in the prompt we are asking model to invoke queue when the specific question ("What would foo say?") is being asked. 
+
+<!-- SNIPPET sample_agents_azure_functions.create_agent_with_azure_function_tool -->
+
+```python
+azure_function_tool = AzureFunctionTool(
+    name="foo",
+    description="Get answers from the foo bot.",
+    parameters={
+        "type": "object",
+        "properties": {
+            "query": {"type": "string", "description": "The question to ask."},
+            "outputqueueuri": {"type": "string", "description": "The full output queue uri."},
+        },
+    },
+    input_queue=AzureFunctionStorageQueue(
+        queue_name="azure-function-foo-input",
+        storage_service_endpoint=storage_service_endpoint,
+    ),
+    output_queue=AzureFunctionStorageQueue(
+        queue_name="azure-function-tool-output",
+        storage_service_endpoint=storage_service_endpoint,
+    ),
+)
+
+agent = project_client.agents.create_agent(
+    model="gpt-4",
+    name="azure-function-agent-foo",
+    instructions=f"You are a helpful support agent. Use the provided function any time the prompt contains the string 'What would foo say?'. When you invoke the function, ALWAYS specify the output queue uri parameter as '{storage_service_endpoint}/azure-function-tool-output'. Always responds with \"Foo says\" and then the response from the tool.",
+    tools=azure_function_tool.definitions,
+)
+print(f"Created agent, agent ID: {agent.id}")
 ```
 
 <!-- END SNIPPET -->

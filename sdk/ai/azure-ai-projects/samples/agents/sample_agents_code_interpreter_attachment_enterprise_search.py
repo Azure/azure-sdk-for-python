@@ -34,6 +34,7 @@ project_client = AIProjectClient.from_connection_string(
 
 with project_client:
 
+    # [START create_agent]
     code_interpreter = CodeInterpreterTool()
 
     # notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
@@ -43,6 +44,7 @@ with project_client:
         instructions="You are helpful assistant",
         tools=code_interpreter.definitions,
     )
+    # [END create_agent]
     print(f"Created agent, agent ID: {agent.id}")
 
     thread = project_client.agents.create_thread()

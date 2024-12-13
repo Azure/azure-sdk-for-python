@@ -31,6 +31,7 @@ with project_client:
     # We will upload the local file to Azure and will use it for vector store creation.
     _, asset_uri = project_client.upload_file("./product_info_1.md")
 
+    # [START attach_files_to_store]
     # create a vector store with no file and wait for it to be processed
     vector_store = project_client.agents.create_vector_store_and_poll(data_sources=[], name="sample_vector_store")
     print(f"Created vector store, vector store ID: {vector_store.id}")
@@ -44,6 +45,7 @@ with project_client:
 
     # create a file search tool
     file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
+    # [END attach_files_to_store]
 
     # notices that FileSearchTool as tool and tool_resources must be added or the assistant unable to search the file
     agent = project_client.agents.create_agent(
