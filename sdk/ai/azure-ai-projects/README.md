@@ -41,7 +41,7 @@ For example, get the inference endpoint URL and credentials associated with your
       - [Azure AI Search](#create-agent-with-azure-ai-search)
       - [Function call](#create-agent-with-function-call)
       - [Azure Function Call](#create-agent-with-azure-function-call)
-      - [OpenAPI](https://aka.ms/azsdk/azure-ai-projects/custom-key-setup)
+      - [OpenAPI](#create-agent-with-openapi)
     - [Create thread](#create-thread) with
       - [Tool resource](#create-thread-with-tool-resource)
     - [Create message](#create-message) with:
@@ -469,7 +469,6 @@ with project_client:
         name="my-assistant",
         instructions="You are a helpful assistant",
         tools=bing.definitions,
-        headers={"x-ms-enable-preview": "true"},
     )
 ```
 
@@ -504,7 +503,6 @@ with project_client:
         instructions="You are a helpful assistant",
         tools=ai_search.definitions,
         tool_resources=ai_search.resources,
-        headers={"x-ms-enable-preview": "true"},
     )
 ```
 
@@ -589,6 +587,43 @@ agent = project_client.agents.create_agent(
     tools=azure_function_tool.definitions,
 )
 print(f"Created agent, agent ID: {agent.id}")
+```
+
+<!-- END SNIPPET -->
+
+#### Create Agent with OpenAPI specification
+
+OpenAPI specifications describe REST operations against a specific endpoint. Agents SDK can read an OpenAPI spec, create a function from it, and call that function against the REST endpoint without additional client-side execution.
+
+Here is an example creating an OpenAPI tool (using anonymous authentication):
+
+<!-- SNIPPET:sample_agents_azure_ai_search.create_agent_with_openapi -->
+
+```python
+
+with open("./weather_openapi.json", "r") as f:
+    openapi_spec = jsonref.loads(f.read())
+
+# Create Auth object for the OpenApiTool (note that connection or managed identity auth setup requires additional setup in Azure)
+auth = OpenApiAnonymousAuthDetails()
+
+# Initialize agent OpenApi tool using the read in OpenAPI spec
+openapi = OpenApiTool(
+    name="get_weather",
+    spec=openapi_spec,
+    description="Retrieve weather information for a location",
+    auth=auth
+)
+
+# Create agent with OpenApi tool and process assistant run
+with project_client:
+    agent = project_client.agents.create_agent(
+        model="gpt-4o-mini",
+        name="my-assistant",
+        instructions="You are a helpful assistant",
+        tools=openapi.definitions
+    )
+
 ```
 
 <!-- END SNIPPET -->
