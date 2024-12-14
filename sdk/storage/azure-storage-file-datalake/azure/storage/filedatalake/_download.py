@@ -11,8 +11,8 @@ from typing import (
 from ._deserialize import from_blob_properties
 
 if TYPE_CHECKING:
-    from ._models import FileProperties
     from azure.storage.blob import StorageStreamDownloader as BlobStorageStreamDownloader
+    from ._models import FileProperties
 
 
 T = TypeVar('T', bytes, str)
