@@ -43,6 +43,7 @@ class MyEventHandler(AsyncAgentEventHandler[str]):
     def __init__(self, functions: AsyncFunctionTool, project_client: AIProjectClient) -> None:
         self.functions = functions
         self.project_client = project_client
+        super().__init__()
 
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         print(f"Text delta received: {delta.text}")
