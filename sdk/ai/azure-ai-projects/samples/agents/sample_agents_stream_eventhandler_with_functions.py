@@ -45,6 +45,7 @@ class MyEventHandler(AgentEventHandler):
 
     def __init__(self, functions: FunctionTool) -> None:
         self.functions = functions
+        super().__init__()
 
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         print(f"Text delta received: {delta.text}")
