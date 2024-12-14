@@ -585,7 +585,9 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", "application/octet-stream"))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("content-type", "application/octet-stream")
+        )
         cls: ClsType[_models.AnalyzeResult] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -681,7 +683,9 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", "application/octet-stream"))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("content-type", "application/octet-stream")
+        )
         if isinstance(body, io.BytesIO):
             content_type = "application/octet-stream"
         return super().begin_classify_document(  # type: ignore[arg-type, misc]
