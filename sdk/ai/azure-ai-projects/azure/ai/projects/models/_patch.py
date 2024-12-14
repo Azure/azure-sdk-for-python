@@ -17,7 +17,6 @@ import math
 import re
 from abc import ABC, abstractmethod
 from typing import (
-    TYPE_CHECKING,
     Any,
     AsyncIterator,
     Awaitable,
@@ -39,7 +38,6 @@ from typing import (
     overload,
 )
 
-from azure.ai.projects import _model_base
 from azure.core.credentials import AccessToken, TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
