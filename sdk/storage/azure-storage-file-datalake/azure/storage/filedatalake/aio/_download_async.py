@@ -3,25 +3,34 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import AsyncIterator, IO, Optional
+from typing import (
+    AsyncIterator, Generic, IO, TypeVar,
+    TYPE_CHECKING
+)
 
 from .._deserialize import from_blob_properties
 
+if TYPE_CHECKING:
+    from .._models import FileProperties
+    from azure.storage.blob.aio import StorageStreamDownloader as BlobStorageStreamDownloader
 
-class StorageStreamDownloader(object):
-    """A streaming object to download from Azure Storage.
 
-    :ivar str name:
-        The name of the file being downloaded.
-    :ivar ~azure.storage.filedatalake.FileProperties properties:
-        The properties of the file being downloaded. If only a range of the data is being
-        downloaded, this will be reflected in the properties.
-    :ivar int size:
-        The size of the total data in the stream. This will be the byte range if specified,
-        otherwise the total size of the file.
-    """
+T = TypeVar('T', bytes, str)
 
-    def __init__(self, downloader):
+
+class StorageStreamDownloader(Generic[T]):
+    """A streaming object to download from Azure Storage."""
+
+    name: str
+    """The name of the file being downloaded."""
+    properties: "FileProperties"
+    """The properties of the file being downloaded. If only a range of the data is being
+        downloaded, this will be reflected in the properties."""
+    size: int
+    """The size of the total data in the stream. This will be the byte range if specified,
+        otherwise the total size of the file."""
+
+    def __init__(self, downloader: "BlobStorageStreamDownloader[T]") -> None:
         self._downloader = downloader
         self.name = self._downloader.name
 
@@ -35,23 +44,27 @@ class StorageStreamDownloader(object):
             acl=acl)
         self.size = self._downloader.size
 
-    def __len__(self):
+    def __len__(self) -> int:
         return self.size
 
     def chunks(self) -> AsyncIterator[bytes]:
-        """Iterate over chunks in the download stream.
+        """Iterate over chunks in the download stream.Note, the iterator returned will
+        iterate over the entire download content, regardless of any data that was
+        previously read.
+
+        NOTE: If the stream has been partially read, some data may be re-downloaded by the iterator.
 
         :returns: An async iterator over the chunks in the download stream.
         :rtype: AsyncIterator[bytes]
         """
         return self._downloader.chunks()
 
-    async def read(self, size: Optional[int] = -1) -> bytes:
+    async def read(self, size: int = -1) -> bytes:
         """
         Read up to size bytes from the stream and return them. If size
         is unspecified or is -1, all bytes will be read.
 
-        :param Optional[int] size:
+        :param int size:
             The number of bytes to download from the stream. Leave unspecified
             or set to -1 to download all bytes.
         :returns:
@@ -64,6 +77,7 @@ class StorageStreamDownloader(object):
         """Download the contents of this file.
 
         This operation is blocking until all data is downloaded.
+
         :returns: The contents of the file.
         :rtype: bytes
         """
