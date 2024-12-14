@@ -32,6 +32,8 @@ class TestDACAnalyzeBatchAsync(AsyncDocumentIntelligenceTest):
         **kwargs
     ):
         set_bodiless_matcher()
+        recorded_variables = kwargs.pop("variables", {})
+        recorded_variables.setdefault("model_id", str(uuid.uuid4()))
         request = AnalyzeBatchDocumentsRequest(
             result_container_url=documentintelligence_batch_training_async_result_data_container_sas_url,
             azure_blob_source=AzureBlobContentSource(
@@ -47,3 +49,4 @@ class TestDACAnalyzeBatchAsync(AsyncDocumentIntelligenceTest):
         # assert response.succeeded_count == 6
         assert response.failed_count == 0
         assert response.skipped_count == 0
+        return recorded_variables
