@@ -681,13 +681,13 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", "application/octet-stream"))
         if isinstance(body, io.BytesIO):
             content_type = "application/octet-stream"
         return super().begin_classify_document(  # type: ignore[arg-type, misc]
             classifier_id=classifier_id,
             body=body,  # type: ignore[arg-type]
-            content_type="application/octet-stream",  # type: ignore[arg-type]
+            content_type=content_type,  # type: ignore[arg-type]
             string_index_type=string_index_type,
             split=split,
             pages=pages,
