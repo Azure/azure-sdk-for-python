@@ -43,6 +43,7 @@ class MyEventHandler(AsyncAgentEventHandler[str]):
     def __init__(self, functions: AsyncFunctionTool, project_client: AIProjectClient) -> None:
         self.functions = functions
         self.project_client = project_client
+        super().__init__()
 
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         print(f"Text delta received: {delta.text}")
@@ -103,7 +104,7 @@ async def main() -> None:
             functions = AsyncFunctionTool(functions=user_async_functions)
 
             agent = await project_client.agents.create_agent(
-                model="gpt-4-1106-preview",
+                model=os.environ["MODEL_DEPLOYMENT_NAME"],
                 name="my-assistant",
                 instructions="You are a helpful assistant",
                 tools=functions.definitions,

@@ -65,7 +65,9 @@ async def main() -> None:
             credential=creds, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
         ) as project_client:
             agent = await project_client.agents.create_agent(
-                model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
+                model=os.environ["MODEL_DEPLOYMENT_NAME"],
+                name="my-assistant",
+                instructions="You are helpful assistant"
             )
             print(f"Created agent, agent ID: {agent.id}")
 
@@ -77,17 +79,17 @@ async def main() -> None:
             )
             print(f"Created message, message ID {message.id}")
 
-        async with await project_client.agents.create_stream(
-            thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
-        ) as stream:
-            async for _, _, func_return in stream:
-                print(func_return)
-
-            await project_client.agents.delete_agent(agent.id)
-            print("Deleted agent")
-
-            messages = await project_client.agents.list_messages(thread_id=thread.id)
-            print(f"Messages: {messages}")
+            async with await project_client.agents.create_stream(
+                thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
+            ) as stream:
+                async for _, _, func_return in stream:
+                    print(func_return)
+    
+                await project_client.agents.delete_agent(agent.id)
+                print("Deleted agent")
+    
+                messages = await project_client.agents.list_messages(thread_id=thread.id)
+                print(f"Messages: {messages}")
 
 
 if __name__ == "__main__":
