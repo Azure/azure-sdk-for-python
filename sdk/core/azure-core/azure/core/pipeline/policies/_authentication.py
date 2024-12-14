@@ -278,7 +278,6 @@ class AzureSasCredentialPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
     :param credential: The credential used to authenticate requests.
     :type credential: ~azure.core.credentials.AzureSasCredential
     :raises ValueError: if credential is None.
-    :raises TypeError: if credential is not an instance of AzureSasCredential.
     """
 
     def __init__(
