@@ -114,17 +114,14 @@ def _succeeded(status):
 
 class BadStatus(Exception):
     """Exception raised when status is invalid."""
-    pass
 
 
 class BadResponse(Exception):
     """Exception raised when response is invalid."""
-    pass
 
 
 class OperationFailed(Exception):
     """Exception raised when operation failed or canceled."""
-    pass
 
 
 def _as_json(response: AllHttpResponseType) -> Dict[str, Any]:
