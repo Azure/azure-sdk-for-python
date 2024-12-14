@@ -239,7 +239,7 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
     @recorded_by_proxy_async
     async def test_polling_interval(self, documentintelligence_endpoint, **kwargs):
         client = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential(is_async=True))
-        assert client._config.polling_interval == 5
+        assert client._config.polling_interval == 1
 
         client = DocumentIntelligenceClient(
             documentintelligence_endpoint, get_credential(is_async=True), polling_interval=7
