@@ -695,6 +695,23 @@ message = project_client.agents.create_message(
 
 <!-- END SNIPPET -->
 
+Azure blob storage can be used as a message attachment. In this case `VectorStoreDataSource` have to be used as a data source:
+
+<!-- SNIPPET:sample_agents_code_interpreter_attachment_enterprise_search.create_agent -->
+
+```python
+code_interpreter = CodeInterpreterTool()
+
+# notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
+agent = project_client.agents.create_agent(
+    model="gpt-4-1106-preview",
+    name="my-assistant",
+    instructions="You are helpful assistant",
+    tools=code_interpreter.definitions,
+)
+```
+
+<!-- END SNIPPET -->
 
 #### Create Run, Run_and_Process, or Stream
 
