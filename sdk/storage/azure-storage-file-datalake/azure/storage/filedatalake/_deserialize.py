@@ -4,61 +4,70 @@
 # license information.
 # --------------------------------------------------------------------------
 import logging
-from typing import NoReturn, TYPE_CHECKING
+from typing import (
+    Any, Dict, List, NoReturn, Tuple, Union,
+    TYPE_CHECKING
+)
 from xml.etree.ElementTree import Element
 
-from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.exceptions import (
-    HttpResponseError,
-    DecodeError,
-    ResourceModifiedError,
     ClientAuthenticationError,
+    DecodeError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceModifiedError,
     ResourceNotFoundError,
-    ResourceExistsError
 )
+from azure.core.pipeline.policies import ContentDecodePolicy
 from ._models import (
-    FileProperties,
-    DirectoryProperties,
-    LeaseProperties,
-    DeletedPathProperties,
-    StaticWebsite,
-    RetentionPolicy,
-    Metrics,
     AnalyticsLogging,
-    PathProperties
+    DeletedPathProperties,
+    DirectoryProperties,
+    FileProperties,
+    LeaseProperties,
+    Metrics,
+    PathProperties,
+    RetentionPolicy,
+    StaticWebsite
 )
 from ._shared.models import StorageErrorCode
 from ._shared.response_handlers import deserialize_metadata
 
 if TYPE_CHECKING:
-    pass
+    from azure.core.pipeline import PipelineResponse
+    from azure.storage.blob import BlobProperties
+    from ._generated.models import (
+        BlobProperties as GeneratedBlobProperties,
+        Path,
+        PathList
+    )
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def deserialize_dir_properties(response, obj, headers):
+def deserialize_dir_properties(response: "PipelineResponse", obj: Any, headers: Dict[str, Any]) -> DirectoryProperties:
     metadata = deserialize_metadata(response, obj, headers)
     dir_properties = DirectoryProperties(
         metadata=metadata,
-        owner=response.headers.get('x-ms-owner'),
-        group=response.headers.get('x-ms-group'),
-        permissions=response.headers.get('x-ms-permissions'),
-        acl=response.headers.get('x-ms-acl'),
+        owner=response.http_headers.get('x-ms-owner'),
+        group=response.http_headers.get('x-ms-group'),
+        permissions=response.http_headers.get('x-ms-permissions'),
+        acl=response.http_headers.get('x-ms-acl'),
         **headers
     )
     return dir_properties
 
 
-def deserialize_file_properties(response, obj, headers):
+def deserialize_file_properties(response: "PipelineResponse", obj: Any, headers: Dict[str, Any]) -> FileProperties:
     metadata = deserialize_metadata(response, obj, headers)
     # DataLake specific headers that are not deserialized in blob are pulled directly from the raw response header
     file_properties = FileProperties(
         metadata=metadata,
-        encryption_context=response.headers.get('x-ms-encryption-context'),
-        owner=response.headers.get('x-ms-owner'),
-        group=response.headers.get('x-ms-group'),
-        permissions=response.headers.get('x-ms-permissions'),
-        acl=response.headers.get('x-ms-acl'),
+        encryption_context=response.http_headers.get('x-ms-encryption-context'),
+        owner=response.http_headers.get('x-ms-owner'),
+        group=response.http_headers.get('x-ms-group'),
+        permissions=response.http_headers.get('x-ms-permissions'),
+        acl=response.http_headers.get('x-ms-acl'),
         **headers
     )
     if 'Content-Range' in headers:
@@ -69,15 +78,19 @@ def deserialize_file_properties(response, obj, headers):
     return file_properties
 
 
-def deserialize_path_properties(path_list):
-    return [PathProperties._from_generated(path) for path in path_list] # pylint: disable=protected-access
+def deserialize_path_properties(path_list: List["Path"]) -> List[PathProperties]:
+    return [PathProperties._from_generated(path) for path in path_list]  # pylint: disable=protected-access
 
 
-def return_headers_and_deserialized_path_list(response, deserialized, response_headers):  # pylint: disable=name-too-long, unused-argument
+def return_headers_and_deserialized_path_list(  # pylint: disable=name-too-long, unused-argument
+    _,
+    deserialized: "PathList",
+    response_headers: Dict[str, Any]
+) -> Union[List["Path"], Tuple[Dict[str, Any], Dict[str, Any]]]:
     return deserialized.paths if deserialized.paths else {}, normalize_headers(response_headers)
 
 
-def get_deleted_path_properties_from_generated_code(generated):  # pylint: disable=name-too-long
+def get_deleted_path_properties_from_generated_code(generated: "GeneratedBlobProperties") -> DeletedPathProperties:  # pylint: disable=name-too-long
     deleted_path = DeletedPathProperties()
     deleted_path.name = generated.name
     deleted_path.deleted_time = generated.properties.deleted_time
@@ -86,26 +99,26 @@ def get_deleted_path_properties_from_generated_code(generated):  # pylint: disab
     return deleted_path
 
 
-def is_file_path(_, __, headers):
+def is_file_path(_, __, headers: Dict[str, Any]) -> bool:
     if headers['x-ms-resource-type'] == "file":
         return True
     return False
 
 
-def get_datalake_service_properties(datalake_properties):
-    datalake_properties["analytics_logging"] = AnalyticsLogging._from_generated(    # pylint: disable=protected-access
+def get_datalake_service_properties(datalake_properties: Dict[str, Any]) -> Dict[str, Any]:
+    datalake_properties["analytics_logging"] = AnalyticsLogging._from_generated(  # pylint: disable=protected-access
         datalake_properties["analytics_logging"])
     datalake_properties["hour_metrics"] = Metrics._from_generated(datalake_properties["hour_metrics"])  # pylint: disable=protected-access
-    datalake_properties["minute_metrics"] = Metrics._from_generated(    # pylint: disable=protected-access
+    datalake_properties["minute_metrics"] = Metrics._from_generated(  # pylint: disable=protected-access
         datalake_properties["minute_metrics"])
-    datalake_properties["delete_retention_policy"] = RetentionPolicy._from_generated(   # pylint: disable=protected-access
+    datalake_properties["delete_retention_policy"] = RetentionPolicy._from_generated(  # pylint: disable=protected-access
         datalake_properties["delete_retention_policy"])
     datalake_properties["static_website"] = StaticWebsite._from_generated(  # pylint: disable=protected-access
         datalake_properties["static_website"])
     return datalake_properties
 
 
-def from_blob_properties(blob_properties, **additional_args):
+def from_blob_properties(blob_properties: "BlobProperties", **additional_args: Any) -> FileProperties:
     file_props = FileProperties()
     file_props.name = blob_properties.name
     file_props.etag = blob_properties.etag
@@ -130,7 +143,7 @@ def from_blob_properties(blob_properties, **additional_args):
     return file_props
 
 
-def normalize_headers(headers):
+def normalize_headers(headers: Dict[str, Any]) -> Dict[str, Any]:
     normalized = {}
     for key, value in headers.items():
         if key.startswith('x-ms-'):
@@ -147,7 +160,7 @@ def process_storage_error(storage_error) -> NoReturn:  # pylint:disable=too-many
     # If it is one of those three then it has been serialized prior by the generated layer.
     if isinstance(storage_error, (ResourceNotFoundError, ClientAuthenticationError, ResourceExistsError)):
         serialized = True
-    error_code = storage_error.response.headers.get('x-ms-error-code')
+    error_code = storage_error.response.http_headers.get('x-ms-error-code')
     error_message = storage_error.message
     additional_data = {}
     error_dict = {}
@@ -236,6 +249,6 @@ def process_storage_error(storage_error) -> NoReturn:  # pylint:disable=too-many
 
     try:
         # `from None` prevents us from double printing the exception (suppresses generated layer error context)
-        exec("raise error from None")   # pylint: disable=exec-used # nosec
+        exec("raise error from None")  # pylint: disable=exec-used # nosec
     except SyntaxError as exc:
         raise error from exc
