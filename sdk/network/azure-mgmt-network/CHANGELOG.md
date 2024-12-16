@@ -66,32 +66,16 @@
   - Added model `VerifierWorkspaceProperties`
   - Added model `VerifierWorkspaceUpdate`
   - Added model `VerifierWorkspaceUpdateProperties`
-  - Model `LoadBalancerLoadBalancingRulesOperations` added method `begin_health`
-  - Model `VirtualNetworkGatewaysOperations` added method `begin_get_failover_all_test_details`
-  - Model `VirtualNetworkGatewaysOperations` added method `begin_get_failover_single_test_details`
-  - Model `VirtualNetworkGatewaysOperations` added method `begin_start_express_route_site_failover_simulation`
-  - Model `VirtualNetworkGatewaysOperations` added method `begin_stop_express_route_site_failover_simulation`
-  - Added model `IpamPoolsOperations`
-  - Added model `ReachabilityAnalysisIntentsOperations`
-  - Added model `ReachabilityAnalysisRunsOperations`
-  - Added model `StaticCidrsOperations`
-  - Added model `VerifierWorkspacesOperations`
-  - Method `VirtualNetworkGatewaysOperations.begin_stop_express_route_site_failover_simulation` has a new overload `def begin_stop_express_route_site_failover_simulation(self: None, resource_group_name: str, virtual_network_gateway_name: str, stop_parameters: ExpressRouteFailoverStopApiParameters, content_type: str)`
-  - Method `VirtualNetworkGatewaysOperations.begin_stop_express_route_site_failover_simulation` has a new overload `def begin_stop_express_route_site_failover_simulation(self: None, resource_group_name: str, virtual_network_gateway_name: str, stop_parameters: IO[bytes], content_type: str)`
-  - Method `IpamPoolsOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, network_manager_name: str, pool_name: str, body: IpamPool, content_type: str)`
-  - Method `IpamPoolsOperations.begin_create` has a new overload `def begin_create(self: None, resource_group_name: str, network_manager_name: str, pool_name: str, body: IO[bytes], content_type: str)`
-  - Method `IpamPoolsOperations.update` has a new overload `def update(self: None, resource_group_name: str, network_manager_name: str, pool_name: str, body: Optional[IpamPoolUpdate], content_type: str)`
-  - Method `IpamPoolsOperations.update` has a new overload `def update(self: None, resource_group_name: str, network_manager_name: str, pool_name: str, body: Optional[IO[bytes]], content_type: str)`
-  - Method `ReachabilityAnalysisIntentsOperations.create` has a new overload `def create(self: None, resource_group_name: str, network_manager_name: str, workspace_name: str, reachability_analysis_intent_name: str, body: ReachabilityAnalysisIntent, content_type: str)`
-  - Method `ReachabilityAnalysisIntentsOperations.create` has a new overload `def create(self: None, resource_group_name: str, network_manager_name: str, workspace_name: str, reachability_analysis_intent_name: str, body: IO[bytes], content_type: str)`
-  - Method `ReachabilityAnalysisRunsOperations.create` has a new overload `def create(self: None, resource_group_name: str, network_manager_name: str, workspace_name: str, reachability_analysis_run_name: str, body: ReachabilityAnalysisRun, content_type: str)`
-  - Method `ReachabilityAnalysisRunsOperations.create` has a new overload `def create(self: None, resource_group_name: str, network_manager_name: str, workspace_name: str, reachability_analysis_run_name: str, body: IO[bytes], content_type: str)`
-  - Method `StaticCidrsOperations.create` has a new overload `def create(self: None, resource_group_name: str, network_manager_name: str, pool_name: str, static_cidr_name: str, body: Optional[StaticCidr], content_type: str)`
-  - Method `StaticCidrsOperations.create` has a new overload `def create(self: None, resource_group_name: str, network_manager_name: str, pool_name: str, static_cidr_name: str, body: Optional[IO[bytes]], content_type: str)`
-  - Method `VerifierWorkspacesOperations.create` has a new overload `def create(self: None, resource_group_name: str, network_manager_name: str, workspace_name: str, body: VerifierWorkspace, content_type: str)`
-  - Method `VerifierWorkspacesOperations.create` has a new overload `def create(self: None, resource_group_name: str, network_manager_name: str, workspace_name: str, body: IO[bytes], content_type: str)`
-  - Method `VerifierWorkspacesOperations.update` has a new overload `def update(self: None, resource_group_name: str, network_manager_name: str, workspace_name: str, body: Optional[VerifierWorkspaceUpdate], content_type: str)`
-  - Method `VerifierWorkspacesOperations.update` has a new overload `def update(self: None, resource_group_name: str, network_manager_name: str, workspace_name: str, body: Optional[IO[bytes]], content_type: str)`
+  - Operation group `LoadBalancerLoadBalancingRulesOperations` added method `begin_health`
+  - Operation group `VirtualNetworkGatewaysOperations` added method `begin_get_failover_all_test_details`
+  - Operation group `VirtualNetworkGatewaysOperations` added method `begin_get_failover_single_test_details`
+  - Operation group `VirtualNetworkGatewaysOperations` added method `begin_start_express_route_site_failover_simulation`
+  - Operation group `VirtualNetworkGatewaysOperations` added method `begin_stop_express_route_site_failover_simulation`
+  - Added operation group `IpamPoolsOperations`
+  - Added operation group `ReachabilityAnalysisIntentsOperations`
+  - Added operation group `ReachabilityAnalysisRunsOperations`
+  - Added operation group `StaticCidrsOperations`
+  - Added operation group `VerifierWorkspacesOperations`
 
 ## 28.0.0 (2024-11-01)
 
