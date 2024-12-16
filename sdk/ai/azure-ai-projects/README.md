@@ -695,6 +695,23 @@ message = project_client.agents.create_message(
 
 <!-- END SNIPPET -->
 
+Azure blob storage can be used as a message attachment. In this case `VectorStoreDataSource` have to be used as a data source:
+
+<!-- SNIPPET:sample_agents_code_interpreter_attachment_enterprise_search.upload_file_and_create_message_with_code_interpreter -->
+
+```python
+# We will upload the local file to Azure and will use it for vector store creation.
+_, asset_uri = project_client.upload_file("./product_info_1.md")
+ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
+
+# Create a message with the attachment
+attachment = MessageAttachment(data_source=ds, tools=code_interpreter.definitions)
+message = project_client.agents.create_message(
+    thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]
+)
+```
+
+<!-- END SNIPPET -->
 
 #### Create Run, Run_and_Process, or Stream
 
