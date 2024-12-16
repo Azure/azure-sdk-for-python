@@ -7,17 +7,31 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_result_pdf_async.py
+FILE: sample_analyze_batch_documents_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to convert an analog PDF into a PDF with embedded text.
+    This sample demonstrates how to analyze documents in a batch.
 
-    This sample uses Read model to demonstrate.
+    This sample uses Layout model to demonstrate.
+
+    Add-on capabilities accept a list of strings containing values from the `DocumentAnalysisFeature`
+    enum class. For more information, see:
+    https://aka.ms/azsdk/python/documentintelligence/analysisfeature.
+
+    The following capabilities are free:
+    - BARCODES
+    - LANGUAGES
+
+    The following capabilities will incur additional charges:
+    - FORMULAS
+    - OCR_HIGH_RESOLUTION
+    - STYLE_FONT
+    - QUERY_FIELDS
 
     See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
 
 USAGE:
-    python sample_analyze_result_pdf_async.py
+    python sample_analyze_batch_documents_async.py
 
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
@@ -28,44 +42,47 @@ import asyncio
 import os
 
 
-async def analyze_result_pdf():
-    path_to_sample_documents = os.path.abspath(
-        os.path.join(
-            os.path.abspath(__file__),
-            "..",
-            "..",
-            "sample_forms/layout/layout-pageobject.pdf",
-        )
-    )
+async def analyze_batch_docs():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
-    from azure.ai.documentintelligence.models import AnalyzeOutputOption, AnalyzeResult
+    from azure.ai.documentintelligence.models import (
+        AnalyzeBatchDocumentsRequest,
+        AzureBlobContentSource,
+    )
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
+    result_container_sas_url = os.environ["RESULT_SAS_URL"]
+    batch_training_data_container_sas_url = os.environ["TRAINING_DATA_SAS_URL"]
 
     document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     async with document_intelligence_client:
-        with open(path_to_sample_documents, "rb") as f:
-            poller = await document_intelligence_client.begin_analyze_document(
-                "prebuilt-read",
-                body=f,
-                output=[AnalyzeOutputOption.PDF],
-            )
-        result: AnalyzeResult = await poller.result()
-        operation_id = poller.details["operation_id"]
-
-        response = await document_intelligence_client.get_analyze_result_pdf(
-            model_id=result.model_id, result_id=operation_id
+        request = AnalyzeBatchDocumentsRequest(
+            result_container_url=result_container_sas_url,
+            azure_blob_source=AzureBlobContentSource(
+                container_url=batch_training_data_container_sas_url,
+            ),
         )
-        with open("async_analyze_result.pdf", "wb") as file:
-            async for chunk in response:
-                file.write(chunk)
+        poller = await document_intelligence_client.begin_analyze_batch_documents(
+            model_id="prebuilt-layout",
+            body=request,
+        )
+        continuation_token = (
+            poller.continuation_token()
+        )  # a continuation token that allows to restart the poller later.
+        poller2 = await document_intelligence_client.get_analyze_batch_result(continuation_token)
+        if poller2.done():
+            final_result = await poller2.result()
+            print(f"Succeeded count: {final_result.succeeded_count}")
+            print(f"Failed count: {final_result.failed_count}")
+            print(f"Skipped count: {final_result.skipped_count}")
+        else:
+            print("The batch analyze is still in process...")
 
 
 async def main():
-    await analyze_result_pdf()
+    await analyze_batch_docs()
 
 
 if __name__ == "__main__":
