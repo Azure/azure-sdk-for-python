@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0 (2024-12-22)
+## 1.0.0 (2024-12-18)
 
 ### Features Added
 
@@ -20,47 +20,8 @@
   - Added model `CheckNameAvailabilityRequest`
   - Added model `CheckNameAvailabilityResponse`
   - Added enum `OfferingType`
-  - Model `AccountsOperations` added method `check_name_availability`
-  - Added model `AccountQuotasOperations`
-  - Method `Account.__init__` has a new overload `def __init__(self: None, location: str, tags: Optional[Dict[str, str]], properties: Optional[_models.AccountProperties])`
-  - Method `Account.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `Account.__init__` has a new overload `def __init__(self: None, location: str, tags: Optional[Dict[str, str]])`
-  - Method `Account.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `AccountProperties.__init__` has a new overload `def __init__(self: None, regional_affinity: Optional[Union[str, _models.EnablementStatus]], scalable_execution: Optional[Union[str, _models.EnablementStatus]], reporting: Optional[Union[str, _models.EnablementStatus]], local_auth: Optional[Union[str, _models.EnablementStatus]])`
-  - Method `AccountProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `AccountUpdate.__init__` has a new overload `def __init__(self: None, tags: Optional[Dict[str, str]], properties: Optional[_models.AccountUpdateProperties])`
-  - Method `AccountUpdate.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `AccountUpdateProperties.__init__` has a new overload `def __init__(self: None, regional_affinity: Optional[Union[str, _models.EnablementStatus]], scalable_execution: Optional[Union[str, _models.EnablementStatus]], reporting: Optional[Union[str, _models.EnablementStatus]], local_auth: Optional[Union[str, _models.EnablementStatus]])`
-  - Method `AccountUpdateProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `ErrorResponse.__init__` has a new overload `def __init__(self: None, error: Optional[_models.ErrorDetail])`
-  - Method `ErrorResponse.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `Operation.__init__` has a new overload `def __init__(self: None, display: Optional[_models.OperationDisplay])`
-  - Method `Operation.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `Quota.__init__` has a new overload `def __init__(self: None, properties: Optional[_models.QuotaProperties])`
-  - Method `Quota.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `QuotaProperties.__init__` has a new overload `def __init__(self: None, free_trial: Optional[_models.FreeTrialProperties])`
-  - Method `QuotaProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `SystemData.__init__` has a new overload `def __init__(self: None, created_by: Optional[str], created_by_type: Optional[Union[str, _models.CreatedByType]], created_at: Optional[datetime], last_modified_by: Optional[str], last_modified_by_type: Optional[Union[str, _models.CreatedByType]], last_modified_at: Optional[datetime])`
-  - Method `SystemData.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `TrackedResource.__init__` has a new overload `def __init__(self: None, location: str, tags: Optional[Dict[str, str]])`
-  - Method `TrackedResource.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `AccountQuota.__init__` has a new overload `def __init__(self: None, properties: Optional[_models.AccountQuotaProperties])`
-  - Method `AccountQuota.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `AccountQuotaProperties.__init__` has a new overload `def __init__(self: None, free_trial: Optional[_models.AccountFreeTrialProperties])`
-  - Method `AccountQuotaProperties.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `CheckNameAvailabilityRequest.__init__` has a new overload `def __init__(self: None, name: Optional[str], type: Optional[str])`
-  - Method `CheckNameAvailabilityRequest.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `CheckNameAvailabilityResponse.__init__` has a new overload `def __init__(self: None, name_available: Optional[bool], reason: Optional[Union[str, _models.CheckNameAvailabilityReason]], message: Optional[str])`
-  - Method `CheckNameAvailabilityResponse.__init__` has a new overload `def __init__(self: None, mapping: Mapping[str, Any])`
-  - Method `AccountsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, account_name: str, resource: Account, content_type: str)`
-  - Method `AccountsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, account_name: str, resource: IO[bytes], content_type: str)`
-  - Method `AccountsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, account_name: str, resource: JSON, content_type: str)`
-  - Method `AccountsOperations.update` has a new overload `def update(self: None, resource_group_name: str, account_name: str, properties: AccountUpdate, content_type: str)`
-  - Method `AccountsOperations.update` has a new overload `def update(self: None, resource_group_name: str, account_name: str, properties: IO[bytes], content_type: str)`
-  - Method `AccountsOperations.update` has a new overload `def update(self: None, resource_group_name: str, account_name: str, properties: JSON, content_type: str)`
-  - Method `AccountsOperations.check_name_availability` has a new overload `def check_name_availability(self: None, body: CheckNameAvailabilityRequest, content_type: str)`
-  - Method `AccountsOperations.check_name_availability` has a new overload `def check_name_availability(self: None, body: JSON, content_type: str)`
-  - Method `AccountsOperations.check_name_availability` has a new overload `def check_name_availability(self: None, body: IO[bytes], content_type: str)`
+  - Operation group `AccountsOperations` added method `check_name_availability`
+  - Added operation group `AccountQuotasOperations`
 
 ### Breaking Changes
 
@@ -85,21 +46,11 @@
   - Model `Resource` deleted or renamed its instance variable `additional_properties`
   - Model `SystemData` deleted or renamed its instance variable `additional_properties`
   - Model `TrackedResource` deleted or renamed its instance variable `additional_properties`
-  - Method `AccountsOperations.begin_create_or_update` inserted a `positional_or_keyword` parameter `account_name`
-  - Method `AccountsOperations.begin_create_or_update` deleted or renamed its parameter `name` of kind `positional_or_keyword`
-  - Method `AccountsOperations.begin_delete` inserted a `positional_or_keyword` parameter `account_name`
-  - Method `AccountsOperations.begin_delete` deleted or renamed its parameter `name` of kind `positional_or_keyword`
-  - Method `AccountsOperations.get` inserted a `positional_or_keyword` parameter `account_name`
-  - Method `AccountsOperations.get` deleted or renamed its parameter `name` of kind `positional_or_keyword`
-  - Method `AccountsOperations.update` inserted a `positional_or_keyword` parameter `account_name`
-  - Method `AccountsOperations.update` deleted or renamed its parameter `name` of kind `positional_or_keyword`
-  - Method `QuotasOperations.get` inserted a `positional_or_keyword` parameter `quota_name`
-  - Method `QuotasOperations.get` deleted or renamed its parameter `name` of kind `positional_or_keyword`
-  - Method `QuotasOperations.get` re-ordered its parameters from `['self', 'location', 'name', 'kwargs']` to `['self', 'location', 'quota_name', 'kwargs']`
-  - Method `AccountsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'name', 'resource', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'resource', 'kwargs']`
-  - Method `AccountsOperations.begin_delete` re-ordered its parameters from `['self', 'resource_group_name', 'name', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'kwargs']`
-  - Method `AccountsOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'name', 'properties', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'properties', 'kwargs']`
-  - Method `AccountsOperations.get` re-ordered its parameters from `['self', 'resource_group_name', 'name', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'kwargs']`
+  - Method `AccountsOperations.begin_create_or_update` renamed its parameter `name` to `account_name`
+  - Method `AccountsOperations.begin_delete` renamed its parameter `name` to `account_name`
+  - Method `AccountsOperations.get` renamed its parameter `name` to `account_name`
+  - Method `AccountsOperations.update` renamed its parameter `name` to `account_name`
+  - Method `QuotasOperations.get` renamed its parameter `name` to `quota_name`
 
 ## 1.0.0b2 (2024-03-04)
 
