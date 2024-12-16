@@ -150,7 +150,7 @@ def normalize_headers(headers: Dict[str, Any]) -> Dict[str, Any]:
     return normalized
 
 
-def process_storage_error(storage_error) -> NoReturn:  # pylint:disable=too-many-statements
+def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # pylint:disable=too-many-statements
     raise_error = HttpResponseError
     serialized = False
     if not storage_error.response:
