@@ -22,7 +22,7 @@ def _get_json_content(obj):
     :type obj: any
     :return: The JSON content of the object.
     :rtype: dict
-    :raises ValueError if JSON content cannot be loaded from the object
+    :raises ValueError: if JSON content cannot be loaded from the object.
     """
     msg = "Failed to load JSON content from the object."
     try:

@@ -11,9 +11,10 @@ import tempfile
 
 from azure.ai.evaluation import (
     ContentSafetyEvaluator,
-    ContentSafetyMultimodalEvaluator,
     SexualMultimodalEvaluator,
+    SexualEvaluator,
     ProtectedMaterialMultimodalEvaluator,
+    ProtectedMaterialEvaluator,
     F1ScoreEvaluator,
     FluencyEvaluator,
     GroundednessEvaluator,
@@ -23,6 +24,7 @@ from azure.ai.evaluation import (
 )
 from azure.ai.evaluation._common.math import list_mean_nan_safe
 import azure.ai.evaluation._evaluate._utils as ev_utils
+from azure.ai.evaluation._azure._clients import LiteMLClient
 
 
 @pytest.fixture
@@ -87,7 +89,7 @@ def question_evaluator(query):
     return {"length": len(query)}
 
 
-def _get_run_from_run_history(flow_run_id, ml_client, project_scope):
+def _get_run_from_run_history(flow_run_id, azure_ml_client: LiteMLClient, project_scope):
     """Get run info from run history"""
     from azure.identity import DefaultAzureCredential
 
@@ -96,8 +98,8 @@ def _get_run_from_run_history(flow_run_id, ml_client, project_scope):
         "Authorization": token,
         "Content-Type": "application/json",
     }
-    workspace = ml_client.workspaces.get(project_scope["project_name"])
-    endpoint = workspace.discovery_url.split("discovery")[0]
+    workspace = azure_ml_client.workspace_get_info(project_scope["project_name"])
+    endpoint = (workspace.discovery_url or "").split("discovery")[0]
     pattern = (
         f"/subscriptions/{project_scope['subscription_id']}"
         f"/resourceGroups/{project_scope['resource_group_name']}"
@@ -255,12 +257,12 @@ class TestEvaluate:
     ):
         os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "false"
         input_data = pd.read_json(multimodal_file_with_imageurls, lines=True)
-        content_safety_eval = ContentSafetyMultimodalEvaluator(
+        content_safety_eval = ContentSafetyEvaluator(
             azure_ai_project=project_scope, credential=azure_cred, _parallel=False
         )
         result = evaluate(
             evaluation_name=f"test-mm-content-safety-eval-dataset-img-url-{str(uuid.uuid4())}",
-            azure_ai_project=project_scope,
+            # azure_ai_project=project_scope,
             data=multimodal_file_with_imageurls,
             evaluators={"content_safety": content_safety_eval},
             evaluator_config={
@@ -297,12 +299,12 @@ class TestEvaluate:
         from .target_fn import target_multimodal_fn1
 
         input_data = pd.read_json(multimodal_file_with_imageurls_with_target, lines=True)
-        content_safety_eval = ContentSafetyMultimodalEvaluator(
+        content_safety_eval = ContentSafetyEvaluator(
             azure_ai_project=project_scope, credential=azure_cred, _parallel=False
         )
         result = evaluate(
             evaluation_name=f"test-mm-eval-dataset-img-url-target-{str(uuid.uuid4())}",
-            azure_ai_project=project_scope,
+            # azure_ai_project=project_scope,
             data=multimodal_file_with_imageurls_with_target,
             target=target_multimodal_fn1,
             evaluators={"content_safety": content_safety_eval},
@@ -333,14 +335,23 @@ class TestEvaluate:
         assert 0 <= metrics.get("content_safety.self_harm_defect_rate") <= 1
         assert 0 <= metrics.get("content_safety.hate_unfairness_defect_rate") <= 1
 
-    def test_evaluate_with_sexual_multimodal_evaluator(self, project_scope, azure_cred, multimodal_file_with_imageurls):
+    @pytest.mark.parametrize(
+        "evaluator_class",
+        [
+            (SexualMultimodalEvaluator),
+            (SexualEvaluator),
+        ],
+    )
+    def test_evaluate_with_sexual_multimodal_evaluator(
+        self, project_scope, azure_cred, multimodal_file_with_imageurls, evaluator_class
+    ):
         os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "false"
         input_data = pd.read_json(multimodal_file_with_imageurls, lines=True)
-        eval = SexualMultimodalEvaluator(azure_ai_project=project_scope, credential=azure_cred)
+        eval = evaluator_class(azure_ai_project=project_scope, credential=azure_cred)
 
         result = evaluate(
             evaluation_name=f"test-mm-sexual-eval-dataset-img-url-{str(uuid.uuid4())}",
-            azure_ai_project=project_scope,
+            # azure_ai_project=project_scope,
             data=multimodal_file_with_imageurls,
             evaluators={"sexual": eval},
             evaluator_config={
@@ -359,15 +370,22 @@ class TestEvaluate:
         assert "sexual.sexual_defect_rate" in metrics.keys()
         assert 0 <= metrics.get("sexual.sexual_defect_rate") <= 1
 
+    @pytest.mark.parametrize(
+        "evaluator_class",
+        [
+            (SexualMultimodalEvaluator),
+            (SexualEvaluator),
+        ],
+    )
     def test_evaluate_with_sexual_multimodal_evaluator_b64_images(
-        self, project_scope, azure_cred, multimodal_file_with_b64_images
+        self, project_scope, azure_cred, multimodal_file_with_b64_images, evaluator_class
     ):
         os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "false"
         input_data = pd.read_json(multimodal_file_with_b64_images, lines=True)
-        eval = SexualMultimodalEvaluator(azure_ai_project=project_scope, credential=azure_cred)
+        eval = evaluator_class(azure_ai_project=project_scope, credential=azure_cred)
         result = evaluate(
             evaluation_name=f"test-mm-sexual-eval-dataset-img-b64-{str(uuid.uuid4())}",
-            azure_ai_project=project_scope,
+            # azure_ai_project=project_scope,
             data=multimodal_file_with_b64_images,
             evaluators={"sexual": eval},
             evaluator_config={
@@ -415,15 +433,22 @@ class TestEvaluate:
         assert "groundedness_pro.groundedness_pro_passing_rate" in convo_metrics.keys()
         assert 0 <= convo_metrics.get("groundedness_pro.groundedness_pro_passing_rate") <= 1
 
+    @pytest.mark.parametrize(
+        "evaluator_class",
+        [
+            (ProtectedMaterialMultimodalEvaluator),
+            (ProtectedMaterialEvaluator),
+        ],
+    )
     def test_evaluate_with_protected_material_multimodal_evaluator(
-        self, project_scope, azure_cred, multimodal_file_with_imageurls
+        self, project_scope, azure_cred, multimodal_file_with_imageurls, evaluator_class
     ):
         os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "false"
         input_data = pd.read_json(multimodal_file_with_imageurls, lines=True)
-        eval = ProtectedMaterialMultimodalEvaluator(azure_ai_project=project_scope, credential=azure_cred)
+        eval = evaluator_class(azure_ai_project=project_scope, credential=azure_cred)
         result = evaluate(
             evaluation_name=f"test-multimodal-protected-material-eval-dataset-{str(uuid.uuid4())}",
-            azure_ai_project=project_scope,
+            # azure_ai_project=project_scope,
             data=multimodal_file_with_imageurls,
             evaluators={"protected_material": eval},
             evaluator_config={
@@ -532,7 +557,7 @@ class TestEvaluate:
             evaluators={"answer": answer_evaluator, "f1": f1_score_eval},
         )
         row_result_df = pd.DataFrame(result["rows"])
-        assert "outputs.answer" in row_result_df.columns
+        assert "outputs.response" in row_result_df.columns
         assert "outputs.answer.length" in row_result_df.columns
         assert list(row_result_df["outputs.answer.length"]) == [28, 76, 22]
         assert "outputs.f1.f1_score" in row_result_df.columns
@@ -574,7 +599,8 @@ class TestEvaluate:
 
         mapping = None
         if evaluation_config:
-            mapping = evaluation_config.get("question_ev", evaluation_config.get("default", None))
+            config = evaluation_config.get("question_ev", evaluation_config.get("default", None))
+            mapping = config.get("column_mapping", config)
         if mapping and ("another_question" in mapping or mapping["query"] == "${data.query}"):
             query = "inputs.query"
         expected = list(row_result_df[query].str.len())
@@ -658,7 +684,7 @@ class TestEvaluate:
         evaluation_name = "test_evaluate_track_in_cloud"
         # run the evaluation with targets
         result = evaluate(
-            azure_ai_project=project_scope,
+            # azure_ai_project=project_scope,
             evaluation_name=evaluation_name,
             data=questions_file,
             target=target_fn,
@@ -698,7 +724,7 @@ class TestEvaluate:
 
         # run the evaluation
         result = evaluate(
-            azure_ai_project=project_scope,
+            # azure_ai_project=project_scope,
             evaluation_name=evaluation_name,
             data=data_file,
             evaluators={"f1_score": f1_score_eval},

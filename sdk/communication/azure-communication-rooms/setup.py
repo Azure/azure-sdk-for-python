@@ -63,7 +63,7 @@ setup(
         ]
     ),
     install_requires=[
-        "azure-core>=1.29.0",
+        "azure-core>=1.32.0",
         "isodate>=0.6.1",
     ],
     python_requires=">=3.8",
