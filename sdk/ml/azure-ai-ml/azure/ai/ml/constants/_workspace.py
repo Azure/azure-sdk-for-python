@@ -5,7 +5,6 @@ from enum import Enum
 
 from azure.ai.ml._utils._experimental import experimental
 from azure.core import CaseInsensitiveEnumMeta
-from azure.ai.ml._utils._experimental import experimental
 
 
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
