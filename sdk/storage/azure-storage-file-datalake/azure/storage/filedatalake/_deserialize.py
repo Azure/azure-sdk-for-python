@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import logging
 from typing import (
-    Any, Collection, Dict, List, NoReturn, Tuple, Union,
+    Any, Collection, Dict, List, NoReturn, Tuple,
     TYPE_CHECKING
 )
 from xml.etree.ElementTree import Element
