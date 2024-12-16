@@ -442,6 +442,7 @@ class TestAgentsOperations:
             submit_tool_mock.assert_not_called()
 
     @patch("azure.ai.projects._patch.PipelineClient")
+    @pytest.mark.skip("Recordings not yet available")
     @pytest.mark.parametrize(
         "file_agent_1,add_azure_fn",
         [

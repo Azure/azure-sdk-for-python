@@ -21,7 +21,7 @@ class TestComputeManagementImagesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_images_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.images.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -72,7 +72,7 @@ class TestComputeManagementImagesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_images_begin_update(self, resource_group):
         response = await (
             await self.client.images.begin_update(
                 resource_group_name=resource_group.name,
@@ -118,7 +118,7 @@ class TestComputeManagementImagesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_images_begin_delete(self, resource_group):
         response = await (
             await self.client.images.begin_delete(
                 resource_group_name=resource_group.name,
@@ -132,7 +132,7 @@ class TestComputeManagementImagesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_images_get(self, resource_group):
         response = await self.client.images.get(
             resource_group_name=resource_group.name,
             image_name="str",
@@ -144,7 +144,7 @@ class TestComputeManagementImagesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_images_list_by_resource_group(self, resource_group):
         response = self.client.images.list_by_resource_group(
             resource_group_name=resource_group.name,
             api_version="2024-07-01",
@@ -155,7 +155,7 @@ class TestComputeManagementImagesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_images_list(self, resource_group):
         response = self.client.images.list(
             api_version="2024-07-01",
         )

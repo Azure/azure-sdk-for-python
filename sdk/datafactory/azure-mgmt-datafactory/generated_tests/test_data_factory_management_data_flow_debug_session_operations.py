@@ -20,7 +20,7 @@ class TestDataFactoryManagementDataFlowDebugSessionOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create(self, resource_group):
+    def test_data_flow_debug_session_begin_create(self, resource_group):
         response = self.client.data_flow_debug_session.begin_create(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -38,7 +38,7 @@ class TestDataFactoryManagementDataFlowDebugSessionOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_query_by_factory(self, resource_group):
+    def test_data_flow_debug_session_query_by_factory(self, resource_group):
         response = self.client.data_flow_debug_session.query_by_factory(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -50,7 +50,7 @@ class TestDataFactoryManagementDataFlowDebugSessionOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_add_data_flow(self, resource_group):
+    def test_data_flow_debug_session_add_data_flow(self, resource_group):
         response = self.client.data_flow_debug_session.add_data_flow(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -78,7 +78,7 @@ class TestDataFactoryManagementDataFlowDebugSessionOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_data_flow_debug_session_delete(self, resource_group):
         response = self.client.data_flow_debug_session.delete(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -91,7 +91,7 @@ class TestDataFactoryManagementDataFlowDebugSessionOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_execute_command(self, resource_group):
+    def test_data_flow_debug_session_begin_execute_command(self, resource_group):
         response = self.client.data_flow_debug_session.begin_execute_command(
             resource_group_name=resource_group.name,
             factory_name="str",
