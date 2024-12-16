@@ -6,7 +6,7 @@
 
 import pytest
 import functools
-from devtools_testutils import recorded_by_proxy, get_credential
+from devtools_testutils import recorded_by_proxy, get_credential, set_bodiless_matcher
 from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import (
     DocumentAnalysisFeature,
@@ -213,6 +213,7 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
     @DocumentIntelligenceClientPreparer()
     @recorded_by_proxy
     def test_layout_url_barcode(self, client):
+        set_bodiless_matcher()
         poller = client.begin_analyze_document(
             "prebuilt-layout",
             AnalyzeDocumentRequest(url_source=self.barcode_url_tif),
