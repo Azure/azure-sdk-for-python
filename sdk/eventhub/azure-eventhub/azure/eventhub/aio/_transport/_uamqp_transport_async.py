@@ -56,7 +56,7 @@ if uamqp_installed:
         """
 
         @staticmethod
-        async def create_connection_async(  # pylint:disable=unused-argument
+        async def create_connection_async(
             *,
             endpoint: str,
             auth: authentication.JWTTokenAuth,
@@ -111,7 +111,7 @@ if uamqp_installed:
             await connection.destroy_async()
 
         @staticmethod
-        def create_send_client(  # pylint: disable=unused-argument
+        def create_send_client(
             *,
             config,
             target: str,
@@ -178,7 +178,7 @@ if uamqp_installed:
                     raise producer._condition
 
         @staticmethod
-        def create_receive_client(  # pylint:disable=unused-argument
+        def create_receive_client(
             *,
             config,
             source: Source,
@@ -227,7 +227,7 @@ if uamqp_installed:
 
             client = ReceiveClientAsync(
                 source,
-                debug=network_trace,  # pylint:disable=protected-access
+                debug=network_trace,
                 error_policy=retry_policy,
                 desired_capabilities=desired_capabilities,
                 prefetch=link_credit,
@@ -427,7 +427,7 @@ if uamqp_installed:
             return status_code, description, response
 
         @staticmethod
-        async def _handle_exception_async(  # pylint:disable=too-many-branches, too-many-statements
+        async def _handle_exception_async(
             exception: Exception,
             closable: Union["ClientBaseAsync", "ConsumerProducerMixin"],
             *,

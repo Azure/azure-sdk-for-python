@@ -24,7 +24,6 @@ from ._constants import (
 
 
 if TYPE_CHECKING:
-    # pylint: disable=ungrouped-imports
     from ._transport._base import AmqpTransport
     from ._pyamqp.message import Message as pyamqp_Message
 
@@ -74,9 +73,9 @@ class UTC(datetime.tzinfo):
 
 
 try:
-    from datetime import timezone  # pylint: disable=ungrouped-imports
+    from datetime import timezone
 
-    TZ_UTC = timezone.utc  # type: ignore
+    TZ_UTC: timezone = timezone.utc
 except ImportError:
     TZ_UTC = UTC()  # type: ignore
 
@@ -134,7 +133,7 @@ def set_event_partition_key(
     annotations = raw_message.annotations
     if annotations is None:
         annotations = {}
-    annotations[amqp_transport.PROP_PARTITION_KEY_AMQP_SYMBOL] = partition_key  # pylint:disable=protected-access
+    annotations[amqp_transport.PROP_PARTITION_KEY_AMQP_SYMBOL] = partition_key
     if not raw_message.header:
         raw_message.header = AmqpMessageHeader(header=True)
     else:
@@ -234,7 +233,6 @@ def transform_outbound_single_message(
 
 
 def decode_with_recurse(data: Any, encoding: str = "UTF-8") -> Any:
-    # pylint:disable=isinstance-second-argument-not-valid-type
     """
     If data is of a compatible type, iterates through nested structure and decodes all binary
         strings with provided encoding.
@@ -249,14 +247,14 @@ def decode_with_recurse(data: Any, encoding: str = "UTF-8") -> Any:
         return data
     if isinstance(data, bytes):
         return data.decode(encoding)
-    if isinstance(data, Mapping):  # pylint:disable=isinstance-second-argument-not-valid-type
+    if isinstance(data, Mapping):
         decoded_mapping = {}
         for k, v in data.items():
             decoded_key = decode_with_recurse(k, encoding)
             decoded_val = decode_with_recurse(v, encoding)
             decoded_mapping[decoded_key] = decoded_val
         return decoded_mapping
-    if isinstance(data, Iterable):  # pylint:disable=isinstance-second-argument-not-valid-type
+    if isinstance(data, Iterable):
         decoded_list = []
         for d in data:
             decoded_list.append(decode_with_recurse(d, encoding))

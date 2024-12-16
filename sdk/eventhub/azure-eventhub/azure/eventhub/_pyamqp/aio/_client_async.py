@@ -1,10 +1,9 @@
-# -------------------------------------------------------------------------  # pylint: disable=client-suffix-needed
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
 # TODO: Check types of kwargs (issue exists for this)
-# pylint: disable=too-many-lines
 import asyncio
 import logging
 import time
@@ -499,7 +498,6 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
         :return: Whether or not the client is ready to start sending messages.
         :rtype: bool
         """
-        # pylint: disable=protected-access
         if not self._link:
             self._link = self._session.create_sender_link(
                 target_address=self.target,
@@ -708,7 +706,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         :return: Whether the client is ready to start receiving messages.
         :rtype: bool
         """
-        # pylint: disable=protected-access
         if not self._link:
             self._link = self._session.create_receiver_link(
                 source_address=self.source,

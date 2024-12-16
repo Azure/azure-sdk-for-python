@@ -111,7 +111,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         if owner_level is not None:
             link_properties[EPOCH_SYMBOL] = int(owner_level)
         link_property_timeout_ms = (
-            self._client._config.receive_timeout or self._timeout  # pylint:disable=protected-access
+            self._client._config.receive_timeout or self._timeout
         ) * self._amqp_transport.TIMEOUT_FACTOR
         link_properties[TIMEOUT_SYMBOL] = int(link_property_timeout_ms)
         self._link_properties: Union[Dict[uamqp_AMQPType, uamqp_AMQPType], Dict[types.AMQPTypes, types.AMQPTypes]] = (
@@ -158,7 +158,6 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._do_retryable_operation(self._open, operation_need_param=False)
 
     def _message_received(self, message: Union[uamqp_Message, Message]) -> None:
-        # pylint:disable=protected-access
         self._message_buffer.append(message)
 
     def _next_message_in_buffer(self):
@@ -245,7 +244,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             if batch:
                 events_for_callback = []
                 for _ in range(min(max_batch_size, len(self._message_buffer))):
-                    events_for_callback.append(self._next_message_in_buffer())  # pylint: disable=protected-access
+                    events_for_callback.append(self._next_message_in_buffer())
                 self._on_event_received(events_for_callback)
             else:
                 self._on_event_received(self._next_message_in_buffer() if self._message_buffer else None)

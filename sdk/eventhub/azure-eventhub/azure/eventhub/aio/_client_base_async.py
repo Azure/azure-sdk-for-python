@@ -305,7 +305,7 @@ class ClientBaseAsync(ClientBase):
         )
         if backoff <= self._config.backoff_max and (
             timeout_time is None or time.time() + backoff <= timeout_time
-        ):  # pylint:disable=no-else-return
+        ):
             await asyncio.sleep(backoff, **self._internal_kwargs)
             _LOGGER.info(
                 "%r has an exception (%r). Retrying...",
@@ -431,7 +431,7 @@ class ConsumerProducerMixin(_MIXIN_BASE):
         Open the EventHubConsumer using the supplied connection.
 
         """
-        # pylint: disable=protected-access,line-too-long
+        # pylint: disable=protected-access
         if not self.running:
             if self._handler:
                 await self._handler.close_async()
@@ -468,7 +468,7 @@ class ConsumerProducerMixin(_MIXIN_BASE):
     async def _do_retryable_operation(
         self, operation: Callable[..., Any], timeout: Optional[float] = None, **kwargs: Any
     ) -> Optional[Any]:
-        # pylint:disable=protected-access,line-too-long
+        # pylint:disable=protected-access
         timeout_time = (time.time() + timeout) if timeout else None
         retried_times = 0
         last_exception = kwargs.pop("last_exception", None)
