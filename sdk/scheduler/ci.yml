@@ -28,6 +28,3 @@ extends:
   parameters:
     ServiceDirectory: scheduler
     TestProxy: true
-    Artifacts:
-    - name: azure-mgmt-scheduler
-      safeName: azuremgmtscheduler

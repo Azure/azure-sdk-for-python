@@ -32,10 +32,6 @@ ROUGE-1.5.5.pl -m -e data -n 2 -a settings.xml
 In these examples settings.xml lists input files and formats.
 """
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import collections
 import re
 

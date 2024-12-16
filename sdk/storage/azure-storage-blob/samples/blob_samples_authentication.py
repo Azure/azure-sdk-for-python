@@ -95,6 +95,10 @@ class AuthSamples(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        if blob_service_client.account_name is None:
+            print("Connection string did not provide an account name." + '\n' +
+                  "Test: auth_shared_access_signature")
+            sys.exit(1)
 
         # [START create_sas_token]
         # Create a SAS token to use to authenticate a new client

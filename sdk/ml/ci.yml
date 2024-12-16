@@ -30,7 +30,6 @@ extends:
   template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: ml
-    ValidateFormatting: true
     TestTimeoutInMinutes: 75
     TestProxy: true
     MatrixFilters:

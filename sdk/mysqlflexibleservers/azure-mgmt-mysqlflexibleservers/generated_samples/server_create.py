@@ -45,7 +45,7 @@ def main():
                 "storage": {
                     "autoGrow": "Disabled",
                     "iops": 600,
-                    "storageRedundancy": "LocalRedundancy",
+                    "storageRedundancy": "ZoneRedundancy",
                     "storageSizeGB": 100,
                 },
                 "version": "5.7",
@@ -57,6 +57,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2024-06-01-preview/examples/ServerCreate.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2024-10-01-preview/examples/ServerCreate.json
 if __name__ == "__main__":
     main()

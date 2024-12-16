@@ -24,6 +24,5 @@ extends:
   parameters:
     ServiceDirectory: ${{ parameters.Service }}
     BuildTargetingString: "*"
-    ValidateFormatting: true
     TestProxy: true
     TestTimeOutInMinutes: 180

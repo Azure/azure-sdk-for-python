@@ -33,7 +33,7 @@ class TestConfig(object):
     connectionPolicy.DisableSSLVerification = True
     is_emulator = host == local_host
     is_live._cache = True if not is_emulator else False
-    credential =  masterKey if is_emulator else get_credential()
+    credential = masterKey if is_emulator else get_credential()
     credential_async = masterKey if is_emulator else get_credential(is_async=True)
 
     global_host = os.getenv('GLOBAL_ACCOUNT_HOST', host)
@@ -185,6 +185,29 @@ def get_vector_embedding_policy(distance_function, data_type, dimensions):
     }
 
 
+def get_full_text_indexing_policy(path):
+    return {
+        "indexingMode": "consistent",
+        "includedPaths": [{"path": "/*"}],
+        'excludedPaths': [{'path': '/"_etag"/?'}],
+        "fullTextIndexes": [
+            {"path": path}
+        ]
+    }
+
+
+def get_full_text_policy(path):
+    return {
+        "defaultLanguage": "en-US",
+        "fullTextPaths": [
+            {
+                "path": path,
+                "language": "en-US"
+            }
+        ]
+    }
+
+
 class FakeResponse:
     def __init__(self, headers):
         self.headers = headers
@@ -243,4 +266,3 @@ class MockConnectionRetryPolicy(ConnectionRetryPolicy):
 
     def mock_send(self):
         raise ServiceRequestError("mock-service")
-

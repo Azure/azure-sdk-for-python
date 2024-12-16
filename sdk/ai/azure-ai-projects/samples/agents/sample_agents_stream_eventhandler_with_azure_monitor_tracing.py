@@ -4,12 +4,10 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_stream_eventhandler_with_azure_monitor_tracing.py
-
 DESCRIPTION:
     This sample demonstrates how to use agent operations with an event handler in streaming from
     the Azure Agents service using a synchronous client with Azure Monitor tracing.
-    View the results in the "Tracing" tab in your Azure AI Studio project page.
+    View the results in the "Tracing" tab in your Azure AI Foundry project page.
 
 USAGE:
     python sample_agents_stream_eventhandler_with_azure_monitor_tracing.py
@@ -19,7 +17,7 @@ USAGE:
     pip install azure-ai-projects azure-identity opentelemetry-sdk azure-monitor-opentelemetry
 
     Set these environment variables with your own values:
-    * PROJECT_CONNECTION_STRING - The Azure AI Project connection string, as found in your AI Studio Project.
+    * PROJECT_CONNECTION_STRING - The Azure AI Project connection string, as found in your AI Foundry project.
     * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
       messages, which may contain personal data. False by default.
 
@@ -30,7 +28,6 @@ from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import (
     AgentEventHandler,
-    MessageDeltaTextContent,
     MessageDeltaChunk,
     ThreadMessage,
     ThreadRun,
@@ -40,10 +37,6 @@ from typing import Any
 from opentelemetry import trace
 from azure.monitor.opentelemetry import configure_azure_monitor
 
-# Create an Azure AI Project Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
-
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
@@ -52,10 +45,7 @@ project_client = AIProjectClient.from_connection_string(
 
 class MyEventHandler(AgentEventHandler):
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
-        for content_part in delta.delta.content:
-            if isinstance(content_part, MessageDeltaTextContent):
-                text_value = content_part.text.value if content_part.text else "No text"
-                print(f"Text delta received: {text_value}")
+        print(f"Text delta received: {delta.text}")
 
     def on_thread_message(self, message: "ThreadMessage") -> None:
         if len(message.content):
@@ -86,7 +76,7 @@ class MyEventHandler(AgentEventHandler):
 application_insights_connection_string = project_client.telemetry.get_connection_string()
 if not application_insights_connection_string:
     print("Application Insights was not enabled for this project.")
-    print("Enable it via the 'Tracing' tab in your AI Studio project page.")
+    print("Enable it via the 'Tracing' tab in your AI Foundry project page.")
     exit()
 configure_azure_monitor(connection_string=application_insights_connection_string)
 

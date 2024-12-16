@@ -8,9 +8,6 @@
 
 from ._models_py3 import ARMProxyResource
 from ._models_py3 import ARMResourceProperties
-from ._models_py3 import AccessRule
-from ._models_py3 import AccessRuleProperties
-from ._models_py3 import AccessRulePropertiesSubscriptionsItem
 from ._models_py3 import AccountKeyMetadata
 from ._models_py3 import AnalyticalStorageConfiguration
 from ._models_py3 import ApiProperties
@@ -18,16 +15,11 @@ from ._models_py3 import AuthenticationMethodLdapProperties
 from ._models_py3 import AutoUpgradePolicyResource
 from ._models_py3 import AutoscaleSettings
 from ._models_py3 import AutoscaleSettingsResource
-from ._models_py3 import AzureBlobDataTransferDataSourceSink
 from ._models_py3 import BackupInformation
 from ._models_py3 import BackupPolicy
 from ._models_py3 import BackupPolicyMigrationState
-from ._models_py3 import BackupResource
-from ._models_py3 import BackupSchedule
-from ._models_py3 import BaseCosmosDataTransferDataSourceSink
 from ._models_py3 import Capability
 from ._models_py3 import Capacity
-from ._models_py3 import CapacityModeChangeTransitionState
 from ._models_py3 import CassandraClusterDataCenterNodeItem
 from ._models_py3 import CassandraClusterPublicStatus
 from ._models_py3 import CassandraClusterPublicStatusDataCentersItem
@@ -46,15 +38,7 @@ from ._models_py3 import CassandraTableGetPropertiesResource
 from ._models_py3 import CassandraTableGetResults
 from ._models_py3 import CassandraTableListResult
 from ._models_py3 import CassandraTableResource
-from ._models_py3 import CassandraViewCreateUpdateParameters
-from ._models_py3 import CassandraViewGetPropertiesOptions
-from ._models_py3 import CassandraViewGetPropertiesResource
-from ._models_py3 import CassandraViewGetResults
-from ._models_py3 import CassandraViewListResult
-from ._models_py3 import CassandraViewResource
 from ._models_py3 import Certificate
-from ._models_py3 import ChaosFaultListResponse
-from ._models_py3 import ChaosFaultResource
 from ._models_py3 import ClientEncryptionIncludedPath
 from ._models_py3 import ClientEncryptionKeyCreateUpdateParameters
 from ._models_py3 import ClientEncryptionKeyGetPropertiesResource
@@ -68,7 +52,6 @@ from ._models_py3 import ClusterResourceProperties
 from ._models_py3 import Column
 from ._models_py3 import CommandOutput
 from ._models_py3 import CommandPostBody
-from ._models_py3 import CommandPublicResource
 from ._models_py3 import CompositePath
 from ._models_py3 import ComputedProperty
 from ._models_py3 import ConflictResolutionPolicy
@@ -80,18 +63,9 @@ from ._models_py3 import ContinuousBackupRestoreLocation
 from ._models_py3 import ContinuousModeBackupPolicy
 from ._models_py3 import ContinuousModeProperties
 from ._models_py3 import CorsPolicy
-from ._models_py3 import CosmosCassandraDataTransferDataSourceSink
-from ._models_py3 import CosmosMongoDataTransferDataSourceSink
-from ._models_py3 import CosmosMongoVCoreDataTransferDataSourceSink
-from ._models_py3 import CosmosSqlDataTransferDataSourceSink
-from ._models_py3 import CreateJobRequest
 from ._models_py3 import CreateUpdateOptions
 from ._models_py3 import DataCenterResource
 from ._models_py3 import DataCenterResourceProperties
-from ._models_py3 import DataTransferDataSourceSink
-from ._models_py3 import DataTransferJobFeedResults
-from ._models_py3 import DataTransferJobGetResults
-from ._models_py3 import DataTransferJobProperties
 from ._models_py3 import DataTransferRegionalServiceResource
 from ._models_py3 import DataTransferServiceResource
 from ._models_py3 import DataTransferServiceResourceCreateUpdateProperties
@@ -107,7 +81,6 @@ from ._models_py3 import DatabaseAccountRegenerateKeyParameters
 from ._models_py3 import DatabaseAccountUpdateParameters
 from ._models_py3 import DatabaseAccountsListResult
 from ._models_py3 import DatabaseRestoreResource
-from ._models_py3 import DiagnosticLogSettings
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
@@ -120,12 +93,6 @@ from ._models_py3 import GraphAPIComputeRegionalServiceResource
 from ._models_py3 import GraphAPIComputeServiceResource
 from ._models_py3 import GraphAPIComputeServiceResourceCreateUpdateProperties
 from ._models_py3 import GraphAPIComputeServiceResourceProperties
-from ._models_py3 import GraphResource
-from ._models_py3 import GraphResourceCreateUpdateParameters
-from ._models_py3 import GraphResourceGetPropertiesOptions
-from ._models_py3 import GraphResourceGetPropertiesResource
-from ._models_py3 import GraphResourceGetResults
-from ._models_py3 import GraphResourcesListResult
 from ._models_py3 import GremlinDatabaseCreateUpdateParameters
 from ._models_py3 import GremlinDatabaseGetPropertiesOptions
 from ._models_py3 import GremlinDatabaseGetPropertiesResource
@@ -144,9 +111,7 @@ from ._models_py3 import Indexes
 from ._models_py3 import IndexingPolicy
 from ._models_py3 import IpAddressOrRange
 from ._models_py3 import KeyWrapMetadata
-from ._models_py3 import ListBackups
 from ._models_py3 import ListClusters
-from ._models_py3 import ListCommands
 from ._models_py3 import ListDataCenters
 from ._models_py3 import Location
 from ._models_py3 import LocationGetResult
@@ -157,12 +122,10 @@ from ._models_py3 import ManagedCassandraManagedServiceIdentity
 from ._models_py3 import ManagedCassandraReaperStatus
 from ._models_py3 import ManagedServiceIdentity
 from ._models_py3 import ManagedServiceIdentityUserAssignedIdentity
-from ._models_py3 import MaterializedViewDefinition
 from ._models_py3 import MaterializedViewsBuilderRegionalServiceResource
 from ._models_py3 import MaterializedViewsBuilderServiceResource
 from ._models_py3 import MaterializedViewsBuilderServiceResourceCreateUpdateProperties
 from ._models_py3 import MaterializedViewsBuilderServiceResourceProperties
-from ._models_py3 import MergeParameters
 from ._models_py3 import Metric
 from ._models_py3 import MetricAvailability
 from ._models_py3 import MetricDefinition
@@ -191,11 +154,6 @@ from ._models_py3 import MongoRoleDefinitionListResult
 from ._models_py3 import MongoUserDefinitionCreateUpdateParameters
 from ._models_py3 import MongoUserDefinitionGetResults
 from ._models_py3 import MongoUserDefinitionListResult
-from ._models_py3 import NetworkSecurityPerimeter
-from ._models_py3 import NetworkSecurityPerimeterConfiguration
-from ._models_py3 import NetworkSecurityPerimeterConfigurationListResult
-from ._models_py3 import NetworkSecurityPerimeterConfigurationProperties
-from ._models_py3 import NetworkSecurityProfile
 from ._models_py3 import NotebookWorkspace
 from ._models_py3 import NotebookWorkspaceConnectionInfoResult
 from ._models_py3 import NotebookWorkspaceCreateUpdateParameters
@@ -214,13 +172,6 @@ from ._models_py3 import PercentileMetricValue
 from ._models_py3 import PeriodicModeBackupPolicy
 from ._models_py3 import PeriodicModeProperties
 from ._models_py3 import Permission
-from ._models_py3 import PhysicalPartitionId
-from ._models_py3 import PhysicalPartitionStorageInfo
-from ._models_py3 import PhysicalPartitionStorageInfoCollection
-from ._models_py3 import PhysicalPartitionThroughputInfoProperties
-from ._models_py3 import PhysicalPartitionThroughputInfoResource
-from ._models_py3 import PhysicalPartitionThroughputInfoResult
-from ._models_py3 import PhysicalPartitionThroughputInfoResultPropertiesResource
 from ._models_py3 import PrivateEndpointConnection
 from ._models_py3 import PrivateEndpointConnectionListResult
 from ._models_py3 import PrivateEndpointProperty
@@ -229,15 +180,10 @@ from ._models_py3 import PrivateLinkResourceListResult
 from ._models_py3 import PrivateLinkServiceConnectionStateProperty
 from ._models_py3 import Privilege
 from ._models_py3 import PrivilegeResource
-from ._models_py3 import ProvisioningIssue
-from ._models_py3 import ProvisioningIssueProperties
 from ._models_py3 import ProxyResource
-from ._models_py3 import RedistributeThroughputParameters
-from ._models_py3 import RedistributeThroughputPropertiesResource
 from ._models_py3 import RegionForOnlineOffline
 from ._models_py3 import RegionalServiceResource
 from ._models_py3 import Resource
-from ._models_py3 import ResourceAssociation
 from ._models_py3 import ResourceRestoreParameters
 from ._models_py3 import RestorableDatabaseAccountGetResult
 from ._models_py3 import RestorableDatabaseAccountsListResult
@@ -275,8 +221,6 @@ from ._models_py3 import RestorableTableResourcesListResult
 from ._models_py3 import RestorableTablesListResult
 from ._models_py3 import RestoreParameters
 from ._models_py3 import RestoreParametersBase
-from ._models_py3 import RetrieveThroughputParameters
-from ._models_py3 import RetrieveThroughputPropertiesResource
 from ._models_py3 import Role
 from ._models_py3 import SeedNode
 from ._models_py3 import ServiceResource
@@ -330,37 +274,26 @@ from ._models_py3 import TableGetResults
 from ._models_py3 import TableListResult
 from ._models_py3 import TableResource
 from ._models_py3 import ThroughputPolicyResource
-from ._models_py3 import ThroughputPoolAccountCreateParameters
-from ._models_py3 import ThroughputPoolAccountResource
-from ._models_py3 import ThroughputPoolAccountsListResult
-from ._models_py3 import ThroughputPoolResource
-from ._models_py3 import ThroughputPoolUpdate
-from ._models_py3 import ThroughputPoolsListResult
 from ._models_py3 import ThroughputSettingsGetPropertiesResource
 from ._models_py3 import ThroughputSettingsGetResults
 from ._models_py3 import ThroughputSettingsResource
 from ._models_py3 import ThroughputSettingsUpdateParameters
-from ._models_py3 import TrackedResource
 from ._models_py3 import UniqueKey
 from ._models_py3 import UniqueKeyPolicy
 from ._models_py3 import Usage
 from ._models_py3 import UsagesResult
+from ._models_py3 import VectorEmbedding
+from ._models_py3 import VectorEmbeddingPolicy
+from ._models_py3 import VectorIndex
 from ._models_py3 import VirtualNetworkRule
 
-from ._cosmos_db_management_client_enums import AccessRuleDirection
 from ._cosmos_db_management_client_enums import AnalyticalStorageSchemaType
 from ._cosmos_db_management_client_enums import ApiType
 from ._cosmos_db_management_client_enums import AuthenticationMethod
-from ._cosmos_db_management_client_enums import AutoReplicate
 from ._cosmos_db_management_client_enums import AzureConnectionType
 from ._cosmos_db_management_client_enums import BackupPolicyMigrationStatus
 from ._cosmos_db_management_client_enums import BackupPolicyType
-from ._cosmos_db_management_client_enums import BackupState
 from ._cosmos_db_management_client_enums import BackupStorageRedundancy
-from ._cosmos_db_management_client_enums import CapacityMode
-from ._cosmos_db_management_client_enums import CapacityModeTransitionStatus
-from ._cosmos_db_management_client_enums import ClusterType
-from ._cosmos_db_management_client_enums import CommandStatus
 from ._cosmos_db_management_client_enums import CompositePathSortOrder
 from ._cosmos_db_management_client_enums import ConflictResolutionMode
 from ._cosmos_db_management_client_enums import ConnectionState
@@ -368,17 +301,13 @@ from ._cosmos_db_management_client_enums import ConnectorOffer
 from ._cosmos_db_management_client_enums import ContinuousTier
 from ._cosmos_db_management_client_enums import CreateMode
 from ._cosmos_db_management_client_enums import CreatedByType
-from ._cosmos_db_management_client_enums import DataTransferComponent
-from ._cosmos_db_management_client_enums import DataTransferJobMode
 from ._cosmos_db_management_client_enums import DataType
 from ._cosmos_db_management_client_enums import DatabaseAccountKind
 from ._cosmos_db_management_client_enums import DedicatedGatewayType
 from ._cosmos_db_management_client_enums import DefaultConsistencyLevel
-from ._cosmos_db_management_client_enums import DefaultPriorityLevel
-from ._cosmos_db_management_client_enums import EnableFullTextQuery
+from ._cosmos_db_management_client_enums import DistanceFunction
 from ._cosmos_db_management_client_enums import IndexKind
 from ._cosmos_db_management_client_enums import IndexingMode
-from ._cosmos_db_management_client_enums import IssueType
 from ._cosmos_db_management_client_enums import KeyKind
 from ._cosmos_db_management_client_enums import Kind
 from ._cosmos_db_management_client_enums import ManagedCassandraProvisioningState
@@ -386,7 +315,6 @@ from ._cosmos_db_management_client_enums import ManagedCassandraResourceIdentity
 from ._cosmos_db_management_client_enums import MinimalTlsVersion
 from ._cosmos_db_management_client_enums import MongoRoleDefinitionType
 from ._cosmos_db_management_client_enums import NetworkAclBypass
-from ._cosmos_db_management_client_enums import NetworkSecurityPerimeterConfigurationProvisioningState
 from ._cosmos_db_management_client_enums import NodeState
 from ._cosmos_db_management_client_enums import NodeStatus
 from ._cosmos_db_management_client_enums import NotebookWorkspaceName
@@ -394,24 +322,21 @@ from ._cosmos_db_management_client_enums import OperationType
 from ._cosmos_db_management_client_enums import PartitionKind
 from ._cosmos_db_management_client_enums import PrimaryAggregationType
 from ._cosmos_db_management_client_enums import PublicNetworkAccess
-from ._cosmos_db_management_client_enums import ResourceAssociationAccessMode
 from ._cosmos_db_management_client_enums import ResourceIdentityType
 from ._cosmos_db_management_client_enums import RestoreMode
 from ._cosmos_db_management_client_enums import RoleDefinitionType
-from ._cosmos_db_management_client_enums import ScheduledEventStrategy
 from ._cosmos_db_management_client_enums import ServerVersion
 from ._cosmos_db_management_client_enums import ServiceSize
 from ._cosmos_db_management_client_enums import ServiceStatus
 from ._cosmos_db_management_client_enums import ServiceType
-from ._cosmos_db_management_client_enums import Severity
 from ._cosmos_db_management_client_enums import SpatialType
 from ._cosmos_db_management_client_enums import Status
-from ._cosmos_db_management_client_enums import SupportedActions
-from ._cosmos_db_management_client_enums import ThroughputPolicyType
 from ._cosmos_db_management_client_enums import TriggerOperation
 from ._cosmos_db_management_client_enums import TriggerType
 from ._cosmos_db_management_client_enums import Type
 from ._cosmos_db_management_client_enums import UnitType
+from ._cosmos_db_management_client_enums import VectorDataType
+from ._cosmos_db_management_client_enums import VectorIndexType
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -419,9 +344,6 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "ARMProxyResource",
     "ARMResourceProperties",
-    "AccessRule",
-    "AccessRuleProperties",
-    "AccessRulePropertiesSubscriptionsItem",
     "AccountKeyMetadata",
     "AnalyticalStorageConfiguration",
     "ApiProperties",
@@ -429,16 +351,11 @@ __all__ = [
     "AutoUpgradePolicyResource",
     "AutoscaleSettings",
     "AutoscaleSettingsResource",
-    "AzureBlobDataTransferDataSourceSink",
     "BackupInformation",
     "BackupPolicy",
     "BackupPolicyMigrationState",
-    "BackupResource",
-    "BackupSchedule",
-    "BaseCosmosDataTransferDataSourceSink",
     "Capability",
     "Capacity",
-    "CapacityModeChangeTransitionState",
     "CassandraClusterDataCenterNodeItem",
     "CassandraClusterPublicStatus",
     "CassandraClusterPublicStatusDataCentersItem",
@@ -457,15 +374,7 @@ __all__ = [
     "CassandraTableGetResults",
     "CassandraTableListResult",
     "CassandraTableResource",
-    "CassandraViewCreateUpdateParameters",
-    "CassandraViewGetPropertiesOptions",
-    "CassandraViewGetPropertiesResource",
-    "CassandraViewGetResults",
-    "CassandraViewListResult",
-    "CassandraViewResource",
     "Certificate",
-    "ChaosFaultListResponse",
-    "ChaosFaultResource",
     "ClientEncryptionIncludedPath",
     "ClientEncryptionKeyCreateUpdateParameters",
     "ClientEncryptionKeyGetPropertiesResource",
@@ -479,7 +388,6 @@ __all__ = [
     "Column",
     "CommandOutput",
     "CommandPostBody",
-    "CommandPublicResource",
     "CompositePath",
     "ComputedProperty",
     "ConflictResolutionPolicy",
@@ -491,18 +399,9 @@ __all__ = [
     "ContinuousModeBackupPolicy",
     "ContinuousModeProperties",
     "CorsPolicy",
-    "CosmosCassandraDataTransferDataSourceSink",
-    "CosmosMongoDataTransferDataSourceSink",
-    "CosmosMongoVCoreDataTransferDataSourceSink",
-    "CosmosSqlDataTransferDataSourceSink",
-    "CreateJobRequest",
     "CreateUpdateOptions",
     "DataCenterResource",
     "DataCenterResourceProperties",
-    "DataTransferDataSourceSink",
-    "DataTransferJobFeedResults",
-    "DataTransferJobGetResults",
-    "DataTransferJobProperties",
     "DataTransferRegionalServiceResource",
     "DataTransferServiceResource",
     "DataTransferServiceResourceCreateUpdateProperties",
@@ -518,7 +417,6 @@ __all__ = [
     "DatabaseAccountUpdateParameters",
     "DatabaseAccountsListResult",
     "DatabaseRestoreResource",
-    "DiagnosticLogSettings",
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
@@ -531,12 +429,6 @@ __all__ = [
     "GraphAPIComputeServiceResource",
     "GraphAPIComputeServiceResourceCreateUpdateProperties",
     "GraphAPIComputeServiceResourceProperties",
-    "GraphResource",
-    "GraphResourceCreateUpdateParameters",
-    "GraphResourceGetPropertiesOptions",
-    "GraphResourceGetPropertiesResource",
-    "GraphResourceGetResults",
-    "GraphResourcesListResult",
     "GremlinDatabaseCreateUpdateParameters",
     "GremlinDatabaseGetPropertiesOptions",
     "GremlinDatabaseGetPropertiesResource",
@@ -555,9 +447,7 @@ __all__ = [
     "IndexingPolicy",
     "IpAddressOrRange",
     "KeyWrapMetadata",
-    "ListBackups",
     "ListClusters",
-    "ListCommands",
     "ListDataCenters",
     "Location",
     "LocationGetResult",
@@ -568,12 +458,10 @@ __all__ = [
     "ManagedCassandraReaperStatus",
     "ManagedServiceIdentity",
     "ManagedServiceIdentityUserAssignedIdentity",
-    "MaterializedViewDefinition",
     "MaterializedViewsBuilderRegionalServiceResource",
     "MaterializedViewsBuilderServiceResource",
     "MaterializedViewsBuilderServiceResourceCreateUpdateProperties",
     "MaterializedViewsBuilderServiceResourceProperties",
-    "MergeParameters",
     "Metric",
     "MetricAvailability",
     "MetricDefinition",
@@ -602,11 +490,6 @@ __all__ = [
     "MongoUserDefinitionCreateUpdateParameters",
     "MongoUserDefinitionGetResults",
     "MongoUserDefinitionListResult",
-    "NetworkSecurityPerimeter",
-    "NetworkSecurityPerimeterConfiguration",
-    "NetworkSecurityPerimeterConfigurationListResult",
-    "NetworkSecurityPerimeterConfigurationProperties",
-    "NetworkSecurityProfile",
     "NotebookWorkspace",
     "NotebookWorkspaceConnectionInfoResult",
     "NotebookWorkspaceCreateUpdateParameters",
@@ -625,13 +508,6 @@ __all__ = [
     "PeriodicModeBackupPolicy",
     "PeriodicModeProperties",
     "Permission",
-    "PhysicalPartitionId",
-    "PhysicalPartitionStorageInfo",
-    "PhysicalPartitionStorageInfoCollection",
-    "PhysicalPartitionThroughputInfoProperties",
-    "PhysicalPartitionThroughputInfoResource",
-    "PhysicalPartitionThroughputInfoResult",
-    "PhysicalPartitionThroughputInfoResultPropertiesResource",
     "PrivateEndpointConnection",
     "PrivateEndpointConnectionListResult",
     "PrivateEndpointProperty",
@@ -640,15 +516,10 @@ __all__ = [
     "PrivateLinkServiceConnectionStateProperty",
     "Privilege",
     "PrivilegeResource",
-    "ProvisioningIssue",
-    "ProvisioningIssueProperties",
     "ProxyResource",
-    "RedistributeThroughputParameters",
-    "RedistributeThroughputPropertiesResource",
     "RegionForOnlineOffline",
     "RegionalServiceResource",
     "Resource",
-    "ResourceAssociation",
     "ResourceRestoreParameters",
     "RestorableDatabaseAccountGetResult",
     "RestorableDatabaseAccountsListResult",
@@ -686,8 +557,6 @@ __all__ = [
     "RestorableTablesListResult",
     "RestoreParameters",
     "RestoreParametersBase",
-    "RetrieveThroughputParameters",
-    "RetrieveThroughputPropertiesResource",
     "Role",
     "SeedNode",
     "ServiceResource",
@@ -741,36 +610,25 @@ __all__ = [
     "TableListResult",
     "TableResource",
     "ThroughputPolicyResource",
-    "ThroughputPoolAccountCreateParameters",
-    "ThroughputPoolAccountResource",
-    "ThroughputPoolAccountsListResult",
-    "ThroughputPoolResource",
-    "ThroughputPoolUpdate",
-    "ThroughputPoolsListResult",
     "ThroughputSettingsGetPropertiesResource",
     "ThroughputSettingsGetResults",
     "ThroughputSettingsResource",
     "ThroughputSettingsUpdateParameters",
-    "TrackedResource",
     "UniqueKey",
     "UniqueKeyPolicy",
     "Usage",
     "UsagesResult",
+    "VectorEmbedding",
+    "VectorEmbeddingPolicy",
+    "VectorIndex",
     "VirtualNetworkRule",
-    "AccessRuleDirection",
     "AnalyticalStorageSchemaType",
     "ApiType",
     "AuthenticationMethod",
-    "AutoReplicate",
     "AzureConnectionType",
     "BackupPolicyMigrationStatus",
     "BackupPolicyType",
-    "BackupState",
     "BackupStorageRedundancy",
-    "CapacityMode",
-    "CapacityModeTransitionStatus",
-    "ClusterType",
-    "CommandStatus",
     "CompositePathSortOrder",
     "ConflictResolutionMode",
     "ConnectionState",
@@ -778,17 +636,13 @@ __all__ = [
     "ContinuousTier",
     "CreateMode",
     "CreatedByType",
-    "DataTransferComponent",
-    "DataTransferJobMode",
     "DataType",
     "DatabaseAccountKind",
     "DedicatedGatewayType",
     "DefaultConsistencyLevel",
-    "DefaultPriorityLevel",
-    "EnableFullTextQuery",
+    "DistanceFunction",
     "IndexKind",
     "IndexingMode",
-    "IssueType",
     "KeyKind",
     "Kind",
     "ManagedCassandraProvisioningState",
@@ -796,7 +650,6 @@ __all__ = [
     "MinimalTlsVersion",
     "MongoRoleDefinitionType",
     "NetworkAclBypass",
-    "NetworkSecurityPerimeterConfigurationProvisioningState",
     "NodeState",
     "NodeStatus",
     "NotebookWorkspaceName",
@@ -804,24 +657,21 @@ __all__ = [
     "PartitionKind",
     "PrimaryAggregationType",
     "PublicNetworkAccess",
-    "ResourceAssociationAccessMode",
     "ResourceIdentityType",
     "RestoreMode",
     "RoleDefinitionType",
-    "ScheduledEventStrategy",
     "ServerVersion",
     "ServiceSize",
     "ServiceStatus",
     "ServiceType",
-    "Severity",
     "SpatialType",
     "Status",
-    "SupportedActions",
-    "ThroughputPolicyType",
     "TriggerOperation",
     "TriggerType",
     "Type",
     "UnitType",
+    "VectorDataType",
+    "VectorIndexType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

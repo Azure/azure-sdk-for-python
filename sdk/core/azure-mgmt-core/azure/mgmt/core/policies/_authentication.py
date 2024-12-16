@@ -23,14 +23,13 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import base64
 import time
 from typing import Optional, Union, MutableMapping, List, Any, Sequence, TypeVar, Generic
 
 from azure.core.credentials import AccessToken, TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy, SansIOHTTPPolicy
-from azure.core.pipeline import PipelineRequest, PipelineResponse
+from azure.core.pipeline import PipelineRequest
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline.transport import (
     HttpRequest as LegacyHttpRequest,
@@ -49,32 +48,7 @@ class ARMChallengeAuthenticationPolicy(BearerTokenCredentialPolicy):
 
     This policy internally handles Continuous Access Evaluation (CAE) challenges. When it can't complete a challenge,
     it will return the 401 (unauthorized) response from ARM.
-
-    :param ~azure.core.credentials.TokenCredential credential: credential for authorizing requests
-    :param str scopes: required authentication scopes
     """
-
-    def on_challenge(
-        self,
-        request: PipelineRequest[HTTPRequestType],
-        response: PipelineResponse[HTTPRequestType, HTTPResponseType],
-    ) -> bool:
-        """Authorize request according to an ARM authentication challenge
-
-        :param ~azure.core.pipeline.PipelineRequest request: the request which elicited an authentication challenge
-        :param ~azure.core.pipeline.PipelineResponse response: ARM's response
-        :returns: a bool indicating whether the policy should send the request
-        :rtype: bool
-        """
-
-        challenge = response.http_response.headers.get("WWW-Authenticate")
-        if challenge:
-            claims = _parse_claims_challenge(challenge)
-            if claims:
-                self.authorize_request(request, *self._scopes, claims=claims)
-                return True
-
-        return False
 
 
 # pylint:disable=too-few-public-methods
@@ -150,33 +124,3 @@ class AuxiliaryAuthenticationPolicy(
             self._aux_tokens = self._get_auxiliary_tokens(*self._scopes)
 
         self._update_headers(request.http_request.headers)
-
-
-def _parse_claims_challenge(challenge: str) -> Optional[str]:
-    """Parse the "claims" parameter from an authentication challenge
-
-    Example challenge with claims:
-        Bearer authorization_uri="https://login.windows-ppe.net/", error="invalid_token",
-        error_description="User session has been revoked",
-        claims="eyJhY2Nlc3NfdG9rZW4iOnsibmJmIjp7ImVzc2VudGlhbCI6dHJ1ZSwgInZhbHVlIjoiMTYwMzc0MjgwMCJ9fX0="
-
-    :param str challenge: The authentication challenge
-    :return: the challenge's "claims" parameter or None, if it doesn't contain that parameter
-    """
-    encoded_claims = None
-    for parameter in challenge.split(","):
-        if "claims=" in parameter:
-            if encoded_claims:
-                # multiple claims challenges, e.g. for cross-tenant auth, would require special handling
-                return None
-            encoded_claims = parameter[parameter.index("=") + 1 :].strip(" \"'")
-
-    if not encoded_claims:
-        return None
-
-    padding_needed = -len(encoded_claims) % 4
-    try:
-        decoded_claims = base64.urlsafe_b64decode(encoded_claims + "=" * padding_needed).decode()
-        return decoded_claims
-    except Exception:  # pylint:disable=broad-except
-        return None

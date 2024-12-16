@@ -1,5 +1,11 @@
 # Release History
 
+## 1.1.0b2 (2024-12-16)
+
+### Features Added
+
+  - Model `ServerForUpdate` added property `cluster`
+
 ## 1.1.0b1 (2024-11-04)
 
 ### Features Added
