@@ -12,8 +12,6 @@
     - Azure Blob Storage
     - Microsoft OneLake
 
-### Bugs Fixed
-
 ## 1.22.3 (2024-11-20)
 
 ### Bugs Fixed
