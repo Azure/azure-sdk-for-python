@@ -1,5 +1,5 @@
 # Release History
-## 1.23.0 (unreleased)
+## 1.23.0 (2024-12-05)
 
 ### Features Added
   - Added support for IP-based access control to default and hub workspaces. 
