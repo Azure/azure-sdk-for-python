@@ -21,7 +21,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_location(self, resource_group):
+    async def test_virtual_machines_list_by_location(self, resource_group):
         response = self.client.virtual_machines.list_by_location(
             location="str",
             api_version="2024-07-01",
@@ -32,7 +32,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_capture(self, resource_group):
+    async def test_virtual_machines_begin_capture(self, resource_group):
         response = await (
             await self.client.virtual_machines.begin_capture(
                 resource_group_name=resource_group.name,
@@ -47,7 +47,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_virtual_machines_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.virtual_machines.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -495,7 +495,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_virtual_machines_begin_update(self, resource_group):
         response = await (
             await self.client.virtual_machines.begin_update(
                 resource_group_name=resource_group.name,
@@ -893,7 +893,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_virtual_machines_begin_delete(self, resource_group):
         response = await (
             await self.client.virtual_machines.begin_delete(
                 resource_group_name=resource_group.name,
@@ -907,7 +907,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_virtual_machines_get(self, resource_group):
         response = await self.client.virtual_machines.get(
             resource_group_name=resource_group.name,
             vm_name="str",
@@ -919,7 +919,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_instance_view(self, resource_group):
+    async def test_virtual_machines_instance_view(self, resource_group):
         response = await self.client.virtual_machines.instance_view(
             resource_group_name=resource_group.name,
             vm_name="str",
@@ -931,7 +931,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_convert_to_managed_disks(self, resource_group):
+    async def test_virtual_machines_begin_convert_to_managed_disks(self, resource_group):
         response = await (
             await self.client.virtual_machines.begin_convert_to_managed_disks(
                 resource_group_name=resource_group.name,
@@ -945,7 +945,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_deallocate(self, resource_group):
+    async def test_virtual_machines_begin_deallocate(self, resource_group):
         response = await (
             await self.client.virtual_machines.begin_deallocate(
                 resource_group_name=resource_group.name,
@@ -959,7 +959,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_generalize(self, resource_group):
+    async def test_virtual_machines_generalize(self, resource_group):
         response = await self.client.virtual_machines.generalize(
             resource_group_name=resource_group.name,
             vm_name="str",
@@ -971,7 +971,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_virtual_machines_list(self, resource_group):
         response = self.client.virtual_machines.list(
             resource_group_name=resource_group.name,
             api_version="2024-07-01",
@@ -982,7 +982,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_all(self, resource_group):
+    async def test_virtual_machines_list_all(self, resource_group):
         response = self.client.virtual_machines.list_all(
             api_version="2024-07-01",
         )
@@ -992,7 +992,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_available_sizes(self, resource_group):
+    async def test_virtual_machines_list_available_sizes(self, resource_group):
         response = self.client.virtual_machines.list_available_sizes(
             resource_group_name=resource_group.name,
             vm_name="str",
@@ -1004,7 +1004,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_power_off(self, resource_group):
+    async def test_virtual_machines_begin_power_off(self, resource_group):
         response = await (
             await self.client.virtual_machines.begin_power_off(
                 resource_group_name=resource_group.name,
@@ -1018,7 +1018,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_reapply(self, resource_group):
+    async def test_virtual_machines_begin_reapply(self, resource_group):
         response = await (
             await self.client.virtual_machines.begin_reapply(
                 resource_group_name=resource_group.name,
@@ -1032,7 +1032,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_restart(self, resource_group):
+    async def test_virtual_machines_begin_restart(self, resource_group):
         response = await (
             await self.client.virtual_machines.begin_restart(
                 resource_group_name=resource_group.name,
@@ -1046,7 +1046,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_start(self, resource_group):
+    async def test_virtual_machines_begin_start(self, resource_group):
         response = await (
             await self.client.virtual_machines.begin_start(
                 resource_group_name=resource_group.name,
@@ -1060,7 +1060,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_redeploy(self, resource_group):
+    async def test_virtual_machines_begin_redeploy(self, resource_group):
         response = await (
             await self.client.virtual_machines.begin_redeploy(
                 resource_group_name=resource_group.name,
@@ -1074,7 +1074,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_reimage(self, resource_group):
+    async def test_virtual_machines_begin_reimage(self, resource_group):
         response = await (
             await self.client.virtual_machines.begin_reimage(
                 resource_group_name=resource_group.name,
@@ -1088,7 +1088,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_retrieve_boot_diagnostics_data(self, resource_group):
+    async def test_virtual_machines_retrieve_boot_diagnostics_data(self, resource_group):
         response = await self.client.virtual_machines.retrieve_boot_diagnostics_data(
             resource_group_name=resource_group.name,
             vm_name="str",
@@ -1100,7 +1100,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_perform_maintenance(self, resource_group):
+    async def test_virtual_machines_begin_perform_maintenance(self, resource_group):
         response = await (
             await self.client.virtual_machines.begin_perform_maintenance(
                 resource_group_name=resource_group.name,
@@ -1114,7 +1114,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_simulate_eviction(self, resource_group):
+    async def test_virtual_machines_simulate_eviction(self, resource_group):
         response = await self.client.virtual_machines.simulate_eviction(
             resource_group_name=resource_group.name,
             vm_name="str",
@@ -1126,7 +1126,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_assess_patches(self, resource_group):
+    async def test_virtual_machines_begin_assess_patches(self, resource_group):
         response = await (
             await self.client.virtual_machines.begin_assess_patches(
                 resource_group_name=resource_group.name,
@@ -1140,7 +1140,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_install_patches(self, resource_group):
+    async def test_virtual_machines_begin_install_patches(self, resource_group):
         response = await (
             await self.client.virtual_machines.begin_install_patches(
                 resource_group_name=resource_group.name,
@@ -1171,7 +1171,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_attach_detach_data_disks(self, resource_group):
+    async def test_virtual_machines_begin_attach_detach_data_disks(self, resource_group):
         response = await (
             await self.client.virtual_machines.begin_attach_detach_data_disks(
                 resource_group_name=resource_group.name,
@@ -1198,7 +1198,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_run_command(self, resource_group):
+    async def test_virtual_machines_begin_run_command(self, resource_group):
         response = await (
             await self.client.virtual_machines.begin_run_command(
                 resource_group_name=resource_group.name,
