@@ -50,7 +50,7 @@ try:
 
     TZ_UTC: timezone = timezone.utc
 except ImportError:
-    TZ_UTC: timezone = UTC()
+    TZ_UTC: timezone = UTC()  # type: ignore
 
 
 def utc_from_timestamp(timestamp):
