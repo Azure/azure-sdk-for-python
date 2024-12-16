@@ -20,7 +20,7 @@ USAGE:
 
 import os
 
-from enum import StrEnum
+from enum import Enum
 from pydantic import BaseModel, TypeAdapter
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
@@ -41,7 +41,7 @@ project_client = AIProjectClient.from_connection_string(
 
 
 # Create the pydantic model to represent the planet names and there masses.
-class Planets(StrEnum):
+class Planets(str, Enum):
     Earth = "Earth"
     Mars = "Mars"
     Jupyter = "Jupyter"
