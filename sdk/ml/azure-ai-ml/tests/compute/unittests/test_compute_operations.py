@@ -102,6 +102,9 @@ class TestComputeOperation:
         )
         mock_compute_operation._operation.begin_delete.assert_called_once()
 
+    @pytest.mark.skip(
+        reason="Irrevelant until CommonRuntime re-enabled (2578431)",
+    )
     def test_local_compute_no_registry_info(self) -> None:
         # Confirm that we can create a docker client without registry username and password
         cr_helper = CommonRuntimeHelper("myjobname")
