@@ -82,14 +82,17 @@ async def main() -> None:
             async with await project_client.agents.create_stream(
                 thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
             ) as stream:
-                async for _, _, func_return in stream:
-                    print(func_return)
-    
-                await project_client.agents.delete_agent(agent.id)
-                print("Deleted agent")
-    
-                messages = await project_client.agents.list_messages(thread_id=thread.id)
-                print(f"Messages: {messages}")
+                async for event_type, event_data, func_return in stream:
+                    print(f"Received data.")
+                    print(f"Streaming receive Event Type: {event_type}")
+                    print(f"Event Data: {str(event_data)[:100]}...")
+                    print(f"Event Function return: {func_return}\n")
+
+            await project_client.agents.delete_agent(agent.id)
+            print("Deleted agent")
+
+            messages = await project_client.agents.list_messages(thread_id=thread.id)
+            print(f"Messages: {messages}")
 
 
 if __name__ == "__main__":

@@ -1228,10 +1228,10 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
         self.submit_tool_outputs: Optional[Callable[[ThreadRun, "BaseAsyncAgentEventHandler[T]"], Awaitable[None]]] = (
             None
         )
-        self.done = False
-        self.buffer = ""
+        self.done: bool
+        self.buffer: str
 
-    def _init(
+    def initialize(
         self,
         response_iterator: AsyncIterator[bytes],
         submit_tool_outputs: Callable[[ThreadRun, "BaseAsyncAgentEventHandler[T]"], Awaitable[None]],
@@ -1240,6 +1240,8 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
         self.response_iterator = response_iterator
         self.event_handler = event_handler
         self.submit_tool_outputs = submit_tool_outputs
+        self.done = False
+        self.buffer = ""
 
     async def __anext__(self) -> T:
         if self.response_iterator is None:
@@ -1285,10 +1287,10 @@ class BaseAgentEventHandler(Iterator[T]):
         self.response_iterator: Optional[Iterator[bytes]] = None
         self.event_handler: Optional["BaseAgentEventHandler[T]"] = None
         self.submit_tool_outputs: Optional[Callable[[ThreadRun, "BaseAgentEventHandler[T]"], Awaitable[None]]] = None
-        self.done = False
-        self.buffer = ""
+        self.done: bool
+        self.buffer: str
 
-    def _init(
+    def initialize(
         self,
         response_iterator: Iterator[bytes],
         submit_tool_outputs: Callable[[ThreadRun, "BaseAgentEventHandler[T]"], Awaitable[None]],
@@ -1297,6 +1299,8 @@ class BaseAgentEventHandler(Iterator[T]):
         self.response_iterator = response_iterator
         self.event_handler = event_handler
         self.submit_tool_outputs = submit_tool_outputs
+        self.done = False
+        self.buffer = ""
 
     def __next__(self) -> T:
         if self.response_iterator is None:
@@ -1567,10 +1571,8 @@ class AsyncAgentRunStream(Generic[BaseAsyncAgentEventHandlerT]):
     ):
         self.response_iterator = response_iterator
         self.event_handler = event_handler
-        self.done = False
-        self.buffer = ""
         self.submit_tool_outputs = submit_tool_outputs
-        self.event_handler._init(
+        self.event_handler.initialize(
             self.response_iterator,
             cast(Callable[[ThreadRun, BaseAsyncAgentEventHandler], Awaitable[None]], submit_tool_outputs),
             self.event_handler,
@@ -1596,10 +1598,8 @@ class AgentRunStream(Generic[BaseAgentEventHandlerT]):
     ):
         self.response_iterator = response_iterator
         self.event_handler = event_handler
-        self.done = False
-        self.buffer = ""
         self.submit_tool_outputs = submit_tool_outputs
-        self.event_handler._init(
+        self.event_handler.initialize(
             self.response_iterator,
             cast(Callable[[ThreadRun, BaseAgentEventHandler], Awaitable[None]], submit_tool_outputs),
             self.event_handler,

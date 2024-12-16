@@ -41,6 +41,7 @@ from user_async_functions import user_async_functions
 class MyEventHandler(AsyncAgentEventHandler[str]):
 
     def __init__(self, functions: AsyncFunctionTool, project_client: AIProjectClient) -> None:
+        super().__init__()
         self.functions = functions
         self.project_client = project_client
         super().__init__()
