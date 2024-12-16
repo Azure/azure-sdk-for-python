@@ -37,7 +37,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
     from azure.storage.blob import BlobProperties
     from ._generated.models import (
-        BlobProperties as GeneratedBlobProperties,
+        BlobItemInternal,
         Path,
         PathList
     )
@@ -49,10 +49,10 @@ def deserialize_dir_properties(response: "PipelineResponse", obj: Any, headers: 
     metadata = deserialize_metadata(response, obj, headers)
     dir_properties = DirectoryProperties(
         metadata=metadata,
-        owner=response.http_headers.get('x-ms-owner'),
-        group=response.http_headers.get('x-ms-group'),
-        permissions=response.http_headers.get('x-ms-permissions'),
-        acl=response.http_headers.get('x-ms-acl'),
+        owner=response.headers.get('x-ms-owner'),
+        group=response.headers.get('x-ms-group'),
+        permissions=response.headers.get('x-ms-permissions'),
+        acl=response.headers.get('x-ms-acl'),
         **headers
     )
     return dir_properties
@@ -63,11 +63,11 @@ def deserialize_file_properties(response: "PipelineResponse", obj: Any, headers:
     # DataLake specific headers that are not deserialized in blob are pulled directly from the raw response header
     file_properties = FileProperties(
         metadata=metadata,
-        encryption_context=response.http_headers.get('x-ms-encryption-context'),
-        owner=response.http_headers.get('x-ms-owner'),
-        group=response.http_headers.get('x-ms-group'),
-        permissions=response.http_headers.get('x-ms-permissions'),
-        acl=response.http_headers.get('x-ms-acl'),
+        encryption_context=response.headers.get('x-ms-encryption-context'),
+        owner=response.headers.get('x-ms-owner'),
+        group=response.headers.get('x-ms-group'),
+        permissions=response.headers.get('x-ms-permissions'),
+        acl=response.headers.get('x-ms-acl'),
         **headers
     )
     if 'Content-Range' in headers:
@@ -90,7 +90,7 @@ def return_headers_and_deserialized_path_list(  # pylint: disable=name-too-long,
     return deserialized.paths if deserialized.paths else {}, normalize_headers(response_headers)
 
 
-def get_deleted_path_properties_from_generated_code(generated: "GeneratedBlobProperties") -> DeletedPathProperties:  # pylint: disable=name-too-long
+def get_deleted_path_properties_from_generated_code(generated: "BlobItemInternal") -> DeletedPathProperties:  # pylint: disable=name-too-long
     deleted_path = DeletedPathProperties()
     deleted_path.name = generated.name
     deleted_path.deleted_time = generated.properties.deleted_time
@@ -100,9 +100,7 @@ def get_deleted_path_properties_from_generated_code(generated: "GeneratedBlobPro
 
 
 def is_file_path(_, __, headers: Dict[str, Any]) -> bool:
-    if headers['x-ms-resource-type'] == "file":
-        return True
-    return False
+    return headers['x-ms-resource-type'] == "file"
 
 
 def get_datalake_service_properties(datalake_properties: Dict[str, Any]) -> Dict[str, Any]:
@@ -160,7 +158,7 @@ def process_storage_error(storage_error) -> NoReturn:  # pylint:disable=too-many
     # If it is one of those three then it has been serialized prior by the generated layer.
     if isinstance(storage_error, (ResourceNotFoundError, ClientAuthenticationError, ResourceExistsError)):
         serialized = True
-    error_code = storage_error.response.http_headers.get('x-ms-error-code')
+    error_code = storage_error.response.headers.get('x-ms-error-code')
     error_message = storage_error.message
     additional_data = {}
     error_dict = {}
