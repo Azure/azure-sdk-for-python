@@ -40,11 +40,12 @@ class TestDACAnalyzeBatch(DocumentIntelligenceTest):
             ),
         )
         poller = client.begin_analyze_batch_documents(
-            model_id=recorded_variables.get("model_id"),
-            analyze_batch_request=request,
+            model_id="prebuilt-layout",
+            body=request,
         )
         response = poller.result()
-        assert response.succeeded_count == 6
+        # FIXME: The training data container isn't being cleaned up, tracking issue: https://github.com/Azure/azure-sdk-for-python/issues/38881
+        # assert response.succeeded_count == 6
         assert response.failed_count == 0
         assert response.skipped_count == 0
         return recorded_variables

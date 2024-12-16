@@ -43,9 +43,7 @@ def convert_to_and_from_dict():
 
     document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     with open(path_to_sample_documents, "rb") as f:
-        poller = document_intelligence_client.begin_analyze_document(
-            "prebuilt-layout", analyze_request=f, content_type="application/octet-stream"
-        )
+        poller = document_intelligence_client.begin_analyze_document("prebuilt-layout", body=f)
     result: AnalyzeResult = poller.result()
 
     # convert the received model to a dictionary
