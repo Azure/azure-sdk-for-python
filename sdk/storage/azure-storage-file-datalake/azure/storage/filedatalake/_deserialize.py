@@ -34,7 +34,7 @@ from ._shared.models import StorageErrorCode
 from ._shared.response_handlers import deserialize_metadata
 
 if TYPE_CHECKING:
-    from azure.core.rest import RestRequestsTransportResponse as PipelineResponse
+    from azure.core.rest import RestRequestsTransportResponse  # type: ignore [attr-defined]
     from azure.storage.blob import BlobProperties
     from ._generated.models import (
         BlobItemInternal,
@@ -45,7 +45,11 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-def deserialize_dir_properties(response: "PipelineResponse", obj: Any, headers: Dict[str, Any]) -> DirectoryProperties:
+def deserialize_dir_properties(
+    response: "RestRequestsTransportResponse",
+    obj: Any,
+    headers: Dict[str, Any]
+) -> DirectoryProperties:
     metadata = deserialize_metadata(response, obj, headers)
     dir_properties = DirectoryProperties(
         metadata=metadata,
@@ -58,7 +62,11 @@ def deserialize_dir_properties(response: "PipelineResponse", obj: Any, headers: 
     return dir_properties
 
 
-def deserialize_file_properties(response: "PipelineResponse", obj: Any, headers: Dict[str, Any]) -> FileProperties:
+def deserialize_file_properties(
+    response: "RestRequestsTransportResponse",
+    obj: Any,
+    headers: Dict[str, Any]
+) -> FileProperties:
     metadata = deserialize_metadata(response, obj, headers)
     # DataLake specific headers that are not deserialized in blob are pulled directly from the raw response header
     file_properties = FileProperties(
