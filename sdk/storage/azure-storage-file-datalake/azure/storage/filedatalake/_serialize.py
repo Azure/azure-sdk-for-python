@@ -134,7 +134,7 @@ def get_path_http_headers(content_settings: "ContentSettings") -> PathHTTPHeader
 
 def get_access_conditions(
     lease: Optional[Union["BlobLeaseClient", "BlobLeaseClientAsync", str]]
-) -> Optional[LeaseAccessConditions, None]:
+) -> Optional[LeaseAccessConditions]:
     if not lease:
         return None
     if hasattr(lease, "id"):
@@ -192,7 +192,7 @@ def get_cpk_info(scheme: str, kwargs: Dict[str, Any]) -> Optional[CpkInfo]:
         return CpkInfo(
             encryption_key=cpk.key_value,
             encryption_key_sha256=cpk.key_hash,
-            encryption_algorithm=cpk.algorithm
+            encryption_algorithm=cpk.algorithm  # type: ignore [arg-type]
         )
 
     return None
