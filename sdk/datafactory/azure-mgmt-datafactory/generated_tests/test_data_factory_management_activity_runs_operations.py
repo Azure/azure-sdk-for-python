@@ -20,7 +20,7 @@ class TestDataFactoryManagementActivityRunsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_query_by_pipeline_run(self, resource_group):
+    def test_activity_runs_query_by_pipeline_run(self, resource_group):
         response = self.client.activity_runs.query_by_pipeline_run(
             resource_group_name=resource_group.name,
             factory_name="str",
