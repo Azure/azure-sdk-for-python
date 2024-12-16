@@ -110,7 +110,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         **kwargs: Any,
     ) -> None:
         uamqp_transport = kwargs.pop("uamqp_transport", False)
-        amqp_transport: Union[Type[PyamqpTransportAsync], Type[UamqpTransportAsync]] = PyamqpTransportAsync
+        amqp_transport: Union[Type[PyamqpTransportAsync], Type["UamqpTransportAsync"]] = PyamqpTransportAsync
 
         if uamqp_transport:
             try:
