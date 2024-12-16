@@ -1,5 +1,5 @@
 # Release History
-## 1.23.0 (unreleased)
+## 1.23.0 (2024-12-05)
 
 ### Features Added
   - Added support for IP-based access control to default and hub workspaces. 
@@ -11,8 +11,6 @@
     - Azure AI Speech
     - Azure Blob Storage
     - Microsoft OneLake
-
-### Bugs Fixed
 
 ## 1.22.3 (2024-11-20)
 
