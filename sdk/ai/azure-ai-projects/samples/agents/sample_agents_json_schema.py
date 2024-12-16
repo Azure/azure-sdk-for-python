@@ -58,7 +58,7 @@ with project_client:
     agent = project_client.agents.create_agent(
         # Note only gpt-4o-mini-2024-07-18 and
         # gpt-4o-2024-08-06 and later support structured output.
-        model="gpt-4o-mini",
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-assistant",
         instructions="Extract the information about planets.",
         headers={"x-ms-enable-preview": "true"},
