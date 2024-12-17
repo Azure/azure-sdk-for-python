@@ -1255,7 +1255,7 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
                 event = await self._process_event(ln)
                 if event:
                     return event
-        
+
         if self.buffer:
             event = await self._process_event(self.buffer)
             if event:
@@ -1311,14 +1311,14 @@ class BaseAgentEventHandler(Iterator[T]):
                 event = self._process_event(ln)
                 if event:
                     return event
-        
+
         if self.buffer:
             event = self._process_event(self.buffer)
             if event:
                 return event
 
         raise StopIteration()
-    
+
     def _process_event(self, event_data_str: str) -> Optional[T]:
         raise NotImplementedError("This method needs to be implemented.")
 
