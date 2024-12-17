@@ -23,6 +23,7 @@ class IsolationMode:
     ALLOW_INTERNET_OUTBOUND = "AllowInternetOutbound"
     ALLOW_ONLY_APPROVED_OUTBOUND = "AllowOnlyApprovedOutbound"
 
+
 @experimental
 class FirewallSku:
     """Firewall Sku for FQDN rules in AllowOnlyApprovedOutbound."""
