@@ -38,7 +38,6 @@ if TYPE_CHECKING:
     from .exceptions import ServiceBusError
 
     try:
-        # pylint:disable=unused-import
         from uamqp import AMQPClient as uamqp_AMQPClientSync
     except ImportError:
         pass
@@ -372,7 +371,6 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
     def _do_retryable_operation(  # pylint: disable=inconsistent-return-statements
         self, operation: Callable, timeout: Optional[float] = None, **kwargs: Any
     ) -> Any:
-        # pylint: disable=protected-access
         require_last_exception = kwargs.pop("require_last_exception", False)
         operation_requires_timeout = kwargs.pop("operation_requires_timeout", False)
         retried_times = 0
@@ -435,7 +433,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         )
         if backoff <= self._config.retry_backoff_max and (
             abs_timeout_time is None or (backoff + time.time()) <= abs_timeout_time
-        ):  # pylint:disable=no-else-return
+        ):
             time.sleep(backoff)
             _LOGGER.info(
                 "%r has an exception (%r). Retrying...",
@@ -517,7 +515,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 timeout=timeout,
                 callback=callback,
             )
-        except Exception as exp:  # pylint: disable=broad-except
+        except Exception as exp:
             if isinstance(exp, self._amqp_transport.TIMEOUT_ERROR):
                 raise OperationTimeoutError(error=exp) from exp
             raise

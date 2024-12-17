@@ -30,10 +30,9 @@ python -m pip install azure-ai-documentintelligence
 
 This table shows the relationship between SDK versions and supported API service versions:
 
-|SDK version|Supported API service version|
-|-|-|
-|1.0.0b1 | 2023-10-31-preview|
-|1.0.0b2 | 2024-02-29-preview|
+| SDK version | Supported API service version |
+| ----------- | ----------------------------- |
+| 1.0.0       | 2024-11-30                    |
 
 Older API versions are supported in `azure-ai-formrecognizer`, please see the [Migration Guide][migration-guide] for detailed instructions on how to update application.
 
@@ -47,10 +46,10 @@ Older API versions are supported in `azure-ai-formrecognizer`, please see the [M
 
 Document Intelligence supports both [multi-service and single-service access][cognitive_resource_portal]. Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Document Intelligence access only, create a Document Intelligence resource. Please note that you will need a single-service resource if you intend to use [Azure Active Directory authentication](#create-the-client-with-an-azure-active-directory-credential).
 
-You can create either resource using: 
+You can create either resource using:
 
-* Option 1: [Azure Portal][cognitive_resource_portal].
-* Option 2: [Azure CLI][cognitive_resource_cli].
+- Option 1: [Azure Portal][cognitive_resource_portal].
+- Option 2: [Azure CLI][cognitive_resource_cli].
 
 Below is an example of how you can create a Document Intelligence resource using the CLI:
 
@@ -132,9 +131,11 @@ name for your resource in order to use this type of authentication.
 To use the [DefaultAzureCredential][default_azure_credential] type shown below, or other credential types provided
 with the Azure SDK, please install the `azure-identity` package:
 
-```pip install azure-identity```
+```
+pip install azure-identity
+```
 
-You will also need to [register a new AAD application and grant access][register_aad_app] to Document Intelligence by assigning the `"Cognitive Services User"` role to your service principal.
+You will also need to [register a new AAD application and grant access][register_aad_app] to Document Intelligence by assigning the [Cognitive Services Data Reader][entra_auth_role] role to your service principal.
 
 Once completed, set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
 `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
@@ -157,8 +158,8 @@ document_intelligence_client = DocumentIntelligenceClient(endpoint, credential)
 ### DocumentIntelligenceClient
 
 `DocumentIntelligenceClient` provides operations for analyzing input documents using prebuilt and custom models through the `begin_analyze_document` API.
-Use the `model_id` parameter to select the type of model for analysis. See a full list of supported models [here][di-models]. 
-The `DocumentIntelligenceClient` also provides operations for classifying documents through the `begin_classify_document` API. 
+Use the `model_id` parameter to select the type of model for analysis. See a full list of supported models [here][di-models].
+The `DocumentIntelligenceClient` also provides operations for classifying documents through the `begin_classify_document` API.
 Custom classification models can classify each page in an input file to identify the document(s) within and can also identify multiple documents or multiple instances of a single document within an input file.
 
 Sample code snippets are provided to illustrate using a DocumentIntelligenceClient [here](#examples "Examples").
@@ -194,16 +195,16 @@ Sample code snippets are provided to illustrate using long-running operations [b
 
 The following section provides several code snippets covering some of the most common Document Intelligence tasks, including:
 
-* [Extract Layout](#extract-layout "Extract Layout")
-* [Extract Figures from Documents](#extract-figures-from-documents "Extract Figures from Documents")
-* [Analyze Documents Result in PDF](#analyze-documents-result-in-pdf "Analyze Documents Result in PDF")
-* [Using the General Document Model](#using-the-general-document-model "Using the General Document Model")
-* [Using Prebuilt Models](#using-prebuilt-models "Using Prebuilt Models")
-* [Build a Custom Model](#build-a-custom-model "Build a custom model")
-* [Analyze Documents Using a Custom Model](#analyze-documents-using-a-custom-model "Analyze Documents Using a Custom Model")
-* [Manage Your Models](#manage-your-models "Manage Your Models")
-* [Add-on Capabilities](#add-on-capabilities "Add-on Capabilities")
-* [Get Raw JSON Result](#get-raw-json-result "Get Raw JSON Result")
+- [Extract Layout](#extract-layout "Extract Layout")
+- [Extract Figures from Documents](#extract-figures-from-documents "Extract Figures from Documents")
+- [Analyze Documents Result in PDF](#analyze-documents-result-in-pdf "Analyze Documents Result in PDF")
+- [Using the General Document Model](#using-the-general-document-model "Using the General Document Model")
+- [Using Prebuilt Models](#using-prebuilt-models "Using Prebuilt Models")
+- [Build a Custom Model](#build-a-custom-model "Build a custom model")
+- [Analyze Documents Using a Custom Model](#analyze-documents-using-a-custom-model "Analyze Documents Using a Custom Model")
+- [Manage Your Models](#manage-your-models "Manage Your Models")
+- [Add-on Capabilities](#add-on-capabilities "Add-on Capabilities")
+- [Get Raw JSON Result](#get-raw-json-result "Get Raw JSON Result")
 
 ### Extract Layout
 
@@ -233,7 +234,7 @@ key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 with open(path_to_sample_documents, "rb") as f:
     poller = document_intelligence_client.begin_analyze_document(
-        "prebuilt-layout", analyze_request=f, content_type="application/octet-stream"
+        "prebuilt-layout", body=f
     )
 result: AnalyzeResult = poller.result()
 
@@ -325,9 +326,8 @@ document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, cre
 with open(path_to_sample_documents, "rb") as f:
     poller = document_intelligence_client.begin_analyze_document(
         "prebuilt-layout",
-        analyze_request=f,
+        body=f,
         output=[AnalyzeOutputOption.FIGURES],
-        content_type="application/octet-stream",
     )
 result: AnalyzeResult = poller.result()
 operation_id = poller.details["operation_id"]
@@ -367,9 +367,8 @@ document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, cre
 with open(path_to_sample_documents, "rb") as f:
     poller = document_intelligence_client.begin_analyze_document(
         "prebuilt-read",
-        analyze_request=f,
+        body=f,
         output=[AnalyzeOutputOption.PDF],
-        content_type="application/octet-stream",
     )
 result: AnalyzeResult = poller.result()
 operation_id = poller.details["operation_id"]
@@ -418,9 +417,8 @@ document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, cre
 with open(path_to_sample_documents, "rb") as f:
     poller = document_intelligence_client.begin_analyze_document(
         "prebuilt-layout",
-        analyze_request=f,
+        body=f,
         features=[DocumentAnalysisFeature.KEY_VALUE_PAIRS],
-        content_type="application/octet-stream",
     )
 result: AnalyzeResult = poller.result()
 
@@ -513,7 +511,7 @@ key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 with open(path_to_sample_documents, "rb") as f:
     poller = document_intelligence_client.begin_analyze_document(
-        "prebuilt-receipt", analyze_request=f, locale="en-US", content_type="application/octet-stream"
+        "prebuilt-receipt", body=f, locale="en-US"
     )
 receipts: AnalyzeResult = poller.result()
 
@@ -668,7 +666,7 @@ document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, cre
 # Make sure your document's type is included in the list of document types the custom model can analyze
 with open(path_to_sample_documents, "rb") as f:
     poller = document_intelligence_client.begin_analyze_document(
-        model_id=model_id, analyze_request=f, content_type="application/octet-stream"
+        model_id=model_id, body=f
     )
 result: AnalyzeResult = poller.result()
 
@@ -827,10 +825,10 @@ if model.doc_types:
 
 <!-- END SNIPPET -->
 
-<!-- SNIPPET:sample_manage_models.get_resource_info -->
+<!-- SNIPPET:sample_manage_models.get_resource_details -->
 
 ```python
-account_details = document_intelligence_admin_client.get_resource_info()
+account_details = document_intelligence_admin_client.get_resource_details()
 print(
     f"Our resource has {account_details.custom_document_models.count} custom models, "
     f"and we can have at most {account_details.custom_document_models.limit} custom models"
@@ -885,9 +883,11 @@ except ResourceNotFoundError:
 <!-- END SNIPPET -->
 
 ### Add-on Capabilities
+
 Document Intelligence supports more sophisticated analysis capabilities. These optional features can be enabled and disabled depending on the scenario of the document extraction.
 
 The following add-on capabilities are available in this SDK:
+
 - [barcode/QR code][addon_barcodes_sample]
 - [formula][addon_formulas_sample]
 - [font/style][addon_fonts_sample]
@@ -900,6 +900,7 @@ Note that some add-on capabilities will incur additional charges. See pricing: h
 ### Get Raw JSON Result
 
 Can get the HTTP response by passing parameter `raw_response_hook` to any client method.
+
 <!-- SNIPPET:sample_get_raw_response.raw_response_hook -->
 
 ```python
@@ -918,7 +919,7 @@ def callback(response):
     responses["status_code"] = response.http_response.status_code
     responses["response_body"] = response.http_response.json()
 
-client.get_resource_info(raw_response_hook=callback)
+client.get_resource_details(raw_response_hook=callback)
 
 print(f"Response status code is: {responses["status_code"]}")
 response_body = responses["response_body"]
@@ -964,7 +965,6 @@ print(
 
 <!-- END SNIPPET -->
 
-
 ## Troubleshooting
 
 ### General
@@ -1000,7 +1000,6 @@ See the [Sample README][sample_readme] for several code snippets illustrating co
 
 For more extensive documentation on Azure AI Document Intelligence, see the [Document Intelligence documentation][python-di-product-docs] on docs.microsoft.com.
 
-
 ## Contributing
 
 This project welcomes contributions and suggestions. Most contributions require
@@ -1019,6 +1018,7 @@ see the Code of Conduct FAQ or contact opencode@microsoft.com with any
 additional questions or comments.
 
 <!-- LINKS -->
+
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [azure_sub]: https://azure.microsoft.com/free/
@@ -1045,6 +1045,7 @@ additional questions or comments.
 [azure_portal_get_endpoint]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows#get-the-keys-for-your-resource
 [cognitive_authentication_api_key]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows#get-the-keys-for-your-resource
 [register_aad_app]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
+[entra_auth_role]: https://learn.microsoft.com/azure/role-based-access-control/built-in-roles/ai-machine-learning#cognitive-services-data-reader
 [custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
 [sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/sdk/azure-sdk-logging
