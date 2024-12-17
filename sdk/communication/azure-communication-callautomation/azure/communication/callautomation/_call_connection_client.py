@@ -49,7 +49,8 @@ from ._generated.models import (
     HoldRequest,
     UnholdRequest,
     StartMediaStreamingRequest,
-    StopMediaStreamingRequest
+    StopMediaStreamingRequest,
+    InterruptAudioAndAnnounceRequest,
 )
 from ._generated.models._enums import RecognizeInputType
 from ._shared.auth_policy_utils import get_authentication_policy
@@ -1138,3 +1139,37 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             stop_media_streaming_request,
             **kwargs
             )
+        
+    @distributed_trace
+    def interrupt_audio_and_announce(
+        self,
+        target_participant: "CommunicationIdentifier",
+        play_sources: Union[List[Union['FileSource', 'TextSource', 'SsmlSource']]],
+        *,
+        operation_context: Optional[str] = None,
+        **kwargs,
+    ) -> None:
+        """Interrupt audio and announce to specific participant(s) in this call.
+
+        :param target_participant: The participant being added.
+        :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
+        :keyword play_sources: A PlaySource representing the source to play.
+        :paramtype play_sources: list[~azure.communication.callautomation.FileSource] or
+         list[~azure.communication.callautomation.TextSource] or
+         list[~azure.communication.callautomation.SsmlSource]
+        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :paramtype operation_context: str or None
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        interrupt_audio_announce_request = InterruptAudioAndAnnounceRequest(
+            play_sources=[source._to_generated() for source in play_sources] if play_sources else None,
+            play_to=serialize_identifier(target_participant),
+            operation_context=operation_context,
+            kwargs=kwargs,
+        )
+
+        self._call_media_client.interrupt_audio_and_announce(call_connection_id=self._call_connection_id, interrupt_request=interrupt_audio_announce_request)
+
