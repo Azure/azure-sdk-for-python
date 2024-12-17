@@ -1,29 +1,56 @@
 # Release History
 
-## 1.0.0b5 (Unreleased)
+## 1.0.0 (Unreleased)
 
 ### Features Added
 
+- Added support for the Analyze Batch Documents API:
+  - Added operations `delete_analyze_batch_result()`, `get_analyze_batch_result()` and `list_analyze_batch_results()` to `DocumentIntelligenceClient`.
+- Added support for the Analyze Documents API:
+  - Added operations `delete_analyze_result()` to `DocumentIntelligenceClient`.
+
 ### Breaking Changes
+
+- Renamed request body parameters on all methods to `body`.
+- Renamed operation `get_resource_info()` to `get_resource_details()`.
+- Renamed model `ContentFormat` to `DocumentContentFormat`.
+- Renamed model `AnalyzeBatchResultOperation` to `AnalyzeBatchOperation`.
+- Renamed model `CopyAuthorization` to `ModelCopyAuthorization`.
+- Renamed model `Document` to `AnalyzedDocument`.
+- Renamed model `Error` to `DocumentIntelligenceError`.
+- Renamed model `ErrorResponse` to `DocumentIntelligenceErrorResponse`.
+- Renamed model `InnerError` to `DocumentIntelligenceInnerError`.
+- Renamed model `OperationDetails` to `DocumentIntelligenceOperationDetails`.
+- Renamed model `OperationStatus` to `DocumentIntelligenceOperationStatus`.
+- Renamed model `ResourceDetails` to `DocumentIntelligenceResourceDetails`.
+- Renamed model `Warning` to `DocumentIntelligenceWarning`.
+- Renamed property `items_property` in model `DocumentFieldSchema` to `items_schema`.
+- Renamed enum `FontStyle` to `DocumentFontStyle`.
+- Renamed enum `FontWeight` to `DocumentFontWeight`.
+- Removed model `AnalyzeResultOperation`.
+- Removed `GENERATIVE ` in enum `DocumentBuildMode`.
 
 ### Bugs Fixed
 
 ### Other Changes
 
+- No need to pass `content-type` when analyze_request is a stream in `begin_analyze_document()` and `begin_classify_document()`.
+
 ## 1.0.0b4 (2024-09-05)
 
 ### Features Added
+
 - Added support for the Analyze Batch Documents API:
-    - Added LRO operation `begin_analyze_batch_documents()` to `DocumentIntelligenceClient`.
-    - Added models `AnalyzeBatchDocumentsRequest`, `AnalyzeBatchResult` and `AnalyzeBatchOperationDetail`.
+  - Added LRO operation `begin_analyze_batch_documents()` to `DocumentIntelligenceClient`.
+  - Added models `AnalyzeBatchDocumentsRequest`, `AnalyzeBatchResult` and `AnalyzeBatchOperationDetail`.
 - Added support for different kinds of output in the Analyze Document API:
-    - Added operations `get_analyze_result_figure()` and `get_analyze_result_pdf()` to `DocumentIntelligenceClient`.
-    - Added optional kwarg `output` to LRO operation `begin_analyze_document()` overloads in `DocumentIntelligenceClient`.
-    - Added enum `AnalyzeOutputOption` to specify output kind, either `pdf` or `figures`.
-    - Added property `id` to model `DocumentFigure`.
+  - Added operations `get_analyze_result_figure()` and `get_analyze_result_pdf()` to `DocumentIntelligenceClient`.
+  - Added optional kwarg `output` to LRO operation `begin_analyze_document()` overloads in `DocumentIntelligenceClient`.
+  - Added enum `AnalyzeOutputOption` to specify output kind, either `pdf` or `figures`.
+  - Added property `id` to model `DocumentFigure`.
 - Added support for the Copy Classifier API:
-    - Added operations `authorize_classifier_copy()` and `begin_copy_classifier_to()` to `DocumentIntelligenceAdministrationClient`.
-    - Added models `AuthorizeClassifierCopyRequest` and `ClassifierCopyAuthorization`.
+  - Added operations `authorize_classifier_copy()` and `begin_copy_classifier_to()` to `DocumentIntelligenceAdministrationClient`.
+  - Added models `AuthorizeClassifierCopyRequest` and `ClassifierCopyAuthorization`.
 - Added optional kwarg `pages` to LRO operation `begin_classify_document()` overloads in `DocumentIntelligenceClient`.
 - Added new kind `GENERATIVE` to enum `DocumentBuildMode`.
 - Added property `warnings` to model `AnalyzeResult`.
@@ -35,24 +62,27 @@
 - Added support for getting `operation_id` via `details` property in the new return types `AnalyzeDocumentLROPoller` and `AsyncAnalyzeDocumentLROPoller` in operation `begin_analyze_document()`.
 
 ### Breaking Changes
+
 - Removed support for extracting lists from analyzed documents:
-    - Removed models `DocumentList` and `DocumentListItem`.
-    - Removed property `lists` from model `AnalyzeResult`.
+  - Removed models `DocumentList` and `DocumentListItem`.
+  - Removed property `lists` from model `AnalyzeResult`.
 - Changes to the Compose Document API:
-    - Removed model `ComponentDocumentModelDetails`.
-    - Removed property `component_models` from model `ComposeDocumentModelRequest`.
-    - `ComposeDocumentModelRequest` now requires a dictionary of `DocumentTypeDetails` instances and a classifier ID to be constructed.
+  - Removed model `ComponentDocumentModelDetails`.
+  - Removed property `component_models` from model `ComposeDocumentModelRequest`.
+  - `ComposeDocumentModelRequest` now requires a dictionary of `DocumentTypeDetails` instances and a classifier ID to be constructed.
 - Removed model `QuotaDetails`.
 - Removed property `custom_neural_document_model_builds` from model `ResourceDetails`.
 - Changed the _required_ property `field_schema` from `DocumentTypeDetails` to be _optional_.
 
 ### Other Changes
+
 - Changed the default service API version to `2024-07-31-preview`.
-- Improved performance by about `1.5X` faster when deserializing `JSON` to an `AnalyzeResult` object compared to last version `1.0.0b3`. 
+- Improved performance by about `1.5X` faster when deserializing `JSON` to an `AnalyzeResult` object compared to last version `1.0.0b3`.
 
 ## 1.0.0b3 (2024-04-09)
 
 ### Other Changes
+
 - Changed the default polling interval from 5s to 1s.
 
 ## 1.0.0b2 (2024-03-07)

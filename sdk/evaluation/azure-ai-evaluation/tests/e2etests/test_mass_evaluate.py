@@ -5,18 +5,19 @@ import os
 import pathlib
 import pandas as pd
 import pytest
+from regex import F
 
 
 from azure.ai.evaluation import (
     F1ScoreEvaluator,
-    # GleuScoreEvaluator,
+    GleuScoreEvaluator,
     BleuScoreEvaluator,
     RougeScoreEvaluator,
     MeteorScoreEvaluator,
     CoherenceEvaluator,
     FluencyEvaluator,
     RelevanceEvaluator,
-    # SimilarityEvaluator,
+    SimilarityEvaluator,
     GroundednessEvaluator,
     # QAEvaluator,
     ContentSafetyEvaluator,
@@ -74,12 +75,11 @@ class TestMassEvaluate:
     """
 
     def test_evaluate_singleton_inputs(self, model_config, azure_cred, project_scope, data_file):
-        # qa and similarity disabled due to being playback-unfriendly due to URL sanitization problems.
-        # glue disabled due to being unfriendly to CI playback for some reason.
-        # content safety disabled temporarily to test CI PF teardown race condition
+        # qa fails in playback but ONLY when using the pf proxy for some reason, and
+        # using it without pf proxy causes CI to hang and timeout after 3 hours.
         evaluators = {
             "f1_score": F1ScoreEvaluator(),
-            # "gleu": GleuScoreEvaluator(),
+            "gleu": GleuScoreEvaluator(),
             "bleu": BleuScoreEvaluator(),
             "rouge": RougeScoreEvaluator(RougeType.ROUGE_L),
             "meteor": MeteorScoreEvaluator(),
@@ -87,8 +87,8 @@ class TestMassEvaluate:
             "coherence": CoherenceEvaluator(model_config),
             "fluency": FluencyEvaluator(model_config),
             "relevance": RelevanceEvaluator(model_config),
-            # "similarity": SimilarityEvaluator(model_config),
-            # "qa" : QAEvaluator(model_config),
+            "similarity": SimilarityEvaluator(model_config),
+            # "qa": QAEvaluator(model_config),
             "grounded_pro": GroundednessProEvaluator(azure_cred, project_scope),
             "protected_material": ProtectedMaterialEvaluator(azure_cred, project_scope),
             "indirect_attack": IndirectAttackEvaluator(azure_cred, project_scope),
@@ -105,13 +105,13 @@ class TestMassEvaluate:
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
 
-        assert len(row_result_df.keys()) == 45  #  63 with gleu, qa/similarity
+        assert len(row_result_df.keys()) == 48  # 63 with qa
         assert len(row_result_df["inputs.query"]) == 3
         assert len(row_result_df["inputs.context"]) == 3
         assert len(row_result_df["inputs.response"]) == 3
         assert len(row_result_df["inputs.ground_truth"]) == 3
         assert len(row_result_df["outputs.f1_score.f1_score"]) == 3
-        # assert len(row_result_df["outputs.gleu.gleu_score"]) == 3
+        assert len(row_result_df["outputs.gleu.gleu_score"]) == 3
         assert len(row_result_df["outputs.bleu.bleu_score"]) == 3
         assert len(row_result_df["outputs.rouge.rouge_precision"]) == 3
         assert len(row_result_df["outputs.rouge.rouge_recall"]) == 3
@@ -129,23 +129,8 @@ class TestMassEvaluate:
         assert len(row_result_df["outputs.relevance.relevance"]) == 3
         assert len(row_result_df["outputs.relevance.gpt_relevance"]) == 3
         assert len(row_result_df["outputs.relevance.relevance_reason"]) == 3
-        # assert len(row_result_df['outputs.similarity.similarity']) == 3
-        # assert len(row_result_df['outputs.similarity.gpt_similarity']) == 3
-        # assert len(row_result_df['outputs.qa.f1_score']) == 3
-        # assert len(row_result_df['outputs.qa.groundedness']) == 3
-        # assert len(row_result_df['outputs.qa.gpt_groundedness']) == 3
-        # assert len(row_result_df['outputs.qa.groundedness_reason']) == 3
-        # assert len(row_result_df['outputs.qa.coherence']) == 3
-        # assert len(row_result_df['outputs.qa.gpt_coherence']) == 3
-        # assert len(row_result_df['outputs.qa.coherence_reason']) == 3
-        # assert len(row_result_df['outputs.qa.fluency']) == 3
-        # assert len(row_result_df['outputs.qa.gpt_fluency']) == 3
-        # assert len(row_result_df['outputs.qa.fluency_reason']) == 3
-        # assert len(row_result_df['outputs.qa.relevance']) == 3
-        # assert len(row_result_df['outputs.qa.gpt_relevance']) == 3
-        # assert len(row_result_df['outputs.qa.relevance_reason']) == 3
-        # assert len(row_result_df['outputs.qa.similarity']) == 3
-        # assert len(row_result_df['outputs.qa.gpt_similarity']) == 3
+        assert len(row_result_df["outputs.similarity.similarity"]) == 3
+        assert len(row_result_df["outputs.similarity.gpt_similarity"]) == 3
         assert len(row_result_df["outputs.grounded_pro.groundedness_pro_label"]) == 3
         assert len(row_result_df["outputs.grounded_pro.groundedness_pro_reason"]) == 3
         assert len(row_result_df["outputs.protected_material.protected_material_label"]) == 3
@@ -169,10 +154,25 @@ class TestMassEvaluate:
         assert len(row_result_df["outputs.content_safety.violence"]) == 3
         assert len(row_result_df["outputs.content_safety.violence_score"]) == 3
         assert len(row_result_df["outputs.content_safety.violence_reason"]) == 3
+        # assert len(row_result_df["outputs.qa.f1_score"]) == 3
+        # assert len(row_result_df["outputs.qa.groundedness"]) == 3
+        # assert len(row_result_df["outputs.qa.gpt_groundedness"]) == 3
+        # assert len(row_result_df["outputs.qa.groundedness_reason"]) == 3
+        # assert len(row_result_df["outputs.qa.coherence"]) == 3
+        # assert len(row_result_df["outputs.qa.gpt_coherence"]) == 3
+        # assert len(row_result_df["outputs.qa.coherence_reason"]) == 3
+        # assert len(row_result_df["outputs.qa.fluency"]) == 3
+        # assert len(row_result_df["outputs.qa.gpt_fluency"]) == 3
+        # assert len(row_result_df["outputs.qa.fluency_reason"]) == 3
+        # assert len(row_result_df["outputs.qa.relevance"]) == 3
+        # assert len(row_result_df["outputs.qa.gpt_relevance"]) == 3
+        # assert len(row_result_df["outputs.qa.relevance_reason"]) == 3
+        # assert len(row_result_df["outputs.qa.similarity"]) == 3
+        # assert len(row_result_df["outputs.qa.gpt_similarity"]) == 3
 
-        assert len(metrics.keys()) == 25  # 39 with gleu, qa, similarity
+        assert len(metrics.keys()) == 28  # 39 with qa
         assert metrics["f1_score.f1_score"] >= 0
-        # assert metrics["gleu.gleu_score"] >= 0
+        assert metrics["gleu.gleu_score"] >= 0
         assert metrics["bleu.bleu_score"] >= 0
         assert metrics["rouge.rouge_precision"] >= 0
         assert metrics["rouge.rouge_recall"] >= 0
@@ -186,8 +186,8 @@ class TestMassEvaluate:
         assert metrics["fluency.gpt_fluency"] >= 0
         assert metrics["relevance.relevance"] >= 0
         assert metrics["relevance.gpt_relevance"] >= 0
-        # assert metrics['similarity.similarity'] >= 0
-        # assert metrics['similarity.gpt_similarity'] >= 0
+        assert metrics["similarity.similarity"] >= 0
+        assert metrics["similarity.gpt_similarity"] >= 0
         assert metrics["indirect_attack.xpia_manipulated_content"] >= 0
         assert metrics["indirect_attack.xpia_intrusion"] >= 0
         assert metrics["indirect_attack.xpia_information_gathering"] >= 0
@@ -199,17 +199,17 @@ class TestMassEvaluate:
         assert metrics["protected_material.protected_material_defect_rate"] >= 0
         assert metrics["indirect_attack.xpia_defect_rate"] >= 0
         assert metrics["eci.eci_defect_rate"] >= 0
-        # assert metrics['qa.f1_score'] >= 0
-        # assert metrics['qa.groundedness'] >= 0
-        # assert metrics['qa.gpt_groundedness'] >= 0
-        # assert metrics['qa.coherence'] >= 0
-        # assert metrics['qa.gpt_coherence'] >= 0
-        # assert metrics['qa.fluency'] >= 0
-        # assert metrics['qa.gpt_fluency'] >= 0
-        # assert metrics['qa.relevance'] >= 0
-        # assert metrics['qa.gpt_relevance'] >= 0
-        # assert metrics['qa.similarity'] >= 0
-        # assert metrics['qa.gpt_similarity'] >= 0
+        # assert metrics["qa.f1_score"] >= 0
+        # assert metrics["qa.groundedness"] >= 0
+        # assert metrics["qa.gpt_groundedness"] >= 0
+        # assert metrics["qa.coherence"] >= 0
+        # assert metrics["qa.gpt_coherence"] >= 0
+        # assert metrics["qa.fluency"] >= 0
+        # assert metrics["qa.gpt_fluency"] >= 0
+        # assert metrics["qa.relevance"] >= 0
+        # assert metrics["qa.gpt_relevance"] >= 0
+        # assert metrics["qa.similarity"] >= 0
+        # assert metrics["qa.gpt_similarity"] >= 0
 
     def test_evaluate_conversation(self, model_config, data_convo_file, azure_cred, project_scope):
         evaluators = {
@@ -291,7 +291,7 @@ class TestMassEvaluate:
         assert metrics["indirect_attack.xpia_defect_rate"] >= 0
         assert metrics["eci.eci_defect_rate"] >= 0
 
-    # Imagee urls with target is disabled due to being unstable in CI
+    # Image urls with target is disabled due to being unstable in CI
     @pytest.mark.parametrize(
         "multi_modal_input_type,pm_evaluator_class,cs_evaluator_class",
         [

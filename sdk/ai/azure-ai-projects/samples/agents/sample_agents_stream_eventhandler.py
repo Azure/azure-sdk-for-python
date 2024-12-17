@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_stream_eventhandler.py
-
 DESCRIPTION:
     This sample demonstrates how to use agent operations with an event handler in streaming from
     the Azure Agents service using a synchronous client.
@@ -18,7 +16,7 @@ USAGE:
     pip install azure-ai-projects azure-identity
 
     Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
 """
 
 import os
@@ -27,19 +25,13 @@ from azure.identity import DefaultAzureCredential
 
 from azure.ai.projects.models import (
     AgentEventHandler,
-    MessageDeltaTextContent,
     MessageDeltaChunk,
     ThreadMessage,
     ThreadRun,
     RunStep,
 )
 
-from typing import Any
-
-
-# Create an Azure AI Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
+from typing import Any, Optional
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
@@ -48,30 +40,29 @@ project_client = AIProjectClient.from_connection_string(
 
 
 # [START stream_event_handler]
-class MyEventHandler(AgentEventHandler):
-    def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
-        for content_part in delta.delta.content:
-            if isinstance(content_part, MessageDeltaTextContent):
-                text_value = content_part.text.value if content_part.text else "No text"
-                print(f"Text delta received: {text_value}")
+# With AgentEventHandler[str], the return type for each event functions is optional string.
+class MyEventHandler(AgentEventHandler[str]):
 
-    def on_thread_message(self, message: "ThreadMessage") -> None:
-        print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
+    def on_message_delta(self, delta: "MessageDeltaChunk") -> Optional[str]:
+        return f"Text delta received: {delta.text}"
 
-    def on_thread_run(self, run: "ThreadRun") -> None:
-        print(f"ThreadRun status: {run.status}")
+    def on_thread_message(self, message: "ThreadMessage") -> Optional[str]:
+        return f"ThreadMessage created. ID: {message.id}, Status: {message.status}"
 
-    def on_run_step(self, step: "RunStep") -> None:
-        print(f"RunStep type: {step.type}, Status: {step.status}")
+    def on_thread_run(self, run: "ThreadRun") -> Optional[str]:
+        return f"ThreadRun status: {run.status}"
 
-    def on_error(self, data: str) -> None:
-        print(f"An error occurred. Data: {data}")
+    def on_run_step(self, step: "RunStep") -> Optional[str]:
+        return f"RunStep type: {step.type}, Status: {step.status}"
 
-    def on_done(self) -> None:
-        print("Stream completed.")
+    def on_error(self, data: str) -> Optional[str]:
+        return f"An error occurred. Data: {data}"
 
-    def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
-        print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
+    def on_done(self) -> Optional[str]:
+        return "Stream completed."
+
+    def on_unhandled_event(self, event_type: str, event_data: Any) -> Optional[str]:
+        return f"Unhandled Event Type: {event_type}, Data: {event_data}"
 
 
 # [END stream_event_handler]
@@ -94,7 +85,11 @@ with project_client:
     with project_client.agents.create_stream(
         thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
     ) as stream:
-        stream.until_done()
+        for event_type, event_data, func_return in stream:
+            print(f"Received data.")
+            print(f"Streaming receive Event Type: {event_type}")
+            print(f"Event Data: {str(event_data)[:100]}...")
+            print(f"Event Function return: {func_return}\n")
     # [END create_stream]
 
     project_client.agents.delete_agent(agent.id)
