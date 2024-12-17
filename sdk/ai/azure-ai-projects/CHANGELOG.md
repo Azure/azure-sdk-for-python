@@ -12,6 +12,7 @@
 ### Bugs Fixed
 * Fix for streaming issue, https://github.com/Azure/azure-sdk-for-python/issues/38918
 * Fix for Async function send_email_async is not called, https://github.com/Azure/azure-sdk-for-python/issues/38898
+* Fix for Streaming with eventhandler fails with AttributeError: 'MyEventHandler' object has no attribute 'buffer', https://github.com/Azure/azure-sdk-for-python/issues/38897
 
 ## 1.0.0b3 (2024-12-13)
 
