@@ -21,6 +21,7 @@ from typing import (
     AsyncIterator,
     Awaitable,
     Callable,
+    Deque,
     Dict,
     Generic,
     Iterator,
@@ -1229,7 +1230,7 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
             None
         )
         self.done: bool
-        self.buffer: str
+        self.chunks: Deque[str]
 
     def initialize(
         self,
@@ -1242,25 +1243,26 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
         self.submit_tool_outputs = submit_tool_outputs
         self.done = False
         self.buffer = ""
+        self.chunks = Deque[str]()
 
     async def __anext__(self) -> T:
         if self.response_iterator is None:
             raise ValueError("The response handler was not initialized.")
-
-        async for chunk in self.response_iterator:
-            self.buffer += chunk.decode("utf-8")
-            split_buffer = self.buffer.split("\n\n")
-            self.buffer = split_buffer[-1]
-            for ln in split_buffer[:-1]:
-                event = await self._process_event(ln)
-                if event:
-                    return event
-
-        if self.buffer:
-            event = await self._process_event(self.buffer)
+        
+        if len(self.chunks) == 0:
+            try:
+                response = await self.response_iterator.__anext__()
+                chunks = response.decode("utf-8").strip()      
+                self.chunks = Deque(chunks.split("\n\n"))
+            except StopAsyncIteration:
+                pass
+            
+        while len(self.chunks) > 0:
+            chunk = self.chunks.pop()
+            event = await self._process_event(chunk)
             if event:
                 return event
-
+        
         raise StopAsyncIteration()
 
     async def _process_event(self, event_data_str: str) -> Optional[T]:
