@@ -76,20 +76,19 @@ class InferenceOperations:
 
         At least one AI model that supports chat completions must be deployed in this resource.
 
-        .. note::
-
-            The packages `azure-ai-inference` and `aiohttp` must be installed prior to calling this method.
+        .. note:: The packages `azure-ai-inference` and `aiohttp` must be installed prior to calling this method.
 
         :keyword connection_name: The name of a connection to an Azure AI Services resource in your AI Foundry project.
-          resource. Optional. If not provided, the default Azure AI Services connection will be used.
+         resource. Optional. If not provided, the default Azure AI Services connection will be used.
         :type connection_name: str
 
         :return: An authenticated chat completions client
         :rtype: ~azure.ai.inference.models.ChatCompletionsClient
+
         :raises ~azure.core.exceptions.ResourceNotFoundError: if an Azure AI Services connection
-        does not exist.
+         does not exist.
         :raises ~azure.core.exceptions.ModuleNotFoundError: if the `azure-ai-inference` package
-        is not installed.
+         is not installed.
         :raises ValueError: if the connection name is an empty string.
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -162,16 +161,14 @@ class InferenceOperations:
         return client
 
     @distributed_trace_async
-    async def get_embeddings_client(self, connection_name: Optional[str] = None, **kwargs) -> "EmbeddingsClient":
+    async def get_embeddings_client(self, *, connection_name: Optional[str] = None, **kwargs) -> "EmbeddingsClient":
         """Get an authenticated asynchronousEmbeddingsClient (from the package azure-ai-inference) for the default
         Azure AI Services connected resource (if `connection_name` is not specificed), or from the Azure AI
         Services resource given by its connection name.
 
         At least one AI model that supports text embeddings must be deployed in this resource.
 
-        .. note::
-
-            The packages `azure-ai-inference` and `aiohttp` must be installed prior to calling this method.
+        .. note:: The packages `azure-ai-inference` and `aiohttp` must be installed prior to calling this method.
 
         :keyword connection_name: The name of a connection to an Azure AI Services resource in your AI Foundry project.
          resource. Optional. If not provided, the default Azure AI Services connection will be used.
@@ -179,10 +176,11 @@ class InferenceOperations:
 
         :return: An authenticated chat completions client
         :rtype: ~azure.ai.inference.models.EmbeddingsClient
+
         :raises ~azure.core.exceptions.ResourceNotFoundError: if an Azure AI Services connection
-        does not exist.
+         does not exist.
         :raises ~azure.core.exceptions.ModuleNotFoundError: if the `azure-ai-inference` package
-        is not installed.
+         is not installed.
         :raises ValueError: if the connection name is an empty string.
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -257,9 +255,7 @@ class InferenceOperations:
         Azure OpenAI connection (if `connection_name` is not specificed), or from the Azure OpenAI
         resource given by its connection name.
 
-        .. note::
-
-            The package `openai` must be installed prior to calling this method.
+        .. note:: The package `openai` must be installed prior to calling this method.
 
         :keyword api_version: The Azure OpenAI api-version to use when creating the client. Optional.
          See "Data plane - Inference" row in the table at
@@ -272,10 +268,11 @@ class InferenceOperations:
 
         :return: An authenticated AsyncAzureOpenAI client
         :rtype: ~openai.AsyncAzureOpenAI
+
         :raises ~azure.core.exceptions.ResourceNotFoundError: if an Azure OpenAI connection
-        does not exist.
+         does not exist.
         :raises ~azure.core.exceptions.ModuleNotFoundError: if the `openai` package
-        is not installed.
+         is not installed.
         :raises ValueError: if the connection name is an empty string.
         :raises ~azure.core.exceptions.HttpResponseError:
 
