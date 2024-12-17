@@ -6,11 +6,12 @@
 
 * Add optional input argument `connection_name` to methods `.inference.get_chat_completions_client`,
  `.inference.get_embeddings_client` and `.inference.get_azure_openai_client`.
-* Fix for streaming issue, https://github.com/Azure/azure-sdk-for-python/issues/38918
 
 ### Breaking Changes
 
 ### Bugs Fixed
+* Fix for streaming issue, https://github.com/Azure/azure-sdk-for-python/issues/38918
+* Fix for Async function send_email_async is not called, https://github.com/Azure/azure-sdk-for-python/issues/38898
 
 ## 1.0.0b3 (2024-12-13)
 
