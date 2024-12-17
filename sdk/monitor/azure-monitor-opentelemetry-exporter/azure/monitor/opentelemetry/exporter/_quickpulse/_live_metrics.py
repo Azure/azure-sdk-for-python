@@ -198,7 +198,8 @@ class _QuickpulseManager(metaclass=Singleton):
                     self._dependency_duration.record(duration_ms)
 
                 # Derive metrics for quickpulse filtering
-                _derive_metrics_from_telemetry_data(span)
+                data = _TelemetryData._from_span(span)
+                _derive_metrics_from_telemetry_data(data)
 
                 # Process docs for quickpulse filtering
                 _apply_document_filters_from_telemetry_data(span)
@@ -220,7 +221,8 @@ class _QuickpulseManager(metaclass=Singleton):
                             self._exception_rate_counter.add(1)
 
                     # Derive metrics for quickpulse filtering
-                    _derive_metrics_from_telemetry_data(log_record)
+                    data = _TelemetryData._from_log_record(log_record)
+                    _derive_metrics_from_telemetry_data(data)
 
                     # Process docs for quickpulse filtering
                     _apply_document_filters_from_telemetry_data(log_record)
@@ -232,15 +234,11 @@ class _QuickpulseManager(metaclass=Singleton):
 
 # Called by record_span/record_log when processing a span/log_record for metrics filtering
 # Derives metrics from projections if applicable to current filters in config
-def _derive_metrics_from_telemetry_data(span_or_log: Union[ReadableSpan, LogRecord]):
+def _derive_metrics_from_telemetry_data(data: _TelemetryData):
     metric_infos_dict: Dict[TelemetryType, List[DerivedMetricInfo]] = _get_quickpulse_derived_metric_infos()
     # if empty, filtering was not configured
     if not metric_infos_dict:
         return
-    if isinstance(span_or_log, ReadableSpan):
-        data = _TelemetryData._from_span(span_or_log)
-    else:
-        data = _TelemetryData._from_log_record(span_or_log)
     metric_infos = []  # type: ignore
     if isinstance(data, _RequestData):
         metric_infos = metric_infos_dict.get(TelemetryType.REQUEST)  # type: ignore

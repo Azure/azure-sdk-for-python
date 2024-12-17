@@ -9,7 +9,7 @@
 - Add applying filter/validating filter logic to live metrics filtering
   ([#38451](https://github.com/Azure/azure-sdk-for-python/pull/38451))
 - Implement live metrics filtering for docs
-  ([#38451](https://github.com/Azure/azure-sdk-for-python/pull/38451))
+  ([#38925](https://github.com/Azure/azure-sdk-for-python/pull/38925))
 
 ### Breaking Changes
 
