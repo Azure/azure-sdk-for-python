@@ -394,7 +394,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         """
         kwargs.setdefault("merge_span", True)
         if not connection_name:
-            raise ValueError("Endpoint name cannot be empty")
+            raise ValueError("Connection name cannot be empty")
         if include_credentials:
             connection: GetConnectionResponse = await self._get_connection_with_secrets(
                 connection_name=connection_name, ignored="ignore", **kwargs

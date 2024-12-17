@@ -42,7 +42,7 @@ class TestInference(InferenceTestBase):
     @servicePreparerInferenceTests()
     @recorded_by_proxy
     def test_inference_get_aoai_client_entra_id_auth(self, **kwargs):
-        connection_name = kwargs.pop("azure_ai_projects_inference_tests_aoai_connection_name")
+        connection_name = kwargs.pop("azure_ai_projects_inference_tests_entraid_auth_aoai_connection_name")
         api_version = kwargs.pop("azure_ai_projects_inference_tests_aoai_api_version")
         model = kwargs.pop("azure_ai_projects_inference_tests_aoai_model_deployment_name")
         with self.get_sync_client(**kwargs) as project_client:
@@ -119,7 +119,7 @@ class TestInference(InferenceTestBase):
     @pytest.mark.skip("Entra ID auth not yet supported for models in AI Services connection")
     @recorded_by_proxy
     def test_inference_get_chat_completions_client_entra_id_auth(self, **kwargs):
-        connection_name = kwargs.pop("azure_ai_projects_inference_tests_aiservices_connection_name")
+        connection_name = kwargs.pop("azure_ai_projects_inference_tests_entraid_auth_aiservices_connection_name")
         model = kwargs.pop("azure_ai_projects_inference_tests_chat_completions_model_deployment_name")
         with self.get_sync_client(**kwargs) as project_client:
             with project_client.inference.get_chat_completions_client(
@@ -188,7 +188,7 @@ class TestInference(InferenceTestBase):
     @pytest.mark.skip("Entra ID auth not yet supported for models in AI Services connection")
     @recorded_by_proxy
     def test_inference_get_embeddings_client_entra_id_auth(self, **kwargs):
-        connection_name = kwargs.pop("azure_ai_projects_inference_tests_aiservices_connection_name")
+        connection_name = kwargs.pop("azure_ai_projects_inference_tests_entraid_auth_aiservices_connection_name")
         model = kwargs.pop("azure_ai_projects_inference_tests_embeddings_model_deployment_name")
         with self.get_sync_client(**kwargs) as project_client:
             with project_client.inference.get_embeddings_client(connection_name=connection_name) as embeddings_client:
