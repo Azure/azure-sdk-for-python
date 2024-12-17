@@ -1246,25 +1246,22 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
     async def __anext__(self) -> T:
         if self.response_iterator is None:
             raise ValueError("The response handler was not initialized.")
-        while True:
-            try:
-                chunk = await self.response_iterator.__anext__()
-                self.buffer += chunk.decode("utf-8")
-            except StopAsyncIteration:
-                if self.buffer:
-                    event_data_str, self.buffer = self.buffer, ""
-                    if event_data_str:
-                        event = await self._process_event(event_data_str)
-                        if event:
-                            return event
-                        continue
-                raise
 
-            while "\n\n" in self.buffer:
-                event_data_str, self.buffer = self.buffer.split("\n\n", 1)
-                event = await self._process_event(event_data_str)
+        async for chunk in self.response_iterator:
+            self.buffer += chunk.decode("utf-8")
+            split_buffer = self.buffer.split("\n\n")
+            self.buffer = split_buffer[-1]
+            for ln in split_buffer[:-1]:
+                event = await self._process_event(ln)
                 if event:
                     return event
+
+        if self.buffer:
+            event = await self._process_event(self.buffer)
+            if event:
+                return event
+
+        raise StopAsyncIteration()
 
     async def _process_event(self, event_data_str: str) -> Optional[T]:
         raise NotImplementedError("This method needs to be implemented.")
@@ -1305,25 +1302,22 @@ class BaseAgentEventHandler(Iterator[T]):
     def __next__(self) -> T:
         if self.response_iterator is None:
             raise ValueError("The response handler was not initialized.")
-        while True:
-            try:
-                chunk = self.response_iterator.__next__()
-                self.buffer += chunk.decode("utf-8")
-            except StopAsyncIteration:
-                if self.buffer:
-                    event_data_str, self.buffer = self.buffer, ""
-                    if event_data_str:
-                        event = self._process_event(event_data_str)
-                        if event:
-                            return event
-                        continue
-                raise
 
-            while "\n\n" in self.buffer:
-                event_data_str, self.buffer = self.buffer.split("\n\n", 1)
-                event = self._process_event(event_data_str)
+        for chunk in self.response_iterator:
+            self.buffer += chunk.decode("utf-8")
+            split_buffer = self.buffer.split("\n\n")
+            self.buffer = split_buffer[-1]
+            for ln in split_buffer[:-1]:
+                event = self._process_event(ln)
                 if event:
                     return event
+
+        if self.buffer:
+            event = self._process_event(self.buffer)
+            if event:
+                return event
+
+        raise StopIteration()
 
     def _process_event(self, event_data_str: str) -> Optional[T]:
         raise NotImplementedError("This method needs to be implemented.")
@@ -1336,7 +1330,7 @@ class BaseAgentEventHandler(Iterator[T]):
         try:
             for _ in self:
                 pass
-        except StopAsyncIteration:
+        except StopIteration:
             pass
 
 
