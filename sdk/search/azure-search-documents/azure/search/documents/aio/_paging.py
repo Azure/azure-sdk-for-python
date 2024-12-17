@@ -17,6 +17,7 @@ from .._api_versions import DEFAULT_VERSION
 
 
 class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
+    """A pageable list of search results."""
     def __init__(self, *args, **kwargs) -> None:
         super(AsyncSearchItemPaged, self).__init__(*args, **kwargs)
         self._first_page_iterator_instance: Optional[AsyncSearchPageIterator] = None
@@ -99,6 +100,7 @@ def _ensure_response(f):
 
 
 class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
+    """An iterator of search results."""
     def __init__(self, client, initial_query, kwargs, continuation_token=None) -> None:
         super(AsyncSearchPageIterator, self).__init__(
             get_next=self._get_next_cb,

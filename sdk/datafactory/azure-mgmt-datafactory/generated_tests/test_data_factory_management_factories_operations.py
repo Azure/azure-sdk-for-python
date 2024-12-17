@@ -20,7 +20,7 @@ class TestDataFactoryManagementFactoriesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_factories_list(self, resource_group):
         response = self.client.factories.list(
             api_version="2018-06-01",
         )
@@ -30,7 +30,7 @@ class TestDataFactoryManagementFactoriesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_configure_factory_repo(self, resource_group):
+    def test_factories_configure_factory_repo(self, resource_group):
         response = self.client.factories.configure_factory_repo(
             location_id="str",
             factory_repo_update={"factoryResourceId": "str", "repoConfiguration": "factory_repo_configuration"},
@@ -42,7 +42,7 @@ class TestDataFactoryManagementFactoriesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_factories_list_by_resource_group(self, resource_group):
         response = self.client.factories.list_by_resource_group(
             resource_group_name=resource_group.name,
             api_version="2018-06-01",
@@ -53,7 +53,7 @@ class TestDataFactoryManagementFactoriesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_factories_create_or_update(self, resource_group):
         response = self.client.factories.create_or_update(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -92,7 +92,7 @@ class TestDataFactoryManagementFactoriesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_factories_update(self, resource_group):
         response = self.client.factories.update(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -114,7 +114,7 @@ class TestDataFactoryManagementFactoriesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_factories_get(self, resource_group):
         response = self.client.factories.get(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -126,7 +126,7 @@ class TestDataFactoryManagementFactoriesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_factories_delete(self, resource_group):
         response = self.client.factories.delete(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -138,7 +138,7 @@ class TestDataFactoryManagementFactoriesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_git_hub_access_token(self, resource_group):
+    def test_factories_get_git_hub_access_token(self, resource_group):
         response = self.client.factories.get_git_hub_access_token(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -156,7 +156,7 @@ class TestDataFactoryManagementFactoriesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_data_plane_access(self, resource_group):
+    def test_factories_get_data_plane_access(self, resource_group):
         response = self.client.factories.get_data_plane_access(
             resource_group_name=resource_group.name,
             factory_name="str",

@@ -53,7 +53,7 @@ async def analyze_receipts():
     async with document_intelligence_client:
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_intelligence_client.begin_analyze_document(
-                "prebuilt-receipt", analyze_request=f, locale="en-US", content_type="application/octet-stream"
+                "prebuilt-receipt", body=f, locale="en-US"
             )
         receipts: AnalyzeResult = await poller.result()
 

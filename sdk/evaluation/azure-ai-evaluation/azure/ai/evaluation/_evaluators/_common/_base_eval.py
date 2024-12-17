@@ -25,6 +25,7 @@ class DerivedEvalInput(TypedDict, total=False):
     query: Dict[str, Any]
     response: Dict[str, Any]
     context: str
+    ground_truth: str
 
 
 AggregateResult: TypeAlias = Dict[str, Union[float, Dict[str, List[T]]]]
@@ -158,6 +159,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         include_context = "context" in self._singleton_inputs
         include_query = "query" in self._singleton_inputs
         include_response = "response" in self._singleton_inputs
+        include_ground_truth = "ground_truth" in self._singleton_inputs
 
         def converter(conversation: Dict) -> List[DerivedEvalInput]:
             messages = cast(List[Dict[str, Any]], conversation["messages"])
@@ -198,6 +200,8 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                     eval_input["response"] = response.get("content", "")
                 if include_context:
                     eval_input["context"] = str(context)
+                if include_ground_truth:
+                    eval_input["ground_truth"] = response.get("ground_truth", "")
                 eval_inputs.append(eval_input)
             return eval_inputs
 
@@ -402,7 +406,9 @@ class AsyncEvaluatorBase:
     # are just not passed into this function instead of ending up in kwargs.
     # Since we want this to be relatively call-agnostic, we just account for every input that any children
     # are known to throw at this, mash them into kwargs, and then pass them into the real call.
-    async def __call__(self, *, query=None, response=None, context=None, conversation=None, **kwargs):
+    async def __call__(
+        self, *, query=None, response=None, context=None, conversation=None, ground_truth=None, **kwargs
+    ):
         if conversation is not None:
             kwargs["conversation"] = conversation
         if query is not None:
@@ -411,4 +417,6 @@ class AsyncEvaluatorBase:
             kwargs["response"] = response
         if context is not None:
             kwargs["context"] = context
+        if ground_truth is not None:
+            kwargs["ground_truth"] = ground_truth
         return await self._real_call(**kwargs)
