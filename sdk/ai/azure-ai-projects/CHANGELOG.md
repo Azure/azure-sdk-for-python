@@ -4,6 +4,9 @@
 
 ### Features Added
 
+* Add optional input argument `connection_name` to methods `.inference.get_chat_completions_client`,
+ `.inference.get_embeddings_client` and `.inference.get_azure_openai_client`.
+
 ### Breaking Changes
 
 ### Bugs Fixed
