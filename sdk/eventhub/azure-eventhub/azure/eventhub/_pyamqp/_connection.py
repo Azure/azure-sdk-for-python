@@ -42,7 +42,7 @@ _CLOSING_STATES = (
 )
 
 
-def get_local_timeout(now: float, idle_timeout: Optional[float], last_frame_received_time: float) -> bool:
+def get_local_timeout(now: float, idle_timeout: float, last_frame_received_time: float) -> bool:
     """Check whether the local timeout has been reached since a new incoming frame was received.
 
     :param float now: The current time to check against.
@@ -90,7 +90,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
      and 1 for transport type AmqpOverWebsocket.
     """
 
-    def __init__(  # pylint:disable=too-many-locals,too-many-statements
+    def __init__(  # pylint:disable=too-many-locals
         self,
         endpoint: str,
         *,
