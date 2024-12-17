@@ -71,35 +71,54 @@ class InferenceOperations:
         self._outer_instance = outer_instance
 
     @distributed_trace
-    def get_chat_completions_client(self, **kwargs) -> "ChatCompletionsClient":
+    def get_chat_completions_client(
+        self, *, connection_name: Optional[str] = None, **kwargs
+    ) -> "ChatCompletionsClient":
         """Get an authenticated ChatCompletionsClient (from the package azure-ai-inference) for the default
-        Azure AI Services connected resource. At least one AI model that supports chat completions must be deployed
-        in this resource. The package `azure-ai-inference` must be installed prior to calling this method.
-        Raises ~azure.core.exceptions.ResourceNotFoundError exception if an Azure AI Services connection
-        does not exist.
-        Raises ~azure.core.exceptions.ModuleNotFoundError exception if the `azure-ai-inference` package
-        is not installed.
+        Azure AI Services connected resource (if `connection_name` is not specificed), or from the Azure AI
+        Services resource given by its connection name.
+
+        At least one AI model that supports chat completions must be deployed in this resource.
+
+        .. note:: The package `azure-ai-inference` must be installed prior to calling this method.
+
+        :keyword connection_name: The name of a connection to an Azure AI Services resource in your AI Foundry project.
+         resource. Optional. If not provided, the default Azure AI Services connection will be used.
+        :type connection_name: str
 
         :return: An authenticated chat completions client, or `None` if no Azure AI Services connection is found.
         :rtype: ~azure.ai.inference.models.ChatCompletionsClient
-        :raises ~azure.core.exceptions.ResourceNotFoundError:
-        :raises ~azure.core.exceptions.ModuleNotFoundError:
+
+        :raises ~azure.core.exceptions.ResourceNotFoundError: if an Azure AI Services connection
+         does not exist.
+        :raises ~azure.core.exceptions.ModuleNotFoundError: if the `azure-ai-inference` package
+         is not installed.
+        :raises ValueError: if the connection name is an empty string.
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)
+
+        if connection_name is not None and not connection_name:
+            raise ValueError("Connection name cannot be empty")
 
         # Back-door way to access the old behavior where each AI model (non-OpenAI) was hosted on
         # a separate "Serverless" connection. This is now deprecated.
         use_serverless_connection: bool = os.getenv("USE_SERVERLESS_CONNECTION", None) == "true"
 
-        if use_serverless_connection:
-            connection = self._outer_instance.connections.get_default(
-                connection_type=ConnectionType.SERVERLESS, include_credentials=True, **kwargs
+        if connection_name:
+            connection = self._outer_instance.connections.get(
+                connection_name=connection_name, include_credentials=True, **kwargs
             )
         else:
-            connection = self._outer_instance.connections.get_default(
-                connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
-            )
+            if use_serverless_connection:
+                connection = self._outer_instance.connections.get_default(
+                    connection_type=ConnectionType.SERVERLESS, include_credentials=True, **kwargs
+                )
+            else:
+                connection = self._outer_instance.connections.get_default(
+                    connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
+                )
+
         logger.debug("[InferenceOperations.get_chat_completions_client] connection = %s", str(connection))
 
         try:
@@ -146,35 +165,52 @@ class InferenceOperations:
         return client
 
     @distributed_trace
-    def get_embeddings_client(self, **kwargs) -> "EmbeddingsClient":
+    def get_embeddings_client(self, *, connection_name: Optional[str] = None, **kwargs) -> "EmbeddingsClient":
         """Get an authenticated EmbeddingsClient (from the package azure-ai-inference) for the default
-        Azure AI Services connected resource. At least one AI model that supports text embeddings must be deployed
-        in this resource. The package `azure-ai-inference` must be installed prior to calling this method.
-        Raises ~azure.core.exceptions.ResourceNotFoundError exception if an Azure AI Services connection
-        does not exist.
-        Raises ~azure.core.exceptions.ModuleNotFoundError exception if the `azure-ai-inference` package
-        is not installed.
+        Azure AI Services connected resource (if `connection_name` is not specificed), or from the Azure AI
+        Services resource given by its connection name.
+
+        At least one AI model that supports text embeddings must be deployed in this resource.
+
+        .. note:: The package `azure-ai-inference` must be installed prior to calling this method.
+
+        :keyword connection_name: The name of a connection to an Azure AI Services resource in your AI Foundry project.
+         resource. Optional. If not provided, the default Azure AI Services connection will be used.
+        :type connection_name: str
 
         :return: An authenticated chat completions client
         :rtype: ~azure.ai.inference.models.EmbeddingsClient
-        :raises ~azure.core.exceptions.ResourceNotFoundError:
-        :raises ~azure.core.exceptions.ModuleNotFoundError:
+
+        :raises ~azure.core.exceptions.ResourceNotFoundError: if an Azure AI Services connection
+         does not exist.
+        :raises ~azure.core.exceptions.ModuleNotFoundError: if the `azure-ai-inference` package
+         is not installed.
+        :raises ValueError: if the connection name is an empty string.
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)
+
+        if connection_name is not None and not connection_name:
+            raise ValueError("Connection name cannot be empty")
 
         # Back-door way to access the old behavior where each AI model (non-OpenAI) was hosted on
         # a separate "Serverless" connection. This is now deprecated.
         use_serverless_connection: bool = os.getenv("USE_SERVERLESS_CONNECTION", None) == "true"
 
-        if use_serverless_connection:
-            connection = self._outer_instance.connections.get_default(
-                connection_type=ConnectionType.SERVERLESS, include_credentials=True, **kwargs
+        if connection_name:
+            connection = self._outer_instance.connections.get(
+                connection_name=connection_name, include_credentials=True, **kwargs
             )
         else:
-            connection = self._outer_instance.connections.get_default(
-                connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
-            )
+            if use_serverless_connection:
+                connection = self._outer_instance.connections.get_default(
+                    connection_type=ConnectionType.SERVERLESS, include_credentials=True, **kwargs
+                )
+            else:
+                connection = self._outer_instance.connections.get_default(
+                    connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
+                )
+
         logger.debug("[InferenceOperations.get_embeddings_client] connection = %s", str(connection))
 
         try:
@@ -216,30 +252,48 @@ class InferenceOperations:
         return client
 
     @distributed_trace
-    def get_azure_openai_client(self, *, api_version: Optional[str] = None, **kwargs) -> "AzureOpenAI":
+    def get_azure_openai_client(
+        self, *, api_version: Optional[str] = None, connection_name: Optional[str] = None, **kwargs
+    ) -> "AzureOpenAI":
         """Get an authenticated AzureOpenAI client (from the `openai` package) for the default
-        Azure OpenAI connection. The package `openai` must be installed prior to calling this method.
-        Raises ~azure.core.exceptions.ResourceNotFoundError exception if an Azure OpenAI connection
-        does not exist.
-        Raises ~azure.core.exceptions.ModuleNotFoundError exception if the `openai` package
-        is not installed.
+        Azure OpenAI connection (if `connection_name` is not specificed), or from the Azure OpenAI
+        resource given by its connection name.
+
+        .. note:: The package `openai` must be installed prior to calling this method.
 
         :keyword api_version: The Azure OpenAI api-version to use when creating the client. Optional.
          See "Data plane - Inference" row in the table at
          https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs. If this keyword
          is not specified, you must set the environment variable `OPENAI_API_VERSION` instead.
         :paramtype api_version: str
+        :keyword connection_name: The name of a connection to an Azure OpenAI resource in your AI Foundry project.
+         resource. Optional. If not provided, the default Azure OpenAI connection will be used.
+        :type connection_name: str
+
         :return: An authenticated AzureOpenAI client
         :rtype: ~openai.AzureOpenAI
-        :raises ~azure.core.exceptions.ResourceNotFoundError:
-        :raises ~azure.core.exceptions.ModuleNotFoundError:
+
+        :raises ~azure.core.exceptions.ResourceNotFoundError: if an Azure OpenAI connection
+         does not exist.
+        :raises ~azure.core.exceptions.ModuleNotFoundError: if the `openai` package
+         is not installed.
+        :raises ValueError: if the connection name is an empty string.
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
         kwargs.setdefault("merge_span", True)
-        connection = self._outer_instance.connections.get_default(
-            connection_type=ConnectionType.AZURE_OPEN_AI, include_credentials=True, **kwargs
-        )
+
+        if connection_name is not None and not connection_name:
+            raise ValueError("Connection name cannot be empty")
+
+        if connection_name:
+            connection = self._outer_instance.connections.get(
+                connection_name=connection_name, include_credentials=True, **kwargs
+            )
+        else:
+            connection = self._outer_instance.connections.get_default(
+                connection_type=ConnectionType.AZURE_OPEN_AI, include_credentials=True, **kwargs
+            )
+
         logger.debug("[InferenceOperations.get_azure_openai_client] connection = %s", str(connection))
 
         try:
