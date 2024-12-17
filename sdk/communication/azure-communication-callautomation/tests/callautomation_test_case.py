@@ -396,7 +396,7 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
 
         return unique_id, call_connection_caller, call_connection_target, call_automation_client_caller, callback_url
     
-    def redact_by_key(self, data: Dict[str, dict[str, any]], keys_to_redact: List[str]) -> Dict[str, Dict[str, any]]:
+    def redact_by_key(self, data: Dict[str, Dict[str, any]], keys_to_redact: List[str]) -> Dict[str, Dict[str, any]]:
         for _, inner_dict in data.items():
             for key in keys_to_redact:
                 if key in inner_dict:
