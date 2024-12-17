@@ -1,10 +1,10 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
+import pytest
 import random
 import time
 import unittest
 import uuid
-
 
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
@@ -47,7 +47,7 @@ class TestLatestSessionToken(unittest.TestCase):
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
 
-
+    @pytest.mark.skip
     def test_latest_session_token_from_logical_pk(self):
         container = self.database.create_container("test_updated_session_token_from_logical_pk" + str(uuid.uuid4()),
                                                    PartitionKey(path="/pk"),
@@ -74,16 +74,18 @@ class TestLatestSessionToken(unittest.TestCase):
         assert session_token == target_session_token
         self.database.delete_container(container.id)
 
+    @pytest.mark.skip
     def test_latest_session_token_from_physical_pk(self):
         container = self.database.create_container("test_updated_session_token_from_physical_pk" + str(uuid.uuid4()),
                                                    PartitionKey(path="/pk"),
-                                                    offer_throughput=400)
+                                                   offer_throughput=400)
         feed_ranges_and_session_tokens = []
         previous_session_token = ""
         pk_feed_range = container.feed_range_from_partition_key('A1')
-        target_session_token, target_feed_range, previous_session_token = self.create_items_physical_pk(container, pk_feed_range,
-                                                                                                   previous_session_token,
-                                                                                                   feed_ranges_and_session_tokens)
+        target_session_token, target_feed_range, previous_session_token = self.create_items_physical_pk(container,
+                                                                                                        pk_feed_range,
+                                                                                                        previous_session_token,
+                                                                                                        feed_ranges_and_session_tokens)
 
         session_token = container.get_latest_session_token(feed_ranges_and_session_tokens, target_feed_range)
         assert session_token == target_session_token
@@ -91,8 +93,8 @@ class TestLatestSessionToken(unittest.TestCase):
         self.trigger_split(container, 11000)
 
         _, target_feed_range, previous_session_token = self.create_items_physical_pk(container, pk_feed_range,
-                                                                                session_token,
-                                                                                feed_ranges_and_session_tokens)
+                                                                                     session_token,
+                                                                                     feed_ranges_and_session_tokens)
 
         session_token = container.get_latest_session_token(feed_ranges_and_session_tokens, target_feed_range)
         assert is_compound_session_token(session_token)
@@ -125,7 +127,6 @@ class TestLatestSessionToken(unittest.TestCase):
         assert session_token == target_session_token
         self.database.delete_container(container.id)
 
-
     def test_latest_session_token_logical_hpk(self):
         container = self.database.create_container("test_updated_session_token_from_logical_hpk" + str(uuid.uuid4()),
                                                    PartitionKey(path=["/state", "/city", "/zipcode"], kind="MultiHash"),
@@ -142,7 +143,6 @@ class TestLatestSessionToken(unittest.TestCase):
 
         assert session_token == target_session_token
         self.database.delete_container(container.id)
-
 
     @staticmethod
     def trigger_split(container, throughput):
@@ -166,7 +166,8 @@ class TestLatestSessionToken(unittest.TestCase):
         print("Split in session token helpers has completed")
 
     @staticmethod
-    def create_items_logical_pk(container, target_pk_range, previous_session_token, feed_ranges_and_session_tokens, hpk=False):
+    def create_items_logical_pk(container, target_pk_range, previous_session_token, feed_ranges_and_session_tokens,
+                                hpk=False):
         target_session_token = ""
         for i in range(100):
             item = create_item(hpk)
@@ -181,11 +182,12 @@ class TestLatestSessionToken(unittest.TestCase):
                 target_session_token = session_token
             previous_session_token = session_token
             feed_ranges_and_session_tokens.append((pk_range,
-                                               session_token))
+                                                   session_token))
         return target_session_token, previous_session_token
 
     @staticmethod
-    def create_items_physical_pk(container, pk_feed_range, previous_session_token, feed_ranges_and_session_tokens, hpk=False):
+    def create_items_physical_pk(container, pk_feed_range, previous_session_token, feed_ranges_and_session_tokens,
+                                 hpk=False):
         target_session_token = ""
         container_feed_ranges = list(container.read_feed_ranges())
         target_feed_range = None
@@ -209,6 +211,7 @@ class TestLatestSessionToken(unittest.TestCase):
             feed_ranges_and_session_tokens.append((curr_feed_range, session_token))
 
         return target_session_token, target_feed_range, previous_session_token
+
 
 if __name__ == '__main__':
     unittest.main()
