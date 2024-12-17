@@ -10,7 +10,7 @@ import datetime
 import calendar
 import logging
 from typing import TYPE_CHECKING, cast, Type, Optional, Dict, Union, Any, Iterable, Tuple, Mapping, Callable
-
+from datetime import timezone
 from .amqp import AmqpAnnotatedMessage, AmqpMessageHeader
 from ._version import VERSION
 from ._constants import (
@@ -44,40 +44,8 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class UTC(datetime.tzinfo):
-    """Time Zone info for handling UTC"""
 
-    def utcoffset(self, dt):
-        """UTF offset for UTC is 0.
-        :param any dt: Ignored.
-        :return: Datetime offset.
-        :rtype: datetime.timedelta
-        """
-        return datetime.timedelta(0)
-
-    def tzname(self, dt):
-        """Timestamp representation.
-        :param any dt: Ignored.
-        :return: Timestamp representation.
-        :rtype: str
-        """
-        return "Z"
-
-    def dst(self, dt):
-        """No daylight saving for UTC.
-        :param any dt: Ignored.
-        :return: Offset for daylight savings time.
-        :rtype: datetime.timedelta
-        """
-        return datetime.timedelta(hours=1)
-
-
-try:
-    from datetime import timezone
-
-    TZ_UTC: timezone = timezone.utc
-except ImportError:
-    TZ_UTC = UTC()  # type: ignore
+TZ_UTC: timezone = timezone.utc
 
 
 def utc_from_timestamp(timestamp):
