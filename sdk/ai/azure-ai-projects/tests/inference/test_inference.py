@@ -116,7 +116,6 @@ class TestInference(InferenceTestBase):
                 assert any(item in response.choices[0].message.content for item in contains)
 
     @servicePreparerInferenceTests()
-    @pytest.mark.skip("Entra ID auth not yet supported for models in AI Services connection")
     @recorded_by_proxy
     def test_inference_get_chat_completions_client_entra_id_auth(self, **kwargs):
         connection_name = kwargs.pop("azure_ai_projects_inference_tests_entraid_auth_aiservices_connection_name")
@@ -185,7 +184,6 @@ class TestInference(InferenceTestBase):
                     assert item.embedding[-1] != 0
 
     @servicePreparerInferenceTests()
-    @pytest.mark.skip("Entra ID auth not yet supported for models in AI Services connection")
     @recorded_by_proxy
     def test_inference_get_embeddings_client_entra_id_auth(self, **kwargs):
         connection_name = kwargs.pop("azure_ai_projects_inference_tests_entraid_auth_aiservices_connection_name")

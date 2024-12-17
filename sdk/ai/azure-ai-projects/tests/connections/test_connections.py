@@ -112,9 +112,8 @@ class TestConnections(ConnectionsTestBase):
                     expected_connection_type=ConnectionType.AZURE_AI_SERVICES,
                     expected_authentication_type=AuthenticationType.ENTRA_ID,
                 )
-                # TODO: Enable once Entra ID with non-OpenAI models works
-                # if (include_credentials):
-                #    ConnectionsTestBase.validate_inference(connection, chat_completions_model_deployment_name)
+                if (include_credentials):
+                    ConnectionsTestBase.validate_inference(connection, chat_completions_model_deployment_name)
 
     @servicePreparerConnectionsTests()
     @recorded_by_proxy
