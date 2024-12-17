@@ -45,7 +45,7 @@ with project_client:
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-assistant",
         instructions="You are a helpful assistant",
-        toolset=toolset
+        toolset=toolset,
     )
     # [END create_agent_toolset]
     print(f"Created agent, ID: {agent.id}")

@@ -278,7 +278,7 @@ agent = project_client.agents.create_agent(
     model=os.environ["MODEL_DEPLOYMENT_NAME"],
     name="my-assistant",
     instructions="You are a helpful assistant",
-    toolset=toolset
+    toolset=toolset,
 )
 ```
 
@@ -497,7 +497,7 @@ agent = project_client.agents.create_agent(
     model=os.environ["MODEL_DEPLOYMENT_NAME"],
     name="my-assistant",
     instructions="You are a helpful assistant",
-    toolset=toolset
+    toolset=toolset,
 )
 ```
 
@@ -592,7 +592,7 @@ with project_client:
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-assistant",
         instructions="You are a helpful assistant",
-        tools=openapi.definitions
+        tools=openapi.definitions,
     )
 ```
 

@@ -49,7 +49,7 @@ with project_client:
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-assistant",
         instructions="You are a helpful assistant",
-        tools=openapi.definitions
+        tools=openapi.definitions,
     )
 
     # [END create_agent_with_openapi]

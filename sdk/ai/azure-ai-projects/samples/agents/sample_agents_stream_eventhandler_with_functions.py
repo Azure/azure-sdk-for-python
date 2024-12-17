@@ -44,6 +44,7 @@ project_client = AIProjectClient.from_connection_string(
 class MyEventHandler(AgentEventHandler):
 
     def __init__(self, functions: FunctionTool) -> None:
+        super().__init__()
         self.functions = functions
         super().__init__()
 
