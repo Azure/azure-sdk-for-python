@@ -108,7 +108,7 @@ class NfsFileType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     REGULAR = "Regular"
     DIRECTORY = "Directory"
-    SYMLINK = "Symlink"
+    SYM_LINK = "SymLink"
 
 
 class OwnerCopyMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
