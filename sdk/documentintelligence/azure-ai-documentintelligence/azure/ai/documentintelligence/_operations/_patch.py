@@ -591,7 +591,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            if isinstance(body, io.BytesIO):
+            if isinstance(body, io.BytesIO) or isinstance(body, bytes):
                 content_type = "application/octet-stream"
             raw_result = self._analyze_document_initial(
                 model_id=model_id,
@@ -682,7 +682,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-        if isinstance(body, io.BytesIO):
+        if isinstance(body, io.BytesIO) or isinstance(body, bytes):
             content_type = "application/octet-stream"
         return super().begin_classify_document(  # type: ignore[arg-type, misc]
             classifier_id=classifier_id,
