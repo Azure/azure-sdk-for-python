@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import os
 import sys
 import datetime
 import logging
@@ -14,13 +15,12 @@ import pathlib
 import glob
 import datetime
 import subprocess
+import csv
 from typing import Any
 
-from azure.core.serialization import AzureJSONEncoder
-from azure.data.tables import TableClient
-from azure.identity import DefaultAzureCredential
-from ci_tools.parsing import ParsedSetup
+from github import Github, Auth
 
+from ci_tools.parsing import ParsedSetup
 from ci_tools.environment_exclusions import (
     IGNORE_PACKAGES,
     FILTER_EXCLUSIONS,
@@ -83,11 +83,9 @@ RESOLUTION_IMPOSSIBLE_LIBRARIES = {
 }
 
 
-def add_entity(package: str, packages_to_score: dict[str, Any], entities: list[tuple[str, dict[str, Any]]]) -> None:
+def add_entity(package: str, packages_to_score: dict[str, Any], entities: list[dict[str, Any]]) -> None:
     d = packages_to_score[package]["Date"]
     entity = {
-        "RowKey": package,
-        "PartitionKey": str(datetime.date(d.year, d.month, d.day)),
         "Package": package,
         "Date": d,
         "LatestVersion": packages_to_score[package]["LatestVersion"],
@@ -100,7 +98,7 @@ def add_entity(package: str, packages_to_score: dict[str, Any], entities: list[t
         "SDKTeamOwned": packages_to_score[package]["SDKTeamOwned"],
         "Active": packages_to_score[package]["Active"]
     }
-    entities.append(("create", entity))
+    entities.append(entity)
 
 
 def install(packages: list[str]) -> None:
@@ -128,7 +126,7 @@ def uninstall_deps(deps: list[str]) -> None:
     subprocess.check_call(commands)
 
 
-def score_package(package: str, packages_to_score: dict[str, Any], entities: list[tuple[str, dict[str, Any]]]) -> None:
+def score_package(package: str, packages_to_score: dict[str, Any], entities: list[dict[str, Any]]) -> None:
     try:
         logging.info(f"Running verifytypes on {package}")
         commands = [sys.executable, "-m", "pyright", "--verifytypes", packages_to_score[package]["Module"], "--ignoreexternal", "--outputjson"]
@@ -158,30 +156,28 @@ def get_alpha_installs(packages_to_score: dict[str, Any]) -> tuple[list[str], di
     packages = json.loads(feed_resp.text)
     versions_to_install = {}
 
+    # Dev feed doesn't default to latest version, so we have to check publish dates for most recent
     for package in packages["value"]:
         if package["name"] in packages_to_score:
             url = f"{package['url']}/Versions"
             versions = requests.get(url)
             version_list = json.loads(versions.text)["value"]
-            latest_publish_date = None
-            for version in version_list:
-                current_latest = datetime.datetime.strptime(version["publishDate"].split(".")[0], "%Y-%m-%dT%H:%M:%S")
-                if latest_publish_date is None:
-                    latest_publish_date = current_latest
-                    versions_to_install[package["name"]] = version["version"]
-                else:
-                    if latest_publish_date < current_latest:
-                        latest_publish_date = current_latest
-                        versions_to_install[package["name"]] = version["version"]
+            latest_version = max(version_list, key=lambda v: datetime.datetime.strptime(v["publishDate"].split(".")[0], "%Y-%m-%dT%H:%M:%S"))
+            versions_to_install[package["name"]] = latest_version["version"]
 
+    extra_index_url = ("--extra-index-url", "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple", "--pre")
     first_round = []
     second_round = {}
+
     for package_name, version in versions_to_install.items():
         packages_to_score[package_name].update({'LatestVersion': version})
+        package_info = [f"{package_name}=={version}", *extra_index_url]
+        
         if package_name in RESOLUTION_IMPOSSIBLE_LIBRARIES:
-            second_round[package_name] = [f"{package_name}=={version}", "--extra-index-url", "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple", "--pre"]
+            second_round[package_name] = package_info
         else:
-            first_round.extend([f"{package_name}=={version}", "--extra-index-url", "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple", "--pre"])
+            first_round.extend(package_info)
+
     return first_round, second_round
 
 
@@ -227,12 +223,46 @@ def get_packages_to_score() -> dict[str, dict[str, Any]]:
     return sorted_libs
 
 
-def update_main_typescores() -> None:
-    client = TableClient(
-        endpoint="https://pythonsdktypescoring.table.core.windows.net",
-        table_name="PythonSDKTypeScoreMain",
-        credential=DefaultAzureCredential()
+def append_results_to_csv(entities: list[dict[str, Any]]) -> None:
+    typescore_path = pathlib.Path(__file__).parent
+
+    github = Github(auth=Auth.Token(os.environ["GH_TOKEN"]))
+    repo = github.get_repo("Azure/azure-sdk-for-python")
+
+    path = "scripts/repo_type_completeness/typescores.csv"
+    content = repo.get_contents(path, ref="python-sdk-type-completeness")
+    decoded_content = content.decoded_content.decode("utf-8")
+
+    with open(typescore_path / "typescores.csv", mode="a", newline='', encoding="utf-8") as file:
+        file.write(decoded_content)
+        writer = csv.writer(file)
+
+        for data in entities:
+            row = [
+                data["Package"],
+                data["Date"],
+                data["LatestVersion"],
+                data["Score"],
+                data["PyTyped"],
+                data["Pyright"],
+                data["Mypy"],
+                data["Samples"],
+                data["Verifytypes"],
+                data["SDKTeamOwned"],
+                data["Active"],
+            ]
+            writer.writerow(row)
+
+    repo.update_file(
+        path=path,
+        message="Update typing dashboard",
+        content=open(path, "rb").read(),
+        branch="python-sdk-type-completeness",
+        sha=content.sha
     )
+
+
+def update_main_typescores() -> None:
     packages_to_score = get_packages_to_score()
 
     first_round, second_round = get_alpha_installs(packages_to_score)
@@ -250,11 +280,7 @@ def update_main_typescores() -> None:
         install(second_round[package])
         score_package(package, packages_to_score, entities)
 
-    # write to file (just in case)
-    with open("scores.json", "w+") as fd:
-        fd.write(json.dumps(entities, cls=AzureJSONEncoder))
-
-    client.submit_transaction(entities)
+    append_results_to_csv(entities)
 
 
 if __name__ == "__main__":
