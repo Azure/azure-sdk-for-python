@@ -6,8 +6,8 @@
 
 from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AmlCompute as AmlComputeRest
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2022_12_01_preview.models import AmlCompute as AmlComputeRest
+from azure.ai.ml._restclient.v2022_12_01_preview.models import (
     AmlComputeProperties,
     ComputeResource,
     ResourceId,
@@ -244,8 +244,11 @@ class AmlCompute(Compute):
             ),
         )
         remote_login_public_access = "Enabled"
+        disableLocalAuth = True
         if self.ssh_public_access_enabled is not None:
             remote_login_public_access = "Enabled" if self.ssh_public_access_enabled else "Disabled"
+            disableLocalAuth = False if self.ssh_public_access_enabled else True
+
         else:
             remote_login_public_access = "NotSpecified"
         aml_prop = AmlComputeProperties(
@@ -258,7 +261,12 @@ class AmlCompute(Compute):
             enable_node_public_ip=self.enable_node_public_ip,
         )
 
-        aml_comp = AmlComputeRest(description=self.description, compute_type=self.type, properties=aml_prop)
+        aml_comp = AmlComputeRest(
+            description=self.description,
+            compute_type=self.type,
+            properties=aml_prop,
+            disable_local_auth=disableLocalAuth
+        )
         return ComputeResource(
             location=self.location,
             properties=aml_comp,
