@@ -3,7 +3,7 @@
 from datetime import datetime, timedelta, timezone
 from typing import List, Optional, Tuple, Union
 
-from opentelemetry.sdk._logs import LogData
+from opentelemetry.sdk._logs import LogRecord
 from opentelemetry.sdk.metrics._internal.point import (
     NumberDataPoint,
     HistogramDataPoint,
@@ -125,9 +125,9 @@ def _get_span_document(span: ReadableSpan) -> Union[RemoteDependencyDocument, Re
 
 
 # mypy: disable-error-code="assignment"
-def _get_log_record_document(log_data: LogData) -> Union[ExceptionDocument, TraceDocument]:
-    exc_type = log_data.log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)  # type: ignore
-    exc_message = log_data.log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)  # type: ignore
+def _get_log_record_document(log_record: LogRecord) -> Union[ExceptionDocument, TraceDocument]:
+    exc_type = log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)  # type: ignore
+    exc_message = log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)  # type: ignore
     if exc_type is not None or exc_message is not None:
         document = ExceptionDocument(
             document_type=DocumentType.EXCEPTION,
@@ -137,7 +137,7 @@ def _get_log_record_document(log_data: LogData) -> Union[ExceptionDocument, Trac
     else:
         document = TraceDocument(
             document_type=DocumentType.TRACE,
-            message=log_data.log_record.body,
+            message=log_record.body,
         )
     return document
 
