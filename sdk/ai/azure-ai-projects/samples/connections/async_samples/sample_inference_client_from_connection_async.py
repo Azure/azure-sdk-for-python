@@ -28,10 +28,10 @@ USAGE:
 
 import asyncio
 import os
+from typing import cast
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import ConnectionType, AuthenticationType
 from azure.identity.aio import DefaultAzureCredential
-from typing import cast
 
 
 async def sample_inference_client_from_connection() -> None:
@@ -58,14 +58,14 @@ async def sample_inference_client_from_connection() -> None:
         from openai import AsyncAzureOpenAI
 
         if connection.authentication_type == AuthenticationType.API_KEY:
-            print("====> Creating AzureOpenAI client using API key authentication")
+            print("====> Creating AsyncAzureOpenAI client using API key authentication")
             aoai_client = AsyncAzureOpenAI(
                 api_key=connection.key,
                 azure_endpoint=connection.endpoint_url,
                 api_version="2024-06-01",  # See "Data plane - inference" row in table https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs
             )
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
-            print("====> Creating AzureOpenAI client using Entra ID authentication")
+            print("====> Creating AsyncAzureOpenAI client using Entra ID authentication")
             from azure.identity.aio import get_bearer_token_provider
             from azure.core.credentials_async import AsyncTokenCredential
 
