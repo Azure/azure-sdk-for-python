@@ -52,8 +52,8 @@ async def analyze_batch_docs():
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
-    result_container_sas_url = os.environ["RESULT_SAS_URL"]
-    batch_training_data_container_sas_url = os.environ["TRAINING_DATA_SAS_URL"]
+    result_container_sas_url = os.environ["RESULT_CONTAINER_SAS_URL"]
+    batch_training_data_container_sas_url = os.environ["TRAINING_DATA_CONTAINER_SAS_URL"]
 
     document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
