@@ -1,4 +1,4 @@
-# -------------------------------------------------------------------------  # pylint: disable=file-needs-copyright-header
+# -------------------------------------------------------------------------  # pylint: disable=file-needs-copyright-header,useless-suppression
 # This is a fork of the transport.py which was originally written by Barry Pederson and
 # maintained by the Celery project: https://github.com/celery/py-amqp.
 #
@@ -31,7 +31,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
 # -------------------------------------------------------------------------
-
 
 import errno
 import re
