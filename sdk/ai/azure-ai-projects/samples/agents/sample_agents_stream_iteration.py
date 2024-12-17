@@ -38,9 +38,7 @@ project_client = AIProjectClient.from_connection_string(
 with project_client:
     # Create an agent and run stream with iteration
     agent = project_client.agents.create_agent(
-        model=os.environ["MODEL_DEPLOYMENT_NAME"],
-        name="my-assistant",
-        instructions="You are a helpful assistant"
+        model=os.environ["MODEL_DEPLOYMENT_NAME"], name="my-assistant", instructions="You are a helpful assistant"
     )
     print(f"Created agent, ID {agent.id}")
 

@@ -36,9 +36,7 @@ async def main() -> None:
 
         async with project_client:
             agent = await project_client.agents.create_agent(
-                model=os.environ["MODEL_DEPLOYMENT_NAME"],
-                name="my-assistant",
-                instructions="You are helpful assistant"
+                model=os.environ["MODEL_DEPLOYMENT_NAME"], name="my-assistant", instructions="You are helpful assistant"
             )
             print(f"Created agent, agent ID: {agent.id}")
 

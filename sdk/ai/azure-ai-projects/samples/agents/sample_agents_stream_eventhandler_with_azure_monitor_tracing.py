@@ -87,9 +87,7 @@ with tracer.start_as_current_span(scenario):
     with project_client:
         # Create an agent and run stream with event handler
         agent = project_client.agents.create_agent(
-            model=os.environ["MODEL_DEPLOYMENT_NAME"],
-            name="my-assistant",
-            instructions="You are a helpful assistant"
+            model=os.environ["MODEL_DEPLOYMENT_NAME"], name="my-assistant", instructions="You are a helpful assistant"
         )
         print(f"Created agent, agent ID {agent.id}")
 
