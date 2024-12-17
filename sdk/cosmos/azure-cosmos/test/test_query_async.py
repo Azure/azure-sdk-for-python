@@ -97,7 +97,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         await self.created_db.delete_container(created_collection.id)
 
-    async def test_populate_index_metrics(self):
+    async def test_populate_index_metrics_async(self):
         created_collection = await self.created_db.create_container(
             "index_metrics_test" + str(uuid.uuid4()),
             PartitionKey(path="/pk"))

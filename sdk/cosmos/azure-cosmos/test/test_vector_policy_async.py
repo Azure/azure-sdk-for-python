@@ -44,7 +44,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
         indexing_policy = {
             "vectorIndexes": [
                 {"path": "/vector1", "type": "flat"},
-                {"path": "/vector2", "type": "quantizedFlat", "quantizationByteSize": 8},
+                {"path": "/vector2", "type": "quantizedFlat"},
                 {"path": "/vector3", "type": "diskANN", "quantizationByteSize": 8, "indexingSearchListSize": 50}
             ]
         }
@@ -145,7 +145,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
         # Pass a vector indexing policy with wrong quantizationByteSize value
         indexing_policy = {
             "vectorIndexes": [
-                {"path": "/vector2", "type": "quantizedFlat", "quantizationByteSize": 0}]
+                {"path": "/vector1", "type": "quantizedFlat", "quantizationByteSize": 0}]
         }
         try:
             await self.test_db.create_container(
