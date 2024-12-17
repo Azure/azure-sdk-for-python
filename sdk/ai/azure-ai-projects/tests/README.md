@@ -15,9 +15,9 @@ The instructions below are for running tests locally, on a Windows machine, agai
     pip install wheel
     python setup.py bdist_wheel
     ```
-- Install the resulting wheel (update version `1.0.0b1` to the current one):
+- Install the resulting wheel (update version `1.0.0b3` to the current one):
     ```bash
-    pip install dist\azure_ai_projects-1.0.0b1-py3-none-any.whl --user --force-reinstall
+    pip install dist\azure_ai_projects-1.0.0b3-py3-none-any.whl --user --force-reinstall
     ```
 
 ## Log in to Azure
@@ -28,7 +28,7 @@ az login
 
 ## Setup up environment variables
 
-Edit the file `azure_ai_projects_tests.env` located in the folder above. Follow the instructions there on how to set up Azure AI Studio projects to be used for testing, and enter appropriate values for the environment variables used for the tests you want to run.
+Edit the file `azure_ai_projects_tests.env` located in the folder above. Follow the instructions there on how to set up Azure AI Foundry projects to be used for testing, and enter appropriate values for the environment variables used for the tests you want to run.
 
 ## Configure test proxy
 

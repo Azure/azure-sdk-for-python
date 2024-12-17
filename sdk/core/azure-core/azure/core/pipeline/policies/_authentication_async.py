@@ -61,7 +61,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
 
         :param request: The pipeline request object to be modified.
         :type request: ~azure.core.pipeline.PipelineRequest
-        :raises: :class:`~azure.core.exceptions.ServiceRequestError`
+        :raises ~azure.core.exceptions.ServiceRequestError: If the request fails.
         """
         _BearerTokenCredentialPolicyBase._enforce_https(request)  # pylint:disable=protected-access
 

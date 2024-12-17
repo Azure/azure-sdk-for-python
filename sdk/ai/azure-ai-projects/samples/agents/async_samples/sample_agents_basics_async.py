@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_basics_async.py
-
 DESCRIPTION:
     This sample demonstrates how to use basic agent operations from
     the Azure Agents service using a asynchronous client.
@@ -15,10 +13,10 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity
+    pip install azure-ai-projects azure-identity aiohttp
 
     Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
 """
 import asyncio
 import time
@@ -31,45 +29,42 @@ import os
 
 async def main() -> None:
 
-    # Create an Azure AI Client from a connection string, copied from your AI Studio project.
-    # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-    # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
-
-    project_client = AIProjectClient.from_connection_string(
-        credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
-    )
-
-    async with project_client:
-        agent = await project_client.agents.create_agent(
-            model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
+    async with DefaultAzureCredential() as creds:
+        project_client = AIProjectClient.from_connection_string(
+            credential=creds, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
         )
-        print(f"Created agent, agent ID: {agent.id}")
 
-        thread = await project_client.agents.create_thread()
-        print(f"Created thread, thread ID: {thread.id}")
+        async with project_client:
+            agent = await project_client.agents.create_agent(
+                model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
+            )
+            print(f"Created agent, agent ID: {agent.id}")
 
-        message = await project_client.agents.create_message(
-            thread_id=thread.id, role="user", content="Hello, tell me a joke"
-        )
-        print(f"Created message, message ID: {message.id}")
+            thread = await project_client.agents.create_thread()
+            print(f"Created thread, thread ID: {thread.id}")
 
-        run = await project_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            message = await project_client.agents.create_message(
+                thread_id=thread.id, role="user", content="Hello, tell me a joke"
+            )
+            print(f"Created message, message ID: {message.id}")
 
-        # poll the run as long as run status is queued or in progress
-        while run.status in ["queued", "in_progress", "requires_action"]:
-            # wait for a second
-            time.sleep(1)
-            run = await project_client.agents.get_run(thread_id=thread.id, run_id=run.id)
+            run = await project_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
 
-            print(f"Run status: {run.status}")
+            # Poll the run as long as run status is queued or in progress
+            while run.status in ["queued", "in_progress", "requires_action"]:
+                # Wait for a second
+                time.sleep(1)
+                run = await project_client.agents.get_run(thread_id=thread.id, run_id=run.id)
 
-        print(f"Run completed with status: {run.status}")
+                print(f"Run status: {run.status}")
 
-        await project_client.agents.delete_agent(agent.id)
-        print("Deleted agent")
+            print(f"Run completed with status: {run.status}")
 
-        messages = await project_client.agents.list_messages(thread_id=thread.id)
-        print(f"Messages: {messages}")
+            await project_client.agents.delete_agent(agent.id)
+            print("Deleted agent")
+
+            messages = await project_client.agents.list_messages(thread_id=thread.id)
+            print(f"Messages: {messages}")
 
 
 if __name__ == "__main__":

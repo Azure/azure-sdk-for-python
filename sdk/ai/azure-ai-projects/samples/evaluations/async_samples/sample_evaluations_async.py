@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_basics_async.py
-
 DESCRIPTION:
     This sample demonstrates how to use evaluation operations from
     the Azure Evaluation service using a asynchronous client.
@@ -18,7 +16,7 @@ USAGE:
     pip install azure-ai-projects azure-identity aiohttp
 
     Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
 """
 import asyncio
 import os
@@ -87,7 +85,7 @@ async def main():
         print("Evaluation status: ", get_evaluation_response.status)
         if isinstance(get_evaluation_response.properties, dict):
             print(
-                "AI Studio URI: ",
+                "AI Foundry URI: ",
                 get_evaluation_response.properties["AiStudioEvaluationUri"],
             )
         print("----------------------------------------------------------------")

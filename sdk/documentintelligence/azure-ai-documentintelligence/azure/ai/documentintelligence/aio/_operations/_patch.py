@@ -7,6 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import sys
+import io
 from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, Mapping, cast, overload
 
 from azure.core.pipeline import PipelineResponse
@@ -22,7 +23,7 @@ from ._operations import (
 )
 from ... import models as _models
 from ..._model_base import _deserialize
-from ..._operations._patch import PollingReturnType_co, _parse_operation_id, _finished
+from ..._operations._patch import PollingReturnType_co, _parse_operation_id
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -60,22 +61,12 @@ class AsyncAnalyzeDocumentLROPoller(AsyncLROPoller[PollingReturnType_co]):
         return cls(client, initial_response, deserialization_callback, polling_method)
 
 
-class AsyncAnalyzeBatchDocumentsLROPollingMethod(AsyncLROBasePolling):  # pylint: disable=name-too-long
-    def finished(self) -> bool:
-        """Is this polling finished?
-
-        :return: Whether the polling finished or not.
-        :rtype: bool
-        """
-        return _finished(self.status())
-
-
 class DocumentIntelligenceAdministrationClientOperationsMixin(
     GeneratedDIAdminClientOps
 ):  # pylint: disable=name-too-long
     @distributed_trace_async
     async def begin_build_classifier(  # type: ignore[override]
-        self, build_request: Union[_models.BuildDocumentClassifierRequest, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.BuildDocumentClassifierRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentClassifierDetails]:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -87,12 +78,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._build_classifier_initial(
-                build_request=build_request,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
+                body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -136,7 +122,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
 
     @distributed_trace_async
     async def begin_build_document_model(  # type: ignore[override]
-        self, build_request: Union[_models.BuildDocumentModelRequest, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.BuildDocumentModelRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentModelDetails]:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -148,12 +134,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._build_document_model_initial(
-                build_request=build_request,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
+                body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -197,7 +178,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
 
     @distributed_trace_async
     async def begin_compose_model(  # type: ignore[override]
-        self, compose_request: Union[_models.ComposeDocumentModelRequest, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.ComposeDocumentModelRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentModelDetails]:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -209,12 +190,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._compose_model_initial(
-                compose_request=compose_request,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
+                body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -258,7 +234,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
 
     @distributed_trace_async
     async def begin_copy_model_to(  # type: ignore[override]
-        self, model_id: str, copy_to_request: Union[_models.CopyAuthorization, JSON, IO[bytes]], **kwargs: Any
+        self, model_id: str, body: Union[_models.ModelCopyAuthorization, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentModelDetails]:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -271,7 +247,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
         if cont_token is None:
             raw_result = await self._copy_model_to_initial(
                 model_id=model_id,
-                copy_to_request=copy_to_request,
+                body=body,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -320,10 +296,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
 
     @distributed_trace_async
     async def begin_copy_classifier_to(  # type: ignore[override]
-        self,
-        classifier_id: str,
-        copy_to_request: Union[_models.ClassifierCopyAuthorization, JSON, IO[bytes]],
-        **kwargs: Any
+        self, classifier_id: str, body: Union[_models.ClassifierCopyAuthorization, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentClassifierDetails]:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -336,7 +309,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
         if cont_token is None:
             raw_result = await self._copy_classifier_to_initial(
                 classifier_id=classifier_id,
-                copy_to_request=copy_to_request,
+                body=body,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -389,14 +362,14 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
     async def begin_analyze_document(
         self,
         model_id: str,
-        analyze_request: Optional[_models.AnalyzeDocumentRequest] = None,
+        body: _models.AnalyzeDocumentRequest,
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output_content_format: Optional[Union[str, _models.DocumentContentFormat]] = None,
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -405,10 +378,9 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :param analyze_request: Analyze request parameters. Default value is None.
-        :type analyze_request: ~azure.ai.documentintelligence.models.AnalyzeDocumentRequest
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :param body: Analyze request parameters. Required.
+        :type body: ~azure.ai.documentintelligence.models.AnalyzeDocumentRequest
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
          only
@@ -425,7 +397,8 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         :paramtype query_fields: list[str]
         :keyword output_content_format: Format of the analyze result top-level content. Known values
          are: "text" and "markdown". Default value is None.
-        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :paramtype output_content_format: str or
+         ~azure.ai.documentintelligence.models.DocumentContentFormat
         :keyword output: Additional outputs to generate during analysis. Default value is None.
         :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -441,14 +414,14 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
     async def begin_analyze_document(
         self,
         model_id: str,
-        analyze_request: Optional[JSON] = None,
+        body: JSON,
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output_content_format: Optional[Union[str, _models.DocumentContentFormat]] = None,
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -457,10 +430,9 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :param analyze_request: Analyze request parameters. Default value is None.
-        :type analyze_request: JSON
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :param body: Analyze request parameters. Required.
+        :type body: JSON
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
          only
@@ -477,7 +449,8 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         :paramtype query_fields: list[str]
         :keyword output_content_format: Format of the analyze result top-level content. Known values
          are: "text" and "markdown". Default value is None.
-        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :paramtype output_content_format: str or
+         ~azure.ai.documentintelligence.models.DocumentContentFormat
         :keyword output: Additional outputs to generate during analysis. Default value is None.
         :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -493,14 +466,14 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
     async def begin_analyze_document(
         self,
         model_id: str,
-        analyze_request: Optional[IO[bytes]] = None,
+        body: IO[bytes],
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output_content_format: Optional[Union[str, _models.DocumentContentFormat]] = None,
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -509,10 +482,9 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :param analyze_request: Analyze request parameters. Default value is None.
-        :type analyze_request: IO[bytes]
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :param body: Analyze request parameters. Required.
+        :type body: IO[bytes]
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
          only
@@ -529,7 +501,8 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         :paramtype query_fields: list[str]
         :keyword output_content_format: Format of the analyze result top-level content. Known values
          are: "text" and "markdown". Default value is None.
-        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :paramtype output_content_format: str or
+         ~azure.ai.documentintelligence.models.DocumentContentFormat
         :keyword output: Additional outputs to generate during analysis. Default value is None.
         :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -545,14 +518,14 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
     async def begin_analyze_document(  # type: ignore[override]
         self,
         model_id: str,
-        analyze_request: Optional[Union[_models.AnalyzeDocumentRequest, JSON, IO[bytes]]] = None,
+        body: Union[_models.AnalyzeDocumentRequest, JSON, IO[bytes]],
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output_content_format: Optional[Union[str, _models.DocumentContentFormat]] = None,
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         **kwargs: Any
     ) -> AsyncAnalyzeDocumentLROPoller[_models.AnalyzeResult]:
@@ -560,12 +533,11 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :param analyze_request: Analyze request parameters. Is one of the following types:
-         AnalyzeDocumentRequest, JSON, IO[bytes] Default value is None.
-        :type analyze_request: ~azure.ai.documentintelligence.models.AnalyzeDocumentRequest or JSON or
+        :param body: Analyze request parameters. Is one of the following types:
+         AnalyzeDocumentRequest, JSON, IO[bytes]. Required.
+        :type body: ~azure.ai.documentintelligence.models.AnalyzeDocumentRequest or JSON or
          IO[bytes]
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
          only
@@ -582,7 +554,8 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         :paramtype query_fields: list[str]
         :keyword output_content_format: Format of the analyze result top-level content. Known values
          are: "text" and "markdown". Default value is None.
-        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :paramtype output_content_format: str or
+         ~azure.ai.documentintelligence.models.DocumentContentFormat
         :keyword output: Additional outputs to generate during analysis. Default value is None.
         :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
         :return: An instance of AsyncAnalyzeDocumentLROPoller that returns AnalyzeResult. The AnalyzeResult is
@@ -593,15 +566,19 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("content-type", "application/octet-stream")
+        )
         cls: ClsType[_models.AnalyzeResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
+            if isinstance(body, io.BytesIO):
+                content_type = "application/octet-stream"
             raw_result = await self._analyze_document_initial(
                 model_id=model_id,
-                analyze_request=analyze_request,
+                body=body,
                 pages=pages,
                 locale=locale,
                 string_index_type=string_index_type,
@@ -645,7 +622,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         else:
             polling_method = polling
         if cont_token:
-            return AsyncAnalyzeDocumentLROPoller[_models.AnalyzeBatchResult].from_continuation_token(
+            return AsyncAnalyzeDocumentLROPoller[_models.AnalyzeResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
@@ -656,33 +633,68 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         )
 
     @distributed_trace_async
-    async def begin_analyze_batch_documents(  # type: ignore[override]
+    async def begin_classify_document(  # type: ignore[override]
         self,
-        model_id: str,
-        analyze_batch_request: Optional[Union[_models.AnalyzeBatchDocumentsRequest, JSON, IO[bytes]]] = None,
+        classifier_id: str,
+        body: Union[_models.ClassifyDocumentRequest, JSON, IO[bytes]],
         *,
-        pages: Optional[str] = None,
-        locale: Optional[str] = None,
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
-        features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
-        query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
-        output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
+        split: Optional[Union[str, _models.SplitMode]] = None,
+        pages: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.AnalyzeBatchResult]:
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        return await super().begin_analyze_batch_documents(
-            model_id=model_id,
-            analyze_batch_request=analyze_batch_request,
-            pages=pages,
-            locale=locale,
+    ) -> AsyncLROPoller[_models.AnalyzeResult]:
+        """Classifies document with document classifier.
+
+        :param classifier_id: Unique document classifier name. Required.
+        :type classifier_id: str
+        :param body: Classify request parameters. Is one of the following types:
+         ClassifyDocumentRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.documentintelligence.models.ClassifyDocumentRequest or JSON
+         or IO[bytes]
+        :keyword string_index_type: Method used to compute string offset and length. Known values are:
+         "textElements", "unicodeCodePoint", and "utf16CodeUnit". Default value is None.
+        :paramtype string_index_type: str or ~azure.ai.documentintelligence.models.StringIndexType
+        :keyword split: Document splitting mode. Known values are: "auto", "none", and "perPage".
+         Default value is None.
+        :paramtype split: str or ~azure.ai.documentintelligence.models.SplitMode
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
+        :paramtype pages: str
+        :return: An instance of AsyncLROPoller that returns AnalyzeResult. The AnalyzeResult is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("content-type", "application/octet-stream")
+        )
+        if isinstance(body, io.BytesIO):
+            content_type = "application/octet-stream"
+        return await super().begin_classify_document(  # type: ignore[arg-type, misc]
+            classifier_id=classifier_id,
+            body=body,  # type: ignore[arg-type]
+            content_type=content_type,  # type: ignore[arg-type]
             string_index_type=string_index_type,
-            features=features,
-            query_fields=query_fields,
-            output_content_format=output_content_format,
-            output=output,
-            polling=AsyncAnalyzeBatchDocumentsLROPollingMethod(timeout=lro_delay),
+            split=split,
+            pages=pages,
             **kwargs
+        )
+
+    @distributed_trace_async
+    async def get_analyze_batch_result(  # type: ignore[override] # pylint: disable=arguments-differ
+        self, continuation_token: str
+    ) -> AsyncLROPoller[_models.AnalyzeBatchResult]:
+        """Gets the result of batch document analysis.
+
+        :param str continuation_token: An opaque continuation token. Required.
+        :return: An instance of AsyncLROPoller that returns AnalyzeBatchResult. The AnalyzeBatchResult
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.AnalyzeBatchResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return await self.begin_analyze_batch_documents(  # type: ignore[call-overload]
+            None, None, continuation_token=continuation_token
         )
 
 
