@@ -353,8 +353,8 @@ class CallAutomationClient:
         :paramtype transcription: ~azure.communication.callautomation.TranscriptionOptions
          or None
         :keyword teams_app_source: Overrides default client source by a MicrosoftTeamsAppIdentifier type source.
-        Required for creating call with Teams resource account ID.
-        This is per-operation setting and does not change the client's default source.
+         Required for creating call with Teams resource account ID.
+         This is per-operation setting and does not change the client's default source.
         :paramtype teams_app_source: ~azure.communication.callautomation.MicrosoftTeamsAppIdentifier or None
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
