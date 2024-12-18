@@ -13,7 +13,7 @@
 ## 1.1.0 (2024-12-12)
 
 ### Features Added
-- Added image support in content safety evaluators. Image URL or base64 encoded image can be passed in as part `conversation` input to the evaluators. See below for an example:
+- Added image support in `ContentSafetyEvaluator`, `ViolenceEvaluator`, `SexualEvaluator`, `SelfHarmEvaluator`, `HateUnfairnessEvaluator` and `ProtectedMaterialEvaluator`. Image URL or base64 encoded image can be passed in as part `conversation` input to the evaluators. See below for an example:
 
 ```python
 evaluator = ContentSafetyEvaluator(credential=azure_cred, azure_ai_project=project_scope)
@@ -51,6 +51,8 @@ conversation = {
 print("Calling Content Safety Evaluator for multi-modal")
 score = evaluator(conversation=conversation)
 ```
+
+- Please switch to generic evaluators for image evaluations as mentioned above. `ContentSafetyMultimodalEvaluator`, `ContentSafetyMultimodalEvaluatorBase`, `ViolenceMultimodalEvaluator`, `SexualMultimodalEvaluator`, `SelfHarmMultimodalEvaluator`, `HateUnfairnessMultimodalEvaluator` and `ProtectedMaterialMultimodalEvaluator` will be deprecated in the next release.
 
 ### Bugs Fixed
 - Removed `[remote]` extra. This is no longer needed when tracking results in Azure AI Studio.
