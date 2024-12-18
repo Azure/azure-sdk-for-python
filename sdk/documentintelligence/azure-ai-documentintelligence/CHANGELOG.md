@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0 (Unreleased)
+## 1.0.0 (2024-12-17)
 
 ### Features Added
 
@@ -29,8 +29,6 @@
 - Renamed enum `FontWeight` to `DocumentFontWeight`.
 - Removed model `AnalyzeResultOperation`.
 - Removed `GENERATIVE ` in enum `DocumentBuildMode`.
-
-### Bugs Fixed
 
 ### Other Changes
 
