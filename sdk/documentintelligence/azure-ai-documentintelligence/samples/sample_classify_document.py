@@ -51,9 +51,7 @@ def classify_document(classifier_id):
 
     document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     with open(path_to_sample_documents, "rb") as f:
-        poller = document_intelligence_client.begin_classify_document(
-            classifier_id, classify_request=f, content_type="application/octet-stream"
-        )
+        poller = document_intelligence_client.begin_classify_document(classifier_id, body=f)
     result: AnalyzeResult = poller.result()
 
     print("----Classified documents----")
