@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13,7 +13,6 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from ... import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -160,7 +159,7 @@ class CommunityGallery(PirCommunityGalleryResource):
     """
 
 
-class CommunityGalleryImage(PirCommunityGalleryResource):  # pylint: disable=too-many-instance-attributes
+class CommunityGalleryImage(PirCommunityGalleryResource):
     """Specifies information about the gallery image definition that you want to create or update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -714,7 +713,7 @@ class Resource(_serialization.Model):
         self.tags = tags
 
 
-class Gallery(Resource):  # pylint: disable=too-many-instance-attributes
+class Gallery(Resource):
     """Specifies information about the Shared Image Gallery that you want to create or update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -807,7 +806,7 @@ class Gallery(Resource):  # pylint: disable=too-many-instance-attributes
         self.sharing_status = None
 
 
-class GalleryApplication(Resource):  # pylint: disable=too-many-instance-attributes
+class GalleryApplication(Resource):
     """Specifies information about the gallery Application Definition that you want to create or
     update.
 
@@ -1290,9 +1289,7 @@ class GalleryArtifactPublishingProfileBase(_serialization.Model):
         self.target_extended_locations = target_extended_locations
 
 
-class GalleryApplicationVersionPublishingProfile(
-    GalleryArtifactPublishingProfileBase
-):  # pylint: disable=too-many-instance-attributes,name-too-long
+class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfileBase):  # pylint: disable=name-too-long
     """The publishing profile of a gallery image version.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1712,7 +1709,7 @@ class GalleryIdentifier(_serialization.Model):
         self.unique_name = None
 
 
-class GalleryImage(Resource):  # pylint: disable=too-many-instance-attributes
+class GalleryImage(Resource):
     """Specifies information about the gallery image definition that you want to create or update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1989,7 +1986,7 @@ class GalleryImageList(_serialization.Model):
         self.next_link = next_link
 
 
-class GalleryImageUpdate(UpdateResourceDefinition):  # pylint: disable=too-many-instance-attributes
+class GalleryImageUpdate(UpdateResourceDefinition):
     """Specifies information about the gallery image definition that you want to update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3145,7 +3142,7 @@ class SharedGalleryDataDiskImage(SharedGalleryDiskImage):
         self.lun = lun
 
 
-class SharedGalleryImage(PirSharedGalleryResource):  # pylint: disable=too-many-instance-attributes
+class SharedGalleryImage(PirSharedGalleryResource):
     """Specifies information about the gallery image definition that you want to create or update.
 
     Variables are only populated by the server, and will be ignored when sending a request.

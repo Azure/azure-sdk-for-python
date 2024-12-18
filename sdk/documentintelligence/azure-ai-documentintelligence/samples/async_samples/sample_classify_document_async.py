@@ -53,9 +53,7 @@ async def classify_document(classifier_id):
     document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     async with document_intelligence_client:
         with open(path_to_sample_documents, "rb") as f:
-            poller = await document_intelligence_client.begin_classify_document(
-                classifier_id, classify_request=f, content_type="application/octet-stream"
-            )
+            poller = await document_intelligence_client.begin_classify_document(classifier_id, body=f)
         result: AnalyzeResult = await poller.result()
 
     print("----Classified documents----")
