@@ -226,7 +226,7 @@ class _QuickpulseManager(metaclass=Singleton):
                     _derive_metrics_from_telemetry_data(data)
 
                     # Process docs for quickpulse filtering
-                    _apply_document_filters_from_telemetry_data(data, exc_type)
+                    _apply_document_filters_from_telemetry_data(data, exc_type)  # type: ignore
             except Exception:  # pylint: disable=broad-except
                 _logger.exception("Exception occurred while recording log record.")
 
@@ -258,7 +258,7 @@ def _derive_metrics_from_telemetry_data(data: _TelemetryData):
 # Called by record_span/record_log when processing a span/log_record for docs filtering
 # Finds doc stream Ids and their doc filter configurations
 def _apply_document_filters_from_telemetry_data(data: _TelemetryData, exc_type: Optional[str] = None):
-    doc_config_dict: Dict[TelemetryType, Dict[str, List[FilterConjunctionGroupInfo]]] = _get_quickpulse_doc_stream_infos()
+    doc_config_dict: Dict[TelemetryType, Dict[str, List[FilterConjunctionGroupInfo]]] = _get_quickpulse_doc_stream_infos()  # pylint: disable=C0301
     stream_ids = set()
     doc_config = {}  # type: ignore
     if isinstance(data, _RequestData):
@@ -274,15 +274,15 @@ def _apply_document_filters_from_telemetry_data(data: _TelemetryData, exc_type: 
             if _check_filters(filter_group.filters, data):
                 stream_ids.add(stream_id)
                 break
-    
+
     # We only append and send the document if either:
     # 1. The document matched the filtering for a specific streamId
     # 2. Filtering was not enabled for this telemetry type (empty doc_config)
     if len(stream_ids) > 0 or not doc_config:
         if type(data) in (_DependencyData, _RequestData):
-            document = _get_span_document(data)
+            document = _get_span_document(data)  # type: ignore
         else:
-            document = _get_log_record_document(data)
+            document = _get_log_record_document(data, exc_type)  # type: ignore
         # A stream (with a unique streamId) is relevant if there are multiple sources sending to the same
         # ApplicationInsights instace with live metrics enabled
         # Modify the document's streamIds to determine which stream to send to in post
