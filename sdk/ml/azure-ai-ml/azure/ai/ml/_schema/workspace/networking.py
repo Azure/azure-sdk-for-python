@@ -48,7 +48,12 @@ class FqdnOutboundRuleSchema(metaclass=PatchedSchemaMeta):
         category = data.get("category", OutboundRuleCategory.USER_DEFINED)
         name = data.get("name")
         status = data.get("status", None)
-        return FqdnDestination(name=name, destination=dest, category=_snake_to_camel(category), status=status)
+        return FqdnDestination(
+            name=name,
+            destination=dest,
+            category=_snake_to_camel(category),
+            status=status,
+        )
 
 
 class ServiceTagDestinationSchema(metaclass=PatchedSchemaMeta):
@@ -186,14 +191,16 @@ class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
         ),
         allow_none=True,
     )
-    firewall_sku = ExperimentalField(StringTransformedEnum(
-        allowed_values=[
-            FirewallSku.STANDARD,
-            FirewallSku.BASIC,
-        ],
-        casing_transform=camel_to_snake,
-        metadata={"description": "Firewall sku for FQDN rules in AllowOnlyApprovedOutbound mode"},
-    ))
+    firewall_sku = ExperimentalField(
+        StringTransformedEnum(
+            allowed_values=[
+                FirewallSku.STANDARD,
+                FirewallSku.BASIC,
+            ],
+            casing_transform=camel_to_snake,
+            metadata={"description": "Firewall sku for FQDN rules in AllowOnlyApprovedOutbound mode"},
+        )
+    )
     network_id = fields.Str(required=False, dump_only=True)
     status = NestedField(ManagedNetworkStatusSchema, allow_none=False, unknown=EXCLUDE)
 
@@ -212,5 +219,6 @@ class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
             )
         else:
             return ManagedNetwork(
-                isolation_mode=_snake_to_camel(data["isolation_mode"]), firewall_sku=firewall_sku_value
+                isolation_mode=_snake_to_camel(data["isolation_mode"]),
+                firewall_sku=firewall_sku_value,
             )
