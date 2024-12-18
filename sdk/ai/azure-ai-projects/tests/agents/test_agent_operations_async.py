@@ -206,10 +206,10 @@ class TestAgentsOperations:
     @pytest.mark.parametrize(
         "file_agent_1,file_agent_2",
         [
-            #("file_for_agent1", "file_for_agent2"),
+            # ("file_for_agent1", "file_for_agent2"),
             (None, "file_for_agent2"),
-            #("file_for_agent1", None),
-            #(None, None),
+            # ("file_for_agent1", None),
+            # (None, None),
         ],
     )
     async def test_multiple_agents_create(
@@ -251,7 +251,7 @@ class TestAgentsOperations:
                 toolset=toolset1,
             )
             self._assert_pipeline_and_reset(mock_pipeline._pipeline.run, tool_set=toolset1)
-            
+
             agent2 = await project_client.agents.create_agent(
                 model="gpt-4-1106-preview",
                 name="second",
@@ -262,7 +262,7 @@ class TestAgentsOperations:
             # Check that the new agents are called with correct tool sets.
             await project_client.agents.create_and_process_run(thread_id="some_thread_id", assistant_id=agent1.id)
             self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run123", toolset1)
-            
+
             await project_client.agents.create_and_process_run(thread_id="some_thread_id", assistant_id=agent2.id)
             self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run456", toolset2)
             # Check the contents of a toolset

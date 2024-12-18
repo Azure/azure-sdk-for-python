@@ -44,7 +44,9 @@ async def main():
             # Upload data for evaluation
             data_id, _ = project_client.upload_file("./data/evaluate_test_data.jsonl")
 
-            default_connection = await project_client.connections.get_default(connection_type=ConnectionType.AZURE_OPEN_AI)
+            default_connection = await project_client.connections.get_default(
+                connection_type=ConnectionType.AZURE_OPEN_AI
+            )
 
             deployment_name = "<>"
             api_version = "<>"

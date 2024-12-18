@@ -103,7 +103,8 @@ async def sample_inference_client_from_connection() -> None:
                     from azure.core.credentials import AzureKeyCredential
 
                     inference_client = ChatCompletionsClient(
-                        endpoint=f"{connection.endpoint_url}/models", credential=AzureKeyCredential(connection.key or "")
+                        endpoint=f"{connection.endpoint_url}/models",
+                        credential=AzureKeyCredential(connection.key or ""),
                     )
                 elif connection.authentication_type == AuthenticationType.ENTRA_ID:
                     from azure.core.credentials_async import AsyncTokenCredential
