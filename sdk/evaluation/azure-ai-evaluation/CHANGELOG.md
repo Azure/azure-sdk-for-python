@@ -22,7 +22,7 @@ conversation = {
         {
             "role": "system",
             "content": [
-                {"type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison."}
+                {"type": "text", "text": "You are an AI assistant that understands images."}
             ],
         },
         {
