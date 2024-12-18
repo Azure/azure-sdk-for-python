@@ -7,12 +7,9 @@
 ### Breaking Changes
 
 ### Bugs Fixed
-<<<<<<< HEAD
 - Removed `[remote]` extra. This is no longer needed when tracking results in Azure AI Studio.
 - Fixed `AttributeError: 'NoneType' object has no attribute 'get'` while running simulator with 1000+ results
 - Fixed the non adversarial simulator to run in task-free mode
-=======
->>>>>>> main
 
 ### Other Changes
 
