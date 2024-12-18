@@ -1,9 +1,5 @@
 # Release History
 
-## 0.0.0 (2024-12-18)
-
-change log generation failed!!!
-
 ## 33.1.0 (2024-12-16)
 
 ### Features Added
