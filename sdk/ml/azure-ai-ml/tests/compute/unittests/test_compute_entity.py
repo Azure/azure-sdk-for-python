@@ -54,7 +54,7 @@ class TestComputeEntity:
 
     def _test_loaded_compute(self, compute: AmlCompute):
         assert compute.name == "banchaml"
-        assert compute.type == "amlcompute"   
+        assert compute.type == "amlcompute"
         assert compute.location == "eastus"
         assert compute.description == "some_desc_aml"
 
@@ -83,7 +83,7 @@ class TestComputeEntity:
             compute.identity.user_assigned_identities
         )
         assert body["location"] == compute.location
-    
+
     def test_aml_compute_from_yaml_with_disable_public_access(self):
 
         compute: AmlCompute = verify_entity_load_and_dump(
