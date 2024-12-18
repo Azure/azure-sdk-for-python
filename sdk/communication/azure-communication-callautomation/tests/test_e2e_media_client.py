@@ -786,12 +786,30 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         play_multiple_file_source = [
             FileSource(url=self.file_source_url)
         ]
-        # call_connection.interrupt_audio_and_announce(target_participant=target, play_sources=play_multiple_file_source)
-
+        call_connection.interrupt_audio_and_announce(target_participant=target, play_sources=play_multiple_file_source)
+        
+        # check returned events
+        hold_audio_paused_event = self.check_for_event(
+            "HoldAudioPaused", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        if hold_audio_paused_event is None:
+            raise ValueError("Caller HoldAudioPaused event is None")
+        
+        hold_audio_resumed_event = self.check_for_event(
+            "HoldAudioResumed", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        if hold_audio_resumed_event is None:
+            raise ValueError("Caller HoldAudioResumed event is None")
+        
         # Unhold participant
         call_connection.unhold(target, operation_context="unhold_add_target_participant")
-
         time.sleep(2)
+        hold_audio_completed_event = self.check_for_event(
+            "HoldAudioCompleted", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        if hold_audio_completed_event is None:
+            raise ValueError("Caller HoldAudioCompleted event is None")
+        
         get_participant_result = call_connection.get_participant(target)
 
         if get_participant_result is None:
