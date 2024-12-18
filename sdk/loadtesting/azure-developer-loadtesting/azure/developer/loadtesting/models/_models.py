@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 
 class AppComponent(_model_base.Model):
     """An Azure resource object (Refer azure generic resource model
-    :https://docs.microsoft.com/en-us/rest/api/resources/resources/get-by-id#genericresource).
+    :https://learn.microsoft.com/en-us/rest/api/resources/resources/get-by-id#genericresource).
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1081,7 +1081,7 @@ class RegionalConfiguration(_model_base.Model):
 class ResourceMetric(_model_base.Model):
     """Associated metric definition for particular metrics of the azure resource (
     Refer :
-    https://docs.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition).
+    https://learn.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition).
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2299,7 +2299,7 @@ class TestRunServerMetricConfig(_model_base.Model):
     :ivar test_run_id: Test run identifier.
     :vartype test_run_id: str
     :ivar metrics: Azure resource metrics collection {metric id : metrics object} (Refer :
-     https://docs.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition
+     https://learn.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition
      for metric id).
     :vartype metrics: dict[str, ~azure.developer.loadtesting.models.ResourceMetric]
     :ivar created_date_time: The creation datetime(RFC 3339 literal format).
@@ -2316,7 +2316,7 @@ class TestRunServerMetricConfig(_model_base.Model):
     """Test run identifier."""
     metrics: Optional[Dict[str, "_models.ResourceMetric"]] = rest_field()
     """Azure resource metrics collection {metric id : metrics object} (Refer :
-     https://docs.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition
+     https://learn.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition
      for metric id)."""
     created_date_time: Optional[datetime.datetime] = rest_field(
         name="createdDateTime", visibility=["read"], format="rfc3339"
@@ -2447,7 +2447,7 @@ class TestServerMetricConfig(_model_base.Model):
     :ivar test_id: Test identifier.
     :vartype test_id: str
     :ivar metrics: Azure resource metrics collection {metric id : metrics object} (Refer :
-     https://docs.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition
+     https://learn.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition
      for metric id). Required.
     :vartype metrics: dict[str, ~azure.developer.loadtesting.models.ResourceMetric]
     :ivar created_date_time: The creation datetime(RFC 3339 literal format).
@@ -2464,7 +2464,7 @@ class TestServerMetricConfig(_model_base.Model):
     """Test identifier."""
     metrics: Dict[str, "_models.ResourceMetric"] = rest_field()
     """Azure resource metrics collection {metric id : metrics object} (Refer :
-     https://docs.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition
+     https://learn.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition
      for metric id). Required."""
     created_date_time: Optional[datetime.datetime] = rest_field(
         name="createdDateTime", visibility=["read"], format="rfc3339"
