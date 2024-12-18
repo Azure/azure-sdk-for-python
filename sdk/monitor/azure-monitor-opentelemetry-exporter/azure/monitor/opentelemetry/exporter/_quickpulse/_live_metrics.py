@@ -1,13 +1,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 # cSpell:disable
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional
 
 import logging
 import platform
 import psutil
 
-from opentelemetry.sdk._logs import LogData, LogRecord
+from opentelemetry.sdk._logs import LogData
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import ReadableSpan
@@ -202,7 +202,7 @@ class _QuickpulseManager(metaclass=Singleton):
                 _derive_metrics_from_telemetry_data(data)
 
                 # Process docs for quickpulse filtering
-                _apply_document_filters_from_telemetry_data(span)
+                _apply_document_filters_from_telemetry_data(data)
 
                 # TODO: derive exception metrics from span events
             except Exception:  # pylint: disable=broad-except
@@ -213,6 +213,7 @@ class _QuickpulseManager(metaclass=Singleton):
         if _is_post_state():
             try:
                 if log_data.log_record:
+                    exc_type = None
                     log_record = log_data.log_record
                     if log_record.attributes:
                         exc_type = log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)
@@ -225,7 +226,7 @@ class _QuickpulseManager(metaclass=Singleton):
                     _derive_metrics_from_telemetry_data(data)
 
                     # Process docs for quickpulse filtering
-                    _apply_document_filters_from_telemetry_data(log_record)
+                    _apply_document_filters_from_telemetry_data(data, exc_type)
             except Exception:  # pylint: disable=broad-except
                 _logger.exception("Exception occurred while recording log record.")
 
@@ -256,13 +257,7 @@ def _derive_metrics_from_telemetry_data(data: _TelemetryData):
 
 # Called by record_span/record_log when processing a span/log_record for docs filtering
 # Finds doc stream Ids and their doc filter configurations
-def _apply_document_filters_from_telemetry_data(span_or_log: Union[ReadableSpan, LogRecord]):
-    if isinstance(span_or_log, ReadableSpan):
-        data = _TelemetryData._from_span(span_or_log)
-        document = _get_span_document(span_or_log)
-    else:
-        data = _TelemetryData._from_log_record(span_or_log)
-        document = _get_log_record_document(span_or_log)
+def _apply_document_filters_from_telemetry_data(data: _TelemetryData, exc_type: Optional[str] = None):
     doc_config_dict: Dict[TelemetryType, Dict[str, List[FilterConjunctionGroupInfo]]] = _get_quickpulse_doc_stream_infos()
     stream_ids = set()
     doc_config = {}  # type: ignore
@@ -284,6 +279,10 @@ def _apply_document_filters_from_telemetry_data(span_or_log: Union[ReadableSpan,
     # 1. The document matched the filtering for a specific streamId
     # 2. Filtering was not enabled for this telemetry type (empty doc_config)
     if len(stream_ids) > 0 or not doc_config:
+        if type(data) in (_DependencyData, _RequestData):
+            document = _get_span_document(data)
+        else:
+            document = _get_log_record_document(data)
         # A stream (with a unique streamId) is relevant if there are multiple sources sending to the same
         # ApplicationInsights instace with live metrics enabled
         # Modify the document's streamIds to determine which stream to send to in post
