@@ -64,8 +64,7 @@ resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2023-04-15' = {
       defaultConsistencyLevel: defaultConsistencyLevel
     }
     capabilities: [
-        {name: 'EnableNoSQLVectorSearch'},
-        {name: 'EnableNoSQLFullTextSearch'}
+        {name: 'EnableNoSQLVectorSearch'}, {name: 'EnableNoSQLFullTextSearch'}
     ]
     locations: locationsConfiguration
   }
