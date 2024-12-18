@@ -2024,8 +2024,9 @@ class CreateCallRequest(_serialization.Model):
     :ivar call_intelligence_options: AI options for the call.
     :vartype call_intelligence_options:
      ~azure.communication.callautomation.models.CallIntelligenceOptions
-    :ivar ops_source: The identifier of the source in an OPS call.
-    :vartype ops_source:
+    :ivar teams_app_source: The identifier of the source for creating call with Teams resource
+     account ID.
+    :vartype teams_app_source:
      ~azure.communication.callautomation.models.MicrosoftTeamsAppIdentifierModel
     :ivar custom_calling_context: Used by customer to send custom calling context to targets.
     :vartype custom_calling_context:
@@ -2050,7 +2051,7 @@ class CreateCallRequest(_serialization.Model):
         "operation_context": {"key": "operationContext", "type": "str"},
         "callback_uri": {"key": "callbackUri", "type": "str"},
         "call_intelligence_options": {"key": "callIntelligenceOptions", "type": "CallIntelligenceOptions"},
-        "ops_source": {"key": "opsSource", "type": "MicrosoftTeamsAppIdentifierModel"},
+        "teams_app_source": {"key": "teamsAppSource", "type": "MicrosoftTeamsAppIdentifierModel"},
         "custom_calling_context": {"key": "customCallingContext", "type": "CustomCallingContext"},
         "media_streaming_options": {"key": "mediaStreamingOptions", "type": "MediaStreamingOptions"},
         "transcription_options": {"key": "transcriptionOptions", "type": "TranscriptionOptions"},
@@ -2066,7 +2067,7 @@ class CreateCallRequest(_serialization.Model):
         source: Optional["_models.CommunicationUserIdentifierModel"] = None,
         operation_context: Optional[str] = None,
         call_intelligence_options: Optional["_models.CallIntelligenceOptions"] = None,
-        ops_source: Optional["_models.MicrosoftTeamsAppIdentifierModel"] = None,
+        teams_app_source: Optional["_models.MicrosoftTeamsAppIdentifierModel"] = None,
         custom_calling_context: Optional["_models.CustomCallingContext"] = None,
         media_streaming_options: Optional["_models.MediaStreamingOptions"] = None,
         transcription_options: Optional["_models.TranscriptionOptions"] = None,
@@ -2092,8 +2093,9 @@ class CreateCallRequest(_serialization.Model):
         :keyword call_intelligence_options: AI options for the call.
         :paramtype call_intelligence_options:
          ~azure.communication.callautomation.models.CallIntelligenceOptions
-        :keyword ops_source: The identifier of the source in an OPS call.
-        :paramtype ops_source:
+        :keyword teams_app_source: The identifier of the source for creating call with Teams resource
+         account ID.
+        :paramtype teams_app_source:
          ~azure.communication.callautomation.models.MicrosoftTeamsAppIdentifierModel
         :keyword custom_calling_context: Used by customer to send custom calling context to targets.
         :paramtype custom_calling_context:
@@ -2113,7 +2115,7 @@ class CreateCallRequest(_serialization.Model):
         self.operation_context = operation_context
         self.callback_uri = callback_uri
         self.call_intelligence_options = call_intelligence_options
-        self.ops_source = ops_source
+        self.teams_app_source = teams_app_source
         self.custom_calling_context = custom_calling_context
         self.media_streaming_options = media_streaming_options
         self.transcription_options = transcription_options
@@ -3433,6 +3435,67 @@ class HoldRequest(_serialization.Model):
         self.play_source_info = play_source_info
         self.operation_context = operation_context
         self.operation_callback_uri = operation_callback_uri
+
+
+class IncomingCall(_serialization.Model):
+    """The incoming call event.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar to: The communication identifier of the target user.
+    :vartype to: ~azure.communication.callautomation.models.CommunicationIdentifierModel
+    :ivar from_property: The communication identifier of the user who initiated the call.
+    :vartype from_property: ~azure.communication.callautomation.models.CommunicationIdentifierModel
+    :ivar caller_display_name: Display name of caller.
+    :vartype caller_display_name: str
+    :ivar server_call_id: The server call id.
+    :vartype server_call_id: str
+    :ivar custom_context: Custom Context of Incoming Call.
+    :vartype custom_context: ~azure.communication.callautomation.models.CustomCallingContext
+    :ivar incoming_call_context: Incoming call context.
+    :vartype incoming_call_context: str
+    :ivar on_behalf_of_callee: The communication identifier of the user on behalf of whom the call
+     is made.
+    :vartype on_behalf_of_callee:
+     ~azure.communication.callautomation.models.CommunicationIdentifierModel
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    """
+
+    _validation = {
+        "to": {"readonly": True},
+        "from_property": {"readonly": True},
+        "caller_display_name": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "custom_context": {"readonly": True},
+        "incoming_call_context": {"readonly": True},
+        "on_behalf_of_callee": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "to": {"key": "to", "type": "CommunicationIdentifierModel"},
+        "from_property": {"key": "from", "type": "CommunicationIdentifierModel"},
+        "caller_display_name": {"key": "callerDisplayName", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "custom_context": {"key": "customContext", "type": "CustomCallingContext"},
+        "incoming_call_context": {"key": "incomingCallContext", "type": "str"},
+        "on_behalf_of_callee": {"key": "onBehalfOfCallee", "type": "CommunicationIdentifierModel"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.to = None
+        self.from_property = None
+        self.caller_display_name = None
+        self.server_call_id = None
+        self.custom_context = None
+        self.incoming_call_context = None
+        self.on_behalf_of_callee = None
+        self.correlation_id = None
 
 
 class InterruptAudioAndAnnounceRequest(_serialization.Model):
