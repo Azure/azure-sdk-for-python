@@ -21,13 +21,13 @@ class TestServiceFabricManagedClustersManagementApplicationsOperationsAsync(Azur
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_read_upgrade(self, resource_group):
+    async def test_applications_begin_read_upgrade(self, resource_group):
         response = await (
             await self.client.applications.begin_read_upgrade(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 application_name="str",
-                api_version="2024-06-01-preview",
+                api_version="2024-09-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -36,13 +36,13 @@ class TestServiceFabricManagedClustersManagementApplicationsOperationsAsync(Azur
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_start_rollback(self, resource_group):
+    async def test_applications_begin_start_rollback(self, resource_group):
         response = await (
             await self.client.applications.begin_start_rollback(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 application_name="str",
-                api_version="2024-06-01-preview",
+                api_version="2024-09-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -51,14 +51,14 @@ class TestServiceFabricManagedClustersManagementApplicationsOperationsAsync(Azur
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_resume_upgrade(self, resource_group):
+    async def test_applications_begin_resume_upgrade(self, resource_group):
         response = await (
             await self.client.applications.begin_resume_upgrade(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 application_name="str",
                 parameters={"upgradeDomainName": "str"},
-                api_version="2024-06-01-preview",
+                api_version="2024-09-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -67,12 +67,12 @@ class TestServiceFabricManagedClustersManagementApplicationsOperationsAsync(Azur
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_applications_get(self, resource_group):
         response = await self.client.applications.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
             application_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-09-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -80,7 +80,7 @@ class TestServiceFabricManagedClustersManagementApplicationsOperationsAsync(Azur
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_applications_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.applications.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -142,7 +142,7 @@ class TestServiceFabricManagedClustersManagementApplicationsOperationsAsync(Azur
                     },
                     "version": "str",
                 },
-                api_version="2024-06-01-preview",
+                api_version="2024-09-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -151,13 +151,13 @@ class TestServiceFabricManagedClustersManagementApplicationsOperationsAsync(Azur
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_applications_update(self, resource_group):
         response = await self.client.applications.update(
             resource_group_name=resource_group.name,
             cluster_name="str",
             application_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-06-01-preview",
+            api_version="2024-09-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -165,13 +165,13 @@ class TestServiceFabricManagedClustersManagementApplicationsOperationsAsync(Azur
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_applications_begin_delete(self, resource_group):
         response = await (
             await self.client.applications.begin_delete(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 application_name="str",
-                api_version="2024-06-01-preview",
+                api_version="2024-09-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -180,11 +180,11 @@ class TestServiceFabricManagedClustersManagementApplicationsOperationsAsync(Azur
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_applications_list(self, resource_group):
         response = self.client.applications.list(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-09-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
