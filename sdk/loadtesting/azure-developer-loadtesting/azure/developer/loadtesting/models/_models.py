@@ -847,16 +847,25 @@ class PassFailCriteria(_model_base.Model):
 
     :ivar pass_fail_metrics: Map of id and pass fail metrics { id  : pass fail metrics }.
     :vartype pass_fail_metrics: dict[str, ~azure.developer.loadtesting.models.PassFailMetric]
+    :ivar pass_fail_server_metrics: Map of id and pass fail server metrics { id  : pass fail
+     metrics }.
+    :vartype pass_fail_server_metrics: dict[str,
+     ~azure.developer.loadtesting.models.PassFailServerMetric]
     """
 
     pass_fail_metrics: Optional[Dict[str, "_models.PassFailMetric"]] = rest_field(name="passFailMetrics")
     """Map of id and pass fail metrics { id  : pass fail metrics }."""
+    pass_fail_server_metrics: Optional[Dict[str, "_models.PassFailServerMetric"]] = rest_field(
+        name="passFailServerMetrics"
+    )
+    """Map of id and pass fail server metrics { id  : pass fail metrics }."""
 
     @overload
     def __init__(
         self,
         *,
         pass_fail_metrics: Optional[Dict[str, "_models.PassFailMetric"]] = None,
+        pass_fail_server_metrics: Optional[Dict[str, "_models.PassFailServerMetric"]] = None,
     ) -> None: ...
 
     @overload
@@ -939,6 +948,78 @@ class PassFailMetric(_model_base.Model):
         condition: Optional[str] = None,
         request_name: Optional[str] = None,
         value: Optional[float] = None,
+        action: Optional[Union[str, "_models.PFAction"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PassFailServerMetric(_model_base.Model):
+    """Pass fail server metric.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar resource_id: The resource id of the resource emitting the metric. Required.
+    :vartype resource_id: str
+    :ivar metric_namespace: The server metric namespace. Required.
+    :vartype metric_namespace: str
+    :ivar metric_name: The server metric name. Required.
+    :vartype metric_name: str
+    :ivar aggregation: Aggregation Type. Required.
+    :vartype aggregation: str
+    :ivar condition: The comparison operator. Supported types ‘>’, ‘<’. Required.
+    :vartype condition: str
+    :ivar value: The value to compare with the server metric. Required.
+    :vartype value: float
+    :ivar action: Action taken after the threshold is met. Default is ‘continue’. Known values are:
+     "continue" and "stop".
+    :vartype action: str or ~azure.developer.loadtesting.models.PFAction
+    :ivar actual_value: The actual value of the server metric.
+    :vartype actual_value: float
+    :ivar result: Outcome of the test run. Known values are: "passed", "undetermined", and
+     "failed".
+    :vartype result: str or ~azure.developer.loadtesting.models.PFResult
+    """
+
+    resource_id: str = rest_field(name="resourceId")
+    """The resource id of the resource emitting the metric. Required."""
+    metric_namespace: str = rest_field(name="metricNamespace")
+    """The server metric namespace. Required."""
+    metric_name: str = rest_field(name="metricName")
+    """The server metric name. Required."""
+    aggregation: str = rest_field()
+    """Aggregation Type. Required."""
+    condition: str = rest_field()
+    """The comparison operator. Supported types ‘>’, ‘<’. Required."""
+    value: float = rest_field()
+    """The value to compare with the server metric. Required."""
+    action: Optional[Union[str, "_models.PFAction"]] = rest_field()
+    """Action taken after the threshold is met. Default is ‘continue’. Known values are: \"continue\"
+     and \"stop\"."""
+    actual_value: Optional[float] = rest_field(name="actualValue", visibility=["read"])
+    """The actual value of the server metric."""
+    result: Optional[Union[str, "_models.PFResult"]] = rest_field(visibility=["read"])
+    """Outcome of the test run. Known values are: \"passed\", \"undetermined\", and \"failed\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_id: str,
+        metric_namespace: str,
+        metric_name: str,
+        aggregation: str,
+        condition: str,
+        value: float,
         action: Optional[Union[str, "_models.PFAction"]] = None,
     ) -> None: ...
 
@@ -1145,6 +1226,20 @@ class Test(_model_base.Model):
     :ivar keyvault_reference_identity_id: Resource Id of the managed identity referencing the Key
      vault.
     :vartype keyvault_reference_identity_id: str
+    :ivar metrics_reference_identity_type: Type of the managed identity referencing the metrics.
+     Known values are: "SystemAssigned" and "UserAssigned".
+    :vartype metrics_reference_identity_type: str or
+     ~azure.developer.loadtesting.models.ManagedIdentityType
+    :ivar metrics_reference_identity_id: Resource Id of the managed identity referencing the
+     metrics.
+    :vartype metrics_reference_identity_id: str
+    :ivar engine_built_in_identity_type: Type of the managed identity built in load test engines.
+     Known values are: "SystemAssigned" and "UserAssigned".
+    :vartype engine_built_in_identity_type: str or
+     ~azure.developer.loadtesting.models.ManagedIdentityType
+    :ivar engine_built_in_identity_ids: Resource Ids of the managed identity built in to load test
+     engines. Required if engineBuiltInIdentityType is UserAssigned.
+    :vartype engine_built_in_identity_ids: list[str]
     :ivar created_date_time: The creation datetime(RFC 3339 literal format).
     :vartype created_date_time: ~datetime.datetime
     :ivar created_by: The user that created.
@@ -1194,6 +1289,21 @@ class Test(_model_base.Model):
     """Type of the managed identity referencing the Key vault."""
     keyvault_reference_identity_id: Optional[str] = rest_field(name="keyvaultReferenceIdentityId")
     """Resource Id of the managed identity referencing the Key vault."""
+    metrics_reference_identity_type: Optional[Union[str, "_models.ManagedIdentityType"]] = rest_field(
+        name="metricsReferenceIdentityType"
+    )
+    """Type of the managed identity referencing the metrics. Known values are: \"SystemAssigned\" and
+     \"UserAssigned\"."""
+    metrics_reference_identity_id: Optional[str] = rest_field(name="metricsReferenceIdentityId")
+    """Resource Id of the managed identity referencing the metrics."""
+    engine_built_in_identity_type: Optional[Union[str, "_models.ManagedIdentityType"]] = rest_field(
+        name="engineBuiltInIdentityType"
+    )
+    """Type of the managed identity built in load test engines. Known values are: \"SystemAssigned\"
+     and \"UserAssigned\"."""
+    engine_built_in_identity_ids: Optional[List[str]] = rest_field(name="engineBuiltInIdentityIds")
+    """Resource Ids of the managed identity built in to load test engines. Required if
+     engineBuiltInIdentityType is UserAssigned."""
     created_date_time: Optional[datetime.datetime] = rest_field(
         name="createdDateTime", visibility=["read"], format="rfc3339"
     )
@@ -1208,7 +1318,7 @@ class Test(_model_base.Model):
     """The user that last modified."""
 
     @overload
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         pass_fail_criteria: Optional["_models.PassFailCriteria"] = None,
@@ -1225,6 +1335,10 @@ class Test(_model_base.Model):
         public_ip_disabled: Optional[bool] = None,
         keyvault_reference_identity_type: Optional[str] = None,
         keyvault_reference_identity_id: Optional[str] = None,
+        metrics_reference_identity_type: Optional[Union[str, "_models.ManagedIdentityType"]] = None,
+        metrics_reference_identity_id: Optional[str] = None,
+        engine_built_in_identity_type: Optional[Union[str, "_models.ManagedIdentityType"]] = None,
+        engine_built_in_identity_ids: Optional[List[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1725,6 +1839,8 @@ class TestRun(_model_base.Model):
     :vartype portal_url: str
     :ivar duration: Test run duration in milliseconds.
     :vartype duration: int
+    :ivar virtual_user_hours: Virtual user hours consumed by the test run.
+    :vartype virtual_user_hours: float
     :ivar subnet_id: Subnet ID on which the load test instances should run.
     :vartype subnet_id: str
     :ivar kind: Type of test. Known values are: "URL", "JMX", and "Locust".
@@ -1738,6 +1854,9 @@ class TestRun(_model_base.Model):
     :ivar public_ip_disabled: Inject load test engines without deploying public IP for outbound
      access.
     :vartype public_ip_disabled: bool
+    :ivar created_by_type: The type of the entity that created the test run. (E.x. User,
+     ScheduleTrigger, etc). Known values are: "User" and "ScheduledTrigger".
+    :vartype created_by_type: str or ~azure.developer.loadtesting.models.CreateByTypes
     :ivar created_date_time: The creation datetime(RFC 3339 literal format).
     :vartype created_date_time: ~datetime.datetime
     :ivar created_by: The user that created.
@@ -1817,6 +1936,8 @@ class TestRun(_model_base.Model):
     """Portal url."""
     duration: Optional[int] = rest_field(visibility=["read"])
     """Test run duration in milliseconds."""
+    virtual_user_hours: Optional[float] = rest_field(name="virtualUserHours", visibility=["read"])
+    """Virtual user hours consumed by the test run."""
     subnet_id: Optional[str] = rest_field(name="subnetId", visibility=["read"])
     """Subnet ID on which the load test instances should run."""
     kind: Optional[Union[str, "_models.TestKind"]] = rest_field(visibility=["read"])
@@ -1828,6 +1949,9 @@ class TestRun(_model_base.Model):
      otherwise."""
     public_ip_disabled: Optional[bool] = rest_field(name="publicIPDisabled", visibility=["read"])
     """Inject load test engines without deploying public IP for outbound access."""
+    created_by_type: Optional[Union[str, "_models.CreateByTypes"]] = rest_field(name="createdByType")
+    """The type of the entity that created the test run. (E.x. User, ScheduleTrigger, etc). Known
+     values are: \"User\" and \"ScheduledTrigger\"."""
     created_date_time: Optional[datetime.datetime] = rest_field(
         name="createdDateTime", visibility=["read"], format="rfc3339"
     )
@@ -1856,6 +1980,7 @@ class TestRun(_model_base.Model):
         description: Optional[str] = None,
         request_data_level: Optional[Union[str, "_models.RequestDataLevel"]] = None,
         debug_logs_enabled: Optional[bool] = None,
+        created_by_type: Optional[Union[str, "_models.CreateByTypes"]] = None,
     ) -> None: ...
 
     @overload

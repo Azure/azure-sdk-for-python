@@ -8,12 +8,7 @@
 from abc import ABC
 from typing import TYPE_CHECKING
 
-from ._configuration import (
-    LoadTestAdministrationClientConfiguration,
-    LoadTestRunClientConfiguration,
-    TestProfileAdministrationClientConfiguration,
-    TestProfileRunClientConfiguration,
-)
+from ._configuration import LoadTestAdministrationClientConfiguration, LoadTestRunClientConfiguration
 
 if TYPE_CHECKING:
     from azure.core import AsyncPipelineClient
@@ -35,23 +30,5 @@ class LoadTestRunClientMixinABC(ABC):
 
     _client: "AsyncPipelineClient"
     _config: LoadTestRunClientConfiguration
-    _serialize: "Serializer"
-    _deserialize: "Deserializer"
-
-
-class TestProfileAdministrationClientMixinABC(ABC):
-    """DO NOT use this class. It is for internal typing use only."""
-
-    _client: "AsyncPipelineClient"
-    _config: TestProfileAdministrationClientConfiguration
-    _serialize: "Serializer"
-    _deserialize: "Deserializer"
-
-
-class TestProfileRunClientMixinABC(ABC):
-    """DO NOT use this class. It is for internal typing use only."""
-
-    _client: "AsyncPipelineClient"
-    _config: TestProfileRunClientConfiguration
     _serialize: "Serializer"
     _deserialize: "Deserializer"

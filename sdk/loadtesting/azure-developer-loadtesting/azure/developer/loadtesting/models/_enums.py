@@ -48,6 +48,15 @@ class CertificateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """If the certificate is stored in an Azure Key Vault."""
 
 
+class CreateByTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the entity that created the test run. (E.x. User, ScheduleTrigger, etc)."""
+
+    USER = "User"
+    """Entity was created by a user."""
+    SCHEDULED_TRIGGER = "ScheduledTrigger"
+    """Entity was created by a scheduled trigger."""
+
+
 class FileStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """File status."""
 
@@ -78,6 +87,15 @@ class FileType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """If the file is a JSON config file to define the requests for a URL test."""
     TEST_SCRIPT = "TEST_SCRIPT"
     """If the file is a test script."""
+
+
+class ManagedIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Managed identity type."""
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    """System-assigned managed identity."""
+    USER_ASSIGNED = "UserAssigned"
+    """User-assigned managed identity."""
 
 
 class MetricUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -36,10 +36,16 @@ def main():
             "autoStopCriteria": {"autoStopDisabled": True, "errorRate": 70, "errorRateTimeWindowInSeconds": 60},
             "description": "sample description",
             "displayName": "Performance_LoadTest",
+            "engineBuiltInIdentityIds": [
+                "/subscriptions/10000000-0000-0000-0000-000000000000/resourceGroups/samplerg1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/sampleresourcename"
+            ],
+            "engineBuiltInIdentityType": "UserAssigned",
             "environmentVariables": {"envvar1": "sampletext"},
             "keyvaultReferenceIdentityId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/samplerg/providers/sampleprovider/sampleresourcetype/sampleresourcename",
             "keyvaultReferenceIdentityType": "UserAssigned",
             "loadTestConfiguration": {"engineInstances": 6, "splitAllCSVs": True},
+            "metricsReferenceIdentityId": "/subscriptions/10000000-0000-0000-0000-000000000000/resourceGroups/samplerg1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/sampleresourcename",
+            "metricsReferenceIdentityType": "UserAssigned",
             "passFailCriteria": {
                 "passFailMetrics": {
                     "fefd759d-7fe8-4f83-8b6d-aeebe0f491fe": {
@@ -49,7 +55,18 @@ def main():
                         "condition": ">",
                         "value": 20,
                     }
-                }
+                },
+                "passFailServerMetrics": {
+                    "fefd759d-7fe8-4f83-8b6d-aeebe0f491fe": {
+                        "action": "continue",
+                        "aggregation": "Average",
+                        "condition": ">",
+                        "metricName": "Percentage CPU",
+                        "metricNamespace": "Microsoft.Compute/virtualMachines",
+                        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/MyResourceGroup/providers/Microsoft.Compute/virtualMachines/MyVM",
+                        "value": 20,
+                    }
+                },
             },
             "secrets": {
                 "secret1": {
@@ -63,6 +80,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-05-01-preview/CreateOrUpdateTest.json
+# x-ms-original-file: 2024-12-01-preview/CreateOrUpdateTest.json
 if __name__ == "__main__":
     main()

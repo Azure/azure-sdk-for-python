@@ -51,40 +51,6 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(regex=loadtestrun_client_id, value="00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(regex=loadtestrun_client_secret, value="00000000-0000-0000-0000-000000000000")
 
-    testprofileadministration_subscription_id = os.environ.get(
-        "TESTPROFILEADMINISTRATION_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000"
-    )
-    testprofileadministration_tenant_id = os.environ.get(
-        "TESTPROFILEADMINISTRATION_TENANT_ID", "00000000-0000-0000-0000-000000000000"
-    )
-    testprofileadministration_client_id = os.environ.get(
-        "TESTPROFILEADMINISTRATION_CLIENT_ID", "00000000-0000-0000-0000-000000000000"
-    )
-    testprofileadministration_client_secret = os.environ.get(
-        "TESTPROFILEADMINISTRATION_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000"
-    )
-    add_general_regex_sanitizer(
-        regex=testprofileadministration_subscription_id, value="00000000-0000-0000-0000-000000000000"
-    )
-    add_general_regex_sanitizer(regex=testprofileadministration_tenant_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=testprofileadministration_client_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(
-        regex=testprofileadministration_client_secret, value="00000000-0000-0000-0000-000000000000"
-    )
-
-    testprofilerun_subscription_id = os.environ.get(
-        "TESTPROFILERUN_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000"
-    )
-    testprofilerun_tenant_id = os.environ.get("TESTPROFILERUN_TENANT_ID", "00000000-0000-0000-0000-000000000000")
-    testprofilerun_client_id = os.environ.get("TESTPROFILERUN_CLIENT_ID", "00000000-0000-0000-0000-000000000000")
-    testprofilerun_client_secret = os.environ.get(
-        "TESTPROFILERUN_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000"
-    )
-    add_general_regex_sanitizer(regex=testprofilerun_subscription_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=testprofilerun_tenant_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=testprofilerun_client_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=testprofilerun_client_secret, value="00000000-0000-0000-0000-000000000000")
-
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")

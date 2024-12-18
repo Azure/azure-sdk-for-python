@@ -27,6 +27,8 @@ class TestLoadTestAdministration(LoadTestAdministrationClientTestBase):
                 "createdDateTime": "2020-02-20 00:00:00",
                 "description": "str",
                 "displayName": "str",
+                "engineBuiltInIdentityIds": ["str"],
+                "engineBuiltInIdentityType": "str",
                 "environmentVariables": {"str": "str"},
                 "inputArtifacts": {
                     "additionalFileInfo": [
@@ -99,6 +101,8 @@ class TestLoadTestAdministration(LoadTestAdministrationClientTestBase):
                     "regionalLoadTestConfig": [{"engineInstances": 0, "region": "str"}],
                     "splitAllCSVs": bool,
                 },
+                "metricsReferenceIdentityId": "str",
+                "metricsReferenceIdentityType": "str",
                 "passFailCriteria": {
                     "passFailMetrics": {
                         "str": {
@@ -111,7 +115,20 @@ class TestLoadTestAdministration(LoadTestAdministrationClientTestBase):
                             "result": "str",
                             "value": 0.0,
                         }
-                    }
+                    },
+                    "passFailServerMetrics": {
+                        "str": {
+                            "aggregation": "str",
+                            "condition": "str",
+                            "metricName": "str",
+                            "metricNamespace": "str",
+                            "resourceId": "str",
+                            "value": 0.0,
+                            "action": "str",
+                            "actualValue": 0.0,
+                            "result": "str",
+                        }
+                    },
                 },
                 "publicIPDisabled": bool,
                 "secrets": {"str": {"type": "str", "value": "str"}},
@@ -280,5 +297,59 @@ class TestLoadTestAdministration(LoadTestAdministrationClientTestBase):
             test_id="str",
         )
 
+        # please add some check logic here by yourself
+        # ...
+
+    @LoadTestAdministrationPreparer()
+    @recorded_by_proxy
+    def test_create_or_update_test_profile(self, loadtestadministration_endpoint):
+        client = self.create_client(endpoint=loadtestadministration_endpoint)
+        response = client.create_or_update_test_profile(
+            test_profile_id="str",
+            body={
+                "testProfileId": "str",
+                "createdBy": "str",
+                "createdDateTime": "2020-02-20 00:00:00",
+                "description": "str",
+                "displayName": "str",
+                "lastModifiedBy": "str",
+                "lastModifiedDateTime": "2020-02-20 00:00:00",
+                "targetResourceConfigurations": "target_resource_configurations",
+                "targetResourceId": "str",
+                "testId": "str",
+            },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @LoadTestAdministrationPreparer()
+    @recorded_by_proxy
+    def test_delete_test_profile(self, loadtestadministration_endpoint):
+        client = self.create_client(endpoint=loadtestadministration_endpoint)
+        response = client.delete_test_profile(
+            test_profile_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @LoadTestAdministrationPreparer()
+    @recorded_by_proxy
+    def test_get_test_profile(self, loadtestadministration_endpoint):
+        client = self.create_client(endpoint=loadtestadministration_endpoint)
+        response = client.get_test_profile(
+            test_profile_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @LoadTestAdministrationPreparer()
+    @recorded_by_proxy
+    def test_list_test_profiles(self, loadtestadministration_endpoint):
+        client = self.create_client(endpoint=loadtestadministration_endpoint)
+        response = client.list_test_profiles()
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

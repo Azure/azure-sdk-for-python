@@ -35,6 +35,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2024-05-01-preview/DeleteTestRun.json
+# x-ms-original-file: 2024-12-01-preview/DeleteTestRun.json
 if __name__ == "__main__":
     main()

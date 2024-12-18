@@ -32,7 +32,7 @@ def main():
 
     response = client.list_metrics(
         test_run_id="12316678-1234-1234-1234-122451189012",
-        metricname="ActiveThreads",
+        metric_name="ActiveThreads",
         metric_namespace="LoadTestRunMetrics",
         time_interval="2022-09-24T19:00:40Z/2022-09-25T19:28:40Z",
     )
@@ -40,6 +40,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2024-05-01-preview/ListTestRunMetrics.json
+# x-ms-original-file: 2024-12-01-preview/ListTestRunMetrics.json
 if __name__ == "__main__":
     main()

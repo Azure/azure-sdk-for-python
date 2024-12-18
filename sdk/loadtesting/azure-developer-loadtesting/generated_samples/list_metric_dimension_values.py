@@ -33,13 +33,13 @@ def main():
     response = client.list_metric_dimension_values(
         test_run_id="12316678-1234-1234-1234-122451189012",
         name="SamplerName",
-        metricname="ActiveThreads",
+        metric_name="ActiveThreads",
         metric_namespace="LoadTestRunMetrics",
         time_interval="2022-09-24T19:00:40Z/2022-09-25T19:28:40Z",
     )
     print(response)
 
 
-# x-ms-original-file: 2024-05-01-preview/ListMetricDimensionValues.json
+# x-ms-original-file: 2024-12-01-preview/ListMetricDimensionValues.json
 if __name__ == "__main__":
     main()

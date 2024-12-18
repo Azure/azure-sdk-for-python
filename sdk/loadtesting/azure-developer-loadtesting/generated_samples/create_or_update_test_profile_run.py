@@ -30,7 +30,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.create_or_update_test_profile_run(
+    response = client.begin_test_profile_run(
         test_profile_run_id="12316678-1234-1234-1234-122451189012",
         body={
             "description": "sample description",
@@ -41,6 +41,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-05-01-preview/CreateOrUpdateTestProfileRun.json
+# x-ms-original-file: 2024-12-01-preview/CreateOrUpdateTestProfileRun.json
 if __name__ == "__main__":
     main()

@@ -24,6 +24,7 @@ class TestLoadTestRunAsync(LoadTestRunClientTestBaseAsync):
                 "autoStopCriteria": {"autoStopDisabled": bool, "errorRate": 0.0, "errorRateTimeWindowInSeconds": 0},
                 "certificate": {"name": "str", "type": "str", "value": "str"},
                 "createdBy": "str",
+                "createdByType": "str",
                 "createdDateTime": "2020-02-20 00:00:00",
                 "debugLogsEnabled": bool,
                 "description": "str",
@@ -62,7 +63,20 @@ class TestLoadTestRunAsync(LoadTestRunClientTestBaseAsync):
                             "result": "str",
                             "value": 0.0,
                         }
-                    }
+                    },
+                    "passFailServerMetrics": {
+                        "str": {
+                            "aggregation": "str",
+                            "condition": "str",
+                            "metricName": "str",
+                            "metricNamespace": "str",
+                            "resourceId": "str",
+                            "value": 0.0,
+                            "action": "str",
+                            "actualValue": 0.0,
+                            "result": "str",
+                        }
+                    },
                 },
                 "portalUrl": "str",
                 "publicIPDisabled": bool,
@@ -202,6 +216,7 @@ class TestLoadTestRunAsync(LoadTestRunClientTestBaseAsync):
                         "transaction": "str",
                     }
                 },
+                "virtualUserHours": 0.0,
                 "virtualUsers": 0,
             },
         )
@@ -331,7 +346,7 @@ class TestLoadTestRunAsync(LoadTestRunClientTestBaseAsync):
         response = await client.list_metric_dimension_values(
             test_run_id="str",
             name="str",
-            metricname="str",
+            metric_name="str",
             metric_namespace="str",
             time_interval="str",
         )
@@ -368,7 +383,7 @@ class TestLoadTestRunAsync(LoadTestRunClientTestBaseAsync):
         client = self.create_async_client(endpoint=loadtestrun_endpoint)
         response = client.list_metrics(
             test_run_id="str",
-            metricname="str",
+            metric_name="str",
             metric_namespace="str",
             time_interval="str",
         )
@@ -391,6 +406,78 @@ class TestLoadTestRunAsync(LoadTestRunClientTestBaseAsync):
         client = self.create_async_client(endpoint=loadtestrun_endpoint)
         response = await client.stop_test_run(
             test_run_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @LoadTestRunPreparer()
+    @recorded_by_proxy_async
+    async def test_begin_test_profile_run(self, loadtestrun_endpoint):
+        client = self.create_async_client(endpoint=loadtestrun_endpoint)
+        response = await client.begin_test_profile_run(
+            test_profile_run_id="str",
+            body={
+                "testProfileRunId": "str",
+                "createdBy": "str",
+                "createdDateTime": "2020-02-20 00:00:00",
+                "description": "str",
+                "displayName": "str",
+                "durationInSeconds": 0,
+                "endDateTime": "2020-02-20 00:00:00",
+                "errorDetails": [{"message": "str"}],
+                "lastModifiedBy": "str",
+                "lastModifiedDateTime": "2020-02-20 00:00:00",
+                "recommendations": [{"category": "str", "configurations": ["str"]}],
+                "startDateTime": "2020-02-20 00:00:00",
+                "status": "str",
+                "targetResourceConfigurations": "target_resource_configurations",
+                "targetResourceId": "str",
+                "testProfileId": "str",
+                "testRunDetails": {"str": {"configurationId": "str", "properties": {"str": "str"}, "status": "str"}},
+            },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @LoadTestRunPreparer()
+    @recorded_by_proxy_async
+    async def test_delete_test_profile_run(self, loadtestrun_endpoint):
+        client = self.create_async_client(endpoint=loadtestrun_endpoint)
+        response = await client.delete_test_profile_run(
+            test_profile_run_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @LoadTestRunPreparer()
+    @recorded_by_proxy_async
+    async def test_get_test_profile_run(self, loadtestrun_endpoint):
+        client = self.create_async_client(endpoint=loadtestrun_endpoint)
+        response = await client.get_test_profile_run(
+            test_profile_run_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @LoadTestRunPreparer()
+    @recorded_by_proxy_async
+    async def test_list_test_profile_runs(self, loadtestrun_endpoint):
+        client = self.create_async_client(endpoint=loadtestrun_endpoint)
+        response = client.list_test_profile_runs()
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @LoadTestRunPreparer()
+    @recorded_by_proxy_async
+    async def test_stop_test_profile_run(self, loadtestrun_endpoint):
+        client = self.create_async_client(endpoint=loadtestrun_endpoint)
+        response = await client.stop_test_profile_run(
+            test_profile_run_id="str",
         )
 
         # please add some check logic here by yourself

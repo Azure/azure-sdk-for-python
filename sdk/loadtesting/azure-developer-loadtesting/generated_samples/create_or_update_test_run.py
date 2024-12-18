@@ -48,7 +48,18 @@ def main():
                         "condition": ">",
                         "value": 20,
                     }
-                }
+                },
+                "passFailServerMetrics": {
+                    "fefd759d-7fe8-4f83-8b6d-aeebe0f491fe": {
+                        "action": "continue",
+                        "aggregation": "Average",
+                        "condition": ">",
+                        "metricName": "Percentage CPU",
+                        "metricNamespace": "Microsoft.Compute/virtualMachines",
+                        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/MyResourceGroup/providers/Microsoft.Compute/virtualMachines/MyVM",
+                        "value": 20,
+                    }
+                },
             },
             "requestDataLevel": "NONE",
             "secrets": {
@@ -63,6 +74,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-05-01-preview/CreateOrUpdateTestRun.json
+# x-ms-original-file: 2024-12-01-preview/CreateOrUpdateTestRun.json
 if __name__ == "__main__":
     main()
