@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -21,15 +21,13 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-from ..._vendor import _convert_request
 from ...operations._web_site_management_client_operations import (
     build_check_name_availability_request,
     build_get_publishing_user_request,
@@ -52,7 +50,7 @@ from .._vendor import WebSiteManagementClientMixinABC
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -74,7 +72,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         :rtype: ~azure.mgmt.web.v2016_03_01.models.User
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -95,7 +93,6 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -109,7 +106,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("User", pipeline_response)
+        deserialized = self._deserialize("User", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -165,7 +162,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         :rtype: ~azure.mgmt.web.v2016_03_01.models.User
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -198,7 +195,6 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -212,7 +208,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("User", pipeline_response)
+        deserialized = self._deserialize("User", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -238,7 +234,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         )
         cls: ClsType[_models.SourceControlCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -254,7 +250,6 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -270,7 +265,6 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -311,7 +305,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         :rtype: ~azure.mgmt.web.v2016_03_01.models.SourceControl
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -333,7 +327,6 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -347,7 +340,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SourceControl", pipeline_response)
+        deserialized = self._deserialize("SourceControl", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -421,7 +414,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         :rtype: ~azure.mgmt.web.v2016_03_01.models.SourceControl
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -455,7 +448,6 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -469,7 +461,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SourceControl", pipeline_response)
+        deserialized = self._deserialize("SourceControl", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -496,7 +488,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         :rtype: ~azure.mgmt.web.v2016_03_01.models.ResourceNameAvailability
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -524,7 +516,6 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -538,7 +529,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ResourceNameAvailability", pipeline_response)
+        deserialized = self._deserialize("ResourceNameAvailability", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -555,7 +546,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         :rtype: ~azure.mgmt.web.v2016_03_01.models.DeploymentLocations
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -578,7 +569,6 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -592,7 +582,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("DeploymentLocations", pipeline_response)
+        deserialized = self._deserialize("DeploymentLocations", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -628,7 +618,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         )
         cls: ClsType[_models.GeoRegionCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -647,7 +637,6 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -663,7 +652,6 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -755,7 +743,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.IdentifierCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -782,7 +770,6 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -798,7 +785,6 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -846,7 +832,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         )
         cls: ClsType[_models.PremierAddOnOfferCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -863,7 +849,6 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -879,7 +864,6 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -918,7 +902,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         :rtype: ~azure.mgmt.web.v2016_03_01.models.SkuInfos
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -940,7 +924,6 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -954,7 +937,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SkuInfos", pipeline_response)
+        deserialized = self._deserialize("SkuInfos", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1018,7 +1001,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         :rtype: ~azure.mgmt.web.v2016_03_01.models.VnetValidationFailureDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1053,7 +1036,6 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1067,7 +1049,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VnetValidationFailureDetails", pipeline_response)
+        deserialized = self._deserialize("VnetValidationFailureDetails", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1075,7 +1057,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    async def move(  # pylint: disable=inconsistent-return-statements
+    async def move(
         self,
         resource_group_name: str,
         move_resource_envelope: _models.CsmMoveResourceEnvelope,
@@ -1100,7 +1082,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         """
 
     @overload
-    async def move(  # pylint: disable=inconsistent-return-statements
+    async def move(
         self,
         resource_group_name: str,
         move_resource_envelope: IO[bytes],
@@ -1125,7 +1107,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         """
 
     @distributed_trace_async
-    async def move(  # pylint: disable=inconsistent-return-statements
+    async def move(
         self,
         resource_group_name: str,
         move_resource_envelope: Union[_models.CsmMoveResourceEnvelope, IO[bytes]],
@@ -1145,7 +1127,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1180,7 +1162,6 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1264,7 +1245,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         :rtype: ~azure.mgmt.web.v2016_03_01.models.ValidateResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1299,7 +1280,6 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1313,7 +1293,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ValidateResponse", pipeline_response)
+        deserialized = self._deserialize("ValidateResponse", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1321,7 +1301,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    async def validate_move(  # pylint: disable=inconsistent-return-statements
+    async def validate_move(
         self,
         resource_group_name: str,
         move_resource_envelope: _models.CsmMoveResourceEnvelope,
@@ -1346,7 +1326,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         """
 
     @overload
-    async def validate_move(  # pylint: disable=inconsistent-return-statements
+    async def validate_move(
         self,
         resource_group_name: str,
         move_resource_envelope: IO[bytes],
@@ -1371,7 +1351,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         """
 
     @distributed_trace_async
-    async def validate_move(  # pylint: disable=inconsistent-return-statements
+    async def validate_move(
         self,
         resource_group_name: str,
         move_resource_envelope: Union[_models.CsmMoveResourceEnvelope, IO[bytes]],
@@ -1391,7 +1371,7 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1426,7 +1406,6 @@ class WebSiteManagementClientOperationsMixin(WebSiteManagementClientMixinABC):
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False

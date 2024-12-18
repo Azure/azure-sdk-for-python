@@ -20,14 +20,14 @@ class TestComputeManagementVirtualMachineExtensionsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_virtual_machine_extensions_begin_create_or_update(self, resource_group):
         response = self.client.virtual_machine_extensions.begin_create_or_update(
             resource_group_name=resource_group.name,
             vm_name="str",
             vm_extension_name="str",
             extension_parameters={
-                "location": "str",
                 "autoUpgradeMinorVersion": bool,
+                "enableAutomaticUpgrade": bool,
                 "forceUpdateTag": "str",
                 "id": "str",
                 "instanceView": {
@@ -53,16 +53,20 @@ class TestComputeManagementVirtualMachineExtensionsOperations(AzureMgmtRecordedT
                     "type": "str",
                     "typeHandlerVersion": "str",
                 },
+                "location": "str",
                 "name": "str",
                 "protectedSettings": {},
+                "protectedSettingsFromKeyVault": {"secretUrl": "str", "sourceVault": {"id": "str"}},
+                "provisionAfterExtensions": ["str"],
                 "provisioningState": "str",
                 "publisher": "str",
                 "settings": {},
+                "suppressFailures": bool,
                 "tags": {"str": "str"},
                 "type": "str",
                 "typeHandlerVersion": "str",
             },
-            api_version="2015-06-15",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -70,22 +74,25 @@ class TestComputeManagementVirtualMachineExtensionsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_virtual_machine_extensions_begin_update(self, resource_group):
         response = self.client.virtual_machine_extensions.begin_update(
             resource_group_name=resource_group.name,
             vm_name="str",
             vm_extension_name="str",
             extension_parameters={
                 "autoUpgradeMinorVersion": bool,
+                "enableAutomaticUpgrade": bool,
                 "forceUpdateTag": "str",
                 "protectedSettings": {},
+                "protectedSettingsFromKeyVault": {"secretUrl": "str", "sourceVault": {"id": "str"}},
                 "publisher": "str",
                 "settings": {},
+                "suppressFailures": bool,
                 "tags": {"str": "str"},
                 "type": "str",
                 "typeHandlerVersion": "str",
             },
-            api_version="2015-06-15",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -93,12 +100,12 @@ class TestComputeManagementVirtualMachineExtensionsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_virtual_machine_extensions_begin_delete(self, resource_group):
         response = self.client.virtual_machine_extensions.begin_delete(
             resource_group_name=resource_group.name,
             vm_name="str",
             vm_extension_name="str",
-            api_version="2015-06-15",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -106,12 +113,24 @@ class TestComputeManagementVirtualMachineExtensionsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_virtual_machine_extensions_get(self, resource_group):
         response = self.client.virtual_machine_extensions.get(
             resource_group_name=resource_group.name,
             vm_name="str",
             vm_extension_name="str",
-            api_version="2015-06-15",
+            api_version="2024-07-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_virtual_machine_extensions_list(self, resource_group):
+        response = self.client.virtual_machine_extensions.list(
+            resource_group_name=resource_group.name,
+            vm_name="str",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself

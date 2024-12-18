@@ -38,7 +38,6 @@ extends:
                   inputs:
                     versionSpec: '3.8'
                 - script: |
-                    python -m pip install setuptools==58.3.0
                     python -m pip install -r eng/ci_tools.txt
                   displayName: 'Prep Environment'
                 - task: PythonScript@0
@@ -100,7 +99,6 @@ extends:
                     versionSpec: '3.11'
 
                 - script: |
-                    python -m pip install setuptools==58.3.0
                     python -m pip install -r eng/ci_tools.txt
                   displayName: 'Prep Environment'
 

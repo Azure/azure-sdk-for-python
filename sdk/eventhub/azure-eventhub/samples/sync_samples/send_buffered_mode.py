@@ -15,7 +15,7 @@ from azure.eventhub import EventHubProducerClient, EventData
 from azure.identity import DefaultAzureCredential
 
 FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
 
 
 def on_success(events, pid):
@@ -34,7 +34,7 @@ producer = EventHubProducerClient(
     credential=DefaultAzureCredential(),
     buffered_mode=True,
     on_success=on_success,
-    on_error=on_error
+    on_error=on_error,
 )
 
 start_time = time.time()
@@ -44,11 +44,11 @@ with producer:
     # single events will be batched automatically
     for i in range(10):
         # the method returning indicates the event has been enqueued to the buffer
-        producer.send_event(EventData('Single data {}'.format(i)))
+        producer.send_event(EventData("Single data {}".format(i)))
 
     batch = producer.create_batch()
     for i in range(10):
-        batch.add(EventData('Single data in batch {}'.format(i)))
+        batch.add(EventData("Single data in batch {}".format(i)))
     # alternatively, you can enqueue an EventDataBatch object to the buffer
     producer.send_batch(batch)
 

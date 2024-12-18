@@ -8,8 +8,8 @@ from typing import Any, Dict, Iterable, List, Optional, Union, cast
 
 from marshmallow import ValidationError
 
-from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedNetworkProvisionOptions
+from azure.ai.ml._restclient.v2024_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102024Preview
+from azure.ai.ml._restclient.v2024_10_01_preview.models import ManagedNetworkProvisionOptions
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._http_utils import HttpPipeline
@@ -52,7 +52,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient082023Preview,
+        service_client: ServiceClient102024Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Any,
@@ -61,7 +61,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
             kwargs.pop("dataplane_client").workspaces if kwargs.get("dataplane_client") else None
         )
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline", None)
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self._provision_network_operation = service_client.managed_network_provisions
         super().__init__(
             operation_scope=operation_scope,

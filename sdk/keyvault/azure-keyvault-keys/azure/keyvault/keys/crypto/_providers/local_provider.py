@@ -14,7 +14,6 @@ from ... import KeyOperation
 ABC = abc.ABC
 
 if TYPE_CHECKING:
-    # pylint:disable=unused-import
     from .._internal.key import Key
     from .. import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
     from ... import JsonWebKey

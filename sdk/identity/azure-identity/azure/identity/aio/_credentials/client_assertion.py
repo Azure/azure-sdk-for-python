@@ -4,7 +4,7 @@
 # ------------------------------------
 from typing import Any, Callable, Optional
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessTokenInfo
 from .._internal import AadClient, AsyncContextManager
 from .._internal.get_token_mixin import GetTokenMixin
 
@@ -24,6 +24,9 @@ class ClientAssertionCredential(AsyncContextManager, GetTokenMixin):
     :keyword str authority: Authority of a Microsoft Entra endpoint, for example
         "login.microsoftonline.com", the authority for Azure Public Cloud (which is the default).
         :class:`~azure.identity.AzureAuthorityHosts` defines authorities for other clouds.
+    :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
+        will cache tokens in memory.
+    :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
@@ -63,10 +66,10 @@ class ClientAssertionCredential(AsyncContextManager, GetTokenMixin):
         """Close the credential's transport session."""
         await self._client.close()
 
-    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessTokenInfo]:
         return self._client.get_cached_access_token(scopes, **kwargs)
 
-    async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
         assertion = self._func()
         token = await self._client.obtain_token_by_jwt_assertion(scopes, assertion, **kwargs)
         return token

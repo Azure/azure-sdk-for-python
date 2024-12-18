@@ -7,7 +7,7 @@
 
 import re
 from datetime import datetime
-from typing import ( # pylint: disable=unused-import
+from typing import (
     Any, Dict, Optional, Tuple, Union,
     TYPE_CHECKING
 )
@@ -121,19 +121,20 @@ class PathClient(StorageAccountHostsMixin):
                                          _hosts=datalake_hosts, **kwargs)
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
-        api_version = get_api_version(kwargs)
+        self._api_version = get_api_version(kwargs)
+        self._client = self._build_generated_client(self.url)
+        self._datalake_client_for_blob_operation = self._build_generated_client(self._blob_client.url)
 
-        self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url, file_system=file_system_name,
-                                                   path=path_name, pipeline=self._pipeline)
-        self._client._config.version = api_version  # pylint: disable=protected-access
-
-        self._datalake_client_for_blob_operation = AzureDataLakeStorageRESTAPI(
-            self._blob_client.url,
-            base_url=self._blob_client.url,
-            file_system=file_system_name,
-            path=path_name,
-            pipeline=self._pipeline)
-        self._datalake_client_for_blob_operation._config.version = api_version  # pylint: disable=protected-access
+    def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
+        client = AzureDataLakeStorageRESTAPI(
+            url,
+            base_url=url,
+            file_system=self.file_system_name,
+            path=self.path_name,
+            pipeline=self._pipeline
+        )
+        client._config.version = self._api_version  # pylint: disable=protected-access
+        return client
 
     def __exit__(self, *args):
         self._blob_client.close()

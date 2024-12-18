@@ -21,12 +21,12 @@ class TestComputeManagementVirtualMachineScaleSetRollingUpgradesOperationsAsync(
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_cancel(self, resource_group):
+    async def test_virtual_machine_scale_set_rolling_upgrades_begin_cancel(self, resource_group):
         response = await (
             await self.client.virtual_machine_scale_set_rolling_upgrades.begin_cancel(
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
-                api_version="2017-03-30",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -35,12 +35,12 @@ class TestComputeManagementVirtualMachineScaleSetRollingUpgradesOperationsAsync(
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_start_os_upgrade(self, resource_group):
+    async def test_virtual_machine_scale_set_rolling_upgrades_begin_start_os_upgrade(self, resource_group):
         response = await (
             await self.client.virtual_machine_scale_set_rolling_upgrades.begin_start_os_upgrade(
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
-                api_version="2017-03-30",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -49,11 +49,25 @@ class TestComputeManagementVirtualMachineScaleSetRollingUpgradesOperationsAsync(
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_latest(self, resource_group):
+    async def test_virtual_machine_scale_set_rolling_upgrades_begin_start_extension_upgrade(self, resource_group):
+        response = await (
+            await self.client.virtual_machine_scale_set_rolling_upgrades.begin_start_extension_upgrade(
+                resource_group_name=resource_group.name,
+                vm_scale_set_name="str",
+                api_version="2024-07-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machine_scale_set_rolling_upgrades_get_latest(self, resource_group):
         response = await self.client.virtual_machine_scale_set_rolling_upgrades.get_latest(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
-            api_version="2017-03-30",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself

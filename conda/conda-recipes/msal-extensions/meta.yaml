@@ -14,12 +14,12 @@ build:
 
 requirements:
   host:
-    - msal >=2023.06.01
+    - msal >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - pip
     - portalocker
     - python
   run:
-    - msal >=2023.06.01
+    - msal >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - portalocker
     - pyjwt
     - python

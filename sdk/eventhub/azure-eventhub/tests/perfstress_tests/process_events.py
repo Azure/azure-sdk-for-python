@@ -19,9 +19,9 @@ class ProcessEventsTest(_EventHubProcessorTest):
         if event:
             if self.args.processing_delay:
                 delay_in_seconds = self.args.processing_delay / 1000
-                if self.args.processing_delay_strategy == 'sleep':
+                if self.args.processing_delay_strategy == "sleep":
                     time.sleep(delay_in_seconds)
-                elif self.args.processing_delay_strategy == 'spin':
+                elif self.args.processing_delay_strategy == "spin":
                     starttime = time.time()
                     while (time.time() - starttime) < delay_in_seconds:
                         pass
@@ -47,9 +47,9 @@ class ProcessEventsTest(_EventHubProcessorTest):
         if event:
             if self.args.processing_delay:
                 delay_in_seconds = self.args.processing_delay / 1000
-                if self.args.processing_delay_strategy == 'sleep':
+                if self.args.processing_delay_strategy == "sleep":
                     await asyncio.sleep(delay_in_seconds)
-                elif self.args.processing_delay_strategy == 'spin':
+                elif self.args.processing_delay_strategy == "spin":
                     starttime = time.time()
                     while (time.time() - starttime) < delay_in_seconds:
                         pass
@@ -70,7 +70,6 @@ class ProcessEventsTest(_EventHubProcessorTest):
                 await self.event_raised_async()
             except Exception as e:
                 await self.error_raised_async(e)
-
 
     def process_error_sync(self, _, error):
         self.error_raised_sync(error)

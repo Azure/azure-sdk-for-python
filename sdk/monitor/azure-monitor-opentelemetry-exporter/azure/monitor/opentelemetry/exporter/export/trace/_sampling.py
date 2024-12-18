@@ -4,6 +4,7 @@ from typing import Optional, Sequence
 
 # pylint:disable=no-name-in-module
 from fixedint import Int32
+
 # pylint:disable=W0611
 from opentelemetry.context import Context
 from opentelemetry.trace import Link, SpanKind, format_trace_id
@@ -65,11 +66,11 @@ class ApplicationInsightsSampler(Sampler):
         # Add sample rate as span attribute
         if attributes is None:
             attributes = {}
-        attributes[_SAMPLE_RATE_KEY] = self._sample_rate # type: ignore
+        attributes[_SAMPLE_RATE_KEY] = self._sample_rate  # type: ignore
         return SamplingResult(
             decision,
             attributes,
-            _get_parent_trace_state(parent_context), # type: ignore
+            _get_parent_trace_state(parent_context),  # type: ignore
         )
 
     def _get_DJB2_sample_score(self, trace_id_hex: str) -> float:
@@ -85,7 +86,6 @@ class ApplicationInsightsSampler(Sampler):
 
         # divide by _INTEGER_MAX for value between 0 and 1 for sampling score
         return float(hash_value) / _INTEGER_MAX
-
 
     def get_description(self) -> str:
         return "ApplicationInsightsSampler{}".format(self._ratio)

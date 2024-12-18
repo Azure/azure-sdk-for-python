@@ -20,7 +20,8 @@ import asyncio
 import os
 from re import M
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
+
 
 async def get_route_directions_batch_sync_async():
     # [START get_route_directions_batch_sync_async]
@@ -31,15 +32,16 @@ async def get_route_directions_batch_sync_async():
 
     async with maps_route_client:
         result = await maps_route_client.get_route_directions_batch_sync(
-            queries=[
-                "47.620659,-122.348934:47.610101,-122.342015&travelMode=bicycle&routeType=eco&traffic=false"
-            ]
+            queries=["47.620659,-122.348934:47.610101,-122.342015&travelMode=bicycle&routeType=eco&traffic=false"]
         )
 
-    print("Get route directions batch sync")
-    print(result.summary.total_requests)
-    print(result.items[0].response.routes[0].sections[0])
+    if result.batch_summary is not None and result.batch_items is not None:
+        print("Get route directions batch sync")
+        print(result.batch_summary.total_requests)
+        print(result.batch_items[0].response.routes[0].summary.departure_time)
+        print(result.batch_items[0].response.routes[0].summary.arrival_time)
     # [END get_route_directions_batch_sync]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(get_route_directions_batch_sync_async())

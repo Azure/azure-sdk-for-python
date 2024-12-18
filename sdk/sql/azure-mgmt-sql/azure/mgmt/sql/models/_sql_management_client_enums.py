@@ -243,7 +243,7 @@ class ColumnDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DATETIMEOFFSET = "datetimeoffset"
     TINYINT = "tinyint"
     SMALLINT = "smallint"
-    INT_ENUM = "int"
+    INT = "int"
     SMALLDATETIME = "smalldatetime"
     REAL = "real"
     MONEY = "money"
@@ -268,6 +268,7 @@ class ColumnDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NCHAR = "nchar"
     XML = "xml"
     SYSNAME = "sysname"
+    INT_ENUM = "int"
 
 
 class ConnectionPolicyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -501,6 +502,13 @@ class ExternalGovernanceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+
+
+class FailoverGroupDatabasesSecondaryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Databases secondary type on partner server."""
+
+    GEO = "Geo"
+    STANDBY = "Standby"
 
 
 class FailoverGroupReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1064,7 +1072,7 @@ class ReplicaSynchronizationHealth(str, Enum, metaclass=CaseInsensitiveEnumMeta)
 
 
 class ReplicationLinkType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Link type (GEO, NAMED, STANDBY)."""
+    """Link type (GEO, NAMED, STANDBY). Update operation does not support NAMED."""
 
     GEO = "GEO"
     NAMED = "NAMED"
@@ -1074,8 +1082,9 @@ class ReplicationLinkType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ReplicationModeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Replication mode of the link."""
 
-    ASYNC_ENUM = "Async"
+    ASYNC = "Async"
     SYNC = "Sync"
+    ASYNC_ENUM = "Async"
 
 
 class ReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):

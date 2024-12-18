@@ -29,7 +29,9 @@ from azure.monitor.opentelemetry.exporter._quickpulse._exporter import (
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._state import (
     _get_global_quickpulse_state,
+    _get_quickpulse_etag,
     _set_global_quickpulse_state,
+    _set_quickpulse_etag,
     _QuickpulseState,
 )
 
@@ -72,7 +74,7 @@ class TestQuickpulse(unittest.TestCase):
                                 ],
                                 aggregation_temporality=AggregationTemporality.DELTA,
                                 is_monotonic=True,
-                            )
+                            ),
                         )
                     ],
                     schema_url="test_url",
@@ -91,13 +93,12 @@ class TestQuickpulse(unittest.TestCase):
             performance_collection_supported=True,
         )
         cls._exporter = _QuickpulseExporter(
-            "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
         )
         cls._reader = _QuickpulseMetricReader(
             cls._exporter,
             cls._data_point,
         )
-
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient")
     def test_init(self, client_mock):
@@ -108,11 +109,9 @@ class TestQuickpulse(unittest.TestCase):
         self.assertEqual(exporter._instrumentation_key, "4321abcd-5678-4efa-8abc-1234567890ab")
         self.assertTrue(isinstance(exporter._client, QuickpulseClient))
 
-
     def test_export_missing_data_point(self):
         result = self._exporter.export(OTMetricsData(resource_metrics=[]))
         self.assertEqual(result, MetricExportResult.FAILURE)
-
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.publish")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._metric_to_quick_pulse_data_points")
@@ -122,27 +121,20 @@ class TestQuickpulse(unittest.TestCase):
             None,
             {
                 "x-ms-qps-subscribed": "false",
-            }
+            },
         )
         convert_mock.return_value = [self._data_point]
         post_mock.return_value = post_response
-        result = self._exporter.export(
-            self._metrics_data,
-            base_monitoring_data_point=self._data_point
-        )
+        result = self._exporter.export(self._metrics_data, base_monitoring_data_point=self._data_point)
         self.assertEqual(result, MetricExportResult.FAILURE)
 
-    
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.publish")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._metric_to_quick_pulse_data_points")
     def test_export_subscribed_none(self, convert_mock, post_mock):
         post_response = None
         convert_mock.return_value = [self._data_point]
         post_mock.return_value = post_response
-        result = self._exporter.export(
-            self._metrics_data,
-            base_monitoring_data_point=self._data_point
-        )
+        result = self._exporter.export(self._metrics_data, base_monitoring_data_point=self._data_point)
         self.assertEqual(result, MetricExportResult.FAILURE)
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._metric_to_quick_pulse_data_points")
@@ -157,10 +149,7 @@ class TestQuickpulse(unittest.TestCase):
             "azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.publish",
             throw(Exception),
         ):  # noqa: E501
-            result = self._exporter.export(
-                self._metrics_data,
-                base_monitoring_data_point=self._data_point
-            )
+            result = self._exporter.export(self._metrics_data, base_monitoring_data_point=self._data_point)
             self.assertEqual(result, MetricExportResult.FAILURE)
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.publish")
@@ -171,15 +160,58 @@ class TestQuickpulse(unittest.TestCase):
             None,
             {
                 "x-ms-qps-subscribed": "true",
-            }
+            },
         )
         convert_mock.return_value = [self._data_point]
         post_mock.return_value = post_response
-        result = self._exporter.export(
-            self._metrics_data,
-            base_monitoring_data_point=self._data_point
-        )
+        result = self._exporter.export(self._metrics_data, base_monitoring_data_point=self._data_point)
         self.assertEqual(result, MetricExportResult.SUCCESS)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._update_filter_configuration")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.publish")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._metric_to_quick_pulse_data_points")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._get_quickpulse_etag")
+    def test_export_subscribed_true_etag_changed(self, etag_mock, convert_mock, post_mock, update_filter_mock):
+        pipeline_response = mock.Mock()
+        config = {"test-config": "test-config-value"}
+        pipeline_response.http_response.content = config
+        post_response = _Response(
+            pipeline_response,
+            None,
+            {
+                "x-ms-qps-subscribed": "true",
+                "x-ms-qps-configuration-etag": "new-etag",
+            },
+        )
+        convert_mock.return_value = [self._data_point]
+        post_mock.return_value = post_response
+        etag_mock.return_value = "old-etag"
+        result = self._exporter.export(self._metrics_data, base_monitoring_data_point=self._data_point)
+        self.assertEqual(result, MetricExportResult.SUCCESS)
+        update_filter_mock.assert_called_once_with("new-etag", config)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._update_filter_configuration")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.publish")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._metric_to_quick_pulse_data_points")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._get_quickpulse_etag")
+    def test_export_subscribed_true_etag_same(self, etag_mock, convert_mock, post_mock, update_filter_mock):
+        pipeline_response = mock.Mock()
+        config = {"test-config": "test-config-value"}
+        pipeline_response.http_response.content = config
+        post_response = _Response(
+            pipeline_response,
+            None,
+            {
+                "x-ms-qps-subscribed": "true",
+                "x-ms-qps-configuration-etag": "old-etag",
+            },
+        )
+        convert_mock.return_value = [self._data_point]
+        post_mock.return_value = post_response
+        etag_mock.return_value = "old-etag"
+        result = self._exporter.export(self._metrics_data, base_monitoring_data_point=self._data_point)
+        self.assertEqual(result, MetricExportResult.SUCCESS)
+        update_filter_mock.assert_not_called()
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.is_subscribed")
     def test_ping(self, ping_mock):
@@ -188,12 +220,10 @@ class TestQuickpulse(unittest.TestCase):
             None,
             {
                 "x-ms-qps-subscribed": "false",
-            }
+            },
         )
         ping_mock.return_value = ping_response
-        response = self._exporter._ping(
-            monitoring_data_point=self._data_point
-        )
+        response = self._exporter._ping(monitoring_data_point=self._data_point)
         self.assertEqual(response, ping_response)
 
     def test_ping_exception(self):
@@ -201,11 +231,23 @@ class TestQuickpulse(unittest.TestCase):
             "azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.is_subscribed",
             throw(HttpResponseError),
         ):  # noqa: E501
-            response = self._exporter._ping(
-                monitoring_data_point=self._data_point
-            )
+            response = self._exporter._ping(monitoring_data_point=self._data_point)
             self.assertIsNone(response)
 
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.is_subscribed")
+    def test_ping_etag_response(self, ping_mock):
+        ping_response = _Response(
+            mock.Mock(),
+            None,
+            {
+                "x-ms-qps-subscribed": "false",
+                "x-ms-qps-configuration-etag": "new-etag",
+            },
+        )
+        ping_mock.return_value = ping_response
+        response = self._exporter._ping(monitoring_data_point=self._data_point)
+        self.assertEqual(response, ping_response)
+        self.assertEqual(response._response_headers["x-ms-qps-configuration-etag"], "new-etag")
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter.PeriodicTask")
     def test_quickpulsereader_init(self, task_mock):
@@ -239,13 +281,7 @@ class TestQuickpulse(unittest.TestCase):
         )
         _set_global_quickpulse_state(_QuickpulseState.PING_SHORT)
         reader._elapsed_num_seconds = _QuickpulseState.PING_SHORT.value
-        ping_mock.return_value = _Response(
-            None,
-            None,
-            {
-                "x-ms-qps-subscribed": "true"
-            }
-        )
+        ping_mock.return_value = _Response(None, None, {"x-ms-qps-subscribed": "true"})
         reader._ticker()
         ping_mock.assert_called_once_with(
             self._data_point,
@@ -253,7 +289,77 @@ class TestQuickpulse(unittest.TestCase):
         self.assertEqual(_get_global_quickpulse_state(), _QuickpulseState.POST_SHORT)
         self.assertEqual(reader._elapsed_num_seconds, 1)
 
-    # TODO: Other ticker cases
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._QuickpulseExporter._ping")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter.PeriodicTask")
+    def test_quickpulsereader_ticker_ping_false_backoff(self, task_mock, ping_mock):
+        task_inst_mock = mock.Mock()
+        task_mock.return_value = task_inst_mock
+        reader = _QuickpulseMetricReader(
+            self._exporter,
+            self._data_point,
+        )
+        _set_global_quickpulse_state(_QuickpulseState.PING_SHORT)
+        reader._elapsed_num_seconds = 60
+        ping_mock.return_value = _Response(None, None, {"x-ms-qps-subscribed": "false"})
+        reader._ticker()
+        ping_mock.assert_called_once_with(
+            self._data_point,
+        )
+        self.assertEqual(_get_global_quickpulse_state(), _QuickpulseState.PING_LONG)
+        self.assertEqual(reader._elapsed_num_seconds, _QuickpulseState.PING_LONG.value + 1)
+        self.assertEqual(_get_quickpulse_etag(), "")
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._QuickpulseExporter._ping")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter.PeriodicTask")
+    def test_ticker_erroneous_no_response_backoff(self, task_mock, ping_mock):
+        _set_global_quickpulse_state(_QuickpulseState.PING_SHORT)
+        _set_quickpulse_etag("old-etag")
+        task_inst_mock = mock.Mock()
+        task_mock.return_value = task_inst_mock
+        reader = _QuickpulseMetricReader(
+            self._exporter,
+            self._data_point,
+        )
+        reader._elapsed_num_seconds = 60
+        ping_mock.return_value = None
+        reader._ticker()
+        self.assertEqual(_get_global_quickpulse_state(), _QuickpulseState.PING_LONG)
+        self.assertEqual(_get_quickpulse_etag(), "")
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._QuickpulseMetricReader.collect")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter.PeriodicTask")
+    def test_ticker_post_state(self, task_mock, collect_mock):
+        _set_global_quickpulse_state(_QuickpulseState.POST_SHORT)
+        task_inst_mock = mock.Mock()
+        task_mock.return_value = task_inst_mock
+        reader = _QuickpulseMetricReader(
+            self._exporter,
+            self._data_point,
+        )
+        reader._elapsed_num_seconds = 0
+        reader._ticker()
+        collect_mock.assert_called_once()
+        self.assertEqual(_get_global_quickpulse_state(), _QuickpulseState.POST_SHORT)
+        self.assertEqual(reader._elapsed_num_seconds, 1)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._QuickpulseMetricReader.collect")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter.PeriodicTask")
+    def test_ticker_post_unsuccessful_backoff(self, task_mock, collect_mock):
+        _set_global_quickpulse_state(_QuickpulseState.POST_SHORT)
+        task_inst_mock = mock.Mock()
+        task_mock.return_value = task_inst_mock
+        reader = _QuickpulseMetricReader(
+            self._exporter,
+            self._data_point,
+        )
+        reader._elapsed_num_seconds = 20
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._quickpulse._exporter._QuickpulseMetricReader.collect",
+            throw(_UnsuccessfulQuickPulsePostError),
+        ):  # noqa: E501
+            reader._ticker()
+            self.assertEqual(_get_global_quickpulse_state(), _QuickpulseState.PING_SHORT)
+            self.assertEqual(reader._elapsed_num_seconds, 1)
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._QuickpulseExporter.export")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter.PeriodicTask")

@@ -35,13 +35,13 @@ from ..exceptions import (
     AuthenticationError,
     ConnectionLostError,
     EventDataSendError,
-    OperationTimeoutError
+    OperationTimeoutError,
 )
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-methods
+class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
     """
     Class which defines uamqp-based methods used by the producer and consumer.
     """
@@ -50,16 +50,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     # define constants
     MAX_FRAME_SIZE_BYTES = constants.MAX_FRAME_SIZE_BYTES
-    MAX_MESSAGE_LENGTH_BYTES = (
-        constants.MAX_FRAME_SIZE_BYTES
-    )  # TODO: define actual value in pyamqp
+    MAX_MESSAGE_LENGTH_BYTES = constants.MAX_FRAME_SIZE_BYTES  # TODO: define actual value in pyamqp
     TIMEOUT_FACTOR = 1
     CONNECTION_CLOSING_STATES: Tuple[
-        ConnectionState,
-        ConnectionState,
-        ConnectionState,
-        ConnectionState,
-        Optional[ConnectionState]] = _CLOSING_STATES
+        ConnectionState, ConnectionState, ConnectionState, ConnectionState, Optional[ConnectionState]
+    ] = _CLOSING_STATES
     TRANSPORT_IDENTIFIER = f"{PYAMQP_LIBRARY}/{__version__}"
 
     # define symbols
@@ -71,9 +66,6 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     PROP_PARTITION_KEY_AMQP_SYMBOL = PROP_PARTITION_KEY
 
     ERROR_CONDITIONS = [condition.value for condition in errors.ErrorCondition]
-
-    # define exceptions
-    AUTHENTICATION_EXCEPTION = errors.AuthenticationException
 
     @staticmethod
     def build_message(**kwargs):
@@ -128,14 +120,16 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                 correlation_id=annotated_message.properties.correlation_id,
                 content_type=annotated_message.properties.content_type,
                 content_encoding=annotated_message.properties.content_encoding,
-                creation_time=int(annotated_message.properties.creation_time)
-                if annotated_message.properties.creation_time
-                else None,
-                absolute_expiry_time=int(
-                    annotated_message.properties.absolute_expiry_time
-                )
-                if annotated_message.properties.absolute_expiry_time
-                else None,
+                creation_time=(
+                    int(annotated_message.properties.creation_time)
+                    if annotated_message.properties.creation_time
+                    else None
+                ),
+                absolute_expiry_time=(
+                    int(annotated_message.properties.absolute_expiry_time)
+                    if annotated_message.properties.absolute_expiry_time
+                    else None
+                ),
                 group_id=annotated_message.properties.group_id,
                 group_sequence=annotated_message.properties.group_sequence,
                 reply_to_group_id=annotated_message.properties.reply_to_group_id,
@@ -214,10 +208,10 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
         """
         return errors.RetryPolicy(
-            retry_total=config.max_retries,  # pylint:disable=protected-access
-            retry_backoff_factor=config.backoff_factor,  # pylint:disable=protected-access
-            retry_backoff_max=config.backoff_max,  # pylint:disable=protected-access
-            retry_mode=config.retry_mode,  # pylint:disable=protected-access
+            retry_total=config.max_retries,
+            retry_backoff_factor=config.backoff_factor,
+            retry_backoff_max=config.backoff_max,
+            retry_mode=config.retry_mode,
             no_retry_condition=NO_RETRY_ERRORS,
             custom_condition_backoff=CUSTOM_CONDITION_BACKOFF,
         )
@@ -231,26 +225,23 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: dict
 
         """
-        return {
-            symbol: utils.amqp_long_value(value)
-            for (symbol, value) in link_properties.items()
-        }
+        return {symbol: utils.amqp_long_value(value) for (symbol, value) in link_properties.items()}
 
     @staticmethod
-    def create_connection(# pylint:disable=unused-argument
+    def create_connection(
         *,
         endpoint: str,
         auth: JWTTokenAuth,
         container_id: Optional[str] = None,
         max_frame_size: int,
         channel_max: int,
-        idle_timeout: float,
+        idle_timeout: Optional[float],
         properties: Optional[Dict[str, Any]] = None,
         remote_idle_timeout_empty_frame_send_ratio: float,
         error_policy: Any,
         debug: bool,
         encoding: str,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Connection:
         """
         Creates and returns the uamqp Connection object.
@@ -279,7 +270,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             properties=properties,
             idle_timeout_empty_frame_send_ratio=remote_idle_timeout_empty_frame_send_ratio,
             network_trace=network_trace,
-            **kwargs
+            **kwargs,
         )
 
     @staticmethod
@@ -303,19 +294,19 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return connection.state
 
     @staticmethod
-    def create_send_client(# pylint: disable=unused-argument
+    def create_send_client(
         *,
         config,
         target: str,
         auth: JWTTokenAuth,
-        idle_timeout: int,
+        idle_timeout: Optional[float],
         network_trace: bool,
         retry_policy: Any,
         keep_alive_interval: int,
         client_name: str,
         link_properties: Optional[Dict[str, Any]] = None,
         properties: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ):
         """
         Creates and returns the pyamqp SendClient.
@@ -334,15 +325,14 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :return: The SendClient.
         :rtype: ~pyamqp.SendClient
         """
-        msg_timeout = kwargs.pop(  # pylint: disable=unused-variable
-            "msg_timeout"
-        )
+        msg_timeout = kwargs.pop("msg_timeout")  # pylint: disable=unused-variable
 
         return SendClient(
             config.hostname,
             target,
             custom_endpoint_address=config.custom_endpoint_address,
             connection_verify=config.connection_verify,
+            ssl_context=config.ssl_context,
             transport_type=config.transport_type,
             http_proxy=config.http_proxy,
             socket_timeout=config.socket_timeout,
@@ -371,9 +361,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         try:
             producer._open()
             timeout = timeout_time - time.time() if timeout_time else 0
-            producer._handler.send_message(
-                producer._unsent_events[0], timeout=timeout
-            )
+            producer._handler.send_message(producer._unsent_events[0], timeout=timeout)
             # TODO: The unsent_events list will always be <= 1. Even for a batch,
             # it gets the underlying singular BatchMessage.
             # May want to refactor in the future so that this isn't a list.
@@ -383,9 +371,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     @staticmethod
     def set_message_partition_key(
-        message: Message,
-        partition_key: Optional[Union[str, bytes]],
-        **kwargs: Any
+        message: Message, partition_key: Optional[Union[str, bytes]], **kwargs: Any
     ) -> Message:
         """Set the partition key as an annotation on a uamqp message.
         :param ~pyamqp.message.Message message: The message to update.
@@ -402,17 +388,13 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                 partition_key = cast(bytes, partition_key).decode(encoding)
             except AttributeError:
                 pass
-            annotations[
-                PROP_PARTITION_KEY
-            ] = partition_key  # pylint:disable=protected-access
+            annotations[PROP_PARTITION_KEY] = partition_key
             header = Header(durable=True)  # type: ignore
             return message._replace(message_annotations=annotations, header=header)
         return message
 
     @staticmethod
-    def add_batch(
-        event_data_batch, outgoing_event_data, event_data
-    ):  # pylint: disable=unused-argument
+    def add_batch(event_data_batch, outgoing_event_data, event_data):
         """
         Add EventData to the data body of the BatchMessage.
         :param ~azure.eventhub.EventDataBatch event_data_batch: EventDataBatch to add data to.
@@ -420,13 +402,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param ~azure.eventhub.EventData event_data: EventData to add to internal batch events. uamqp use only.
         :rtype: None
         """
-        event_data_batch._internal_events.append(  # pylint: disable=protected-access
-            event_data
-        )
+        event_data_batch._internal_events.append(event_data)  # pylint: disable=protected-access
         # pylint: disable=protected-access
-        utils.add_batch(
-            event_data_batch._message, outgoing_event_data._message
-        )
+        utils.add_batch(event_data_batch._message, outgoing_event_data._message)
 
     @staticmethod
     def create_source(source, offset, selector):
@@ -452,7 +430,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         config,
         source: Source,
         auth: JWTTokenAuth,
-        idle_timeout: int,
+        idle_timeout: Optional[float],
         network_trace: bool,
         retry_policy: Any,
         client_name: str,
@@ -464,7 +442,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         streaming_receive: bool,
         message_received_callback: Callable,
         timeout: float,
-        **kwargs
+        **kwargs,
     ):
         """
         Creates and returns the receive client.
@@ -497,6 +475,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             transport_type=config.transport_type,
             custom_endpoint_address=config.custom_endpoint_address,
             connection_verify=config.connection_verify,
+            ssl_context=config.ssl_context,
             socket_timeout=config.socket_timeout,
             auth=auth,
             idle_timeout=idle_timeout,
@@ -525,11 +504,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :paramtype auth: ~pyamqp.authentication.JWTTokenAuth
         """
         # pylint:disable=protected-access
-        handler.open(
-            connection=client._conn_manager.get_connection(
-                client._address.hostname, auth
-            )
-        )
+        handler.open(connection=client._conn_manager.get_connection(client._address.hostname, auth))
 
     @staticmethod
     def check_link_stolen(consumer, exception):
@@ -539,13 +514,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param Exception exception: Exception to check.
         """
 
-        if (
-            isinstance(exception, errors.AMQPLinkError)
-            and exception.condition == errors.ErrorCondition.LinkStolen
-        ):
-            raise consumer._handle_exception(  # pylint: disable=protected-access
-                exception
-            )
+        if isinstance(exception, errors.AMQPLinkError) and exception.condition == errors.ErrorCondition.LinkStolen:
+            raise consumer._handle_exception(exception)  # pylint: disable=protected-access
 
     @staticmethod
     def create_token_auth(
@@ -582,15 +552,12 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             timeout=config.auth_timeout,
             custom_endpoint_hostname=config.custom_endpoint_hostname,
             port=config.connection_port,
-            verify=config.connection_verify,
         )
         # if update_token:
         #    token_auth.update_token()  # TODO: why don't we need to update in pyamqp?
 
     @staticmethod
-    def create_mgmt_client(
-        address, mgmt_auth, config
-    ):  # pylint: disable=unused-argument
+    def create_mgmt_client(address, mgmt_auth, config):
         """
         Creates and returns the mgmt AMQP client.
         :param _Address address: Required. The Address.
@@ -609,6 +576,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             http_proxy=config.http_proxy,
             custom_endpoint_address=config.custom_endpoint_address,
             connection_verify=config.connection_verify,
+            ssl_context=config.ssl_context,
             use_tls=config.use_tls,
         )
 
@@ -633,7 +601,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         status_code_field: bytes,
         description_fields: bytes,
         **kwargs: Any,
-    ): # pylint:disable=unused-argument
+    ):
         """
         Send mgmt request.
         :param ~pyamqp.AMQPClient mgmt_client: Client to send request with.
@@ -670,7 +638,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             return errors.AuthenticationException(
                 errors.ErrorCondition.UnauthorizedAccess,
                 description=f"""Management authentication failed. Status code: {status_code}, """
-                    f"""Description: {description!r}""",
+                f"""Description: {description!r}""",
             )
         if status_code in [404]:
             return errors.AMQPConnectionError(
@@ -734,7 +702,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     @staticmethod
     def _handle_exception(
         exception, closable, *, is_consumer=False
-    ):  # pylint:disable=too-many-branches, too-many-statements
+    ):
         try:  # closable is a producer/consumer object
             name = closable._name  # pylint: disable=protected-access
         except AttributeError:  # closable is an client object
@@ -764,7 +732,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         elif isinstance(exception, errors.MessageException):
             _LOGGER.info("%r Event data send error (%r)", name, exception)
             # TODO: issue #34266
-            error = EventDataSendError(str(exception), exception)   # type: ignore[arg-type]
+            error = EventDataSendError(str(exception), exception)  # type: ignore[arg-type]
             raise error
         else:
             if isinstance(exception, errors.AuthenticationException):
@@ -779,7 +747,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             # TODO: add MessageHandlerError in amqp?
             # elif isinstance(exception, errors.MessageHandlerError):
             #     if hasattr(closable, "_close_handler"):
-            #         closable._close_handler()  # pylint:disable=protected-access
+            #         closable._close_handler()
             else:  # errors.AMQPConnectionError, compat.TimeoutException
                 if hasattr(closable, "_close_connection"):
                     closable._close_connection()  # pylint:disable=protected-access

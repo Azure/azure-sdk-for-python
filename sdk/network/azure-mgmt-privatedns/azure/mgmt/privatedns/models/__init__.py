@@ -28,6 +28,7 @@ from ._models_py3 import VirtualNetworkLinkListResult
 
 from ._private_dns_management_client_enums import ProvisioningState
 from ._private_dns_management_client_enums import RecordType
+from ._private_dns_management_client_enums import ResolutionPolicy
 from ._private_dns_management_client_enums import VirtualNetworkLinkState
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -55,6 +56,7 @@ __all__ = [
     "VirtualNetworkLinkListResult",
     "ProvisioningState",
     "RecordType",
+    "ResolutionPolicy",
     "VirtualNetworkLinkState",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

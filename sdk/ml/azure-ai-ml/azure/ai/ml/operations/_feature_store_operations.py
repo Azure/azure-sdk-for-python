@@ -10,8 +10,8 @@ from typing import Any, Dict, Iterable, Optional, cast
 
 from marshmallow import ValidationError
 
-from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedNetworkProvisionOptions
+from azure.ai.ml._restclient.v2024_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102024Preview
+from azure.ai.ml._restclient.v2024_10_01_preview.models import ManagedNetworkProvisionOptions
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
@@ -19,10 +19,10 @@ from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.constants._common import Scope, WorkspaceKind
 from azure.ai.ml.entities import (
-    WorkspaceConnection,
     IdentityConfiguration,
     ManagedIdentityConfiguration,
     ManagedNetworkProvisionStatus,
+    WorkspaceConnection,
 )
 from azure.ai.ml.entities._feature_store._constants import (
     OFFLINE_MATERIALIZATION_STORE_TYPE,
@@ -58,12 +58,12 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient082023Preview,
+        service_client: ServiceClient102024Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self._provision_network_operation = service_client.managed_network_provisions
         super().__init__(
             operation_scope=operation_scope,
@@ -459,6 +459,14 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             update_offline_store_role_assignment = False
         if not online_store_target_to_update:
             update_online_store_role_assignment = False
+
+        user_defined_cr = feature_store.compute_runtime
+        if (
+            user_defined_cr
+            and user_defined_cr.spark_runtime_version != feature_store_settings.compute_runtime.spark_runtime_version
+        ):
+            # update user defined compute runtime
+            feature_store_settings.compute_runtime = feature_store.compute_runtime
 
         identity = kwargs.pop("identity", feature_store.identity)
         if materialization_identity:

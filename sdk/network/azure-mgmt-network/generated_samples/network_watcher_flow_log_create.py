@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.network import NetworkManagementClient
@@ -46,6 +44,7 @@ def main():
             "location": "centraluseuap",
             "properties": {
                 "enabled": True,
+                "enabledFilteringCriteria": "srcIP=158.255.7.8 || dstPort=56891",
                 "format": {"type": "JSON", "version": 1},
                 "storageId": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Storage/storageAccounts/nwtest1mgvbfmqsigdxe",
                 "targetResourceId": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/networkSecurityGroups/desmondcentral-nsg",
@@ -55,6 +54,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-01-01/examples/NetworkWatcherFlowLogCreate.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-03-01/examples/NetworkWatcherFlowLogCreate.json
 if __name__ == "__main__":
     main()

@@ -63,9 +63,6 @@ parameters:
   - name: VerifyAutorest
     type: boolean
     default: false
-  - name: ValidateFormatting
-    type: boolean
-    default: false
   - name: TestProxy
     type: boolean
     default: true
@@ -107,7 +104,6 @@ extends:
               MatrixFilters: ${{ parameters.MatrixFilters }}
               MatrixReplace: ${{ parameters.MatrixReplace }}
               VerifyAutorest: ${{ parameters.VerifyAutorest }}
-              ValidateFormatting: ${{ parameters.ValidateFormatting }}
               TestProxy: ${{ parameters.TestProxy }}
               GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
 

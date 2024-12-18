@@ -11,21 +11,21 @@ Example to show sending, receiving and parsing amqp annotated message(s) to Even
 
 import os
 import asyncio
+from azure.eventhub import TransportType
 from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient
 from azure.eventhub.amqp import AmqpAnnotatedMessage, AmqpMessageBodyType
-from azure.identity.aio import DefaultAzureCredential
+from azure.identity.aio import AzureCliCredential
 
 FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
+
 
 async def send_data_message(producer):
-    data_body = [b'aa', b'bb', b'cc']
+    data_body = [b"aa", b"bb", b"cc"]
     application_properties = {"body_type": "data"}
     delivery_annotations = {"delivery_annotation_key": "value"}
     data_message = AmqpAnnotatedMessage(
-        data_body=data_body,
-        delivery_annotations=delivery_annotations,
-        application_properties=application_properties
+        data_body=data_body, delivery_annotations=delivery_annotations, application_properties=application_properties
     )
     batch = await producer.create_batch()
     batch.add(data_message)
@@ -34,30 +34,24 @@ async def send_data_message(producer):
 
 
 async def send_sequence_message(producer):
-    sequence_body = [b'message', 123.456, True]
-    footer = {'footer_key': 'footer_value'}
+    sequence_body = [b"message", 123.456, True]
+    footer = {"footer_key": "footer_value"}
     properties = {"subject": "sequence"}
     application_properties = {"body_type": "sequence"}
     sequence_message = AmqpAnnotatedMessage(
-        sequence_body=sequence_body,
-        footer=footer,
-        properties=properties,
-        application_properties=application_properties
+        sequence_body=sequence_body, footer=footer, properties=properties, application_properties=application_properties
     )
     await producer.send_batch([sequence_message])
     print("Message of sequence body sent.")
 
 
 async def send_value_message(producer):
-    value_body = {b"key": [-123, b'data', False]}
+    value_body = {b"key": [-123, b"data", False]}
     header = {"priority": 10}
     annotations = {"annotation_key": "value"}
     application_properties = {"body_type": "value"}
     value_message = AmqpAnnotatedMessage(
-        value_body=value_body,
-        header=header,
-        annotations=annotations,
-        application_properties=application_properties
+        value_body=value_body, header=header, annotations=annotations, application_properties=application_properties
     )
     await producer.send_batch([value_message])
     print("Message of value body sent.")
@@ -89,7 +83,7 @@ async def receive_and_parse_message(consumer):
                 starting_position="-1",  # "-1" is from the beginning of the partition.
             )
         except KeyboardInterrupt:
-            print('Stopped receiving.')
+            print("Stopped receiving.")
 
 
 async def main():
@@ -97,7 +91,8 @@ async def main():
     producer = EventHubProducerClient(
         fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
         eventhub_name=EVENTHUB_NAME,
-        credential=DefaultAzureCredential(),
+        credential=AzureCliCredential(),
+        transport_type=TransportType.AmqpOverWebsocket,
     )
     async with producer:
         await send_data_message(producer)
@@ -107,11 +102,13 @@ async def main():
     # Receive
     consumer = EventHubConsumerClient(
         fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
-        credential=DefaultAzureCredential(),
-        consumer_group='$Default',
+        credential=AzureCliCredential(),
+        consumer_group="$Default",
         eventhub_name=EVENTHUB_NAME,
+        transport_type=TransportType.AmqpOverWebsocket,
     )
     await receive_and_parse_message(consumer)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

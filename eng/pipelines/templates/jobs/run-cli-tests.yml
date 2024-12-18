@@ -9,7 +9,7 @@ resources:
 parameters:
   - name: TargetRepoPackages
     type: object
-    default: 
+    default:
       - 'sdk/core/azure-core'
     # a list of any resolvable pip install. EG:
     # - https://<path-to-blobstorage>/blah.whl
@@ -68,14 +68,14 @@ jobs:
             set -ev
             source env/bin/activate
             python -m pip install -e $(Build.SourcesDirectory)/${{ artifact }}
-          displayName: Install ${{ artifact }} 
+          displayName: Install ${{ artifact }}
 
       - ${{ each package_spec in parameters.InjectedPackages }}:
         - bash: |
             set -ev
             source env/bin/activate
             python -m pip install -e ${{ package_spec }}
-          displayName: Install ${{ package_spec }} 
+          displayName: Install ${{ package_spec }}
 
       - bash: |
           set -ev

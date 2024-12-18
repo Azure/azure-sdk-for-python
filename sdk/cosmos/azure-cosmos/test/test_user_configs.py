@@ -64,17 +64,17 @@ class TestUserConfigs(unittest.TestCase):
         # Testing the session token logic works without user passing in Session explicitly
         database = client.create_database(database_id)
         container = database.create_container(id=container_id, partition_key=PartitionKey(path="/id"))
-        container.create_item(body=get_test_item())
-        session_token = client.client_connection.last_response_headers[http_constants.CookieHeaders.SessionToken]
+        create_response = container.create_item(body=get_test_item())
+        session_token = create_response.get_response_headers()[http_constants.CookieHeaders.SessionToken]
         item2 = get_test_item()
-        container.create_item(body=item2)
-        session_token2 = client.client_connection.last_response_headers[http_constants.CookieHeaders.SessionToken]
+        create_response = container.create_item(body=item2)
+        session_token2 = create_response.get_response_headers()[http_constants.CookieHeaders.SessionToken]
 
         # Check Session token is being updated to reflect new item created
         self.assertNotEqual(session_token, session_token2)
 
-        container.read_item(item=item2.get("id"), partition_key=item2.get("id"))
-        read_session_token = client.client_connection.last_response_headers[http_constants.CookieHeaders.SessionToken]
+        read_response = container.read_item(item=item2.get("id"), partition_key=item2.get("id"))
+        read_session_token = read_response.get_response_headers()[http_constants.CookieHeaders.SessionToken]
 
         # Check Session token remains the same for read operation as with previous create item operation
         self.assertEqual(session_token2, read_session_token)

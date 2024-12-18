@@ -25,9 +25,9 @@ import os
 import uuid
 
 
-
 from azure.healthinsights.radiologyinsights import models
-    
+
+
 async def radiology_insights_async() -> None:
 
     from azure.identity.aio import DefaultAzureCredential
@@ -39,7 +39,7 @@ async def radiology_insights_async() -> None:
 
     job_id = str(uuid.uuid4())
 
-    radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential = credential)
+    radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=credential)
     # [END create_radiology_insights_client]
     doc_content1 = """CLINICAL HISTORY:   
     20-year-old female presenting with abdominal pain. Surgical history significant for appendectomy.
@@ -114,10 +114,11 @@ async def radiology_insights_async() -> None:
                 resource=patient_data,
             )
             radiology_insights_result = await poller.result()
-            
+
             display_sex_mismatch(radiology_insights_result)
     except Exception as ex:
         raise ex
+
 
 def display_sex_mismatch(radiology_insights_result):
     # [START display_sex_mismatch]
@@ -130,7 +131,6 @@ def display_sex_mismatch(radiology_insights_result):
                     print(f"Sex Mismatch: Sex Indication: {code.system} {code.code} {code.display}")
 
     # [END display_sex_mismatch]
-
 
 
 if __name__ == "__main__":

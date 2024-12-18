@@ -30,7 +30,7 @@ with open("README.md", encoding="utf-8") as f:
 
 setup(
     name=PACKAGE_NAME,
-    version='1.0.0',
+    version="1.0.0",
     description=PACKAGE_NAME,
     # ensure that these are updated to reflect the package owners' information
     long_description=long_description,

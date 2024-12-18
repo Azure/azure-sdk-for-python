@@ -1,5 +1,42 @@
 # Release History
 
+## 33.1.0 (2024-12-16)
+
+### Features Added
+
+  - Added operation group GalleryInVMAccessControlProfileVersionsOperations
+  - Added operation group GalleryInVMAccessControlProfilesOperations
+  - Added operation group SoftDeletedResourceOperations
+  - Model Gallery has a new parameter identity
+  - Model GalleryImage has a new parameter allow_update_image
+  - Model GalleryImageFeature has a new parameter starts_at_version
+  - Model GalleryImageUpdate has a new parameter allow_update_image
+  - Model GalleryImageVersion has a new parameter restore
+  - Model GalleryImageVersion has a new parameter validations_profile
+  - Model GalleryImageVersionSafetyProfile has a new parameter block_deletion_before_end_of_life
+  - Model GalleryImageVersionUpdate has a new parameter restore
+  - Model GalleryImageVersionUpdate has a new parameter validations_profile
+  - Model GalleryList has a new parameter security_profile
+  - Model GalleryUpdate has a new parameter identity
+  - Model TargetRegion has a new parameter additional_replica_sets
+  - Model UserArtifactSettings has a new parameter script_behavior_after_reboot
+
+## 33.0.0 (2024-08-20)
+
+### Features Added
+
+  - Model AvailabilitySet has a new parameter scheduled_events_policy
+  - Model AvailabilitySetUpdate has a new parameter scheduled_events_policy
+  - Model VirtualMachineScaleSet has a new parameter sku_profile
+  - Model VirtualMachineScaleSet has a new parameter zonal_platform_fault_domain_align_mode
+  - Model VirtualMachineScaleSetUpdate has a new parameter sku_profile
+  - Model VirtualMachineScaleSetUpdate has a new parameter zonal_platform_fault_domain_align_mode
+  - Model VirtualMachineScaleSetUpdate has a new parameter zones
+
+### Breaking Changes
+
+  - Model PurchasePlan no longer has parameter promotion_code
+
 ## 32.0.0 (2024-07-22)
 
 ### Features Added

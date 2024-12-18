@@ -177,7 +177,7 @@ class AsyncHttpXStreamDownloadGenerator(AsyncIterator):
         return self
 
     async def __anext__(self):
-        internal_response = self.response._internal_response  # pylint: disable=protected-access
+        internal_response = self.response._internal_response
         try:
             return await self.iter_content_func.__anext__()
         except StopAsyncIteration:

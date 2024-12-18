@@ -6,54 +6,72 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._agreements_operations import AgreementsOperations
+from ._associated_tenants_operations import AssociatedTenantsOperations
+from ._available_balances_operations import AvailableBalancesOperations
 from ._billing_accounts_operations import BillingAccountsOperations
 from ._address_operations import AddressOperations
-from ._available_balances_operations import AvailableBalancesOperations
-from ._instructions_operations import InstructionsOperations
-from ._billing_profiles_operations import BillingProfilesOperations
-from ._customers_operations import CustomersOperations
-from ._invoice_sections_operations import InvoiceSectionsOperations
 from ._billing_permissions_operations import BillingPermissionsOperations
-from ._billing_subscriptions_operations import BillingSubscriptionsOperations
-from ._products_operations import ProductsOperations
-from ._invoices_operations import InvoicesOperations
-from ._transactions_operations import TransactionsOperations
-from ._policies_operations import PoliciesOperations
+from ._billing_profiles_operations import BillingProfilesOperations
 from ._billing_property_operations import BillingPropertyOperations
-from ._billing_role_definitions_operations import BillingRoleDefinitionsOperations
+from ._billing_requests_operations import BillingRequestsOperations
 from ._billing_role_assignments_operations import BillingRoleAssignmentsOperations
-from ._agreements_operations import AgreementsOperations
-from ._reservations_operations import ReservationsOperations
+from ._billing_role_definition_operations import BillingRoleDefinitionOperations
+from ._savings_plan_orders_operations import SavingsPlanOrdersOperations
+from ._savings_plans_operations import SavingsPlansOperations
+from ._billing_subscriptions_operations import BillingSubscriptionsOperations
+from ._billing_subscriptions_aliases_operations import BillingSubscriptionsAliasesOperations
+from ._customers_operations import CustomersOperations
+from ._departments_operations import DepartmentsOperations
 from ._enrollment_accounts_operations import EnrollmentAccountsOperations
-from ._billing_periods_operations import BillingPeriodsOperations
+from ._invoices_operations import InvoicesOperations
+from ._invoice_sections_operations import InvoiceSectionsOperations
 from ._operations import Operations
+from ._payment_methods_operations import PaymentMethodsOperations
+from ._policies_operations import PoliciesOperations
+from ._products_operations import ProductsOperations
+from ._reservations_operations import ReservationsOperations
+from ._reservation_orders_operations import ReservationOrdersOperations
+from ._transactions_operations import TransactionsOperations
+from ._transfers_operations import TransfersOperations
+from ._partner_transfers_operations import PartnerTransfersOperations
+from ._recipient_transfers_operations import RecipientTransfersOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AgreementsOperations",
+    "AssociatedTenantsOperations",
+    "AvailableBalancesOperations",
     "BillingAccountsOperations",
     "AddressOperations",
-    "AvailableBalancesOperations",
-    "InstructionsOperations",
-    "BillingProfilesOperations",
-    "CustomersOperations",
-    "InvoiceSectionsOperations",
     "BillingPermissionsOperations",
-    "BillingSubscriptionsOperations",
-    "ProductsOperations",
-    "InvoicesOperations",
-    "TransactionsOperations",
-    "PoliciesOperations",
+    "BillingProfilesOperations",
     "BillingPropertyOperations",
-    "BillingRoleDefinitionsOperations",
+    "BillingRequestsOperations",
     "BillingRoleAssignmentsOperations",
-    "AgreementsOperations",
-    "ReservationsOperations",
+    "BillingRoleDefinitionOperations",
+    "SavingsPlanOrdersOperations",
+    "SavingsPlansOperations",
+    "BillingSubscriptionsOperations",
+    "BillingSubscriptionsAliasesOperations",
+    "CustomersOperations",
+    "DepartmentsOperations",
     "EnrollmentAccountsOperations",
-    "BillingPeriodsOperations",
+    "InvoicesOperations",
+    "InvoiceSectionsOperations",
     "Operations",
+    "PaymentMethodsOperations",
+    "PoliciesOperations",
+    "ProductsOperations",
+    "ReservationsOperations",
+    "ReservationOrdersOperations",
+    "TransactionsOperations",
+    "TransfersOperations",
+    "PartnerTransfersOperations",
+    "RecipientTransfersOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

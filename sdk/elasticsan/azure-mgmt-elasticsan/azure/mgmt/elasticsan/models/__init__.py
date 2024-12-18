@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models_py3 import AutoScaleProperties
 from ._models_py3 import ElasticSan
 from ._models_py3 import ElasticSanList
 from ._models_py3 import ElasticSanProperties
@@ -35,6 +36,7 @@ from ._models_py3 import PrivateLinkServiceConnectionState
 from ._models_py3 import ProxyResource
 from ._models_py3 import Resource
 from ._models_py3 import SKUCapability
+from ._models_py3 import ScaleUpProperties
 from ._models_py3 import Sku
 from ._models_py3 import SkuInformation
 from ._models_py3 import SkuInformationList
@@ -61,6 +63,7 @@ from ._models_py3 import VolumeUpdateProperties
 
 from ._elastic_san_mgmt_client_enums import Action
 from ._elastic_san_mgmt_client_enums import ActionType
+from ._elastic_san_mgmt_client_enums import AutoScalePolicyEnforcement
 from ._elastic_san_mgmt_client_enums import CreatedByType
 from ._elastic_san_mgmt_client_enums import EncryptionType
 from ._elastic_san_mgmt_client_enums import IdentityType
@@ -80,6 +83,7 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AutoScaleProperties",
     "ElasticSan",
     "ElasticSanList",
     "ElasticSanProperties",
@@ -109,6 +113,7 @@ __all__ = [
     "ProxyResource",
     "Resource",
     "SKUCapability",
+    "ScaleUpProperties",
     "Sku",
     "SkuInformation",
     "SkuInformationList",
@@ -134,6 +139,7 @@ __all__ = [
     "VolumeUpdateProperties",
     "Action",
     "ActionType",
+    "AutoScalePolicyEnforcement",
     "CreatedByType",
     "EncryptionType",
     "IdentityType",

@@ -69,8 +69,8 @@ class AnalyticalStorageConfiguration(_serialization.Model):
 class ApiProperties(_serialization.Model):
     """ApiProperties.
 
-    :ivar server_version: Describes the ServerVersion of an a MongoDB account. Known values are:
-     "3.2", "3.6", "4.0", "4.2", "5.0", and "6.0".
+    :ivar server_version: Describes the version of the MongoDB account. Known values are: "3.2",
+     "3.6", "4.0", "4.2", "5.0", "6.0", and "7.0".
     :vartype server_version: str or ~azure.mgmt.cosmosdb.models.ServerVersion
     """
 
@@ -80,8 +80,8 @@ class ApiProperties(_serialization.Model):
 
     def __init__(self, *, server_version: Optional[Union[str, "_models.ServerVersion"]] = None, **kwargs: Any) -> None:
         """
-        :keyword server_version: Describes the ServerVersion of an a MongoDB account. Known values are:
-         "3.2", "3.6", "4.0", "4.2", "5.0", and "6.0".
+        :keyword server_version: Describes the version of the MongoDB account. Known values are: "3.2",
+         "3.6", "4.0", "4.2", "5.0", "6.0", and "7.0".
         :paramtype server_version: str or ~azure.mgmt.cosmosdb.models.ServerVersion
         """
         super().__init__(**kwargs)
@@ -2955,12 +2955,15 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):  # pylint: d
      1.2. Cassandra and Mongo APIs only work with Tls 1.2. Known values are: "Tls", "Tls11", and
      "Tls12".
     :vartype minimal_tls_version: str or ~azure.mgmt.cosmosdb.models.MinimalTlsVersion
-    :ivar enable_burst_capacity: Flag to indicate enabling/disabling of Burst Capacity Preview
-     feature on the account.
+    :ivar enable_burst_capacity: Flag to indicate enabling/disabling of Burst Capacity feature on
+     the account.
     :vartype enable_burst_capacity: bool
     :ivar customer_managed_key_status: Indicates the status of the Customer Managed Key feature on
      the account. In case there are errors, the property provides troubleshooting guidance.
     :vartype customer_managed_key_status: str
+    :ivar enable_per_region_per_partition_autoscale: Flag to indicate enabling/disabling of
+     PerRegionPerPartitionAutoscale feature on the account.
+    :vartype enable_per_region_per_partition_autoscale: bool
     """
 
     _validation = {
@@ -3018,6 +3021,10 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):  # pylint: d
         "minimal_tls_version": {"key": "properties.minimalTlsVersion", "type": "str"},
         "enable_burst_capacity": {"key": "properties.enableBurstCapacity", "type": "bool"},
         "customer_managed_key_status": {"key": "properties.customerManagedKeyStatus", "type": "str"},
+        "enable_per_region_per_partition_autoscale": {
+            "key": "properties.enablePerRegionPerPartitionAutoscale",
+            "type": "bool",
+        },
     }
 
     database_account_offer_type = "Standard"
@@ -3059,6 +3066,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):  # pylint: d
         minimal_tls_version: Optional[Union[str, "_models.MinimalTlsVersion"]] = None,
         enable_burst_capacity: Optional[bool] = None,
         customer_managed_key_status: Optional[str] = None,
+        enable_per_region_per_partition_autoscale: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3153,12 +3161,15 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):  # pylint: d
          Tls 1.2. Cassandra and Mongo APIs only work with Tls 1.2. Known values are: "Tls", "Tls11", and
          "Tls12".
         :paramtype minimal_tls_version: str or ~azure.mgmt.cosmosdb.models.MinimalTlsVersion
-        :keyword enable_burst_capacity: Flag to indicate enabling/disabling of Burst Capacity Preview
-         feature on the account.
+        :keyword enable_burst_capacity: Flag to indicate enabling/disabling of Burst Capacity feature
+         on the account.
         :paramtype enable_burst_capacity: bool
         :keyword customer_managed_key_status: Indicates the status of the Customer Managed Key feature
          on the account. In case there are errors, the property provides troubleshooting guidance.
         :paramtype customer_managed_key_status: str
+        :keyword enable_per_region_per_partition_autoscale: Flag to indicate enabling/disabling of
+         PerRegionPerPartitionAutoscale feature on the account.
+        :paramtype enable_per_region_per_partition_autoscale: bool
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
@@ -3194,6 +3205,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):  # pylint: d
         self.minimal_tls_version = minimal_tls_version
         self.enable_burst_capacity = enable_burst_capacity
         self.customer_managed_key_status = customer_managed_key_status
+        self.enable_per_region_per_partition_autoscale = enable_per_region_per_partition_autoscale
 
 
 class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-many-instance-attributes
@@ -3328,12 +3340,15 @@ class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-m
      1.2. Cassandra and Mongo APIs only work with Tls 1.2. Known values are: "Tls", "Tls11", and
      "Tls12".
     :vartype minimal_tls_version: str or ~azure.mgmt.cosmosdb.models.MinimalTlsVersion
-    :ivar enable_burst_capacity: Flag to indicate enabling/disabling of Burst Capacity Preview
-     feature on the account.
+    :ivar enable_burst_capacity: Flag to indicate enabling/disabling of Burst Capacity feature on
+     the account.
     :vartype enable_burst_capacity: bool
     :ivar customer_managed_key_status: Indicates the status of the Customer Managed Key feature on
      the account. In case there are errors, the property provides troubleshooting guidance.
     :vartype customer_managed_key_status: str
+    :ivar enable_per_region_per_partition_autoscale: Flag to indicate enabling/disabling of
+     PerRegionPerPartitionAutoscale feature on the account.
+    :vartype enable_per_region_per_partition_autoscale: bool
     """
 
     _validation = {
@@ -3410,6 +3425,10 @@ class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-m
         "minimal_tls_version": {"key": "properties.minimalTlsVersion", "type": "str"},
         "enable_burst_capacity": {"key": "properties.enableBurstCapacity", "type": "bool"},
         "customer_managed_key_status": {"key": "properties.customerManagedKeyStatus", "type": "str"},
+        "enable_per_region_per_partition_autoscale": {
+            "key": "properties.enablePerRegionPerPartitionAutoscale",
+            "type": "bool",
+        },
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -3448,6 +3467,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-m
         minimal_tls_version: Optional[Union[str, "_models.MinimalTlsVersion"]] = None,
         enable_burst_capacity: Optional[bool] = None,
         customer_managed_key_status: Optional[str] = None,
+        enable_per_region_per_partition_autoscale: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3539,12 +3559,15 @@ class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-m
          Tls 1.2. Cassandra and Mongo APIs only work with Tls 1.2. Known values are: "Tls", "Tls11", and
          "Tls12".
         :paramtype minimal_tls_version: str or ~azure.mgmt.cosmosdb.models.MinimalTlsVersion
-        :keyword enable_burst_capacity: Flag to indicate enabling/disabling of Burst Capacity Preview
-         feature on the account.
+        :keyword enable_burst_capacity: Flag to indicate enabling/disabling of Burst Capacity feature
+         on the account.
         :paramtype enable_burst_capacity: bool
         :keyword customer_managed_key_status: Indicates the status of the Customer Managed Key feature
          on the account. In case there are errors, the property provides troubleshooting guidance.
         :paramtype customer_managed_key_status: str
+        :keyword enable_per_region_per_partition_autoscale: Flag to indicate enabling/disabling of
+         PerRegionPerPartitionAutoscale feature on the account.
+        :paramtype enable_per_region_per_partition_autoscale: bool
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
@@ -3589,6 +3612,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-m
         self.minimal_tls_version = minimal_tls_version
         self.enable_burst_capacity = enable_burst_capacity
         self.customer_managed_key_status = customer_managed_key_status
+        self.enable_per_region_per_partition_autoscale = enable_per_region_per_partition_autoscale
 
 
 class DatabaseAccountKeysMetadata(_serialization.Model):
@@ -3863,12 +3887,15 @@ class DatabaseAccountUpdateParameters(_serialization.Model):  # pylint: disable=
      1.2. Cassandra and Mongo APIs only work with Tls 1.2. Known values are: "Tls", "Tls11", and
      "Tls12".
     :vartype minimal_tls_version: str or ~azure.mgmt.cosmosdb.models.MinimalTlsVersion
-    :ivar enable_burst_capacity: Flag to indicate enabling/disabling of Burst Capacity Preview
-     feature on the account.
+    :ivar enable_burst_capacity: Flag to indicate enabling/disabling of Burst Capacity feature on
+     the account.
     :vartype enable_burst_capacity: bool
     :ivar customer_managed_key_status: Indicates the status of the Customer Managed Key feature on
      the account. In case there are errors, the property provides troubleshooting guidance.
     :vartype customer_managed_key_status: str
+    :ivar enable_per_region_per_partition_autoscale: Flag to indicate enabling/disabling of
+     PerRegionPerPartitionAutoscale feature on the account.
+    :vartype enable_per_region_per_partition_autoscale: bool
     """
 
     _validation = {
@@ -3914,6 +3941,10 @@ class DatabaseAccountUpdateParameters(_serialization.Model):  # pylint: disable=
         "minimal_tls_version": {"key": "properties.minimalTlsVersion", "type": "str"},
         "enable_burst_capacity": {"key": "properties.enableBurstCapacity", "type": "bool"},
         "customer_managed_key_status": {"key": "properties.customerManagedKeyStatus", "type": "str"},
+        "enable_per_region_per_partition_autoscale": {
+            "key": "properties.enablePerRegionPerPartitionAutoscale",
+            "type": "bool",
+        },
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -3950,6 +3981,7 @@ class DatabaseAccountUpdateParameters(_serialization.Model):  # pylint: disable=
         minimal_tls_version: Optional[Union[str, "_models.MinimalTlsVersion"]] = None,
         enable_burst_capacity: Optional[bool] = None,
         customer_managed_key_status: Optional[str] = None,
+        enable_per_region_per_partition_autoscale: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4036,12 +4068,15 @@ class DatabaseAccountUpdateParameters(_serialization.Model):  # pylint: disable=
          Tls 1.2. Cassandra and Mongo APIs only work with Tls 1.2. Known values are: "Tls", "Tls11", and
          "Tls12".
         :paramtype minimal_tls_version: str or ~azure.mgmt.cosmosdb.models.MinimalTlsVersion
-        :keyword enable_burst_capacity: Flag to indicate enabling/disabling of Burst Capacity Preview
-         feature on the account.
+        :keyword enable_burst_capacity: Flag to indicate enabling/disabling of Burst Capacity feature
+         on the account.
         :paramtype enable_burst_capacity: bool
         :keyword customer_managed_key_status: Indicates the status of the Customer Managed Key feature
          on the account. In case there are errors, the property provides troubleshooting guidance.
         :paramtype customer_managed_key_status: str
+        :keyword enable_per_region_per_partition_autoscale: Flag to indicate enabling/disabling of
+         PerRegionPerPartitionAutoscale feature on the account.
+        :paramtype enable_per_region_per_partition_autoscale: bool
         """
         super().__init__(**kwargs)
         self.tags = tags
@@ -4076,6 +4111,7 @@ class DatabaseAccountUpdateParameters(_serialization.Model):  # pylint: disable=
         self.minimal_tls_version = minimal_tls_version
         self.enable_burst_capacity = enable_burst_capacity
         self.customer_managed_key_status = customer_managed_key_status
+        self.enable_per_region_per_partition_autoscale = enable_per_region_per_partition_autoscale
 
 
 class DatabaseRestoreResource(_serialization.Model):
@@ -4649,6 +4685,77 @@ class DataTransferServiceResourceProperties(ServiceResourceProperties):
         self.locations = None
 
 
+class ErrorAdditionalInfo(_serialization.Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: JSON
+    """
+
+    _validation = {
+        "type": {"readonly": True},
+        "info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
+class ErrorDetail(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.cosmosdb.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.cosmosdb.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
 class ErrorResponse(_serialization.Model):
     """Error Response.
 
@@ -4673,6 +4780,27 @@ class ErrorResponse(_serialization.Model):
         super().__init__(**kwargs)
         self.code = code
         self.message = message
+
+
+class ErrorResponseAutoGenerated(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.cosmosdb.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.cosmosdb.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.error = error
 
 
 class ExcludedPath(_serialization.Model):
@@ -5763,6 +5891,8 @@ class IndexingPolicy(_serialization.Model):
     :vartype composite_indexes: list[list[~azure.mgmt.cosmosdb.models.CompositePath]]
     :ivar spatial_indexes: List of spatial specifics.
     :vartype spatial_indexes: list[~azure.mgmt.cosmosdb.models.SpatialSpec]
+    :ivar vector_indexes: List of paths to include in the vector indexing.
+    :vartype vector_indexes: list[~azure.mgmt.cosmosdb.models.VectorIndex]
     """
 
     _attribute_map = {
@@ -5772,6 +5902,7 @@ class IndexingPolicy(_serialization.Model):
         "excluded_paths": {"key": "excludedPaths", "type": "[ExcludedPath]"},
         "composite_indexes": {"key": "compositeIndexes", "type": "[[CompositePath]]"},
         "spatial_indexes": {"key": "spatialIndexes", "type": "[SpatialSpec]"},
+        "vector_indexes": {"key": "vectorIndexes", "type": "[VectorIndex]"},
     }
 
     def __init__(
@@ -5783,6 +5914,7 @@ class IndexingPolicy(_serialization.Model):
         excluded_paths: Optional[List["_models.ExcludedPath"]] = None,
         composite_indexes: Optional[List[List["_models.CompositePath"]]] = None,
         spatial_indexes: Optional[List["_models.SpatialSpec"]] = None,
+        vector_indexes: Optional[List["_models.VectorIndex"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5799,6 +5931,8 @@ class IndexingPolicy(_serialization.Model):
         :paramtype composite_indexes: list[list[~azure.mgmt.cosmosdb.models.CompositePath]]
         :keyword spatial_indexes: List of spatial specifics.
         :paramtype spatial_indexes: list[~azure.mgmt.cosmosdb.models.SpatialSpec]
+        :keyword vector_indexes: List of paths to include in the vector indexing.
+        :paramtype vector_indexes: list[~azure.mgmt.cosmosdb.models.VectorIndex]
         """
         super().__init__(**kwargs)
         self.automatic = automatic
@@ -5807,6 +5941,7 @@ class IndexingPolicy(_serialization.Model):
         self.excluded_paths = excluded_paths
         self.composite_indexes = composite_indexes
         self.spatial_indexes = spatial_indexes
+        self.vector_indexes = vector_indexes
 
 
 class IpAddressOrRange(_serialization.Model):
@@ -8775,11 +8910,15 @@ class RestoreParametersBase(_serialization.Model):
     :vartype restore_source: str
     :ivar restore_timestamp_in_utc: Time to which the account has to be restored (ISO-8601 format).
     :vartype restore_timestamp_in_utc: ~datetime.datetime
+    :ivar restore_with_ttl_disabled: Specifies whether the restored account will have Time-To-Live
+     disabled upon the successful restore.
+    :vartype restore_with_ttl_disabled: bool
     """
 
     _attribute_map = {
         "restore_source": {"key": "restoreSource", "type": "str"},
         "restore_timestamp_in_utc": {"key": "restoreTimestampInUtc", "type": "iso-8601"},
+        "restore_with_ttl_disabled": {"key": "restoreWithTtlDisabled", "type": "bool"},
     }
 
     def __init__(
@@ -8787,6 +8926,7 @@ class RestoreParametersBase(_serialization.Model):
         *,
         restore_source: Optional[str] = None,
         restore_timestamp_in_utc: Optional[datetime.datetime] = None,
+        restore_with_ttl_disabled: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8797,10 +8937,14 @@ class RestoreParametersBase(_serialization.Model):
         :keyword restore_timestamp_in_utc: Time to which the account has to be restored (ISO-8601
          format).
         :paramtype restore_timestamp_in_utc: ~datetime.datetime
+        :keyword restore_with_ttl_disabled: Specifies whether the restored account will have
+         Time-To-Live disabled upon the successful restore.
+        :paramtype restore_with_ttl_disabled: bool
         """
         super().__init__(**kwargs)
         self.restore_source = restore_source
         self.restore_timestamp_in_utc = restore_timestamp_in_utc
+        self.restore_with_ttl_disabled = restore_with_ttl_disabled
 
 
 class ResourceRestoreParameters(RestoreParametersBase):
@@ -8812,6 +8956,9 @@ class ResourceRestoreParameters(RestoreParametersBase):
     :vartype restore_source: str
     :ivar restore_timestamp_in_utc: Time to which the account has to be restored (ISO-8601 format).
     :vartype restore_timestamp_in_utc: ~datetime.datetime
+    :ivar restore_with_ttl_disabled: Specifies whether the restored account will have Time-To-Live
+     disabled upon the successful restore.
+    :vartype restore_with_ttl_disabled: bool
     """
 
 
@@ -9731,6 +9878,8 @@ class SqlContainerResource(_serialization.Model):  # pylint: disable=too-many-in
     :vartype create_mode: str or ~azure.mgmt.cosmosdb.models.CreateMode
     :ivar computed_properties: List of computed properties.
     :vartype computed_properties: list[~azure.mgmt.cosmosdb.models.ComputedProperty]
+    :ivar vector_embedding_policy: The vector embedding policy for the container.
+    :vartype vector_embedding_policy: ~azure.mgmt.cosmosdb.models.VectorEmbeddingPolicy
     """
 
     _validation = {
@@ -9749,6 +9898,7 @@ class SqlContainerResource(_serialization.Model):  # pylint: disable=too-many-in
         "restore_parameters": {"key": "restoreParameters", "type": "ResourceRestoreParameters"},
         "create_mode": {"key": "createMode", "type": "str"},
         "computed_properties": {"key": "computedProperties", "type": "[ComputedProperty]"},
+        "vector_embedding_policy": {"key": "vectorEmbeddingPolicy", "type": "VectorEmbeddingPolicy"},
     }
 
     def __init__(
@@ -9765,6 +9915,7 @@ class SqlContainerResource(_serialization.Model):  # pylint: disable=too-many-in
         restore_parameters: Optional["_models.ResourceRestoreParameters"] = None,
         create_mode: Union[str, "_models.CreateMode"] = "Default",
         computed_properties: Optional[List["_models.ComputedProperty"]] = None,
+        vector_embedding_policy: Optional["_models.VectorEmbeddingPolicy"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9794,6 +9945,8 @@ class SqlContainerResource(_serialization.Model):  # pylint: disable=too-many-in
         :paramtype create_mode: str or ~azure.mgmt.cosmosdb.models.CreateMode
         :keyword computed_properties: List of computed properties.
         :paramtype computed_properties: list[~azure.mgmt.cosmosdb.models.ComputedProperty]
+        :keyword vector_embedding_policy: The vector embedding policy for the container.
+        :paramtype vector_embedding_policy: ~azure.mgmt.cosmosdb.models.VectorEmbeddingPolicy
         """
         super().__init__(**kwargs)
         self.id = id
@@ -9807,6 +9960,7 @@ class SqlContainerResource(_serialization.Model):  # pylint: disable=too-many-in
         self.restore_parameters = restore_parameters
         self.create_mode = create_mode
         self.computed_properties = computed_properties
+        self.vector_embedding_policy = vector_embedding_policy
 
 
 class RestorableSqlContainerPropertiesResourceContainer(
@@ -9851,6 +10005,8 @@ class RestorableSqlContainerPropertiesResourceContainer(
     :vartype create_mode: str or ~azure.mgmt.cosmosdb.models.CreateMode
     :ivar computed_properties: List of computed properties.
     :vartype computed_properties: list[~azure.mgmt.cosmosdb.models.ComputedProperty]
+    :ivar vector_embedding_policy: The vector embedding policy for the container.
+    :vartype vector_embedding_policy: ~azure.mgmt.cosmosdb.models.VectorEmbeddingPolicy
     :ivar self_property: A system generated property that specifies the addressable path of the
      container resource.
     :vartype self_property: str
@@ -9879,6 +10035,7 @@ class RestorableSqlContainerPropertiesResourceContainer(
         "restore_parameters": {"key": "restoreParameters", "type": "ResourceRestoreParameters"},
         "create_mode": {"key": "createMode", "type": "str"},
         "computed_properties": {"key": "computedProperties", "type": "[ComputedProperty]"},
+        "vector_embedding_policy": {"key": "vectorEmbeddingPolicy", "type": "VectorEmbeddingPolicy"},
         "self_property": {"key": "_self", "type": "str"},
     }
 
@@ -9896,6 +10053,7 @@ class RestorableSqlContainerPropertiesResourceContainer(
         restore_parameters: Optional["_models.ResourceRestoreParameters"] = None,
         create_mode: Union[str, "_models.CreateMode"] = "Default",
         computed_properties: Optional[List["_models.ComputedProperty"]] = None,
+        vector_embedding_policy: Optional["_models.VectorEmbeddingPolicy"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9925,6 +10083,8 @@ class RestorableSqlContainerPropertiesResourceContainer(
         :paramtype create_mode: str or ~azure.mgmt.cosmosdb.models.CreateMode
         :keyword computed_properties: List of computed properties.
         :paramtype computed_properties: list[~azure.mgmt.cosmosdb.models.ComputedProperty]
+        :keyword vector_embedding_policy: The vector embedding policy for the container.
+        :paramtype vector_embedding_policy: ~azure.mgmt.cosmosdb.models.VectorEmbeddingPolicy
         """
         super().__init__(
             id=id,
@@ -9938,6 +10098,7 @@ class RestorableSqlContainerPropertiesResourceContainer(
             restore_parameters=restore_parameters,
             create_mode=create_mode,
             computed_properties=computed_properties,
+            vector_embedding_policy=vector_embedding_policy,
             **kwargs
         )
         self.rid = None
@@ -9955,6 +10116,7 @@ class RestorableSqlContainerPropertiesResourceContainer(
         self.restore_parameters = restore_parameters
         self.create_mode = create_mode
         self.computed_properties = computed_properties
+        self.vector_embedding_policy = vector_embedding_policy
 
 
 class RestorableSqlContainersListResult(_serialization.Model):
@@ -10498,6 +10660,9 @@ class RestoreParameters(RestoreParametersBase):
     :vartype restore_source: str
     :ivar restore_timestamp_in_utc: Time to which the account has to be restored (ISO-8601 format).
     :vartype restore_timestamp_in_utc: ~datetime.datetime
+    :ivar restore_with_ttl_disabled: Specifies whether the restored account will have Time-To-Live
+     disabled upon the successful restore.
+    :vartype restore_with_ttl_disabled: bool
     :ivar restore_mode: Describes the mode of the restore. "PointInTime"
     :vartype restore_mode: str or ~azure.mgmt.cosmosdb.models.RestoreMode
     :ivar databases_to_restore: List of specific databases available for restore.
@@ -10512,6 +10677,7 @@ class RestoreParameters(RestoreParametersBase):
     _attribute_map = {
         "restore_source": {"key": "restoreSource", "type": "str"},
         "restore_timestamp_in_utc": {"key": "restoreTimestampInUtc", "type": "iso-8601"},
+        "restore_with_ttl_disabled": {"key": "restoreWithTtlDisabled", "type": "bool"},
         "restore_mode": {"key": "restoreMode", "type": "str"},
         "databases_to_restore": {"key": "databasesToRestore", "type": "[DatabaseRestoreResource]"},
         "gremlin_databases_to_restore": {
@@ -10526,6 +10692,7 @@ class RestoreParameters(RestoreParametersBase):
         *,
         restore_source: Optional[str] = None,
         restore_timestamp_in_utc: Optional[datetime.datetime] = None,
+        restore_with_ttl_disabled: Optional[bool] = None,
         restore_mode: Optional[Union[str, "_models.RestoreMode"]] = None,
         databases_to_restore: Optional[List["_models.DatabaseRestoreResource"]] = None,
         gremlin_databases_to_restore: Optional[List["_models.GremlinDatabaseRestoreResource"]] = None,
@@ -10540,6 +10707,9 @@ class RestoreParameters(RestoreParametersBase):
         :keyword restore_timestamp_in_utc: Time to which the account has to be restored (ISO-8601
          format).
         :paramtype restore_timestamp_in_utc: ~datetime.datetime
+        :keyword restore_with_ttl_disabled: Specifies whether the restored account will have
+         Time-To-Live disabled upon the successful restore.
+        :paramtype restore_with_ttl_disabled: bool
         :keyword restore_mode: Describes the mode of the restore. "PointInTime"
         :paramtype restore_mode: str or ~azure.mgmt.cosmosdb.models.RestoreMode
         :keyword databases_to_restore: List of specific databases available for restore.
@@ -10551,7 +10721,12 @@ class RestoreParameters(RestoreParametersBase):
         :keyword tables_to_restore: List of specific tables available for restore.
         :paramtype tables_to_restore: list[str]
         """
-        super().__init__(restore_source=restore_source, restore_timestamp_in_utc=restore_timestamp_in_utc, **kwargs)
+        super().__init__(
+            restore_source=restore_source,
+            restore_timestamp_in_utc=restore_timestamp_in_utc,
+            restore_with_ttl_disabled=restore_with_ttl_disabled,
+            **kwargs
+        )
         self.restore_mode = restore_mode
         self.databases_to_restore = databases_to_restore
         self.gremlin_databases_to_restore = gremlin_databases_to_restore
@@ -10849,6 +11024,8 @@ class SqlContainerGetPropertiesResource(
     :vartype create_mode: str or ~azure.mgmt.cosmosdb.models.CreateMode
     :ivar computed_properties: List of computed properties.
     :vartype computed_properties: list[~azure.mgmt.cosmosdb.models.ComputedProperty]
+    :ivar vector_embedding_policy: The vector embedding policy for the container.
+    :vartype vector_embedding_policy: ~azure.mgmt.cosmosdb.models.VectorEmbeddingPolicy
     """
 
     _validation = {
@@ -10873,6 +11050,7 @@ class SqlContainerGetPropertiesResource(
         "restore_parameters": {"key": "restoreParameters", "type": "ResourceRestoreParameters"},
         "create_mode": {"key": "createMode", "type": "str"},
         "computed_properties": {"key": "computedProperties", "type": "[ComputedProperty]"},
+        "vector_embedding_policy": {"key": "vectorEmbeddingPolicy", "type": "VectorEmbeddingPolicy"},
     }
 
     def __init__(
@@ -10889,6 +11067,7 @@ class SqlContainerGetPropertiesResource(
         restore_parameters: Optional["_models.ResourceRestoreParameters"] = None,
         create_mode: Union[str, "_models.CreateMode"] = "Default",
         computed_properties: Optional[List["_models.ComputedProperty"]] = None,
+        vector_embedding_policy: Optional["_models.VectorEmbeddingPolicy"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -10918,6 +11097,8 @@ class SqlContainerGetPropertiesResource(
         :paramtype create_mode: str or ~azure.mgmt.cosmosdb.models.CreateMode
         :keyword computed_properties: List of computed properties.
         :paramtype computed_properties: list[~azure.mgmt.cosmosdb.models.ComputedProperty]
+        :keyword vector_embedding_policy: The vector embedding policy for the container.
+        :paramtype vector_embedding_policy: ~azure.mgmt.cosmosdb.models.VectorEmbeddingPolicy
         """
         super().__init__(
             id=id,
@@ -10931,6 +11112,7 @@ class SqlContainerGetPropertiesResource(
             restore_parameters=restore_parameters,
             create_mode=create_mode,
             computed_properties=computed_properties,
+            vector_embedding_policy=vector_embedding_policy,
             **kwargs
         )
         self.rid = None
@@ -10947,6 +11129,7 @@ class SqlContainerGetPropertiesResource(
         self.restore_parameters = restore_parameters
         self.create_mode = create_mode
         self.computed_properties = computed_properties
+        self.vector_embedding_policy = vector_embedding_policy
 
 
 class SqlContainerGetResults(ARMResourceProperties):
@@ -13311,6 +13494,121 @@ class UsagesResult(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.value = None
+
+
+class VectorEmbedding(_serialization.Model):
+    """Represents a vector embedding. A vector embedding is used to define a vector field in the
+    documents.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar path: The path to the vector field in the document. Required.
+    :vartype path: str
+    :ivar data_type: Indicates the data type of vector. Required. Known values are: "float32",
+     "uint8", and "int8".
+    :vartype data_type: str or ~azure.mgmt.cosmosdb.models.VectorDataType
+    :ivar distance_function: The distance function to use for distance calculation in between
+     vectors. Required. Known values are: "euclidean", "cosine", and "dotproduct".
+    :vartype distance_function: str or ~azure.mgmt.cosmosdb.models.DistanceFunction
+    :ivar dimensions: The number of dimensions in the vector. Required.
+    :vartype dimensions: int
+    """
+
+    _validation = {
+        "path": {"required": True},
+        "data_type": {"required": True},
+        "distance_function": {"required": True},
+        "dimensions": {"required": True},
+    }
+
+    _attribute_map = {
+        "path": {"key": "path", "type": "str"},
+        "data_type": {"key": "dataType", "type": "str"},
+        "distance_function": {"key": "distanceFunction", "type": "str"},
+        "dimensions": {"key": "dimensions", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        path: str,
+        data_type: Union[str, "_models.VectorDataType"],
+        distance_function: Union[str, "_models.DistanceFunction"],
+        dimensions: int,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword path: The path to the vector field in the document. Required.
+        :paramtype path: str
+        :keyword data_type: Indicates the data type of vector. Required. Known values are: "float32",
+         "uint8", and "int8".
+        :paramtype data_type: str or ~azure.mgmt.cosmosdb.models.VectorDataType
+        :keyword distance_function: The distance function to use for distance calculation in between
+         vectors. Required. Known values are: "euclidean", "cosine", and "dotproduct".
+        :paramtype distance_function: str or ~azure.mgmt.cosmosdb.models.DistanceFunction
+        :keyword dimensions: The number of dimensions in the vector. Required.
+        :paramtype dimensions: int
+        """
+        super().__init__(**kwargs)
+        self.path = path
+        self.data_type = data_type
+        self.distance_function = distance_function
+        self.dimensions = dimensions
+
+
+class VectorEmbeddingPolicy(_serialization.Model):
+    """Cosmos DB Vector Embedding Policy.
+
+    :ivar vector_embeddings: List of vector embeddings.
+    :vartype vector_embeddings: list[~azure.mgmt.cosmosdb.models.VectorEmbedding]
+    """
+
+    _attribute_map = {
+        "vector_embeddings": {"key": "vectorEmbeddings", "type": "[VectorEmbedding]"},
+    }
+
+    def __init__(self, *, vector_embeddings: Optional[List["_models.VectorEmbedding"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword vector_embeddings: List of vector embeddings.
+        :paramtype vector_embeddings: list[~azure.mgmt.cosmosdb.models.VectorEmbedding]
+        """
+        super().__init__(**kwargs)
+        self.vector_embeddings = vector_embeddings
+
+
+class VectorIndex(_serialization.Model):
+    """VectorIndex.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar path: The path to the vector field in the document. Required.
+    :vartype path: str
+    :ivar type: The index type of the vector. Currently, flat, diskANN, and quantizedFlat are
+     supported. Required. Known values are: "flat", "diskANN", and "quantizedFlat".
+    :vartype type: str or ~azure.mgmt.cosmosdb.models.VectorIndexType
+    """
+
+    _validation = {
+        "path": {"required": True},
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "path": {"key": "path", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(self, *, path: str, type: Union[str, "_models.VectorIndexType"], **kwargs: Any) -> None:
+        """
+        :keyword path: The path to the vector field in the document. Required.
+        :paramtype path: str
+        :keyword type: The index type of the vector. Currently, flat, diskANN, and quantizedFlat are
+         supported. Required. Known values are: "flat", "diskANN", and "quantizedFlat".
+        :paramtype type: str or ~azure.mgmt.cosmosdb.models.VectorIndexType
+        """
+        super().__init__(**kwargs)
+        self.path = path
+        self.type = type
 
 
 class VirtualNetworkRule(_serialization.Model):

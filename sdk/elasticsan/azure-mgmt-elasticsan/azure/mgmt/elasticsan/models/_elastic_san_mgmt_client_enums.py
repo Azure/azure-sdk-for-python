@@ -22,6 +22,14 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INTERNAL = "Internal"
 
 
+class AutoScalePolicyEnforcement(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enable or Disable scale up setting on Elastic San Appliance."""
+
+    NONE = "None"
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -38,7 +46,7 @@ class EncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Volume is encrypted at rest with Platform managed key. It is the default encryption type."""
     ENCRYPTION_AT_REST_WITH_CUSTOMER_MANAGED_KEY = "EncryptionAtRestWithCustomerManagedKey"
     """Volume is encrypted at rest with Customer managed key that can be changed and revoked by a
-    #: customer."""
+    customer."""
 
 
 class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

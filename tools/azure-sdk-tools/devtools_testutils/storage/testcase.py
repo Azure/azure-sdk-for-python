@@ -3,8 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from __future__ import division
-
 from datetime import datetime, timedelta
 from io import StringIO
 import logging
@@ -178,7 +176,6 @@ class StorageRecordedTestCase(AzureRecordedTestCase):
             for i in progress[1:]:
                 assert i[0] % max_chunk_size == 0 or i[0] % max_chunk_size == small_chunk_size
                 assert i[1] == size
-
 
     def get_datetime_variable(self, variables, name, dt):
         dt_string = variables.setdefault(name, dt.isoformat())

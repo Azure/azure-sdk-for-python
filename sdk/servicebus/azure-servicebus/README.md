@@ -424,6 +424,8 @@ import logging
 import sys
 
 handler = logging.StreamHandler(stream=sys.stdout)
+log_fmt = logging.Formatter(fmt="%(asctime)s | %(threadName)s | %(levelname)s | %(name)s | %(message)s")
+handler.setFormatter(log_fmt)
 logger = logging.getLogger('azure.servicebus')
 logger.setLevel(logging.DEBUG)
 logger.addHandler(handler)

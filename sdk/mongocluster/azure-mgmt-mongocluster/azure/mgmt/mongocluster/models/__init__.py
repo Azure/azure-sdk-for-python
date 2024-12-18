@@ -6,21 +6,25 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models import AdministratorProperties
+from ._models import BackupProperties
 from ._models import CheckNameAvailabilityRequest
 from ._models import CheckNameAvailabilityResponse
+from ._models import ComputeProperties
 from ._models import ConnectionString
 from ._models import ErrorAdditionalInfo
 from ._models import ErrorDetail
 from ._models import ErrorResponse
 from ._models import FirewallRule
 from ._models import FirewallRuleProperties
+from ._models import HighAvailabilityProperties
 from ._models import ListConnectionStringsResult
 from ._models import MongoCluster
 from ._models import MongoClusterProperties
+from ._models import MongoClusterReplicaParameters
 from ._models import MongoClusterRestoreParameters
 from ._models import MongoClusterUpdate
 from ._models import MongoClusterUpdateProperties
-from ._models import NodeGroupSpec
 from ._models import Operation
 from ._models import OperationDisplay
 from ._models import PrivateEndpoint
@@ -30,8 +34,13 @@ from ._models import PrivateEndpointConnectionResource
 from ._models import PrivateLinkResource
 from ._models import PrivateLinkResourceProperties
 from ._models import PrivateLinkServiceConnectionState
+from ._models import PromoteReplicaRequest
 from ._models import ProxyResource
+from ._models import Replica
+from ._models import ReplicationProperties
 from ._models import Resource
+from ._models import ShardingProperties
+from ._models import StorageProperties
 from ._models import SystemData
 from ._models import TrackedResource
 
@@ -39,33 +48,42 @@ from ._enums import ActionType
 from ._enums import CheckNameAvailabilityReason
 from ._enums import CreateMode
 from ._enums import CreatedByType
+from ._enums import HighAvailabilityMode
 from ._enums import MongoClusterStatus
-from ._enums import NodeKind
 from ._enums import Origin
+from ._enums import PreviewFeature
 from ._enums import PrivateEndpointConnectionProvisioningState
 from ._enums import PrivateEndpointServiceConnectionStatus
+from ._enums import PromoteMode
+from ._enums import PromoteOption
 from ._enums import ProvisioningState
 from ._enums import PublicNetworkAccess
+from ._enums import ReplicationRole
+from ._enums import ReplicationState
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AdministratorProperties",
+    "BackupProperties",
     "CheckNameAvailabilityRequest",
     "CheckNameAvailabilityResponse",
+    "ComputeProperties",
     "ConnectionString",
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
     "FirewallRule",
     "FirewallRuleProperties",
+    "HighAvailabilityProperties",
     "ListConnectionStringsResult",
     "MongoCluster",
     "MongoClusterProperties",
+    "MongoClusterReplicaParameters",
     "MongoClusterRestoreParameters",
     "MongoClusterUpdate",
     "MongoClusterUpdateProperties",
-    "NodeGroupSpec",
     "Operation",
     "OperationDisplay",
     "PrivateEndpoint",
@@ -75,21 +93,31 @@ __all__ = [
     "PrivateLinkResource",
     "PrivateLinkResourceProperties",
     "PrivateLinkServiceConnectionState",
+    "PromoteReplicaRequest",
     "ProxyResource",
+    "Replica",
+    "ReplicationProperties",
     "Resource",
+    "ShardingProperties",
+    "StorageProperties",
     "SystemData",
     "TrackedResource",
     "ActionType",
     "CheckNameAvailabilityReason",
     "CreateMode",
     "CreatedByType",
+    "HighAvailabilityMode",
     "MongoClusterStatus",
-    "NodeKind",
     "Origin",
+    "PreviewFeature",
     "PrivateEndpointConnectionProvisioningState",
     "PrivateEndpointServiceConnectionStatus",
+    "PromoteMode",
+    "PromoteOption",
     "ProvisioningState",
     "PublicNetworkAccess",
+    "ReplicationRole",
+    "ReplicationState",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

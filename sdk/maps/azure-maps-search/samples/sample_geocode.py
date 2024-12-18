@@ -22,6 +22,7 @@ from azure.core.exceptions import HttpResponseError
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
+
 def geocode():
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search import MapsSearchClient
@@ -29,8 +30,8 @@ def geocode():
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = maps_search_client.get_geocoding(query="15127 NE 24th Street, Redmond, WA 98052")
-        if result.get('features', False):
-            coordinates = result['features'][0]['geometry']['coordinates']
+        if result.get("features", False):
+            coordinates = result["features"][0]["geometry"]["coordinates"]
             longitude = coordinates[0]
             latitude = coordinates[1]
 
@@ -43,5 +44,6 @@ def geocode():
             print(f"Error Code: {exception.error.code}")
             print(f"Message: {exception.error.message}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     geocode()

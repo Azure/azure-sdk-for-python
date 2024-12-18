@@ -150,7 +150,7 @@ class TestCloudEnvironments:
         cloud_details = _get_cloud_details("TEST_ENV2")
         assert (
             cloud_details.get(EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT)
-            == "https://test_env2west.api.azureml.windows.net/"
+            == "https://test_env2west.api.ml.azure.windows.net/"
         )
 
     @mock.patch.dict(os.environ, {}, clear=True)

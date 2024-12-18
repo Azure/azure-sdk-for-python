@@ -1,5 +1,12 @@
 # Release History
 
+## 1.2.0 (2024-09-23)
+
+### Features Added
+
+  - Model `VirtualNetworkLink` added property `resolution_policy`
+  - Added enum `ResolutionPolicy`
+
 ## 1.1.0 (2023-05-20)
 
 ### Features Added

@@ -21,7 +21,7 @@ class TestComputeManagementVirtualMachineImagesEdgeZoneOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_virtual_machine_images_edge_zone_get(self, resource_group):
         response = await self.client.virtual_machine_images_edge_zone.get(
             location="str",
             edge_zone="str",
@@ -29,7 +29,7 @@ class TestComputeManagementVirtualMachineImagesEdgeZoneOperationsAsync(AzureMgmt
             offer="str",
             skus="str",
             version="str",
-            api_version="2020-12-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -37,14 +37,14 @@ class TestComputeManagementVirtualMachineImagesEdgeZoneOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_virtual_machine_images_edge_zone_list(self, resource_group):
         response = await self.client.virtual_machine_images_edge_zone.list(
             location="str",
             edge_zone="str",
             publisher_name="str",
             offer="str",
             skus="str",
-            api_version="2020-12-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -52,12 +52,12 @@ class TestComputeManagementVirtualMachineImagesEdgeZoneOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_offers(self, resource_group):
+    async def test_virtual_machine_images_edge_zone_list_offers(self, resource_group):
         response = await self.client.virtual_machine_images_edge_zone.list_offers(
             location="str",
             edge_zone="str",
             publisher_name="str",
-            api_version="2020-12-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -65,11 +65,11 @@ class TestComputeManagementVirtualMachineImagesEdgeZoneOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_publishers(self, resource_group):
+    async def test_virtual_machine_images_edge_zone_list_publishers(self, resource_group):
         response = await self.client.virtual_machine_images_edge_zone.list_publishers(
             location="str",
             edge_zone="str",
-            api_version="2020-12-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -77,13 +77,13 @@ class TestComputeManagementVirtualMachineImagesEdgeZoneOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_skus(self, resource_group):
+    async def test_virtual_machine_images_edge_zone_list_skus(self, resource_group):
         response = await self.client.virtual_machine_images_edge_zone.list_skus(
             location="str",
             edge_zone="str",
             publisher_name="str",
             offer="str",
-            api_version="2020-12-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself

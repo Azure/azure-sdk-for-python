@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, Awaitable, Optional
+from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
@@ -41,7 +42,7 @@ class AzureDataLakeStorageRESTAPI:  # pylint: disable=client-accepts-api-version
      is "filesystem". Note that overriding this default value may result in unsupported behavior.
     :paramtype resource: str
     :keyword version: Specifies the version of the operation to use for this request. Default value
-     is "2023-05-03". Note that overriding this default value may result in unsupported behavior.
+     is "2025-01-05". Note that overriding this default value may result in unsupported behavior.
     :paramtype version: str
     """
 
@@ -105,7 +106,7 @@ class AzureDataLakeStorageRESTAPI:  # pylint: disable=client-accepts-api-version
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "AzureDataLakeStorageRESTAPI":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 

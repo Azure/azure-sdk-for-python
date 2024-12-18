@@ -1,6 +1,6 @@
 -e ../../../tools/azure-sdk-tools
 ../../core/azure-core
--e ../../identity/azure-identity
+azure-identity~=1.17.0
 azure-mgmt-eventhub<=10.1.0
 azure-mgmt-resource==20.0.0
 aiohttp; python_version < '3.12'

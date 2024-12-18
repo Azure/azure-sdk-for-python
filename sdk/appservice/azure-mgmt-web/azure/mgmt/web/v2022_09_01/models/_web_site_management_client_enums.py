@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -658,12 +659,13 @@ class ParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NOT_SPECIFIED = "NotSpecified"
     STRING = "String"
     SECURE_STRING = "SecureString"
-    INT_ENUM = "Int"
+    INT = "Int"
     FLOAT = "Float"
     BOOL = "Bool"
     ARRAY = "Array"
     OBJECT = "Object"
     SECURE_OBJECT = "SecureObject"
+    INT_ENUM = "Int"
 
 
 class ProviderOsTypeSelected(str, Enum, metaclass=CaseInsensitiveEnumMeta):

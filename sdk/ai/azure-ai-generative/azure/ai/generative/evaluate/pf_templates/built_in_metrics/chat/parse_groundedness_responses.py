@@ -2,6 +2,7 @@ from promptflow import tool
 from typing import List
 import numpy as np
 import re
+import ast
 
 
 def parse_single_response(response: dict) -> list:
@@ -10,7 +11,7 @@ def parse_single_response(response: dict) -> list:
         harm_type = key.replace("generic", "gpt")
         parsed_harm_response = {}
         try:
-            harm_response = eval(response[key])
+            harm_response = ast.literal_eval(response[key])
         except Exception:
             harm_response = response[key]
         if harm_response != "" and isinstance(harm_response, dict):

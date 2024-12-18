@@ -530,7 +530,7 @@ class FlowComponent(Component, AdditionalIncludesMixin):
 
     @contextlib.contextmanager
     def _try_build_local_code(self) -> Generator:
-        with super()._try_build_local_code() as code:
+        with super()._try_build_local_code() as code:  # pylint:disable=contextmanager-generator-missing-cleanup
             if not code or not code.path:
                 yield code
                 return

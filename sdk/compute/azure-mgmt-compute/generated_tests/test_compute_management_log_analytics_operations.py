@@ -20,7 +20,7 @@ class TestComputeManagementLogAnalyticsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_export_request_rate_by_interval(self, resource_group):
+    def test_log_analytics_begin_export_request_rate_by_interval(self, resource_group):
         response = self.client.log_analytics.begin_export_request_rate_by_interval(
             location="str",
             parameters={
@@ -28,11 +28,13 @@ class TestComputeManagementLogAnalyticsOperations(AzureMgmtRecordedTestCase):
                 "fromTime": "2020-02-20 00:00:00",
                 "intervalLength": "str",
                 "toTime": "2020-02-20 00:00:00",
+                "groupByClientApplicationId": bool,
                 "groupByOperationName": bool,
                 "groupByResourceName": bool,
                 "groupByThrottlePolicy": bool,
+                "groupByUserAgent": bool,
             },
-            api_version="2017-12-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -40,18 +42,20 @@ class TestComputeManagementLogAnalyticsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_export_throttled_requests(self, resource_group):
+    def test_log_analytics_begin_export_throttled_requests(self, resource_group):
         response = self.client.log_analytics.begin_export_throttled_requests(
             location="str",
             parameters={
                 "blobContainerSasUri": "str",
                 "fromTime": "2020-02-20 00:00:00",
                 "toTime": "2020-02-20 00:00:00",
+                "groupByClientApplicationId": bool,
                 "groupByOperationName": bool,
                 "groupByResourceName": bool,
                 "groupByThrottlePolicy": bool,
+                "groupByUserAgent": bool,
             },
-            api_version="2017-12-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

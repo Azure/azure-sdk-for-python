@@ -31,9 +31,24 @@ from enum import Enum
 import logging
 import os
 import sys
-from typing import Type, Optional, Callable, Union, Dict, Any, TypeVar, Tuple, Generic, Mapping, List
-from azure.core.tracing import AbstractSpan
+from typing import (
+    Type,
+    Optional,
+    Callable,
+    Union,
+    Dict,
+    Any,
+    TypeVar,
+    Tuple,
+    Generic,
+    Mapping,
+    List,
+    TYPE_CHECKING,
+)
 from ._azure_clouds import AzureClouds
+
+if TYPE_CHECKING:
+    from azure.core.tracing import AbstractSpan
 
 ValidInputType = TypeVar("ValidInputType")
 ValueType = TypeVar("ValueType")
@@ -144,7 +159,7 @@ def _get_opencensus_span() -> Optional[Type[AbstractSpan]]:
     :returns: OpenCensusSpan type or None
     """
     try:
-        from azure.core.tracing.ext.opencensus_span import (  # pylint:disable=redefined-outer-name
+        from azure.core.tracing.ext.opencensus_span import (
             OpenCensusSpan,
         )
 
@@ -160,7 +175,7 @@ def _get_opentelemetry_span() -> Optional[Type[AbstractSpan]]:
     :returns: OpenTelemetrySpan type or None
     """
     try:
-        from azure.core.tracing.ext.opentelemetry_span import (  # pylint:disable=redefined-outer-name
+        from azure.core.tracing.ext.opentelemetry_span import (
             OpenTelemetrySpan,
         )
 
@@ -287,7 +302,7 @@ class PrioritizedSetting(Generic[ValidInputType, ValueType]):
         :type value: str or int or float or None
         :returns: the value of the setting
         :rtype: str or int or float
-        :raises: RuntimeError if no value can be determined
+        :raises RuntimeError: if no value can be determined
         """
 
         # 4. immediate values

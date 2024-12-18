@@ -10,6 +10,18 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AppAttachPackageArchitectures(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Possible device architectures that an app attach package can be configured for."""
+
+    ARM = "ARM"
+    ARM64 = "ARM64"
+    X86 = "x86"
+    X64 = "x64"
+    NEUTRAL = "Neutral"
+    X86_A64 = "x86a64"
+    ALL = "ALL"
+
+
 class ApplicationGroupType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Resource Type of ApplicationGroup."""
 
@@ -56,61 +68,69 @@ class DayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SUNDAY = "Sunday"
 
 
+class FailHealthCheckOnStagingFailure(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Parameter indicating how the health check should behave if this package fails staging."""
+
+    UNHEALTHY = "Unhealthy"
+    NEEDS_ASSISTANCE = "NeedsAssistance"
+    DO_NOT_FAIL = "DoNotFail"
+
+
 class HealthCheckName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents the name of the health check operation performed."""
 
     DOMAIN_JOINED_CHECK = "DomainJoinedCheck"
     """Verifies the SessionHost is joined to a domain. If this check fails is classified as fatal as
-    #: no connection can succeed if the SessionHost is not joined to the domain. (Currently Enabled)"""
+    no connection can succeed if the SessionHost is not joined to the domain. (Currently Enabled)"""
     DOMAIN_TRUST_CHECK = "DomainTrustCheck"
     """Verifies the SessionHost is not experiencing domain trust issues that will prevent
-    #: authentication on SessionHost at connection time when session is created. If this check fails
-    #: is classified as fatal as no connection can succeed if we cannot reach the domain for
-    #: authentication on the SessionHost. (Currently Enabled)"""
+    authentication on SessionHost at connection time when session is created. If this check fails
+    is classified as fatal as no connection can succeed if we cannot reach the domain for
+    authentication on the SessionHost. (Currently Enabled)"""
     FS_LOGIX_HEALTH_CHECK = "FSLogixHealthCheck"
     """Verifies the FSLogix service is up and running to make sure users' profiles are loaded in the
-    #: session. If this check fails is classified as fatal as even if the connection can succeed, user
-    #: experience is bad as the user profile cannot be loaded and user will get a temporary profile in
-    #: the session. (Currently Disabled)"""
+    session. If this check fails is classified as fatal as even if the connection can succeed, user
+    experience is bad as the user profile cannot be loaded and user will get a temporary profile in
+    the session. (Currently Disabled)"""
     SX_S_STACK_LISTENER_CHECK = "SxSStackListenerCheck"
     """Verifies that the SxS stack is up and running so connections can succeed. If this check fails
-    #: is classified as fatal as no connection can succeed if the SxS stack is not ready. (Currently
-    #: Enabled)"""
+    is classified as fatal as no connection can succeed if the SxS stack is not ready. (Currently
+    Enabled)"""
     URLS_ACCESSIBLE_CHECK = "UrlsAccessibleCheck"
     """Verifies that the required WVD service and Geneva URLs are reachable from the SessionHost.
-    #: These URLs are: RdTokenUri, RdBrokerURI, RdDiagnosticsUri and storage blob URLs for agent
-    #: monitoring (geneva). If this check fails, it is non fatal and the machine still can service
-    #: connections, main issue may be that monitoring agent is unable to store warm path data (logs,
-    #: operations ...). (Currently Disabled)"""
+    These URLs are: RdTokenUri, RdBrokerURI, RdDiagnosticsUri and storage blob URLs for agent
+    monitoring (geneva). If this check fails, it is non fatal and the machine still can service
+    connections, main issue may be that monitoring agent is unable to store warm path data (logs,
+    operations ...). (Currently Disabled)"""
     MONITORING_AGENT_CHECK = "MonitoringAgentCheck"
     """Verifies that the required Geneva agent is running. If this check fails, it is non fatal and
-    #: the machine still can service connections, main issue may be that monitoring agent is missing
-    #: or running (possibly) older version. (Currently Enabled)"""
+    the machine still can service connections, main issue may be that monitoring agent is missing
+    or running (possibly) older version. (Currently Enabled)"""
     DOMAIN_REACHABLE = "DomainReachable"
     """Verifies the domain the SessionHost is joined to is still reachable. If this check fails is
-    #: classified as fatal as no connection can succeed if the domain the SessionHost is joined is not
-    #: reachable at the time of connection. (Currently Disabled)"""
+    classified as fatal as no connection can succeed if the domain the SessionHost is joined is not
+    reachable at the time of connection. (Currently Disabled)"""
     WEB_RTC_REDIRECTOR_CHECK = "WebRTCRedirectorCheck"
     """Verifies whether the WebRTCRedirector component is healthy. The WebRTCRedirector component is
-    #: used to optimize video and audio performance in Microsoft Teams. This checks whether the
-    #: component is still running, and whether there is a higher version available. If this check
-    #: fails, it is non fatal and the machine still can service connections, main issue may be the
-    #: WebRTCRedirector component has to be restarted or updated. (Currently Disabled)"""
+    used to optimize video and audio performance in Microsoft Teams. This checks whether the
+    component is still running, and whether there is a higher version available. If this check
+    fails, it is non fatal and the machine still can service connections, main issue may be the
+    WebRTCRedirector component has to be restarted or updated. (Currently Disabled)"""
     SUPPORTED_ENCRYPTION_CHECK = "SupportedEncryptionCheck"
     """Verifies the value of SecurityLayer registration key. If the value is 0 (SecurityLayer.RDP)
-    #: this check fails with Error code = NativeMethodErrorCode.E_FAIL and is fatal. If the value is 1
-    #: (SecurityLayer.Negotiate) this check fails with Error code =
-    #: NativeMethodErrorCode.ERROR_SUCCESS and is non fatal. (Currently Disabled)"""
+    this check fails with Error code = NativeMethodErrorCode.E_FAIL and is fatal. If the value is 1
+    (SecurityLayer.Negotiate) this check fails with Error code =
+    NativeMethodErrorCode.ERROR_SUCCESS and is non fatal. (Currently Disabled)"""
     META_DATA_SERVICE_CHECK = "MetaDataServiceCheck"
     """Verifies the metadata service is accessible and return compute properties. (Currently Enabled)"""
     APP_ATTACH_HEALTH_CHECK = "AppAttachHealthCheck"
     """Verifies that the AppAttachService is healthy (there were no issues during package staging).
-    #: The AppAttachService is used to enable the staging/registration (and eventual
-    #: deregistration/destaging) of MSIX apps that have been set up by the tenant admin. This checks
-    #: whether the component had any failures during package staging. Failures in staging will prevent
-    #: some MSIX apps from working properly for the end user. If this check fails, it is non fatal and
-    #: the machine still can service connections, main issue may be certain apps will not work for
-    #: end-users. (Currently Enabled)"""
+    The AppAttachService is used to enable the staging/registration (and eventual
+    deregistration/destaging) of MSIX apps that have been set up by the tenant admin. This checks
+    whether the component had any failures during package staging. Failures in staging will prevent
+    some MSIX apps from working properly for the end user. If this check fails, it is non fatal and
+    the machine still can service connections, main issue may be certain apps will not work for
+    end-users. (Currently Enabled)"""
 
 
 class HealthCheckResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -142,13 +162,13 @@ class HostPoolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     PERSONAL = "Personal"
     """Users will be assigned a SessionHost either by administrators (PersonalDesktopAssignmentType =
-    #: Direct) or upon connecting to the pool (PersonalDesktopAssignmentType = Automatic). They will
-    #: always be redirected to their assigned SessionHost."""
+    Direct) or upon connecting to the pool (PersonalDesktopAssignmentType = Automatic). They will
+    always be redirected to their assigned SessionHost."""
     POOLED = "Pooled"
     """Users get a new (random) SessionHost every time it connects to the HostPool."""
     BYO_DESKTOP = "BYODesktop"
     """Users assign their own machines, load balancing logic remains the same as Personal.
-    #: PersonalDesktopAssignmentType must be Direct."""
+    PersonalDesktopAssignmentType must be Direct."""
 
 
 class LoadBalancerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -157,6 +177,13 @@ class LoadBalancerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BREADTH_FIRST = "BreadthFirst"
     DEPTH_FIRST = "DepthFirst"
     PERSISTENT = "Persistent"
+
+
+class PackageTimestamped(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Is package timestamped so it can ignore the certificate expiry date."""
+
+    TIMESTAMPED = "Timestamped"
+    NOT_TIMESTAMPED = "NotTimestamped"
 
 
 class PersonalDesktopAssignmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -189,6 +216,15 @@ class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiv
     PENDING = "Pending"
     APPROVED = "Approved"
     REJECTED = "Rejected"
+
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state."""
+
+    SUCCEEDED = "Succeeded"
+    PROVISIONING = "Provisioning"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
 
 
 class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -304,7 +340,7 @@ class StartupBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NONE = "None"
     """Session hosts will not be started by the service. This setting depends on Start VM on Connect
-    #: to be enabled to start the session hosts."""
+    to be enabled to start the session hosts."""
     WITH_ASSIGNED_USER = "WithAssignedUser"
     """Session hosts with an assigned user will be started during Ramp Up"""
     ALL = "All"
@@ -318,19 +354,19 @@ class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Session Host has passed all the health checks and is available to handle connections."""
     UNAVAILABLE = "Unavailable"
     """Session Host is either turned off or has failed critical health checks which is causing service
-    #: not to be able to route connections to this session host. Note this replaces previous
-    #: 'NoHeartBeat' status."""
+    not to be able to route connections to this session host. Note this replaces previous
+    'NoHeartBeat' status."""
     SHUTDOWN = "Shutdown"
     """Session Host is shutdown - RD Agent reported session host to be stopped or deallocated."""
     DISCONNECTED = "Disconnected"
     """The Session Host is unavailable because it is currently disconnected."""
     UPGRADING = "Upgrading"
     """Session Host is unavailable because currently an upgrade of RDAgent/side-by-side stack is in
-    #: progress. Note: this state will be removed once the upgrade completes and the host is able to
-    #: accept connections."""
+    progress. Note: this state will be removed once the upgrade completes and the host is able to
+    accept connections."""
     UPGRADE_FAILED = "UpgradeFailed"
     """Session Host is unavailable because the critical component upgrade (agent, side-by-side stack,
-    #: etc.) failed."""
+    etc.) failed."""
     NO_HEARTBEAT = "NoHeartbeat"
     """The Session Host is not heart beating."""
     NOT_JOINED_TO_DOMAIN = "NotJoinedToDomain"
@@ -343,7 +379,7 @@ class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FSLogix is in an unhealthy state on the session host."""
     NEEDS_ASSISTANCE = "NeedsAssistance"
     """New status to inform admins that the health on their endpoint needs to be fixed. The
-    #: connections might not fail, as these issues are not fatal."""
+    connections might not fail, as these issues are not fatal."""
 
 
 class StopHostsWhen(str, Enum, metaclass=CaseInsensitiveEnumMeta):

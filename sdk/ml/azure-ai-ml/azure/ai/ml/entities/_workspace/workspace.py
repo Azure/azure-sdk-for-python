@@ -8,13 +8,14 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Type, Union
 
-from azure.ai.ml._restclient.v2023_08_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
+from azure.ai.ml._restclient.v2024_10_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
+from azure.ai.ml._restclient.v2024_10_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
+from azure.ai.ml._restclient.v2024_10_01_preview.models import NetworkAcls as RestNetworkAcls
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
     ServerlessComputeSettings as RestServerlessComputeSettings,
 )
-from azure.ai.ml._restclient.v2023_08_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml._restclient.v2024_10_01_preview.models import Workspace as RestWorkspace
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import (
@@ -32,6 +33,7 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 
 from .customer_managed_key import CustomerManagedKey
 from .feature_store_settings import FeatureStoreSettings
+from .network_acls import NetworkAcls
 from .networking import ManagedNetwork
 
 
@@ -75,12 +77,17 @@ class Workspace(Resource):
     :param public_network_access: Whether to allow public endpoint connectivity
         when a workspace is private link enabled.
     :type public_network_access: str
+    :param network_acls: The network access control list (ACL) settings of the workspace.
+    :type network_acls: ~azure.ai.ml.entities.NetworkAcls
     :param identity: workspace's Managed Identity (user assigned, or system assigned)
     :type identity: ~azure.ai.ml.entities.IdentityConfiguration
     :param primary_user_assigned_identity: The workspace's primary user assigned identity
     :type primary_user_assigned_identity: str
     :param managed_network: workspace's Managed Network configuration
     :type managed_network: ~azure.ai.ml.entities.ManagedNetwork
+    :param provision_network_now: Set to trigger the provisioning of the managed vnet with the default options when
+        creating a workspace with the managed vnet enable, or else it does nothing
+    :type provision_network_now: Optional[bool]
     :param system_datastores_auth_mode: The authentication mode for system datastores.
     :type system_datastores_auth_mode: str
     :param enable_data_isolation: A flag to determine if workspace has data isolation enabled.
@@ -104,6 +111,7 @@ class Workspace(Resource):
             :caption: Creating a Workspace object.
     """
 
+    # pylint: disable=too-many-locals
     def __init__(
         self,
         *,
@@ -121,9 +129,11 @@ class Workspace(Resource):
         customer_managed_key: Optional[CustomerManagedKey] = None,
         image_build_compute: Optional[str] = None,
         public_network_access: Optional[str] = None,
+        network_acls: Optional[NetworkAcls] = None,
         identity: Optional[IdentityConfiguration] = None,
         primary_user_assigned_identity: Optional[str] = None,
         managed_network: Optional[ManagedNetwork] = None,
+        provision_network_now: Optional[bool] = None,
         system_datastores_auth_mode: Optional[str] = None,
         enable_data_isolation: bool = False,
         allow_roleassignment_on_rg: Optional[bool] = None,
@@ -132,7 +142,6 @@ class Workspace(Resource):
         serverless_compute: Optional[ServerlessComputeSettings] = None,
         **kwargs: Any,
     ):
-
         # Workspaces have subclasses that are differentiated by the 'kind' field in the REST API.
         # Now that this value is occasionally surfaced (for sub-class YAML specifications)
         # We've switched to using 'type' in the SDK for consistency's sake with other polymorphic classes.
@@ -140,6 +149,7 @@ class Workspace(Resource):
         # to maintain backwards compatibility with internal systems that I suspect still use 'kind' somewhere.
         # 'type' takes precedence over 'kind' if they're both set, and this defaults to a normal workspace's type
         # if nothing is set.
+        # pylint: disable=too-many-locals
         self._kind = kwargs.pop("kind", None)
         if self._kind is None:
             self._kind = WorkspaceKind.DEFAULT
@@ -165,6 +175,7 @@ class Workspace(Resource):
         self.identity = identity
         self.primary_user_assigned_identity = primary_user_assigned_identity
         self.managed_network = managed_network
+        self.provision_network_now = provision_network_now
         self.system_datastores_auth_mode = system_datastores_auth_mode
         self.enable_data_isolation = enable_data_isolation
         self.allow_roleassignment_on_rg = allow_roleassignment_on_rg
@@ -177,6 +188,7 @@ class Workspace(Resource):
         if hub_id:
             self._kind = WorkspaceKind.PROJECT
         self.serverless_compute: Optional[ServerlessComputeSettings] = serverless_compute
+        self.network_acls: Optional[NetworkAcls] = network_acls
 
     @property
     def discovery_url(self) -> Optional[str]:
@@ -315,7 +327,9 @@ class Workspace(Resource):
         return result
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspace) -> Optional["Workspace"]:
+    def _from_rest_object(
+        cls, rest_obj: RestWorkspace, v2_service_context: Optional[object] = None
+    ) -> Optional["Workspace"]:
 
         if not rest_obj:
             return None
@@ -331,13 +345,23 @@ class Workspace(Resource):
 
         # TODO: Remove attribute check once Oct API version is out
         mlflow_tracking_uri = None
+
         if hasattr(rest_obj, "ml_flow_tracking_uri"):
-            mlflow_tracking_uri = rest_obj.ml_flow_tracking_uri
+            try:
+                if v2_service_context:
+                    # v2_service_context is required (not None) in get_mlflow_tracking_uri_v2
+                    from azureml.mlflow import get_mlflow_tracking_uri_v2
+
+                    mlflow_tracking_uri = get_mlflow_tracking_uri_v2(rest_obj, v2_service_context)
+                else:
+                    mlflow_tracking_uri = rest_obj.ml_flow_tracking_uri
+            except ImportError:
+                mlflow_tracking_uri = rest_obj.ml_flow_tracking_uri
 
         # TODO: Remove once Online Endpoints updates API version to at least 2023-08-01
         allow_roleassignment_on_rg = None
-        if hasattr(rest_obj, "allow_roleassignment_on_rg"):
-            allow_roleassignment_on_rg = rest_obj.allow_roleassignment_on_rg
+        if hasattr(rest_obj, "allow_role_assignment_on_rg"):
+            allow_roleassignment_on_rg = rest_obj.allow_role_assignment_on_rg
         system_datastores_auth_mode = None
         if hasattr(rest_obj, "system_datastores_auth_mode"):
             system_datastores_auth_mode = rest_obj.system_datastores_auth_mode
@@ -349,6 +373,11 @@ class Workspace(Resource):
                 managed_network = ManagedNetwork._from_rest_object(  # pylint: disable=protected-access
                     rest_obj.managed_network
                 )
+
+        # TODO: Remove once it's included in response
+        provision_network_now = None
+        if hasattr(rest_obj, "provision_network_now"):
+            provision_network_now = rest_obj.provision_network_now
 
         armid_parts = str(rest_obj.id).split("/")
         group = None if len(armid_parts) < 4 else armid_parts[4]
@@ -371,6 +400,10 @@ class Workspace(Resource):
                 serverless_compute = ServerlessComputeSettings._from_rest_object(  # pylint: disable=protected-access
                     rest_obj.serverless_compute_settings
                 )
+        network_acls = None
+        if hasattr(rest_obj, "network_acls"):
+            if rest_obj.network_acls and isinstance(rest_obj.network_acls, RestNetworkAcls):
+                network_acls = NetworkAcls._from_rest_object(rest_obj.network_acls)  # pylint: disable=protected-access
 
         return cls(
             name=rest_obj.name,
@@ -390,10 +423,12 @@ class Workspace(Resource):
             customer_managed_key=customer_managed_key,
             image_build_compute=rest_obj.image_build_compute,
             public_network_access=rest_obj.public_network_access,
+            network_acls=network_acls,
             mlflow_tracking_uri=mlflow_tracking_uri,
             identity=identity,
             primary_user_assigned_identity=rest_obj.primary_user_assigned_identity,
             managed_network=managed_network,
+            provision_network_now=provision_network_now,
             system_datastores_auth_mode=system_datastores_auth_mode,
             feature_store_settings=feature_store_settings,
             enable_data_isolation=rest_obj.enable_data_isolation,
@@ -417,6 +452,7 @@ class Workspace(Resource):
         serverless_compute_settings = None
         if self.serverless_compute:
             serverless_compute_settings = self.serverless_compute._to_rest_object()  # pylint: disable=protected-access
+
         return RestWorkspace(
             name=self.name,
             identity=(
@@ -441,10 +477,11 @@ class Workspace(Resource):
                 if self.managed_network
                 else None
             ),  # pylint: disable=protected-access
+            provision_network_now=self.provision_network_now,
             system_datastores_auth_mode=self.system_datastores_auth_mode,
             feature_store_settings=feature_store_settings,
             enable_data_isolation=self.enable_data_isolation,
-            allow_roleassignment_on_rg=self.allow_roleassignment_on_rg,
+            allow_role_assignment_on_rg=self.allow_roleassignment_on_rg,  # diff due to swagger restclient casing diff
             hub_resource_id=self._hub_id,
             serverless_compute_settings=serverless_compute_settings,
         )

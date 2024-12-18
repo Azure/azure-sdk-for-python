@@ -64,18 +64,19 @@ _SERVICE_PARAMS = {
 }
 
 
-class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
+class StorageAccountHostsMixin(object):
     _client: Any
     def __init__(
         self,
         parsed_url: Any,
         service: str,
-        credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential", TokenCredential]] = None, # pylint: disable=line-too-long
+        credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential", TokenCredential]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> None:
         self._location_mode = kwargs.get("_location_mode", LocationMode.PRIMARY)
         self._hosts = kwargs.get("_hosts")
         self.scheme = parsed_url.scheme
+        self._is_localhost = False
 
         if service not in ["blob", "queue", "file-share", "dfs"]:
             raise ValueError(f"Invalid service: {service}")
@@ -85,6 +86,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self.account_name = account[0] if len(account) > 1 else None
         if not self.account_name and parsed_url.netloc.startswith("localhost") \
                 or parsed_url.netloc.startswith("127.0.0.1"):
+            self._is_localhost = True
             self.account_name = parsed_url.path.strip("/")
 
         self.credential = _format_shared_key_credential(self.account_name, credential)
@@ -222,7 +224,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         return query_str.rstrip("?&"), credential
 
     def _create_pipeline(
-        self, credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] = None, # pylint: disable=line-too-long
+        self, credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> Tuple[StorageConfiguration, Pipeline]:
         self._credential_policy: Any = None
@@ -306,7 +308,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             enforce_https=False
         )
 
-        Pipeline._prepare_multipart_mixed_request(request) # pylint: disable=protected-access
+        Pipeline._prepare_multipart_mixed_request(request)  # pylint: disable=protected-access
         body = serialize_batch_body(request.multipart_mixed_info[0], batch_id)
         request.set_bytes_body(body)
 
@@ -356,13 +358,13 @@ class TransportWrapper(HttpTransport):
     def __enter__(self):
         pass
 
-    def __exit__(self, *args):  # pylint: disable=arguments-differ
+    def __exit__(self, *args):
         pass
 
 
 def _format_shared_key_credential(
-    account_name: str,
-    credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential", TokenCredential]] = None, # pylint: disable=line-too-long
+    account_name: Optional[str],
+    credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential", TokenCredential]] = None  # pylint: disable=line-too-long
 ) -> Any:
     if isinstance(credential, str):
         if not account_name:
@@ -381,9 +383,9 @@ def _format_shared_key_credential(
 
 def parse_connection_str(
     conn_str: str,
-    credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]], # pylint: disable=line-too-long
+    credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]],
     service: str
-) -> Tuple[str, Optional[str], Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]]]: # pylint: disable=line-too-long
+) -> Tuple[str, Optional[str], Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]]]:  # pylint: disable=line-too-long
     conn_str = conn_str.rstrip(";")
     conn_settings_list = [s.split("=", 1) for s in conn_str.split(";")]
     if any(len(tup) != 2 for tup in conn_settings_list):

@@ -1,0 +1,56 @@
+# NOTE: Please refer to https://aka.ms/azsdk/engsys/ci-yaml before editing this file.
+
+trigger:
+  branches:
+    include:
+    - main
+    - hotfix/*
+    - release/*
+    - restapi*
+  paths:
+    include:
+    - sdk/core/
+    - eng/
+    - tools/
+    exclude:
+    - eng/common/
+
+pr:
+  branches:
+    include:
+    - main
+    - feature/*
+    - hotfix/*
+    - release/*
+    - restapi*
+  paths:
+    include:
+    - sdk/core/
+    - eng/
+    - tools/
+    exclude:
+    - eng/common/
+
+extends:
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+  parameters:
+    ServiceDirectory: core
+    BuildTargetingString: "*"
+    TestProxy: false
+    TestTimeoutInMinutes: 120
+    Artifacts:
+    - name: azure-core
+      safeName: azurecore
+    - name: azure-mgmt-core
+      safeName: azuremgmtcore
+    - name: azure-core-tracing-opencensus
+      safeName: azurecorecoretracingopencensus
+    - name: azure-core-tracing-opentelemetry
+      safeName: azurecorecoretracingtelemetry
+    - name: azure-common
+      safeName: azurecommon
+      skipPublishDocMs: true
+    - name: azure-core-experimental
+      safeName: azurecoreexperimental
+    - name: corehttp
+      safeName: corehttp

@@ -286,9 +286,7 @@ def adjust_attribute_map():
     """
     # pylint:disable=protected-access
     for class_, attributes in MODEL_CLASS_ATTRIBUTES.items():
-        class_._attribute_map = _adjust_dict_key_sequence(
-            class_._attribute_map, attributes
-        )
+        class_._attribute_map = _adjust_dict_key_sequence(class_._attribute_map, attributes)
 
         # For the "title" workaround. Need to discuss with Java whether we should use "string" in the swagger file.
         if "title" in class_._attribute_map:

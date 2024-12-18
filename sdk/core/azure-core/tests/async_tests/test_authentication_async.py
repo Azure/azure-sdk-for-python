@@ -6,13 +6,13 @@
 import asyncio
 import sys
 import time
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, patch, AsyncMock, create_autospec
 from requests import Response
 
-from azure.core.credentials import AccessToken
-from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.credentials import AccessToken, AccessTokenInfo
+from azure.core.credentials_async import AsyncTokenCredential, AsyncSupportsTokenInfo
 from azure.core.exceptions import ServiceRequestError
-from azure.core.pipeline import AsyncPipeline
+from azure.core.pipeline import AsyncPipeline, PipelineRequest, PipelineContext
 from azure.core.pipeline.policies import (
     AsyncBearerTokenCredentialPolicy,
     SansIOHTTPPolicy,
@@ -58,6 +58,84 @@ async def test_bearer_policy_adds_header(http_request):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_bearer_policy_authorize_request(http_request):
+    """The authorize_request method should add a header containing a token from its credential"""
+    # 2524608000 == 01/01/2050 @ 12:00am (UTC)
+    expected_token = AccessToken("expected_token", 2524608000)
+
+    fake_credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=expected_token))
+    policy = AsyncBearerTokenCredentialPolicy(fake_credential, "scope")
+    http_req = http_request("GET", "https://spam.eggs")
+    request = PipelineRequest(http_req, PipelineContext(None))
+
+    await policy.authorize_request(request, "scope", claims="foo")
+    assert policy._token is expected_token
+    assert http_req.headers["Authorization"] == f"Bearer {expected_token.token}"
+    assert fake_credential.get_token.call_count == 1
+    assert fake_credential.get_token.call_args[0] == ("scope",)
+    assert fake_credential.get_token.call_args[1] == {"claims": "foo"}
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_bearer_policy_adds_header_access_token_info(http_request):
+    """The bearer token policy should also add an auth header when an AccessTokenInfo is returned."""
+    # 2524608000 == 01/01/2050 @ 12:00am (UTC)
+    access_token = AccessToken("other_token", 2524608000)
+    expected_token = AccessTokenInfo("expected_token", 2524608000, refresh_on=2524608000)
+
+    async def verify_authorization_header(request):
+        assert request.http_request.headers["Authorization"] == "Bearer {}".format(expected_token.token)
+        return Mock()
+
+    get_token_calls = 0
+    get_token_info_calls = 0
+
+    class MockCredential(AsyncTokenCredential):
+        async def get_token(self, *_, **__):
+            nonlocal get_token_calls
+            get_token_calls += 1
+            return access_token
+
+        async def get_token_info(*_, **__):
+            nonlocal get_token_info_calls
+            get_token_info_calls += 1
+            return expected_token
+
+    fake_credential: AsyncTokenCredential = MockCredential()
+    policies = [AsyncBearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_authorization_header)]
+    pipeline = AsyncPipeline(transport=AsyncMock(), policies=policies)
+
+    await pipeline.run(http_request("GET", "https://spam.eggs"), context=None)
+    assert get_token_info_calls == 1
+
+    await pipeline.run(http_request("GET", "https://spam.eggs"), context=None)
+    # Didn't need a new token
+    assert get_token_info_calls == 1
+    # get_token should not have been called
+    assert get_token_calls == 0
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_bearer_policy_authorize_request_access_token_info(http_request):
+    """The authorize_request method should add a header containing a token from its credential"""
+    # 2524608000 == 01/01/2050 @ 12:00am (UTC)
+    expected_token = AccessTokenInfo("expected_token", 2524608000)
+    fake_credential = Mock(get_token=Mock(), get_token_info=Mock(return_value=expected_token))
+    policy = AsyncBearerTokenCredentialPolicy(fake_credential, "scope")
+    http_req = http_request("GET", "https://spam.eggs")
+    request = PipelineRequest(http_req, PipelineContext(None))
+
+    await policy.authorize_request(request, "scope", claims="foo")
+    assert policy._token is expected_token
+    assert http_req.headers["Authorization"] == f"Bearer {expected_token.token}"
+    assert fake_credential.get_token_info.call_args[0] == ("scope",)
+    assert fake_credential.get_token_info.call_args[1] == {"options": {"claims": "foo"}}
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_bearer_policy_send(http_request):
     """The bearer token policy should invoke the next policy's send method and return the result"""
     expected_request = http_request("GET", "https://spam.eggs")
@@ -97,7 +175,7 @@ async def test_bearer_policy_sync_send(http_request):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_bearer_policy_token_caching(http_request):
-    good_for_one_hour = AccessToken("token", time.time() + 3600)
+    good_for_one_hour = AccessToken("token", int(time.time() + 3600))
     expected_token = good_for_one_hour
     get_token_calls = 0
 
@@ -119,7 +197,7 @@ async def test_bearer_policy_token_caching(http_request):
     await pipeline.run(http_request("GET", "https://spam.eggs"))
     assert get_token_calls == 1  # token is good for an hour -> policy should return it from cache
 
-    expired_token = AccessToken("token", time.time())
+    expired_token = AccessToken("token", int(time.time()))
     get_token_calls = 0
     expected_token = expired_token
     policies = [
@@ -133,6 +211,48 @@ async def test_bearer_policy_token_caching(http_request):
 
     await pipeline.run(http_request("GET", "https://spam.eggs"))
     assert get_token_calls == 2  # token expired -> policy should call get_token
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_bearer_policy_access_token_info_caching(http_request):
+    """The policy should cache AccessTokenInfo instances and refresh them when necessary."""
+
+    good_for_one_hour = AccessTokenInfo("token", int(time.time() + 3600))
+
+    credential = create_autospec(AsyncSupportsTokenInfo, instance=True, spec_set=True)
+    credential.get_token_info = AsyncMock(return_value=good_for_one_hour)
+    pipeline = AsyncPipeline(transport=AsyncMock(), policies=[AsyncBearerTokenCredentialPolicy(credential, "scope")])
+
+    await pipeline.run(http_request("GET", "https://spam.eggs"))
+    assert (
+        credential.get_token_info.call_count == 1
+    )  # policy has no token at first request -> it should call get_token_info
+
+    await pipeline.run(http_request("GET", "https://spam.eggs"))
+    assert credential.get_token_info.call_count == 1  # token is good for an hour -> policy should return it from cache
+
+    expired_token = AccessTokenInfo("token", int(time.time()))
+    credential.get_token_info.reset_mock()
+    credential.get_token_info.return_value = expired_token
+    pipeline = AsyncPipeline(transport=AsyncMock(), policies=[AsyncBearerTokenCredentialPolicy(credential, "scope")])
+
+    await pipeline.run(http_request("GET", "https://spam.eggs"))
+    assert credential.get_token_info.call_count == 1
+
+    await pipeline.run(http_request("GET", "https://spam.eggs"))
+    assert credential.get_token_info.call_count == 2  # token is expired -> policy should call get_token_info again
+
+    refreshable_token = AccessTokenInfo("token", int(time.time() + 3600), refresh_on=int(time.time() - 1))
+    credential.get_token_info.reset_mock()
+    credential.get_token_info.return_value = refreshable_token
+    pipeline = AsyncPipeline(transport=AsyncMock(), policies=[AsyncBearerTokenCredentialPolicy(credential, "scope")])
+
+    await pipeline.run(http_request("GET", "https://spam.eggs"))
+    assert credential.get_token_info.call_count == 1
+
+    await pipeline.run(http_request("GET", "https://spam.eggs"))
+    assert credential.get_token_info.call_count == 2  # token refresh-on time has passed, call again
 
 
 @pytest.mark.asyncio

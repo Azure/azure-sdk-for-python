@@ -71,14 +71,18 @@ def _iterate_response_content(iterator):
         raise _ResponseStopIteration()  # pylint: disable=raise-missing-from
 
 
-class AsyncHttpResponse(_HttpResponseBase, AsyncContextManager["AsyncHttpResponse"]):  # pylint: disable=abstract-method
+class AsyncHttpResponse(_HttpResponseBase, AsyncContextManager["AsyncHttpResponse"]):
     """An AsyncHttpResponse ABC.
 
     Allows for the asynchronous streaming of data from the response.
     """
 
     def stream_download(
-        self, pipeline: AsyncPipeline[HttpRequest, "AsyncHttpResponse"], *, decompress: bool = True, **kwargs: Any
+        self,
+        pipeline: AsyncPipeline[HttpRequest, "AsyncHttpResponse"],
+        *,
+        decompress: bool = True,
+        **kwargs: Any,
     ) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.
 
@@ -115,9 +119,7 @@ class AsyncHttpResponse(_HttpResponseBase, AsyncContextManager["AsyncHttpRespons
         return None
 
 
-class AsyncHttpClientTransportResponse(  # pylint: disable=abstract-method
-    _HttpClientTransportResponse, AsyncHttpResponse
-):
+class AsyncHttpClientTransportResponse(_HttpClientTransportResponse, AsyncHttpResponse):
     """Create a HTTPResponse from an http.client response.
 
     Body will NOT be read by the constructor. Call "body()" to load the body in memory if necessary.

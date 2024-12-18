@@ -23,7 +23,7 @@ import os
 
 from azure.core.exceptions import HttpResponseError
 from azure.identity.aio import DefaultAzureCredential
-from azure.monitor.query.aio  import LogsQueryClient
+from azure.monitor.query.aio import LogsQueryClient
 from azure.monitor.query import LogsBatchQuery, LogsQueryStatus
 import pandas as pd
 
@@ -44,7 +44,10 @@ async def logs_batch_query():
             range x from 1 to 3 step 1
             | summarize percentilesw(x, Weight * 100, 50)""",
             workspace_id=os.environ["LOGS_WORKSPACE_ID"],
-            timespan=(datetime(2021, 6, 2, tzinfo=timezone.utc), datetime(2021, 6, 5, tzinfo=timezone.utc)),  # (start, end)
+            timespan=(
+                datetime(2021, 6, 2, tzinfo=timezone.utc),
+                datetime(2021, 6, 5, tzinfo=timezone.utc),
+            ),  # (start, end)
             include_statistics=True,
         ),
     ]
@@ -72,6 +75,7 @@ async def logs_batch_query():
             print("something fatal happened")
             print(err)
     await credential.close()
+
 
 # [END send_query_batch_async]
 

@@ -55,6 +55,9 @@ test:
     - azure.mgmt.apimanagement.aio.operations
     - azure.mgmt.apimanagement.models
     - azure.mgmt.apimanagement.operations
+    - azure.mgmt.appcomplianceautomation
+    - azure.mgmt.appcomplianceautomation.aio
+    - azure.mgmt.appcomplianceautomation.models
     - azure.mgmt.appconfiguration
     - azure.mgmt.appconfiguration.aio
     - azure.mgmt.appconfiguration.models
@@ -129,6 +132,11 @@ test:
     - azure.mgmt.batch.aio.operations
     - azure.mgmt.batch.models
     - azure.mgmt.batch.operations
+    - azure.mgmt.batchai
+    - azure.mgmt.batchai.aio
+    - azure.mgmt.batchai.aio.operations
+    - azure.mgmt.batchai.models
+    - azure.mgmt.batchai.operations
     - azure.mgmt.billing
     - azure.mgmt.billing.aio
     - azure.mgmt.billing.aio.operations
@@ -176,6 +184,11 @@ test:
     - azure.mgmt.compute.v2023_07_01.aio.operations
     - azure.mgmt.compute.v2023_07_01.models
     - azure.mgmt.compute.v2023_07_01.operations
+    - azure.mgmt.computefleet
+    - azure.mgmt.computefleet.aio
+    - azure.mgmt.computefleet.aio.operations
+    - azure.mgmt.computefleet.models
+    - azure.mgmt.computefleet.operations
     - azure.mgmt.confidentialledger
     - azure.mgmt.confidentialledger.aio
     - azure.mgmt.confidentialledger.aio.operations
@@ -222,11 +235,6 @@ test:
     - azure.mgmt.containerservice.v2023_08_01.operations
     - azure.mgmt.containerservicefleet
     - azure.mgmt.containerservicefleet.aio
-    - azure.mgmt.containerservicefleet.v2023_10_15
-    - azure.mgmt.containerservicefleet.v2023_10_15.aio
-    - azure.mgmt.containerservicefleet.v2023_10_15.aio.operations
-    - azure.mgmt.containerservicefleet.v2023_10_15.models
-    - azure.mgmt.containerservicefleet.v2023_10_15.operations
     - azure.mgmt.cosmosdb
     - azure.mgmt.cosmosdb.aio
     - azure.mgmt.cosmosdb.aio.operations
@@ -249,11 +257,6 @@ test:
     - azure.mgmt.dashboard.operations
     - azure.mgmt.databox
     - azure.mgmt.databox.aio
-    - azure.mgmt.databox.v2022_12_01
-    - azure.mgmt.databox.v2022_12_01.aio
-    - azure.mgmt.databox.v2022_12_01.aio.operations
-    - azure.mgmt.databox.v2022_12_01.models
-    - azure.mgmt.databox.v2022_12_01.operations
     - azure.mgmt.datab
     - azure.mgmt.datab.aio
     - azure.mgmt.datab.aio.operations
@@ -315,12 +318,17 @@ test:
     - azure.mgmt.devcenter.aio
     - azure.mgmt.devcenter.aio.operations
     - azure.mgmt.devcenter.models
-    - azure.mgmt.devcenter.operations  
+    - azure.mgmt.devcenter.operations
     - azure.mgmt.deviceupdate
     - azure.mgmt.deviceupdate.aio
     - azure.mgmt.deviceupdate.aio.operations
     - azure.mgmt.deviceupdate.models
     - azure.mgmt.deviceupdate.operations
+    - azure.mgmt.devopsinfrastructure
+    - azure.mgmt.devopsinfrastructure.aio
+    - azure.mgmt.devopsinfrastructure.aio.operations
+    - azure.mgmt.devopsinfrastructure.models
+    - azure.mgmt.devopsinfrastructure.operations
     - azure.mgmt.devtestlabs
     - azure.mgmt.devtestlabs.aio
     - azure.mgmt.devtestlabs.aio.operations
@@ -328,11 +336,6 @@ test:
     - azure.mgmt.devtestlabs.operations
     - azure.mgmt.digitaltwins
     - azure.mgmt.digitaltwins.aio
-    - azure.mgmt.digitaltwins.v2023_01_31
-    - azure.mgmt.digitaltwins.v2023_01_31.aio
-    - azure.mgmt.digitaltwins.v2023_01_31.aio.operations
-    - azure.mgmt.digitaltwins.v2023_01_31.models
-    - azure.mgmt.digitaltwins.v2023_01_31.operations
     - azure.mgmt.dns
     - azure.mgmt.dns.aio
     - azure.mgmt.dns.v2018_05_01
@@ -357,11 +360,6 @@ test:
     - azure.mgmt.dynatrace.operations
     - azure.mgmt.edgeorder
     - azure.mgmt.edgeorder.aio
-    - azure.mgmt.edgeorder.v2021_12_01
-    - azure.mgmt.edgeorder.v2021_12_01.aio
-    - azure.mgmt.edgeorder.v2021_12_01.aio.operations
-    - azure.mgmt.edgeorder.v2021_12_01.models
-    - azure.mgmt.edgeorder.v2021_12_01.operations
     - azure.mgmt.elastic
     - azure.mgmt.elastic.aio
     - azure.mgmt.elastic.aio.operations
@@ -391,16 +389,11 @@ test:
     - azure.mgmt.eventhub.v2022_10_01_preview.operations
     - azure.mgmt.extendedlocation
     - azure.mgmt.extendedlocation.aio
-    - azure.mgmt.extendedlocation.v2021_08_15
-    - azure.mgmt.extendedlocation.v2021_08_15.aio
-    - azure.mgmt.extendedlocation.v2021_08_15.aio.operations
-    - azure.mgmt.extendedlocation.v2021_08_15.models
-    - azure.mgmt.extendedlocation.v2021_08_15.operations
-    - azure.mgmt.extendedlocation.v2021_08_31_preview
-    - azure.mgmt.extendedlocation.v2021_08_31_preview.aio
-    - azure.mgmt.extendedlocation.v2021_08_31_preview.aio.operations
-    - azure.mgmt.extendedlocation.v2021_08_31_preview.models
-    - azure.mgmt.extendedlocation.v2021_08_31_preview.operations
+    - azure.mgmt.fabric
+    - azure.mgmt.fabric.aio
+    - azure.mgmt.fabric.aio.operations
+    - azure.mgmt.fabric.models
+    - azure.mgmt.fabric.operations
     - azure.mgmt.fluidrelay
     - azure.mgmt.fluidrelay.aio
     - azure.mgmt.fluidrelay.aio.operations
@@ -431,6 +424,11 @@ test:
     - azure.mgmt.healthcareapis.aio.operations
     - azure.mgmt.healthcareapis.models
     - azure.mgmt.healthcareapis.operations
+    - azure.mgmt.healthdataaiservices
+    - azure.mgmt.healthdataaiservices.aio
+    - azure.mgmt.healthdataaiservices.aio.operations
+    - azure.mgmt.healthdataaiservices.models
+    - azure.mgmt.healthdataaiservices.operations
     - azure.mgmt.hybridcompute
     - azure.mgmt.hybridcompute.aio
     - azure.mgmt.hybridcompute.aio.operations
@@ -461,6 +459,11 @@ test:
     - azure.mgmt.imagebuilder.aio.operations
     - azure.mgmt.imagebuilder.models
     - azure.mgmt.imagebuilder.operations
+    - azure.mgmt.informaticadatamanagement
+    - azure.mgmt.informaticadatamanagement.aio
+    - azure.mgmt.informaticadatamanagement.aio.operations
+    - azure.mgmt.informaticadatamanagement.models
+    - azure.mgmt.informaticadatamanagement.operations
     - azure.mgmt.iothub
     - azure.mgmt.iothub.aio
     - azure.mgmt.iothub.v2023_06_30
@@ -473,6 +476,11 @@ test:
     - azure.mgmt.iothubprovisioningservices.aio.operations
     - azure.mgmt.iothubprovisioningservices.models
     - azure.mgmt.iothubprovisioningservices.operations
+    - azure.mgmt.iotfirmwaredefense
+    - azure.mgmt.iotfirmwaredefense.aio
+    - azure.mgmt.iotfirmwaredefense.aio.operations
+    - azure.mgmt.iotfirmwaredefense.models
+    - azure.mgmt.iotfirmwaredefense.operations
     - azure.mgmt.keyvault
     - azure.mgmt.keyvault.aio
     - azure.mgmt.keyvault.v2023_07_01
@@ -582,6 +590,11 @@ test:
     - azure.mgmt.mobilenetwork.aio.operations
     - azure.mgmt.mobilenetwork.models
     - azure.mgmt.mobilenetwork.operations
+    - azure.mgmt.mongocluster
+    - azure.mgmt.mongocluster.aio
+    - azure.mgmt.mongocluster.aio.operations
+    - azure.mgmt.mongocluster.models
+    - azure.mgmt.mongocluster.operations
     - azure.mgmt.monitor
     - azure.mgmt.monitor.aio
     - azure.mgmt.monitor.v2023_01_01
@@ -641,6 +654,11 @@ test:
     - azure.mgmt.operationsmanagement.aio.operations
     - azure.mgmt.operationsmanagement.models
     - azure.mgmt.operationsmanagement.operations
+    - azure.mgmt.oracledatabase
+    - azure.mgmt.oracledatabase.aio
+    - azure.mgmt.oracledatabase.aio.operations
+    - azure.mgmt.oracledatabase.models
+    - azure.mgmt.oracledatabase.operations
     - azure.mgmt.orbital
     - azure.mgmt.orbital.aio
     - azure.mgmt.orbital.aio.operations
@@ -671,6 +689,11 @@ test:
     - azure.mgmt.portal.aio.operations
     - azure.mgmt.portal.models
     - azure.mgmt.portal.operations
+    - azure.mgmt.postgresqlflexibleservers
+    - azure.mgmt.postgresqlflexibleservers.aio
+    - azure.mgmt.postgresqlflexibleservers.aio.operations
+    - azure.mgmt.postgresqlflexibleservers.models
+    - azure.mgmt.postgresqlflexibleservers.operations
     - azure.mgmt.powerbidedicated
     - azure.mgmt.powerbidedicated.aio
     - azure.mgmt.powerbidedicated.aio.operations
@@ -744,11 +767,6 @@ test:
     - azure.mgmt.recoveryservicessiterecovery.operations
     - azure.mgmt.redhatopenshift
     - azure.mgmt.redhatopenshift.aio
-    - azure.mgmt.redhatopenshift.v2023_09_04
-    - azure.mgmt.redhatopenshift.v2023_09_04.aio
-    - azure.mgmt.redhatopenshift.v2023_09_04.aio.operations
-    - azure.mgmt.redhatopenshift.v2023_09_04.models
-    - azure.mgmt.redhatopenshift.v2023_09_04.operations
     - azure.mgmt.redis
     - azure.mgmt.redis.aio
     - azure.mgmt.redis.aio.operations
@@ -834,6 +852,11 @@ test:
     - azure.mgmt.resourceconnector.aio.operations
     - azure.mgmt.resourceconnector.models
     - azure.mgmt.resourceconnector.operations
+    - azure.mgmt.scvmm
+    - azure.mgmt.scvmm.aio
+    - azure.mgmt.scvmm.aio.operations
+    - azure.mgmt.scvmm.models
+    - azure.mgmt.scvmm.operations
     - azure.mgmt.search
     - azure.mgmt.search.aio
     - azure.mgmt.search.aio.operations
@@ -857,11 +880,19 @@ test:
     - azure.mgmt.serialconsole.aio.operations
     - azure.mgmt.serialconsole.models
     - azure.mgmt.serialconsole.operations
+    - azure.mgmt.servermanager
+    - azure.mgmt.servermanager.models
+    - azure.mgmt.servermanager.operations
     - azure.mgmt.servicefabric
     - azure.mgmt.servicefabric.aio
     - azure.mgmt.servicefabric.aio.operations
     - azure.mgmt.servicefabric.models
     - azure.mgmt.servicefabric.operations
+    - azure.mgmt.servicefabricmanagedclusters
+    - azure.mgmt.servicefabricmanagedclusters.aio
+    - azure.mgmt.servicefabricmanagedclusters.aio.operations
+    - azure.mgmt.servicefabricmanagedclusters.models
+    - azure.mgmt.servicefabricmanagedclusters.operations
     - azure.mgmt.servicebus
     - azure.mgmt.servicebus.aio
     - azure.mgmt.servicebus.models
@@ -890,6 +921,11 @@ test:
     - azure.mgmt.sql.aio.operations
     - azure.mgmt.sql.models
     - azure.mgmt.sql.operations
+    - azure.mgmt.standbypool
+    - azure.mgmt.standbypool.aio
+    - azure.mgmt.standbypool.aio.operations
+    - azure.mgmt.standbypool.models
+    - azure.mgmt.standbypool.operations
     - azure.mgmt.storage
     - azure.mgmt.storage.aio
     - azure.mgmt.storage.v2023_01_01
@@ -974,13 +1010,13 @@ about:
   home: "https://github.com/Azure/azure-sdk-for-python/"
   license: MIT
   license_family: MIT
-  license_file: 
+  license_file:
   summary: "Microsoft Azure Management Client Library for Python"
   description: |
     This package is the Microsoft Azure Resource Management bundle.
     Please see https://aka.ms/azsdk/conda/releases/mgmt for version details.
-  doc_url: 
-  dev_url: 
+  doc_url:
+  dev_url:
 
 extra:
   recipe-maintainers:

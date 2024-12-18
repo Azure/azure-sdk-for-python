@@ -5,21 +5,21 @@
 from abc import ABC
 from typing import Any, Dict, List, Optional
 
-from azure.ai.ml._restclient.v2023_08_01_preview.models import FqdnOutboundRule as RestFqdnOutboundRule
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview.models import FqdnOutboundRule as RestFqdnOutboundRule
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
     ManagedNetworkProvisionStatus as RestManagedNetworkProvisionStatus,
 )
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
     PrivateEndpointDestination as RestPrivateEndpointOutboundRuleDestination,
 )
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
     PrivateEndpointOutboundRule as RestPrivateEndpointOutboundRule,
 )
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview.models import (
     ServiceTagDestination as RestServiceTagOutboundRuleDestination,
 )
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ServiceTagOutboundRule as RestServiceTagOutboundRule
+from azure.ai.ml._restclient.v2024_10_01_preview.models import ServiceTagOutboundRule as RestServiceTagOutboundRule
 from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory, OutboundRuleType
 
 
@@ -42,6 +42,7 @@ class OutboundRule(ABC):
         **kwargs: Any,
     ) -> None:
         self.name = name
+        self.parent_rule_names = kwargs.pop("parent_rule_names", None)
         self.type = kwargs.pop("type", None)
         self.category = kwargs.pop("category", OutboundRuleCategory.USER_DEFINED)
         self.status = kwargs.pop("status", None)
@@ -58,6 +59,7 @@ class OutboundRule(ABC):
                 service_resource_id=rest_obj.destination.service_resource_id,
                 subresource_target=rest_obj.destination.subresource_target,
                 spark_enabled=rest_obj.destination.spark_enabled,
+                fqdns=rest_obj.fqdns,
                 name=name,
             )
             rule_privateEndpointDestination.category = rest_obj.category
@@ -68,6 +70,7 @@ class OutboundRule(ABC):
                 service_tag=rest_obj.destination.service_tag,
                 protocol=rest_obj.destination.protocol,
                 port_ranges=rest_obj.destination.port_ranges,
+                address_prefixes=rest_obj.destination.address_prefixes,
                 name=name,
             )
             rule.category = rest_obj.category
@@ -124,6 +127,10 @@ class PrivateEndpointDestination(OutboundRule):
     :type subresource_target: str
     :param spark_enabled: Indicates if the private endpoint can be used for Spark jobs, default is “false”.
     :type spark_enabled: bool
+    :param fqdns: String list of FQDNs particular to the Private Endpoint resource creation. For application
+        gateway Private Endpoints, this is the FQDN which will resolve to the private IP of the application
+        gateway PE inside the workspace's managed network.
+    :type fqdns: List[str]
     :ivar type: Type of the outbound rule. Set to "PrivateEndpoint" for this class.
     :vartype type: str
 
@@ -142,11 +149,13 @@ class PrivateEndpointDestination(OutboundRule):
         service_resource_id: str,
         subresource_target: str,
         spark_enabled: bool = False,
+        fqdns: Optional[List[str]] = None,
         **kwargs: Any,
     ) -> None:
         self.service_resource_id = service_resource_id
         self.subresource_target = subresource_target
         self.spark_enabled = spark_enabled
+        self.fqdns = fqdns
         OutboundRule.__init__(self, type=OutboundRuleType.PRIVATE_ENDPOINT, name=name, **kwargs)
 
     def _to_rest_object(self) -> RestPrivateEndpointOutboundRule:
@@ -158,6 +167,7 @@ class PrivateEndpointDestination(OutboundRule):
                 subresource_target=self.subresource_target,
                 spark_enabled=self.spark_enabled,
             ),
+            fqdns=self.fqdns,
         )
 
     def _to_dict(self) -> Dict:
@@ -170,6 +180,7 @@ class PrivateEndpointDestination(OutboundRule):
                 "subresource_target": self.subresource_target,
                 "spark_enabled": self.spark_enabled,
             },
+            "fqdns": self.fqdns,
             "status": self.status,
         }
 
@@ -186,6 +197,9 @@ class ServiceTagDestination(OutboundRule):
     :param port_ranges: A comma-separated list of single ports and/or range of ports, such as "80,1024-65535".
         Traffics should be allowed to these port ranges.
     :type port_ranges: str
+    :param address_prefixes: Optional list of CIDR prefixes or IP ranges, when provided, service_tag argument will
+        be ignored and address_prefixes will be used instead.
+    :type address_prefixes: List[str]
     :ivar type: Type of the outbound rule. Set to "ServiceTag" for this class.
     :vartype type: str
 
@@ -201,14 +215,16 @@ class ServiceTagDestination(OutboundRule):
         self,
         *,
         name: str,
-        service_tag: str,
         protocol: str,
         port_ranges: str,
+        service_tag: Optional[str] = None,
+        address_prefixes: Optional[List[str]] = None,
         **kwargs: Any,
     ) -> None:
         self.service_tag = service_tag
         self.protocol = protocol
         self.port_ranges = port_ranges
+        self.address_prefixes = address_prefixes
         OutboundRule.__init__(self, type=OutboundRuleType.SERVICE_TAG, name=name, **kwargs)
 
     def _to_rest_object(self) -> RestServiceTagOutboundRule:
@@ -216,7 +232,10 @@ class ServiceTagDestination(OutboundRule):
             type=self.type,
             category=self.category,
             destination=RestServiceTagOutboundRuleDestination(
-                service_tag=self.service_tag, protocol=self.protocol, port_ranges=self.port_ranges
+                service_tag=self.service_tag,
+                protocol=self.protocol,
+                port_ranges=self.port_ranges,
+                address_prefixes=self.address_prefixes,
             ),
         )
 
@@ -229,6 +248,7 @@ class ServiceTagDestination(OutboundRule):
                 "service_tag": self.service_tag,
                 "protocol": self.protocol,
                 "port_ranges": self.port_ranges,
+                "address_prefixes": self.address_prefixes,
             },
             "status": self.status,
         }
@@ -239,6 +259,8 @@ class ManagedNetwork:
 
     :param isolation_mode: Isolation of the managed network, defaults to Disabled.
     :type isolation_mode: str
+    :param firewall_sku: Firewall Sku for FQDN rules in AllowOnlyApprovedOutbound..
+    :type firewall_sku: str
     :param outbound_rules: List of outbound rules for the managed network.
     :type outbound_rules: List[~azure.ai.ml.entities.OutboundRule]
     :param network_id: Network id for the managed network, not meant to be set by user.
@@ -257,10 +279,12 @@ class ManagedNetwork:
         *,
         isolation_mode: str = IsolationMode.DISABLED,
         outbound_rules: Optional[List[OutboundRule]] = None,
+        firewall_sku: Optional[str] = None,
         network_id: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         self.isolation_mode = isolation_mode
+        self.firewall_sku = firewall_sku
         self.network_id = network_id
         self.outbound_rules = outbound_rules
         self.status = kwargs.pop("status", None)
@@ -275,7 +299,9 @@ class ManagedNetwork:
             if self.outbound_rules
             else {}
         )
-        return RestManagedNetwork(isolation_mode=self.isolation_mode, outbound_rules=rest_outbound_rules)
+        return RestManagedNetwork(
+            isolation_mode=self.isolation_mode, outbound_rules=rest_outbound_rules, firewall_sku=self.firewall_sku
+        )
 
     @classmethod
     def _from_rest_object(cls, obj: RestManagedNetwork) -> "ManagedNetwork":
@@ -292,6 +318,7 @@ class ManagedNetwork:
             outbound_rules=from_rest_outbound_rules,  # type: ignore[arg-type]
             network_id=obj.network_id,
             status=obj.status,
+            firewall_sku=obj.firewall_sku,
         )
 
 

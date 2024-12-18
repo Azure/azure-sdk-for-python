@@ -8,12 +8,8 @@ extends:
       ServiceDirectory: communication
       MatrixReplace:
         - TestSamples=.*/true
-      UseFederatedAuth: true
       CloudConfig:
         Public:
-          ServiceConnection: azure-sdk-tests
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzurePublicMsft.json
           SubscriptionConfigurations:
             - $(sub-config-communication-services-cloud-test-resources-common)
             - $(sub-config-communication-services-cloud-test-resources-python)

@@ -14,27 +14,14 @@ extends:
       Packages: ${{ parameters.Services }}
       SupportedClouds: 'Public,UsGov,China'
       TestTimeoutInMinutes: 240
-      UseFederatedAuth: true
       CloudConfig:
         Public:
-          ServiceConnection: azure-sdk-tests
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzurePublicMsft.json
         UsGov:
-          ServiceConnection: usgov_azure-sdk-tests
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzureUsGovMsft.json
           MatrixFilters:
             - ArmTemplateParameters=^(?!.*enableHsm.*true)
         China:
-          ServiceConnection: china_azure-sdk-tests
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzureChinaMsft.json
           MatrixFilters:
             - ArmTemplateParameters=^(?!.*enableHsm.*true)
-          Location: chinaeast2
       EnvVars:
         AZURE_TEST_RUN_LIVE: true
         AZURE_SKIP_LIVE_RECORDING: 'True'
-        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
-        AZURE_CLIENT_OID: $(aad-azure-sdk-test-client-oid)

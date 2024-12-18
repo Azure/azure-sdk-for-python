@@ -31,13 +31,8 @@ class Link:  # pylint: disable=too-many-instance-attributes
     """
 
     def __init__(
-            self,
-            session: "Session",
-            handle: int,
-            name: Optional[str] = None,
-            role: bool = Role.Receiver,
-            **kwargs: Any
-        ) -> None:
+        self, session: "Session", handle: int, name: Optional[str] = None, role: bool = Role.Receiver, **kwargs: Any
+    ) -> None:
         self.state = LinkState.DETACHED
         self.name = name or str(uuid.uuid4())
         self.handle = handle
@@ -100,7 +95,8 @@ class Link:  # pylint: disable=too-many-instance-attributes
         self._is_closed = False
         self._on_link_state_change = kwargs.get("on_link_state_change")
         self._on_attach = kwargs.get("on_attach")
-        self._error = None
+        self._error: Optional[AMQPLinkError] = None
+        self.total_link_credit = self.link_credit
 
     async def __aenter__(self) -> "Link":
         await self.attach()
@@ -124,8 +120,9 @@ class Link:  # pylint: disable=too-many-instance-attributes
         if self._is_closed:
             if self._error:
                 raise self._error
-            raise AMQPConnectionError(condition=ErrorCondition.InternalError,
-                                          description="Link already closed.") from None
+            raise AMQPConnectionError(
+                condition=ErrorCondition.InternalError, description="Link already closed."
+            ) from None
 
     async def _set_state(self, new_state: LinkState) -> None:
         """Update the session state.
@@ -172,7 +169,7 @@ class Link:  # pylint: disable=too-many-instance-attributes
         )
         if self.network_trace:
             _LOGGER.debug("-> %r", attach_frame, extra=self.network_trace_params)
-        await self._session._outgoing_attach(attach_frame) # pylint: disable=protected-access
+        await self._session._outgoing_attach(attach_frame)  # pylint: disable=protected-access
 
     async def _incoming_attach(self, frame) -> None:
         if self.network_trace:
@@ -211,7 +208,7 @@ class Link:  # pylint: disable=too-many-instance-attributes
             "echo": kwargs.get("echo"),
             "properties": kwargs.get("properties"),
         }
-        await self._session._outgoing_flow(flow_frame) # pylint: disable=protected-access
+        await self._session._outgoing_flow(flow_frame)  # pylint: disable=protected-access
 
     async def _incoming_flow(self, frame):
         pass
@@ -223,7 +220,7 @@ class Link:  # pylint: disable=too-many-instance-attributes
         detach_frame = DetachFrame(handle=self.handle, closed=close, error=error)
         if self.network_trace:
             _LOGGER.debug("-> %r", detach_frame, extra=self.network_trace_params)
-        await self._session._outgoing_detach(detach_frame) # pylint: disable=protected-access
+        await self._session._outgoing_detach(detach_frame)  # pylint: disable=protected-access
         if close:
             self._is_closed = True
 
@@ -244,6 +241,12 @@ class Link:  # pylint: disable=too-many-instance-attributes
             self._error = error_cls(condition=frame[2][0], description=frame[2][1], info=frame[2][2])
             await self._set_state(LinkState.ERROR)
         else:
+            if self.state != LinkState.DETACH_SENT:
+                # Handle the case of when the remote side detaches without sending an error.
+                # We should detach as per the spec but then retry connecting
+                self._error = AMQPLinkError(
+                    condition=ErrorCondition.UnknownError, description="Link detached unexpectedly.", retryable=True
+                )
             await self._set_state(LinkState.DETACHED)
 
     async def attach(self) -> None:
@@ -268,5 +271,19 @@ class Link:  # pylint: disable=too-many-instance-attributes
             await self._set_state(LinkState.DETACHED)
 
     async def flow(self, *, link_credit: Optional[int] = None, **kwargs) -> None:
-        self.current_link_credit = link_credit if link_credit is not None else self.link_credit
-        await self._outgoing_flow(**kwargs)
+        # Given the desired link credit `link_credit`, the link credit sent via
+        # FlowFrame is calculated as follows: The link credit to flow on the wire
+        # `self.current_link_credit` is the desired link credit `link_credit`
+        # minus the current link credit on the wire `self.total_link_credit`.
+        self.current_link_credit = link_credit - self.total_link_credit if link_credit is not None else self.link_credit
+
+        # If the link credit to flow is greater than 0 (i.e the desired link credit
+        # is greater than the current link credit on the wire), then we will send a
+        # flow to issue more link credit. Otherwise link credit on the wire is sufficient.
+        if self.current_link_credit > 0:
+            # Calculate the total link credit on the wire, by adding the credit
+            # we will flow to the total link credit.
+            self.total_link_credit = (
+                self.current_link_credit + self.total_link_credit if link_credit is not None else self.link_credit
+            )
+            await self._outgoing_flow(**kwargs)

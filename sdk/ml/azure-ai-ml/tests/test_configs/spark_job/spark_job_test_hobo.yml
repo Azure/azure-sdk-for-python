@@ -5,7 +5,7 @@ code: ./basic_spark_job/src
 description: "simply the best"
 resources:
   instance_type: standard_e8s_v3
-  runtime_version: 3.2
+  runtime_version: 3.3
 entry:
   file: main.py
 conf:

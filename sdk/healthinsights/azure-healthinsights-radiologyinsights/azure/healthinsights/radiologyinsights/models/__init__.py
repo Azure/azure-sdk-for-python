@@ -11,10 +11,6 @@ from ._models import Annotation
 from ._models import CodeableConcept
 from ._models import Coding
 from ._models import CompleteOrderDiscrepancyInference
-from ._models import Condition
-from ._models import ConditionStage
-from ._models import ContactDetail
-from ._models import ContactPoint
 from ._models import CriticalResult
 from ._models import CriticalResultInference
 from ._models import DocumentAdministrativeMetadata
@@ -22,7 +18,6 @@ from ._models import DocumentAuthor
 from ._models import DocumentContent
 from ._models import DomainResource
 from ._models import Element
-from ._models import Error
 from ._models import Extension
 from ._models import FindingInference
 from ._models import FindingOptions
@@ -34,7 +29,6 @@ from ._models import HealthInsightsErrorResponse
 from ._models import Identifier
 from ._models import ImagingProcedure
 from ._models import ImagingProcedureRecommendation
-from ._models import InnerError
 from ._models import LateralityDiscrepancyInference
 from ._models import LimitedOrderDiscrepancyInference
 from ._models import Meta
@@ -63,9 +57,6 @@ from ._models import Range
 from ._models import Ratio
 from ._models import RecommendationFinding
 from ._models import Reference
-from ._models import ResearchStudy
-from ._models import ResearchStudyArm
-from ._models import ResearchStudyObjective
 from ._models import Resource
 from ._models import SampledData
 from ._models import SexMismatchInference
@@ -96,10 +87,6 @@ __all__ = [
     "CodeableConcept",
     "Coding",
     "CompleteOrderDiscrepancyInference",
-    "Condition",
-    "ConditionStage",
-    "ContactDetail",
-    "ContactPoint",
     "CriticalResult",
     "CriticalResultInference",
     "DocumentAdministrativeMetadata",
@@ -107,7 +94,6 @@ __all__ = [
     "DocumentContent",
     "DomainResource",
     "Element",
-    "Error",
     "Extension",
     "FindingInference",
     "FindingOptions",
@@ -119,7 +105,6 @@ __all__ = [
     "Identifier",
     "ImagingProcedure",
     "ImagingProcedureRecommendation",
-    "InnerError",
     "LateralityDiscrepancyInference",
     "LimitedOrderDiscrepancyInference",
     "Meta",
@@ -148,9 +133,6 @@ __all__ = [
     "Ratio",
     "RecommendationFinding",
     "Reference",
-    "ResearchStudy",
-    "ResearchStudyArm",
-    "ResearchStudyObjective",
     "Resource",
     "SampledData",
     "SexMismatchInference",

@@ -14,6 +14,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 AZURE_LOCATION = "eastus"
 
 
+@pytest.mark.live_test_only
 class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ComputeManagementClient, is_async=True)
@@ -23,7 +24,6 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
     async def test_list(self, resource_group):
         response = self.client.virtual_machines.list(
             resource_group_name=resource_group.name,
-            api_version="2024-03-01",
         )
         result = [r async for r in response]
         assert result == []
@@ -31,8 +31,6 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_list_all(self, resource_group):
-        response = self.client.virtual_machines.list_all(
-            api_version="2024-03-01",
-        )
+        response = self.client.virtual_machines.list_all()
         result = [r async for r in response]
         assert response

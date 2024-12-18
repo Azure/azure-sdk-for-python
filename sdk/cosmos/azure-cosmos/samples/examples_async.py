@@ -263,6 +263,43 @@ async def examples_async():
             await container.delete_item(item, partition_key=["GA", "Atlanta", 30363])
         # [END delete_items]
 
+        # Get the feed ranges list from container.
+        # [START read_feed_ranges]
+        feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
+        # [END read_feed_ranges]
+
+        # Get a feed range from a partition key.
+        # [START feed_range_from_partition_key ]
+        feed_range_from_pk = await container.feed_range_from_partition_key(["GA", "Atlanta", 30363])
+        # [END feed_range_from_partition_key]
+
+        # Figure out if a feed range is a subset of another feed range.
+        # This example sees in which feed range from the container a feed range from a partition key is part of.
+        # [START is_feed_range_subset]
+        parent_feed_range = {}
+        for feed_range in feed_ranges:
+            if await container.is_feed_range_subset(feed_range, feed_range_from_pk):
+                parent_feed_range = feed_range
+                break
+        # [END is_feed_range_subset]
+
+
+        # Query a sorted list of items that were changed for one feed range.
+        # The asynchronous client returns asynchronous iterators for its query methods;
+        # as such, we iterate over it by using an async for loop
+        # [START query_items_change_feed]
+        async for item in container.query_items_change_feed(feed_range=feed_ranges[0]):
+            print(json.dumps(item, indent=True))
+        # [END query_items_change_feed]
+
+        # Query a sorted list of items that were changed for one feed range from beginning.
+        # The asynchronous client returns asynchronous iterators for its query methods;
+        # as such, we iterate over it by using an async for loop
+        # [START query_items_change_feed_from_beginning]
+        async for item in container.query_items_change_feed(feed_range=feed_ranges[0], start_time="Beginning"):
+            print(json.dumps(item, indent=True))
+        # [END query_items_change_feed_from_beginning]
+
         await client.delete_database(database_name)
         print("Sample done running!")
 

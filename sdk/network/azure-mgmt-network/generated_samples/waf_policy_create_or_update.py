@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.network import NetworkManagementClient
@@ -107,6 +105,40 @@ def main():
                     },
                 ],
                 "managedRules": {
+                    "exceptions": [
+                        {
+                            "exceptionManagedRuleSets": [{"ruleSetType": "OWASP", "ruleSetVersion": "3.2"}],
+                            "matchVariable": "RequestURI",
+                            "valueMatchOperator": "Contains",
+                            "values": ["health", "account/images", "default.aspx"],
+                        },
+                        {
+                            "exceptionManagedRuleSets": [
+                                {
+                                    "ruleGroups": [{"ruleGroupName": "REQUEST-932-APPLICATION-ATTACK-RCE"}],
+                                    "ruleSetType": "OWASP",
+                                    "ruleSetVersion": "3.2",
+                                }
+                            ],
+                            "matchVariable": "RequestHeader",
+                            "selector": "User-Agent",
+                            "selectorMatchOperator": "StartsWith",
+                            "valueMatchOperator": "Contains",
+                            "values": ["Mozilla/5.0", "Chrome/122.0.0.0"],
+                        },
+                        {
+                            "exceptionManagedRuleSets": [
+                                {
+                                    "ruleGroups": [{"ruleGroupName": "BadBots", "rules": [{"ruleId": "100100"}]}],
+                                    "ruleSetType": "Microsoft_BotManagerRuleSet",
+                                    "ruleSetVersion": "1.0",
+                                }
+                            ],
+                            "matchVariable": "RemoteAddr",
+                            "valueMatchOperator": "IPMatch",
+                            "values": ["1.2.3.4", "10.0.0.1/6"],
+                        },
+                    ],
                     "exclusions": [
                         {
                             "exclusionManagedRuleSets": [
@@ -165,6 +197,23 @@ def main():
                             "ruleSetType": "Microsoft_BotManagerRuleSet",
                             "ruleSetVersion": "1.0",
                         },
+                        {
+                            "ruleGroupOverrides": [
+                                {
+                                    "ruleGroupName": "ExcessiveRequests",
+                                    "rules": [
+                                        {
+                                            "action": "Block",
+                                            "ruleId": "500100",
+                                            "sensitivity": "High",
+                                            "state": "Enabled",
+                                        }
+                                    ],
+                                }
+                            ],
+                            "ruleSetType": "Microsoft_HTTPDDoSRuleSet",
+                            "ruleSetVersion": "1.0",
+                        },
                     ],
                 },
                 "policySettings": {
@@ -192,6 +241,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-01-01/examples/WafPolicyCreateOrUpdate.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-03-01/examples/WafPolicyCreateOrUpdate.json
 if __name__ == "__main__":
     main()

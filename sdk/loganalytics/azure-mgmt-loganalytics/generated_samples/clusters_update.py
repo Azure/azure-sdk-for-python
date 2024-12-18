@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.loganalytics import LogAnalyticsManagementClient
 
 """
@@ -26,7 +27,7 @@ from azure.mgmt.loganalytics import LogAnalyticsManagementClient
 def main():
     client = LogAnalyticsManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="00000000-0000-0000-0000-00000000000",
+        subscription_id="53bc36c5-91e1-4d09-92c9-63b89e571926",
     )
 
     response = client.clusters.begin_update(
@@ -36,7 +37,7 @@ def main():
             "identity": {
                 "type": "UserAssigned",
                 "userAssignedIdentities": {
-                    "/subscriptions/00000000-0000-0000-0000-00000000000/resourcegroups/oiautorest6685/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myidentity": {}
+                    "/subscriptions/53bc36c5-91e1-4d09-92c9-63b89e571926/resourcegroups/oiautorest6685/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myidentity": {}
                 },
             },
             "properties": {
@@ -44,7 +45,7 @@ def main():
                     "keyName": "aztest2170cert",
                     "keyRsaSize": 1024,
                     "keyVaultUri": "https://aztest2170.vault.azure.net",
-                    "keyVersion": "654ft6c4e63845cbb50fd6fg51540429",
+                    "keyVersion": "",
                 }
             },
             "sku": {"capacity": 1000, "name": "CapacityReservation"},
@@ -54,6 +55,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/operationalinsights/resource-manager/Microsoft.OperationalInsights/stable/2021-06-01/examples/ClustersUpdate.json
+# x-ms-original-file: specification/operationalinsights/resource-manager/Microsoft.OperationalInsights/stable/2022-10-01/examples/ClustersUpdate.json
 if __name__ == "__main__":
     main()

@@ -1,30 +1,30 @@
 # coding: utf-8
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 # covered ops:
 #   dedicated_hosts: 5/5
 #   dedicated_host_groups: 6/6
 
 import unittest
-
+import pytest
 import azure.mgmt.compute
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
-AZURE_LOCATION = 'eastus'
+AZURE_LOCATION = "eastus"
 
+
+@pytest.mark.live_test_only
 class TestMgmtCompute(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
-        self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.compute.ComputeManagementClient
-        )
+        self.mgmt_client = self.create_mgmt_client(azure.mgmt.compute.ComputeManagementClient)
 
-    @unittest.skip('hard to test')
+    @unittest.skip("hard to test")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_dedicated_hosts(self, resource_group):
@@ -33,29 +33,23 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
 
         # Create or update a dedicated host group.[put]
         BODY = {
-          "location": "eastus",
-          "tags": {
-            "department": "finance"
-          },
-          "zones": [
-            "1"
-          ],
-          "platform_fault_domain_count": "3"
+            "location": "eastus",
+            "tags": {"department": "finance"},
+            "zones": ["1"],
+            "platform_fault_domain_count": "3",
         }
         result = self.mgmt_client.dedicated_host_groups.create_or_update(resource_group.name, HOST_GROUP_NAME, BODY)
-        
+
         # Create or update a dedicated host .[put]
         BODY = {
-          "location": "eastus",
-          "tags": {
-            "department": "HR"
-          },
-          "platform_fault_domain": "1",
-          "sku": {
-            "name": "DSv3-Type1"
-          }
+            "location": "eastus",
+            "tags": {"department": "HR"},
+            "platform_fault_domain": "1",
+            "sku": {"name": "DSv3-Type1"},
         }
-        result = self.mgmt_client.dedicated_hosts.begin_create_or_update(resource_group.name, HOST_GROUP_NAME, HOST_NAME, BODY)
+        result = self.mgmt_client.dedicated_hosts.begin_create_or_update(
+            resource_group.name, HOST_GROUP_NAME, HOST_NAME, BODY
+        )
         result = result.result()
 
         # Get a dedicated host group.[get]
@@ -74,19 +68,12 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
         result = self.mgmt_client.dedicated_host_groups.list_by_subscription()
 
         # Update a dedicated host group.[put]
-        BODY = {
-          "tags": {
-            "department": "finance"
-          },
-          "platform_fault_domain_count": "3"
-        }
+        BODY = {"tags": {"department": "finance"}, "platform_fault_domain_count": "3"}
         result = self.mgmt_client.dedicated_host_groups.update(resource_group.name, HOST_GROUP_NAME, BODY)
 
         # Update a dedicated host (TODO: need swagger file )
         BODY = {
-          "tags": {
-            "department": "HR"
-          },
+            "tags": {"department": "HR"},
         }
         result = self.mgmt_client.dedicated_hosts.begin_update(resource_group.name, HOST_GROUP_NAME, HOST_NAME, BODY)
         result = result.result()

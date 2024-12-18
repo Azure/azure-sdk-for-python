@@ -15,11 +15,10 @@ from devtools_testutils import (
 import pytest
 
 
+@pytest.mark.live_test_only
 class TestMgmtNetworkMixinOperation(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.network.NetworkManagementClient
-        )
+        self.mgmt_client = self.create_mgmt_client(azure.mgmt.network.NetworkManagementClient)
 
     @RandomNameResourceGroupPreparer(location="eastus")
     @recorded_by_proxy

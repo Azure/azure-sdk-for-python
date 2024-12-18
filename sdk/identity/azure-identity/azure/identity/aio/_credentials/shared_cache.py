@@ -2,8 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Optional
-from azure.core.credentials import AccessToken
+from typing import Any, Optional, cast
+from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 from ..._internal.aad_client import AadClientBase
 from ... import CredentialUnavailableError
 from ..._constants import DEVELOPER_SIGN_ON_CLIENT_ID
@@ -48,7 +48,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
         claims: Optional[str] = None,
         tenant_id: Optional[str] = None,
         enable_cae: bool = False,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> AccessToken:
         """Get an access token for `scopes` from the shared cache.
 
@@ -73,13 +73,58 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
           attribute gives a reason. Any error response from Microsoft Entra ID is available as the error's
           ``response`` attribute.
         """
+        options: TokenRequestOptions = {}
+        if claims:
+            options["claims"] = claims
+        if tenant_id:
+            options["tenant_id"] = tenant_id
+        options["enable_cae"] = enable_cae
+
+        token_info = await self._get_token_base(*scopes, options=options, base_method_name="get_token", **kwargs)
+        return AccessToken(token_info.token, token_info.expires_on)
+
+    @log_get_token_async
+    async def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
+        """Get an access token for `scopes` from the shared cache.
+
+        If no access token is cached, attempt to acquire one using a cached refresh token.
+
+        This is an alternative to `get_token` to enable certain scenarios that require additional properties
+        on the token. This method is called automatically by Azure SDK clients.
+
+        :param str scopes: desired scope for the access token. This method requires at least one scope.
+            For more information about scopes, see https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
+        :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
+        :paramtype options: ~azure.core.credentials.TokenRequestOptions
+
+        :rtype: AccessTokenInfo
+        :return: An AccessTokenInfo instance containing information about the token.
+        :raises ~azure.identity.CredentialUnavailableError: the cache is unavailable or contains insufficient user
+            information
+        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
+          attribute gives a reason. Any error response from Microsoft Entra ID is available as the error's
+          ``response`` attribute.
+        """
+        return await self._get_token_base(*scopes, options=options, base_method_name="get_token_info")
+
+    async def _get_token_base(
+        self,
+        *scopes: str,
+        options: Optional[TokenRequestOptions] = None,
+        base_method_name: str = "get_token_info",
+        **kwargs: Any,
+    ) -> AccessTokenInfo:
         if not scopes:
-            raise ValueError("'get_token' requires at least one scope")
+            raise ValueError(f"'{base_method_name}' requires at least one scope")
 
         if not self._client_initialized:
             self._initialize_client()
 
-        is_cae = enable_cae
+        options = options or {}
+        claims = options.get("claims")
+        tenant_id = options.get("tenant_id")
+        is_cae = options.get("enable_cae", False)
+
         token_cache = self._cae_cache if is_cae else self._cache
 
         # Try to load the cache if it is None.
@@ -98,8 +143,8 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
 
         # try each refresh token, returning the first access token acquired
         for refresh_token in self._get_refresh_tokens(account, is_cae=is_cae):
-            token = await self._client.obtain_token_by_refresh_token(
-                scopes, refresh_token, claims=claims, tenant_id=tenant_id, **kwargs
+            token = await cast(AadClient, self._client).obtain_token_by_refresh_token(
+                scopes, refresh_token, claims=claims, tenant_id=tenant_id, enable_cae=is_cae, **kwargs
             )
             return token
 

@@ -522,11 +522,7 @@ class MaintenanceConfigurationsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("MaintenanceConfiguration", pipeline_response.http_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("MaintenanceConfiguration", pipeline_response.http_response)
+        deserialized = self._deserialize("MaintenanceConfiguration", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

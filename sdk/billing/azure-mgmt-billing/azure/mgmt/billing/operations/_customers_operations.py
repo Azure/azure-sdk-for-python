@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
+from typing import Any, Callable, Dict, Iterable, Optional, Type, TypeVar
+import urllib.parse
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -19,20 +20,18 @@ from azure.core.exceptions import (
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
 else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -40,18 +39,61 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
+def build_get_request(
+    billing_account_name: str, billing_profile_name: str, customer_name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/customers/{customerName}",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "billingAccountName": _SERIALIZER.url(
+            "billing_account_name",
+            billing_account_name,
+            "str",
+            pattern=r"^([0-9]+|([Pp][Cc][Nn]\.[A-Za-z0-9]+)|[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}(:[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}_[0-9]{4}(-[0-9]{2}){2})?)$",
+        ),
+        "billingProfileName": _SERIALIZER.url(
+            "billing_profile_name", billing_profile_name, "str", pattern=r"^[a-zA-Z\d-_]{1,128}$"
+        ),
+        "customerName": _SERIALIZER.url("customer_name", customer_name, "str", pattern=r"^[a-zA-Z\d-_]{1,128}$"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_list_by_billing_profile_request(
     billing_account_name: str,
     billing_profile_name: str,
     *,
-    search: Optional[str] = None,
+    expand: Optional[str] = None,
     filter: Optional[str] = None,
+    order_by: Optional[str] = None,
+    top: Optional[int] = None,
+    skip: Optional[int] = None,
+    count: Optional[bool] = None,
+    search: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))  # type: Literal["2020-05-01"]
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -60,18 +102,67 @@ def build_list_by_billing_profile_request(
         "/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/customers",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "billingAccountName": _SERIALIZER.url("billing_account_name", billing_account_name, "str"),
-        "billingProfileName": _SERIALIZER.url("billing_profile_name", billing_profile_name, "str"),
+        "billingAccountName": _SERIALIZER.url(
+            "billing_account_name",
+            billing_account_name,
+            "str",
+            pattern=r"^([0-9]+|([Pp][Cc][Nn]\.[A-Za-z0-9]+)|[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}(:[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}_[0-9]{4}(-[0-9]{2}){2})?)$",
+        ),
+        "billingProfileName": _SERIALIZER.url(
+            "billing_profile_name", billing_profile_name, "str", pattern=r"^[a-zA-Z\d-_]{1,128}$"
+        ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if search is not None:
-        _params["$search"] = _SERIALIZER.query("search", search, "str")
+    if expand is not None:
+        _params["expand"] = _SERIALIZER.query("expand", expand, "str")
     if filter is not None:
-        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
+    if order_by is not None:
+        _params["orderBy"] = _SERIALIZER.query("order_by", order_by, "str")
+    if top is not None:
+        _params["top"] = _SERIALIZER.query("top", top, "int")
+    if skip is not None:
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    if count is not None:
+        _params["count"] = _SERIALIZER.query("count", count, "bool")
+    if search is not None:
+        _params["search"] = _SERIALIZER.query("search", search, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_get_by_billing_account_request(billing_account_name: str, customer_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url", "/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/customers/{customerName}"
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "billingAccountName": _SERIALIZER.url(
+            "billing_account_name",
+            billing_account_name,
+            "str",
+            pattern=r"^([0-9]+|([Pp][Cc][Nn]\.[A-Za-z0-9]+)|[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}(:[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}_[0-9]{4}(-[0-9]{2}){2})?)$",
+        ),
+        "customerName": _SERIALIZER.url("customer_name", customer_name, "str", pattern=r"^[a-zA-Z\d-_]{1,128}$"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -80,59 +171,52 @@ def build_list_by_billing_profile_request(
 
 
 def build_list_by_billing_account_request(
-    billing_account_name: str, *, search: Optional[str] = None, filter: Optional[str] = None, **kwargs: Any
+    billing_account_name: str,
+    *,
+    expand: Optional[str] = None,
+    filter: Optional[str] = None,
+    order_by: Optional[str] = None,
+    top: Optional[int] = None,
+    skip: Optional[int] = None,
+    count: Optional[bool] = None,
+    search: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))  # type: Literal["2020-05-01"]
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/customers")
     path_format_arguments = {
-        "billingAccountName": _SERIALIZER.url("billing_account_name", billing_account_name, "str"),
+        "billingAccountName": _SERIALIZER.url(
+            "billing_account_name",
+            billing_account_name,
+            "str",
+            pattern=r"^([0-9]+|([Pp][Cc][Nn]\.[A-Za-z0-9]+)|[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}(:[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}_[0-9]{4}(-[0-9]{2}){2})?)$",
+        ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if search is not None:
-        _params["$search"] = _SERIALIZER.query("search", search, "str")
-    if filter is not None:
-        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_get_request(
-    billing_account_name: str, customer_name: str, *, expand: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))  # type: Literal["2020-05-01"]
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url", "/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/customers/{customerName}"
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "billingAccountName": _SERIALIZER.url("billing_account_name", billing_account_name, "str"),
-        "customerName": _SERIALIZER.url("customer_name", customer_name, "str"),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if expand is not None:
-        _params["$expand"] = _SERIALIZER.query("expand", expand, "str")
+        _params["expand"] = _SERIALIZER.query("expand", expand, "str")
+    if filter is not None:
+        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
+    if order_by is not None:
+        _params["orderBy"] = _SERIALIZER.query("order_by", order_by, "str")
+    if top is not None:
+        _params["top"] = _SERIALIZER.query("top", top, "int")
+    if skip is not None:
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    if count is not None:
+        _params["count"] = _SERIALIZER.query("count", count, "bool")
+    if search is not None:
+        _params["search"] = _SERIALIZER.query("search", search, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -160,194 +244,26 @@ class CustomersOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_by_billing_profile(
-        self,
-        billing_account_name: str,
-        billing_profile_name: str,
-        search: Optional[str] = None,
-        filter: Optional[str] = None,
-        **kwargs: Any
-    ) -> Iterable["_models.Customer"]:
-        """Lists the customers that are billed to a billing profile. The operation is supported only for
-        billing accounts with agreement type Microsoft Partner Agreement.
+    def get(
+        self, billing_account_name: str, billing_profile_name: str, customer_name: str, **kwargs: Any
+    ) -> _models.Customer:
+        """Gets a customer by its ID. The operation is supported only for billing accounts with agreement
+        type Microsoft Partner Agreement.
+
+        .. seealso::
+           - https://docs.microsoft.com/en-us/rest/api/billing/
 
         :param billing_account_name: The ID that uniquely identifies a billing account. Required.
         :type billing_account_name: str
         :param billing_profile_name: The ID that uniquely identifies a billing profile. Required.
         :type billing_profile_name: str
-        :param search: Used for searching customers by their name. Any customer with name containing
-         the search text will be included in the response. Default value is None.
-        :type search: str
-        :param filter: May be used to filter the list of customers. Default value is None.
-        :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either Customer or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.billing.models.Customer]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))  # type: Literal["2020-05-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CustomerListResult]
-
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                request = build_list_by_billing_profile_request(
-                    billing_account_name=billing_account_name,
-                    billing_profile_name=billing_profile_name,
-                    search=search,
-                    filter=filter,
-                    api_version=api_version,
-                    template_url=self.list_by_billing_profile.metadata["url"],
-                    headers=_headers,
-                    params=_params,
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
-
-            else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
-                request.method = "GET"
-            return request
-
-        def extract_data(pipeline_response):
-            deserialized = self._deserialize("CustomerListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    list_by_billing_profile.metadata = {"url": "/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/customers"}  # type: ignore
-
-    @distributed_trace
-    def list_by_billing_account(
-        self, billing_account_name: str, search: Optional[str] = None, filter: Optional[str] = None, **kwargs: Any
-    ) -> Iterable["_models.Customer"]:
-        """Lists the customers that are billed to a billing account. The operation is supported only for
-        billing accounts with agreement type Microsoft Partner Agreement.
-
-        :param billing_account_name: The ID that uniquely identifies a billing account. Required.
-        :type billing_account_name: str
-        :param search: Used for searching customers by their name. Any customer with name containing
-         the search text will be included in the response. Default value is None.
-        :type search: str
-        :param filter: May be used to filter the list of customers. Default value is None.
-        :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either Customer or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.billing.models.Customer]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))  # type: Literal["2020-05-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CustomerListResult]
-
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                request = build_list_by_billing_account_request(
-                    billing_account_name=billing_account_name,
-                    search=search,
-                    filter=filter,
-                    api_version=api_version,
-                    template_url=self.list_by_billing_account.metadata["url"],
-                    headers=_headers,
-                    params=_params,
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
-
-            else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
-                request.method = "GET"
-            return request
-
-        def extract_data(pipeline_response):
-            deserialized = self._deserialize("CustomerListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    list_by_billing_account.metadata = {"url": "/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/customers"}  # type: ignore
-
-    @distributed_trace
-    def get(
-        self, billing_account_name: str, customer_name: str, expand: Optional[str] = None, **kwargs: Any
-    ) -> _models.Customer:
-        """Gets a customer by its ID. The operation is supported only for billing accounts with agreement
-        type Microsoft Partner Agreement.
-
-        :param billing_account_name: The ID that uniquely identifies a billing account. Required.
-        :type billing_account_name: str
         :param customer_name: The ID that uniquely identifies a customer. Required.
         :type customer_name: str
-        :param expand: May be used to expand enabledAzurePlans and resellers. Default value is None.
-        :type expand: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Customer or the result of cls(response)
         :rtype: ~azure.mgmt.billing.models.Customer
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -358,23 +274,22 @@ class CustomersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))  # type: Literal["2020-05-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Customer]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.Customer] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             billing_account_name=billing_account_name,
+            billing_profile_name=billing_profile_name,
             customer_name=customer_name,
-            expand=expand,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        _request.url = self._client.format_url(_request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -384,11 +299,311 @@ class CustomersOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Customer", pipeline_response)
+        deserialized = self._deserialize("Customer", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    get.metadata = {"url": "/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/customers/{customerName}"}  # type: ignore
+    @distributed_trace
+    def list_by_billing_profile(
+        self,
+        billing_account_name: str,
+        billing_profile_name: str,
+        expand: Optional[str] = None,
+        filter: Optional[str] = None,
+        order_by: Optional[str] = None,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        count: Optional[bool] = None,
+        search: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.Customer"]:
+        """Lists the customers that are billed to a billing profile. The operation is supported only for
+        billing accounts with agreement type Microsoft Partner Agreement.
+
+        .. seealso::
+           - https://docs.microsoft.com/en-us/rest/api/billing/
+
+        :param billing_account_name: The ID that uniquely identifies a billing account. Required.
+        :type billing_account_name: str
+        :param billing_profile_name: The ID that uniquely identifies a billing profile. Required.
+        :type billing_profile_name: str
+        :param expand: May be used to expand enabledAzurePlans and resellers. Default value is None.
+        :type expand: str
+        :param filter: The filter query option allows clients to filter a collection of resources that
+         are addressed by a request URL. Default value is None.
+        :type filter: str
+        :param order_by: The orderby query option allows clients to request resources in a particular
+         order. Default value is None.
+        :type order_by: str
+        :param top: The top query option requests the number of items in the queried collection to be
+         included in the result. The maximum supported value for top is 50. Default value is None.
+        :type top: int
+        :param skip: The skip query option requests the number of items in the queried collection that
+         are to be skipped and not included in the result. Default value is None.
+        :type skip: int
+        :param count: The count query option allows clients to request a count of the matching
+         resources included with the resources in the response. Default value is None.
+        :type count: bool
+        :param search: The search query option allows clients to request items within a collection
+         matching a free-text search expression. search is only supported for string fields. Default
+         value is None.
+        :type search: str
+        :return: An iterator like instance of either Customer or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.billing.models.Customer]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.CustomerListResult] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_list_by_billing_profile_request(
+                    billing_account_name=billing_account_name,
+                    billing_profile_name=billing_profile_name,
+                    expand=expand,
+                    filter=filter,
+                    order_by=order_by,
+                    top=top,
+                    skip=skip,
+                    count=count,
+                    search=search,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize("CustomerListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def get_by_billing_account(self, billing_account_name: str, customer_name: str, **kwargs: Any) -> _models.Customer:
+        """Gets a customer by its ID at billing account level. The operation is supported only for billing
+        accounts with agreement type Microsoft Partner Agreement.
+
+        .. seealso::
+           - https://docs.microsoft.com/en-us/rest/api/billing/
+
+        :param billing_account_name: The ID that uniquely identifies a billing account. Required.
+        :type billing_account_name: str
+        :param customer_name: The ID that uniquely identifies a customer. Required.
+        :type customer_name: str
+        :return: Customer or the result of cls(response)
+        :rtype: ~azure.mgmt.billing.models.Customer
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.Customer] = kwargs.pop("cls", None)
+
+        _request = build_get_by_billing_account_request(
+            billing_account_name=billing_account_name,
+            customer_name=customer_name,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("Customer", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_by_billing_account(
+        self,
+        billing_account_name: str,
+        expand: Optional[str] = None,
+        filter: Optional[str] = None,
+        order_by: Optional[str] = None,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        count: Optional[bool] = None,
+        search: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.Customer"]:
+        """Lists the customers that are billed to a billing account. The operation is supported only for
+        billing accounts with agreement type Microsoft Partner Agreement.
+
+        .. seealso::
+           - https://docs.microsoft.com/en-us/rest/api/billing/
+
+        :param billing_account_name: The ID that uniquely identifies a billing account. Required.
+        :type billing_account_name: str
+        :param expand: May be used to expand enabledAzurePlans and resellers. Default value is None.
+        :type expand: str
+        :param filter: The filter query option allows clients to filter a collection of resources that
+         are addressed by a request URL. Default value is None.
+        :type filter: str
+        :param order_by: The orderby query option allows clients to request resources in a particular
+         order. Default value is None.
+        :type order_by: str
+        :param top: The top query option requests the number of items in the queried collection to be
+         included in the result. The maximum supported value for top is 50. Default value is None.
+        :type top: int
+        :param skip: The skip query option requests the number of items in the queried collection that
+         are to be skipped and not included in the result. Default value is None.
+        :type skip: int
+        :param count: The count query option allows clients to request a count of the matching
+         resources included with the resources in the response. Default value is None.
+        :type count: bool
+        :param search: The search query option allows clients to request items within a collection
+         matching a free-text search expression. search is only supported for string fields. Default
+         value is None.
+        :type search: str
+        :return: An iterator like instance of either Customer or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.billing.models.Customer]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.CustomerListResult] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_list_by_billing_account_request(
+                    billing_account_name=billing_account_name,
+                    expand=expand,
+                    filter=filter,
+                    order_by=order_by,
+                    top=top,
+                    skip=skip,
+                    count=count,
+                    search=search,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize("CustomerListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)

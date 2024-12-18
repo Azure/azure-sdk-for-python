@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,21 +9,7 @@
 from io import IOBase
 import json
 import sys
-from typing import (
-    Any,
-    AsyncIterable,
-    AsyncIterator,
-    Callable,
-    Dict,
-    IO,
-    List,
-    Optional,
-    Type,
-    TypeVar,
-    Union,
-    cast,
-    overload,
-)
+from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -46,7 +32,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._model_base import SdkJSONEncoder, _deserialize
+from ..._model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._operations._operations import (
     build_document_intelligence_administration_authorize_classifier_copy_request,
     build_document_intelligence_administration_authorize_model_copy_request,
@@ -60,22 +46,26 @@ from ..._operations._operations import (
     build_document_intelligence_administration_get_classifier_request,
     build_document_intelligence_administration_get_model_request,
     build_document_intelligence_administration_get_operation_request,
-    build_document_intelligence_administration_get_resource_info_request,
+    build_document_intelligence_administration_get_resource_details_request,
     build_document_intelligence_administration_list_classifiers_request,
     build_document_intelligence_administration_list_models_request,
     build_document_intelligence_administration_list_operations_request,
     build_document_intelligence_analyze_batch_documents_request,
     build_document_intelligence_analyze_document_request,
     build_document_intelligence_classify_document_request,
+    build_document_intelligence_delete_analyze_batch_result_request,
+    build_document_intelligence_delete_analyze_result_request,
+    build_document_intelligence_get_analyze_batch_result_request,
     build_document_intelligence_get_analyze_result_figure_request,
     build_document_intelligence_get_analyze_result_pdf_request,
+    build_document_intelligence_list_analyze_batch_results_request,
 )
 from .._vendor import DocumentIntelligenceAdministrationClientMixinABC, DocumentIntelligenceClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -86,18 +76,18 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
     async def _analyze_document_initial(
         self,
         model_id: str,
-        analyze_request: Optional[Union[_models.AnalyzeDocumentRequest, JSON, IO[bytes]]] = None,
+        body: Union[_models.AnalyzeDocumentRequest, JSON, IO[bytes]],
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output_content_format: Optional[Union[str, _models.DocumentContentFormat]] = None,
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -113,13 +103,10 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(analyze_request, (IOBase, bytes)):
-            _content = analyze_request
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            if analyze_request is not None:
-                _content = json.dumps(analyze_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-            else:
-                _content = None
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_document_intelligence_analyze_document_request(
             model_id=model_id,
@@ -154,7 +141,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -172,14 +159,14 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
     async def begin_analyze_document(
         self,
         model_id: str,
-        analyze_request: Optional[_models.AnalyzeDocumentRequest] = None,
+        body: _models.AnalyzeDocumentRequest,
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output_content_format: Optional[Union[str, _models.DocumentContentFormat]] = None,
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -188,10 +175,9 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :param analyze_request: Analyze request parameters. Default value is None.
-        :type analyze_request: ~azure.ai.documentintelligence.models.AnalyzeDocumentRequest
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :param body: Analyze request parameters. Required.
+        :type body: ~azure.ai.documentintelligence.models.AnalyzeDocumentRequest
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
          only
@@ -208,7 +194,8 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :paramtype query_fields: list[str]
         :keyword output_content_format: Format of the analyze result top-level content. Known values
          are: "text" and "markdown". Default value is None.
-        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :paramtype output_content_format: str or
+         ~azure.ai.documentintelligence.models.DocumentContentFormat
         :keyword output: Additional outputs to generate during analysis. Default value is None.
         :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -218,463 +205,20 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                analyze_request = {
-                    "base64Source": bytes("bytes", encoding="utf-8"),
-                    "urlSource": "str"
-                }
-
-                # response body for status code(s): 202
-                response == {
-                    "apiVersion": "str",
-                    "content": "str",
-                    "modelId": "str",
-                    "pages": [
-                        {
-                            "pageNumber": 0,
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "angle": 0.0,
-                            "barcodes": [
-                                {
-                                    "confidence": 0.0,
-                                    "kind": "str",
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "value": "str",
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "formulas": [
-                                {
-                                    "confidence": 0.0,
-                                    "kind": "str",
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "value": "str",
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "height": 0.0,
-                            "lines": [
-                                {
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "selectionMarks": [
-                                {
-                                    "confidence": 0.0,
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "state": "str",
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "unit": "str",
-                            "width": 0.0,
-                            "words": [
-                                {
-                                    "confidence": 0.0,
-                                    "content": "str",
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ]
-                        }
-                    ],
-                    "stringIndexType": "str",
-                    "contentFormat": "str",
-                    "documents": [
-                        {
-                            "confidence": 0.0,
-                            "docType": "str",
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "fields": {
-                                "str": {
-                                    "type": "str",
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "confidence": 0.0,
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "valueAddress": {
-                                        "city": "str",
-                                        "cityDistrict": "str",
-                                        "countryRegion": "str",
-                                        "house": "str",
-                                        "houseNumber": "str",
-                                        "level": "str",
-                                        "poBox": "str",
-                                        "postalCode": "str",
-                                        "road": "str",
-                                        "state": "str",
-                                        "stateDistrict": "str",
-                                        "streetAddress": "str",
-                                        "suburb": "str",
-                                        "unit": "str"
-                                    },
-                                    "valueArray": [
-                                        ...
-                                    ],
-                                    "valueBoolean": bool,
-                                    "valueCountryRegion": "str",
-                                    "valueCurrency": {
-                                        "amount": 0.0,
-                                        "currencyCode": "str",
-                                        "currencySymbol": "str"
-                                    },
-                                    "valueDate": "2020-02-20",
-                                    "valueInteger": 0,
-                                    "valueNumber": 0.0,
-                                    "valueObject": {
-                                        "str": ...
-                                    },
-                                    "valuePhoneNumber": "str",
-                                    "valueSelectionGroup": [
-                                        "str"
-                                    ],
-                                    "valueSelectionMark": "str",
-                                    "valueSignature": "str",
-                                    "valueString": "str",
-                                    "valueTime": "12:30:00"
-                                }
-                            }
-                        }
-                    ],
-                    "figures": [
-                        {
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "caption": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ],
-                                "elements": [
-                                    "str"
-                                ]
-                            },
-                            "elements": [
-                                "str"
-                            ],
-                            "footnotes": [
-                                {
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "elements": [
-                                        "str"
-                                    ]
-                                }
-                            ],
-                            "id": "str"
-                        }
-                    ],
-                    "keyValuePairs": [
-                        {
-                            "confidence": 0.0,
-                            "key": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ]
-                            },
-                            "value": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ]
-                            }
-                        }
-                    ],
-                    "languages": [
-                        {
-                            "confidence": 0.0,
-                            "locale": "str",
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ]
-                        }
-                    ],
-                    "paragraphs": [
-                        {
-                            "content": "str",
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "role": "str"
-                        }
-                    ],
-                    "sections": [
-                        {
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "elements": [
-                                "str"
-                            ]
-                        }
-                    ],
-                    "styles": [
-                        {
-                            "confidence": 0.0,
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "backgroundColor": "str",
-                            "color": "str",
-                            "fontStyle": "str",
-                            "fontWeight": "str",
-                            "isHandwritten": bool,
-                            "similarFontFamily": "str"
-                        }
-                    ],
-                    "tables": [
-                        {
-                            "cells": [
-                                {
-                                    "columnIndex": 0,
-                                    "content": "str",
-                                    "rowIndex": 0,
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "columnSpan": 0,
-                                    "elements": [
-                                        "str"
-                                    ],
-                                    "kind": "str",
-                                    "rowSpan": 0
-                                }
-                            ],
-                            "columnCount": 0,
-                            "rowCount": 0,
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "caption": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ],
-                                "elements": [
-                                    "str"
-                                ]
-                            },
-                            "footnotes": [
-                                {
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "elements": [
-                                        "str"
-                                    ]
-                                }
-                            ]
-                        }
-                    ],
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
 
     @overload
     async def begin_analyze_document(
         self,
         model_id: str,
-        analyze_request: Optional[JSON] = None,
+        body: JSON,
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output_content_format: Optional[Union[str, _models.DocumentContentFormat]] = None,
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -683,10 +227,9 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :param analyze_request: Analyze request parameters. Default value is None.
-        :type analyze_request: JSON
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :param body: Analyze request parameters. Required.
+        :type body: JSON
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
          only
@@ -703,7 +246,8 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :paramtype query_fields: list[str]
         :keyword output_content_format: Format of the analyze result top-level content. Known values
          are: "text" and "markdown". Default value is None.
-        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :paramtype output_content_format: str or
+         ~azure.ai.documentintelligence.models.DocumentContentFormat
         :keyword output: Additional outputs to generate during analysis. Default value is None.
         :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -713,457 +257,20 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 202
-                response == {
-                    "apiVersion": "str",
-                    "content": "str",
-                    "modelId": "str",
-                    "pages": [
-                        {
-                            "pageNumber": 0,
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "angle": 0.0,
-                            "barcodes": [
-                                {
-                                    "confidence": 0.0,
-                                    "kind": "str",
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "value": "str",
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "formulas": [
-                                {
-                                    "confidence": 0.0,
-                                    "kind": "str",
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "value": "str",
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "height": 0.0,
-                            "lines": [
-                                {
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "selectionMarks": [
-                                {
-                                    "confidence": 0.0,
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "state": "str",
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "unit": "str",
-                            "width": 0.0,
-                            "words": [
-                                {
-                                    "confidence": 0.0,
-                                    "content": "str",
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ]
-                        }
-                    ],
-                    "stringIndexType": "str",
-                    "contentFormat": "str",
-                    "documents": [
-                        {
-                            "confidence": 0.0,
-                            "docType": "str",
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "fields": {
-                                "str": {
-                                    "type": "str",
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "confidence": 0.0,
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "valueAddress": {
-                                        "city": "str",
-                                        "cityDistrict": "str",
-                                        "countryRegion": "str",
-                                        "house": "str",
-                                        "houseNumber": "str",
-                                        "level": "str",
-                                        "poBox": "str",
-                                        "postalCode": "str",
-                                        "road": "str",
-                                        "state": "str",
-                                        "stateDistrict": "str",
-                                        "streetAddress": "str",
-                                        "suburb": "str",
-                                        "unit": "str"
-                                    },
-                                    "valueArray": [
-                                        ...
-                                    ],
-                                    "valueBoolean": bool,
-                                    "valueCountryRegion": "str",
-                                    "valueCurrency": {
-                                        "amount": 0.0,
-                                        "currencyCode": "str",
-                                        "currencySymbol": "str"
-                                    },
-                                    "valueDate": "2020-02-20",
-                                    "valueInteger": 0,
-                                    "valueNumber": 0.0,
-                                    "valueObject": {
-                                        "str": ...
-                                    },
-                                    "valuePhoneNumber": "str",
-                                    "valueSelectionGroup": [
-                                        "str"
-                                    ],
-                                    "valueSelectionMark": "str",
-                                    "valueSignature": "str",
-                                    "valueString": "str",
-                                    "valueTime": "12:30:00"
-                                }
-                            }
-                        }
-                    ],
-                    "figures": [
-                        {
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "caption": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ],
-                                "elements": [
-                                    "str"
-                                ]
-                            },
-                            "elements": [
-                                "str"
-                            ],
-                            "footnotes": [
-                                {
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "elements": [
-                                        "str"
-                                    ]
-                                }
-                            ],
-                            "id": "str"
-                        }
-                    ],
-                    "keyValuePairs": [
-                        {
-                            "confidence": 0.0,
-                            "key": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ]
-                            },
-                            "value": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ]
-                            }
-                        }
-                    ],
-                    "languages": [
-                        {
-                            "confidence": 0.0,
-                            "locale": "str",
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ]
-                        }
-                    ],
-                    "paragraphs": [
-                        {
-                            "content": "str",
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "role": "str"
-                        }
-                    ],
-                    "sections": [
-                        {
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "elements": [
-                                "str"
-                            ]
-                        }
-                    ],
-                    "styles": [
-                        {
-                            "confidence": 0.0,
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "backgroundColor": "str",
-                            "color": "str",
-                            "fontStyle": "str",
-                            "fontWeight": "str",
-                            "isHandwritten": bool,
-                            "similarFontFamily": "str"
-                        }
-                    ],
-                    "tables": [
-                        {
-                            "cells": [
-                                {
-                                    "columnIndex": 0,
-                                    "content": "str",
-                                    "rowIndex": 0,
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "columnSpan": 0,
-                                    "elements": [
-                                        "str"
-                                    ],
-                                    "kind": "str",
-                                    "rowSpan": 0
-                                }
-                            ],
-                            "columnCount": 0,
-                            "rowCount": 0,
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "caption": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ],
-                                "elements": [
-                                    "str"
-                                ]
-                            },
-                            "footnotes": [
-                                {
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "elements": [
-                                        "str"
-                                    ]
-                                }
-                            ]
-                        }
-                    ],
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
 
     @overload
     async def begin_analyze_document(
         self,
         model_id: str,
-        analyze_request: Optional[IO[bytes]] = None,
+        body: IO[bytes],
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output_content_format: Optional[Union[str, _models.DocumentContentFormat]] = None,
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1172,10 +279,9 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :param analyze_request: Analyze request parameters. Default value is None.
-        :type analyze_request: IO[bytes]
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :param body: Analyze request parameters. Required.
+        :type body: IO[bytes]
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
          only
@@ -1192,7 +298,8 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :paramtype query_fields: list[str]
         :keyword output_content_format: Format of the analyze result top-level content. Known values
          are: "text" and "markdown". Default value is None.
-        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :paramtype output_content_format: str or
+         ~azure.ai.documentintelligence.models.DocumentContentFormat
         :keyword output: Additional outputs to generate during analysis. Default value is None.
         :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -1202,457 +309,20 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 202
-                response == {
-                    "apiVersion": "str",
-                    "content": "str",
-                    "modelId": "str",
-                    "pages": [
-                        {
-                            "pageNumber": 0,
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "angle": 0.0,
-                            "barcodes": [
-                                {
-                                    "confidence": 0.0,
-                                    "kind": "str",
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "value": "str",
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "formulas": [
-                                {
-                                    "confidence": 0.0,
-                                    "kind": "str",
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "value": "str",
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "height": 0.0,
-                            "lines": [
-                                {
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "selectionMarks": [
-                                {
-                                    "confidence": 0.0,
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "state": "str",
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "unit": "str",
-                            "width": 0.0,
-                            "words": [
-                                {
-                                    "confidence": 0.0,
-                                    "content": "str",
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ]
-                        }
-                    ],
-                    "stringIndexType": "str",
-                    "contentFormat": "str",
-                    "documents": [
-                        {
-                            "confidence": 0.0,
-                            "docType": "str",
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "fields": {
-                                "str": {
-                                    "type": "str",
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "confidence": 0.0,
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "valueAddress": {
-                                        "city": "str",
-                                        "cityDistrict": "str",
-                                        "countryRegion": "str",
-                                        "house": "str",
-                                        "houseNumber": "str",
-                                        "level": "str",
-                                        "poBox": "str",
-                                        "postalCode": "str",
-                                        "road": "str",
-                                        "state": "str",
-                                        "stateDistrict": "str",
-                                        "streetAddress": "str",
-                                        "suburb": "str",
-                                        "unit": "str"
-                                    },
-                                    "valueArray": [
-                                        ...
-                                    ],
-                                    "valueBoolean": bool,
-                                    "valueCountryRegion": "str",
-                                    "valueCurrency": {
-                                        "amount": 0.0,
-                                        "currencyCode": "str",
-                                        "currencySymbol": "str"
-                                    },
-                                    "valueDate": "2020-02-20",
-                                    "valueInteger": 0,
-                                    "valueNumber": 0.0,
-                                    "valueObject": {
-                                        "str": ...
-                                    },
-                                    "valuePhoneNumber": "str",
-                                    "valueSelectionGroup": [
-                                        "str"
-                                    ],
-                                    "valueSelectionMark": "str",
-                                    "valueSignature": "str",
-                                    "valueString": "str",
-                                    "valueTime": "12:30:00"
-                                }
-                            }
-                        }
-                    ],
-                    "figures": [
-                        {
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "caption": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ],
-                                "elements": [
-                                    "str"
-                                ]
-                            },
-                            "elements": [
-                                "str"
-                            ],
-                            "footnotes": [
-                                {
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "elements": [
-                                        "str"
-                                    ]
-                                }
-                            ],
-                            "id": "str"
-                        }
-                    ],
-                    "keyValuePairs": [
-                        {
-                            "confidence": 0.0,
-                            "key": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ]
-                            },
-                            "value": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ]
-                            }
-                        }
-                    ],
-                    "languages": [
-                        {
-                            "confidence": 0.0,
-                            "locale": "str",
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ]
-                        }
-                    ],
-                    "paragraphs": [
-                        {
-                            "content": "str",
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "role": "str"
-                        }
-                    ],
-                    "sections": [
-                        {
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "elements": [
-                                "str"
-                            ]
-                        }
-                    ],
-                    "styles": [
-                        {
-                            "confidence": 0.0,
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "backgroundColor": "str",
-                            "color": "str",
-                            "fontStyle": "str",
-                            "fontWeight": "str",
-                            "isHandwritten": bool,
-                            "similarFontFamily": "str"
-                        }
-                    ],
-                    "tables": [
-                        {
-                            "cells": [
-                                {
-                                    "columnIndex": 0,
-                                    "content": "str",
-                                    "rowIndex": 0,
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "columnSpan": 0,
-                                    "elements": [
-                                        "str"
-                                    ],
-                                    "kind": "str",
-                                    "rowSpan": 0
-                                }
-                            ],
-                            "columnCount": 0,
-                            "rowCount": 0,
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "caption": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ],
-                                "elements": [
-                                    "str"
-                                ]
-                            },
-                            "footnotes": [
-                                {
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "elements": [
-                                        "str"
-                                    ]
-                                }
-                            ]
-                        }
-                    ],
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
 
     @distributed_trace_async
     async def begin_analyze_document(
         self,
         model_id: str,
-        analyze_request: Optional[Union[_models.AnalyzeDocumentRequest, JSON, IO[bytes]]] = None,
+        body: Union[_models.AnalyzeDocumentRequest, JSON, IO[bytes]],
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output_content_format: Optional[Union[str, _models.DocumentContentFormat]] = None,
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AnalyzeResult]:
@@ -1660,12 +330,10 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :param analyze_request: Analyze request parameters. Is one of the following types:
-         AnalyzeDocumentRequest, JSON, IO[bytes] Default value is None.
-        :type analyze_request: ~azure.ai.documentintelligence.models.AnalyzeDocumentRequest or JSON or
-         IO[bytes]
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :param body: Analyze request parameters. Is one of the following types: AnalyzeDocumentRequest,
+         JSON, IO[bytes] Required.
+        :type body: ~azure.ai.documentintelligence.models.AnalyzeDocumentRequest or JSON or IO[bytes]
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
          only
@@ -1682,456 +350,14 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :paramtype query_fields: list[str]
         :keyword output_content_format: Format of the analyze result top-level content. Known values
          are: "text" and "markdown". Default value is None.
-        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :paramtype output_content_format: str or
+         ~azure.ai.documentintelligence.models.DocumentContentFormat
         :keyword output: Additional outputs to generate during analysis. Default value is None.
         :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
         :return: An instance of AsyncLROPoller that returns AnalyzeResult. The AnalyzeResult is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                analyze_request = {
-                    "base64Source": bytes("bytes", encoding="utf-8"),
-                    "urlSource": "str"
-                }
-
-                # response body for status code(s): 202
-                response == {
-                    "apiVersion": "str",
-                    "content": "str",
-                    "modelId": "str",
-                    "pages": [
-                        {
-                            "pageNumber": 0,
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "angle": 0.0,
-                            "barcodes": [
-                                {
-                                    "confidence": 0.0,
-                                    "kind": "str",
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "value": "str",
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "formulas": [
-                                {
-                                    "confidence": 0.0,
-                                    "kind": "str",
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "value": "str",
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "height": 0.0,
-                            "lines": [
-                                {
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "selectionMarks": [
-                                {
-                                    "confidence": 0.0,
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "state": "str",
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "unit": "str",
-                            "width": 0.0,
-                            "words": [
-                                {
-                                    "confidence": 0.0,
-                                    "content": "str",
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ]
-                        }
-                    ],
-                    "stringIndexType": "str",
-                    "contentFormat": "str",
-                    "documents": [
-                        {
-                            "confidence": 0.0,
-                            "docType": "str",
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "fields": {
-                                "str": {
-                                    "type": "str",
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "confidence": 0.0,
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "valueAddress": {
-                                        "city": "str",
-                                        "cityDistrict": "str",
-                                        "countryRegion": "str",
-                                        "house": "str",
-                                        "houseNumber": "str",
-                                        "level": "str",
-                                        "poBox": "str",
-                                        "postalCode": "str",
-                                        "road": "str",
-                                        "state": "str",
-                                        "stateDistrict": "str",
-                                        "streetAddress": "str",
-                                        "suburb": "str",
-                                        "unit": "str"
-                                    },
-                                    "valueArray": [
-                                        ...
-                                    ],
-                                    "valueBoolean": bool,
-                                    "valueCountryRegion": "str",
-                                    "valueCurrency": {
-                                        "amount": 0.0,
-                                        "currencyCode": "str",
-                                        "currencySymbol": "str"
-                                    },
-                                    "valueDate": "2020-02-20",
-                                    "valueInteger": 0,
-                                    "valueNumber": 0.0,
-                                    "valueObject": {
-                                        "str": ...
-                                    },
-                                    "valuePhoneNumber": "str",
-                                    "valueSelectionGroup": [
-                                        "str"
-                                    ],
-                                    "valueSelectionMark": "str",
-                                    "valueSignature": "str",
-                                    "valueString": "str",
-                                    "valueTime": "12:30:00"
-                                }
-                            }
-                        }
-                    ],
-                    "figures": [
-                        {
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "caption": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ],
-                                "elements": [
-                                    "str"
-                                ]
-                            },
-                            "elements": [
-                                "str"
-                            ],
-                            "footnotes": [
-                                {
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "elements": [
-                                        "str"
-                                    ]
-                                }
-                            ],
-                            "id": "str"
-                        }
-                    ],
-                    "keyValuePairs": [
-                        {
-                            "confidence": 0.0,
-                            "key": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ]
-                            },
-                            "value": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ]
-                            }
-                        }
-                    ],
-                    "languages": [
-                        {
-                            "confidence": 0.0,
-                            "locale": "str",
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ]
-                        }
-                    ],
-                    "paragraphs": [
-                        {
-                            "content": "str",
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "role": "str"
-                        }
-                    ],
-                    "sections": [
-                        {
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "elements": [
-                                "str"
-                            ]
-                        }
-                    ],
-                    "styles": [
-                        {
-                            "confidence": 0.0,
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "backgroundColor": "str",
-                            "color": "str",
-                            "fontStyle": "str",
-                            "fontWeight": "str",
-                            "isHandwritten": bool,
-                            "similarFontFamily": "str"
-                        }
-                    ],
-                    "tables": [
-                        {
-                            "cells": [
-                                {
-                                    "columnIndex": 0,
-                                    "content": "str",
-                                    "rowIndex": 0,
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "columnSpan": 0,
-                                    "elements": [
-                                        "str"
-                                    ],
-                                    "kind": "str",
-                                    "rowSpan": 0
-                                }
-                            ],
-                            "columnCount": 0,
-                            "rowCount": 0,
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "caption": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ],
-                                "elements": [
-                                    "str"
-                                ]
-                            },
-                            "footnotes": [
-                                {
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "elements": [
-                                        "str"
-                                    ]
-                                }
-                            ]
-                        }
-                    ],
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -2144,7 +370,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         if cont_token is None:
             raw_result = await self._analyze_document_initial(
                 model_id=model_id,
-                analyze_request=analyze_request,
+                body=body,
                 pages=pages,
                 locale=locale,
                 string_index_type=string_index_type,
@@ -2198,21 +424,206 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @distributed_trace_async
+    async def get_analyze_result_pdf(self, model_id: str, result_id: str, **kwargs: Any) -> AsyncIterator[bytes]:
+        """Gets the generated searchable PDF output from document analysis.
+
+        :param model_id: Unique document model name. Required.
+        :type model_id: str
+        :param result_id: Analyze operation result ID. Required.
+        :type result_id: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_document_intelligence_get_analyze_result_pdf_request(
+            model_id=model_id,
+            result_id=result_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_analyze_result_figure(
+        self, model_id: str, result_id: str, figure_id: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """Gets the generated cropped image of specified figure from document analysis.
+
+        :param model_id: Unique document model name. Required.
+        :type model_id: str
+        :param result_id: Analyze operation result ID. Required.
+        :type result_id: str
+        :param figure_id: Figure ID. Required.
+        :type figure_id: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_document_intelligence_get_analyze_result_figure_request(
+            model_id=model_id,
+            result_id=result_id,
+            figure_id=figure_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete_analyze_result(self, model_id: str, result_id: str, **kwargs: Any) -> None:
+        """Mark the result of document analysis for deletion.
+
+        :param model_id: Unique document model name. Required.
+        :type model_id: str
+        :param result_id: Analyze operation result ID. Required.
+        :type result_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_document_intelligence_delete_analyze_result_request(
+            model_id=model_id,
+            result_id=result_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
     async def _analyze_batch_documents_initial(
         self,
         model_id: str,
-        analyze_batch_request: Optional[Union[_models.AnalyzeBatchDocumentsRequest, JSON, IO[bytes]]] = None,
+        body: Union[_models.AnalyzeBatchDocumentsRequest, JSON, IO[bytes]],
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output_content_format: Optional[Union[str, _models.DocumentContentFormat]] = None,
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2228,13 +639,10 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(analyze_batch_request, (IOBase, bytes)):
-            _content = analyze_batch_request
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            if analyze_batch_request is not None:
-                _content = json.dumps(analyze_batch_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-            else:
-                _content = None
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_document_intelligence_analyze_batch_documents_request(
             model_id=model_id,
@@ -2269,7 +677,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2287,14 +695,14 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
     async def begin_analyze_batch_documents(
         self,
         model_id: str,
-        analyze_batch_request: Optional[_models.AnalyzeBatchDocumentsRequest] = None,
+        body: _models.AnalyzeBatchDocumentsRequest,
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output_content_format: Optional[Union[str, _models.DocumentContentFormat]] = None,
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2303,10 +711,9 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :param analyze_batch_request: Analyze batch request parameters. Default value is None.
-        :type analyze_batch_request: ~azure.ai.documentintelligence.models.AnalyzeBatchDocumentsRequest
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :param body: Analyze batch request parameters. Required.
+        :type body: ~azure.ai.documentintelligence.models.AnalyzeBatchDocumentsRequest
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
          only
@@ -2323,7 +730,8 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :paramtype query_fields: list[str]
         :keyword output_content_format: Format of the analyze result top-level content. Known values
          are: "text" and "markdown". Default value is None.
-        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :paramtype output_content_format: str or
+         ~azure.ai.documentintelligence.models.DocumentContentFormat
         :keyword output: Additional outputs to generate during analysis. Default value is None.
         :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -2334,65 +742,20 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.AnalyzeBatchResult]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                analyze_batch_request = {
-                    "resultContainerUrl": "str",
-                    "azureBlobFileListSource": {
-                        "containerUrl": "str",
-                        "fileList": "str"
-                    },
-                    "azureBlobSource": {
-                        "containerUrl": "str",
-                        "prefix": "str"
-                    },
-                    "overwriteExisting": bool,
-                    "resultPrefix": "str"
-                }
-
-                # response body for status code(s): 202
-                response == {
-                    "details": [
-                        {
-                            "sourceUrl": "str",
-                            "status": "str",
-                            "error": {
-                                "code": "str",
-                                "message": "str",
-                                "details": [
-                                    ...
-                                ],
-                                "innererror": {
-                                    "code": "str",
-                                    "innererror": ...,
-                                    "message": "str"
-                                },
-                                "target": "str"
-                            },
-                            "resultUrl": "str"
-                        }
-                    ],
-                    "failedCount": 0,
-                    "skippedCount": 0,
-                    "succeededCount": 0
-                }
         """
 
     @overload
     async def begin_analyze_batch_documents(
         self,
         model_id: str,
-        analyze_batch_request: Optional[JSON] = None,
+        body: JSON,
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output_content_format: Optional[Union[str, _models.DocumentContentFormat]] = None,
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2401,10 +764,9 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :param analyze_batch_request: Analyze batch request parameters. Default value is None.
-        :type analyze_batch_request: JSON
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :param body: Analyze batch request parameters. Required.
+        :type body: JSON
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
          only
@@ -2421,7 +783,8 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :paramtype query_fields: list[str]
         :keyword output_content_format: Format of the analyze result top-level content. Known values
          are: "text" and "markdown". Default value is None.
-        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :paramtype output_content_format: str or
+         ~azure.ai.documentintelligence.models.DocumentContentFormat
         :keyword output: Additional outputs to generate during analysis. Default value is None.
         :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -2432,50 +795,20 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.AnalyzeBatchResult]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 202
-                response == {
-                    "details": [
-                        {
-                            "sourceUrl": "str",
-                            "status": "str",
-                            "error": {
-                                "code": "str",
-                                "message": "str",
-                                "details": [
-                                    ...
-                                ],
-                                "innererror": {
-                                    "code": "str",
-                                    "innererror": ...,
-                                    "message": "str"
-                                },
-                                "target": "str"
-                            },
-                            "resultUrl": "str"
-                        }
-                    ],
-                    "failedCount": 0,
-                    "skippedCount": 0,
-                    "succeededCount": 0
-                }
         """
 
     @overload
     async def begin_analyze_batch_documents(
         self,
         model_id: str,
-        analyze_batch_request: Optional[IO[bytes]] = None,
+        body: IO[bytes],
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output_content_format: Optional[Union[str, _models.DocumentContentFormat]] = None,
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2484,10 +817,9 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :param analyze_batch_request: Analyze batch request parameters. Default value is None.
-        :type analyze_batch_request: IO[bytes]
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :param body: Analyze batch request parameters. Required.
+        :type body: IO[bytes]
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
          only
@@ -2504,7 +836,8 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :paramtype query_fields: list[str]
         :keyword output_content_format: Format of the analyze result top-level content. Known values
          are: "text" and "markdown". Default value is None.
-        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :paramtype output_content_format: str or
+         ~azure.ai.documentintelligence.models.DocumentContentFormat
         :keyword output: Additional outputs to generate during analysis. Default value is None.
         :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -2515,50 +848,20 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.AnalyzeBatchResult]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 202
-                response == {
-                    "details": [
-                        {
-                            "sourceUrl": "str",
-                            "status": "str",
-                            "error": {
-                                "code": "str",
-                                "message": "str",
-                                "details": [
-                                    ...
-                                ],
-                                "innererror": {
-                                    "code": "str",
-                                    "innererror": ...,
-                                    "message": "str"
-                                },
-                                "target": "str"
-                            },
-                            "resultUrl": "str"
-                        }
-                    ],
-                    "failedCount": 0,
-                    "skippedCount": 0,
-                    "succeededCount": 0
-                }
         """
 
     @distributed_trace_async
     async def begin_analyze_batch_documents(
         self,
         model_id: str,
-        analyze_batch_request: Optional[Union[_models.AnalyzeBatchDocumentsRequest, JSON, IO[bytes]]] = None,
+        body: Union[_models.AnalyzeBatchDocumentsRequest, JSON, IO[bytes]],
         *,
         pages: Optional[str] = None,
         locale: Optional[str] = None,
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
-        output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output_content_format: Optional[Union[str, _models.DocumentContentFormat]] = None,
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AnalyzeBatchResult]:
@@ -2566,12 +869,11 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :param analyze_batch_request: Analyze batch request parameters. Is one of the following types:
-         AnalyzeBatchDocumentsRequest, JSON, IO[bytes] Default value is None.
-        :type analyze_batch_request: ~azure.ai.documentintelligence.models.AnalyzeBatchDocumentsRequest
-         or JSON or IO[bytes]
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :param body: Analyze batch request parameters. Is one of the following types:
+         AnalyzeBatchDocumentsRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.documentintelligence.models.AnalyzeBatchDocumentsRequest or JSON or
+         IO[bytes]
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
          only
@@ -2588,7 +890,8 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :paramtype query_fields: list[str]
         :keyword output_content_format: Format of the analyze result top-level content. Known values
          are: "text" and "markdown". Default value is None.
-        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :paramtype output_content_format: str or
+         ~azure.ai.documentintelligence.models.DocumentContentFormat
         :keyword output: Additional outputs to generate during analysis. Default value is None.
         :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
         :return: An instance of AsyncLROPoller that returns AnalyzeBatchResult. The AnalyzeBatchResult
@@ -2596,51 +899,6 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.AnalyzeBatchResult]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                analyze_batch_request = {
-                    "resultContainerUrl": "str",
-                    "azureBlobFileListSource": {
-                        "containerUrl": "str",
-                        "fileList": "str"
-                    },
-                    "azureBlobSource": {
-                        "containerUrl": "str",
-                        "prefix": "str"
-                    },
-                    "overwriteExisting": bool,
-                    "resultPrefix": "str"
-                }
-
-                # response body for status code(s): 202
-                response == {
-                    "details": [
-                        {
-                            "sourceUrl": "str",
-                            "status": "str",
-                            "error": {
-                                "code": "str",
-                                "message": "str",
-                                "details": [
-                                    ...
-                                ],
-                                "innererror": {
-                                    "code": "str",
-                                    "innererror": ...,
-                                    "message": "str"
-                                },
-                                "target": "str"
-                            },
-                            "resultUrl": "str"
-                        }
-                    ],
-                    "failedCount": 0,
-                    "skippedCount": 0,
-                    "succeededCount": 0
-                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -2653,7 +911,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         if cont_token is None:
             raw_result = await self._analyze_batch_documents_initial(
                 model_id=model_id,
-                analyze_batch_request=analyze_batch_request,
+                body=body,
                 pages=pages,
                 locale=locale,
                 string_index_type=string_index_type,
@@ -2707,19 +965,108 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    @distributed_trace_async
-    async def get_analyze_result_pdf(self, model_id: str, result_id: str, **kwargs: Any) -> AsyncIterator[bytes]:
-        """Gets the generated searchable PDF output from document analysis.
+    @distributed_trace
+    def list_analyze_batch_results(
+        self, model_id: str, **kwargs: Any
+    ) -> AsyncIterable["_models.AnalyzeBatchOperation"]:
+        """List batch document analysis results.
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :param result_id: Analyze operation result ID. Required.
-        :type result_id: str
-        :return: AsyncIterator[bytes]
-        :rtype: AsyncIterator[bytes]
+        :return: An iterator like instance of AnalyzeBatchOperation
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.documentintelligence.models.AnalyzeBatchOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AnalyzeBatchOperation]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_document_intelligence_list_analyze_batch_results_request(
+                    model_id=model_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.AnalyzeBatchOperation], deserialized["value"])
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def delete_analyze_batch_result(self, model_id: str, result_id: str, **kwargs: Any) -> None:
+        """Mark the batch document analysis result for deletion.
+
+        :param model_id: Unique document model name. Required.
+        :type model_id: str
+        :param result_id: Analyze batch operation result ID. Required.
+        :type result_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2730,9 +1077,9 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_document_intelligence_get_analyze_result_pdf_request(
+        _request = build_document_intelligence_delete_analyze_batch_result_request(
             model_id=model_id,
             result_id=result_id,
             api_version=self._config.api_version,
@@ -2744,7 +1091,61 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", True)
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    async def get_analyze_batch_result(
+        self, model_id: str, result_id: str, **kwargs: Any
+    ) -> _models.AnalyzeBatchOperation:
+        """Gets the result of batch document analysis.
+
+        :param model_id: Unique document model name. Required.
+        :type model_id: str
+        :param result_id: Analyze batch operation result ID. Required.
+        :type result_id: str
+        :return: AnalyzeBatchOperation. The AnalyzeBatchOperation is compatible with MutableMapping
+        :rtype: ~azure.ai.documentintelligence.models.AnalyzeBatchOperation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AnalyzeBatchOperation] = kwargs.pop("cls", None)
+
+        _request = build_document_intelligence_get_analyze_batch_result_request(
+            model_id=model_id,
+            result_id=result_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -2758,99 +1159,30 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
-        response_headers = {}
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_analyze_result_figure(
-        self, model_id: str, result_id: str, figure_id: str, **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        """Gets the generated cropped image of specified figure from document analysis.
-
-        :param model_id: Unique document model name. Required.
-        :type model_id: str
-        :param result_id: Analyze operation result ID. Required.
-        :type result_id: str
-        :param figure_id: Figure ID. Required.
-        :type figure_id: str
-        :return: AsyncIterator[bytes]
-        :rtype: AsyncIterator[bytes]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_document_intelligence_get_analyze_result_figure_request(
-            model_id=model_id,
-            result_id=result_id,
-            figure_id=figure_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-
-        deserialized = response.iter_bytes()
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.AnalyzeBatchOperation, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
     async def _classify_document_initial(
         self,
         classifier_id: str,
-        classify_request: Union[_models.ClassifyDocumentRequest, JSON, IO[bytes]],
+        body: Union[_models.ClassifyDocumentRequest, JSON, IO[bytes]],
         *,
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         split: Optional[Union[str, _models.SplitMode]] = None,
         pages: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2866,10 +1198,10 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(classify_request, (IOBase, bytes)):
-            _content = classify_request
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(classify_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_document_intelligence_classify_document_request(
             classifier_id=classifier_id,
@@ -2900,7 +1232,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2918,7 +1250,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
     async def begin_classify_document(
         self,
         classifier_id: str,
-        classify_request: _models.ClassifyDocumentRequest,
+        body: _models.ClassifyDocumentRequest,
         *,
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         split: Optional[Union[str, _models.SplitMode]] = None,
@@ -2930,16 +1262,15 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         :param classifier_id: Unique document classifier name. Required.
         :type classifier_id: str
-        :param classify_request: Classify request parameters. Required.
-        :type classify_request: ~azure.ai.documentintelligence.models.ClassifyDocumentRequest
+        :param body: Classify request parameters. Required.
+        :type body: ~azure.ai.documentintelligence.models.ClassifyDocumentRequest
         :keyword string_index_type: Method used to compute string offset and length. Known values are:
          "textElements", "unicodeCodePoint", and "utf16CodeUnit". Default value is None.
         :paramtype string_index_type: str or ~azure.ai.documentintelligence.models.StringIndexType
         :keyword split: Document splitting mode. Known values are: "auto", "none", and "perPage".
          Default value is None.
         :paramtype split: str or ~azure.ai.documentintelligence.models.SplitMode
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2948,456 +1279,13 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                classify_request = {
-                    "base64Source": bytes("bytes", encoding="utf-8"),
-                    "urlSource": "str"
-                }
-
-                # response body for status code(s): 202
-                response == {
-                    "apiVersion": "str",
-                    "content": "str",
-                    "modelId": "str",
-                    "pages": [
-                        {
-                            "pageNumber": 0,
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "angle": 0.0,
-                            "barcodes": [
-                                {
-                                    "confidence": 0.0,
-                                    "kind": "str",
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "value": "str",
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "formulas": [
-                                {
-                                    "confidence": 0.0,
-                                    "kind": "str",
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "value": "str",
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "height": 0.0,
-                            "lines": [
-                                {
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "selectionMarks": [
-                                {
-                                    "confidence": 0.0,
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "state": "str",
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "unit": "str",
-                            "width": 0.0,
-                            "words": [
-                                {
-                                    "confidence": 0.0,
-                                    "content": "str",
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ]
-                        }
-                    ],
-                    "stringIndexType": "str",
-                    "contentFormat": "str",
-                    "documents": [
-                        {
-                            "confidence": 0.0,
-                            "docType": "str",
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "fields": {
-                                "str": {
-                                    "type": "str",
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "confidence": 0.0,
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "valueAddress": {
-                                        "city": "str",
-                                        "cityDistrict": "str",
-                                        "countryRegion": "str",
-                                        "house": "str",
-                                        "houseNumber": "str",
-                                        "level": "str",
-                                        "poBox": "str",
-                                        "postalCode": "str",
-                                        "road": "str",
-                                        "state": "str",
-                                        "stateDistrict": "str",
-                                        "streetAddress": "str",
-                                        "suburb": "str",
-                                        "unit": "str"
-                                    },
-                                    "valueArray": [
-                                        ...
-                                    ],
-                                    "valueBoolean": bool,
-                                    "valueCountryRegion": "str",
-                                    "valueCurrency": {
-                                        "amount": 0.0,
-                                        "currencyCode": "str",
-                                        "currencySymbol": "str"
-                                    },
-                                    "valueDate": "2020-02-20",
-                                    "valueInteger": 0,
-                                    "valueNumber": 0.0,
-                                    "valueObject": {
-                                        "str": ...
-                                    },
-                                    "valuePhoneNumber": "str",
-                                    "valueSelectionGroup": [
-                                        "str"
-                                    ],
-                                    "valueSelectionMark": "str",
-                                    "valueSignature": "str",
-                                    "valueString": "str",
-                                    "valueTime": "12:30:00"
-                                }
-                            }
-                        }
-                    ],
-                    "figures": [
-                        {
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "caption": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ],
-                                "elements": [
-                                    "str"
-                                ]
-                            },
-                            "elements": [
-                                "str"
-                            ],
-                            "footnotes": [
-                                {
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "elements": [
-                                        "str"
-                                    ]
-                                }
-                            ],
-                            "id": "str"
-                        }
-                    ],
-                    "keyValuePairs": [
-                        {
-                            "confidence": 0.0,
-                            "key": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ]
-                            },
-                            "value": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ]
-                            }
-                        }
-                    ],
-                    "languages": [
-                        {
-                            "confidence": 0.0,
-                            "locale": "str",
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ]
-                        }
-                    ],
-                    "paragraphs": [
-                        {
-                            "content": "str",
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "role": "str"
-                        }
-                    ],
-                    "sections": [
-                        {
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "elements": [
-                                "str"
-                            ]
-                        }
-                    ],
-                    "styles": [
-                        {
-                            "confidence": 0.0,
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "backgroundColor": "str",
-                            "color": "str",
-                            "fontStyle": "str",
-                            "fontWeight": "str",
-                            "isHandwritten": bool,
-                            "similarFontFamily": "str"
-                        }
-                    ],
-                    "tables": [
-                        {
-                            "cells": [
-                                {
-                                    "columnIndex": 0,
-                                    "content": "str",
-                                    "rowIndex": 0,
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "columnSpan": 0,
-                                    "elements": [
-                                        "str"
-                                    ],
-                                    "kind": "str",
-                                    "rowSpan": 0
-                                }
-                            ],
-                            "columnCount": 0,
-                            "rowCount": 0,
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "caption": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ],
-                                "elements": [
-                                    "str"
-                                ]
-                            },
-                            "footnotes": [
-                                {
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "elements": [
-                                        "str"
-                                    ]
-                                }
-                            ]
-                        }
-                    ],
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
 
     @overload
     async def begin_classify_document(
         self,
         classifier_id: str,
-        classify_request: JSON,
+        body: JSON,
         *,
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         split: Optional[Union[str, _models.SplitMode]] = None,
@@ -3409,16 +1297,15 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         :param classifier_id: Unique document classifier name. Required.
         :type classifier_id: str
-        :param classify_request: Classify request parameters. Required.
-        :type classify_request: JSON
+        :param body: Classify request parameters. Required.
+        :type body: JSON
         :keyword string_index_type: Method used to compute string offset and length. Known values are:
          "textElements", "unicodeCodePoint", and "utf16CodeUnit". Default value is None.
         :paramtype string_index_type: str or ~azure.ai.documentintelligence.models.StringIndexType
         :keyword split: Document splitting mode. Known values are: "auto", "none", and "perPage".
          Default value is None.
         :paramtype split: str or ~azure.ai.documentintelligence.models.SplitMode
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -3427,450 +1314,13 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 202
-                response == {
-                    "apiVersion": "str",
-                    "content": "str",
-                    "modelId": "str",
-                    "pages": [
-                        {
-                            "pageNumber": 0,
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "angle": 0.0,
-                            "barcodes": [
-                                {
-                                    "confidence": 0.0,
-                                    "kind": "str",
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "value": "str",
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "formulas": [
-                                {
-                                    "confidence": 0.0,
-                                    "kind": "str",
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "value": "str",
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "height": 0.0,
-                            "lines": [
-                                {
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "selectionMarks": [
-                                {
-                                    "confidence": 0.0,
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "state": "str",
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "unit": "str",
-                            "width": 0.0,
-                            "words": [
-                                {
-                                    "confidence": 0.0,
-                                    "content": "str",
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ]
-                        }
-                    ],
-                    "stringIndexType": "str",
-                    "contentFormat": "str",
-                    "documents": [
-                        {
-                            "confidence": 0.0,
-                            "docType": "str",
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "fields": {
-                                "str": {
-                                    "type": "str",
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "confidence": 0.0,
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "valueAddress": {
-                                        "city": "str",
-                                        "cityDistrict": "str",
-                                        "countryRegion": "str",
-                                        "house": "str",
-                                        "houseNumber": "str",
-                                        "level": "str",
-                                        "poBox": "str",
-                                        "postalCode": "str",
-                                        "road": "str",
-                                        "state": "str",
-                                        "stateDistrict": "str",
-                                        "streetAddress": "str",
-                                        "suburb": "str",
-                                        "unit": "str"
-                                    },
-                                    "valueArray": [
-                                        ...
-                                    ],
-                                    "valueBoolean": bool,
-                                    "valueCountryRegion": "str",
-                                    "valueCurrency": {
-                                        "amount": 0.0,
-                                        "currencyCode": "str",
-                                        "currencySymbol": "str"
-                                    },
-                                    "valueDate": "2020-02-20",
-                                    "valueInteger": 0,
-                                    "valueNumber": 0.0,
-                                    "valueObject": {
-                                        "str": ...
-                                    },
-                                    "valuePhoneNumber": "str",
-                                    "valueSelectionGroup": [
-                                        "str"
-                                    ],
-                                    "valueSelectionMark": "str",
-                                    "valueSignature": "str",
-                                    "valueString": "str",
-                                    "valueTime": "12:30:00"
-                                }
-                            }
-                        }
-                    ],
-                    "figures": [
-                        {
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "caption": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ],
-                                "elements": [
-                                    "str"
-                                ]
-                            },
-                            "elements": [
-                                "str"
-                            ],
-                            "footnotes": [
-                                {
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "elements": [
-                                        "str"
-                                    ]
-                                }
-                            ],
-                            "id": "str"
-                        }
-                    ],
-                    "keyValuePairs": [
-                        {
-                            "confidence": 0.0,
-                            "key": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ]
-                            },
-                            "value": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ]
-                            }
-                        }
-                    ],
-                    "languages": [
-                        {
-                            "confidence": 0.0,
-                            "locale": "str",
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ]
-                        }
-                    ],
-                    "paragraphs": [
-                        {
-                            "content": "str",
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "role": "str"
-                        }
-                    ],
-                    "sections": [
-                        {
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "elements": [
-                                "str"
-                            ]
-                        }
-                    ],
-                    "styles": [
-                        {
-                            "confidence": 0.0,
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "backgroundColor": "str",
-                            "color": "str",
-                            "fontStyle": "str",
-                            "fontWeight": "str",
-                            "isHandwritten": bool,
-                            "similarFontFamily": "str"
-                        }
-                    ],
-                    "tables": [
-                        {
-                            "cells": [
-                                {
-                                    "columnIndex": 0,
-                                    "content": "str",
-                                    "rowIndex": 0,
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "columnSpan": 0,
-                                    "elements": [
-                                        "str"
-                                    ],
-                                    "kind": "str",
-                                    "rowSpan": 0
-                                }
-                            ],
-                            "columnCount": 0,
-                            "rowCount": 0,
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "caption": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ],
-                                "elements": [
-                                    "str"
-                                ]
-                            },
-                            "footnotes": [
-                                {
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "elements": [
-                                        "str"
-                                    ]
-                                }
-                            ]
-                        }
-                    ],
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
 
     @overload
     async def begin_classify_document(
         self,
         classifier_id: str,
-        classify_request: IO[bytes],
+        body: IO[bytes],
         *,
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         split: Optional[Union[str, _models.SplitMode]] = None,
@@ -3882,16 +1332,15 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         :param classifier_id: Unique document classifier name. Required.
         :type classifier_id: str
-        :param classify_request: Classify request parameters. Required.
-        :type classify_request: IO[bytes]
+        :param body: Classify request parameters. Required.
+        :type body: IO[bytes]
         :keyword string_index_type: Method used to compute string offset and length. Known values are:
          "textElements", "unicodeCodePoint", and "utf16CodeUnit". Default value is None.
         :paramtype string_index_type: str or ~azure.ai.documentintelligence.models.StringIndexType
         :keyword split: Document splitting mode. Known values are: "auto", "none", and "perPage".
          Default value is None.
         :paramtype split: str or ~azure.ai.documentintelligence.models.SplitMode
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -3900,450 +1349,13 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 202
-                response == {
-                    "apiVersion": "str",
-                    "content": "str",
-                    "modelId": "str",
-                    "pages": [
-                        {
-                            "pageNumber": 0,
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "angle": 0.0,
-                            "barcodes": [
-                                {
-                                    "confidence": 0.0,
-                                    "kind": "str",
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "value": "str",
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "formulas": [
-                                {
-                                    "confidence": 0.0,
-                                    "kind": "str",
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "value": "str",
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "height": 0.0,
-                            "lines": [
-                                {
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "selectionMarks": [
-                                {
-                                    "confidence": 0.0,
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "state": "str",
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "unit": "str",
-                            "width": 0.0,
-                            "words": [
-                                {
-                                    "confidence": 0.0,
-                                    "content": "str",
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ]
-                        }
-                    ],
-                    "stringIndexType": "str",
-                    "contentFormat": "str",
-                    "documents": [
-                        {
-                            "confidence": 0.0,
-                            "docType": "str",
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "fields": {
-                                "str": {
-                                    "type": "str",
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "confidence": 0.0,
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "valueAddress": {
-                                        "city": "str",
-                                        "cityDistrict": "str",
-                                        "countryRegion": "str",
-                                        "house": "str",
-                                        "houseNumber": "str",
-                                        "level": "str",
-                                        "poBox": "str",
-                                        "postalCode": "str",
-                                        "road": "str",
-                                        "state": "str",
-                                        "stateDistrict": "str",
-                                        "streetAddress": "str",
-                                        "suburb": "str",
-                                        "unit": "str"
-                                    },
-                                    "valueArray": [
-                                        ...
-                                    ],
-                                    "valueBoolean": bool,
-                                    "valueCountryRegion": "str",
-                                    "valueCurrency": {
-                                        "amount": 0.0,
-                                        "currencyCode": "str",
-                                        "currencySymbol": "str"
-                                    },
-                                    "valueDate": "2020-02-20",
-                                    "valueInteger": 0,
-                                    "valueNumber": 0.0,
-                                    "valueObject": {
-                                        "str": ...
-                                    },
-                                    "valuePhoneNumber": "str",
-                                    "valueSelectionGroup": [
-                                        "str"
-                                    ],
-                                    "valueSelectionMark": "str",
-                                    "valueSignature": "str",
-                                    "valueString": "str",
-                                    "valueTime": "12:30:00"
-                                }
-                            }
-                        }
-                    ],
-                    "figures": [
-                        {
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "caption": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ],
-                                "elements": [
-                                    "str"
-                                ]
-                            },
-                            "elements": [
-                                "str"
-                            ],
-                            "footnotes": [
-                                {
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "elements": [
-                                        "str"
-                                    ]
-                                }
-                            ],
-                            "id": "str"
-                        }
-                    ],
-                    "keyValuePairs": [
-                        {
-                            "confidence": 0.0,
-                            "key": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ]
-                            },
-                            "value": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ]
-                            }
-                        }
-                    ],
-                    "languages": [
-                        {
-                            "confidence": 0.0,
-                            "locale": "str",
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ]
-                        }
-                    ],
-                    "paragraphs": [
-                        {
-                            "content": "str",
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "role": "str"
-                        }
-                    ],
-                    "sections": [
-                        {
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "elements": [
-                                "str"
-                            ]
-                        }
-                    ],
-                    "styles": [
-                        {
-                            "confidence": 0.0,
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "backgroundColor": "str",
-                            "color": "str",
-                            "fontStyle": "str",
-                            "fontWeight": "str",
-                            "isHandwritten": bool,
-                            "similarFontFamily": "str"
-                        }
-                    ],
-                    "tables": [
-                        {
-                            "cells": [
-                                {
-                                    "columnIndex": 0,
-                                    "content": "str",
-                                    "rowIndex": 0,
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "columnSpan": 0,
-                                    "elements": [
-                                        "str"
-                                    ],
-                                    "kind": "str",
-                                    "rowSpan": 0
-                                }
-                            ],
-                            "columnCount": 0,
-                            "rowCount": 0,
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "caption": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ],
-                                "elements": [
-                                    "str"
-                                ]
-                            },
-                            "footnotes": [
-                                {
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "elements": [
-                                        "str"
-                                    ]
-                                }
-                            ]
-                        }
-                    ],
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
 
     @distributed_trace_async
     async def begin_classify_document(
         self,
         classifier_id: str,
-        classify_request: Union[_models.ClassifyDocumentRequest, JSON, IO[bytes]],
+        body: Union[_models.ClassifyDocumentRequest, JSON, IO[bytes]],
         *,
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         split: Optional[Union[str, _models.SplitMode]] = None,
@@ -4354,466 +1366,21 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
         :param classifier_id: Unique document classifier name. Required.
         :type classifier_id: str
-        :param classify_request: Classify request parameters. Is one of the following types:
+        :param body: Classify request parameters. Is one of the following types:
          ClassifyDocumentRequest, JSON, IO[bytes] Required.
-        :type classify_request: ~azure.ai.documentintelligence.models.ClassifyDocumentRequest or JSON
-         or IO[bytes]
+        :type body: ~azure.ai.documentintelligence.models.ClassifyDocumentRequest or JSON or IO[bytes]
         :keyword string_index_type: Method used to compute string offset and length. Known values are:
          "textElements", "unicodeCodePoint", and "utf16CodeUnit". Default value is None.
         :paramtype string_index_type: str or ~azure.ai.documentintelligence.models.StringIndexType
         :keyword split: Document splitting mode. Known values are: "auto", "none", and "perPage".
          Default value is None.
         :paramtype split: str or ~azure.ai.documentintelligence.models.SplitMode
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
+        :keyword pages: 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
         :paramtype pages: str
         :return: An instance of AsyncLROPoller that returns AnalyzeResult. The AnalyzeResult is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                classify_request = {
-                    "base64Source": bytes("bytes", encoding="utf-8"),
-                    "urlSource": "str"
-                }
-
-                # response body for status code(s): 202
-                response == {
-                    "apiVersion": "str",
-                    "content": "str",
-                    "modelId": "str",
-                    "pages": [
-                        {
-                            "pageNumber": 0,
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "angle": 0.0,
-                            "barcodes": [
-                                {
-                                    "confidence": 0.0,
-                                    "kind": "str",
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "value": "str",
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "formulas": [
-                                {
-                                    "confidence": 0.0,
-                                    "kind": "str",
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "value": "str",
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "height": 0.0,
-                            "lines": [
-                                {
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "selectionMarks": [
-                                {
-                                    "confidence": 0.0,
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "state": "str",
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "unit": "str",
-                            "width": 0.0,
-                            "words": [
-                                {
-                                    "confidence": 0.0,
-                                    "content": "str",
-                                    "span": {
-                                        "length": 0,
-                                        "offset": 0
-                                    },
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ]
-                        }
-                    ],
-                    "stringIndexType": "str",
-                    "contentFormat": "str",
-                    "documents": [
-                        {
-                            "confidence": 0.0,
-                            "docType": "str",
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "fields": {
-                                "str": {
-                                    "type": "str",
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "confidence": 0.0,
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "valueAddress": {
-                                        "city": "str",
-                                        "cityDistrict": "str",
-                                        "countryRegion": "str",
-                                        "house": "str",
-                                        "houseNumber": "str",
-                                        "level": "str",
-                                        "poBox": "str",
-                                        "postalCode": "str",
-                                        "road": "str",
-                                        "state": "str",
-                                        "stateDistrict": "str",
-                                        "streetAddress": "str",
-                                        "suburb": "str",
-                                        "unit": "str"
-                                    },
-                                    "valueArray": [
-                                        ...
-                                    ],
-                                    "valueBoolean": bool,
-                                    "valueCountryRegion": "str",
-                                    "valueCurrency": {
-                                        "amount": 0.0,
-                                        "currencyCode": "str",
-                                        "currencySymbol": "str"
-                                    },
-                                    "valueDate": "2020-02-20",
-                                    "valueInteger": 0,
-                                    "valueNumber": 0.0,
-                                    "valueObject": {
-                                        "str": ...
-                                    },
-                                    "valuePhoneNumber": "str",
-                                    "valueSelectionGroup": [
-                                        "str"
-                                    ],
-                                    "valueSelectionMark": "str",
-                                    "valueSignature": "str",
-                                    "valueString": "str",
-                                    "valueTime": "12:30:00"
-                                }
-                            }
-                        }
-                    ],
-                    "figures": [
-                        {
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "caption": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ],
-                                "elements": [
-                                    "str"
-                                ]
-                            },
-                            "elements": [
-                                "str"
-                            ],
-                            "footnotes": [
-                                {
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "elements": [
-                                        "str"
-                                    ]
-                                }
-                            ],
-                            "id": "str"
-                        }
-                    ],
-                    "keyValuePairs": [
-                        {
-                            "confidence": 0.0,
-                            "key": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ]
-                            },
-                            "value": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ]
-                            }
-                        }
-                    ],
-                    "languages": [
-                        {
-                            "confidence": 0.0,
-                            "locale": "str",
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ]
-                        }
-                    ],
-                    "paragraphs": [
-                        {
-                            "content": "str",
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "role": "str"
-                        }
-                    ],
-                    "sections": [
-                        {
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "elements": [
-                                "str"
-                            ]
-                        }
-                    ],
-                    "styles": [
-                        {
-                            "confidence": 0.0,
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "backgroundColor": "str",
-                            "color": "str",
-                            "fontStyle": "str",
-                            "fontWeight": "str",
-                            "isHandwritten": bool,
-                            "similarFontFamily": "str"
-                        }
-                    ],
-                    "tables": [
-                        {
-                            "cells": [
-                                {
-                                    "columnIndex": 0,
-                                    "content": "str",
-                                    "rowIndex": 0,
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "columnSpan": 0,
-                                    "elements": [
-                                        "str"
-                                    ],
-                                    "kind": "str",
-                                    "rowSpan": 0
-                                }
-                            ],
-                            "columnCount": 0,
-                            "rowCount": 0,
-                            "spans": [
-                                {
-                                    "length": 0,
-                                    "offset": 0
-                                }
-                            ],
-                            "boundingRegions": [
-                                {
-                                    "pageNumber": 0,
-                                    "polygon": [
-                                        0.0
-                                    ]
-                                }
-                            ],
-                            "caption": {
-                                "content": "str",
-                                "spans": [
-                                    {
-                                        "length": 0,
-                                        "offset": 0
-                                    }
-                                ],
-                                "boundingRegions": [
-                                    {
-                                        "pageNumber": 0,
-                                        "polygon": [
-                                            0.0
-                                        ]
-                                    }
-                                ],
-                                "elements": [
-                                    "str"
-                                ]
-                            },
-                            "footnotes": [
-                                {
-                                    "content": "str",
-                                    "spans": [
-                                        {
-                                            "length": 0,
-                                            "offset": 0
-                                        }
-                                    ],
-                                    "boundingRegions": [
-                                        {
-                                            "pageNumber": 0,
-                                            "polygon": [
-                                                0.0
-                                            ]
-                                        }
-                                    ],
-                                    "elements": [
-                                        "str"
-                                    ]
-                                }
-                            ]
-                        }
-                    ],
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -4826,7 +1393,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         if cont_token is None:
             raw_result = await self._classify_document_initial(
                 classifier_id=classifier_id,
-                classify_request=classify_request,
+                body=body,
                 string_index_type=string_index_type,
                 split=split,
                 pages=pages,
@@ -4882,9 +1449,9 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 ):
 
     async def _build_document_model_initial(
-        self, build_request: Union[_models.BuildDocumentModelRequest, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.BuildDocumentModelRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4900,10 +1467,10 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(build_request, (IOBase, bytes)):
-            _content = build_request
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(build_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_document_intelligence_administration_build_document_model_request(
             content_type=content_type,
@@ -4930,7 +1497,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -4946,12 +1513,12 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
     @overload
     async def begin_build_document_model(
-        self, build_request: _models.BuildDocumentModelRequest, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _models.BuildDocumentModelRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentModelDetails]:
         """Builds a custom document analysis model.
 
-        :param build_request: Build request parameters. Required.
-        :type build_request: ~azure.ai.documentintelligence.models.BuildDocumentModelRequest
+        :param body: Build request parameters. Required.
+        :type body: ~azure.ai.documentintelligence.models.BuildDocumentModelRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4960,99 +1527,16 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.DocumentModelDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                build_request = {
-                    "buildMode": "str",
-                    "modelId": "str",
-                    "allowOverwrite": bool,
-                    "azureBlobFileListSource": {
-                        "containerUrl": "str",
-                        "fileList": "str"
-                    },
-                    "azureBlobSource": {
-                        "containerUrl": "str",
-                        "prefix": "str"
-                    },
-                    "description": "str",
-                    "maxTrainingHours": 0.0,
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # response body for status code(s): 202
-                response == {
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "modelId": "str",
-                    "apiVersion": "str",
-                    "azureBlobFileListSource": {
-                        "containerUrl": "str",
-                        "fileList": "str"
-                    },
-                    "azureBlobSource": {
-                        "containerUrl": "str",
-                        "prefix": "str"
-                    },
-                    "buildMode": "str",
-                    "classifierId": "str",
-                    "description": "str",
-                    "docTypes": {
-                        "str": {
-                            "buildMode": "str",
-                            "confidenceThreshold": 0.0,
-                            "description": "str",
-                            "features": [
-                                "str"
-                            ],
-                            "fieldConfidence": {
-                                "str": 0.0
-                            },
-                            "fieldSchema": {
-                                "str": {
-                                    "type": "str",
-                                    "description": "str",
-                                    "example": "str",
-                                    "items": ...,
-                                    "properties": {
-                                        "str": ...
-                                    }
-                                }
-                            },
-                            "maxDocumentsToAnalyze": 0,
-                            "modelId": "str",
-                            "queryFields": [
-                                "str"
-                            ]
-                        }
-                    },
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "split": "str",
-                    "tags": {
-                        "str": "str"
-                    },
-                    "trainingHours": 0.0,
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
 
     @overload
     async def begin_build_document_model(
-        self, build_request: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentModelDetails]:
         """Builds a custom document analysis model.
 
-        :param build_request: Build request parameters. Required.
-        :type build_request: JSON
+        :param body: Build request parameters. Required.
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5061,79 +1545,16 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.DocumentModelDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 202
-                response == {
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "modelId": "str",
-                    "apiVersion": "str",
-                    "azureBlobFileListSource": {
-                        "containerUrl": "str",
-                        "fileList": "str"
-                    },
-                    "azureBlobSource": {
-                        "containerUrl": "str",
-                        "prefix": "str"
-                    },
-                    "buildMode": "str",
-                    "classifierId": "str",
-                    "description": "str",
-                    "docTypes": {
-                        "str": {
-                            "buildMode": "str",
-                            "confidenceThreshold": 0.0,
-                            "description": "str",
-                            "features": [
-                                "str"
-                            ],
-                            "fieldConfidence": {
-                                "str": 0.0
-                            },
-                            "fieldSchema": {
-                                "str": {
-                                    "type": "str",
-                                    "description": "str",
-                                    "example": "str",
-                                    "items": ...,
-                                    "properties": {
-                                        "str": ...
-                                    }
-                                }
-                            },
-                            "maxDocumentsToAnalyze": 0,
-                            "modelId": "str",
-                            "queryFields": [
-                                "str"
-                            ]
-                        }
-                    },
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "split": "str",
-                    "tags": {
-                        "str": "str"
-                    },
-                    "trainingHours": 0.0,
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
 
     @overload
     async def begin_build_document_model(
-        self, build_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentModelDetails]:
         """Builds a custom document analysis model.
 
-        :param build_request: Build request parameters. Required.
-        :type build_request: IO[bytes]
+        :param body: Build request parameters. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5142,169 +1563,23 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.DocumentModelDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 202
-                response == {
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "modelId": "str",
-                    "apiVersion": "str",
-                    "azureBlobFileListSource": {
-                        "containerUrl": "str",
-                        "fileList": "str"
-                    },
-                    "azureBlobSource": {
-                        "containerUrl": "str",
-                        "prefix": "str"
-                    },
-                    "buildMode": "str",
-                    "classifierId": "str",
-                    "description": "str",
-                    "docTypes": {
-                        "str": {
-                            "buildMode": "str",
-                            "confidenceThreshold": 0.0,
-                            "description": "str",
-                            "features": [
-                                "str"
-                            ],
-                            "fieldConfidence": {
-                                "str": 0.0
-                            },
-                            "fieldSchema": {
-                                "str": {
-                                    "type": "str",
-                                    "description": "str",
-                                    "example": "str",
-                                    "items": ...,
-                                    "properties": {
-                                        "str": ...
-                                    }
-                                }
-                            },
-                            "maxDocumentsToAnalyze": 0,
-                            "modelId": "str",
-                            "queryFields": [
-                                "str"
-                            ]
-                        }
-                    },
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "split": "str",
-                    "tags": {
-                        "str": "str"
-                    },
-                    "trainingHours": 0.0,
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
 
     @distributed_trace_async
     async def begin_build_document_model(
-        self, build_request: Union[_models.BuildDocumentModelRequest, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.BuildDocumentModelRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentModelDetails]:
         """Builds a custom document analysis model.
 
-        :param build_request: Build request parameters. Is one of the following types:
+        :param body: Build request parameters. Is one of the following types:
          BuildDocumentModelRequest, JSON, IO[bytes] Required.
-        :type build_request: ~azure.ai.documentintelligence.models.BuildDocumentModelRequest or JSON or
+        :type body: ~azure.ai.documentintelligence.models.BuildDocumentModelRequest or JSON or
          IO[bytes]
         :return: An instance of AsyncLROPoller that returns DocumentModelDetails. The
          DocumentModelDetails is compatible with MutableMapping
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.DocumentModelDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                build_request = {
-                    "buildMode": "str",
-                    "modelId": "str",
-                    "allowOverwrite": bool,
-                    "azureBlobFileListSource": {
-                        "containerUrl": "str",
-                        "fileList": "str"
-                    },
-                    "azureBlobSource": {
-                        "containerUrl": "str",
-                        "prefix": "str"
-                    },
-                    "description": "str",
-                    "maxTrainingHours": 0.0,
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # response body for status code(s): 202
-                response == {
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "modelId": "str",
-                    "apiVersion": "str",
-                    "azureBlobFileListSource": {
-                        "containerUrl": "str",
-                        "fileList": "str"
-                    },
-                    "azureBlobSource": {
-                        "containerUrl": "str",
-                        "prefix": "str"
-                    },
-                    "buildMode": "str",
-                    "classifierId": "str",
-                    "description": "str",
-                    "docTypes": {
-                        "str": {
-                            "buildMode": "str",
-                            "confidenceThreshold": 0.0,
-                            "description": "str",
-                            "features": [
-                                "str"
-                            ],
-                            "fieldConfidence": {
-                                "str": 0.0
-                            },
-                            "fieldSchema": {
-                                "str": {
-                                    "type": "str",
-                                    "description": "str",
-                                    "example": "str",
-                                    "items": ...,
-                                    "properties": {
-                                        "str": ...
-                                    }
-                                }
-                            },
-                            "maxDocumentsToAnalyze": 0,
-                            "modelId": "str",
-                            "queryFields": [
-                                "str"
-                            ]
-                        }
-                    },
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "split": "str",
-                    "tags": {
-                        "str": "str"
-                    },
-                    "trainingHours": 0.0,
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -5316,12 +1591,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._build_document_model_initial(
-                build_request=build_request,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
+                body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -5364,9 +1634,9 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         )
 
     async def _compose_model_initial(
-        self, compose_request: Union[_models.ComposeDocumentModelRequest, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.ComposeDocumentModelRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5382,10 +1652,10 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(compose_request, (IOBase, bytes)):
-            _content = compose_request
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(compose_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_document_intelligence_administration_compose_model_request(
             content_type=content_type,
@@ -5412,7 +1682,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -5428,16 +1698,12 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
     @overload
     async def begin_compose_model(
-        self,
-        compose_request: _models.ComposeDocumentModelRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: _models.ComposeDocumentModelRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentModelDetails]:
         """Creates a new document model from document types of existing document models.
 
-        :param compose_request: Compose request parameters. Required.
-        :type compose_request: ~azure.ai.documentintelligence.models.ComposeDocumentModelRequest
+        :param body: Compose request parameters. Required.
+        :type body: ~azure.ai.documentintelligence.models.ComposeDocumentModelRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5446,119 +1712,16 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.DocumentModelDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                compose_request = {
-                    "classifierId": "str",
-                    "docTypes": {
-                        "str": {
-                            "buildMode": "str",
-                            "confidenceThreshold": 0.0,
-                            "description": "str",
-                            "features": [
-                                "str"
-                            ],
-                            "fieldConfidence": {
-                                "str": 0.0
-                            },
-                            "fieldSchema": {
-                                "str": {
-                                    "type": "str",
-                                    "description": "str",
-                                    "example": "str",
-                                    "items": ...,
-                                    "properties": {
-                                        "str": ...
-                                    }
-                                }
-                            },
-                            "maxDocumentsToAnalyze": 0,
-                            "modelId": "str",
-                            "queryFields": [
-                                "str"
-                            ]
-                        }
-                    },
-                    "modelId": "str",
-                    "description": "str",
-                    "split": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # response body for status code(s): 202
-                response == {
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "modelId": "str",
-                    "apiVersion": "str",
-                    "azureBlobFileListSource": {
-                        "containerUrl": "str",
-                        "fileList": "str"
-                    },
-                    "azureBlobSource": {
-                        "containerUrl": "str",
-                        "prefix": "str"
-                    },
-                    "buildMode": "str",
-                    "classifierId": "str",
-                    "description": "str",
-                    "docTypes": {
-                        "str": {
-                            "buildMode": "str",
-                            "confidenceThreshold": 0.0,
-                            "description": "str",
-                            "features": [
-                                "str"
-                            ],
-                            "fieldConfidence": {
-                                "str": 0.0
-                            },
-                            "fieldSchema": {
-                                "str": {
-                                    "type": "str",
-                                    "description": "str",
-                                    "example": "str",
-                                    "items": ...,
-                                    "properties": {
-                                        "str": ...
-                                    }
-                                }
-                            },
-                            "maxDocumentsToAnalyze": 0,
-                            "modelId": "str",
-                            "queryFields": [
-                                "str"
-                            ]
-                        }
-                    },
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "split": "str",
-                    "tags": {
-                        "str": "str"
-                    },
-                    "trainingHours": 0.0,
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
 
     @overload
     async def begin_compose_model(
-        self, compose_request: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentModelDetails]:
         """Creates a new document model from document types of existing document models.
 
-        :param compose_request: Compose request parameters. Required.
-        :type compose_request: JSON
+        :param body: Compose request parameters. Required.
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5567,79 +1730,16 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.DocumentModelDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 202
-                response == {
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "modelId": "str",
-                    "apiVersion": "str",
-                    "azureBlobFileListSource": {
-                        "containerUrl": "str",
-                        "fileList": "str"
-                    },
-                    "azureBlobSource": {
-                        "containerUrl": "str",
-                        "prefix": "str"
-                    },
-                    "buildMode": "str",
-                    "classifierId": "str",
-                    "description": "str",
-                    "docTypes": {
-                        "str": {
-                            "buildMode": "str",
-                            "confidenceThreshold": 0.0,
-                            "description": "str",
-                            "features": [
-                                "str"
-                            ],
-                            "fieldConfidence": {
-                                "str": 0.0
-                            },
-                            "fieldSchema": {
-                                "str": {
-                                    "type": "str",
-                                    "description": "str",
-                                    "example": "str",
-                                    "items": ...,
-                                    "properties": {
-                                        "str": ...
-                                    }
-                                }
-                            },
-                            "maxDocumentsToAnalyze": 0,
-                            "modelId": "str",
-                            "queryFields": [
-                                "str"
-                            ]
-                        }
-                    },
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "split": "str",
-                    "tags": {
-                        "str": "str"
-                    },
-                    "trainingHours": 0.0,
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
 
     @overload
     async def begin_compose_model(
-        self, compose_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentModelDetails]:
         """Creates a new document model from document types of existing document models.
 
-        :param compose_request: Compose request parameters. Required.
-        :type compose_request: IO[bytes]
+        :param body: Compose request parameters. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5648,189 +1748,23 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.DocumentModelDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 202
-                response == {
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "modelId": "str",
-                    "apiVersion": "str",
-                    "azureBlobFileListSource": {
-                        "containerUrl": "str",
-                        "fileList": "str"
-                    },
-                    "azureBlobSource": {
-                        "containerUrl": "str",
-                        "prefix": "str"
-                    },
-                    "buildMode": "str",
-                    "classifierId": "str",
-                    "description": "str",
-                    "docTypes": {
-                        "str": {
-                            "buildMode": "str",
-                            "confidenceThreshold": 0.0,
-                            "description": "str",
-                            "features": [
-                                "str"
-                            ],
-                            "fieldConfidence": {
-                                "str": 0.0
-                            },
-                            "fieldSchema": {
-                                "str": {
-                                    "type": "str",
-                                    "description": "str",
-                                    "example": "str",
-                                    "items": ...,
-                                    "properties": {
-                                        "str": ...
-                                    }
-                                }
-                            },
-                            "maxDocumentsToAnalyze": 0,
-                            "modelId": "str",
-                            "queryFields": [
-                                "str"
-                            ]
-                        }
-                    },
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "split": "str",
-                    "tags": {
-                        "str": "str"
-                    },
-                    "trainingHours": 0.0,
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
 
     @distributed_trace_async
     async def begin_compose_model(
-        self, compose_request: Union[_models.ComposeDocumentModelRequest, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.ComposeDocumentModelRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentModelDetails]:
         """Creates a new document model from document types of existing document models.
 
-        :param compose_request: Compose request parameters. Is one of the following types:
+        :param body: Compose request parameters. Is one of the following types:
          ComposeDocumentModelRequest, JSON, IO[bytes] Required.
-        :type compose_request: ~azure.ai.documentintelligence.models.ComposeDocumentModelRequest or
-         JSON or IO[bytes]
+        :type body: ~azure.ai.documentintelligence.models.ComposeDocumentModelRequest or JSON or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns DocumentModelDetails. The
          DocumentModelDetails is compatible with MutableMapping
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.DocumentModelDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                compose_request = {
-                    "classifierId": "str",
-                    "docTypes": {
-                        "str": {
-                            "buildMode": "str",
-                            "confidenceThreshold": 0.0,
-                            "description": "str",
-                            "features": [
-                                "str"
-                            ],
-                            "fieldConfidence": {
-                                "str": 0.0
-                            },
-                            "fieldSchema": {
-                                "str": {
-                                    "type": "str",
-                                    "description": "str",
-                                    "example": "str",
-                                    "items": ...,
-                                    "properties": {
-                                        "str": ...
-                                    }
-                                }
-                            },
-                            "maxDocumentsToAnalyze": 0,
-                            "modelId": "str",
-                            "queryFields": [
-                                "str"
-                            ]
-                        }
-                    },
-                    "modelId": "str",
-                    "description": "str",
-                    "split": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # response body for status code(s): 202
-                response == {
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "modelId": "str",
-                    "apiVersion": "str",
-                    "azureBlobFileListSource": {
-                        "containerUrl": "str",
-                        "fileList": "str"
-                    },
-                    "azureBlobSource": {
-                        "containerUrl": "str",
-                        "prefix": "str"
-                    },
-                    "buildMode": "str",
-                    "classifierId": "str",
-                    "description": "str",
-                    "docTypes": {
-                        "str": {
-                            "buildMode": "str",
-                            "confidenceThreshold": 0.0,
-                            "description": "str",
-                            "features": [
-                                "str"
-                            ],
-                            "fieldConfidence": {
-                                "str": 0.0
-                            },
-                            "fieldSchema": {
-                                "str": {
-                                    "type": "str",
-                                    "description": "str",
-                                    "example": "str",
-                                    "items": ...,
-                                    "properties": {
-                                        "str": ...
-                                    }
-                                }
-                            },
-                            "maxDocumentsToAnalyze": 0,
-                            "modelId": "str",
-                            "queryFields": [
-                                "str"
-                            ]
-                        }
-                    },
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "split": "str",
-                    "tags": {
-                        "str": "str"
-                    },
-                    "trainingHours": 0.0,
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -5842,12 +1776,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._compose_model_initial(
-                compose_request=compose_request,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
+                body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -5891,145 +1820,70 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
     @overload
     async def authorize_model_copy(
-        self,
-        authorize_copy_request: _models.AuthorizeCopyRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.CopyAuthorization:
+        self, body: _models.AuthorizeCopyRequest, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ModelCopyAuthorization:
         """Generates authorization to copy a document model to this location with
         specified modelId and optional description.
 
-        :param authorize_copy_request: Authorize copy request parameters. Required.
-        :type authorize_copy_request: ~azure.ai.documentintelligence.models.AuthorizeCopyRequest
+        :param body: Authorize copy request parameters. Required.
+        :type body: ~azure.ai.documentintelligence.models.AuthorizeCopyRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: CopyAuthorization. The CopyAuthorization is compatible with MutableMapping
-        :rtype: ~azure.ai.documentintelligence.models.CopyAuthorization
+        :return: ModelCopyAuthorization. The ModelCopyAuthorization is compatible with MutableMapping
+        :rtype: ~azure.ai.documentintelligence.models.ModelCopyAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                authorize_copy_request = {
-                    "modelId": "str",
-                    "description": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "accessToken": "str",
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "targetModelId": "str",
-                    "targetModelLocation": "str",
-                    "targetResourceId": "str",
-                    "targetResourceRegion": "str"
-                }
         """
 
     @overload
     async def authorize_model_copy(
-        self, authorize_copy_request: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.CopyAuthorization:
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ModelCopyAuthorization:
         """Generates authorization to copy a document model to this location with
         specified modelId and optional description.
 
-        :param authorize_copy_request: Authorize copy request parameters. Required.
-        :type authorize_copy_request: JSON
+        :param body: Authorize copy request parameters. Required.
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: CopyAuthorization. The CopyAuthorization is compatible with MutableMapping
-        :rtype: ~azure.ai.documentintelligence.models.CopyAuthorization
+        :return: ModelCopyAuthorization. The ModelCopyAuthorization is compatible with MutableMapping
+        :rtype: ~azure.ai.documentintelligence.models.ModelCopyAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "accessToken": "str",
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "targetModelId": "str",
-                    "targetModelLocation": "str",
-                    "targetResourceId": "str",
-                    "targetResourceRegion": "str"
-                }
         """
 
     @overload
     async def authorize_model_copy(
-        self, authorize_copy_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.CopyAuthorization:
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ModelCopyAuthorization:
         """Generates authorization to copy a document model to this location with
         specified modelId and optional description.
 
-        :param authorize_copy_request: Authorize copy request parameters. Required.
-        :type authorize_copy_request: IO[bytes]
+        :param body: Authorize copy request parameters. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: CopyAuthorization. The CopyAuthorization is compatible with MutableMapping
-        :rtype: ~azure.ai.documentintelligence.models.CopyAuthorization
+        :return: ModelCopyAuthorization. The ModelCopyAuthorization is compatible with MutableMapping
+        :rtype: ~azure.ai.documentintelligence.models.ModelCopyAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "accessToken": "str",
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "targetModelId": "str",
-                    "targetModelLocation": "str",
-                    "targetResourceId": "str",
-                    "targetResourceRegion": "str"
-                }
         """
 
     @distributed_trace_async
     async def authorize_model_copy(
-        self, authorize_copy_request: Union[_models.AuthorizeCopyRequest, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.CopyAuthorization:
+        self, body: Union[_models.AuthorizeCopyRequest, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.ModelCopyAuthorization:
         """Generates authorization to copy a document model to this location with
         specified modelId and optional description.
 
-        :param authorize_copy_request: Authorize copy request parameters. Is one of the following
-         types: AuthorizeCopyRequest, JSON, IO[bytes] Required.
-        :type authorize_copy_request: ~azure.ai.documentintelligence.models.AuthorizeCopyRequest or
-         JSON or IO[bytes]
-        :return: CopyAuthorization. The CopyAuthorization is compatible with MutableMapping
-        :rtype: ~azure.ai.documentintelligence.models.CopyAuthorization
+        :param body: Authorize copy request parameters. Is one of the following types:
+         AuthorizeCopyRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.documentintelligence.models.AuthorizeCopyRequest or JSON or IO[bytes]
+        :return: ModelCopyAuthorization. The ModelCopyAuthorization is compatible with MutableMapping
+        :rtype: ~azure.ai.documentintelligence.models.ModelCopyAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                authorize_copy_request = {
-                    "modelId": "str",
-                    "description": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "accessToken": "str",
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "targetModelId": "str",
-                    "targetModelLocation": "str",
-                    "targetResourceId": "str",
-                    "targetResourceRegion": "str"
-                }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6041,14 +1895,14 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.CopyAuthorization] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ModelCopyAuthorization] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(authorize_copy_request, (IOBase, bytes)):
-            _content = authorize_copy_request
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(authorize_copy_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_document_intelligence_administration_authorize_model_copy_request(
             content_type=content_type,
@@ -6076,13 +1930,13 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.CopyAuthorization, response.json())
+            deserialized = _deserialize(_models.ModelCopyAuthorization, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6090,9 +1944,9 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         return deserialized  # type: ignore
 
     async def _copy_model_to_initial(
-        self, model_id: str, copy_to_request: Union[_models.CopyAuthorization, JSON, IO[bytes]], **kwargs: Any
+        self, model_id: str, body: Union[_models.ModelCopyAuthorization, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6108,10 +1962,10 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(copy_to_request, (IOBase, bytes)):
-            _content = copy_to_request
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(copy_to_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_document_intelligence_administration_copy_model_to_request(
             model_id=model_id,
@@ -6139,7 +1993,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6157,7 +2011,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
     async def begin_copy_model_to(
         self,
         model_id: str,
-        copy_to_request: _models.CopyAuthorization,
+        body: _models.ModelCopyAuthorization,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6166,8 +2020,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :param copy_to_request: Copy to request parameters. Required.
-        :type copy_to_request: ~azure.ai.documentintelligence.models.CopyAuthorization
+        :param body: Copy to request parameters. Required.
+        :type body: ~azure.ai.documentintelligence.models.ModelCopyAuthorization
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6176,91 +2030,18 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.DocumentModelDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                copy_to_request = {
-                    "accessToken": "str",
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "targetModelId": "str",
-                    "targetModelLocation": "str",
-                    "targetResourceId": "str",
-                    "targetResourceRegion": "str"
-                }
-
-                # response body for status code(s): 202
-                response == {
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "modelId": "str",
-                    "apiVersion": "str",
-                    "azureBlobFileListSource": {
-                        "containerUrl": "str",
-                        "fileList": "str"
-                    },
-                    "azureBlobSource": {
-                        "containerUrl": "str",
-                        "prefix": "str"
-                    },
-                    "buildMode": "str",
-                    "classifierId": "str",
-                    "description": "str",
-                    "docTypes": {
-                        "str": {
-                            "buildMode": "str",
-                            "confidenceThreshold": 0.0,
-                            "description": "str",
-                            "features": [
-                                "str"
-                            ],
-                            "fieldConfidence": {
-                                "str": 0.0
-                            },
-                            "fieldSchema": {
-                                "str": {
-                                    "type": "str",
-                                    "description": "str",
-                                    "example": "str",
-                                    "items": ...,
-                                    "properties": {
-                                        "str": ...
-                                    }
-                                }
-                            },
-                            "maxDocumentsToAnalyze": 0,
-                            "modelId": "str",
-                            "queryFields": [
-                                "str"
-                            ]
-                        }
-                    },
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "split": "str",
-                    "tags": {
-                        "str": "str"
-                    },
-                    "trainingHours": 0.0,
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
 
     @overload
     async def begin_copy_model_to(
-        self, model_id: str, copy_to_request: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, model_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentModelDetails]:
         """Copies document model to the target resource, region, and modelId.
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :param copy_to_request: Copy to request parameters. Required.
-        :type copy_to_request: JSON
+        :param body: Copy to request parameters. Required.
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6269,81 +2050,18 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.DocumentModelDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 202
-                response == {
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "modelId": "str",
-                    "apiVersion": "str",
-                    "azureBlobFileListSource": {
-                        "containerUrl": "str",
-                        "fileList": "str"
-                    },
-                    "azureBlobSource": {
-                        "containerUrl": "str",
-                        "prefix": "str"
-                    },
-                    "buildMode": "str",
-                    "classifierId": "str",
-                    "description": "str",
-                    "docTypes": {
-                        "str": {
-                            "buildMode": "str",
-                            "confidenceThreshold": 0.0,
-                            "description": "str",
-                            "features": [
-                                "str"
-                            ],
-                            "fieldConfidence": {
-                                "str": 0.0
-                            },
-                            "fieldSchema": {
-                                "str": {
-                                    "type": "str",
-                                    "description": "str",
-                                    "example": "str",
-                                    "items": ...,
-                                    "properties": {
-                                        "str": ...
-                                    }
-                                }
-                            },
-                            "maxDocumentsToAnalyze": 0,
-                            "modelId": "str",
-                            "queryFields": [
-                                "str"
-                            ]
-                        }
-                    },
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "split": "str",
-                    "tags": {
-                        "str": "str"
-                    },
-                    "trainingHours": 0.0,
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
 
     @overload
     async def begin_copy_model_to(
-        self, model_id: str, copy_to_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, model_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentModelDetails]:
         """Copies document model to the target resource, region, and modelId.
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :param copy_to_request: Copy to request parameters. Required.
-        :type copy_to_request: IO[bytes]
+        :param body: Copy to request parameters. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6352,161 +2070,24 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.DocumentModelDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 202
-                response == {
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "modelId": "str",
-                    "apiVersion": "str",
-                    "azureBlobFileListSource": {
-                        "containerUrl": "str",
-                        "fileList": "str"
-                    },
-                    "azureBlobSource": {
-                        "containerUrl": "str",
-                        "prefix": "str"
-                    },
-                    "buildMode": "str",
-                    "classifierId": "str",
-                    "description": "str",
-                    "docTypes": {
-                        "str": {
-                            "buildMode": "str",
-                            "confidenceThreshold": 0.0,
-                            "description": "str",
-                            "features": [
-                                "str"
-                            ],
-                            "fieldConfidence": {
-                                "str": 0.0
-                            },
-                            "fieldSchema": {
-                                "str": {
-                                    "type": "str",
-                                    "description": "str",
-                                    "example": "str",
-                                    "items": ...,
-                                    "properties": {
-                                        "str": ...
-                                    }
-                                }
-                            },
-                            "maxDocumentsToAnalyze": 0,
-                            "modelId": "str",
-                            "queryFields": [
-                                "str"
-                            ]
-                        }
-                    },
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "split": "str",
-                    "tags": {
-                        "str": "str"
-                    },
-                    "trainingHours": 0.0,
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
 
     @distributed_trace_async
     async def begin_copy_model_to(
-        self, model_id: str, copy_to_request: Union[_models.CopyAuthorization, JSON, IO[bytes]], **kwargs: Any
+        self, model_id: str, body: Union[_models.ModelCopyAuthorization, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentModelDetails]:
         """Copies document model to the target resource, region, and modelId.
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :param copy_to_request: Copy to request parameters. Is one of the following types:
-         CopyAuthorization, JSON, IO[bytes] Required.
-        :type copy_to_request: ~azure.ai.documentintelligence.models.CopyAuthorization or JSON or
-         IO[bytes]
+        :param body: Copy to request parameters. Is one of the following types: ModelCopyAuthorization,
+         JSON, IO[bytes] Required.
+        :type body: ~azure.ai.documentintelligence.models.ModelCopyAuthorization or JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DocumentModelDetails. The
          DocumentModelDetails is compatible with MutableMapping
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.DocumentModelDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                copy_to_request = {
-                    "accessToken": "str",
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "targetModelId": "str",
-                    "targetModelLocation": "str",
-                    "targetResourceId": "str",
-                    "targetResourceRegion": "str"
-                }
-
-                # response body for status code(s): 202
-                response == {
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "modelId": "str",
-                    "apiVersion": "str",
-                    "azureBlobFileListSource": {
-                        "containerUrl": "str",
-                        "fileList": "str"
-                    },
-                    "azureBlobSource": {
-                        "containerUrl": "str",
-                        "prefix": "str"
-                    },
-                    "buildMode": "str",
-                    "classifierId": "str",
-                    "description": "str",
-                    "docTypes": {
-                        "str": {
-                            "buildMode": "str",
-                            "confidenceThreshold": 0.0,
-                            "description": "str",
-                            "features": [
-                                "str"
-                            ],
-                            "fieldConfidence": {
-                                "str": 0.0
-                            },
-                            "fieldSchema": {
-                                "str": {
-                                    "type": "str",
-                                    "description": "str",
-                                    "example": "str",
-                                    "items": ...,
-                                    "properties": {
-                                        "str": ...
-                                    }
-                                }
-                            },
-                            "maxDocumentsToAnalyze": 0,
-                            "modelId": "str",
-                            "queryFields": [
-                                "str"
-                            ]
-                        }
-                    },
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "split": "str",
-                    "tags": {
-                        "str": "str"
-                    },
-                    "trainingHours": 0.0,
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -6519,7 +2100,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         if cont_token is None:
             raw_result = await self._copy_model_to_initial(
                 model_id=model_id,
-                copy_to_request=copy_to_request,
+                body=body,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -6575,71 +2156,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :return: DocumentModelDetails. The DocumentModelDetails is compatible with MutableMapping
         :rtype: ~azure.ai.documentintelligence.models.DocumentModelDetails
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "modelId": "str",
-                    "apiVersion": "str",
-                    "azureBlobFileListSource": {
-                        "containerUrl": "str",
-                        "fileList": "str"
-                    },
-                    "azureBlobSource": {
-                        "containerUrl": "str",
-                        "prefix": "str"
-                    },
-                    "buildMode": "str",
-                    "classifierId": "str",
-                    "description": "str",
-                    "docTypes": {
-                        "str": {
-                            "buildMode": "str",
-                            "confidenceThreshold": 0.0,
-                            "description": "str",
-                            "features": [
-                                "str"
-                            ],
-                            "fieldConfidence": {
-                                "str": 0.0
-                            },
-                            "fieldSchema": {
-                                "str": {
-                                    "type": "str",
-                                    "description": "str",
-                                    "example": "str",
-                                    "items": ...,
-                                    "properties": {
-                                        "str": ...
-                                    }
-                                }
-                            },
-                            "maxDocumentsToAnalyze": 0,
-                            "modelId": "str",
-                            "queryFields": [
-                                "str"
-                            ]
-                        }
-                    },
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "split": "str",
-                    "tags": {
-                        "str": "str"
-                    },
-                    "trainingHours": 0.0,
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6677,7 +2195,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6703,76 +2221,13 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.ai.documentintelligence.models.DocumentModelDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "modelId": "str",
-                    "apiVersion": "str",
-                    "azureBlobFileListSource": {
-                        "containerUrl": "str",
-                        "fileList": "str"
-                    },
-                    "azureBlobSource": {
-                        "containerUrl": "str",
-                        "prefix": "str"
-                    },
-                    "buildMode": "str",
-                    "classifierId": "str",
-                    "description": "str",
-                    "docTypes": {
-                        "str": {
-                            "buildMode": "str",
-                            "confidenceThreshold": 0.0,
-                            "description": "str",
-                            "features": [
-                                "str"
-                            ],
-                            "fieldConfidence": {
-                                "str": 0.0
-                            },
-                            "fieldSchema": {
-                                "str": {
-                                    "type": "str",
-                                    "description": "str",
-                                    "example": "str",
-                                    "items": ...,
-                                    "properties": {
-                                        "str": ...
-                                    }
-                                }
-                            },
-                            "maxDocumentsToAnalyze": 0,
-                            "modelId": "str",
-                            "queryFields": [
-                                "str"
-                            ]
-                        }
-                    },
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "split": "str",
-                    "tags": {
-                        "str": "str"
-                    },
-                    "trainingHours": 0.0,
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         cls: ClsType[List[_models.DocumentModelDetails]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6835,7 +2290,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -6843,9 +2298,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def delete_model(  # pylint: disable=inconsistent-return-statements
-        self, model_id: str, **kwargs: Any
-    ) -> None:
+    async def delete_model(self, model_id: str, **kwargs: Any) -> None:
         """Deletes document model.
 
         :param model_id: Unique document model name. Required.
@@ -6854,7 +2307,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6887,7 +2340,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -6899,25 +2352,15 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def get_resource_info(self, **kwargs: Any) -> _models.ResourceDetails:
+    async def get_resource_details(self, **kwargs: Any) -> _models.DocumentIntelligenceResourceDetails:
         """Return information about the current resource.
 
-        :return: ResourceDetails. The ResourceDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.documentintelligence.models.ResourceDetails
+        :return: DocumentIntelligenceResourceDetails. The DocumentIntelligenceResourceDetails is
+         compatible with MutableMapping
+        :rtype: ~azure.ai.documentintelligence.models.DocumentIntelligenceResourceDetails
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "customDocumentModels": {
-                        "count": 0,
-                        "limit": 0
-                    }
-                }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6928,9 +2371,9 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ResourceDetails] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DocumentIntelligenceResourceDetails] = kwargs.pop("cls", None)
 
-        _request = build_document_intelligence_administration_get_resource_info_request(
+        _request = build_document_intelligence_administration_get_resource_details_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6954,13 +2397,13 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ResourceDetails, response.json())
+            deserialized = _deserialize(_models.DocumentIntelligenceResourceDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6968,395 +2411,17 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_operation(self, operation_id: str, **kwargs: Any) -> _models.OperationDetails:
+    async def get_operation(self, operation_id: str, **kwargs: Any) -> _models.DocumentIntelligenceOperationDetails:
         """Gets operation info.
 
         :param operation_id: Operation ID. Required.
         :type operation_id: str
-        :return: OperationDetails. The OperationDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.documentintelligence.models.OperationDetails
+        :return: DocumentIntelligenceOperationDetails. The DocumentIntelligenceOperationDetails is
+         compatible with MutableMapping
+        :rtype: ~azure.ai.documentintelligence.models.DocumentIntelligenceOperationDetails
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "documentClassifierBuild":
-                operation_details = {
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "kind": "documentClassifierBuild",
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",
-                    "operationId": "str",
-                    "resourceLocation": "str",
-                    "status": "str",
-                    "apiVersion": "str",
-                    "error": {
-                        "code": "str",
-                        "message": "str",
-                        "details": [
-                            ...
-                        ],
-                        "innererror": {
-                            "code": "str",
-                            "innererror": ...,
-                            "message": "str"
-                        },
-                        "target": "str"
-                    },
-                    "percentCompleted": 0,
-                    "result": {
-                        "apiVersion": "str",
-                        "classifierId": "str",
-                        "createdDateTime": "2020-02-20 00:00:00",
-                        "docTypes": {
-                            "str": {
-                                "azureBlobFileListSource": {
-                                    "containerUrl": "str",
-                                    "fileList": "str"
-                                },
-                                "azureBlobSource": {
-                                    "containerUrl": "str",
-                                    "prefix": "str"
-                                },
-                                "sourceKind": "str"
-                            }
-                        },
-                        "baseClassifierId": "str",
-                        "description": "str",
-                        "expirationDateTime": "2020-02-20 00:00:00",
-                        "warnings": [
-                            {
-                                "code": "str",
-                                "message": "str",
-                                "target": "str"
-                            }
-                        ]
-                    },
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "documentClassifierCopyTo":
-                operation_details = {
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "kind": "documentClassifierCopyTo",
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",
-                    "operationId": "str",
-                    "resourceLocation": "str",
-                    "status": "str",
-                    "apiVersion": "str",
-                    "error": {
-                        "code": "str",
-                        "message": "str",
-                        "details": [
-                            ...
-                        ],
-                        "innererror": {
-                            "code": "str",
-                            "innererror": ...,
-                            "message": "str"
-                        },
-                        "target": "str"
-                    },
-                    "percentCompleted": 0,
-                    "result": {
-                        "apiVersion": "str",
-                        "classifierId": "str",
-                        "createdDateTime": "2020-02-20 00:00:00",
-                        "docTypes": {
-                            "str": {
-                                "azureBlobFileListSource": {
-                                    "containerUrl": "str",
-                                    "fileList": "str"
-                                },
-                                "azureBlobSource": {
-                                    "containerUrl": "str",
-                                    "prefix": "str"
-                                },
-                                "sourceKind": "str"
-                            }
-                        },
-                        "baseClassifierId": "str",
-                        "description": "str",
-                        "expirationDateTime": "2020-02-20 00:00:00",
-                        "warnings": [
-                            {
-                                "code": "str",
-                                "message": "str",
-                                "target": "str"
-                            }
-                        ]
-                    },
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "documentModelBuild":
-                operation_details = {
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "kind": "documentModelBuild",
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",
-                    "operationId": "str",
-                    "resourceLocation": "str",
-                    "status": "str",
-                    "apiVersion": "str",
-                    "error": {
-                        "code": "str",
-                        "message": "str",
-                        "details": [
-                            ...
-                        ],
-                        "innererror": {
-                            "code": "str",
-                            "innererror": ...,
-                            "message": "str"
-                        },
-                        "target": "str"
-                    },
-                    "percentCompleted": 0,
-                    "result": {
-                        "createdDateTime": "2020-02-20 00:00:00",
-                        "modelId": "str",
-                        "apiVersion": "str",
-                        "azureBlobFileListSource": {
-                            "containerUrl": "str",
-                            "fileList": "str"
-                        },
-                        "azureBlobSource": {
-                            "containerUrl": "str",
-                            "prefix": "str"
-                        },
-                        "buildMode": "str",
-                        "classifierId": "str",
-                        "description": "str",
-                        "docTypes": {
-                            "str": {
-                                "buildMode": "str",
-                                "confidenceThreshold": 0.0,
-                                "description": "str",
-                                "features": [
-                                    "str"
-                                ],
-                                "fieldConfidence": {
-                                    "str": 0.0
-                                },
-                                "fieldSchema": {
-                                    "str": {
-                                        "type": "str",
-                                        "description": "str",
-                                        "example": "str",
-                                        "items": ...,
-                                        "properties": {
-                                            "str": ...
-                                        }
-                                    }
-                                },
-                                "maxDocumentsToAnalyze": 0,
-                                "modelId": "str",
-                                "queryFields": [
-                                    "str"
-                                ]
-                            }
-                        },
-                        "expirationDateTime": "2020-02-20 00:00:00",
-                        "split": "str",
-                        "tags": {
-                            "str": "str"
-                        },
-                        "trainingHours": 0.0,
-                        "warnings": [
-                            {
-                                "code": "str",
-                                "message": "str",
-                                "target": "str"
-                            }
-                        ]
-                    },
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "documentModelCompose":
-                operation_details = {
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "kind": "documentModelCompose",
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",
-                    "operationId": "str",
-                    "resourceLocation": "str",
-                    "status": "str",
-                    "apiVersion": "str",
-                    "error": {
-                        "code": "str",
-                        "message": "str",
-                        "details": [
-                            ...
-                        ],
-                        "innererror": {
-                            "code": "str",
-                            "innererror": ...,
-                            "message": "str"
-                        },
-                        "target": "str"
-                    },
-                    "percentCompleted": 0,
-                    "result": {
-                        "createdDateTime": "2020-02-20 00:00:00",
-                        "modelId": "str",
-                        "apiVersion": "str",
-                        "azureBlobFileListSource": {
-                            "containerUrl": "str",
-                            "fileList": "str"
-                        },
-                        "azureBlobSource": {
-                            "containerUrl": "str",
-                            "prefix": "str"
-                        },
-                        "buildMode": "str",
-                        "classifierId": "str",
-                        "description": "str",
-                        "docTypes": {
-                            "str": {
-                                "buildMode": "str",
-                                "confidenceThreshold": 0.0,
-                                "description": "str",
-                                "features": [
-                                    "str"
-                                ],
-                                "fieldConfidence": {
-                                    "str": 0.0
-                                },
-                                "fieldSchema": {
-                                    "str": {
-                                        "type": "str",
-                                        "description": "str",
-                                        "example": "str",
-                                        "items": ...,
-                                        "properties": {
-                                            "str": ...
-                                        }
-                                    }
-                                },
-                                "maxDocumentsToAnalyze": 0,
-                                "modelId": "str",
-                                "queryFields": [
-                                    "str"
-                                ]
-                            }
-                        },
-                        "expirationDateTime": "2020-02-20 00:00:00",
-                        "split": "str",
-                        "tags": {
-                            "str": "str"
-                        },
-                        "trainingHours": 0.0,
-                        "warnings": [
-                            {
-                                "code": "str",
-                                "message": "str",
-                                "target": "str"
-                            }
-                        ]
-                    },
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "documentModelCopyTo":
-                operation_details = {
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "kind": "documentModelCopyTo",
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",
-                    "operationId": "str",
-                    "resourceLocation": "str",
-                    "status": "str",
-                    "apiVersion": "str",
-                    "error": {
-                        "code": "str",
-                        "message": "str",
-                        "details": [
-                            ...
-                        ],
-                        "innererror": {
-                            "code": "str",
-                            "innererror": ...,
-                            "message": "str"
-                        },
-                        "target": "str"
-                    },
-                    "percentCompleted": 0,
-                    "result": {
-                        "createdDateTime": "2020-02-20 00:00:00",
-                        "modelId": "str",
-                        "apiVersion": "str",
-                        "azureBlobFileListSource": {
-                            "containerUrl": "str",
-                            "fileList": "str"
-                        },
-                        "azureBlobSource": {
-                            "containerUrl": "str",
-                            "prefix": "str"
-                        },
-                        "buildMode": "str",
-                        "classifierId": "str",
-                        "description": "str",
-                        "docTypes": {
-                            "str": {
-                                "buildMode": "str",
-                                "confidenceThreshold": 0.0,
-                                "description": "str",
-                                "features": [
-                                    "str"
-                                ],
-                                "fieldConfidence": {
-                                    "str": 0.0
-                                },
-                                "fieldSchema": {
-                                    "str": {
-                                        "type": "str",
-                                        "description": "str",
-                                        "example": "str",
-                                        "items": ...,
-                                        "properties": {
-                                            "str": ...
-                                        }
-                                    }
-                                },
-                                "maxDocumentsToAnalyze": 0,
-                                "modelId": "str",
-                                "queryFields": [
-                                    "str"
-                                ]
-                            }
-                        },
-                        "expirationDateTime": "2020-02-20 00:00:00",
-                        "split": "str",
-                        "tags": {
-                            "str": "str"
-                        },
-                        "trainingHours": 0.0,
-                        "warnings": [
-                            {
-                                "code": "str",
-                                "message": "str",
-                                "target": "str"
-                            }
-                        ]
-                    },
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == operation_details
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7367,7 +2432,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.OperationDetails] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DocumentIntelligenceOperationDetails] = kwargs.pop("cls", None)
 
         _request = build_document_intelligence_administration_get_operation_request(
             operation_id=operation_id,
@@ -7394,7 +2459,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7405,7 +2470,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.OperationDetails, response.json())
+            deserialized = _deserialize(_models.DocumentIntelligenceOperationDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7413,399 +2478,21 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_operations(self, **kwargs: Any) -> AsyncIterable["_models.OperationDetails"]:
+    def list_operations(self, **kwargs: Any) -> AsyncIterable["_models.DocumentIntelligenceOperationDetails"]:
+        # pylint: disable=line-too-long
         """Lists all operations.
 
-        :return: An iterator like instance of OperationDetails
+        :return: An iterator like instance of DocumentIntelligenceOperationDetails
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.documentintelligence.models.OperationDetails]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.documentintelligence.models.DocumentIntelligenceOperationDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "documentClassifierBuild":
-                operation_details = {
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "kind": "documentClassifierBuild",
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",
-                    "operationId": "str",
-                    "resourceLocation": "str",
-                    "status": "str",
-                    "apiVersion": "str",
-                    "error": {
-                        "code": "str",
-                        "message": "str",
-                        "details": [
-                            ...
-                        ],
-                        "innererror": {
-                            "code": "str",
-                            "innererror": ...,
-                            "message": "str"
-                        },
-                        "target": "str"
-                    },
-                    "percentCompleted": 0,
-                    "result": {
-                        "apiVersion": "str",
-                        "classifierId": "str",
-                        "createdDateTime": "2020-02-20 00:00:00",
-                        "docTypes": {
-                            "str": {
-                                "azureBlobFileListSource": {
-                                    "containerUrl": "str",
-                                    "fileList": "str"
-                                },
-                                "azureBlobSource": {
-                                    "containerUrl": "str",
-                                    "prefix": "str"
-                                },
-                                "sourceKind": "str"
-                            }
-                        },
-                        "baseClassifierId": "str",
-                        "description": "str",
-                        "expirationDateTime": "2020-02-20 00:00:00",
-                        "warnings": [
-                            {
-                                "code": "str",
-                                "message": "str",
-                                "target": "str"
-                            }
-                        ]
-                    },
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "documentClassifierCopyTo":
-                operation_details = {
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "kind": "documentClassifierCopyTo",
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",
-                    "operationId": "str",
-                    "resourceLocation": "str",
-                    "status": "str",
-                    "apiVersion": "str",
-                    "error": {
-                        "code": "str",
-                        "message": "str",
-                        "details": [
-                            ...
-                        ],
-                        "innererror": {
-                            "code": "str",
-                            "innererror": ...,
-                            "message": "str"
-                        },
-                        "target": "str"
-                    },
-                    "percentCompleted": 0,
-                    "result": {
-                        "apiVersion": "str",
-                        "classifierId": "str",
-                        "createdDateTime": "2020-02-20 00:00:00",
-                        "docTypes": {
-                            "str": {
-                                "azureBlobFileListSource": {
-                                    "containerUrl": "str",
-                                    "fileList": "str"
-                                },
-                                "azureBlobSource": {
-                                    "containerUrl": "str",
-                                    "prefix": "str"
-                                },
-                                "sourceKind": "str"
-                            }
-                        },
-                        "baseClassifierId": "str",
-                        "description": "str",
-                        "expirationDateTime": "2020-02-20 00:00:00",
-                        "warnings": [
-                            {
-                                "code": "str",
-                                "message": "str",
-                                "target": "str"
-                            }
-                        ]
-                    },
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "documentModelBuild":
-                operation_details = {
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "kind": "documentModelBuild",
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",
-                    "operationId": "str",
-                    "resourceLocation": "str",
-                    "status": "str",
-                    "apiVersion": "str",
-                    "error": {
-                        "code": "str",
-                        "message": "str",
-                        "details": [
-                            ...
-                        ],
-                        "innererror": {
-                            "code": "str",
-                            "innererror": ...,
-                            "message": "str"
-                        },
-                        "target": "str"
-                    },
-                    "percentCompleted": 0,
-                    "result": {
-                        "createdDateTime": "2020-02-20 00:00:00",
-                        "modelId": "str",
-                        "apiVersion": "str",
-                        "azureBlobFileListSource": {
-                            "containerUrl": "str",
-                            "fileList": "str"
-                        },
-                        "azureBlobSource": {
-                            "containerUrl": "str",
-                            "prefix": "str"
-                        },
-                        "buildMode": "str",
-                        "classifierId": "str",
-                        "description": "str",
-                        "docTypes": {
-                            "str": {
-                                "buildMode": "str",
-                                "confidenceThreshold": 0.0,
-                                "description": "str",
-                                "features": [
-                                    "str"
-                                ],
-                                "fieldConfidence": {
-                                    "str": 0.0
-                                },
-                                "fieldSchema": {
-                                    "str": {
-                                        "type": "str",
-                                        "description": "str",
-                                        "example": "str",
-                                        "items": ...,
-                                        "properties": {
-                                            "str": ...
-                                        }
-                                    }
-                                },
-                                "maxDocumentsToAnalyze": 0,
-                                "modelId": "str",
-                                "queryFields": [
-                                    "str"
-                                ]
-                            }
-                        },
-                        "expirationDateTime": "2020-02-20 00:00:00",
-                        "split": "str",
-                        "tags": {
-                            "str": "str"
-                        },
-                        "trainingHours": 0.0,
-                        "warnings": [
-                            {
-                                "code": "str",
-                                "message": "str",
-                                "target": "str"
-                            }
-                        ]
-                    },
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "documentModelCompose":
-                operation_details = {
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "kind": "documentModelCompose",
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",
-                    "operationId": "str",
-                    "resourceLocation": "str",
-                    "status": "str",
-                    "apiVersion": "str",
-                    "error": {
-                        "code": "str",
-                        "message": "str",
-                        "details": [
-                            ...
-                        ],
-                        "innererror": {
-                            "code": "str",
-                            "innererror": ...,
-                            "message": "str"
-                        },
-                        "target": "str"
-                    },
-                    "percentCompleted": 0,
-                    "result": {
-                        "createdDateTime": "2020-02-20 00:00:00",
-                        "modelId": "str",
-                        "apiVersion": "str",
-                        "azureBlobFileListSource": {
-                            "containerUrl": "str",
-                            "fileList": "str"
-                        },
-                        "azureBlobSource": {
-                            "containerUrl": "str",
-                            "prefix": "str"
-                        },
-                        "buildMode": "str",
-                        "classifierId": "str",
-                        "description": "str",
-                        "docTypes": {
-                            "str": {
-                                "buildMode": "str",
-                                "confidenceThreshold": 0.0,
-                                "description": "str",
-                                "features": [
-                                    "str"
-                                ],
-                                "fieldConfidence": {
-                                    "str": 0.0
-                                },
-                                "fieldSchema": {
-                                    "str": {
-                                        "type": "str",
-                                        "description": "str",
-                                        "example": "str",
-                                        "items": ...,
-                                        "properties": {
-                                            "str": ...
-                                        }
-                                    }
-                                },
-                                "maxDocumentsToAnalyze": 0,
-                                "modelId": "str",
-                                "queryFields": [
-                                    "str"
-                                ]
-                            }
-                        },
-                        "expirationDateTime": "2020-02-20 00:00:00",
-                        "split": "str",
-                        "tags": {
-                            "str": "str"
-                        },
-                        "trainingHours": 0.0,
-                        "warnings": [
-                            {
-                                "code": "str",
-                                "message": "str",
-                                "target": "str"
-                            }
-                        ]
-                    },
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "documentModelCopyTo":
-                operation_details = {
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "kind": "documentModelCopyTo",
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",
-                    "operationId": "str",
-                    "resourceLocation": "str",
-                    "status": "str",
-                    "apiVersion": "str",
-                    "error": {
-                        "code": "str",
-                        "message": "str",
-                        "details": [
-                            ...
-                        ],
-                        "innererror": {
-                            "code": "str",
-                            "innererror": ...,
-                            "message": "str"
-                        },
-                        "target": "str"
-                    },
-                    "percentCompleted": 0,
-                    "result": {
-                        "createdDateTime": "2020-02-20 00:00:00",
-                        "modelId": "str",
-                        "apiVersion": "str",
-                        "azureBlobFileListSource": {
-                            "containerUrl": "str",
-                            "fileList": "str"
-                        },
-                        "azureBlobSource": {
-                            "containerUrl": "str",
-                            "prefix": "str"
-                        },
-                        "buildMode": "str",
-                        "classifierId": "str",
-                        "description": "str",
-                        "docTypes": {
-                            "str": {
-                                "buildMode": "str",
-                                "confidenceThreshold": 0.0,
-                                "description": "str",
-                                "features": [
-                                    "str"
-                                ],
-                                "fieldConfidence": {
-                                    "str": 0.0
-                                },
-                                "fieldSchema": {
-                                    "str": {
-                                        "type": "str",
-                                        "description": "str",
-                                        "example": "str",
-                                        "items": ...,
-                                        "properties": {
-                                            "str": ...
-                                        }
-                                    }
-                                },
-                                "maxDocumentsToAnalyze": 0,
-                                "modelId": "str",
-                                "queryFields": [
-                                    "str"
-                                ]
-                            }
-                        },
-                        "expirationDateTime": "2020-02-20 00:00:00",
-                        "split": "str",
-                        "tags": {
-                            "str": "str"
-                        },
-                        "trainingHours": 0.0,
-                        "warnings": [
-                            {
-                                "code": "str",
-                                "message": "str",
-                                "target": "str"
-                            }
-                        ]
-                    },
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == operation_details
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.OperationDetails]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.DocumentIntelligenceOperationDetails]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7852,7 +2539,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.OperationDetails], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.DocumentIntelligenceOperationDetails], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -7868,7 +2555,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -7876,9 +2563,9 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         return AsyncItemPaged(get_next, extract_data)
 
     async def _build_classifier_initial(
-        self, build_request: Union[_models.BuildDocumentClassifierRequest, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.BuildDocumentClassifierRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7894,10 +2581,10 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(build_request, (IOBase, bytes)):
-            _content = build_request
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(build_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_document_intelligence_administration_build_classifier_request(
             content_type=content_type,
@@ -7924,7 +2611,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -7940,16 +2627,12 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
     @overload
     async def begin_build_classifier(
-        self,
-        build_request: _models.BuildDocumentClassifierRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: _models.BuildDocumentClassifierRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentClassifierDetails]:
         """Builds a custom document classifier.
 
-        :param build_request: Build request parameters. Required.
-        :type build_request: ~azure.ai.documentintelligence.models.BuildDocumentClassifierRequest
+        :param body: Build request parameters. Required.
+        :type body: ~azure.ai.documentintelligence.models.BuildDocumentClassifierRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7958,70 +2641,16 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.DocumentClassifierDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                build_request = {
-                    "classifierId": "str",
-                    "docTypes": {
-                        "str": {
-                            "azureBlobFileListSource": {
-                                "containerUrl": "str",
-                                "fileList": "str"
-                            },
-                            "azureBlobSource": {
-                                "containerUrl": "str",
-                                "prefix": "str"
-                            },
-                            "sourceKind": "str"
-                        }
-                    },
-                    "allowOverwrite": bool,
-                    "baseClassifierId": "str",
-                    "description": "str"
-                }
-
-                # response body for status code(s): 202
-                response == {
-                    "apiVersion": "str",
-                    "classifierId": "str",
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "docTypes": {
-                        "str": {
-                            "azureBlobFileListSource": {
-                                "containerUrl": "str",
-                                "fileList": "str"
-                            },
-                            "azureBlobSource": {
-                                "containerUrl": "str",
-                                "prefix": "str"
-                            },
-                            "sourceKind": "str"
-                        }
-                    },
-                    "baseClassifierId": "str",
-                    "description": "str",
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
 
     @overload
     async def begin_build_classifier(
-        self, build_request: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentClassifierDetails]:
         """Builds a custom document classifier.
 
-        :param build_request: Build request parameters. Required.
-        :type build_request: JSON
+        :param body: Build request parameters. Required.
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8030,49 +2659,16 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.DocumentClassifierDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 202
-                response == {
-                    "apiVersion": "str",
-                    "classifierId": "str",
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "docTypes": {
-                        "str": {
-                            "azureBlobFileListSource": {
-                                "containerUrl": "str",
-                                "fileList": "str"
-                            },
-                            "azureBlobSource": {
-                                "containerUrl": "str",
-                                "prefix": "str"
-                            },
-                            "sourceKind": "str"
-                        }
-                    },
-                    "baseClassifierId": "str",
-                    "description": "str",
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
 
     @overload
     async def begin_build_classifier(
-        self, build_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentClassifierDetails]:
         """Builds a custom document classifier.
 
-        :param build_request: Build request parameters. Required.
-        :type build_request: IO[bytes]
+        :param body: Build request parameters. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8081,110 +2677,23 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.DocumentClassifierDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 202
-                response == {
-                    "apiVersion": "str",
-                    "classifierId": "str",
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "docTypes": {
-                        "str": {
-                            "azureBlobFileListSource": {
-                                "containerUrl": "str",
-                                "fileList": "str"
-                            },
-                            "azureBlobSource": {
-                                "containerUrl": "str",
-                                "prefix": "str"
-                            },
-                            "sourceKind": "str"
-                        }
-                    },
-                    "baseClassifierId": "str",
-                    "description": "str",
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
 
     @distributed_trace_async
     async def begin_build_classifier(
-        self, build_request: Union[_models.BuildDocumentClassifierRequest, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.BuildDocumentClassifierRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentClassifierDetails]:
         """Builds a custom document classifier.
 
-        :param build_request: Build request parameters. Is one of the following types:
+        :param body: Build request parameters. Is one of the following types:
          BuildDocumentClassifierRequest, JSON, IO[bytes] Required.
-        :type build_request: ~azure.ai.documentintelligence.models.BuildDocumentClassifierRequest or
-         JSON or IO[bytes]
+        :type body: ~azure.ai.documentintelligence.models.BuildDocumentClassifierRequest or JSON or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns DocumentClassifierDetails. The
          DocumentClassifierDetails is compatible with MutableMapping
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.DocumentClassifierDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                build_request = {
-                    "classifierId": "str",
-                    "docTypes": {
-                        "str": {
-                            "azureBlobFileListSource": {
-                                "containerUrl": "str",
-                                "fileList": "str"
-                            },
-                            "azureBlobSource": {
-                                "containerUrl": "str",
-                                "prefix": "str"
-                            },
-                            "sourceKind": "str"
-                        }
-                    },
-                    "allowOverwrite": bool,
-                    "baseClassifierId": "str",
-                    "description": "str"
-                }
-
-                # response body for status code(s): 202
-                response == {
-                    "apiVersion": "str",
-                    "classifierId": "str",
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "docTypes": {
-                        "str": {
-                            "azureBlobFileListSource": {
-                                "containerUrl": "str",
-                                "fileList": "str"
-                            },
-                            "azureBlobSource": {
-                                "containerUrl": "str",
-                                "prefix": "str"
-                            },
-                            "sourceKind": "str"
-                        }
-                    },
-                    "baseClassifierId": "str",
-                    "description": "str",
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -8196,12 +2705,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._build_classifier_initial(
-                build_request=build_request,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
+                body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -8245,18 +2749,13 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
     @overload
     async def authorize_classifier_copy(
-        self,
-        authorize_copy_request: _models.AuthorizeClassifierCopyRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: _models.AuthorizeClassifierCopyRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ClassifierCopyAuthorization:
         """Generates authorization to copy a document classifier to this location with
         specified classifierId and optional description.
 
-        :param authorize_copy_request: Authorize copy request parameters. Required.
-        :type authorize_copy_request:
-         ~azure.ai.documentintelligence.models.AuthorizeClassifierCopyRequest
+        :param body: Authorize copy request parameters. Required.
+        :type body: ~azure.ai.documentintelligence.models.AuthorizeClassifierCopyRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8264,39 +2763,17 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
          MutableMapping
         :rtype: ~azure.ai.documentintelligence.models.ClassifierCopyAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                authorize_copy_request = {
-                    "classifierId": "str",
-                    "description": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "accessToken": "str",
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "targetClassifierId": "str",
-                    "targetClassifierLocation": "str",
-                    "targetResourceId": "str",
-                    "targetResourceRegion": "str"
-                }
         """
 
     @overload
     async def authorize_classifier_copy(
-        self, authorize_copy_request: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ClassifierCopyAuthorization:
         """Generates authorization to copy a document classifier to this location with
         specified classifierId and optional description.
 
-        :param authorize_copy_request: Authorize copy request parameters. Required.
-        :type authorize_copy_request: JSON
+        :param body: Authorize copy request parameters. Required.
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8304,30 +2781,17 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
          MutableMapping
         :rtype: ~azure.ai.documentintelligence.models.ClassifierCopyAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "accessToken": "str",
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "targetClassifierId": "str",
-                    "targetClassifierLocation": "str",
-                    "targetResourceId": "str",
-                    "targetResourceRegion": "str"
-                }
         """
 
     @overload
     async def authorize_classifier_copy(
-        self, authorize_copy_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ClassifierCopyAuthorization:
         """Generates authorization to copy a document classifier to this location with
         specified classifierId and optional description.
 
-        :param authorize_copy_request: Authorize copy request parameters. Required.
-        :type authorize_copy_request: IO[bytes]
+        :param body: Authorize copy request parameters. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8335,60 +2799,25 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
          MutableMapping
         :rtype: ~azure.ai.documentintelligence.models.ClassifierCopyAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "accessToken": "str",
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "targetClassifierId": "str",
-                    "targetClassifierLocation": "str",
-                    "targetResourceId": "str",
-                    "targetResourceRegion": "str"
-                }
         """
 
     @distributed_trace_async
     async def authorize_classifier_copy(
-        self, authorize_copy_request: Union[_models.AuthorizeClassifierCopyRequest, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.AuthorizeClassifierCopyRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.ClassifierCopyAuthorization:
         """Generates authorization to copy a document classifier to this location with
         specified classifierId and optional description.
 
-        :param authorize_copy_request: Authorize copy request parameters. Is one of the following
-         types: AuthorizeClassifierCopyRequest, JSON, IO[bytes] Required.
-        :type authorize_copy_request:
-         ~azure.ai.documentintelligence.models.AuthorizeClassifierCopyRequest or JSON or IO[bytes]
+        :param body: Authorize copy request parameters. Is one of the following types:
+         AuthorizeClassifierCopyRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.documentintelligence.models.AuthorizeClassifierCopyRequest or JSON or
+         IO[bytes]
         :return: ClassifierCopyAuthorization. The ClassifierCopyAuthorization is compatible with
          MutableMapping
         :rtype: ~azure.ai.documentintelligence.models.ClassifierCopyAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                authorize_copy_request = {
-                    "classifierId": "str",
-                    "description": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "accessToken": "str",
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "targetClassifierId": "str",
-                    "targetClassifierLocation": "str",
-                    "targetResourceId": "str",
-                    "targetResourceRegion": "str"
-                }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8404,10 +2833,10 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(authorize_copy_request, (IOBase, bytes)):
-            _content = authorize_copy_request
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(authorize_copy_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_document_intelligence_administration_authorize_classifier_copy_request(
             content_type=content_type,
@@ -8435,7 +2864,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -8449,12 +2878,9 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         return deserialized  # type: ignore
 
     async def _copy_classifier_to_initial(
-        self,
-        classifier_id: str,
-        copy_to_request: Union[_models.ClassifierCopyAuthorization, JSON, IO[bytes]],
-        **kwargs: Any
+        self, classifier_id: str, body: Union[_models.ClassifierCopyAuthorization, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8470,10 +2896,10 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(copy_to_request, (IOBase, bytes)):
-            _content = copy_to_request
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(copy_to_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_document_intelligence_administration_copy_classifier_to_request(
             classifier_id=classifier_id,
@@ -8501,7 +2927,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -8519,7 +2945,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
     async def begin_copy_classifier_to(
         self,
         classifier_id: str,
-        copy_to_request: _models.ClassifierCopyAuthorization,
+        body: _models.ClassifierCopyAuthorization,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8528,8 +2954,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         :param classifier_id: Unique document classifier name. Required.
         :type classifier_id: str
-        :param copy_to_request: Copy to request parameters. Required.
-        :type copy_to_request: ~azure.ai.documentintelligence.models.ClassifierCopyAuthorization
+        :param body: Copy to request parameters. Required.
+        :type body: ~azure.ai.documentintelligence.models.ClassifierCopyAuthorization
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8538,61 +2964,18 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.DocumentClassifierDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                copy_to_request = {
-                    "accessToken": "str",
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "targetClassifierId": "str",
-                    "targetClassifierLocation": "str",
-                    "targetResourceId": "str",
-                    "targetResourceRegion": "str"
-                }
-
-                # response body for status code(s): 202
-                response == {
-                    "apiVersion": "str",
-                    "classifierId": "str",
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "docTypes": {
-                        "str": {
-                            "azureBlobFileListSource": {
-                                "containerUrl": "str",
-                                "fileList": "str"
-                            },
-                            "azureBlobSource": {
-                                "containerUrl": "str",
-                                "prefix": "str"
-                            },
-                            "sourceKind": "str"
-                        }
-                    },
-                    "baseClassifierId": "str",
-                    "description": "str",
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
 
     @overload
     async def begin_copy_classifier_to(
-        self, classifier_id: str, copy_to_request: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, classifier_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentClassifierDetails]:
         """Copies document classifier to the target resource, region, and classifierId.
 
         :param classifier_id: Unique document classifier name. Required.
         :type classifier_id: str
-        :param copy_to_request: Copy to request parameters. Required.
-        :type copy_to_request: JSON
+        :param body: Copy to request parameters. Required.
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8601,51 +2984,18 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.DocumentClassifierDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 202
-                response == {
-                    "apiVersion": "str",
-                    "classifierId": "str",
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "docTypes": {
-                        "str": {
-                            "azureBlobFileListSource": {
-                                "containerUrl": "str",
-                                "fileList": "str"
-                            },
-                            "azureBlobSource": {
-                                "containerUrl": "str",
-                                "prefix": "str"
-                            },
-                            "sourceKind": "str"
-                        }
-                    },
-                    "baseClassifierId": "str",
-                    "description": "str",
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
 
     @overload
     async def begin_copy_classifier_to(
-        self, classifier_id: str, copy_to_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, classifier_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentClassifierDetails]:
         """Copies document classifier to the target resource, region, and classifierId.
 
         :param classifier_id: Unique document classifier name. Required.
         :type classifier_id: str
-        :param copy_to_request: Copy to request parameters. Required.
-        :type copy_to_request: IO[bytes]
+        :param body: Copy to request parameters. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8654,104 +3004,25 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.DocumentClassifierDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 202
-                response == {
-                    "apiVersion": "str",
-                    "classifierId": "str",
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "docTypes": {
-                        "str": {
-                            "azureBlobFileListSource": {
-                                "containerUrl": "str",
-                                "fileList": "str"
-                            },
-                            "azureBlobSource": {
-                                "containerUrl": "str",
-                                "prefix": "str"
-                            },
-                            "sourceKind": "str"
-                        }
-                    },
-                    "baseClassifierId": "str",
-                    "description": "str",
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
 
     @distributed_trace_async
     async def begin_copy_classifier_to(
-        self,
-        classifier_id: str,
-        copy_to_request: Union[_models.ClassifierCopyAuthorization, JSON, IO[bytes]],
-        **kwargs: Any
+        self, classifier_id: str, body: Union[_models.ClassifierCopyAuthorization, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.DocumentClassifierDetails]:
         """Copies document classifier to the target resource, region, and classifierId.
 
         :param classifier_id: Unique document classifier name. Required.
         :type classifier_id: str
-        :param copy_to_request: Copy to request parameters. Is one of the following types:
+        :param body: Copy to request parameters. Is one of the following types:
          ClassifierCopyAuthorization, JSON, IO[bytes] Required.
-        :type copy_to_request: ~azure.ai.documentintelligence.models.ClassifierCopyAuthorization or
-         JSON or IO[bytes]
+        :type body: ~azure.ai.documentintelligence.models.ClassifierCopyAuthorization or JSON or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns DocumentClassifierDetails. The
          DocumentClassifierDetails is compatible with MutableMapping
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.DocumentClassifierDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                copy_to_request = {
-                    "accessToken": "str",
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "targetClassifierId": "str",
-                    "targetClassifierLocation": "str",
-                    "targetResourceId": "str",
-                    "targetResourceRegion": "str"
-                }
-
-                # response body for status code(s): 202
-                response == {
-                    "apiVersion": "str",
-                    "classifierId": "str",
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "docTypes": {
-                        "str": {
-                            "azureBlobFileListSource": {
-                                "containerUrl": "str",
-                                "fileList": "str"
-                            },
-                            "azureBlobSource": {
-                                "containerUrl": "str",
-                                "prefix": "str"
-                            },
-                            "sourceKind": "str"
-                        }
-                    },
-                    "baseClassifierId": "str",
-                    "description": "str",
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -8764,7 +3035,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         if cont_token is None:
             raw_result = await self._copy_classifier_to_initial(
                 classifier_id=classifier_id,
-                copy_to_request=copy_to_request,
+                body=body,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -8821,41 +3092,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
          MutableMapping
         :rtype: ~azure.ai.documentintelligence.models.DocumentClassifierDetails
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "apiVersion": "str",
-                    "classifierId": "str",
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "docTypes": {
-                        "str": {
-                            "azureBlobFileListSource": {
-                                "containerUrl": "str",
-                                "fileList": "str"
-                            },
-                            "azureBlobSource": {
-                                "containerUrl": "str",
-                                "prefix": "str"
-                            },
-                            "sourceKind": "str"
-                        }
-                    },
-                    "baseClassifierId": "str",
-                    "description": "str",
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8893,7 +3131,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -8919,46 +3157,13 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.ai.documentintelligence.models.DocumentClassifierDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "apiVersion": "str",
-                    "classifierId": "str",
-                    "createdDateTime": "2020-02-20 00:00:00",
-                    "docTypes": {
-                        "str": {
-                            "azureBlobFileListSource": {
-                                "containerUrl": "str",
-                                "fileList": "str"
-                            },
-                            "azureBlobSource": {
-                                "containerUrl": "str",
-                                "prefix": "str"
-                            },
-                            "sourceKind": "str"
-                        }
-                    },
-                    "baseClassifierId": "str",
-                    "description": "str",
-                    "expirationDateTime": "2020-02-20 00:00:00",
-                    "warnings": [
-                        {
-                            "code": "str",
-                            "message": "str",
-                            "target": "str"
-                        }
-                    ]
-                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         cls: ClsType[List[_models.DocumentClassifierDetails]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -9021,7 +3226,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -9029,9 +3234,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def delete_classifier(  # pylint: disable=inconsistent-return-statements
-        self, classifier_id: str, **kwargs: Any
-    ) -> None:
+    async def delete_classifier(self, classifier_id: str, **kwargs: Any) -> None:
         """Deletes document classifier.
 
         :param classifier_id: Unique document classifier name. Required.
@@ -9040,7 +3243,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -9073,7 +3276,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.DocumentIntelligenceErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

@@ -25,9 +25,7 @@ trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
 set_logger_provider(LoggerProvider())
 
-exporter = AzureMonitorLogExporter.from_connection_string(
-    os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
-)
+exporter = AzureMonitorLogExporter.from_connection_string(os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"])
 get_logger_provider().add_log_record_processor(BatchLogRecordProcessor(exporter))
 
 # Attach LoggingHandler to namespaced logger

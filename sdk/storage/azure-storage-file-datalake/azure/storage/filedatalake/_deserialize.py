@@ -8,10 +8,25 @@ from typing import NoReturn, TYPE_CHECKING
 from xml.etree.ElementTree import Element
 
 from azure.core.pipeline.policies import ContentDecodePolicy
-from azure.core.exceptions import HttpResponseError, DecodeError, ResourceModifiedError, ClientAuthenticationError, \
-    ResourceNotFoundError, ResourceExistsError
-from ._models import FileProperties, DirectoryProperties, LeaseProperties, DeletedPathProperties, StaticWebsite, \
-    RetentionPolicy, Metrics, AnalyticsLogging, PathProperties  # pylint: disable=protected-access
+from azure.core.exceptions import (
+    HttpResponseError,
+    DecodeError,
+    ResourceModifiedError,
+    ClientAuthenticationError,
+    ResourceNotFoundError,
+    ResourceExistsError
+)
+from ._models import (
+    FileProperties,
+    DirectoryProperties,
+    LeaseProperties,
+    DeletedPathProperties,
+    StaticWebsite,
+    RetentionPolicy,
+    Metrics,
+    AnalyticsLogging,
+    PathProperties
+)
 from ._shared.models import StorageErrorCode
 from ._shared.response_handlers import deserialize_metadata
 

@@ -57,23 +57,18 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHT
 
     :keyword int retry_total: Total number of retries to allow. Takes precedence over other counts.
      Default value is 10.
-
     :keyword int retry_connect: How many connection-related errors to retry on.
      These are errors raised before the request is sent to the remote server,
      which we assume has not triggered the server to process the request. Default value is 3.
-
     :keyword int retry_read: How many times to retry on read errors.
      These errors are raised after the request was sent to the server, so the
      request may have side-effects. Default value is 3.
-
     :keyword int retry_status: How many times to retry on bad status codes. Default value is 3.
-
     :keyword float retry_backoff_factor: A backoff factor to apply between attempts after the second try
      (most errors are resolved immediately by a second try without a delay).
      Retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))`
      seconds. If the backoff_factor is 0.1, then the retry will sleep
      for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
-
     :keyword int retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
 
     .. admonition:: Example:
@@ -107,7 +102,9 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHT
         return False
 
     async def _sleep_backoff(
-        self, settings: Dict[str, Any], transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]
+        self,
+        settings: Dict[str, Any],
+        transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType],
     ) -> None:
         """Sleep using exponential backoff. Immediately returns if backoff is 0.
 
@@ -152,10 +149,10 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHT
 
         :param request: The PipelineRequest object
         :type request: ~azure.core.pipeline.PipelineRequest
-        :return: Returns the PipelineResponse or raises error if maximum retries exceeded.
+        :return: The PipelineResponse.
         :rtype: ~azure.core.pipeline.PipelineResponse
-        :raise: ~azure.core.exceptions.AzureError if maximum retries exceeded.
-        :raise: ~azure.core.exceptions.ClientAuthenticationError if authentication fails
+        :raise ~azure.core.exceptions.AzureError: if maximum retries exceeded.
+        :raise ~azure.core.exceptions.ClientAuthenticationError: if authentication fails
         """
         retry_active = True
         response = None
@@ -172,7 +169,8 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHT
             # The correct fix is to make PipelineContext generic, but that's a breaking change and a lot of
             # generic to update in Pipeline, PipelineClient, PipelineRequest, PipelineResponse, etc.
             transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType] = cast(
-                AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType], request.context.transport
+                AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType],
+                request.context.transport,
             )
             try:
                 self._configure_timeout(request, absolute_timeout, is_response_error)
@@ -189,7 +187,7 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHT
                         is_response_error = True
                         continue
                 break
-            except ClientAuthenticationError:  # pylint:disable=try-except-raise
+            except ClientAuthenticationError:
                 # the authentication policy failed such that the client's request can't
                 # succeed--we'll never have a response to it, so propagate the exception
                 raise

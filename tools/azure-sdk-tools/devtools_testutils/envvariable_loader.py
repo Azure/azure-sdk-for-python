@@ -26,7 +26,7 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
         random_name_enabled=False,
         use_cache=True,
         preparers=None,
-        **kwargs
+        **kwargs,
     ):
         super(EnvironmentVariableLoader, self).__init__(
             name_prefix,
@@ -128,8 +128,8 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
                                 )
                     else:
                         raise AzureTestError(
-                            'To pass a live ID you must provide the scrubbed value for recordings to prevent secrets '
-                            f'from being written to files. {key} was not given. For example: '
+                            "To pass a live ID you must provide the scrubbed value for recordings to prevent secrets "
+                            f"from being written to files. {key} was not given. For example: "
                             '@EnvironmentVariableLoader("schemaregistry", '
                             'schemaregistry_endpoint="fake_endpoint.servicebus.windows.net")'
                         )

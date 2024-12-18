@@ -30,6 +30,7 @@ try:
         MessageHeader,
         MessageProperties,
     )
+
     uamqp_installed = True
 except ImportError:
     uamqp_installed = False
@@ -63,6 +64,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 if uamqp_installed:
+
     def _error_handler(error):
         """
         Called internally when an event has failed to send so we
@@ -88,8 +90,7 @@ if uamqp_installed:
             return errors.ErrorAction(retry=False)
         return errors.ErrorAction(retry=True)
 
-
-    class UamqpTransport(AmqpTransport):    # pylint: disable=too-many-public-methods
+    class UamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         """
         Class which defines uamqp-based methods used by the producer and consumer.
         """
@@ -101,17 +102,18 @@ if uamqp_installed:
         MAX_MESSAGE_LENGTH_BYTES = constants.MAX_MESSAGE_LENGTH_BYTES
         TIMEOUT_FACTOR = 1000
         CONNECTION_CLOSING_STATES: Tuple[
-        Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
-        Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
-        Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
-        Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
-        Optional[Union["uamqp_ConnectionState", "pyamqp_ConnectionState"]]] = (  # pylint:disable=protected-access
-                c_uamqp.ConnectionState.CLOSE_RCVD,  # pylint:disable=c-extension-no-member
-                c_uamqp.ConnectionState.CLOSE_SENT,  # pylint:disable=c-extension-no-member
-                c_uamqp.ConnectionState.DISCARDING,  # pylint:disable=c-extension-no-member
-                c_uamqp.ConnectionState.END,  # pylint:disable=c-extension-no-member
-                None
-            )
+            Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
+            Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
+            Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
+            Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
+            Optional[Union["uamqp_ConnectionState", "pyamqp_ConnectionState"]],
+        ] = (
+            c_uamqp.ConnectionState.CLOSE_RCVD,
+            c_uamqp.ConnectionState.CLOSE_SENT,
+            c_uamqp.ConnectionState.DISCARDING,
+            c_uamqp.ConnectionState.END,
+            None,
+        )
         TRANSPORT_IDENTIFIER = f"{UAMQP_LIBRARY}/{__version__}"
 
         # define symbols
@@ -121,9 +123,6 @@ if uamqp_installed:
         PLATFORM_SYMBOL = types.AMQPSymbol("platform")
         USER_AGENT_SYMBOL = types.AMQPSymbol("user-agent")
         PROP_PARTITION_KEY_AMQP_SYMBOL = types.AMQPSymbol(PROP_PARTITION_KEY)
-
-        # define exceptions
-        AUTHENTICATION_EXCEPTION = errors.AuthenticationException
 
         @staticmethod
         def build_message(**kwargs):
@@ -178,14 +177,20 @@ if uamqp_installed:
                     correlation_id=annotated_message.properties.correlation_id,
                     content_type=annotated_message.properties.content_type,
                     content_encoding=annotated_message.properties.content_encoding,
-                    creation_time=int(annotated_message.properties.creation_time)
-                        if annotated_message.properties.creation_time else None,
-                    absolute_expiry_time=int(annotated_message.properties.absolute_expiry_time)
-                    if annotated_message.properties.absolute_expiry_time else None,
+                    creation_time=(
+                        int(annotated_message.properties.creation_time)
+                        if annotated_message.properties.creation_time
+                        else None
+                    ),
+                    absolute_expiry_time=(
+                        int(annotated_message.properties.absolute_expiry_time)
+                        if annotated_message.properties.absolute_expiry_time
+                        else None
+                    ),
                     group_id=annotated_message.properties.group_id,
                     group_sequence=annotated_message.properties.group_sequence,
                     reply_to_group_id=annotated_message.properties.reply_to_group_id,
-                    encoding=annotated_message._encoding    # pylint: disable=protected-access
+                    encoding=annotated_message._encoding,  # pylint: disable=protected-access
                 )
 
             # pylint: disable=protected-access
@@ -208,7 +213,7 @@ if uamqp_installed:
                 application_properties=annotated_message.application_properties,
                 annotations=annotated_message.annotations,
                 delivery_annotations=annotated_message.delivery_annotations,
-                footer=annotated_message.footer
+                footer=annotated_message.footer,
             )
 
         @staticmethod
@@ -283,20 +288,20 @@ if uamqp_installed:
             return {types.AMQPSymbol(symbol): types.AMQPLong(value) for (symbol, value) in link_properties.items()}
 
         @staticmethod
-        def create_connection(# pylint:disable=unused-argument
+        def create_connection(
             *,
             endpoint: str,
             auth: authentication.JWTTokenAuth,
             container_id: Optional[str] = None,
             max_frame_size: int,
             channel_max: int,
-            idle_timeout: float,
+            idle_timeout: Optional[float],
             properties: Optional[Dict[str, Any]],
             remote_idle_timeout_empty_frame_send_ratio: float,
             error_policy: Any,
             debug: bool,
             encoding: str,
-            **kwargs: Any
+            **kwargs: Any,
         ) -> Connection:
             """
             Creates and returns the uamqp Connection object.
@@ -327,7 +332,7 @@ if uamqp_installed:
                 remote_idle_timeout_empty_frame_send_ratio=remote_idle_timeout_empty_frame_send_ratio,
                 encoding=encoding,
                 debug=debug,
-                **kwargs
+                **kwargs,
             )
 
         @staticmethod
@@ -349,22 +354,22 @@ if uamqp_installed:
             :return: The connection state.
             :rtype: uamqp.constants.ConnectionState
             """
-            return connection._state    # pylint:disable=protected-access
+            return connection._state  # pylint:disable=protected-access
 
         @staticmethod
-        def create_send_client(# pylint: disable=unused-argument
+        def create_send_client(
             *,
             config,
             target: str,
             auth: authentication.JWTTokenAuth,
-            idle_timeout: int,
+            idle_timeout: Optional[float],
             network_trace: bool,
             retry_policy: Any,
             keep_alive_interval: int,
             client_name: str,
             link_properties: Optional[Dict[str, Any]] = None,
             properties: Optional[Dict[str, Any]] = None,
-            **kwargs: Any
+            **kwargs: Any,
         ):
             """
             Creates and returns the uamqp SendClient.
@@ -393,11 +398,12 @@ if uamqp_installed:
                 link_properties=link_properties,
                 idle_timeout=idle_timeout,
                 auth=auth,
-                **kwargs
+                **kwargs,
             )
 
         @staticmethod
         def _set_msg_timeout(producer, timeout_time, last_exception, logger):
+            # pylint: disable=protected-access
             if not timeout_time:
                 return
             remaining_time = timeout_time - time.time()
@@ -406,9 +412,9 @@ if uamqp_installed:
                     error = last_exception
                 else:
                     error = OperationTimeoutError("Send operation timed out")
-                logger.info("%r send operation timed out. (%r)", producer._name, error) # pylint: disable=protected-access
+                logger.info("%r send operation timed out. (%r)", producer._name, error)
                 raise error
-            producer._handler._msg_timeout = remaining_time * 1000  # type: ignore  # pylint: disable=protected-access
+            producer._handler._msg_timeout = remaining_time * 1000  # type: ignore
 
         @staticmethod
         def send_messages(producer, timeout_time, last_exception, logger):
@@ -434,10 +440,8 @@ if uamqp_installed:
 
         @staticmethod
         def set_message_partition_key(
-            message: Message,
-            partition_key: Optional[Union[bytes, str]] = None,
-            **kwargs: Any
-        ) -> Message:  # pylint:disable=unused-argument
+            message: Message, partition_key: Optional[Union[bytes, str]] = None, **kwargs: Any
+        ) -> Message:
             """Set the partition key as an annotation on a uamqp message.
 
             :param uamqp.Message message: The message to update.
@@ -450,7 +454,7 @@ if uamqp_installed:
                 if annotations is None:
                     annotations = {}
                 annotations[
-                    UamqpTransport.PROP_PARTITION_KEY_AMQP_SYMBOL   # TODO: see if setting non-amqp symbol is valid
+                    UamqpTransport.PROP_PARTITION_KEY_AMQP_SYMBOL  # TODO: see if setting non-amqp symbol is valid
                 ] = partition_key
                 header = MessageHeader()
                 header.durable = True
@@ -469,9 +473,7 @@ if uamqp_installed:
             """
             # pylint: disable=protected-access
             event_data_batch._internal_events.append(event_data)
-            event_data_batch._message._body_gen.append(
-                outgoing_event_data._message
-            )
+            event_data_batch._message._body_gen.append(outgoing_event_data._message)
 
         @staticmethod
         def create_source(source, offset, selector):
@@ -490,12 +492,12 @@ if uamqp_installed:
             return source
 
         @staticmethod
-        def create_receive_client( # pylint: disable=unused-argument
+        def create_receive_client(
             *,
             config,
             source: Source,
             auth: authentication.JWTTokenAuth,
-            idle_timeout: int,
+            idle_timeout: Optional[float],
             network_trace: bool,
             retry_policy: Any,
             client_name: str,
@@ -507,7 +509,7 @@ if uamqp_installed:
             streaming_receive: bool,
             message_received_callback: Callable,
             timeout: float,
-            **kwargs
+            **kwargs,
         ):
             """
             Creates and returns the receive client.
@@ -539,7 +541,7 @@ if uamqp_installed:
 
             client = ReceiveClient(
                 source,
-                debug=network_trace,  # pylint:disable=protected-access
+                debug=network_trace,
                 error_policy=retry_policy,
                 desired_capabilities=desired_capabilities,
                 prefetch=link_credit,
@@ -552,7 +554,7 @@ if uamqp_installed:
                 idle_timeout=idle_timeout,
                 auth=auth,
                 timeout=timeout,
-                **kwargs
+                **kwargs,
             )
             # pylint:disable=protected-access
             client._streaming_receive = streaming_receive
@@ -568,9 +570,7 @@ if uamqp_installed:
             :keyword ~uamqp.authentication.JWTTokenAuth auth: Auth.
             """
             # pylint:disable=protected-access
-            handler.open(connection=client._conn_manager.get_connection(
-                client._address.hostname, auth
-            ))
+            handler.open(connection=client._conn_manager.get_connection(client._address.hostname, auth))
 
         @staticmethod
         def check_link_stolen(consumer, exception):
@@ -581,7 +581,7 @@ if uamqp_installed:
             """
             if (
                 isinstance(exception, errors.LinkDetach)
-                and exception.condition == constants.ErrorCodes.LinkStolen  # pylint: disable=no-member
+                and exception.condition == constants.ErrorCodes.LinkStolen
             ):
                 raise consumer._handle_exception(exception)  # pylint: disable=protected-access
 
@@ -624,7 +624,7 @@ if uamqp_installed:
                 custom_endpoint_hostname=config.custom_endpoint_hostname,
                 port=config.connection_port,
                 verify=config.connection_verify,
-                refresh_window=refresh_window
+                refresh_window=refresh_window,
             )
             if update_token:
                 token_auth.update_token()
@@ -643,11 +643,7 @@ if uamqp_installed:
             """
 
             mgmt_target = f"amqps://{address.hostname}{address.path}"
-            return AMQPClient(
-                mgmt_target,
-                auth=mgmt_auth,
-                debug=config.network_tracing
-            )
+            return AMQPClient(mgmt_target, auth=mgmt_auth, debug=config.network_tracing)
 
         @staticmethod
         def open_mgmt_client(mgmt_client, conn):
@@ -679,7 +675,7 @@ if uamqp_installed:
             operation_type: bytes,
             status_code_field: bytes,
             description_fields: bytes,
-            **kwargs: Any
+            **kwargs: Any,
         ):
             """
             Send mgmt request.
@@ -698,12 +694,10 @@ if uamqp_installed:
                 op_type=operation_type,
                 status_code_field=status_code_field,
                 description_fields=description_fields,
-                **kwargs
+                **kwargs,
             )
             status_code = response.application_properties[status_code_field]
-            description: Optional[Union[str, bytes]] = response.application_properties.get(
-                description_fields
-            )
+            description: Optional[Union[str, bytes]] = response.application_properties.get(description_fields)
             return status_code, description, response
 
         @staticmethod
@@ -737,12 +731,8 @@ if uamqp_installed:
             :return: Timeout exception.
             :rtype: Exception
             """
-            if not base.running and isinstance(
-                exception, compat.TimeoutException
-            ):
-                exception = errors.AuthenticationException(
-                    "Authorization timeout."
-                )
+            if not base.running and isinstance(exception, compat.TimeoutException):
+                exception = errors.AuthenticationException("Authorization timeout.")
             return exception
 
         @staticmethod
@@ -772,8 +762,8 @@ if uamqp_installed:
 
         @staticmethod
         def _handle_exception(
-            exception, closable, *, is_consumer=False   # pylint:disable=unused-argument
-        ):  # pylint:disable=too-many-branches, too-many-statements
+            exception, closable, *, is_consumer=False  # pylint:disable=unused-argument
+        ):
             try:  # closable is a producer/consumer object
                 name = closable._name  # pylint: disable=protected-access
             except AttributeError:  # closable is an client object

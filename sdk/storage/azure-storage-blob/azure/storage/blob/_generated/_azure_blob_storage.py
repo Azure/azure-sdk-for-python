@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any
+from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.pipeline import policies
@@ -47,7 +48,7 @@ class AzureBlobStorage:  # pylint: disable=client-accepts-api-version-keyword
     :param base_url: Service URL. Required. Default value is "".
     :type base_url: str
     :keyword version: Specifies the version of the operation to use for this request. Default value
-     is "2024-08-04". Note that overriding this default value may result in unsupported behavior.
+     is "2025-01-05". Note that overriding this default value may result in unsupported behavior.
     :paramtype version: str
     """
 
@@ -110,7 +111,7 @@ class AzureBlobStorage:  # pylint: disable=client-accepts-api-version-keyword
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "AzureBlobStorage":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

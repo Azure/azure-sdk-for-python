@@ -39,7 +39,7 @@ class TestSparkJobSchema:
             with pytest.raises(ValidationError) as ve:
                 internal_representation: SparkJob = SparkJob(**schema.load(cfg))
                 source = internal_representation._to_rest_object()
-                assert ve.message == "runtime version should be either 3.2 or 3.3"
+                assert ve.message == "runtime version should be either 3.3 or 3.4"
 
     def test_invalid_instance_type(self):
         test_path = "./tests/test_configs/spark_job/spark_job_invalid_instance_type.yml"
@@ -81,7 +81,7 @@ class TestSparkJobSchema:
             environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             resources={
                 "instance_type": "Standard_E8S_V3",
-                "runtime_version": "3.2.0",
+                "runtime_version": "3.3.0",
             },
         )
         assert isinstance(spark_job.inputs["input1"], Input)

@@ -4,7 +4,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from __future__ import absolute_import
 from collections.abc import Mapping
 
 from io import BytesIO
@@ -130,6 +129,7 @@ def _prepare_multipart_body_helper(http_request: "HTTPRequestType", content_inde
     correct context (sync/async)
 
     Does nothing if "set_multipart_mixed" was never called.
+
     :param http_request: The http request whose multipart body we are trying
      to prepare
     :type http_request: any
@@ -335,7 +335,9 @@ def _parts_helper(
     return responses
 
 
-def _format_data_helper(data: "FileType") -> Union[Tuple[Optional[str], str], Tuple[Optional[str], "FileContent", str]]:
+def _format_data_helper(
+    data: "FileType",
+) -> Union[Tuple[Optional[str], str], Tuple[Optional[str], "FileContent", str]]:
     """Helper for _format_data.
 
     Format field data according to whether it is a stream or

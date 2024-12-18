@@ -25,12 +25,14 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
+
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
         """This is a fake class to support current implemetation of MultiApiClientMixin."
         Will be removed in final version of multiapi azure-core based client
         """
         pass
+
 
 class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
     """The Container Service Client.
@@ -56,34 +58,35 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '2024-05-01'
+    DEFAULT_API_VERSION = "2024-09-01"
     _PROFILE_TAG = "azure.mgmt.containerservice.ContainerServiceClient"
-    LATEST_PROFILE = ProfileDefinition({
-        _PROFILE_TAG: {
-            None: DEFAULT_API_VERSION,
-            'container_services': '2019-04-01',
-            'fleet_members': '2022-09-02-preview',
-            'fleets': '2022-09-02-preview',
-            'load_balancers': '2024-04-02-preview',
-            'machines': '2024-04-02-preview',
-            'managed_cluster_snapshots': '2024-04-02-preview',
-            'open_shift_managed_clusters': '2019-04-30',
-            'operation_status_result': '2024-04-02-preview',
-        }},
-        _PROFILE_TAG + " latest"
+    LATEST_PROFILE = ProfileDefinition(
+        {
+            _PROFILE_TAG: {
+                None: DEFAULT_API_VERSION,
+                "container_services": "2019-04-01",
+                "fleet_members": "2022-09-02-preview",
+                "fleets": "2022-09-02-preview",
+                "load_balancers": "2024-07-02-preview",
+                "managed_cluster_snapshots": "2024-07-02-preview",
+                "open_shift_managed_clusters": "2019-04-30",
+                "operation_status_result": "2024-07-02-preview",
+            }
+        },
+        _PROFILE_TAG + " latest",
     )
 
     def __init__(
         self,
         credential: "TokenCredential",
         subscription_id: str,
-        api_version: Optional[str]=None,
+        api_version: Optional[str] = None,
         base_url: str = "https://management.azure.com",
-        profile: KnownProfiles=KnownProfiles.default,
+        profile: KnownProfiles = KnownProfiles.default,
         **kwargs: Any
     ):
         if api_version:
-            kwargs.setdefault('api_version', api_version)
+            kwargs.setdefault("api_version", api_version)
         self._config = ContainerServiceClientConfiguration(credential, subscription_id, **kwargs)
         _policies = kwargs.pop("policies", None)
         if _policies is None:
@@ -104,10 +107,7 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
                 self._config.http_logging_policy,
             ]
         self._client = ARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
-        super(ContainerServiceClient, self).__init__(
-            api_version=api_version,
-            profile=profile
-        )
+        super(ContainerServiceClient, self).__init__(api_version=api_version, profile=profile)
 
     @classmethod
     def _models_dict(cls, api_version):
@@ -117,322 +117,431 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
-           * 2017-07-01: :mod:`v2017_07_01.models<azure.mgmt.containerservice.v2017_07_01.models>`
-           * 2018-03-31: :mod:`v2018_03_31.models<azure.mgmt.containerservice.v2018_03_31.models>`
-           * 2018-08-01-preview: :mod:`v2018_08_01_preview.models<azure.mgmt.containerservice.v2018_08_01_preview.models>`
-           * 2018-09-30-preview: :mod:`v2018_09_30_preview.models<azure.mgmt.containerservice.v2018_09_30_preview.models>`
-           * 2019-02-01: :mod:`v2019_02_01.models<azure.mgmt.containerservice.v2019_02_01.models>`
-           * 2019-04-01: :mod:`v2019_04_01.models<azure.mgmt.containerservice.v2019_04_01.models>`
-           * 2019-04-30: :mod:`v2019_04_30.models<azure.mgmt.containerservice.v2019_04_30.models>`
-           * 2019-06-01: :mod:`v2019_06_01.models<azure.mgmt.containerservice.v2019_06_01.models>`
-           * 2019-08-01: :mod:`v2019_08_01.models<azure.mgmt.containerservice.v2019_08_01.models>`
-           * 2019-09-30-preview: :mod:`v2019_09_30_preview.models<azure.mgmt.containerservice.v2019_09_30_preview.models>`
-           * 2019-10-01: :mod:`v2019_10_01.models<azure.mgmt.containerservice.v2019_10_01.models>`
-           * 2019-10-27-preview: :mod:`v2019_10_27_preview.models<azure.mgmt.containerservice.v2019_10_27_preview.models>`
-           * 2019-11-01: :mod:`v2019_11_01.models<azure.mgmt.containerservice.v2019_11_01.models>`
-           * 2020-01-01: :mod:`v2020_01_01.models<azure.mgmt.containerservice.v2020_01_01.models>`
-           * 2020-02-01: :mod:`v2020_02_01.models<azure.mgmt.containerservice.v2020_02_01.models>`
-           * 2020-03-01: :mod:`v2020_03_01.models<azure.mgmt.containerservice.v2020_03_01.models>`
-           * 2020-04-01: :mod:`v2020_04_01.models<azure.mgmt.containerservice.v2020_04_01.models>`
-           * 2020-06-01: :mod:`v2020_06_01.models<azure.mgmt.containerservice.v2020_06_01.models>`
-           * 2020-07-01: :mod:`v2020_07_01.models<azure.mgmt.containerservice.v2020_07_01.models>`
-           * 2020-09-01: :mod:`v2020_09_01.models<azure.mgmt.containerservice.v2020_09_01.models>`
-           * 2020-11-01: :mod:`v2020_11_01.models<azure.mgmt.containerservice.v2020_11_01.models>`
-           * 2020-12-01: :mod:`v2020_12_01.models<azure.mgmt.containerservice.v2020_12_01.models>`
-           * 2021-02-01: :mod:`v2021_02_01.models<azure.mgmt.containerservice.v2021_02_01.models>`
-           * 2021-03-01: :mod:`v2021_03_01.models<azure.mgmt.containerservice.v2021_03_01.models>`
-           * 2021-05-01: :mod:`v2021_05_01.models<azure.mgmt.containerservice.v2021_05_01.models>`
-           * 2021-07-01: :mod:`v2021_07_01.models<azure.mgmt.containerservice.v2021_07_01.models>`
-           * 2021-08-01: :mod:`v2021_08_01.models<azure.mgmt.containerservice.v2021_08_01.models>`
-           * 2021-09-01: :mod:`v2021_09_01.models<azure.mgmt.containerservice.v2021_09_01.models>`
-           * 2021-10-01: :mod:`v2021_10_01.models<azure.mgmt.containerservice.v2021_10_01.models>`
-           * 2021-11-01-preview: :mod:`v2021_11_01_preview.models<azure.mgmt.containerservice.v2021_11_01_preview.models>`
-           * 2022-01-01: :mod:`v2022_01_01.models<azure.mgmt.containerservice.v2022_01_01.models>`
-           * 2022-01-02-preview: :mod:`v2022_01_02_preview.models<azure.mgmt.containerservice.v2022_01_02_preview.models>`
-           * 2022-02-01: :mod:`v2022_02_01.models<azure.mgmt.containerservice.v2022_02_01.models>`
-           * 2022-02-02-preview: :mod:`v2022_02_02_preview.models<azure.mgmt.containerservice.v2022_02_02_preview.models>`
-           * 2022-03-01: :mod:`v2022_03_01.models<azure.mgmt.containerservice.v2022_03_01.models>`
-           * 2022-03-02-preview: :mod:`v2022_03_02_preview.models<azure.mgmt.containerservice.v2022_03_02_preview.models>`
-           * 2022-04-01: :mod:`v2022_04_01.models<azure.mgmt.containerservice.v2022_04_01.models>`
-           * 2022-04-02-preview: :mod:`v2022_04_02_preview.models<azure.mgmt.containerservice.v2022_04_02_preview.models>`
-           * 2022-05-02-preview: :mod:`v2022_05_02_preview.models<azure.mgmt.containerservice.v2022_05_02_preview.models>`
-           * 2022-06-01: :mod:`v2022_06_01.models<azure.mgmt.containerservice.v2022_06_01.models>`
-           * 2022-06-02-preview: :mod:`v2022_06_02_preview.models<azure.mgmt.containerservice.v2022_06_02_preview.models>`
-           * 2022-07-01: :mod:`v2022_07_01.models<azure.mgmt.containerservice.v2022_07_01.models>`
-           * 2022-07-02-preview: :mod:`v2022_07_02_preview.models<azure.mgmt.containerservice.v2022_07_02_preview.models>`
-           * 2022-08-02-preview: :mod:`v2022_08_02_preview.models<azure.mgmt.containerservice.v2022_08_02_preview.models>`
-           * 2022-08-03-preview: :mod:`v2022_08_03_preview.models<azure.mgmt.containerservice.v2022_08_03_preview.models>`
-           * 2022-09-01: :mod:`v2022_09_01.models<azure.mgmt.containerservice.v2022_09_01.models>`
-           * 2022-09-02-preview: :mod:`v2022_09_02_preview.models<azure.mgmt.containerservice.v2022_09_02_preview.models>`
-           * 2022-10-02-preview: :mod:`v2022_10_02_preview.models<azure.mgmt.containerservice.v2022_10_02_preview.models>`
-           * 2022-11-01: :mod:`v2022_11_01.models<azure.mgmt.containerservice.v2022_11_01.models>`
-           * 2022-11-02-preview: :mod:`v2022_11_02_preview.models<azure.mgmt.containerservice.v2022_11_02_preview.models>`
-           * 2023-01-01: :mod:`v2023_01_01.models<azure.mgmt.containerservice.v2023_01_01.models>`
-           * 2023-01-02-preview: :mod:`v2023_01_02_preview.models<azure.mgmt.containerservice.v2023_01_02_preview.models>`
-           * 2023-02-01: :mod:`v2023_02_01.models<azure.mgmt.containerservice.v2023_02_01.models>`
-           * 2023-02-02-preview: :mod:`v2023_02_02_preview.models<azure.mgmt.containerservice.v2023_02_02_preview.models>`
-           * 2023-03-01: :mod:`v2023_03_01.models<azure.mgmt.containerservice.v2023_03_01.models>`
-           * 2023-03-02-preview: :mod:`v2023_03_02_preview.models<azure.mgmt.containerservice.v2023_03_02_preview.models>`
-           * 2023-04-01: :mod:`v2023_04_01.models<azure.mgmt.containerservice.v2023_04_01.models>`
-           * 2023-04-02-preview: :mod:`v2023_04_02_preview.models<azure.mgmt.containerservice.v2023_04_02_preview.models>`
-           * 2023-05-01: :mod:`v2023_05_01.models<azure.mgmt.containerservice.v2023_05_01.models>`
-           * 2023-05-02-preview: :mod:`v2023_05_02_preview.models<azure.mgmt.containerservice.v2023_05_02_preview.models>`
-           * 2023-06-01: :mod:`v2023_06_01.models<azure.mgmt.containerservice.v2023_06_01.models>`
-           * 2023-06-02-preview: :mod:`v2023_06_02_preview.models<azure.mgmt.containerservice.v2023_06_02_preview.models>`
-           * 2023-07-01: :mod:`v2023_07_01.models<azure.mgmt.containerservice.v2023_07_01.models>`
-           * 2023-07-02-preview: :mod:`v2023_07_02_preview.models<azure.mgmt.containerservice.v2023_07_02_preview.models>`
-           * 2023-08-01: :mod:`v2023_08_01.models<azure.mgmt.containerservice.v2023_08_01.models>`
-           * 2023-08-02-preview: :mod:`v2023_08_02_preview.models<azure.mgmt.containerservice.v2023_08_02_preview.models>`
-           * 2023-09-01: :mod:`v2023_09_01.models<azure.mgmt.containerservice.v2023_09_01.models>`
-           * 2023-09-02-preview: :mod:`v2023_09_02_preview.models<azure.mgmt.containerservice.v2023_09_02_preview.models>`
-           * 2023-10-01: :mod:`v2023_10_01.models<azure.mgmt.containerservice.v2023_10_01.models>`
-           * 2023-10-02-preview: :mod:`v2023_10_02_preview.models<azure.mgmt.containerservice.v2023_10_02_preview.models>`
-           * 2023-11-01: :mod:`v2023_11_01.models<azure.mgmt.containerservice.v2023_11_01.models>`
-           * 2023-11-02-preview: :mod:`v2023_11_02_preview.models<azure.mgmt.containerservice.v2023_11_02_preview.models>`
-           * 2024-01-01: :mod:`v2024_01_01.models<azure.mgmt.containerservice.v2024_01_01.models>`
-           * 2024-01-02-preview: :mod:`v2024_01_02_preview.models<azure.mgmt.containerservice.v2024_01_02_preview.models>`
-           * 2024-02-01: :mod:`v2024_02_01.models<azure.mgmt.containerservice.v2024_02_01.models>`
-           * 2024-02-02-preview: :mod:`v2024_02_02_preview.models<azure.mgmt.containerservice.v2024_02_02_preview.models>`
-           * 2024-03-02-preview: :mod:`v2024_03_02_preview.models<azure.mgmt.containerservice.v2024_03_02_preview.models>`
-           * 2024-04-02-preview: :mod:`v2024_04_02_preview.models<azure.mgmt.containerservice.v2024_04_02_preview.models>`
-           * 2024-05-01: :mod:`v2024_05_01.models<azure.mgmt.containerservice.v2024_05_01.models>`
+        * 2017-07-01: :mod:`v2017_07_01.models<azure.mgmt.containerservice.v2017_07_01.models>`
+        * 2018-03-31: :mod:`v2018_03_31.models<azure.mgmt.containerservice.v2018_03_31.models>`
+        * 2018-08-01-preview: :mod:`v2018_08_01_preview.models<azure.mgmt.containerservice.v2018_08_01_preview.models>`
+        * 2018-09-30-preview: :mod:`v2018_09_30_preview.models<azure.mgmt.containerservice.v2018_09_30_preview.models>`
+        * 2019-02-01: :mod:`v2019_02_01.models<azure.mgmt.containerservice.v2019_02_01.models>`
+        * 2019-04-01: :mod:`v2019_04_01.models<azure.mgmt.containerservice.v2019_04_01.models>`
+        * 2019-04-30: :mod:`v2019_04_30.models<azure.mgmt.containerservice.v2019_04_30.models>`
+        * 2019-06-01: :mod:`v2019_06_01.models<azure.mgmt.containerservice.v2019_06_01.models>`
+        * 2019-08-01: :mod:`v2019_08_01.models<azure.mgmt.containerservice.v2019_08_01.models>`
+        * 2019-09-30-preview: :mod:`v2019_09_30_preview.models<azure.mgmt.containerservice.v2019_09_30_preview.models>`
+        * 2019-10-01: :mod:`v2019_10_01.models<azure.mgmt.containerservice.v2019_10_01.models>`
+        * 2019-10-27-preview: :mod:`v2019_10_27_preview.models<azure.mgmt.containerservice.v2019_10_27_preview.models>`
+        * 2019-11-01: :mod:`v2019_11_01.models<azure.mgmt.containerservice.v2019_11_01.models>`
+        * 2020-01-01: :mod:`v2020_01_01.models<azure.mgmt.containerservice.v2020_01_01.models>`
+        * 2020-02-01: :mod:`v2020_02_01.models<azure.mgmt.containerservice.v2020_02_01.models>`
+        * 2020-03-01: :mod:`v2020_03_01.models<azure.mgmt.containerservice.v2020_03_01.models>`
+        * 2020-04-01: :mod:`v2020_04_01.models<azure.mgmt.containerservice.v2020_04_01.models>`
+        * 2020-06-01: :mod:`v2020_06_01.models<azure.mgmt.containerservice.v2020_06_01.models>`
+        * 2020-07-01: :mod:`v2020_07_01.models<azure.mgmt.containerservice.v2020_07_01.models>`
+        * 2020-09-01: :mod:`v2020_09_01.models<azure.mgmt.containerservice.v2020_09_01.models>`
+        * 2020-11-01: :mod:`v2020_11_01.models<azure.mgmt.containerservice.v2020_11_01.models>`
+        * 2020-12-01: :mod:`v2020_12_01.models<azure.mgmt.containerservice.v2020_12_01.models>`
+        * 2021-02-01: :mod:`v2021_02_01.models<azure.mgmt.containerservice.v2021_02_01.models>`
+        * 2021-03-01: :mod:`v2021_03_01.models<azure.mgmt.containerservice.v2021_03_01.models>`
+        * 2021-05-01: :mod:`v2021_05_01.models<azure.mgmt.containerservice.v2021_05_01.models>`
+        * 2021-07-01: :mod:`v2021_07_01.models<azure.mgmt.containerservice.v2021_07_01.models>`
+        * 2021-08-01: :mod:`v2021_08_01.models<azure.mgmt.containerservice.v2021_08_01.models>`
+        * 2021-09-01: :mod:`v2021_09_01.models<azure.mgmt.containerservice.v2021_09_01.models>`
+        * 2021-10-01: :mod:`v2021_10_01.models<azure.mgmt.containerservice.v2021_10_01.models>`
+        * 2021-11-01-preview: :mod:`v2021_11_01_preview.models<azure.mgmt.containerservice.v2021_11_01_preview.models>`
+        * 2022-01-01: :mod:`v2022_01_01.models<azure.mgmt.containerservice.v2022_01_01.models>`
+        * 2022-01-02-preview: :mod:`v2022_01_02_preview.models<azure.mgmt.containerservice.v2022_01_02_preview.models>`
+        * 2022-02-01: :mod:`v2022_02_01.models<azure.mgmt.containerservice.v2022_02_01.models>`
+        * 2022-02-02-preview: :mod:`v2022_02_02_preview.models<azure.mgmt.containerservice.v2022_02_02_preview.models>`
+        * 2022-03-01: :mod:`v2022_03_01.models<azure.mgmt.containerservice.v2022_03_01.models>`
+        * 2022-03-02-preview: :mod:`v2022_03_02_preview.models<azure.mgmt.containerservice.v2022_03_02_preview.models>`
+        * 2022-04-01: :mod:`v2022_04_01.models<azure.mgmt.containerservice.v2022_04_01.models>`
+        * 2022-04-02-preview: :mod:`v2022_04_02_preview.models<azure.mgmt.containerservice.v2022_04_02_preview.models>`
+        * 2022-05-02-preview: :mod:`v2022_05_02_preview.models<azure.mgmt.containerservice.v2022_05_02_preview.models>`
+        * 2022-06-01: :mod:`v2022_06_01.models<azure.mgmt.containerservice.v2022_06_01.models>`
+        * 2022-06-02-preview: :mod:`v2022_06_02_preview.models<azure.mgmt.containerservice.v2022_06_02_preview.models>`
+        * 2022-07-01: :mod:`v2022_07_01.models<azure.mgmt.containerservice.v2022_07_01.models>`
+        * 2022-07-02-preview: :mod:`v2022_07_02_preview.models<azure.mgmt.containerservice.v2022_07_02_preview.models>`
+        * 2022-08-02-preview: :mod:`v2022_08_02_preview.models<azure.mgmt.containerservice.v2022_08_02_preview.models>`
+        * 2022-08-03-preview: :mod:`v2022_08_03_preview.models<azure.mgmt.containerservice.v2022_08_03_preview.models>`
+        * 2022-09-01: :mod:`v2022_09_01.models<azure.mgmt.containerservice.v2022_09_01.models>`
+        * 2022-09-02-preview: :mod:`v2022_09_02_preview.models<azure.mgmt.containerservice.v2022_09_02_preview.models>`
+        * 2022-10-02-preview: :mod:`v2022_10_02_preview.models<azure.mgmt.containerservice.v2022_10_02_preview.models>`
+        * 2022-11-01: :mod:`v2022_11_01.models<azure.mgmt.containerservice.v2022_11_01.models>`
+        * 2022-11-02-preview: :mod:`v2022_11_02_preview.models<azure.mgmt.containerservice.v2022_11_02_preview.models>`
+        * 2023-01-01: :mod:`v2023_01_01.models<azure.mgmt.containerservice.v2023_01_01.models>`
+        * 2023-01-02-preview: :mod:`v2023_01_02_preview.models<azure.mgmt.containerservice.v2023_01_02_preview.models>`
+        * 2023-02-01: :mod:`v2023_02_01.models<azure.mgmt.containerservice.v2023_02_01.models>`
+        * 2023-02-02-preview: :mod:`v2023_02_02_preview.models<azure.mgmt.containerservice.v2023_02_02_preview.models>`
+        * 2023-03-01: :mod:`v2023_03_01.models<azure.mgmt.containerservice.v2023_03_01.models>`
+        * 2023-03-02-preview: :mod:`v2023_03_02_preview.models<azure.mgmt.containerservice.v2023_03_02_preview.models>`
+        * 2023-04-01: :mod:`v2023_04_01.models<azure.mgmt.containerservice.v2023_04_01.models>`
+        * 2023-04-02-preview: :mod:`v2023_04_02_preview.models<azure.mgmt.containerservice.v2023_04_02_preview.models>`
+        * 2023-05-01: :mod:`v2023_05_01.models<azure.mgmt.containerservice.v2023_05_01.models>`
+        * 2023-05-02-preview: :mod:`v2023_05_02_preview.models<azure.mgmt.containerservice.v2023_05_02_preview.models>`
+        * 2023-06-01: :mod:`v2023_06_01.models<azure.mgmt.containerservice.v2023_06_01.models>`
+        * 2023-06-02-preview: :mod:`v2023_06_02_preview.models<azure.mgmt.containerservice.v2023_06_02_preview.models>`
+        * 2023-07-01: :mod:`v2023_07_01.models<azure.mgmt.containerservice.v2023_07_01.models>`
+        * 2023-07-02-preview: :mod:`v2023_07_02_preview.models<azure.mgmt.containerservice.v2023_07_02_preview.models>`
+        * 2023-08-01: :mod:`v2023_08_01.models<azure.mgmt.containerservice.v2023_08_01.models>`
+        * 2023-08-02-preview: :mod:`v2023_08_02_preview.models<azure.mgmt.containerservice.v2023_08_02_preview.models>`
+        * 2023-09-01: :mod:`v2023_09_01.models<azure.mgmt.containerservice.v2023_09_01.models>`
+        * 2023-09-02-preview: :mod:`v2023_09_02_preview.models<azure.mgmt.containerservice.v2023_09_02_preview.models>`
+        * 2023-10-01: :mod:`v2023_10_01.models<azure.mgmt.containerservice.v2023_10_01.models>`
+        * 2023-10-02-preview: :mod:`v2023_10_02_preview.models<azure.mgmt.containerservice.v2023_10_02_preview.models>`
+        * 2023-11-01: :mod:`v2023_11_01.models<azure.mgmt.containerservice.v2023_11_01.models>`
+        * 2023-11-02-preview: :mod:`v2023_11_02_preview.models<azure.mgmt.containerservice.v2023_11_02_preview.models>`
+        * 2024-01-01: :mod:`v2024_01_01.models<azure.mgmt.containerservice.v2024_01_01.models>`
+        * 2024-01-02-preview: :mod:`v2024_01_02_preview.models<azure.mgmt.containerservice.v2024_01_02_preview.models>`
+        * 2024-02-01: :mod:`v2024_02_01.models<azure.mgmt.containerservice.v2024_02_01.models>`
+        * 2024-02-02-preview: :mod:`v2024_02_02_preview.models<azure.mgmt.containerservice.v2024_02_02_preview.models>`
+        * 2024-03-02-preview: :mod:`v2024_03_02_preview.models<azure.mgmt.containerservice.v2024_03_02_preview.models>`
+        * 2024-04-02-preview: :mod:`v2024_04_02_preview.models<azure.mgmt.containerservice.v2024_04_02_preview.models>`
+        * 2024-05-01: :mod:`v2024_05_01.models<azure.mgmt.containerservice.v2024_05_01.models>`
+        * 2024-05-02-preview: :mod:`v2024_05_02_preview.models<azure.mgmt.containerservice.v2024_05_02_preview.models>`
+        * 2024-06-02-preview: :mod:`v2024_06_02_preview.models<azure.mgmt.containerservice.v2024_06_02_preview.models>`
+        * 2024-07-01: :mod:`v2024_07_01.models<azure.mgmt.containerservice.v2024_07_01.models>`
+        * 2024-07-02-preview: :mod:`v2024_07_02_preview.models<azure.mgmt.containerservice.v2024_07_02_preview.models>`
+        * 2024-08-01: :mod:`v2024_08_01.models<azure.mgmt.containerservice.v2024_08_01.models>`
+        * 2024-09-01: :mod:`v2024_09_01.models<azure.mgmt.containerservice.v2024_09_01.models>`
         """
-        if api_version == '2017-07-01':
+        if api_version == "2017-07-01":
             from .v2017_07_01 import models
+
             return models
-        elif api_version == '2018-03-31':
+        elif api_version == "2018-03-31":
             from .v2018_03_31 import models
+
             return models
-        elif api_version == '2018-08-01-preview':
+        elif api_version == "2018-08-01-preview":
             from .v2018_08_01_preview import models
+
             return models
-        elif api_version == '2018-09-30-preview':
+        elif api_version == "2018-09-30-preview":
             from .v2018_09_30_preview import models
+
             return models
-        elif api_version == '2019-02-01':
+        elif api_version == "2019-02-01":
             from .v2019_02_01 import models
+
             return models
-        elif api_version == '2019-04-01':
+        elif api_version == "2019-04-01":
             from .v2019_04_01 import models
+
             return models
-        elif api_version == '2019-04-30':
+        elif api_version == "2019-04-30":
             from .v2019_04_30 import models
+
             return models
-        elif api_version == '2019-06-01':
+        elif api_version == "2019-06-01":
             from .v2019_06_01 import models
+
             return models
-        elif api_version == '2019-08-01':
+        elif api_version == "2019-08-01":
             from .v2019_08_01 import models
+
             return models
-        elif api_version == '2019-09-30-preview':
+        elif api_version == "2019-09-30-preview":
             from .v2019_09_30_preview import models
+
             return models
-        elif api_version == '2019-10-01':
+        elif api_version == "2019-10-01":
             from .v2019_10_01 import models
+
             return models
-        elif api_version == '2019-10-27-preview':
+        elif api_version == "2019-10-27-preview":
             from .v2019_10_27_preview import models
+
             return models
-        elif api_version == '2019-11-01':
+        elif api_version == "2019-11-01":
             from .v2019_11_01 import models
+
             return models
-        elif api_version == '2020-01-01':
+        elif api_version == "2020-01-01":
             from .v2020_01_01 import models
+
             return models
-        elif api_version == '2020-02-01':
+        elif api_version == "2020-02-01":
             from .v2020_02_01 import models
+
             return models
-        elif api_version == '2020-03-01':
+        elif api_version == "2020-03-01":
             from .v2020_03_01 import models
+
             return models
-        elif api_version == '2020-04-01':
+        elif api_version == "2020-04-01":
             from .v2020_04_01 import models
+
             return models
-        elif api_version == '2020-06-01':
+        elif api_version == "2020-06-01":
             from .v2020_06_01 import models
+
             return models
-        elif api_version == '2020-07-01':
+        elif api_version == "2020-07-01":
             from .v2020_07_01 import models
+
             return models
-        elif api_version == '2020-09-01':
+        elif api_version == "2020-09-01":
             from .v2020_09_01 import models
+
             return models
-        elif api_version == '2020-11-01':
+        elif api_version == "2020-11-01":
             from .v2020_11_01 import models
+
             return models
-        elif api_version == '2020-12-01':
+        elif api_version == "2020-12-01":
             from .v2020_12_01 import models
+
             return models
-        elif api_version == '2021-02-01':
+        elif api_version == "2021-02-01":
             from .v2021_02_01 import models
+
             return models
-        elif api_version == '2021-03-01':
+        elif api_version == "2021-03-01":
             from .v2021_03_01 import models
+
             return models
-        elif api_version == '2021-05-01':
+        elif api_version == "2021-05-01":
             from .v2021_05_01 import models
+
             return models
-        elif api_version == '2021-07-01':
+        elif api_version == "2021-07-01":
             from .v2021_07_01 import models
+
             return models
-        elif api_version == '2021-08-01':
+        elif api_version == "2021-08-01":
             from .v2021_08_01 import models
+
             return models
-        elif api_version == '2021-09-01':
+        elif api_version == "2021-09-01":
             from .v2021_09_01 import models
+
             return models
-        elif api_version == '2021-10-01':
+        elif api_version == "2021-10-01":
             from .v2021_10_01 import models
+
             return models
-        elif api_version == '2021-11-01-preview':
+        elif api_version == "2021-11-01-preview":
             from .v2021_11_01_preview import models
+
             return models
-        elif api_version == '2022-01-01':
+        elif api_version == "2022-01-01":
             from .v2022_01_01 import models
+
             return models
-        elif api_version == '2022-01-02-preview':
+        elif api_version == "2022-01-02-preview":
             from .v2022_01_02_preview import models
+
             return models
-        elif api_version == '2022-02-01':
+        elif api_version == "2022-02-01":
             from .v2022_02_01 import models
+
             return models
-        elif api_version == '2022-02-02-preview':
+        elif api_version == "2022-02-02-preview":
             from .v2022_02_02_preview import models
+
             return models
-        elif api_version == '2022-03-01':
+        elif api_version == "2022-03-01":
             from .v2022_03_01 import models
+
             return models
-        elif api_version == '2022-03-02-preview':
+        elif api_version == "2022-03-02-preview":
             from .v2022_03_02_preview import models
+
             return models
-        elif api_version == '2022-04-01':
+        elif api_version == "2022-04-01":
             from .v2022_04_01 import models
+
             return models
-        elif api_version == '2022-04-02-preview':
+        elif api_version == "2022-04-02-preview":
             from .v2022_04_02_preview import models
+
             return models
-        elif api_version == '2022-05-02-preview':
+        elif api_version == "2022-05-02-preview":
             from .v2022_05_02_preview import models
+
             return models
-        elif api_version == '2022-06-01':
+        elif api_version == "2022-06-01":
             from .v2022_06_01 import models
+
             return models
-        elif api_version == '2022-06-02-preview':
+        elif api_version == "2022-06-02-preview":
             from .v2022_06_02_preview import models
+
             return models
-        elif api_version == '2022-07-01':
+        elif api_version == "2022-07-01":
             from .v2022_07_01 import models
+
             return models
-        elif api_version == '2022-07-02-preview':
+        elif api_version == "2022-07-02-preview":
             from .v2022_07_02_preview import models
+
             return models
-        elif api_version == '2022-08-02-preview':
+        elif api_version == "2022-08-02-preview":
             from .v2022_08_02_preview import models
+
             return models
-        elif api_version == '2022-08-03-preview':
+        elif api_version == "2022-08-03-preview":
             from .v2022_08_03_preview import models
+
             return models
-        elif api_version == '2022-09-01':
+        elif api_version == "2022-09-01":
             from .v2022_09_01 import models
+
             return models
-        elif api_version == '2022-09-02-preview':
+        elif api_version == "2022-09-02-preview":
             from .v2022_09_02_preview import models
+
             return models
-        elif api_version == '2022-10-02-preview':
+        elif api_version == "2022-10-02-preview":
             from .v2022_10_02_preview import models
+
             return models
-        elif api_version == '2022-11-01':
+        elif api_version == "2022-11-01":
             from .v2022_11_01 import models
+
             return models
-        elif api_version == '2022-11-02-preview':
+        elif api_version == "2022-11-02-preview":
             from .v2022_11_02_preview import models
+
             return models
-        elif api_version == '2023-01-01':
+        elif api_version == "2023-01-01":
             from .v2023_01_01 import models
+
             return models
-        elif api_version == '2023-01-02-preview':
+        elif api_version == "2023-01-02-preview":
             from .v2023_01_02_preview import models
+
             return models
-        elif api_version == '2023-02-01':
+        elif api_version == "2023-02-01":
             from .v2023_02_01 import models
+
             return models
-        elif api_version == '2023-02-02-preview':
+        elif api_version == "2023-02-02-preview":
             from .v2023_02_02_preview import models
+
             return models
-        elif api_version == '2023-03-01':
+        elif api_version == "2023-03-01":
             from .v2023_03_01 import models
+
             return models
-        elif api_version == '2023-03-02-preview':
+        elif api_version == "2023-03-02-preview":
             from .v2023_03_02_preview import models
+
             return models
-        elif api_version == '2023-04-01':
+        elif api_version == "2023-04-01":
             from .v2023_04_01 import models
+
             return models
-        elif api_version == '2023-04-02-preview':
+        elif api_version == "2023-04-02-preview":
             from .v2023_04_02_preview import models
+
             return models
-        elif api_version == '2023-05-01':
+        elif api_version == "2023-05-01":
             from .v2023_05_01 import models
+
             return models
-        elif api_version == '2023-05-02-preview':
+        elif api_version == "2023-05-02-preview":
             from .v2023_05_02_preview import models
+
             return models
-        elif api_version == '2023-06-01':
+        elif api_version == "2023-06-01":
             from .v2023_06_01 import models
+
             return models
-        elif api_version == '2023-06-02-preview':
+        elif api_version == "2023-06-02-preview":
             from .v2023_06_02_preview import models
+
             return models
-        elif api_version == '2023-07-01':
+        elif api_version == "2023-07-01":
             from .v2023_07_01 import models
+
             return models
-        elif api_version == '2023-07-02-preview':
+        elif api_version == "2023-07-02-preview":
             from .v2023_07_02_preview import models
+
             return models
-        elif api_version == '2023-08-01':
+        elif api_version == "2023-08-01":
             from .v2023_08_01 import models
+
             return models
-        elif api_version == '2023-08-02-preview':
+        elif api_version == "2023-08-02-preview":
             from .v2023_08_02_preview import models
+
             return models
-        elif api_version == '2023-09-01':
+        elif api_version == "2023-09-01":
             from .v2023_09_01 import models
+
             return models
-        elif api_version == '2023-09-02-preview':
+        elif api_version == "2023-09-02-preview":
             from .v2023_09_02_preview import models
+
             return models
-        elif api_version == '2023-10-01':
+        elif api_version == "2023-10-01":
             from .v2023_10_01 import models
+
             return models
-        elif api_version == '2023-10-02-preview':
+        elif api_version == "2023-10-02-preview":
             from .v2023_10_02_preview import models
+
             return models
-        elif api_version == '2023-11-01':
+        elif api_version == "2023-11-01":
             from .v2023_11_01 import models
+
             return models
-        elif api_version == '2023-11-02-preview':
+        elif api_version == "2023-11-02-preview":
             from .v2023_11_02_preview import models
+
             return models
-        elif api_version == '2024-01-01':
+        elif api_version == "2024-01-01":
             from .v2024_01_01 import models
+
             return models
-        elif api_version == '2024-01-02-preview':
+        elif api_version == "2024-01-02-preview":
             from .v2024_01_02_preview import models
+
             return models
-        elif api_version == '2024-02-01':
+        elif api_version == "2024-02-01":
             from .v2024_02_01 import models
+
             return models
-        elif api_version == '2024-02-02-preview':
+        elif api_version == "2024-02-02-preview":
             from .v2024_02_02_preview import models
+
             return models
-        elif api_version == '2024-03-02-preview':
+        elif api_version == "2024-03-02-preview":
             from .v2024_03_02_preview import models
+
             return models
-        elif api_version == '2024-04-02-preview':
+        elif api_version == "2024-04-02-preview":
             from .v2024_04_02_preview import models
+
             return models
-        elif api_version == '2024-05-01':
+        elif api_version == "2024-05-01":
             from .v2024_05_01 import models
+
+            return models
+        elif api_version == "2024-05-02-preview":
+            from .v2024_05_02_preview import models
+
+            return models
+        elif api_version == "2024-06-02-preview":
+            from .v2024_06_02_preview import models
+
+            return models
+        elif api_version == "2024-07-01":
+            from .v2024_07_01 import models
+
+            return models
+        elif api_version == "2024-07-02-preview":
+            from .v2024_07_02_preview import models
+
+            return models
+        elif api_version == "2024-08-01":
+            from .v2024_08_01 import models
+
+            return models
+        elif api_version == "2024-09-01":
+            from .v2024_09_01 import models
+
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -440,2088 +549,2439 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
     def agent_pools(self):
         """Instance depends on the API version:
 
-           * 2019-02-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2019_02_01.operations.AgentPoolsOperations>`
-           * 2019-04-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2019_04_01.operations.AgentPoolsOperations>`
-           * 2019-06-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2019_06_01.operations.AgentPoolsOperations>`
-           * 2019-08-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2019_08_01.operations.AgentPoolsOperations>`
-           * 2019-10-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2019_10_01.operations.AgentPoolsOperations>`
-           * 2019-11-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2019_11_01.operations.AgentPoolsOperations>`
-           * 2020-01-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2020_01_01.operations.AgentPoolsOperations>`
-           * 2020-02-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2020_02_01.operations.AgentPoolsOperations>`
-           * 2020-03-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2020_03_01.operations.AgentPoolsOperations>`
-           * 2020-04-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2020_04_01.operations.AgentPoolsOperations>`
-           * 2020-06-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2020_06_01.operations.AgentPoolsOperations>`
-           * 2020-07-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2020_07_01.operations.AgentPoolsOperations>`
-           * 2020-09-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2020_09_01.operations.AgentPoolsOperations>`
-           * 2020-11-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2020_11_01.operations.AgentPoolsOperations>`
-           * 2020-12-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2020_12_01.operations.AgentPoolsOperations>`
-           * 2021-02-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2021_02_01.operations.AgentPoolsOperations>`
-           * 2021-03-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2021_03_01.operations.AgentPoolsOperations>`
-           * 2021-05-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2021_05_01.operations.AgentPoolsOperations>`
-           * 2021-07-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2021_07_01.operations.AgentPoolsOperations>`
-           * 2021-08-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2021_08_01.operations.AgentPoolsOperations>`
-           * 2021-09-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2021_09_01.operations.AgentPoolsOperations>`
-           * 2021-10-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2021_10_01.operations.AgentPoolsOperations>`
-           * 2021-11-01-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2021_11_01_preview.operations.AgentPoolsOperations>`
-           * 2022-01-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_01_01.operations.AgentPoolsOperations>`
-           * 2022-01-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_01_02_preview.operations.AgentPoolsOperations>`
-           * 2022-02-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_02_01.operations.AgentPoolsOperations>`
-           * 2022-02-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_02_02_preview.operations.AgentPoolsOperations>`
-           * 2022-03-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_03_01.operations.AgentPoolsOperations>`
-           * 2022-03-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_03_02_preview.operations.AgentPoolsOperations>`
-           * 2022-04-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_04_01.operations.AgentPoolsOperations>`
-           * 2022-04-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_04_02_preview.operations.AgentPoolsOperations>`
-           * 2022-05-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_05_02_preview.operations.AgentPoolsOperations>`
-           * 2022-06-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_06_01.operations.AgentPoolsOperations>`
-           * 2022-06-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_06_02_preview.operations.AgentPoolsOperations>`
-           * 2022-07-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_07_01.operations.AgentPoolsOperations>`
-           * 2022-07-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_07_02_preview.operations.AgentPoolsOperations>`
-           * 2022-08-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_08_02_preview.operations.AgentPoolsOperations>`
-           * 2022-08-03-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_08_03_preview.operations.AgentPoolsOperations>`
-           * 2022-09-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_09_01.operations.AgentPoolsOperations>`
-           * 2022-09-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_09_02_preview.operations.AgentPoolsOperations>`
-           * 2022-10-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_10_02_preview.operations.AgentPoolsOperations>`
-           * 2022-11-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_11_01.operations.AgentPoolsOperations>`
-           * 2022-11-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_11_02_preview.operations.AgentPoolsOperations>`
-           * 2023-01-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_01_01.operations.AgentPoolsOperations>`
-           * 2023-01-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_01_02_preview.operations.AgentPoolsOperations>`
-           * 2023-02-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_02_01.operations.AgentPoolsOperations>`
-           * 2023-02-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_02_02_preview.operations.AgentPoolsOperations>`
-           * 2023-03-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_03_01.operations.AgentPoolsOperations>`
-           * 2023-03-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_03_02_preview.operations.AgentPoolsOperations>`
-           * 2023-04-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_04_01.operations.AgentPoolsOperations>`
-           * 2023-04-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_04_02_preview.operations.AgentPoolsOperations>`
-           * 2023-05-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_05_01.operations.AgentPoolsOperations>`
-           * 2023-05-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_05_02_preview.operations.AgentPoolsOperations>`
-           * 2023-06-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_06_01.operations.AgentPoolsOperations>`
-           * 2023-06-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_06_02_preview.operations.AgentPoolsOperations>`
-           * 2023-07-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_07_01.operations.AgentPoolsOperations>`
-           * 2023-07-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_07_02_preview.operations.AgentPoolsOperations>`
-           * 2023-08-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_08_01.operations.AgentPoolsOperations>`
-           * 2023-08-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_08_02_preview.operations.AgentPoolsOperations>`
-           * 2023-09-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_09_01.operations.AgentPoolsOperations>`
-           * 2023-09-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_09_02_preview.operations.AgentPoolsOperations>`
-           * 2023-10-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_10_01.operations.AgentPoolsOperations>`
-           * 2023-10-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_10_02_preview.operations.AgentPoolsOperations>`
-           * 2023-11-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_11_01.operations.AgentPoolsOperations>`
-           * 2023-11-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_11_02_preview.operations.AgentPoolsOperations>`
-           * 2024-01-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2024_01_01.operations.AgentPoolsOperations>`
-           * 2024-01-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2024_01_02_preview.operations.AgentPoolsOperations>`
-           * 2024-02-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2024_02_01.operations.AgentPoolsOperations>`
-           * 2024-02-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2024_02_02_preview.operations.AgentPoolsOperations>`
-           * 2024-03-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2024_03_02_preview.operations.AgentPoolsOperations>`
-           * 2024-04-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2024_04_02_preview.operations.AgentPoolsOperations>`
-           * 2024-05-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2024_05_01.operations.AgentPoolsOperations>`
+        * 2019-02-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2019_02_01.operations.AgentPoolsOperations>`
+        * 2019-04-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2019_04_01.operations.AgentPoolsOperations>`
+        * 2019-06-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2019_06_01.operations.AgentPoolsOperations>`
+        * 2019-08-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2019_08_01.operations.AgentPoolsOperations>`
+        * 2019-10-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2019_10_01.operations.AgentPoolsOperations>`
+        * 2019-11-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2019_11_01.operations.AgentPoolsOperations>`
+        * 2020-01-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2020_01_01.operations.AgentPoolsOperations>`
+        * 2020-02-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2020_02_01.operations.AgentPoolsOperations>`
+        * 2020-03-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2020_03_01.operations.AgentPoolsOperations>`
+        * 2020-04-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2020_04_01.operations.AgentPoolsOperations>`
+        * 2020-06-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2020_06_01.operations.AgentPoolsOperations>`
+        * 2020-07-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2020_07_01.operations.AgentPoolsOperations>`
+        * 2020-09-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2020_09_01.operations.AgentPoolsOperations>`
+        * 2020-11-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2020_11_01.operations.AgentPoolsOperations>`
+        * 2020-12-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2020_12_01.operations.AgentPoolsOperations>`
+        * 2021-02-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2021_02_01.operations.AgentPoolsOperations>`
+        * 2021-03-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2021_03_01.operations.AgentPoolsOperations>`
+        * 2021-05-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2021_05_01.operations.AgentPoolsOperations>`
+        * 2021-07-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2021_07_01.operations.AgentPoolsOperations>`
+        * 2021-08-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2021_08_01.operations.AgentPoolsOperations>`
+        * 2021-09-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2021_09_01.operations.AgentPoolsOperations>`
+        * 2021-10-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2021_10_01.operations.AgentPoolsOperations>`
+        * 2021-11-01-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2021_11_01_preview.operations.AgentPoolsOperations>`
+        * 2022-01-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_01_01.operations.AgentPoolsOperations>`
+        * 2022-01-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_01_02_preview.operations.AgentPoolsOperations>`
+        * 2022-02-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_02_01.operations.AgentPoolsOperations>`
+        * 2022-02-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_02_02_preview.operations.AgentPoolsOperations>`
+        * 2022-03-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_03_01.operations.AgentPoolsOperations>`
+        * 2022-03-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_03_02_preview.operations.AgentPoolsOperations>`
+        * 2022-04-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_04_01.operations.AgentPoolsOperations>`
+        * 2022-04-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_04_02_preview.operations.AgentPoolsOperations>`
+        * 2022-05-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_05_02_preview.operations.AgentPoolsOperations>`
+        * 2022-06-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_06_01.operations.AgentPoolsOperations>`
+        * 2022-06-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_06_02_preview.operations.AgentPoolsOperations>`
+        * 2022-07-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_07_01.operations.AgentPoolsOperations>`
+        * 2022-07-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_07_02_preview.operations.AgentPoolsOperations>`
+        * 2022-08-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_08_02_preview.operations.AgentPoolsOperations>`
+        * 2022-08-03-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_08_03_preview.operations.AgentPoolsOperations>`
+        * 2022-09-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_09_01.operations.AgentPoolsOperations>`
+        * 2022-09-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_09_02_preview.operations.AgentPoolsOperations>`
+        * 2022-10-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_10_02_preview.operations.AgentPoolsOperations>`
+        * 2022-11-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_11_01.operations.AgentPoolsOperations>`
+        * 2022-11-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2022_11_02_preview.operations.AgentPoolsOperations>`
+        * 2023-01-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_01_01.operations.AgentPoolsOperations>`
+        * 2023-01-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_01_02_preview.operations.AgentPoolsOperations>`
+        * 2023-02-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_02_01.operations.AgentPoolsOperations>`
+        * 2023-02-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_02_02_preview.operations.AgentPoolsOperations>`
+        * 2023-03-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_03_01.operations.AgentPoolsOperations>`
+        * 2023-03-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_03_02_preview.operations.AgentPoolsOperations>`
+        * 2023-04-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_04_01.operations.AgentPoolsOperations>`
+        * 2023-04-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_04_02_preview.operations.AgentPoolsOperations>`
+        * 2023-05-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_05_01.operations.AgentPoolsOperations>`
+        * 2023-05-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_05_02_preview.operations.AgentPoolsOperations>`
+        * 2023-06-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_06_01.operations.AgentPoolsOperations>`
+        * 2023-06-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_06_02_preview.operations.AgentPoolsOperations>`
+        * 2023-07-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_07_01.operations.AgentPoolsOperations>`
+        * 2023-07-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_07_02_preview.operations.AgentPoolsOperations>`
+        * 2023-08-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_08_01.operations.AgentPoolsOperations>`
+        * 2023-08-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_08_02_preview.operations.AgentPoolsOperations>`
+        * 2023-09-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_09_01.operations.AgentPoolsOperations>`
+        * 2023-09-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_09_02_preview.operations.AgentPoolsOperations>`
+        * 2023-10-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_10_01.operations.AgentPoolsOperations>`
+        * 2023-10-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_10_02_preview.operations.AgentPoolsOperations>`
+        * 2023-11-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_11_01.operations.AgentPoolsOperations>`
+        * 2023-11-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2023_11_02_preview.operations.AgentPoolsOperations>`
+        * 2024-01-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2024_01_01.operations.AgentPoolsOperations>`
+        * 2024-01-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2024_01_02_preview.operations.AgentPoolsOperations>`
+        * 2024-02-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2024_02_01.operations.AgentPoolsOperations>`
+        * 2024-02-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2024_02_02_preview.operations.AgentPoolsOperations>`
+        * 2024-03-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2024_03_02_preview.operations.AgentPoolsOperations>`
+        * 2024-04-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2024_04_02_preview.operations.AgentPoolsOperations>`
+        * 2024-05-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2024_05_01.operations.AgentPoolsOperations>`
+        * 2024-05-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2024_05_02_preview.operations.AgentPoolsOperations>`
+        * 2024-06-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2024_06_02_preview.operations.AgentPoolsOperations>`
+        * 2024-07-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2024_07_01.operations.AgentPoolsOperations>`
+        * 2024-07-02-preview: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2024_07_02_preview.operations.AgentPoolsOperations>`
+        * 2024-08-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2024_08_01.operations.AgentPoolsOperations>`
+        * 2024-09-01: :class:`AgentPoolsOperations<azure.mgmt.containerservice.v2024_09_01.operations.AgentPoolsOperations>`
         """
-        api_version = self._get_api_version('agent_pools')
-        if api_version == '2019-02-01':
+        api_version = self._get_api_version("agent_pools")
+        if api_version == "2019-02-01":
             from .v2019_02_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2019-04-01':
+        elif api_version == "2019-04-01":
             from .v2019_04_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2019-06-01':
+        elif api_version == "2019-06-01":
             from .v2019_06_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2019-08-01':
+        elif api_version == "2019-08-01":
             from .v2019_08_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2019-10-01':
+        elif api_version == "2019-10-01":
             from .v2019_10_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2019-11-01':
+        elif api_version == "2019-11-01":
             from .v2019_11_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2020-01-01':
+        elif api_version == "2020-01-01":
             from .v2020_01_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2020-02-01':
+        elif api_version == "2020-02-01":
             from .v2020_02_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2020-03-01':
+        elif api_version == "2020-03-01":
             from .v2020_03_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2020-04-01':
+        elif api_version == "2020-04-01":
             from .v2020_04_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2020-06-01':
+        elif api_version == "2020-06-01":
             from .v2020_06_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2020-07-01':
+        elif api_version == "2020-07-01":
             from .v2020_07_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2020-09-01':
+        elif api_version == "2020-09-01":
             from .v2020_09_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2020-11-01':
+        elif api_version == "2020-11-01":
             from .v2020_11_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2020-12-01':
+        elif api_version == "2020-12-01":
             from .v2020_12_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2021-02-01':
+        elif api_version == "2021-02-01":
             from .v2021_02_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2021-03-01':
+        elif api_version == "2021-03-01":
             from .v2021_03_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2021-05-01':
+        elif api_version == "2021-05-01":
             from .v2021_05_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2021-07-01':
+        elif api_version == "2021-07-01":
             from .v2021_07_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2021-08-01':
+        elif api_version == "2021-08-01":
             from .v2021_08_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2021-09-01':
+        elif api_version == "2021-09-01":
             from .v2021_09_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2021-10-01':
+        elif api_version == "2021-10-01":
             from .v2021_10_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2021-11-01-preview':
+        elif api_version == "2021-11-01-preview":
             from .v2021_11_01_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2022-01-01':
+        elif api_version == "2022-01-01":
             from .v2022_01_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2022-01-02-preview':
+        elif api_version == "2022-01-02-preview":
             from .v2022_01_02_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2022-02-01':
+        elif api_version == "2022-02-01":
             from .v2022_02_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2022-02-02-preview':
+        elif api_version == "2022-02-02-preview":
             from .v2022_02_02_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2022-03-01':
+        elif api_version == "2022-03-01":
             from .v2022_03_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2022-03-02-preview':
+        elif api_version == "2022-03-02-preview":
             from .v2022_03_02_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2022-04-01':
+        elif api_version == "2022-04-01":
             from .v2022_04_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2022-04-02-preview':
+        elif api_version == "2022-04-02-preview":
             from .v2022_04_02_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2022-05-02-preview':
+        elif api_version == "2022-05-02-preview":
             from .v2022_05_02_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2022-06-01':
+        elif api_version == "2022-06-01":
             from .v2022_06_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2022-06-02-preview':
+        elif api_version == "2022-06-02-preview":
             from .v2022_06_02_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2022-07-01':
+        elif api_version == "2022-07-01":
             from .v2022_07_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2022-07-02-preview':
+        elif api_version == "2022-07-02-preview":
             from .v2022_07_02_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2022-08-02-preview':
+        elif api_version == "2022-08-02-preview":
             from .v2022_08_02_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2022-08-03-preview':
+        elif api_version == "2022-08-03-preview":
             from .v2022_08_03_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2022-09-01':
+        elif api_version == "2022-09-01":
             from .v2022_09_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2022-09-02-preview':
+        elif api_version == "2022-09-02-preview":
             from .v2022_09_02_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2022-10-02-preview':
+        elif api_version == "2022-10-02-preview":
             from .v2022_10_02_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2022-11-01':
+        elif api_version == "2022-11-01":
             from .v2022_11_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2022-11-02-preview':
+        elif api_version == "2022-11-02-preview":
             from .v2022_11_02_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2023-01-01':
+        elif api_version == "2023-01-01":
             from .v2023_01_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2023-01-02-preview':
+        elif api_version == "2023-01-02-preview":
             from .v2023_01_02_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2023-02-01':
+        elif api_version == "2023-02-01":
             from .v2023_02_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2023-02-02-preview':
+        elif api_version == "2023-02-02-preview":
             from .v2023_02_02_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2023-03-01':
+        elif api_version == "2023-03-01":
             from .v2023_03_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2023-03-02-preview':
+        elif api_version == "2023-03-02-preview":
             from .v2023_03_02_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2023-04-01':
+        elif api_version == "2023-04-01":
             from .v2023_04_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2023-04-02-preview':
+        elif api_version == "2023-04-02-preview":
             from .v2023_04_02_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2023-05-01':
+        elif api_version == "2023-05-01":
             from .v2023_05_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2023-05-02-preview':
+        elif api_version == "2023-05-02-preview":
             from .v2023_05_02_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2023-06-01':
+        elif api_version == "2023-06-01":
             from .v2023_06_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2023-06-02-preview':
+        elif api_version == "2023-06-02-preview":
             from .v2023_06_02_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2023-07-01':
+        elif api_version == "2023-07-01":
             from .v2023_07_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2023-07-02-preview':
+        elif api_version == "2023-07-02-preview":
             from .v2023_07_02_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2023-08-01':
+        elif api_version == "2023-08-01":
             from .v2023_08_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2023-08-02-preview':
+        elif api_version == "2023-08-02-preview":
             from .v2023_08_02_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2023-09-01':
+        elif api_version == "2023-09-01":
             from .v2023_09_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2023-09-02-preview':
+        elif api_version == "2023-09-02-preview":
             from .v2023_09_02_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2023-10-01':
+        elif api_version == "2023-10-01":
             from .v2023_10_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2023-10-02-preview':
+        elif api_version == "2023-10-02-preview":
             from .v2023_10_02_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2023-11-01':
+        elif api_version == "2023-11-01":
             from .v2023_11_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2023-11-02-preview':
+        elif api_version == "2023-11-02-preview":
             from .v2023_11_02_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2024-01-01':
+        elif api_version == "2024-01-01":
             from .v2024_01_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2024-01-02-preview':
+        elif api_version == "2024-01-02-preview":
             from .v2024_01_02_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2024-02-01':
+        elif api_version == "2024-02-01":
             from .v2024_02_01.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2024-02-02-preview':
+        elif api_version == "2024-02-02-preview":
             from .v2024_02_02_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2024-03-02-preview':
+        elif api_version == "2024-03-02-preview":
             from .v2024_03_02_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2024-04-02-preview':
+        elif api_version == "2024-04-02-preview":
             from .v2024_04_02_preview.operations import AgentPoolsOperations as OperationClass
-        elif api_version == '2024-05-01':
+        elif api_version == "2024-05-01":
             from .v2024_05_01.operations import AgentPoolsOperations as OperationClass
+        elif api_version == "2024-05-02-preview":
+            from .v2024_05_02_preview.operations import AgentPoolsOperations as OperationClass
+        elif api_version == "2024-06-02-preview":
+            from .v2024_06_02_preview.operations import AgentPoolsOperations as OperationClass
+        elif api_version == "2024-07-01":
+            from .v2024_07_01.operations import AgentPoolsOperations as OperationClass
+        elif api_version == "2024-07-02-preview":
+            from .v2024_07_02_preview.operations import AgentPoolsOperations as OperationClass
+        elif api_version == "2024-08-01":
+            from .v2024_08_01.operations import AgentPoolsOperations as OperationClass
+        elif api_version == "2024-09-01":
+            from .v2024_09_01.operations import AgentPoolsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'agent_pools'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
+        return OperationClass(
+            self._client,
+            self._config,
+            Serializer(self._models_dict(api_version)),
+            Deserializer(self._models_dict(api_version)),
+            api_version,
+        )
 
     @property
     def container_services(self):
         """Instance depends on the API version:
 
-           * 2017-07-01: :class:`ContainerServicesOperations<azure.mgmt.containerservice.v2017_07_01.operations.ContainerServicesOperations>`
-           * 2019-04-01: :class:`ContainerServicesOperations<azure.mgmt.containerservice.v2019_04_01.operations.ContainerServicesOperations>`
+        * 2017-07-01: :class:`ContainerServicesOperations<azure.mgmt.containerservice.v2017_07_01.operations.ContainerServicesOperations>`
+        * 2019-04-01: :class:`ContainerServicesOperations<azure.mgmt.containerservice.v2019_04_01.operations.ContainerServicesOperations>`
         """
-        api_version = self._get_api_version('container_services')
-        if api_version == '2017-07-01':
+        api_version = self._get_api_version("container_services")
+        if api_version == "2017-07-01":
             from .v2017_07_01.operations import ContainerServicesOperations as OperationClass
-        elif api_version == '2019-04-01':
+        elif api_version == "2019-04-01":
             from .v2019_04_01.operations import ContainerServicesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'container_services'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
+        return OperationClass(
+            self._client,
+            self._config,
+            Serializer(self._models_dict(api_version)),
+            Deserializer(self._models_dict(api_version)),
+            api_version,
+        )
 
     @property
     def fleet_members(self):
         """Instance depends on the API version:
 
-           * 2022-06-02-preview: :class:`FleetMembersOperations<azure.mgmt.containerservice.v2022_06_02_preview.operations.FleetMembersOperations>`
-           * 2022-07-02-preview: :class:`FleetMembersOperations<azure.mgmt.containerservice.v2022_07_02_preview.operations.FleetMembersOperations>`
-           * 2022-09-02-preview: :class:`FleetMembersOperations<azure.mgmt.containerservice.v2022_09_02_preview.operations.FleetMembersOperations>`
+        * 2022-06-02-preview: :class:`FleetMembersOperations<azure.mgmt.containerservice.v2022_06_02_preview.operations.FleetMembersOperations>`
+        * 2022-07-02-preview: :class:`FleetMembersOperations<azure.mgmt.containerservice.v2022_07_02_preview.operations.FleetMembersOperations>`
+        * 2022-09-02-preview: :class:`FleetMembersOperations<azure.mgmt.containerservice.v2022_09_02_preview.operations.FleetMembersOperations>`
         """
-        api_version = self._get_api_version('fleet_members')
-        if api_version == '2022-06-02-preview':
+        api_version = self._get_api_version("fleet_members")
+        if api_version == "2022-06-02-preview":
             from .v2022_06_02_preview.operations import FleetMembersOperations as OperationClass
-        elif api_version == '2022-07-02-preview':
+        elif api_version == "2022-07-02-preview":
             from .v2022_07_02_preview.operations import FleetMembersOperations as OperationClass
-        elif api_version == '2022-09-02-preview':
+        elif api_version == "2022-09-02-preview":
             from .v2022_09_02_preview.operations import FleetMembersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'fleet_members'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
+        return OperationClass(
+            self._client,
+            self._config,
+            Serializer(self._models_dict(api_version)),
+            Deserializer(self._models_dict(api_version)),
+            api_version,
+        )
 
     @property
     def fleets(self):
         """Instance depends on the API version:
 
-           * 2022-06-02-preview: :class:`FleetsOperations<azure.mgmt.containerservice.v2022_06_02_preview.operations.FleetsOperations>`
-           * 2022-07-02-preview: :class:`FleetsOperations<azure.mgmt.containerservice.v2022_07_02_preview.operations.FleetsOperations>`
-           * 2022-09-02-preview: :class:`FleetsOperations<azure.mgmt.containerservice.v2022_09_02_preview.operations.FleetsOperations>`
+        * 2022-06-02-preview: :class:`FleetsOperations<azure.mgmt.containerservice.v2022_06_02_preview.operations.FleetsOperations>`
+        * 2022-07-02-preview: :class:`FleetsOperations<azure.mgmt.containerservice.v2022_07_02_preview.operations.FleetsOperations>`
+        * 2022-09-02-preview: :class:`FleetsOperations<azure.mgmt.containerservice.v2022_09_02_preview.operations.FleetsOperations>`
         """
-        api_version = self._get_api_version('fleets')
-        if api_version == '2022-06-02-preview':
+        api_version = self._get_api_version("fleets")
+        if api_version == "2022-06-02-preview":
             from .v2022_06_02_preview.operations import FleetsOperations as OperationClass
-        elif api_version == '2022-07-02-preview':
+        elif api_version == "2022-07-02-preview":
             from .v2022_07_02_preview.operations import FleetsOperations as OperationClass
-        elif api_version == '2022-09-02-preview':
+        elif api_version == "2022-09-02-preview":
             from .v2022_09_02_preview.operations import FleetsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'fleets'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
+        return OperationClass(
+            self._client,
+            self._config,
+            Serializer(self._models_dict(api_version)),
+            Deserializer(self._models_dict(api_version)),
+            api_version,
+        )
 
     @property
     def load_balancers(self):
         """Instance depends on the API version:
 
-           * 2024-03-02-preview: :class:`LoadBalancersOperations<azure.mgmt.containerservice.v2024_03_02_preview.operations.LoadBalancersOperations>`
-           * 2024-04-02-preview: :class:`LoadBalancersOperations<azure.mgmt.containerservice.v2024_04_02_preview.operations.LoadBalancersOperations>`
+        * 2024-03-02-preview: :class:`LoadBalancersOperations<azure.mgmt.containerservice.v2024_03_02_preview.operations.LoadBalancersOperations>`
+        * 2024-04-02-preview: :class:`LoadBalancersOperations<azure.mgmt.containerservice.v2024_04_02_preview.operations.LoadBalancersOperations>`
+        * 2024-05-02-preview: :class:`LoadBalancersOperations<azure.mgmt.containerservice.v2024_05_02_preview.operations.LoadBalancersOperations>`
+        * 2024-06-02-preview: :class:`LoadBalancersOperations<azure.mgmt.containerservice.v2024_06_02_preview.operations.LoadBalancersOperations>`
+        * 2024-07-02-preview: :class:`LoadBalancersOperations<azure.mgmt.containerservice.v2024_07_02_preview.operations.LoadBalancersOperations>`
         """
-        api_version = self._get_api_version('load_balancers')
-        if api_version == '2024-03-02-preview':
+        api_version = self._get_api_version("load_balancers")
+        if api_version == "2024-03-02-preview":
             from .v2024_03_02_preview.operations import LoadBalancersOperations as OperationClass
-        elif api_version == '2024-04-02-preview':
+        elif api_version == "2024-04-02-preview":
             from .v2024_04_02_preview.operations import LoadBalancersOperations as OperationClass
+        elif api_version == "2024-05-02-preview":
+            from .v2024_05_02_preview.operations import LoadBalancersOperations as OperationClass
+        elif api_version == "2024-06-02-preview":
+            from .v2024_06_02_preview.operations import LoadBalancersOperations as OperationClass
+        elif api_version == "2024-07-02-preview":
+            from .v2024_07_02_preview.operations import LoadBalancersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'load_balancers'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
+        return OperationClass(
+            self._client,
+            self._config,
+            Serializer(self._models_dict(api_version)),
+            Deserializer(self._models_dict(api_version)),
+            api_version,
+        )
 
     @property
     def machines(self):
         """Instance depends on the API version:
 
-           * 2023-07-02-preview: :class:`MachinesOperations<azure.mgmt.containerservice.v2023_07_02_preview.operations.MachinesOperations>`
-           * 2023-08-02-preview: :class:`MachinesOperations<azure.mgmt.containerservice.v2023_08_02_preview.operations.MachinesOperations>`
-           * 2023-09-02-preview: :class:`MachinesOperations<azure.mgmt.containerservice.v2023_09_02_preview.operations.MachinesOperations>`
-           * 2023-10-02-preview: :class:`MachinesOperations<azure.mgmt.containerservice.v2023_10_02_preview.operations.MachinesOperations>`
-           * 2023-11-02-preview: :class:`MachinesOperations<azure.mgmt.containerservice.v2023_11_02_preview.operations.MachinesOperations>`
-           * 2024-01-02-preview: :class:`MachinesOperations<azure.mgmt.containerservice.v2024_01_02_preview.operations.MachinesOperations>`
-           * 2024-02-02-preview: :class:`MachinesOperations<azure.mgmt.containerservice.v2024_02_02_preview.operations.MachinesOperations>`
-           * 2024-03-02-preview: :class:`MachinesOperations<azure.mgmt.containerservice.v2024_03_02_preview.operations.MachinesOperations>`
-           * 2024-04-02-preview: :class:`MachinesOperations<azure.mgmt.containerservice.v2024_04_02_preview.operations.MachinesOperations>`
+        * 2023-07-02-preview: :class:`MachinesOperations<azure.mgmt.containerservice.v2023_07_02_preview.operations.MachinesOperations>`
+        * 2023-08-02-preview: :class:`MachinesOperations<azure.mgmt.containerservice.v2023_08_02_preview.operations.MachinesOperations>`
+        * 2023-09-02-preview: :class:`MachinesOperations<azure.mgmt.containerservice.v2023_09_02_preview.operations.MachinesOperations>`
+        * 2023-10-02-preview: :class:`MachinesOperations<azure.mgmt.containerservice.v2023_10_02_preview.operations.MachinesOperations>`
+        * 2023-11-02-preview: :class:`MachinesOperations<azure.mgmt.containerservice.v2023_11_02_preview.operations.MachinesOperations>`
+        * 2024-01-02-preview: :class:`MachinesOperations<azure.mgmt.containerservice.v2024_01_02_preview.operations.MachinesOperations>`
+        * 2024-02-02-preview: :class:`MachinesOperations<azure.mgmt.containerservice.v2024_02_02_preview.operations.MachinesOperations>`
+        * 2024-03-02-preview: :class:`MachinesOperations<azure.mgmt.containerservice.v2024_03_02_preview.operations.MachinesOperations>`
+        * 2024-04-02-preview: :class:`MachinesOperations<azure.mgmt.containerservice.v2024_04_02_preview.operations.MachinesOperations>`
+        * 2024-05-02-preview: :class:`MachinesOperations<azure.mgmt.containerservice.v2024_05_02_preview.operations.MachinesOperations>`
+        * 2024-06-02-preview: :class:`MachinesOperations<azure.mgmt.containerservice.v2024_06_02_preview.operations.MachinesOperations>`
+        * 2024-07-01: :class:`MachinesOperations<azure.mgmt.containerservice.v2024_07_01.operations.MachinesOperations>`
+        * 2024-07-02-preview: :class:`MachinesOperations<azure.mgmt.containerservice.v2024_07_02_preview.operations.MachinesOperations>`
+        * 2024-08-01: :class:`MachinesOperations<azure.mgmt.containerservice.v2024_08_01.operations.MachinesOperations>`
+        * 2024-09-01: :class:`MachinesOperations<azure.mgmt.containerservice.v2024_09_01.operations.MachinesOperations>`
         """
-        api_version = self._get_api_version('machines')
-        if api_version == '2023-07-02-preview':
+        api_version = self._get_api_version("machines")
+        if api_version == "2023-07-02-preview":
             from .v2023_07_02_preview.operations import MachinesOperations as OperationClass
-        elif api_version == '2023-08-02-preview':
+        elif api_version == "2023-08-02-preview":
             from .v2023_08_02_preview.operations import MachinesOperations as OperationClass
-        elif api_version == '2023-09-02-preview':
+        elif api_version == "2023-09-02-preview":
             from .v2023_09_02_preview.operations import MachinesOperations as OperationClass
-        elif api_version == '2023-10-02-preview':
+        elif api_version == "2023-10-02-preview":
             from .v2023_10_02_preview.operations import MachinesOperations as OperationClass
-        elif api_version == '2023-11-02-preview':
+        elif api_version == "2023-11-02-preview":
             from .v2023_11_02_preview.operations import MachinesOperations as OperationClass
-        elif api_version == '2024-01-02-preview':
+        elif api_version == "2024-01-02-preview":
             from .v2024_01_02_preview.operations import MachinesOperations as OperationClass
-        elif api_version == '2024-02-02-preview':
+        elif api_version == "2024-02-02-preview":
             from .v2024_02_02_preview.operations import MachinesOperations as OperationClass
-        elif api_version == '2024-03-02-preview':
+        elif api_version == "2024-03-02-preview":
             from .v2024_03_02_preview.operations import MachinesOperations as OperationClass
-        elif api_version == '2024-04-02-preview':
+        elif api_version == "2024-04-02-preview":
             from .v2024_04_02_preview.operations import MachinesOperations as OperationClass
+        elif api_version == "2024-05-02-preview":
+            from .v2024_05_02_preview.operations import MachinesOperations as OperationClass
+        elif api_version == "2024-06-02-preview":
+            from .v2024_06_02_preview.operations import MachinesOperations as OperationClass
+        elif api_version == "2024-07-01":
+            from .v2024_07_01.operations import MachinesOperations as OperationClass
+        elif api_version == "2024-07-02-preview":
+            from .v2024_07_02_preview.operations import MachinesOperations as OperationClass
+        elif api_version == "2024-08-01":
+            from .v2024_08_01.operations import MachinesOperations as OperationClass
+        elif api_version == "2024-09-01":
+            from .v2024_09_01.operations import MachinesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'machines'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
+        return OperationClass(
+            self._client,
+            self._config,
+            Serializer(self._models_dict(api_version)),
+            Deserializer(self._models_dict(api_version)),
+            api_version,
+        )
 
     @property
     def maintenance_configurations(self):
         """Instance depends on the API version:
 
-           * 2020-12-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2020_12_01.operations.MaintenanceConfigurationsOperations>`
-           * 2021-02-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2021_02_01.operations.MaintenanceConfigurationsOperations>`
-           * 2021-03-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2021_03_01.operations.MaintenanceConfigurationsOperations>`
-           * 2021-05-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2021_05_01.operations.MaintenanceConfigurationsOperations>`
-           * 2021-07-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2021_07_01.operations.MaintenanceConfigurationsOperations>`
-           * 2021-08-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2021_08_01.operations.MaintenanceConfigurationsOperations>`
-           * 2021-09-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2021_09_01.operations.MaintenanceConfigurationsOperations>`
-           * 2021-10-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2021_10_01.operations.MaintenanceConfigurationsOperations>`
-           * 2021-11-01-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2021_11_01_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2022-01-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_01_01.operations.MaintenanceConfigurationsOperations>`
-           * 2022-01-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_01_02_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2022-02-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_02_01.operations.MaintenanceConfigurationsOperations>`
-           * 2022-02-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_02_02_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2022-03-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_03_01.operations.MaintenanceConfigurationsOperations>`
-           * 2022-03-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_03_02_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2022-04-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_04_01.operations.MaintenanceConfigurationsOperations>`
-           * 2022-04-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_04_02_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2022-05-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_05_02_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2022-06-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_06_01.operations.MaintenanceConfigurationsOperations>`
-           * 2022-06-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_06_02_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2022-07-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_07_01.operations.MaintenanceConfigurationsOperations>`
-           * 2022-07-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_07_02_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2022-08-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_08_02_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2022-08-03-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_08_03_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2022-09-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_09_01.operations.MaintenanceConfigurationsOperations>`
-           * 2022-09-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_09_02_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2022-10-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_10_02_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2022-11-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_11_01.operations.MaintenanceConfigurationsOperations>`
-           * 2022-11-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_11_02_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2023-01-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_01_01.operations.MaintenanceConfigurationsOperations>`
-           * 2023-01-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_01_02_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2023-02-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_02_01.operations.MaintenanceConfigurationsOperations>`
-           * 2023-02-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_02_02_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2023-03-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_03_01.operations.MaintenanceConfigurationsOperations>`
-           * 2023-03-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_03_02_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2023-04-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_04_01.operations.MaintenanceConfigurationsOperations>`
-           * 2023-04-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_04_02_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2023-05-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_05_01.operations.MaintenanceConfigurationsOperations>`
-           * 2023-05-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_05_02_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2023-06-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_06_01.operations.MaintenanceConfigurationsOperations>`
-           * 2023-06-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_06_02_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2023-07-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_07_01.operations.MaintenanceConfigurationsOperations>`
-           * 2023-07-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_07_02_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2023-08-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_08_01.operations.MaintenanceConfigurationsOperations>`
-           * 2023-08-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_08_02_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2023-09-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_09_01.operations.MaintenanceConfigurationsOperations>`
-           * 2023-09-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_09_02_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2023-10-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_10_01.operations.MaintenanceConfigurationsOperations>`
-           * 2023-10-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_10_02_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2023-11-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_11_01.operations.MaintenanceConfigurationsOperations>`
-           * 2023-11-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_11_02_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2024-01-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2024_01_01.operations.MaintenanceConfigurationsOperations>`
-           * 2024-01-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2024_01_02_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2024-02-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2024_02_01.operations.MaintenanceConfigurationsOperations>`
-           * 2024-02-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2024_02_02_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2024-03-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2024_03_02_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2024-04-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2024_04_02_preview.operations.MaintenanceConfigurationsOperations>`
-           * 2024-05-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2024_05_01.operations.MaintenanceConfigurationsOperations>`
+        * 2020-12-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2020_12_01.operations.MaintenanceConfigurationsOperations>`
+        * 2021-02-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2021_02_01.operations.MaintenanceConfigurationsOperations>`
+        * 2021-03-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2021_03_01.operations.MaintenanceConfigurationsOperations>`
+        * 2021-05-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2021_05_01.operations.MaintenanceConfigurationsOperations>`
+        * 2021-07-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2021_07_01.operations.MaintenanceConfigurationsOperations>`
+        * 2021-08-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2021_08_01.operations.MaintenanceConfigurationsOperations>`
+        * 2021-09-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2021_09_01.operations.MaintenanceConfigurationsOperations>`
+        * 2021-10-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2021_10_01.operations.MaintenanceConfigurationsOperations>`
+        * 2021-11-01-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2021_11_01_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2022-01-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_01_01.operations.MaintenanceConfigurationsOperations>`
+        * 2022-01-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_01_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2022-02-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_02_01.operations.MaintenanceConfigurationsOperations>`
+        * 2022-02-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_02_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2022-03-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_03_01.operations.MaintenanceConfigurationsOperations>`
+        * 2022-03-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_03_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2022-04-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_04_01.operations.MaintenanceConfigurationsOperations>`
+        * 2022-04-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_04_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2022-05-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_05_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2022-06-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_06_01.operations.MaintenanceConfigurationsOperations>`
+        * 2022-06-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_06_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2022-07-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_07_01.operations.MaintenanceConfigurationsOperations>`
+        * 2022-07-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_07_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2022-08-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_08_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2022-08-03-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_08_03_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2022-09-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_09_01.operations.MaintenanceConfigurationsOperations>`
+        * 2022-09-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_09_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2022-10-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_10_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2022-11-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_11_01.operations.MaintenanceConfigurationsOperations>`
+        * 2022-11-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2022_11_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2023-01-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_01_01.operations.MaintenanceConfigurationsOperations>`
+        * 2023-01-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_01_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2023-02-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_02_01.operations.MaintenanceConfigurationsOperations>`
+        * 2023-02-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_02_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2023-03-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_03_01.operations.MaintenanceConfigurationsOperations>`
+        * 2023-03-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_03_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2023-04-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_04_01.operations.MaintenanceConfigurationsOperations>`
+        * 2023-04-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_04_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2023-05-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_05_01.operations.MaintenanceConfigurationsOperations>`
+        * 2023-05-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_05_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2023-06-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_06_01.operations.MaintenanceConfigurationsOperations>`
+        * 2023-06-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_06_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2023-07-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_07_01.operations.MaintenanceConfigurationsOperations>`
+        * 2023-07-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_07_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2023-08-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_08_01.operations.MaintenanceConfigurationsOperations>`
+        * 2023-08-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_08_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2023-09-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_09_01.operations.MaintenanceConfigurationsOperations>`
+        * 2023-09-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_09_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2023-10-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_10_01.operations.MaintenanceConfigurationsOperations>`
+        * 2023-10-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_10_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2023-11-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_11_01.operations.MaintenanceConfigurationsOperations>`
+        * 2023-11-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2023_11_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2024-01-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2024_01_01.operations.MaintenanceConfigurationsOperations>`
+        * 2024-01-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2024_01_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2024-02-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2024_02_01.operations.MaintenanceConfigurationsOperations>`
+        * 2024-02-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2024_02_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2024-03-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2024_03_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2024-04-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2024_04_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2024-05-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2024_05_01.operations.MaintenanceConfigurationsOperations>`
+        * 2024-05-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2024_05_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2024-06-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2024_06_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2024-07-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2024_07_01.operations.MaintenanceConfigurationsOperations>`
+        * 2024-07-02-preview: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2024_07_02_preview.operations.MaintenanceConfigurationsOperations>`
+        * 2024-08-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2024_08_01.operations.MaintenanceConfigurationsOperations>`
+        * 2024-09-01: :class:`MaintenanceConfigurationsOperations<azure.mgmt.containerservice.v2024_09_01.operations.MaintenanceConfigurationsOperations>`
         """
-        api_version = self._get_api_version('maintenance_configurations')
-        if api_version == '2020-12-01':
+        api_version = self._get_api_version("maintenance_configurations")
+        if api_version == "2020-12-01":
             from .v2020_12_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2021-02-01':
+        elif api_version == "2021-02-01":
             from .v2021_02_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2021-03-01':
+        elif api_version == "2021-03-01":
             from .v2021_03_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2021-05-01':
+        elif api_version == "2021-05-01":
             from .v2021_05_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2021-07-01':
+        elif api_version == "2021-07-01":
             from .v2021_07_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2021-08-01':
+        elif api_version == "2021-08-01":
             from .v2021_08_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2021-09-01':
+        elif api_version == "2021-09-01":
             from .v2021_09_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2021-10-01':
+        elif api_version == "2021-10-01":
             from .v2021_10_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2021-11-01-preview':
+        elif api_version == "2021-11-01-preview":
             from .v2021_11_01_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2022-01-01':
+        elif api_version == "2022-01-01":
             from .v2022_01_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2022-01-02-preview':
+        elif api_version == "2022-01-02-preview":
             from .v2022_01_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2022-02-01':
+        elif api_version == "2022-02-01":
             from .v2022_02_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2022-02-02-preview':
+        elif api_version == "2022-02-02-preview":
             from .v2022_02_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2022-03-01':
+        elif api_version == "2022-03-01":
             from .v2022_03_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2022-03-02-preview':
+        elif api_version == "2022-03-02-preview":
             from .v2022_03_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2022-04-01':
+        elif api_version == "2022-04-01":
             from .v2022_04_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2022-04-02-preview':
+        elif api_version == "2022-04-02-preview":
             from .v2022_04_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2022-05-02-preview':
+        elif api_version == "2022-05-02-preview":
             from .v2022_05_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2022-06-01':
+        elif api_version == "2022-06-01":
             from .v2022_06_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2022-06-02-preview':
+        elif api_version == "2022-06-02-preview":
             from .v2022_06_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2022-07-01':
+        elif api_version == "2022-07-01":
             from .v2022_07_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2022-07-02-preview':
+        elif api_version == "2022-07-02-preview":
             from .v2022_07_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2022-08-02-preview':
+        elif api_version == "2022-08-02-preview":
             from .v2022_08_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2022-08-03-preview':
+        elif api_version == "2022-08-03-preview":
             from .v2022_08_03_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2022-09-01':
+        elif api_version == "2022-09-01":
             from .v2022_09_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2022-09-02-preview':
+        elif api_version == "2022-09-02-preview":
             from .v2022_09_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2022-10-02-preview':
+        elif api_version == "2022-10-02-preview":
             from .v2022_10_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2022-11-01':
+        elif api_version == "2022-11-01":
             from .v2022_11_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2022-11-02-preview':
+        elif api_version == "2022-11-02-preview":
             from .v2022_11_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2023-01-01':
+        elif api_version == "2023-01-01":
             from .v2023_01_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2023-01-02-preview':
+        elif api_version == "2023-01-02-preview":
             from .v2023_01_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2023-02-01':
+        elif api_version == "2023-02-01":
             from .v2023_02_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2023-02-02-preview':
+        elif api_version == "2023-02-02-preview":
             from .v2023_02_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2023-03-01':
+        elif api_version == "2023-03-01":
             from .v2023_03_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2023-03-02-preview':
+        elif api_version == "2023-03-02-preview":
             from .v2023_03_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2023-04-01':
+        elif api_version == "2023-04-01":
             from .v2023_04_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2023-04-02-preview':
+        elif api_version == "2023-04-02-preview":
             from .v2023_04_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2023-05-01':
+        elif api_version == "2023-05-01":
             from .v2023_05_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2023-05-02-preview':
+        elif api_version == "2023-05-02-preview":
             from .v2023_05_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2023-06-01':
+        elif api_version == "2023-06-01":
             from .v2023_06_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2023-06-02-preview':
+        elif api_version == "2023-06-02-preview":
             from .v2023_06_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2023-07-01':
+        elif api_version == "2023-07-01":
             from .v2023_07_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2023-07-02-preview':
+        elif api_version == "2023-07-02-preview":
             from .v2023_07_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2023-08-01':
+        elif api_version == "2023-08-01":
             from .v2023_08_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2023-08-02-preview':
+        elif api_version == "2023-08-02-preview":
             from .v2023_08_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2023-09-01':
+        elif api_version == "2023-09-01":
             from .v2023_09_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2023-09-02-preview':
+        elif api_version == "2023-09-02-preview":
             from .v2023_09_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2023-10-01':
+        elif api_version == "2023-10-01":
             from .v2023_10_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2023-10-02-preview':
+        elif api_version == "2023-10-02-preview":
             from .v2023_10_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2023-11-01':
+        elif api_version == "2023-11-01":
             from .v2023_11_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2023-11-02-preview':
+        elif api_version == "2023-11-02-preview":
             from .v2023_11_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2024-01-01':
+        elif api_version == "2024-01-01":
             from .v2024_01_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2024-01-02-preview':
+        elif api_version == "2024-01-02-preview":
             from .v2024_01_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2024-02-01':
+        elif api_version == "2024-02-01":
             from .v2024_02_01.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2024-02-02-preview':
+        elif api_version == "2024-02-02-preview":
             from .v2024_02_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2024-03-02-preview':
+        elif api_version == "2024-03-02-preview":
             from .v2024_03_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2024-04-02-preview':
+        elif api_version == "2024-04-02-preview":
             from .v2024_04_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
-        elif api_version == '2024-05-01':
+        elif api_version == "2024-05-01":
             from .v2024_05_01.operations import MaintenanceConfigurationsOperations as OperationClass
+        elif api_version == "2024-05-02-preview":
+            from .v2024_05_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
+        elif api_version == "2024-06-02-preview":
+            from .v2024_06_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
+        elif api_version == "2024-07-01":
+            from .v2024_07_01.operations import MaintenanceConfigurationsOperations as OperationClass
+        elif api_version == "2024-07-02-preview":
+            from .v2024_07_02_preview.operations import MaintenanceConfigurationsOperations as OperationClass
+        elif api_version == "2024-08-01":
+            from .v2024_08_01.operations import MaintenanceConfigurationsOperations as OperationClass
+        elif api_version == "2024-09-01":
+            from .v2024_09_01.operations import MaintenanceConfigurationsOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'maintenance_configurations'".format(api_version))
+            raise ValueError(
+                "API version {} does not have operation group 'maintenance_configurations'".format(api_version)
+            )
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
+        return OperationClass(
+            self._client,
+            self._config,
+            Serializer(self._models_dict(api_version)),
+            Deserializer(self._models_dict(api_version)),
+            api_version,
+        )
 
     @property
     def managed_cluster_snapshots(self):
         """Instance depends on the API version:
 
-           * 2022-02-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2022_02_02_preview.operations.ManagedClusterSnapshotsOperations>`
-           * 2022-03-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2022_03_02_preview.operations.ManagedClusterSnapshotsOperations>`
-           * 2022-04-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2022_04_02_preview.operations.ManagedClusterSnapshotsOperations>`
-           * 2022-05-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2022_05_02_preview.operations.ManagedClusterSnapshotsOperations>`
-           * 2022-06-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2022_06_02_preview.operations.ManagedClusterSnapshotsOperations>`
-           * 2022-07-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2022_07_02_preview.operations.ManagedClusterSnapshotsOperations>`
-           * 2022-08-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2022_08_02_preview.operations.ManagedClusterSnapshotsOperations>`
-           * 2022-08-03-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2022_08_03_preview.operations.ManagedClusterSnapshotsOperations>`
-           * 2022-09-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2022_09_02_preview.operations.ManagedClusterSnapshotsOperations>`
-           * 2022-10-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2022_10_02_preview.operations.ManagedClusterSnapshotsOperations>`
-           * 2022-11-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2022_11_02_preview.operations.ManagedClusterSnapshotsOperations>`
-           * 2023-01-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2023_01_02_preview.operations.ManagedClusterSnapshotsOperations>`
-           * 2023-02-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2023_02_02_preview.operations.ManagedClusterSnapshotsOperations>`
-           * 2023-03-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2023_03_02_preview.operations.ManagedClusterSnapshotsOperations>`
-           * 2023-04-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2023_04_02_preview.operations.ManagedClusterSnapshotsOperations>`
-           * 2023-05-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2023_05_02_preview.operations.ManagedClusterSnapshotsOperations>`
-           * 2023-06-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2023_06_02_preview.operations.ManagedClusterSnapshotsOperations>`
-           * 2023-07-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2023_07_02_preview.operations.ManagedClusterSnapshotsOperations>`
-           * 2023-08-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2023_08_02_preview.operations.ManagedClusterSnapshotsOperations>`
-           * 2023-09-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2023_09_02_preview.operations.ManagedClusterSnapshotsOperations>`
-           * 2023-10-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2023_10_02_preview.operations.ManagedClusterSnapshotsOperations>`
-           * 2023-11-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2023_11_02_preview.operations.ManagedClusterSnapshotsOperations>`
-           * 2024-01-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2024_01_02_preview.operations.ManagedClusterSnapshotsOperations>`
-           * 2024-02-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2024_02_02_preview.operations.ManagedClusterSnapshotsOperations>`
-           * 2024-03-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2024_03_02_preview.operations.ManagedClusterSnapshotsOperations>`
-           * 2024-04-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2024_04_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2022-02-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2022_02_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2022-03-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2022_03_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2022-04-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2022_04_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2022-05-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2022_05_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2022-06-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2022_06_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2022-07-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2022_07_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2022-08-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2022_08_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2022-08-03-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2022_08_03_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2022-09-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2022_09_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2022-10-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2022_10_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2022-11-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2022_11_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2023-01-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2023_01_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2023-02-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2023_02_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2023-03-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2023_03_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2023-04-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2023_04_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2023-05-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2023_05_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2023-06-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2023_06_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2023-07-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2023_07_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2023-08-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2023_08_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2023-09-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2023_09_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2023-10-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2023_10_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2023-11-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2023_11_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2024-01-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2024_01_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2024-02-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2024_02_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2024-03-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2024_03_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2024-04-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2024_04_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2024-05-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2024_05_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2024-06-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2024_06_02_preview.operations.ManagedClusterSnapshotsOperations>`
+        * 2024-07-02-preview: :class:`ManagedClusterSnapshotsOperations<azure.mgmt.containerservice.v2024_07_02_preview.operations.ManagedClusterSnapshotsOperations>`
         """
-        api_version = self._get_api_version('managed_cluster_snapshots')
-        if api_version == '2022-02-02-preview':
+        api_version = self._get_api_version("managed_cluster_snapshots")
+        if api_version == "2022-02-02-preview":
             from .v2022_02_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
-        elif api_version == '2022-03-02-preview':
+        elif api_version == "2022-03-02-preview":
             from .v2022_03_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
-        elif api_version == '2022-04-02-preview':
+        elif api_version == "2022-04-02-preview":
             from .v2022_04_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
-        elif api_version == '2022-05-02-preview':
+        elif api_version == "2022-05-02-preview":
             from .v2022_05_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
-        elif api_version == '2022-06-02-preview':
+        elif api_version == "2022-06-02-preview":
             from .v2022_06_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
-        elif api_version == '2022-07-02-preview':
+        elif api_version == "2022-07-02-preview":
             from .v2022_07_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
-        elif api_version == '2022-08-02-preview':
+        elif api_version == "2022-08-02-preview":
             from .v2022_08_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
-        elif api_version == '2022-08-03-preview':
+        elif api_version == "2022-08-03-preview":
             from .v2022_08_03_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
-        elif api_version == '2022-09-02-preview':
+        elif api_version == "2022-09-02-preview":
             from .v2022_09_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
-        elif api_version == '2022-10-02-preview':
+        elif api_version == "2022-10-02-preview":
             from .v2022_10_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
-        elif api_version == '2022-11-02-preview':
+        elif api_version == "2022-11-02-preview":
             from .v2022_11_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
-        elif api_version == '2023-01-02-preview':
+        elif api_version == "2023-01-02-preview":
             from .v2023_01_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
-        elif api_version == '2023-02-02-preview':
+        elif api_version == "2023-02-02-preview":
             from .v2023_02_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
-        elif api_version == '2023-03-02-preview':
+        elif api_version == "2023-03-02-preview":
             from .v2023_03_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
-        elif api_version == '2023-04-02-preview':
+        elif api_version == "2023-04-02-preview":
             from .v2023_04_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
-        elif api_version == '2023-05-02-preview':
+        elif api_version == "2023-05-02-preview":
             from .v2023_05_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
-        elif api_version == '2023-06-02-preview':
+        elif api_version == "2023-06-02-preview":
             from .v2023_06_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
-        elif api_version == '2023-07-02-preview':
+        elif api_version == "2023-07-02-preview":
             from .v2023_07_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
-        elif api_version == '2023-08-02-preview':
+        elif api_version == "2023-08-02-preview":
             from .v2023_08_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
-        elif api_version == '2023-09-02-preview':
+        elif api_version == "2023-09-02-preview":
             from .v2023_09_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
-        elif api_version == '2023-10-02-preview':
+        elif api_version == "2023-10-02-preview":
             from .v2023_10_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
-        elif api_version == '2023-11-02-preview':
+        elif api_version == "2023-11-02-preview":
             from .v2023_11_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
-        elif api_version == '2024-01-02-preview':
+        elif api_version == "2024-01-02-preview":
             from .v2024_01_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
-        elif api_version == '2024-02-02-preview':
+        elif api_version == "2024-02-02-preview":
             from .v2024_02_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
-        elif api_version == '2024-03-02-preview':
+        elif api_version == "2024-03-02-preview":
             from .v2024_03_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
-        elif api_version == '2024-04-02-preview':
+        elif api_version == "2024-04-02-preview":
             from .v2024_04_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
+        elif api_version == "2024-05-02-preview":
+            from .v2024_05_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
+        elif api_version == "2024-06-02-preview":
+            from .v2024_06_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
+        elif api_version == "2024-07-02-preview":
+            from .v2024_07_02_preview.operations import ManagedClusterSnapshotsOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'managed_cluster_snapshots'".format(api_version))
+            raise ValueError(
+                "API version {} does not have operation group 'managed_cluster_snapshots'".format(api_version)
+            )
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
+        return OperationClass(
+            self._client,
+            self._config,
+            Serializer(self._models_dict(api_version)),
+            Deserializer(self._models_dict(api_version)),
+            api_version,
+        )
 
     @property
     def managed_clusters(self):
         """Instance depends on the API version:
 
-           * 2018-03-31: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2018_03_31.operations.ManagedClustersOperations>`
-           * 2018-08-01-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2018_08_01_preview.operations.ManagedClustersOperations>`
-           * 2019-02-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2019_02_01.operations.ManagedClustersOperations>`
-           * 2019-04-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2019_04_01.operations.ManagedClustersOperations>`
-           * 2019-06-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2019_06_01.operations.ManagedClustersOperations>`
-           * 2019-08-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2019_08_01.operations.ManagedClustersOperations>`
-           * 2019-10-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2019_10_01.operations.ManagedClustersOperations>`
-           * 2019-11-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2019_11_01.operations.ManagedClustersOperations>`
-           * 2020-01-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2020_01_01.operations.ManagedClustersOperations>`
-           * 2020-02-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2020_02_01.operations.ManagedClustersOperations>`
-           * 2020-03-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2020_03_01.operations.ManagedClustersOperations>`
-           * 2020-04-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2020_04_01.operations.ManagedClustersOperations>`
-           * 2020-06-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2020_06_01.operations.ManagedClustersOperations>`
-           * 2020-07-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2020_07_01.operations.ManagedClustersOperations>`
-           * 2020-09-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2020_09_01.operations.ManagedClustersOperations>`
-           * 2020-11-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2020_11_01.operations.ManagedClustersOperations>`
-           * 2020-12-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2020_12_01.operations.ManagedClustersOperations>`
-           * 2021-02-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2021_02_01.operations.ManagedClustersOperations>`
-           * 2021-03-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2021_03_01.operations.ManagedClustersOperations>`
-           * 2021-05-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2021_05_01.operations.ManagedClustersOperations>`
-           * 2021-07-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2021_07_01.operations.ManagedClustersOperations>`
-           * 2021-08-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2021_08_01.operations.ManagedClustersOperations>`
-           * 2021-09-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2021_09_01.operations.ManagedClustersOperations>`
-           * 2021-10-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2021_10_01.operations.ManagedClustersOperations>`
-           * 2021-11-01-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2021_11_01_preview.operations.ManagedClustersOperations>`
-           * 2022-01-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_01_01.operations.ManagedClustersOperations>`
-           * 2022-01-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_01_02_preview.operations.ManagedClustersOperations>`
-           * 2022-02-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_02_01.operations.ManagedClustersOperations>`
-           * 2022-02-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_02_02_preview.operations.ManagedClustersOperations>`
-           * 2022-03-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_03_01.operations.ManagedClustersOperations>`
-           * 2022-03-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_03_02_preview.operations.ManagedClustersOperations>`
-           * 2022-04-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_04_01.operations.ManagedClustersOperations>`
-           * 2022-04-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_04_02_preview.operations.ManagedClustersOperations>`
-           * 2022-05-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_05_02_preview.operations.ManagedClustersOperations>`
-           * 2022-06-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_06_01.operations.ManagedClustersOperations>`
-           * 2022-06-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_06_02_preview.operations.ManagedClustersOperations>`
-           * 2022-07-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_07_01.operations.ManagedClustersOperations>`
-           * 2022-07-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_07_02_preview.operations.ManagedClustersOperations>`
-           * 2022-08-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_08_02_preview.operations.ManagedClustersOperations>`
-           * 2022-08-03-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_08_03_preview.operations.ManagedClustersOperations>`
-           * 2022-09-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_09_01.operations.ManagedClustersOperations>`
-           * 2022-09-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_09_02_preview.operations.ManagedClustersOperations>`
-           * 2022-10-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_10_02_preview.operations.ManagedClustersOperations>`
-           * 2022-11-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_11_01.operations.ManagedClustersOperations>`
-           * 2022-11-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_11_02_preview.operations.ManagedClustersOperations>`
-           * 2023-01-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_01_01.operations.ManagedClustersOperations>`
-           * 2023-01-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_01_02_preview.operations.ManagedClustersOperations>`
-           * 2023-02-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_02_01.operations.ManagedClustersOperations>`
-           * 2023-02-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_02_02_preview.operations.ManagedClustersOperations>`
-           * 2023-03-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_03_01.operations.ManagedClustersOperations>`
-           * 2023-03-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_03_02_preview.operations.ManagedClustersOperations>`
-           * 2023-04-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_04_01.operations.ManagedClustersOperations>`
-           * 2023-04-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_04_02_preview.operations.ManagedClustersOperations>`
-           * 2023-05-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_05_01.operations.ManagedClustersOperations>`
-           * 2023-05-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_05_02_preview.operations.ManagedClustersOperations>`
-           * 2023-06-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_06_01.operations.ManagedClustersOperations>`
-           * 2023-06-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_06_02_preview.operations.ManagedClustersOperations>`
-           * 2023-07-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_07_01.operations.ManagedClustersOperations>`
-           * 2023-07-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_07_02_preview.operations.ManagedClustersOperations>`
-           * 2023-08-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_08_01.operations.ManagedClustersOperations>`
-           * 2023-08-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_08_02_preview.operations.ManagedClustersOperations>`
-           * 2023-09-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_09_01.operations.ManagedClustersOperations>`
-           * 2023-09-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_09_02_preview.operations.ManagedClustersOperations>`
-           * 2023-10-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_10_01.operations.ManagedClustersOperations>`
-           * 2023-10-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_10_02_preview.operations.ManagedClustersOperations>`
-           * 2023-11-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_11_01.operations.ManagedClustersOperations>`
-           * 2023-11-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_11_02_preview.operations.ManagedClustersOperations>`
-           * 2024-01-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2024_01_01.operations.ManagedClustersOperations>`
-           * 2024-01-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2024_01_02_preview.operations.ManagedClustersOperations>`
-           * 2024-02-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2024_02_01.operations.ManagedClustersOperations>`
-           * 2024-02-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2024_02_02_preview.operations.ManagedClustersOperations>`
-           * 2024-03-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2024_03_02_preview.operations.ManagedClustersOperations>`
-           * 2024-04-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2024_04_02_preview.operations.ManagedClustersOperations>`
-           * 2024-05-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2024_05_01.operations.ManagedClustersOperations>`
+        * 2018-03-31: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2018_03_31.operations.ManagedClustersOperations>`
+        * 2018-08-01-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2018_08_01_preview.operations.ManagedClustersOperations>`
+        * 2019-02-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2019_02_01.operations.ManagedClustersOperations>`
+        * 2019-04-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2019_04_01.operations.ManagedClustersOperations>`
+        * 2019-06-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2019_06_01.operations.ManagedClustersOperations>`
+        * 2019-08-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2019_08_01.operations.ManagedClustersOperations>`
+        * 2019-10-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2019_10_01.operations.ManagedClustersOperations>`
+        * 2019-11-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2019_11_01.operations.ManagedClustersOperations>`
+        * 2020-01-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2020_01_01.operations.ManagedClustersOperations>`
+        * 2020-02-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2020_02_01.operations.ManagedClustersOperations>`
+        * 2020-03-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2020_03_01.operations.ManagedClustersOperations>`
+        * 2020-04-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2020_04_01.operations.ManagedClustersOperations>`
+        * 2020-06-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2020_06_01.operations.ManagedClustersOperations>`
+        * 2020-07-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2020_07_01.operations.ManagedClustersOperations>`
+        * 2020-09-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2020_09_01.operations.ManagedClustersOperations>`
+        * 2020-11-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2020_11_01.operations.ManagedClustersOperations>`
+        * 2020-12-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2020_12_01.operations.ManagedClustersOperations>`
+        * 2021-02-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2021_02_01.operations.ManagedClustersOperations>`
+        * 2021-03-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2021_03_01.operations.ManagedClustersOperations>`
+        * 2021-05-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2021_05_01.operations.ManagedClustersOperations>`
+        * 2021-07-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2021_07_01.operations.ManagedClustersOperations>`
+        * 2021-08-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2021_08_01.operations.ManagedClustersOperations>`
+        * 2021-09-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2021_09_01.operations.ManagedClustersOperations>`
+        * 2021-10-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2021_10_01.operations.ManagedClustersOperations>`
+        * 2021-11-01-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2021_11_01_preview.operations.ManagedClustersOperations>`
+        * 2022-01-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_01_01.operations.ManagedClustersOperations>`
+        * 2022-01-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_01_02_preview.operations.ManagedClustersOperations>`
+        * 2022-02-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_02_01.operations.ManagedClustersOperations>`
+        * 2022-02-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_02_02_preview.operations.ManagedClustersOperations>`
+        * 2022-03-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_03_01.operations.ManagedClustersOperations>`
+        * 2022-03-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_03_02_preview.operations.ManagedClustersOperations>`
+        * 2022-04-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_04_01.operations.ManagedClustersOperations>`
+        * 2022-04-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_04_02_preview.operations.ManagedClustersOperations>`
+        * 2022-05-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_05_02_preview.operations.ManagedClustersOperations>`
+        * 2022-06-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_06_01.operations.ManagedClustersOperations>`
+        * 2022-06-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_06_02_preview.operations.ManagedClustersOperations>`
+        * 2022-07-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_07_01.operations.ManagedClustersOperations>`
+        * 2022-07-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_07_02_preview.operations.ManagedClustersOperations>`
+        * 2022-08-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_08_02_preview.operations.ManagedClustersOperations>`
+        * 2022-08-03-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_08_03_preview.operations.ManagedClustersOperations>`
+        * 2022-09-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_09_01.operations.ManagedClustersOperations>`
+        * 2022-09-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_09_02_preview.operations.ManagedClustersOperations>`
+        * 2022-10-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_10_02_preview.operations.ManagedClustersOperations>`
+        * 2022-11-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_11_01.operations.ManagedClustersOperations>`
+        * 2022-11-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2022_11_02_preview.operations.ManagedClustersOperations>`
+        * 2023-01-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_01_01.operations.ManagedClustersOperations>`
+        * 2023-01-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_01_02_preview.operations.ManagedClustersOperations>`
+        * 2023-02-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_02_01.operations.ManagedClustersOperations>`
+        * 2023-02-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_02_02_preview.operations.ManagedClustersOperations>`
+        * 2023-03-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_03_01.operations.ManagedClustersOperations>`
+        * 2023-03-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_03_02_preview.operations.ManagedClustersOperations>`
+        * 2023-04-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_04_01.operations.ManagedClustersOperations>`
+        * 2023-04-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_04_02_preview.operations.ManagedClustersOperations>`
+        * 2023-05-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_05_01.operations.ManagedClustersOperations>`
+        * 2023-05-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_05_02_preview.operations.ManagedClustersOperations>`
+        * 2023-06-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_06_01.operations.ManagedClustersOperations>`
+        * 2023-06-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_06_02_preview.operations.ManagedClustersOperations>`
+        * 2023-07-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_07_01.operations.ManagedClustersOperations>`
+        * 2023-07-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_07_02_preview.operations.ManagedClustersOperations>`
+        * 2023-08-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_08_01.operations.ManagedClustersOperations>`
+        * 2023-08-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_08_02_preview.operations.ManagedClustersOperations>`
+        * 2023-09-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_09_01.operations.ManagedClustersOperations>`
+        * 2023-09-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_09_02_preview.operations.ManagedClustersOperations>`
+        * 2023-10-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_10_01.operations.ManagedClustersOperations>`
+        * 2023-10-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_10_02_preview.operations.ManagedClustersOperations>`
+        * 2023-11-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_11_01.operations.ManagedClustersOperations>`
+        * 2023-11-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2023_11_02_preview.operations.ManagedClustersOperations>`
+        * 2024-01-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2024_01_01.operations.ManagedClustersOperations>`
+        * 2024-01-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2024_01_02_preview.operations.ManagedClustersOperations>`
+        * 2024-02-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2024_02_01.operations.ManagedClustersOperations>`
+        * 2024-02-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2024_02_02_preview.operations.ManagedClustersOperations>`
+        * 2024-03-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2024_03_02_preview.operations.ManagedClustersOperations>`
+        * 2024-04-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2024_04_02_preview.operations.ManagedClustersOperations>`
+        * 2024-05-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2024_05_01.operations.ManagedClustersOperations>`
+        * 2024-05-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2024_05_02_preview.operations.ManagedClustersOperations>`
+        * 2024-06-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2024_06_02_preview.operations.ManagedClustersOperations>`
+        * 2024-07-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2024_07_01.operations.ManagedClustersOperations>`
+        * 2024-07-02-preview: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2024_07_02_preview.operations.ManagedClustersOperations>`
+        * 2024-08-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2024_08_01.operations.ManagedClustersOperations>`
+        * 2024-09-01: :class:`ManagedClustersOperations<azure.mgmt.containerservice.v2024_09_01.operations.ManagedClustersOperations>`
         """
-        api_version = self._get_api_version('managed_clusters')
-        if api_version == '2018-03-31':
+        api_version = self._get_api_version("managed_clusters")
+        if api_version == "2018-03-31":
             from .v2018_03_31.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2018-08-01-preview':
+        elif api_version == "2018-08-01-preview":
             from .v2018_08_01_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2019-02-01':
+        elif api_version == "2019-02-01":
             from .v2019_02_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2019-04-01':
+        elif api_version == "2019-04-01":
             from .v2019_04_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2019-06-01':
+        elif api_version == "2019-06-01":
             from .v2019_06_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2019-08-01':
+        elif api_version == "2019-08-01":
             from .v2019_08_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2019-10-01':
+        elif api_version == "2019-10-01":
             from .v2019_10_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2019-11-01':
+        elif api_version == "2019-11-01":
             from .v2019_11_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2020-01-01':
+        elif api_version == "2020-01-01":
             from .v2020_01_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2020-02-01':
+        elif api_version == "2020-02-01":
             from .v2020_02_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2020-03-01':
+        elif api_version == "2020-03-01":
             from .v2020_03_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2020-04-01':
+        elif api_version == "2020-04-01":
             from .v2020_04_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2020-06-01':
+        elif api_version == "2020-06-01":
             from .v2020_06_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2020-07-01':
+        elif api_version == "2020-07-01":
             from .v2020_07_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2020-09-01':
+        elif api_version == "2020-09-01":
             from .v2020_09_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2020-11-01':
+        elif api_version == "2020-11-01":
             from .v2020_11_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2020-12-01':
+        elif api_version == "2020-12-01":
             from .v2020_12_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2021-02-01':
+        elif api_version == "2021-02-01":
             from .v2021_02_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2021-03-01':
+        elif api_version == "2021-03-01":
             from .v2021_03_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2021-05-01':
+        elif api_version == "2021-05-01":
             from .v2021_05_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2021-07-01':
+        elif api_version == "2021-07-01":
             from .v2021_07_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2021-08-01':
+        elif api_version == "2021-08-01":
             from .v2021_08_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2021-09-01':
+        elif api_version == "2021-09-01":
             from .v2021_09_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2021-10-01':
+        elif api_version == "2021-10-01":
             from .v2021_10_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2021-11-01-preview':
+        elif api_version == "2021-11-01-preview":
             from .v2021_11_01_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2022-01-01':
+        elif api_version == "2022-01-01":
             from .v2022_01_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2022-01-02-preview':
+        elif api_version == "2022-01-02-preview":
             from .v2022_01_02_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2022-02-01':
+        elif api_version == "2022-02-01":
             from .v2022_02_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2022-02-02-preview':
+        elif api_version == "2022-02-02-preview":
             from .v2022_02_02_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2022-03-01':
+        elif api_version == "2022-03-01":
             from .v2022_03_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2022-03-02-preview':
+        elif api_version == "2022-03-02-preview":
             from .v2022_03_02_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2022-04-01':
+        elif api_version == "2022-04-01":
             from .v2022_04_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2022-04-02-preview':
+        elif api_version == "2022-04-02-preview":
             from .v2022_04_02_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2022-05-02-preview':
+        elif api_version == "2022-05-02-preview":
             from .v2022_05_02_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2022-06-01':
+        elif api_version == "2022-06-01":
             from .v2022_06_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2022-06-02-preview':
+        elif api_version == "2022-06-02-preview":
             from .v2022_06_02_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2022-07-01':
+        elif api_version == "2022-07-01":
             from .v2022_07_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2022-07-02-preview':
+        elif api_version == "2022-07-02-preview":
             from .v2022_07_02_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2022-08-02-preview':
+        elif api_version == "2022-08-02-preview":
             from .v2022_08_02_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2022-08-03-preview':
+        elif api_version == "2022-08-03-preview":
             from .v2022_08_03_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2022-09-01':
+        elif api_version == "2022-09-01":
             from .v2022_09_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2022-09-02-preview':
+        elif api_version == "2022-09-02-preview":
             from .v2022_09_02_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2022-10-02-preview':
+        elif api_version == "2022-10-02-preview":
             from .v2022_10_02_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2022-11-01':
+        elif api_version == "2022-11-01":
             from .v2022_11_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2022-11-02-preview':
+        elif api_version == "2022-11-02-preview":
             from .v2022_11_02_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2023-01-01':
+        elif api_version == "2023-01-01":
             from .v2023_01_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2023-01-02-preview':
+        elif api_version == "2023-01-02-preview":
             from .v2023_01_02_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2023-02-01':
+        elif api_version == "2023-02-01":
             from .v2023_02_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2023-02-02-preview':
+        elif api_version == "2023-02-02-preview":
             from .v2023_02_02_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2023-03-01':
+        elif api_version == "2023-03-01":
             from .v2023_03_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2023-03-02-preview':
+        elif api_version == "2023-03-02-preview":
             from .v2023_03_02_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2023-04-01':
+        elif api_version == "2023-04-01":
             from .v2023_04_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2023-04-02-preview':
+        elif api_version == "2023-04-02-preview":
             from .v2023_04_02_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2023-05-01':
+        elif api_version == "2023-05-01":
             from .v2023_05_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2023-05-02-preview':
+        elif api_version == "2023-05-02-preview":
             from .v2023_05_02_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2023-06-01':
+        elif api_version == "2023-06-01":
             from .v2023_06_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2023-06-02-preview':
+        elif api_version == "2023-06-02-preview":
             from .v2023_06_02_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2023-07-01':
+        elif api_version == "2023-07-01":
             from .v2023_07_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2023-07-02-preview':
+        elif api_version == "2023-07-02-preview":
             from .v2023_07_02_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2023-08-01':
+        elif api_version == "2023-08-01":
             from .v2023_08_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2023-08-02-preview':
+        elif api_version == "2023-08-02-preview":
             from .v2023_08_02_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2023-09-01':
+        elif api_version == "2023-09-01":
             from .v2023_09_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2023-09-02-preview':
+        elif api_version == "2023-09-02-preview":
             from .v2023_09_02_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2023-10-01':
+        elif api_version == "2023-10-01":
             from .v2023_10_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2023-10-02-preview':
+        elif api_version == "2023-10-02-preview":
             from .v2023_10_02_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2023-11-01':
+        elif api_version == "2023-11-01":
             from .v2023_11_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2023-11-02-preview':
+        elif api_version == "2023-11-02-preview":
             from .v2023_11_02_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2024-01-01':
+        elif api_version == "2024-01-01":
             from .v2024_01_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2024-01-02-preview':
+        elif api_version == "2024-01-02-preview":
             from .v2024_01_02_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2024-02-01':
+        elif api_version == "2024-02-01":
             from .v2024_02_01.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2024-02-02-preview':
+        elif api_version == "2024-02-02-preview":
             from .v2024_02_02_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2024-03-02-preview':
+        elif api_version == "2024-03-02-preview":
             from .v2024_03_02_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2024-04-02-preview':
+        elif api_version == "2024-04-02-preview":
             from .v2024_04_02_preview.operations import ManagedClustersOperations as OperationClass
-        elif api_version == '2024-05-01':
+        elif api_version == "2024-05-01":
             from .v2024_05_01.operations import ManagedClustersOperations as OperationClass
+        elif api_version == "2024-05-02-preview":
+            from .v2024_05_02_preview.operations import ManagedClustersOperations as OperationClass
+        elif api_version == "2024-06-02-preview":
+            from .v2024_06_02_preview.operations import ManagedClustersOperations as OperationClass
+        elif api_version == "2024-07-01":
+            from .v2024_07_01.operations import ManagedClustersOperations as OperationClass
+        elif api_version == "2024-07-02-preview":
+            from .v2024_07_02_preview.operations import ManagedClustersOperations as OperationClass
+        elif api_version == "2024-08-01":
+            from .v2024_08_01.operations import ManagedClustersOperations as OperationClass
+        elif api_version == "2024-09-01":
+            from .v2024_09_01.operations import ManagedClustersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'managed_clusters'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
+        return OperationClass(
+            self._client,
+            self._config,
+            Serializer(self._models_dict(api_version)),
+            Deserializer(self._models_dict(api_version)),
+            api_version,
+        )
 
     @property
     def open_shift_managed_clusters(self):
         """Instance depends on the API version:
 
-           * 2018-09-30-preview: :class:`OpenShiftManagedClustersOperations<azure.mgmt.containerservice.v2018_09_30_preview.operations.OpenShiftManagedClustersOperations>`
-           * 2019-04-30: :class:`OpenShiftManagedClustersOperations<azure.mgmt.containerservice.v2019_04_30.operations.OpenShiftManagedClustersOperations>`
-           * 2019-09-30-preview: :class:`OpenShiftManagedClustersOperations<azure.mgmt.containerservice.v2019_09_30_preview.operations.OpenShiftManagedClustersOperations>`
-           * 2019-10-27-preview: :class:`OpenShiftManagedClustersOperations<azure.mgmt.containerservice.v2019_10_27_preview.operations.OpenShiftManagedClustersOperations>`
+        * 2018-09-30-preview: :class:`OpenShiftManagedClustersOperations<azure.mgmt.containerservice.v2018_09_30_preview.operations.OpenShiftManagedClustersOperations>`
+        * 2019-04-30: :class:`OpenShiftManagedClustersOperations<azure.mgmt.containerservice.v2019_04_30.operations.OpenShiftManagedClustersOperations>`
+        * 2019-09-30-preview: :class:`OpenShiftManagedClustersOperations<azure.mgmt.containerservice.v2019_09_30_preview.operations.OpenShiftManagedClustersOperations>`
+        * 2019-10-27-preview: :class:`OpenShiftManagedClustersOperations<azure.mgmt.containerservice.v2019_10_27_preview.operations.OpenShiftManagedClustersOperations>`
         """
-        api_version = self._get_api_version('open_shift_managed_clusters')
-        if api_version == '2018-09-30-preview':
+        api_version = self._get_api_version("open_shift_managed_clusters")
+        if api_version == "2018-09-30-preview":
             from .v2018_09_30_preview.operations import OpenShiftManagedClustersOperations as OperationClass
-        elif api_version == '2019-04-30':
+        elif api_version == "2019-04-30":
             from .v2019_04_30.operations import OpenShiftManagedClustersOperations as OperationClass
-        elif api_version == '2019-09-30-preview':
+        elif api_version == "2019-09-30-preview":
             from .v2019_09_30_preview.operations import OpenShiftManagedClustersOperations as OperationClass
-        elif api_version == '2019-10-27-preview':
+        elif api_version == "2019-10-27-preview":
             from .v2019_10_27_preview.operations import OpenShiftManagedClustersOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'open_shift_managed_clusters'".format(api_version))
+            raise ValueError(
+                "API version {} does not have operation group 'open_shift_managed_clusters'".format(api_version)
+            )
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
+        return OperationClass(
+            self._client,
+            self._config,
+            Serializer(self._models_dict(api_version)),
+            Deserializer(self._models_dict(api_version)),
+            api_version,
+        )
 
     @property
     def operation_status_result(self):
         """Instance depends on the API version:
 
-           * 2023-10-02-preview: :class:`OperationStatusResultOperations<azure.mgmt.containerservice.v2023_10_02_preview.operations.OperationStatusResultOperations>`
-           * 2023-11-02-preview: :class:`OperationStatusResultOperations<azure.mgmt.containerservice.v2023_11_02_preview.operations.OperationStatusResultOperations>`
-           * 2024-01-02-preview: :class:`OperationStatusResultOperations<azure.mgmt.containerservice.v2024_01_02_preview.operations.OperationStatusResultOperations>`
-           * 2024-02-02-preview: :class:`OperationStatusResultOperations<azure.mgmt.containerservice.v2024_02_02_preview.operations.OperationStatusResultOperations>`
-           * 2024-03-02-preview: :class:`OperationStatusResultOperations<azure.mgmt.containerservice.v2024_03_02_preview.operations.OperationStatusResultOperations>`
-           * 2024-04-02-preview: :class:`OperationStatusResultOperations<azure.mgmt.containerservice.v2024_04_02_preview.operations.OperationStatusResultOperations>`
+        * 2023-10-02-preview: :class:`OperationStatusResultOperations<azure.mgmt.containerservice.v2023_10_02_preview.operations.OperationStatusResultOperations>`
+        * 2023-11-02-preview: :class:`OperationStatusResultOperations<azure.mgmt.containerservice.v2023_11_02_preview.operations.OperationStatusResultOperations>`
+        * 2024-01-02-preview: :class:`OperationStatusResultOperations<azure.mgmt.containerservice.v2024_01_02_preview.operations.OperationStatusResultOperations>`
+        * 2024-02-02-preview: :class:`OperationStatusResultOperations<azure.mgmt.containerservice.v2024_02_02_preview.operations.OperationStatusResultOperations>`
+        * 2024-03-02-preview: :class:`OperationStatusResultOperations<azure.mgmt.containerservice.v2024_03_02_preview.operations.OperationStatusResultOperations>`
+        * 2024-04-02-preview: :class:`OperationStatusResultOperations<azure.mgmt.containerservice.v2024_04_02_preview.operations.OperationStatusResultOperations>`
+        * 2024-05-02-preview: :class:`OperationStatusResultOperations<azure.mgmt.containerservice.v2024_05_02_preview.operations.OperationStatusResultOperations>`
+        * 2024-06-02-preview: :class:`OperationStatusResultOperations<azure.mgmt.containerservice.v2024_06_02_preview.operations.OperationStatusResultOperations>`
+        * 2024-07-02-preview: :class:`OperationStatusResultOperations<azure.mgmt.containerservice.v2024_07_02_preview.operations.OperationStatusResultOperations>`
         """
-        api_version = self._get_api_version('operation_status_result')
-        if api_version == '2023-10-02-preview':
+        api_version = self._get_api_version("operation_status_result")
+        if api_version == "2023-10-02-preview":
             from .v2023_10_02_preview.operations import OperationStatusResultOperations as OperationClass
-        elif api_version == '2023-11-02-preview':
+        elif api_version == "2023-11-02-preview":
             from .v2023_11_02_preview.operations import OperationStatusResultOperations as OperationClass
-        elif api_version == '2024-01-02-preview':
+        elif api_version == "2024-01-02-preview":
             from .v2024_01_02_preview.operations import OperationStatusResultOperations as OperationClass
-        elif api_version == '2024-02-02-preview':
+        elif api_version == "2024-02-02-preview":
             from .v2024_02_02_preview.operations import OperationStatusResultOperations as OperationClass
-        elif api_version == '2024-03-02-preview':
+        elif api_version == "2024-03-02-preview":
             from .v2024_03_02_preview.operations import OperationStatusResultOperations as OperationClass
-        elif api_version == '2024-04-02-preview':
+        elif api_version == "2024-04-02-preview":
             from .v2024_04_02_preview.operations import OperationStatusResultOperations as OperationClass
+        elif api_version == "2024-05-02-preview":
+            from .v2024_05_02_preview.operations import OperationStatusResultOperations as OperationClass
+        elif api_version == "2024-06-02-preview":
+            from .v2024_06_02_preview.operations import OperationStatusResultOperations as OperationClass
+        elif api_version == "2024-07-02-preview":
+            from .v2024_07_02_preview.operations import OperationStatusResultOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'operation_status_result'".format(api_version))
+            raise ValueError(
+                "API version {} does not have operation group 'operation_status_result'".format(api_version)
+            )
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
+        return OperationClass(
+            self._client,
+            self._config,
+            Serializer(self._models_dict(api_version)),
+            Deserializer(self._models_dict(api_version)),
+            api_version,
+        )
 
     @property
     def operations(self):
         """Instance depends on the API version:
 
-           * 2018-03-31: :class:`Operations<azure.mgmt.containerservice.v2018_03_31.operations.Operations>`
-           * 2018-08-01-preview: :class:`Operations<azure.mgmt.containerservice.v2018_08_01_preview.operations.Operations>`
-           * 2019-02-01: :class:`Operations<azure.mgmt.containerservice.v2019_02_01.operations.Operations>`
-           * 2019-04-01: :class:`Operations<azure.mgmt.containerservice.v2019_04_01.operations.Operations>`
-           * 2019-06-01: :class:`Operations<azure.mgmt.containerservice.v2019_06_01.operations.Operations>`
-           * 2019-08-01: :class:`Operations<azure.mgmt.containerservice.v2019_08_01.operations.Operations>`
-           * 2019-10-01: :class:`Operations<azure.mgmt.containerservice.v2019_10_01.operations.Operations>`
-           * 2019-11-01: :class:`Operations<azure.mgmt.containerservice.v2019_11_01.operations.Operations>`
-           * 2020-01-01: :class:`Operations<azure.mgmt.containerservice.v2020_01_01.operations.Operations>`
-           * 2020-02-01: :class:`Operations<azure.mgmt.containerservice.v2020_02_01.operations.Operations>`
-           * 2020-03-01: :class:`Operations<azure.mgmt.containerservice.v2020_03_01.operations.Operations>`
-           * 2020-04-01: :class:`Operations<azure.mgmt.containerservice.v2020_04_01.operations.Operations>`
-           * 2020-06-01: :class:`Operations<azure.mgmt.containerservice.v2020_06_01.operations.Operations>`
-           * 2020-07-01: :class:`Operations<azure.mgmt.containerservice.v2020_07_01.operations.Operations>`
-           * 2020-09-01: :class:`Operations<azure.mgmt.containerservice.v2020_09_01.operations.Operations>`
-           * 2020-11-01: :class:`Operations<azure.mgmt.containerservice.v2020_11_01.operations.Operations>`
-           * 2020-12-01: :class:`Operations<azure.mgmt.containerservice.v2020_12_01.operations.Operations>`
-           * 2021-02-01: :class:`Operations<azure.mgmt.containerservice.v2021_02_01.operations.Operations>`
-           * 2021-03-01: :class:`Operations<azure.mgmt.containerservice.v2021_03_01.operations.Operations>`
-           * 2021-05-01: :class:`Operations<azure.mgmt.containerservice.v2021_05_01.operations.Operations>`
-           * 2021-07-01: :class:`Operations<azure.mgmt.containerservice.v2021_07_01.operations.Operations>`
-           * 2021-08-01: :class:`Operations<azure.mgmt.containerservice.v2021_08_01.operations.Operations>`
-           * 2021-09-01: :class:`Operations<azure.mgmt.containerservice.v2021_09_01.operations.Operations>`
-           * 2021-10-01: :class:`Operations<azure.mgmt.containerservice.v2021_10_01.operations.Operations>`
-           * 2021-11-01-preview: :class:`Operations<azure.mgmt.containerservice.v2021_11_01_preview.operations.Operations>`
-           * 2022-01-01: :class:`Operations<azure.mgmt.containerservice.v2022_01_01.operations.Operations>`
-           * 2022-01-02-preview: :class:`Operations<azure.mgmt.containerservice.v2022_01_02_preview.operations.Operations>`
-           * 2022-02-01: :class:`Operations<azure.mgmt.containerservice.v2022_02_01.operations.Operations>`
-           * 2022-02-02-preview: :class:`Operations<azure.mgmt.containerservice.v2022_02_02_preview.operations.Operations>`
-           * 2022-03-01: :class:`Operations<azure.mgmt.containerservice.v2022_03_01.operations.Operations>`
-           * 2022-03-02-preview: :class:`Operations<azure.mgmt.containerservice.v2022_03_02_preview.operations.Operations>`
-           * 2022-04-01: :class:`Operations<azure.mgmt.containerservice.v2022_04_01.operations.Operations>`
-           * 2022-04-02-preview: :class:`Operations<azure.mgmt.containerservice.v2022_04_02_preview.operations.Operations>`
-           * 2022-05-02-preview: :class:`Operations<azure.mgmt.containerservice.v2022_05_02_preview.operations.Operations>`
-           * 2022-06-01: :class:`Operations<azure.mgmt.containerservice.v2022_06_01.operations.Operations>`
-           * 2022-06-02-preview: :class:`Operations<azure.mgmt.containerservice.v2022_06_02_preview.operations.Operations>`
-           * 2022-07-01: :class:`Operations<azure.mgmt.containerservice.v2022_07_01.operations.Operations>`
-           * 2022-07-02-preview: :class:`Operations<azure.mgmt.containerservice.v2022_07_02_preview.operations.Operations>`
-           * 2022-08-02-preview: :class:`Operations<azure.mgmt.containerservice.v2022_08_02_preview.operations.Operations>`
-           * 2022-08-03-preview: :class:`Operations<azure.mgmt.containerservice.v2022_08_03_preview.operations.Operations>`
-           * 2022-09-01: :class:`Operations<azure.mgmt.containerservice.v2022_09_01.operations.Operations>`
-           * 2022-09-02-preview: :class:`Operations<azure.mgmt.containerservice.v2022_09_02_preview.operations.Operations>`
-           * 2022-10-02-preview: :class:`Operations<azure.mgmt.containerservice.v2022_10_02_preview.operations.Operations>`
-           * 2022-11-01: :class:`Operations<azure.mgmt.containerservice.v2022_11_01.operations.Operations>`
-           * 2022-11-02-preview: :class:`Operations<azure.mgmt.containerservice.v2022_11_02_preview.operations.Operations>`
-           * 2023-01-01: :class:`Operations<azure.mgmt.containerservice.v2023_01_01.operations.Operations>`
-           * 2023-01-02-preview: :class:`Operations<azure.mgmt.containerservice.v2023_01_02_preview.operations.Operations>`
-           * 2023-02-01: :class:`Operations<azure.mgmt.containerservice.v2023_02_01.operations.Operations>`
-           * 2023-02-02-preview: :class:`Operations<azure.mgmt.containerservice.v2023_02_02_preview.operations.Operations>`
-           * 2023-03-01: :class:`Operations<azure.mgmt.containerservice.v2023_03_01.operations.Operations>`
-           * 2023-03-02-preview: :class:`Operations<azure.mgmt.containerservice.v2023_03_02_preview.operations.Operations>`
-           * 2023-04-01: :class:`Operations<azure.mgmt.containerservice.v2023_04_01.operations.Operations>`
-           * 2023-04-02-preview: :class:`Operations<azure.mgmt.containerservice.v2023_04_02_preview.operations.Operations>`
-           * 2023-05-01: :class:`Operations<azure.mgmt.containerservice.v2023_05_01.operations.Operations>`
-           * 2023-05-02-preview: :class:`Operations<azure.mgmt.containerservice.v2023_05_02_preview.operations.Operations>`
-           * 2023-06-01: :class:`Operations<azure.mgmt.containerservice.v2023_06_01.operations.Operations>`
-           * 2023-06-02-preview: :class:`Operations<azure.mgmt.containerservice.v2023_06_02_preview.operations.Operations>`
-           * 2023-07-01: :class:`Operations<azure.mgmt.containerservice.v2023_07_01.operations.Operations>`
-           * 2023-07-02-preview: :class:`Operations<azure.mgmt.containerservice.v2023_07_02_preview.operations.Operations>`
-           * 2023-08-01: :class:`Operations<azure.mgmt.containerservice.v2023_08_01.operations.Operations>`
-           * 2023-08-02-preview: :class:`Operations<azure.mgmt.containerservice.v2023_08_02_preview.operations.Operations>`
-           * 2023-09-01: :class:`Operations<azure.mgmt.containerservice.v2023_09_01.operations.Operations>`
-           * 2023-09-02-preview: :class:`Operations<azure.mgmt.containerservice.v2023_09_02_preview.operations.Operations>`
-           * 2023-10-01: :class:`Operations<azure.mgmt.containerservice.v2023_10_01.operations.Operations>`
-           * 2023-10-02-preview: :class:`Operations<azure.mgmt.containerservice.v2023_10_02_preview.operations.Operations>`
-           * 2023-11-01: :class:`Operations<azure.mgmt.containerservice.v2023_11_01.operations.Operations>`
-           * 2023-11-02-preview: :class:`Operations<azure.mgmt.containerservice.v2023_11_02_preview.operations.Operations>`
-           * 2024-01-01: :class:`Operations<azure.mgmt.containerservice.v2024_01_01.operations.Operations>`
-           * 2024-01-02-preview: :class:`Operations<azure.mgmt.containerservice.v2024_01_02_preview.operations.Operations>`
-           * 2024-02-01: :class:`Operations<azure.mgmt.containerservice.v2024_02_01.operations.Operations>`
-           * 2024-02-02-preview: :class:`Operations<azure.mgmt.containerservice.v2024_02_02_preview.operations.Operations>`
-           * 2024-03-02-preview: :class:`Operations<azure.mgmt.containerservice.v2024_03_02_preview.operations.Operations>`
-           * 2024-04-02-preview: :class:`Operations<azure.mgmt.containerservice.v2024_04_02_preview.operations.Operations>`
-           * 2024-05-01: :class:`Operations<azure.mgmt.containerservice.v2024_05_01.operations.Operations>`
+        * 2018-03-31: :class:`Operations<azure.mgmt.containerservice.v2018_03_31.operations.Operations>`
+        * 2018-08-01-preview: :class:`Operations<azure.mgmt.containerservice.v2018_08_01_preview.operations.Operations>`
+        * 2019-02-01: :class:`Operations<azure.mgmt.containerservice.v2019_02_01.operations.Operations>`
+        * 2019-04-01: :class:`Operations<azure.mgmt.containerservice.v2019_04_01.operations.Operations>`
+        * 2019-06-01: :class:`Operations<azure.mgmt.containerservice.v2019_06_01.operations.Operations>`
+        * 2019-08-01: :class:`Operations<azure.mgmt.containerservice.v2019_08_01.operations.Operations>`
+        * 2019-10-01: :class:`Operations<azure.mgmt.containerservice.v2019_10_01.operations.Operations>`
+        * 2019-11-01: :class:`Operations<azure.mgmt.containerservice.v2019_11_01.operations.Operations>`
+        * 2020-01-01: :class:`Operations<azure.mgmt.containerservice.v2020_01_01.operations.Operations>`
+        * 2020-02-01: :class:`Operations<azure.mgmt.containerservice.v2020_02_01.operations.Operations>`
+        * 2020-03-01: :class:`Operations<azure.mgmt.containerservice.v2020_03_01.operations.Operations>`
+        * 2020-04-01: :class:`Operations<azure.mgmt.containerservice.v2020_04_01.operations.Operations>`
+        * 2020-06-01: :class:`Operations<azure.mgmt.containerservice.v2020_06_01.operations.Operations>`
+        * 2020-07-01: :class:`Operations<azure.mgmt.containerservice.v2020_07_01.operations.Operations>`
+        * 2020-09-01: :class:`Operations<azure.mgmt.containerservice.v2020_09_01.operations.Operations>`
+        * 2020-11-01: :class:`Operations<azure.mgmt.containerservice.v2020_11_01.operations.Operations>`
+        * 2020-12-01: :class:`Operations<azure.mgmt.containerservice.v2020_12_01.operations.Operations>`
+        * 2021-02-01: :class:`Operations<azure.mgmt.containerservice.v2021_02_01.operations.Operations>`
+        * 2021-03-01: :class:`Operations<azure.mgmt.containerservice.v2021_03_01.operations.Operations>`
+        * 2021-05-01: :class:`Operations<azure.mgmt.containerservice.v2021_05_01.operations.Operations>`
+        * 2021-07-01: :class:`Operations<azure.mgmt.containerservice.v2021_07_01.operations.Operations>`
+        * 2021-08-01: :class:`Operations<azure.mgmt.containerservice.v2021_08_01.operations.Operations>`
+        * 2021-09-01: :class:`Operations<azure.mgmt.containerservice.v2021_09_01.operations.Operations>`
+        * 2021-10-01: :class:`Operations<azure.mgmt.containerservice.v2021_10_01.operations.Operations>`
+        * 2021-11-01-preview: :class:`Operations<azure.mgmt.containerservice.v2021_11_01_preview.operations.Operations>`
+        * 2022-01-01: :class:`Operations<azure.mgmt.containerservice.v2022_01_01.operations.Operations>`
+        * 2022-01-02-preview: :class:`Operations<azure.mgmt.containerservice.v2022_01_02_preview.operations.Operations>`
+        * 2022-02-01: :class:`Operations<azure.mgmt.containerservice.v2022_02_01.operations.Operations>`
+        * 2022-02-02-preview: :class:`Operations<azure.mgmt.containerservice.v2022_02_02_preview.operations.Operations>`
+        * 2022-03-01: :class:`Operations<azure.mgmt.containerservice.v2022_03_01.operations.Operations>`
+        * 2022-03-02-preview: :class:`Operations<azure.mgmt.containerservice.v2022_03_02_preview.operations.Operations>`
+        * 2022-04-01: :class:`Operations<azure.mgmt.containerservice.v2022_04_01.operations.Operations>`
+        * 2022-04-02-preview: :class:`Operations<azure.mgmt.containerservice.v2022_04_02_preview.operations.Operations>`
+        * 2022-05-02-preview: :class:`Operations<azure.mgmt.containerservice.v2022_05_02_preview.operations.Operations>`
+        * 2022-06-01: :class:`Operations<azure.mgmt.containerservice.v2022_06_01.operations.Operations>`
+        * 2022-06-02-preview: :class:`Operations<azure.mgmt.containerservice.v2022_06_02_preview.operations.Operations>`
+        * 2022-07-01: :class:`Operations<azure.mgmt.containerservice.v2022_07_01.operations.Operations>`
+        * 2022-07-02-preview: :class:`Operations<azure.mgmt.containerservice.v2022_07_02_preview.operations.Operations>`
+        * 2022-08-02-preview: :class:`Operations<azure.mgmt.containerservice.v2022_08_02_preview.operations.Operations>`
+        * 2022-08-03-preview: :class:`Operations<azure.mgmt.containerservice.v2022_08_03_preview.operations.Operations>`
+        * 2022-09-01: :class:`Operations<azure.mgmt.containerservice.v2022_09_01.operations.Operations>`
+        * 2022-09-02-preview: :class:`Operations<azure.mgmt.containerservice.v2022_09_02_preview.operations.Operations>`
+        * 2022-10-02-preview: :class:`Operations<azure.mgmt.containerservice.v2022_10_02_preview.operations.Operations>`
+        * 2022-11-01: :class:`Operations<azure.mgmt.containerservice.v2022_11_01.operations.Operations>`
+        * 2022-11-02-preview: :class:`Operations<azure.mgmt.containerservice.v2022_11_02_preview.operations.Operations>`
+        * 2023-01-01: :class:`Operations<azure.mgmt.containerservice.v2023_01_01.operations.Operations>`
+        * 2023-01-02-preview: :class:`Operations<azure.mgmt.containerservice.v2023_01_02_preview.operations.Operations>`
+        * 2023-02-01: :class:`Operations<azure.mgmt.containerservice.v2023_02_01.operations.Operations>`
+        * 2023-02-02-preview: :class:`Operations<azure.mgmt.containerservice.v2023_02_02_preview.operations.Operations>`
+        * 2023-03-01: :class:`Operations<azure.mgmt.containerservice.v2023_03_01.operations.Operations>`
+        * 2023-03-02-preview: :class:`Operations<azure.mgmt.containerservice.v2023_03_02_preview.operations.Operations>`
+        * 2023-04-01: :class:`Operations<azure.mgmt.containerservice.v2023_04_01.operations.Operations>`
+        * 2023-04-02-preview: :class:`Operations<azure.mgmt.containerservice.v2023_04_02_preview.operations.Operations>`
+        * 2023-05-01: :class:`Operations<azure.mgmt.containerservice.v2023_05_01.operations.Operations>`
+        * 2023-05-02-preview: :class:`Operations<azure.mgmt.containerservice.v2023_05_02_preview.operations.Operations>`
+        * 2023-06-01: :class:`Operations<azure.mgmt.containerservice.v2023_06_01.operations.Operations>`
+        * 2023-06-02-preview: :class:`Operations<azure.mgmt.containerservice.v2023_06_02_preview.operations.Operations>`
+        * 2023-07-01: :class:`Operations<azure.mgmt.containerservice.v2023_07_01.operations.Operations>`
+        * 2023-07-02-preview: :class:`Operations<azure.mgmt.containerservice.v2023_07_02_preview.operations.Operations>`
+        * 2023-08-01: :class:`Operations<azure.mgmt.containerservice.v2023_08_01.operations.Operations>`
+        * 2023-08-02-preview: :class:`Operations<azure.mgmt.containerservice.v2023_08_02_preview.operations.Operations>`
+        * 2023-09-01: :class:`Operations<azure.mgmt.containerservice.v2023_09_01.operations.Operations>`
+        * 2023-09-02-preview: :class:`Operations<azure.mgmt.containerservice.v2023_09_02_preview.operations.Operations>`
+        * 2023-10-01: :class:`Operations<azure.mgmt.containerservice.v2023_10_01.operations.Operations>`
+        * 2023-10-02-preview: :class:`Operations<azure.mgmt.containerservice.v2023_10_02_preview.operations.Operations>`
+        * 2023-11-01: :class:`Operations<azure.mgmt.containerservice.v2023_11_01.operations.Operations>`
+        * 2023-11-02-preview: :class:`Operations<azure.mgmt.containerservice.v2023_11_02_preview.operations.Operations>`
+        * 2024-01-01: :class:`Operations<azure.mgmt.containerservice.v2024_01_01.operations.Operations>`
+        * 2024-01-02-preview: :class:`Operations<azure.mgmt.containerservice.v2024_01_02_preview.operations.Operations>`
+        * 2024-02-01: :class:`Operations<azure.mgmt.containerservice.v2024_02_01.operations.Operations>`
+        * 2024-02-02-preview: :class:`Operations<azure.mgmt.containerservice.v2024_02_02_preview.operations.Operations>`
+        * 2024-03-02-preview: :class:`Operations<azure.mgmt.containerservice.v2024_03_02_preview.operations.Operations>`
+        * 2024-04-02-preview: :class:`Operations<azure.mgmt.containerservice.v2024_04_02_preview.operations.Operations>`
+        * 2024-05-01: :class:`Operations<azure.mgmt.containerservice.v2024_05_01.operations.Operations>`
+        * 2024-05-02-preview: :class:`Operations<azure.mgmt.containerservice.v2024_05_02_preview.operations.Operations>`
+        * 2024-06-02-preview: :class:`Operations<azure.mgmt.containerservice.v2024_06_02_preview.operations.Operations>`
+        * 2024-07-01: :class:`Operations<azure.mgmt.containerservice.v2024_07_01.operations.Operations>`
+        * 2024-07-02-preview: :class:`Operations<azure.mgmt.containerservice.v2024_07_02_preview.operations.Operations>`
+        * 2024-08-01: :class:`Operations<azure.mgmt.containerservice.v2024_08_01.operations.Operations>`
+        * 2024-09-01: :class:`Operations<azure.mgmt.containerservice.v2024_09_01.operations.Operations>`
         """
-        api_version = self._get_api_version('operations')
-        if api_version == '2018-03-31':
+        api_version = self._get_api_version("operations")
+        if api_version == "2018-03-31":
             from .v2018_03_31.operations import Operations as OperationClass
-        elif api_version == '2018-08-01-preview':
+        elif api_version == "2018-08-01-preview":
             from .v2018_08_01_preview.operations import Operations as OperationClass
-        elif api_version == '2019-02-01':
+        elif api_version == "2019-02-01":
             from .v2019_02_01.operations import Operations as OperationClass
-        elif api_version == '2019-04-01':
+        elif api_version == "2019-04-01":
             from .v2019_04_01.operations import Operations as OperationClass
-        elif api_version == '2019-06-01':
+        elif api_version == "2019-06-01":
             from .v2019_06_01.operations import Operations as OperationClass
-        elif api_version == '2019-08-01':
+        elif api_version == "2019-08-01":
             from .v2019_08_01.operations import Operations as OperationClass
-        elif api_version == '2019-10-01':
+        elif api_version == "2019-10-01":
             from .v2019_10_01.operations import Operations as OperationClass
-        elif api_version == '2019-11-01':
+        elif api_version == "2019-11-01":
             from .v2019_11_01.operations import Operations as OperationClass
-        elif api_version == '2020-01-01':
+        elif api_version == "2020-01-01":
             from .v2020_01_01.operations import Operations as OperationClass
-        elif api_version == '2020-02-01':
+        elif api_version == "2020-02-01":
             from .v2020_02_01.operations import Operations as OperationClass
-        elif api_version == '2020-03-01':
+        elif api_version == "2020-03-01":
             from .v2020_03_01.operations import Operations as OperationClass
-        elif api_version == '2020-04-01':
+        elif api_version == "2020-04-01":
             from .v2020_04_01.operations import Operations as OperationClass
-        elif api_version == '2020-06-01':
+        elif api_version == "2020-06-01":
             from .v2020_06_01.operations import Operations as OperationClass
-        elif api_version == '2020-07-01':
+        elif api_version == "2020-07-01":
             from .v2020_07_01.operations import Operations as OperationClass
-        elif api_version == '2020-09-01':
+        elif api_version == "2020-09-01":
             from .v2020_09_01.operations import Operations as OperationClass
-        elif api_version == '2020-11-01':
+        elif api_version == "2020-11-01":
             from .v2020_11_01.operations import Operations as OperationClass
-        elif api_version == '2020-12-01':
+        elif api_version == "2020-12-01":
             from .v2020_12_01.operations import Operations as OperationClass
-        elif api_version == '2021-02-01':
+        elif api_version == "2021-02-01":
             from .v2021_02_01.operations import Operations as OperationClass
-        elif api_version == '2021-03-01':
+        elif api_version == "2021-03-01":
             from .v2021_03_01.operations import Operations as OperationClass
-        elif api_version == '2021-05-01':
+        elif api_version == "2021-05-01":
             from .v2021_05_01.operations import Operations as OperationClass
-        elif api_version == '2021-07-01':
+        elif api_version == "2021-07-01":
             from .v2021_07_01.operations import Operations as OperationClass
-        elif api_version == '2021-08-01':
+        elif api_version == "2021-08-01":
             from .v2021_08_01.operations import Operations as OperationClass
-        elif api_version == '2021-09-01':
+        elif api_version == "2021-09-01":
             from .v2021_09_01.operations import Operations as OperationClass
-        elif api_version == '2021-10-01':
+        elif api_version == "2021-10-01":
             from .v2021_10_01.operations import Operations as OperationClass
-        elif api_version == '2021-11-01-preview':
+        elif api_version == "2021-11-01-preview":
             from .v2021_11_01_preview.operations import Operations as OperationClass
-        elif api_version == '2022-01-01':
+        elif api_version == "2022-01-01":
             from .v2022_01_01.operations import Operations as OperationClass
-        elif api_version == '2022-01-02-preview':
+        elif api_version == "2022-01-02-preview":
             from .v2022_01_02_preview.operations import Operations as OperationClass
-        elif api_version == '2022-02-01':
+        elif api_version == "2022-02-01":
             from .v2022_02_01.operations import Operations as OperationClass
-        elif api_version == '2022-02-02-preview':
+        elif api_version == "2022-02-02-preview":
             from .v2022_02_02_preview.operations import Operations as OperationClass
-        elif api_version == '2022-03-01':
+        elif api_version == "2022-03-01":
             from .v2022_03_01.operations import Operations as OperationClass
-        elif api_version == '2022-03-02-preview':
+        elif api_version == "2022-03-02-preview":
             from .v2022_03_02_preview.operations import Operations as OperationClass
-        elif api_version == '2022-04-01':
+        elif api_version == "2022-04-01":
             from .v2022_04_01.operations import Operations as OperationClass
-        elif api_version == '2022-04-02-preview':
+        elif api_version == "2022-04-02-preview":
             from .v2022_04_02_preview.operations import Operations as OperationClass
-        elif api_version == '2022-05-02-preview':
+        elif api_version == "2022-05-02-preview":
             from .v2022_05_02_preview.operations import Operations as OperationClass
-        elif api_version == '2022-06-01':
+        elif api_version == "2022-06-01":
             from .v2022_06_01.operations import Operations as OperationClass
-        elif api_version == '2022-06-02-preview':
+        elif api_version == "2022-06-02-preview":
             from .v2022_06_02_preview.operations import Operations as OperationClass
-        elif api_version == '2022-07-01':
+        elif api_version == "2022-07-01":
             from .v2022_07_01.operations import Operations as OperationClass
-        elif api_version == '2022-07-02-preview':
+        elif api_version == "2022-07-02-preview":
             from .v2022_07_02_preview.operations import Operations as OperationClass
-        elif api_version == '2022-08-02-preview':
+        elif api_version == "2022-08-02-preview":
             from .v2022_08_02_preview.operations import Operations as OperationClass
-        elif api_version == '2022-08-03-preview':
+        elif api_version == "2022-08-03-preview":
             from .v2022_08_03_preview.operations import Operations as OperationClass
-        elif api_version == '2022-09-01':
+        elif api_version == "2022-09-01":
             from .v2022_09_01.operations import Operations as OperationClass
-        elif api_version == '2022-09-02-preview':
+        elif api_version == "2022-09-02-preview":
             from .v2022_09_02_preview.operations import Operations as OperationClass
-        elif api_version == '2022-10-02-preview':
+        elif api_version == "2022-10-02-preview":
             from .v2022_10_02_preview.operations import Operations as OperationClass
-        elif api_version == '2022-11-01':
+        elif api_version == "2022-11-01":
             from .v2022_11_01.operations import Operations as OperationClass
-        elif api_version == '2022-11-02-preview':
+        elif api_version == "2022-11-02-preview":
             from .v2022_11_02_preview.operations import Operations as OperationClass
-        elif api_version == '2023-01-01':
+        elif api_version == "2023-01-01":
             from .v2023_01_01.operations import Operations as OperationClass
-        elif api_version == '2023-01-02-preview':
+        elif api_version == "2023-01-02-preview":
             from .v2023_01_02_preview.operations import Operations as OperationClass
-        elif api_version == '2023-02-01':
+        elif api_version == "2023-02-01":
             from .v2023_02_01.operations import Operations as OperationClass
-        elif api_version == '2023-02-02-preview':
+        elif api_version == "2023-02-02-preview":
             from .v2023_02_02_preview.operations import Operations as OperationClass
-        elif api_version == '2023-03-01':
+        elif api_version == "2023-03-01":
             from .v2023_03_01.operations import Operations as OperationClass
-        elif api_version == '2023-03-02-preview':
+        elif api_version == "2023-03-02-preview":
             from .v2023_03_02_preview.operations import Operations as OperationClass
-        elif api_version == '2023-04-01':
+        elif api_version == "2023-04-01":
             from .v2023_04_01.operations import Operations as OperationClass
-        elif api_version == '2023-04-02-preview':
+        elif api_version == "2023-04-02-preview":
             from .v2023_04_02_preview.operations import Operations as OperationClass
-        elif api_version == '2023-05-01':
+        elif api_version == "2023-05-01":
             from .v2023_05_01.operations import Operations as OperationClass
-        elif api_version == '2023-05-02-preview':
+        elif api_version == "2023-05-02-preview":
             from .v2023_05_02_preview.operations import Operations as OperationClass
-        elif api_version == '2023-06-01':
+        elif api_version == "2023-06-01":
             from .v2023_06_01.operations import Operations as OperationClass
-        elif api_version == '2023-06-02-preview':
+        elif api_version == "2023-06-02-preview":
             from .v2023_06_02_preview.operations import Operations as OperationClass
-        elif api_version == '2023-07-01':
+        elif api_version == "2023-07-01":
             from .v2023_07_01.operations import Operations as OperationClass
-        elif api_version == '2023-07-02-preview':
+        elif api_version == "2023-07-02-preview":
             from .v2023_07_02_preview.operations import Operations as OperationClass
-        elif api_version == '2023-08-01':
+        elif api_version == "2023-08-01":
             from .v2023_08_01.operations import Operations as OperationClass
-        elif api_version == '2023-08-02-preview':
+        elif api_version == "2023-08-02-preview":
             from .v2023_08_02_preview.operations import Operations as OperationClass
-        elif api_version == '2023-09-01':
+        elif api_version == "2023-09-01":
             from .v2023_09_01.operations import Operations as OperationClass
-        elif api_version == '2023-09-02-preview':
+        elif api_version == "2023-09-02-preview":
             from .v2023_09_02_preview.operations import Operations as OperationClass
-        elif api_version == '2023-10-01':
+        elif api_version == "2023-10-01":
             from .v2023_10_01.operations import Operations as OperationClass
-        elif api_version == '2023-10-02-preview':
+        elif api_version == "2023-10-02-preview":
             from .v2023_10_02_preview.operations import Operations as OperationClass
-        elif api_version == '2023-11-01':
+        elif api_version == "2023-11-01":
             from .v2023_11_01.operations import Operations as OperationClass
-        elif api_version == '2023-11-02-preview':
+        elif api_version == "2023-11-02-preview":
             from .v2023_11_02_preview.operations import Operations as OperationClass
-        elif api_version == '2024-01-01':
+        elif api_version == "2024-01-01":
             from .v2024_01_01.operations import Operations as OperationClass
-        elif api_version == '2024-01-02-preview':
+        elif api_version == "2024-01-02-preview":
             from .v2024_01_02_preview.operations import Operations as OperationClass
-        elif api_version == '2024-02-01':
+        elif api_version == "2024-02-01":
             from .v2024_02_01.operations import Operations as OperationClass
-        elif api_version == '2024-02-02-preview':
+        elif api_version == "2024-02-02-preview":
             from .v2024_02_02_preview.operations import Operations as OperationClass
-        elif api_version == '2024-03-02-preview':
+        elif api_version == "2024-03-02-preview":
             from .v2024_03_02_preview.operations import Operations as OperationClass
-        elif api_version == '2024-04-02-preview':
+        elif api_version == "2024-04-02-preview":
             from .v2024_04_02_preview.operations import Operations as OperationClass
-        elif api_version == '2024-05-01':
+        elif api_version == "2024-05-01":
             from .v2024_05_01.operations import Operations as OperationClass
+        elif api_version == "2024-05-02-preview":
+            from .v2024_05_02_preview.operations import Operations as OperationClass
+        elif api_version == "2024-06-02-preview":
+            from .v2024_06_02_preview.operations import Operations as OperationClass
+        elif api_version == "2024-07-01":
+            from .v2024_07_01.operations import Operations as OperationClass
+        elif api_version == "2024-07-02-preview":
+            from .v2024_07_02_preview.operations import Operations as OperationClass
+        elif api_version == "2024-08-01":
+            from .v2024_08_01.operations import Operations as OperationClass
+        elif api_version == "2024-09-01":
+            from .v2024_09_01.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
+        return OperationClass(
+            self._client,
+            self._config,
+            Serializer(self._models_dict(api_version)),
+            Deserializer(self._models_dict(api_version)),
+            api_version,
+        )
 
     @property
     def private_endpoint_connections(self):
         """Instance depends on the API version:
 
-           * 2020-06-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2020_06_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2020-07-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2020_07_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2020-09-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2020_09_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2020-11-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2020_11_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2020-12-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2020_12_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2021-02-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2021_02_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2021-03-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2021_03_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2021-05-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2021_05_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2021-07-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2021_07_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2021-08-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2021_08_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2021-09-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2021_09_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2021-10-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2021_10_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2021-11-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2021_11_01_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2022-01-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_01_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2022-01-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_01_02_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2022-02-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_02_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2022-02-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_02_02_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2022-03-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_03_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2022-03-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_03_02_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2022-04-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_04_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2022-04-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_04_02_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2022-05-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_05_02_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2022-06-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_06_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2022-06-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_06_02_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2022-07-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_07_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2022-07-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_07_02_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2022-08-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_08_02_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2022-08-03-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_08_03_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2022-09-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_09_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2022-09-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_09_02_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2022-10-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_10_02_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2022-11-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_11_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2022-11-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_11_02_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2023-01-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_01_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2023-01-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_01_02_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2023-02-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_02_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2023-02-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_02_02_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2023-03-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_03_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2023-03-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_03_02_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2023-04-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_04_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2023-04-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_04_02_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2023-05-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_05_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2023-05-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_05_02_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2023-06-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_06_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2023-06-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_06_02_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2023-07-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_07_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2023-07-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_07_02_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2023-08-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_08_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2023-08-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_08_02_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2023-09-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_09_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2023-09-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_09_02_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2023-10-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_10_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2023-10-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_10_02_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2023-11-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_11_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2023-11-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_11_02_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2024-01-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2024_01_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2024-01-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2024_01_02_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2024-02-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2024_02_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2024-02-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2024_02_02_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2024-03-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2024_03_02_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2024-04-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2024_04_02_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2024-05-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2024_05_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2020-06-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2020_06_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2020-07-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2020_07_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2020-09-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2020_09_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2020-11-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2020_11_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2020-12-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2020_12_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2021-02-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2021_02_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2021-03-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2021_03_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2021-05-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2021_05_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2021-07-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2021_07_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2021-08-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2021_08_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2021-09-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2021_09_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2021-10-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2021_10_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2021-11-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2021_11_01_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2022-01-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_01_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2022-01-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_01_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2022-02-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_02_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2022-02-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_02_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2022-03-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_03_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2022-03-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_03_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2022-04-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_04_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2022-04-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_04_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2022-05-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_05_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2022-06-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_06_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2022-06-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_06_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2022-07-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_07_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2022-07-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_07_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2022-08-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_08_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2022-08-03-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_08_03_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2022-09-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_09_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2022-09-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_09_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2022-10-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_10_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2022-11-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_11_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2022-11-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2022_11_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2023-01-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_01_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2023-01-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_01_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2023-02-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_02_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2023-02-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_02_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2023-03-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_03_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2023-03-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_03_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2023-04-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_04_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2023-04-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_04_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2023-05-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_05_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2023-05-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_05_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2023-06-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_06_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2023-06-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_06_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2023-07-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_07_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2023-07-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_07_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2023-08-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_08_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2023-08-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_08_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2023-09-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_09_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2023-09-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_09_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2023-10-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_10_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2023-10-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_10_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2023-11-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_11_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2023-11-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2023_11_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2024-01-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2024_01_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2024-01-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2024_01_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2024-02-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2024_02_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2024-02-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2024_02_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2024-03-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2024_03_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2024-04-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2024_04_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2024-05-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2024_05_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2024-05-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2024_05_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2024-06-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2024_06_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2024-07-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2024_07_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2024-07-02-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2024_07_02_preview.operations.PrivateEndpointConnectionsOperations>`
+        * 2024-08-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2024_08_01.operations.PrivateEndpointConnectionsOperations>`
+        * 2024-09-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerservice.v2024_09_01.operations.PrivateEndpointConnectionsOperations>`
         """
-        api_version = self._get_api_version('private_endpoint_connections')
-        if api_version == '2020-06-01':
+        api_version = self._get_api_version("private_endpoint_connections")
+        if api_version == "2020-06-01":
             from .v2020_06_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2020-07-01':
+        elif api_version == "2020-07-01":
             from .v2020_07_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2020-09-01':
+        elif api_version == "2020-09-01":
             from .v2020_09_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2020-11-01':
+        elif api_version == "2020-11-01":
             from .v2020_11_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2020-12-01':
+        elif api_version == "2020-12-01":
             from .v2020_12_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2021-02-01':
+        elif api_version == "2021-02-01":
             from .v2021_02_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2021-03-01':
+        elif api_version == "2021-03-01":
             from .v2021_03_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2021-05-01':
+        elif api_version == "2021-05-01":
             from .v2021_05_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2021-07-01':
+        elif api_version == "2021-07-01":
             from .v2021_07_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2021-08-01':
+        elif api_version == "2021-08-01":
             from .v2021_08_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2021-09-01':
+        elif api_version == "2021-09-01":
             from .v2021_09_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2021-10-01':
+        elif api_version == "2021-10-01":
             from .v2021_10_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2021-11-01-preview':
+        elif api_version == "2021-11-01-preview":
             from .v2021_11_01_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-01-01':
+        elif api_version == "2022-01-01":
             from .v2022_01_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-01-02-preview':
+        elif api_version == "2022-01-02-preview":
             from .v2022_01_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-02-01':
+        elif api_version == "2022-02-01":
             from .v2022_02_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-02-02-preview':
+        elif api_version == "2022-02-02-preview":
             from .v2022_02_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-03-01':
+        elif api_version == "2022-03-01":
             from .v2022_03_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-03-02-preview':
+        elif api_version == "2022-03-02-preview":
             from .v2022_03_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-04-01':
+        elif api_version == "2022-04-01":
             from .v2022_04_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-04-02-preview':
+        elif api_version == "2022-04-02-preview":
             from .v2022_04_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-05-02-preview':
+        elif api_version == "2022-05-02-preview":
             from .v2022_05_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-06-01':
+        elif api_version == "2022-06-01":
             from .v2022_06_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-06-02-preview':
+        elif api_version == "2022-06-02-preview":
             from .v2022_06_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-07-01':
+        elif api_version == "2022-07-01":
             from .v2022_07_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-07-02-preview':
+        elif api_version == "2022-07-02-preview":
             from .v2022_07_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-08-02-preview':
+        elif api_version == "2022-08-02-preview":
             from .v2022_08_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-08-03-preview':
+        elif api_version == "2022-08-03-preview":
             from .v2022_08_03_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-09-01':
+        elif api_version == "2022-09-01":
             from .v2022_09_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-09-02-preview':
+        elif api_version == "2022-09-02-preview":
             from .v2022_09_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-10-02-preview':
+        elif api_version == "2022-10-02-preview":
             from .v2022_10_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-11-01':
+        elif api_version == "2022-11-01":
             from .v2022_11_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-11-02-preview':
+        elif api_version == "2022-11-02-preview":
             from .v2022_11_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-01-01':
+        elif api_version == "2023-01-01":
             from .v2023_01_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-01-02-preview':
+        elif api_version == "2023-01-02-preview":
             from .v2023_01_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-02-01':
+        elif api_version == "2023-02-01":
             from .v2023_02_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-02-02-preview':
+        elif api_version == "2023-02-02-preview":
             from .v2023_02_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-03-01':
+        elif api_version == "2023-03-01":
             from .v2023_03_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-03-02-preview':
+        elif api_version == "2023-03-02-preview":
             from .v2023_03_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-04-01':
+        elif api_version == "2023-04-01":
             from .v2023_04_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-04-02-preview':
+        elif api_version == "2023-04-02-preview":
             from .v2023_04_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-05-01':
+        elif api_version == "2023-05-01":
             from .v2023_05_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-05-02-preview':
+        elif api_version == "2023-05-02-preview":
             from .v2023_05_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-06-01':
+        elif api_version == "2023-06-01":
             from .v2023_06_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-06-02-preview':
+        elif api_version == "2023-06-02-preview":
             from .v2023_06_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-07-01':
+        elif api_version == "2023-07-01":
             from .v2023_07_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-07-02-preview':
+        elif api_version == "2023-07-02-preview":
             from .v2023_07_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-08-01':
+        elif api_version == "2023-08-01":
             from .v2023_08_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-08-02-preview':
+        elif api_version == "2023-08-02-preview":
             from .v2023_08_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-09-01':
+        elif api_version == "2023-09-01":
             from .v2023_09_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-09-02-preview':
+        elif api_version == "2023-09-02-preview":
             from .v2023_09_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-10-01':
+        elif api_version == "2023-10-01":
             from .v2023_10_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-10-02-preview':
+        elif api_version == "2023-10-02-preview":
             from .v2023_10_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-11-01':
+        elif api_version == "2023-11-01":
             from .v2023_11_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-11-02-preview':
+        elif api_version == "2023-11-02-preview":
             from .v2023_11_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2024-01-01':
+        elif api_version == "2024-01-01":
             from .v2024_01_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2024-01-02-preview':
+        elif api_version == "2024-01-02-preview":
             from .v2024_01_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2024-02-01':
+        elif api_version == "2024-02-01":
             from .v2024_02_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2024-02-02-preview':
+        elif api_version == "2024-02-02-preview":
             from .v2024_02_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2024-03-02-preview':
+        elif api_version == "2024-03-02-preview":
             from .v2024_03_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2024-04-02-preview':
+        elif api_version == "2024-04-02-preview":
             from .v2024_04_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2024-05-01':
+        elif api_version == "2024-05-01":
             from .v2024_05_01.operations import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == "2024-05-02-preview":
+            from .v2024_05_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == "2024-06-02-preview":
+            from .v2024_06_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == "2024-07-01":
+            from .v2024_07_01.operations import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == "2024-07-02-preview":
+            from .v2024_07_02_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == "2024-08-01":
+            from .v2024_08_01.operations import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == "2024-09-01":
+            from .v2024_09_01.operations import PrivateEndpointConnectionsOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'private_endpoint_connections'".format(api_version))
+            raise ValueError(
+                "API version {} does not have operation group 'private_endpoint_connections'".format(api_version)
+            )
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
+        return OperationClass(
+            self._client,
+            self._config,
+            Serializer(self._models_dict(api_version)),
+            Deserializer(self._models_dict(api_version)),
+            api_version,
+        )
 
     @property
     def private_link_resources(self):
         """Instance depends on the API version:
 
-           * 2020-09-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2020_09_01.operations.PrivateLinkResourcesOperations>`
-           * 2020-11-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2020_11_01.operations.PrivateLinkResourcesOperations>`
-           * 2020-12-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2020_12_01.operations.PrivateLinkResourcesOperations>`
-           * 2021-02-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2021_02_01.operations.PrivateLinkResourcesOperations>`
-           * 2021-03-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2021_03_01.operations.PrivateLinkResourcesOperations>`
-           * 2021-05-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2021_05_01.operations.PrivateLinkResourcesOperations>`
-           * 2021-07-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2021_07_01.operations.PrivateLinkResourcesOperations>`
-           * 2021-08-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2021_08_01.operations.PrivateLinkResourcesOperations>`
-           * 2021-09-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2021_09_01.operations.PrivateLinkResourcesOperations>`
-           * 2021-10-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2021_10_01.operations.PrivateLinkResourcesOperations>`
-           * 2021-11-01-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2021_11_01_preview.operations.PrivateLinkResourcesOperations>`
-           * 2022-01-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_01_01.operations.PrivateLinkResourcesOperations>`
-           * 2022-01-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_01_02_preview.operations.PrivateLinkResourcesOperations>`
-           * 2022-02-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_02_01.operations.PrivateLinkResourcesOperations>`
-           * 2022-02-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_02_02_preview.operations.PrivateLinkResourcesOperations>`
-           * 2022-03-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_03_01.operations.PrivateLinkResourcesOperations>`
-           * 2022-03-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_03_02_preview.operations.PrivateLinkResourcesOperations>`
-           * 2022-04-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_04_01.operations.PrivateLinkResourcesOperations>`
-           * 2022-04-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_04_02_preview.operations.PrivateLinkResourcesOperations>`
-           * 2022-05-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_05_02_preview.operations.PrivateLinkResourcesOperations>`
-           * 2022-06-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_06_01.operations.PrivateLinkResourcesOperations>`
-           * 2022-06-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_06_02_preview.operations.PrivateLinkResourcesOperations>`
-           * 2022-07-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_07_01.operations.PrivateLinkResourcesOperations>`
-           * 2022-07-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_07_02_preview.operations.PrivateLinkResourcesOperations>`
-           * 2022-08-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_08_02_preview.operations.PrivateLinkResourcesOperations>`
-           * 2022-08-03-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_08_03_preview.operations.PrivateLinkResourcesOperations>`
-           * 2022-09-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_09_01.operations.PrivateLinkResourcesOperations>`
-           * 2022-09-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_09_02_preview.operations.PrivateLinkResourcesOperations>`
-           * 2022-10-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_10_02_preview.operations.PrivateLinkResourcesOperations>`
-           * 2022-11-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_11_01.operations.PrivateLinkResourcesOperations>`
-           * 2022-11-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_11_02_preview.operations.PrivateLinkResourcesOperations>`
-           * 2023-01-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_01_01.operations.PrivateLinkResourcesOperations>`
-           * 2023-01-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_01_02_preview.operations.PrivateLinkResourcesOperations>`
-           * 2023-02-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_02_01.operations.PrivateLinkResourcesOperations>`
-           * 2023-02-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_02_02_preview.operations.PrivateLinkResourcesOperations>`
-           * 2023-03-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_03_01.operations.PrivateLinkResourcesOperations>`
-           * 2023-03-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_03_02_preview.operations.PrivateLinkResourcesOperations>`
-           * 2023-04-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_04_01.operations.PrivateLinkResourcesOperations>`
-           * 2023-04-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_04_02_preview.operations.PrivateLinkResourcesOperations>`
-           * 2023-05-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_05_01.operations.PrivateLinkResourcesOperations>`
-           * 2023-05-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_05_02_preview.operations.PrivateLinkResourcesOperations>`
-           * 2023-06-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_06_01.operations.PrivateLinkResourcesOperations>`
-           * 2023-06-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_06_02_preview.operations.PrivateLinkResourcesOperations>`
-           * 2023-07-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_07_01.operations.PrivateLinkResourcesOperations>`
-           * 2023-07-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_07_02_preview.operations.PrivateLinkResourcesOperations>`
-           * 2023-08-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_08_01.operations.PrivateLinkResourcesOperations>`
-           * 2023-08-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_08_02_preview.operations.PrivateLinkResourcesOperations>`
-           * 2023-09-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_09_01.operations.PrivateLinkResourcesOperations>`
-           * 2023-09-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_09_02_preview.operations.PrivateLinkResourcesOperations>`
-           * 2023-10-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_10_01.operations.PrivateLinkResourcesOperations>`
-           * 2023-10-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_10_02_preview.operations.PrivateLinkResourcesOperations>`
-           * 2023-11-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_11_01.operations.PrivateLinkResourcesOperations>`
-           * 2023-11-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_11_02_preview.operations.PrivateLinkResourcesOperations>`
-           * 2024-01-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2024_01_01.operations.PrivateLinkResourcesOperations>`
-           * 2024-01-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2024_01_02_preview.operations.PrivateLinkResourcesOperations>`
-           * 2024-02-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2024_02_01.operations.PrivateLinkResourcesOperations>`
-           * 2024-02-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2024_02_02_preview.operations.PrivateLinkResourcesOperations>`
-           * 2024-03-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2024_03_02_preview.operations.PrivateLinkResourcesOperations>`
-           * 2024-04-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2024_04_02_preview.operations.PrivateLinkResourcesOperations>`
-           * 2024-05-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2024_05_01.operations.PrivateLinkResourcesOperations>`
+        * 2020-09-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2020_09_01.operations.PrivateLinkResourcesOperations>`
+        * 2020-11-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2020_11_01.operations.PrivateLinkResourcesOperations>`
+        * 2020-12-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2020_12_01.operations.PrivateLinkResourcesOperations>`
+        * 2021-02-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2021_02_01.operations.PrivateLinkResourcesOperations>`
+        * 2021-03-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2021_03_01.operations.PrivateLinkResourcesOperations>`
+        * 2021-05-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2021_05_01.operations.PrivateLinkResourcesOperations>`
+        * 2021-07-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2021_07_01.operations.PrivateLinkResourcesOperations>`
+        * 2021-08-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2021_08_01.operations.PrivateLinkResourcesOperations>`
+        * 2021-09-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2021_09_01.operations.PrivateLinkResourcesOperations>`
+        * 2021-10-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2021_10_01.operations.PrivateLinkResourcesOperations>`
+        * 2021-11-01-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2021_11_01_preview.operations.PrivateLinkResourcesOperations>`
+        * 2022-01-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_01_01.operations.PrivateLinkResourcesOperations>`
+        * 2022-01-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_01_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2022-02-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_02_01.operations.PrivateLinkResourcesOperations>`
+        * 2022-02-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_02_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2022-03-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_03_01.operations.PrivateLinkResourcesOperations>`
+        * 2022-03-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_03_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2022-04-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_04_01.operations.PrivateLinkResourcesOperations>`
+        * 2022-04-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_04_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2022-05-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_05_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2022-06-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_06_01.operations.PrivateLinkResourcesOperations>`
+        * 2022-06-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_06_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2022-07-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_07_01.operations.PrivateLinkResourcesOperations>`
+        * 2022-07-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_07_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2022-08-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_08_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2022-08-03-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_08_03_preview.operations.PrivateLinkResourcesOperations>`
+        * 2022-09-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_09_01.operations.PrivateLinkResourcesOperations>`
+        * 2022-09-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_09_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2022-10-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_10_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2022-11-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_11_01.operations.PrivateLinkResourcesOperations>`
+        * 2022-11-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2022_11_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2023-01-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_01_01.operations.PrivateLinkResourcesOperations>`
+        * 2023-01-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_01_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2023-02-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_02_01.operations.PrivateLinkResourcesOperations>`
+        * 2023-02-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_02_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2023-03-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_03_01.operations.PrivateLinkResourcesOperations>`
+        * 2023-03-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_03_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2023-04-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_04_01.operations.PrivateLinkResourcesOperations>`
+        * 2023-04-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_04_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2023-05-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_05_01.operations.PrivateLinkResourcesOperations>`
+        * 2023-05-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_05_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2023-06-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_06_01.operations.PrivateLinkResourcesOperations>`
+        * 2023-06-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_06_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2023-07-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_07_01.operations.PrivateLinkResourcesOperations>`
+        * 2023-07-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_07_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2023-08-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_08_01.operations.PrivateLinkResourcesOperations>`
+        * 2023-08-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_08_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2023-09-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_09_01.operations.PrivateLinkResourcesOperations>`
+        * 2023-09-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_09_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2023-10-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_10_01.operations.PrivateLinkResourcesOperations>`
+        * 2023-10-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_10_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2023-11-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_11_01.operations.PrivateLinkResourcesOperations>`
+        * 2023-11-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2023_11_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2024-01-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2024_01_01.operations.PrivateLinkResourcesOperations>`
+        * 2024-01-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2024_01_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2024-02-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2024_02_01.operations.PrivateLinkResourcesOperations>`
+        * 2024-02-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2024_02_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2024-03-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2024_03_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2024-04-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2024_04_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2024-05-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2024_05_01.operations.PrivateLinkResourcesOperations>`
+        * 2024-05-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2024_05_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2024-06-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2024_06_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2024-07-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2024_07_01.operations.PrivateLinkResourcesOperations>`
+        * 2024-07-02-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2024_07_02_preview.operations.PrivateLinkResourcesOperations>`
+        * 2024-08-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2024_08_01.operations.PrivateLinkResourcesOperations>`
+        * 2024-09-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.containerservice.v2024_09_01.operations.PrivateLinkResourcesOperations>`
         """
-        api_version = self._get_api_version('private_link_resources')
-        if api_version == '2020-09-01':
+        api_version = self._get_api_version("private_link_resources")
+        if api_version == "2020-09-01":
             from .v2020_09_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2020-11-01':
+        elif api_version == "2020-11-01":
             from .v2020_11_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2020-12-01':
+        elif api_version == "2020-12-01":
             from .v2020_12_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2021-02-01':
+        elif api_version == "2021-02-01":
             from .v2021_02_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2021-03-01':
+        elif api_version == "2021-03-01":
             from .v2021_03_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2021-05-01':
+        elif api_version == "2021-05-01":
             from .v2021_05_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2021-07-01':
+        elif api_version == "2021-07-01":
             from .v2021_07_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2021-08-01':
+        elif api_version == "2021-08-01":
             from .v2021_08_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2021-09-01':
+        elif api_version == "2021-09-01":
             from .v2021_09_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2021-10-01':
+        elif api_version == "2021-10-01":
             from .v2021_10_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2021-11-01-preview':
+        elif api_version == "2021-11-01-preview":
             from .v2021_11_01_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-01-01':
+        elif api_version == "2022-01-01":
             from .v2022_01_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-01-02-preview':
+        elif api_version == "2022-01-02-preview":
             from .v2022_01_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-02-01':
+        elif api_version == "2022-02-01":
             from .v2022_02_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-02-02-preview':
+        elif api_version == "2022-02-02-preview":
             from .v2022_02_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-03-01':
+        elif api_version == "2022-03-01":
             from .v2022_03_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-03-02-preview':
+        elif api_version == "2022-03-02-preview":
             from .v2022_03_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-04-01':
+        elif api_version == "2022-04-01":
             from .v2022_04_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-04-02-preview':
+        elif api_version == "2022-04-02-preview":
             from .v2022_04_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-05-02-preview':
+        elif api_version == "2022-05-02-preview":
             from .v2022_05_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-06-01':
+        elif api_version == "2022-06-01":
             from .v2022_06_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-06-02-preview':
+        elif api_version == "2022-06-02-preview":
             from .v2022_06_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-07-01':
+        elif api_version == "2022-07-01":
             from .v2022_07_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-07-02-preview':
+        elif api_version == "2022-07-02-preview":
             from .v2022_07_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-08-02-preview':
+        elif api_version == "2022-08-02-preview":
             from .v2022_08_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-08-03-preview':
+        elif api_version == "2022-08-03-preview":
             from .v2022_08_03_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-09-01':
+        elif api_version == "2022-09-01":
             from .v2022_09_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-09-02-preview':
+        elif api_version == "2022-09-02-preview":
             from .v2022_09_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-10-02-preview':
+        elif api_version == "2022-10-02-preview":
             from .v2022_10_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-11-01':
+        elif api_version == "2022-11-01":
             from .v2022_11_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-11-02-preview':
+        elif api_version == "2022-11-02-preview":
             from .v2022_11_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-01-01':
+        elif api_version == "2023-01-01":
             from .v2023_01_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-01-02-preview':
+        elif api_version == "2023-01-02-preview":
             from .v2023_01_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-02-01':
+        elif api_version == "2023-02-01":
             from .v2023_02_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-02-02-preview':
+        elif api_version == "2023-02-02-preview":
             from .v2023_02_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-03-01':
+        elif api_version == "2023-03-01":
             from .v2023_03_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-03-02-preview':
+        elif api_version == "2023-03-02-preview":
             from .v2023_03_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-04-01':
+        elif api_version == "2023-04-01":
             from .v2023_04_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-04-02-preview':
+        elif api_version == "2023-04-02-preview":
             from .v2023_04_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-05-01':
+        elif api_version == "2023-05-01":
             from .v2023_05_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-05-02-preview':
+        elif api_version == "2023-05-02-preview":
             from .v2023_05_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-06-01':
+        elif api_version == "2023-06-01":
             from .v2023_06_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-06-02-preview':
+        elif api_version == "2023-06-02-preview":
             from .v2023_06_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-07-01':
+        elif api_version == "2023-07-01":
             from .v2023_07_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-07-02-preview':
+        elif api_version == "2023-07-02-preview":
             from .v2023_07_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-08-01':
+        elif api_version == "2023-08-01":
             from .v2023_08_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-08-02-preview':
+        elif api_version == "2023-08-02-preview":
             from .v2023_08_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-09-01':
+        elif api_version == "2023-09-01":
             from .v2023_09_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-09-02-preview':
+        elif api_version == "2023-09-02-preview":
             from .v2023_09_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-10-01':
+        elif api_version == "2023-10-01":
             from .v2023_10_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-10-02-preview':
+        elif api_version == "2023-10-02-preview":
             from .v2023_10_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-11-01':
+        elif api_version == "2023-11-01":
             from .v2023_11_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-11-02-preview':
+        elif api_version == "2023-11-02-preview":
             from .v2023_11_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2024-01-01':
+        elif api_version == "2024-01-01":
             from .v2024_01_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2024-01-02-preview':
+        elif api_version == "2024-01-02-preview":
             from .v2024_01_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2024-02-01':
+        elif api_version == "2024-02-01":
             from .v2024_02_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2024-02-02-preview':
+        elif api_version == "2024-02-02-preview":
             from .v2024_02_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2024-03-02-preview':
+        elif api_version == "2024-03-02-preview":
             from .v2024_03_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2024-04-02-preview':
+        elif api_version == "2024-04-02-preview":
             from .v2024_04_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2024-05-01':
+        elif api_version == "2024-05-01":
             from .v2024_05_01.operations import PrivateLinkResourcesOperations as OperationClass
+        elif api_version == "2024-05-02-preview":
+            from .v2024_05_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
+        elif api_version == "2024-06-02-preview":
+            from .v2024_06_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
+        elif api_version == "2024-07-01":
+            from .v2024_07_01.operations import PrivateLinkResourcesOperations as OperationClass
+        elif api_version == "2024-07-02-preview":
+            from .v2024_07_02_preview.operations import PrivateLinkResourcesOperations as OperationClass
+        elif api_version == "2024-08-01":
+            from .v2024_08_01.operations import PrivateLinkResourcesOperations as OperationClass
+        elif api_version == "2024-09-01":
+            from .v2024_09_01.operations import PrivateLinkResourcesOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'private_link_resources'".format(api_version))
+            raise ValueError(
+                "API version {} does not have operation group 'private_link_resources'".format(api_version)
+            )
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
+        return OperationClass(
+            self._client,
+            self._config,
+            Serializer(self._models_dict(api_version)),
+            Deserializer(self._models_dict(api_version)),
+            api_version,
+        )
 
     @property
     def resolve_private_link_service_id(self):
         """Instance depends on the API version:
 
-           * 2020-09-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2020_09_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2020-11-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2020_11_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2020-12-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2020_12_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2021-02-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2021_02_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2021-03-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2021_03_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2021-05-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2021_05_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2021-07-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2021_07_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2021-08-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2021_08_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2021-09-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2021_09_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2021-10-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2021_10_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2021-11-01-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2021_11_01_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2022-01-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_01_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2022-01-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_01_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2022-02-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_02_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2022-02-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_02_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2022-03-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_03_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2022-03-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_03_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2022-04-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_04_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2022-04-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_04_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2022-05-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_05_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2022-06-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_06_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2022-06-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_06_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2022-07-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_07_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2022-07-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_07_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2022-08-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_08_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2022-08-03-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_08_03_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2022-09-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_09_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2022-09-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_09_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2022-10-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_10_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2022-11-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_11_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2022-11-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_11_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2023-01-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_01_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2023-01-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_01_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2023-02-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_02_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2023-02-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_02_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2023-03-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_03_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2023-03-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_03_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2023-04-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_04_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2023-04-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_04_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2023-05-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_05_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2023-05-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_05_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2023-06-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_06_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2023-06-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_06_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2023-07-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_07_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2023-07-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_07_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2023-08-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_08_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2023-08-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_08_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2023-09-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_09_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2023-09-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_09_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2023-10-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_10_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2023-10-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_10_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2023-11-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_11_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2023-11-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_11_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2024-01-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2024_01_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2024-01-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2024_01_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2024-02-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2024_02_01.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2024-02-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2024_02_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2024-03-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2024_03_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2024-04-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2024_04_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
-           * 2024-05-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2024_05_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2020-09-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2020_09_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2020-11-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2020_11_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2020-12-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2020_12_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2021-02-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2021_02_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2021-03-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2021_03_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2021-05-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2021_05_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2021-07-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2021_07_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2021-08-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2021_08_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2021-09-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2021_09_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2021-10-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2021_10_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2021-11-01-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2021_11_01_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2022-01-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_01_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2022-01-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_01_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2022-02-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_02_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2022-02-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_02_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2022-03-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_03_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2022-03-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_03_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2022-04-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_04_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2022-04-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_04_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2022-05-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_05_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2022-06-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_06_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2022-06-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_06_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2022-07-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_07_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2022-07-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_07_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2022-08-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_08_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2022-08-03-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_08_03_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2022-09-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_09_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2022-09-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_09_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2022-10-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_10_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2022-11-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_11_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2022-11-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2022_11_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2023-01-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_01_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2023-01-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_01_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2023-02-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_02_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2023-02-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_02_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2023-03-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_03_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2023-03-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_03_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2023-04-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_04_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2023-04-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_04_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2023-05-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_05_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2023-05-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_05_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2023-06-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_06_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2023-06-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_06_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2023-07-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_07_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2023-07-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_07_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2023-08-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_08_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2023-08-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_08_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2023-09-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_09_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2023-09-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_09_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2023-10-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_10_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2023-10-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_10_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2023-11-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_11_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2023-11-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2023_11_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2024-01-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2024_01_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2024-01-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2024_01_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2024-02-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2024_02_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2024-02-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2024_02_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2024-03-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2024_03_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2024-04-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2024_04_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2024-05-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2024_05_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2024-05-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2024_05_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2024-06-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2024_06_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2024-07-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2024_07_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2024-07-02-preview: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2024_07_02_preview.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2024-08-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2024_08_01.operations.ResolvePrivateLinkServiceIdOperations>`
+        * 2024-09-01: :class:`ResolvePrivateLinkServiceIdOperations<azure.mgmt.containerservice.v2024_09_01.operations.ResolvePrivateLinkServiceIdOperations>`
         """
-        api_version = self._get_api_version('resolve_private_link_service_id')
-        if api_version == '2020-09-01':
+        api_version = self._get_api_version("resolve_private_link_service_id")
+        if api_version == "2020-09-01":
             from .v2020_09_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2020-11-01':
+        elif api_version == "2020-11-01":
             from .v2020_11_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2020-12-01':
+        elif api_version == "2020-12-01":
             from .v2020_12_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2021-02-01':
+        elif api_version == "2021-02-01":
             from .v2021_02_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2021-03-01':
+        elif api_version == "2021-03-01":
             from .v2021_03_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2021-05-01':
+        elif api_version == "2021-05-01":
             from .v2021_05_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2021-07-01':
+        elif api_version == "2021-07-01":
             from .v2021_07_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2021-08-01':
+        elif api_version == "2021-08-01":
             from .v2021_08_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2021-09-01':
+        elif api_version == "2021-09-01":
             from .v2021_09_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2021-10-01':
+        elif api_version == "2021-10-01":
             from .v2021_10_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2021-11-01-preview':
+        elif api_version == "2021-11-01-preview":
             from .v2021_11_01_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2022-01-01':
+        elif api_version == "2022-01-01":
             from .v2022_01_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2022-01-02-preview':
+        elif api_version == "2022-01-02-preview":
             from .v2022_01_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2022-02-01':
+        elif api_version == "2022-02-01":
             from .v2022_02_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2022-02-02-preview':
+        elif api_version == "2022-02-02-preview":
             from .v2022_02_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2022-03-01':
+        elif api_version == "2022-03-01":
             from .v2022_03_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2022-03-02-preview':
+        elif api_version == "2022-03-02-preview":
             from .v2022_03_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2022-04-01':
+        elif api_version == "2022-04-01":
             from .v2022_04_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2022-04-02-preview':
+        elif api_version == "2022-04-02-preview":
             from .v2022_04_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2022-05-02-preview':
+        elif api_version == "2022-05-02-preview":
             from .v2022_05_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2022-06-01':
+        elif api_version == "2022-06-01":
             from .v2022_06_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2022-06-02-preview':
+        elif api_version == "2022-06-02-preview":
             from .v2022_06_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2022-07-01':
+        elif api_version == "2022-07-01":
             from .v2022_07_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2022-07-02-preview':
+        elif api_version == "2022-07-02-preview":
             from .v2022_07_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2022-08-02-preview':
+        elif api_version == "2022-08-02-preview":
             from .v2022_08_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2022-08-03-preview':
+        elif api_version == "2022-08-03-preview":
             from .v2022_08_03_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2022-09-01':
+        elif api_version == "2022-09-01":
             from .v2022_09_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2022-09-02-preview':
+        elif api_version == "2022-09-02-preview":
             from .v2022_09_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2022-10-02-preview':
+        elif api_version == "2022-10-02-preview":
             from .v2022_10_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2022-11-01':
+        elif api_version == "2022-11-01":
             from .v2022_11_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2022-11-02-preview':
+        elif api_version == "2022-11-02-preview":
             from .v2022_11_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2023-01-01':
+        elif api_version == "2023-01-01":
             from .v2023_01_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2023-01-02-preview':
+        elif api_version == "2023-01-02-preview":
             from .v2023_01_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2023-02-01':
+        elif api_version == "2023-02-01":
             from .v2023_02_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2023-02-02-preview':
+        elif api_version == "2023-02-02-preview":
             from .v2023_02_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2023-03-01':
+        elif api_version == "2023-03-01":
             from .v2023_03_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2023-03-02-preview':
+        elif api_version == "2023-03-02-preview":
             from .v2023_03_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2023-04-01':
+        elif api_version == "2023-04-01":
             from .v2023_04_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2023-04-02-preview':
+        elif api_version == "2023-04-02-preview":
             from .v2023_04_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2023-05-01':
+        elif api_version == "2023-05-01":
             from .v2023_05_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2023-05-02-preview':
+        elif api_version == "2023-05-02-preview":
             from .v2023_05_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2023-06-01':
+        elif api_version == "2023-06-01":
             from .v2023_06_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2023-06-02-preview':
+        elif api_version == "2023-06-02-preview":
             from .v2023_06_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2023-07-01':
+        elif api_version == "2023-07-01":
             from .v2023_07_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2023-07-02-preview':
+        elif api_version == "2023-07-02-preview":
             from .v2023_07_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2023-08-01':
+        elif api_version == "2023-08-01":
             from .v2023_08_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2023-08-02-preview':
+        elif api_version == "2023-08-02-preview":
             from .v2023_08_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2023-09-01':
+        elif api_version == "2023-09-01":
             from .v2023_09_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2023-09-02-preview':
+        elif api_version == "2023-09-02-preview":
             from .v2023_09_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2023-10-01':
+        elif api_version == "2023-10-01":
             from .v2023_10_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2023-10-02-preview':
+        elif api_version == "2023-10-02-preview":
             from .v2023_10_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2023-11-01':
+        elif api_version == "2023-11-01":
             from .v2023_11_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2023-11-02-preview':
+        elif api_version == "2023-11-02-preview":
             from .v2023_11_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2024-01-01':
+        elif api_version == "2024-01-01":
             from .v2024_01_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2024-01-02-preview':
+        elif api_version == "2024-01-02-preview":
             from .v2024_01_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2024-02-01':
+        elif api_version == "2024-02-01":
             from .v2024_02_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2024-02-02-preview':
+        elif api_version == "2024-02-02-preview":
             from .v2024_02_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2024-03-02-preview':
+        elif api_version == "2024-03-02-preview":
             from .v2024_03_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2024-04-02-preview':
+        elif api_version == "2024-04-02-preview":
             from .v2024_04_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
-        elif api_version == '2024-05-01':
+        elif api_version == "2024-05-01":
             from .v2024_05_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
+        elif api_version == "2024-05-02-preview":
+            from .v2024_05_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
+        elif api_version == "2024-06-02-preview":
+            from .v2024_06_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
+        elif api_version == "2024-07-01":
+            from .v2024_07_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
+        elif api_version == "2024-07-02-preview":
+            from .v2024_07_02_preview.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
+        elif api_version == "2024-08-01":
+            from .v2024_08_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
+        elif api_version == "2024-09-01":
+            from .v2024_09_01.operations import ResolvePrivateLinkServiceIdOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'resolve_private_link_service_id'".format(api_version))
+            raise ValueError(
+                "API version {} does not have operation group 'resolve_private_link_service_id'".format(api_version)
+            )
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
+        return OperationClass(
+            self._client,
+            self._config,
+            Serializer(self._models_dict(api_version)),
+            Deserializer(self._models_dict(api_version)),
+            api_version,
+        )
 
     @property
     def snapshots(self):
         """Instance depends on the API version:
 
-           * 2021-08-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2021_08_01.operations.SnapshotsOperations>`
-           * 2021-09-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2021_09_01.operations.SnapshotsOperations>`
-           * 2021-10-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2021_10_01.operations.SnapshotsOperations>`
-           * 2021-11-01-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2021_11_01_preview.operations.SnapshotsOperations>`
-           * 2022-01-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_01_01.operations.SnapshotsOperations>`
-           * 2022-01-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_01_02_preview.operations.SnapshotsOperations>`
-           * 2022-02-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_02_01.operations.SnapshotsOperations>`
-           * 2022-02-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_02_02_preview.operations.SnapshotsOperations>`
-           * 2022-03-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_03_01.operations.SnapshotsOperations>`
-           * 2022-03-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_03_02_preview.operations.SnapshotsOperations>`
-           * 2022-04-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_04_01.operations.SnapshotsOperations>`
-           * 2022-04-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_04_02_preview.operations.SnapshotsOperations>`
-           * 2022-05-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_05_02_preview.operations.SnapshotsOperations>`
-           * 2022-06-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_06_01.operations.SnapshotsOperations>`
-           * 2022-06-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_06_02_preview.operations.SnapshotsOperations>`
-           * 2022-07-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_07_01.operations.SnapshotsOperations>`
-           * 2022-07-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_07_02_preview.operations.SnapshotsOperations>`
-           * 2022-08-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_08_02_preview.operations.SnapshotsOperations>`
-           * 2022-08-03-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_08_03_preview.operations.SnapshotsOperations>`
-           * 2022-09-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_09_01.operations.SnapshotsOperations>`
-           * 2022-09-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_09_02_preview.operations.SnapshotsOperations>`
-           * 2022-10-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_10_02_preview.operations.SnapshotsOperations>`
-           * 2022-11-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_11_01.operations.SnapshotsOperations>`
-           * 2022-11-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_11_02_preview.operations.SnapshotsOperations>`
-           * 2023-01-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_01_01.operations.SnapshotsOperations>`
-           * 2023-01-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_01_02_preview.operations.SnapshotsOperations>`
-           * 2023-02-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_02_01.operations.SnapshotsOperations>`
-           * 2023-02-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_02_02_preview.operations.SnapshotsOperations>`
-           * 2023-03-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_03_01.operations.SnapshotsOperations>`
-           * 2023-03-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_03_02_preview.operations.SnapshotsOperations>`
-           * 2023-04-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_04_01.operations.SnapshotsOperations>`
-           * 2023-04-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_04_02_preview.operations.SnapshotsOperations>`
-           * 2023-05-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_05_01.operations.SnapshotsOperations>`
-           * 2023-05-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_05_02_preview.operations.SnapshotsOperations>`
-           * 2023-06-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_06_01.operations.SnapshotsOperations>`
-           * 2023-06-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_06_02_preview.operations.SnapshotsOperations>`
-           * 2023-07-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_07_01.operations.SnapshotsOperations>`
-           * 2023-07-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_07_02_preview.operations.SnapshotsOperations>`
-           * 2023-08-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_08_01.operations.SnapshotsOperations>`
-           * 2023-08-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_08_02_preview.operations.SnapshotsOperations>`
-           * 2023-09-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_09_01.operations.SnapshotsOperations>`
-           * 2023-09-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_09_02_preview.operations.SnapshotsOperations>`
-           * 2023-10-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_10_01.operations.SnapshotsOperations>`
-           * 2023-10-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_10_02_preview.operations.SnapshotsOperations>`
-           * 2023-11-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_11_01.operations.SnapshotsOperations>`
-           * 2023-11-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_11_02_preview.operations.SnapshotsOperations>`
-           * 2024-01-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2024_01_01.operations.SnapshotsOperations>`
-           * 2024-01-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2024_01_02_preview.operations.SnapshotsOperations>`
-           * 2024-02-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2024_02_01.operations.SnapshotsOperations>`
-           * 2024-02-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2024_02_02_preview.operations.SnapshotsOperations>`
-           * 2024-03-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2024_03_02_preview.operations.SnapshotsOperations>`
-           * 2024-04-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2024_04_02_preview.operations.SnapshotsOperations>`
-           * 2024-05-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2024_05_01.operations.SnapshotsOperations>`
+        * 2021-08-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2021_08_01.operations.SnapshotsOperations>`
+        * 2021-09-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2021_09_01.operations.SnapshotsOperations>`
+        * 2021-10-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2021_10_01.operations.SnapshotsOperations>`
+        * 2021-11-01-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2021_11_01_preview.operations.SnapshotsOperations>`
+        * 2022-01-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_01_01.operations.SnapshotsOperations>`
+        * 2022-01-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_01_02_preview.operations.SnapshotsOperations>`
+        * 2022-02-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_02_01.operations.SnapshotsOperations>`
+        * 2022-02-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_02_02_preview.operations.SnapshotsOperations>`
+        * 2022-03-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_03_01.operations.SnapshotsOperations>`
+        * 2022-03-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_03_02_preview.operations.SnapshotsOperations>`
+        * 2022-04-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_04_01.operations.SnapshotsOperations>`
+        * 2022-04-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_04_02_preview.operations.SnapshotsOperations>`
+        * 2022-05-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_05_02_preview.operations.SnapshotsOperations>`
+        * 2022-06-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_06_01.operations.SnapshotsOperations>`
+        * 2022-06-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_06_02_preview.operations.SnapshotsOperations>`
+        * 2022-07-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_07_01.operations.SnapshotsOperations>`
+        * 2022-07-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_07_02_preview.operations.SnapshotsOperations>`
+        * 2022-08-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_08_02_preview.operations.SnapshotsOperations>`
+        * 2022-08-03-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_08_03_preview.operations.SnapshotsOperations>`
+        * 2022-09-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_09_01.operations.SnapshotsOperations>`
+        * 2022-09-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_09_02_preview.operations.SnapshotsOperations>`
+        * 2022-10-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_10_02_preview.operations.SnapshotsOperations>`
+        * 2022-11-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_11_01.operations.SnapshotsOperations>`
+        * 2022-11-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2022_11_02_preview.operations.SnapshotsOperations>`
+        * 2023-01-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_01_01.operations.SnapshotsOperations>`
+        * 2023-01-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_01_02_preview.operations.SnapshotsOperations>`
+        * 2023-02-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_02_01.operations.SnapshotsOperations>`
+        * 2023-02-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_02_02_preview.operations.SnapshotsOperations>`
+        * 2023-03-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_03_01.operations.SnapshotsOperations>`
+        * 2023-03-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_03_02_preview.operations.SnapshotsOperations>`
+        * 2023-04-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_04_01.operations.SnapshotsOperations>`
+        * 2023-04-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_04_02_preview.operations.SnapshotsOperations>`
+        * 2023-05-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_05_01.operations.SnapshotsOperations>`
+        * 2023-05-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_05_02_preview.operations.SnapshotsOperations>`
+        * 2023-06-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_06_01.operations.SnapshotsOperations>`
+        * 2023-06-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_06_02_preview.operations.SnapshotsOperations>`
+        * 2023-07-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_07_01.operations.SnapshotsOperations>`
+        * 2023-07-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_07_02_preview.operations.SnapshotsOperations>`
+        * 2023-08-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_08_01.operations.SnapshotsOperations>`
+        * 2023-08-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_08_02_preview.operations.SnapshotsOperations>`
+        * 2023-09-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_09_01.operations.SnapshotsOperations>`
+        * 2023-09-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_09_02_preview.operations.SnapshotsOperations>`
+        * 2023-10-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_10_01.operations.SnapshotsOperations>`
+        * 2023-10-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_10_02_preview.operations.SnapshotsOperations>`
+        * 2023-11-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_11_01.operations.SnapshotsOperations>`
+        * 2023-11-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2023_11_02_preview.operations.SnapshotsOperations>`
+        * 2024-01-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2024_01_01.operations.SnapshotsOperations>`
+        * 2024-01-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2024_01_02_preview.operations.SnapshotsOperations>`
+        * 2024-02-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2024_02_01.operations.SnapshotsOperations>`
+        * 2024-02-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2024_02_02_preview.operations.SnapshotsOperations>`
+        * 2024-03-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2024_03_02_preview.operations.SnapshotsOperations>`
+        * 2024-04-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2024_04_02_preview.operations.SnapshotsOperations>`
+        * 2024-05-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2024_05_01.operations.SnapshotsOperations>`
+        * 2024-05-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2024_05_02_preview.operations.SnapshotsOperations>`
+        * 2024-06-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2024_06_02_preview.operations.SnapshotsOperations>`
+        * 2024-07-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2024_07_01.operations.SnapshotsOperations>`
+        * 2024-07-02-preview: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2024_07_02_preview.operations.SnapshotsOperations>`
+        * 2024-08-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2024_08_01.operations.SnapshotsOperations>`
+        * 2024-09-01: :class:`SnapshotsOperations<azure.mgmt.containerservice.v2024_09_01.operations.SnapshotsOperations>`
         """
-        api_version = self._get_api_version('snapshots')
-        if api_version == '2021-08-01':
+        api_version = self._get_api_version("snapshots")
+        if api_version == "2021-08-01":
             from .v2021_08_01.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2021-09-01':
+        elif api_version == "2021-09-01":
             from .v2021_09_01.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2021-10-01':
+        elif api_version == "2021-10-01":
             from .v2021_10_01.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2021-11-01-preview':
+        elif api_version == "2021-11-01-preview":
             from .v2021_11_01_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2022-01-01':
+        elif api_version == "2022-01-01":
             from .v2022_01_01.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2022-01-02-preview':
+        elif api_version == "2022-01-02-preview":
             from .v2022_01_02_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2022-02-01':
+        elif api_version == "2022-02-01":
             from .v2022_02_01.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2022-02-02-preview':
+        elif api_version == "2022-02-02-preview":
             from .v2022_02_02_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2022-03-01':
+        elif api_version == "2022-03-01":
             from .v2022_03_01.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2022-03-02-preview':
+        elif api_version == "2022-03-02-preview":
             from .v2022_03_02_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2022-04-01':
+        elif api_version == "2022-04-01":
             from .v2022_04_01.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2022-04-02-preview':
+        elif api_version == "2022-04-02-preview":
             from .v2022_04_02_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2022-05-02-preview':
+        elif api_version == "2022-05-02-preview":
             from .v2022_05_02_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2022-06-01':
+        elif api_version == "2022-06-01":
             from .v2022_06_01.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2022-06-02-preview':
+        elif api_version == "2022-06-02-preview":
             from .v2022_06_02_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2022-07-01':
+        elif api_version == "2022-07-01":
             from .v2022_07_01.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2022-07-02-preview':
+        elif api_version == "2022-07-02-preview":
             from .v2022_07_02_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2022-08-02-preview':
+        elif api_version == "2022-08-02-preview":
             from .v2022_08_02_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2022-08-03-preview':
+        elif api_version == "2022-08-03-preview":
             from .v2022_08_03_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2022-09-01':
+        elif api_version == "2022-09-01":
             from .v2022_09_01.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2022-09-02-preview':
+        elif api_version == "2022-09-02-preview":
             from .v2022_09_02_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2022-10-02-preview':
+        elif api_version == "2022-10-02-preview":
             from .v2022_10_02_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2022-11-01':
+        elif api_version == "2022-11-01":
             from .v2022_11_01.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2022-11-02-preview':
+        elif api_version == "2022-11-02-preview":
             from .v2022_11_02_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2023-01-01':
+        elif api_version == "2023-01-01":
             from .v2023_01_01.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2023-01-02-preview':
+        elif api_version == "2023-01-02-preview":
             from .v2023_01_02_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2023-02-01':
+        elif api_version == "2023-02-01":
             from .v2023_02_01.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2023-02-02-preview':
+        elif api_version == "2023-02-02-preview":
             from .v2023_02_02_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2023-03-01':
+        elif api_version == "2023-03-01":
             from .v2023_03_01.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2023-03-02-preview':
+        elif api_version == "2023-03-02-preview":
             from .v2023_03_02_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2023-04-01':
+        elif api_version == "2023-04-01":
             from .v2023_04_01.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2023-04-02-preview':
+        elif api_version == "2023-04-02-preview":
             from .v2023_04_02_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2023-05-01':
+        elif api_version == "2023-05-01":
             from .v2023_05_01.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2023-05-02-preview':
+        elif api_version == "2023-05-02-preview":
             from .v2023_05_02_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2023-06-01':
+        elif api_version == "2023-06-01":
             from .v2023_06_01.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2023-06-02-preview':
+        elif api_version == "2023-06-02-preview":
             from .v2023_06_02_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2023-07-01':
+        elif api_version == "2023-07-01":
             from .v2023_07_01.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2023-07-02-preview':
+        elif api_version == "2023-07-02-preview":
             from .v2023_07_02_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2023-08-01':
+        elif api_version == "2023-08-01":
             from .v2023_08_01.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2023-08-02-preview':
+        elif api_version == "2023-08-02-preview":
             from .v2023_08_02_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2023-09-01':
+        elif api_version == "2023-09-01":
             from .v2023_09_01.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2023-09-02-preview':
+        elif api_version == "2023-09-02-preview":
             from .v2023_09_02_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2023-10-01':
+        elif api_version == "2023-10-01":
             from .v2023_10_01.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2023-10-02-preview':
+        elif api_version == "2023-10-02-preview":
             from .v2023_10_02_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2023-11-01':
+        elif api_version == "2023-11-01":
             from .v2023_11_01.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2023-11-02-preview':
+        elif api_version == "2023-11-02-preview":
             from .v2023_11_02_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2024-01-01':
+        elif api_version == "2024-01-01":
             from .v2024_01_01.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2024-01-02-preview':
+        elif api_version == "2024-01-02-preview":
             from .v2024_01_02_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2024-02-01':
+        elif api_version == "2024-02-01":
             from .v2024_02_01.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2024-02-02-preview':
+        elif api_version == "2024-02-02-preview":
             from .v2024_02_02_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2024-03-02-preview':
+        elif api_version == "2024-03-02-preview":
             from .v2024_03_02_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2024-04-02-preview':
+        elif api_version == "2024-04-02-preview":
             from .v2024_04_02_preview.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2024-05-01':
+        elif api_version == "2024-05-01":
             from .v2024_05_01.operations import SnapshotsOperations as OperationClass
+        elif api_version == "2024-05-02-preview":
+            from .v2024_05_02_preview.operations import SnapshotsOperations as OperationClass
+        elif api_version == "2024-06-02-preview":
+            from .v2024_06_02_preview.operations import SnapshotsOperations as OperationClass
+        elif api_version == "2024-07-01":
+            from .v2024_07_01.operations import SnapshotsOperations as OperationClass
+        elif api_version == "2024-07-02-preview":
+            from .v2024_07_02_preview.operations import SnapshotsOperations as OperationClass
+        elif api_version == "2024-08-01":
+            from .v2024_08_01.operations import SnapshotsOperations as OperationClass
+        elif api_version == "2024-09-01":
+            from .v2024_09_01.operations import SnapshotsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'snapshots'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
+        return OperationClass(
+            self._client,
+            self._config,
+            Serializer(self._models_dict(api_version)),
+            Deserializer(self._models_dict(api_version)),
+            api_version,
+        )
 
     @property
     def trusted_access_role_bindings(self):
         """Instance depends on the API version:
 
-           * 2022-04-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2022_04_02_preview.operations.TrustedAccessRoleBindingsOperations>`
-           * 2022-05-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2022_05_02_preview.operations.TrustedAccessRoleBindingsOperations>`
-           * 2022-06-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2022_06_02_preview.operations.TrustedAccessRoleBindingsOperations>`
-           * 2022-07-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2022_07_02_preview.operations.TrustedAccessRoleBindingsOperations>`
-           * 2022-08-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2022_08_02_preview.operations.TrustedAccessRoleBindingsOperations>`
-           * 2022-08-03-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2022_08_03_preview.operations.TrustedAccessRoleBindingsOperations>`
-           * 2022-09-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2022_09_02_preview.operations.TrustedAccessRoleBindingsOperations>`
-           * 2022-10-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2022_10_02_preview.operations.TrustedAccessRoleBindingsOperations>`
-           * 2022-11-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2022_11_02_preview.operations.TrustedAccessRoleBindingsOperations>`
-           * 2023-01-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_01_02_preview.operations.TrustedAccessRoleBindingsOperations>`
-           * 2023-02-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_02_02_preview.operations.TrustedAccessRoleBindingsOperations>`
-           * 2023-03-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_03_02_preview.operations.TrustedAccessRoleBindingsOperations>`
-           * 2023-04-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_04_02_preview.operations.TrustedAccessRoleBindingsOperations>`
-           * 2023-05-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_05_02_preview.operations.TrustedAccessRoleBindingsOperations>`
-           * 2023-06-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_06_02_preview.operations.TrustedAccessRoleBindingsOperations>`
-           * 2023-07-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_07_02_preview.operations.TrustedAccessRoleBindingsOperations>`
-           * 2023-08-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_08_02_preview.operations.TrustedAccessRoleBindingsOperations>`
-           * 2023-09-01: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_09_01.operations.TrustedAccessRoleBindingsOperations>`
-           * 2023-09-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_09_02_preview.operations.TrustedAccessRoleBindingsOperations>`
-           * 2023-10-01: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_10_01.operations.TrustedAccessRoleBindingsOperations>`
-           * 2023-10-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_10_02_preview.operations.TrustedAccessRoleBindingsOperations>`
-           * 2023-11-01: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_11_01.operations.TrustedAccessRoleBindingsOperations>`
-           * 2023-11-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_11_02_preview.operations.TrustedAccessRoleBindingsOperations>`
-           * 2024-01-01: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2024_01_01.operations.TrustedAccessRoleBindingsOperations>`
-           * 2024-01-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2024_01_02_preview.operations.TrustedAccessRoleBindingsOperations>`
-           * 2024-02-01: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2024_02_01.operations.TrustedAccessRoleBindingsOperations>`
-           * 2024-02-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2024_02_02_preview.operations.TrustedAccessRoleBindingsOperations>`
-           * 2024-03-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2024_03_02_preview.operations.TrustedAccessRoleBindingsOperations>`
-           * 2024-04-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2024_04_02_preview.operations.TrustedAccessRoleBindingsOperations>`
-           * 2024-05-01: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2024_05_01.operations.TrustedAccessRoleBindingsOperations>`
+        * 2022-04-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2022_04_02_preview.operations.TrustedAccessRoleBindingsOperations>`
+        * 2022-05-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2022_05_02_preview.operations.TrustedAccessRoleBindingsOperations>`
+        * 2022-06-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2022_06_02_preview.operations.TrustedAccessRoleBindingsOperations>`
+        * 2022-07-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2022_07_02_preview.operations.TrustedAccessRoleBindingsOperations>`
+        * 2022-08-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2022_08_02_preview.operations.TrustedAccessRoleBindingsOperations>`
+        * 2022-08-03-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2022_08_03_preview.operations.TrustedAccessRoleBindingsOperations>`
+        * 2022-09-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2022_09_02_preview.operations.TrustedAccessRoleBindingsOperations>`
+        * 2022-10-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2022_10_02_preview.operations.TrustedAccessRoleBindingsOperations>`
+        * 2022-11-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2022_11_02_preview.operations.TrustedAccessRoleBindingsOperations>`
+        * 2023-01-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_01_02_preview.operations.TrustedAccessRoleBindingsOperations>`
+        * 2023-02-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_02_02_preview.operations.TrustedAccessRoleBindingsOperations>`
+        * 2023-03-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_03_02_preview.operations.TrustedAccessRoleBindingsOperations>`
+        * 2023-04-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_04_02_preview.operations.TrustedAccessRoleBindingsOperations>`
+        * 2023-05-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_05_02_preview.operations.TrustedAccessRoleBindingsOperations>`
+        * 2023-06-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_06_02_preview.operations.TrustedAccessRoleBindingsOperations>`
+        * 2023-07-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_07_02_preview.operations.TrustedAccessRoleBindingsOperations>`
+        * 2023-08-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_08_02_preview.operations.TrustedAccessRoleBindingsOperations>`
+        * 2023-09-01: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_09_01.operations.TrustedAccessRoleBindingsOperations>`
+        * 2023-09-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_09_02_preview.operations.TrustedAccessRoleBindingsOperations>`
+        * 2023-10-01: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_10_01.operations.TrustedAccessRoleBindingsOperations>`
+        * 2023-10-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_10_02_preview.operations.TrustedAccessRoleBindingsOperations>`
+        * 2023-11-01: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_11_01.operations.TrustedAccessRoleBindingsOperations>`
+        * 2023-11-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2023_11_02_preview.operations.TrustedAccessRoleBindingsOperations>`
+        * 2024-01-01: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2024_01_01.operations.TrustedAccessRoleBindingsOperations>`
+        * 2024-01-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2024_01_02_preview.operations.TrustedAccessRoleBindingsOperations>`
+        * 2024-02-01: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2024_02_01.operations.TrustedAccessRoleBindingsOperations>`
+        * 2024-02-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2024_02_02_preview.operations.TrustedAccessRoleBindingsOperations>`
+        * 2024-03-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2024_03_02_preview.operations.TrustedAccessRoleBindingsOperations>`
+        * 2024-04-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2024_04_02_preview.operations.TrustedAccessRoleBindingsOperations>`
+        * 2024-05-01: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2024_05_01.operations.TrustedAccessRoleBindingsOperations>`
+        * 2024-05-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2024_05_02_preview.operations.TrustedAccessRoleBindingsOperations>`
+        * 2024-06-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2024_06_02_preview.operations.TrustedAccessRoleBindingsOperations>`
+        * 2024-07-01: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2024_07_01.operations.TrustedAccessRoleBindingsOperations>`
+        * 2024-07-02-preview: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2024_07_02_preview.operations.TrustedAccessRoleBindingsOperations>`
+        * 2024-08-01: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2024_08_01.operations.TrustedAccessRoleBindingsOperations>`
+        * 2024-09-01: :class:`TrustedAccessRoleBindingsOperations<azure.mgmt.containerservice.v2024_09_01.operations.TrustedAccessRoleBindingsOperations>`
         """
-        api_version = self._get_api_version('trusted_access_role_bindings')
-        if api_version == '2022-04-02-preview':
+        api_version = self._get_api_version("trusted_access_role_bindings")
+        if api_version == "2022-04-02-preview":
             from .v2022_04_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2022-05-02-preview':
+        elif api_version == "2022-05-02-preview":
             from .v2022_05_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2022-06-02-preview':
+        elif api_version == "2022-06-02-preview":
             from .v2022_06_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2022-07-02-preview':
+        elif api_version == "2022-07-02-preview":
             from .v2022_07_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2022-08-02-preview':
+        elif api_version == "2022-08-02-preview":
             from .v2022_08_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2022-08-03-preview':
+        elif api_version == "2022-08-03-preview":
             from .v2022_08_03_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2022-09-02-preview':
+        elif api_version == "2022-09-02-preview":
             from .v2022_09_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2022-10-02-preview':
+        elif api_version == "2022-10-02-preview":
             from .v2022_10_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2022-11-02-preview':
+        elif api_version == "2022-11-02-preview":
             from .v2022_11_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2023-01-02-preview':
+        elif api_version == "2023-01-02-preview":
             from .v2023_01_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2023-02-02-preview':
+        elif api_version == "2023-02-02-preview":
             from .v2023_02_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2023-03-02-preview':
+        elif api_version == "2023-03-02-preview":
             from .v2023_03_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2023-04-02-preview':
+        elif api_version == "2023-04-02-preview":
             from .v2023_04_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2023-05-02-preview':
+        elif api_version == "2023-05-02-preview":
             from .v2023_05_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2023-06-02-preview':
+        elif api_version == "2023-06-02-preview":
             from .v2023_06_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2023-07-02-preview':
+        elif api_version == "2023-07-02-preview":
             from .v2023_07_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2023-08-02-preview':
+        elif api_version == "2023-08-02-preview":
             from .v2023_08_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2023-09-01':
+        elif api_version == "2023-09-01":
             from .v2023_09_01.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2023-09-02-preview':
+        elif api_version == "2023-09-02-preview":
             from .v2023_09_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2023-10-01':
+        elif api_version == "2023-10-01":
             from .v2023_10_01.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2023-10-02-preview':
+        elif api_version == "2023-10-02-preview":
             from .v2023_10_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2023-11-01':
+        elif api_version == "2023-11-01":
             from .v2023_11_01.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2023-11-02-preview':
+        elif api_version == "2023-11-02-preview":
             from .v2023_11_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2024-01-01':
+        elif api_version == "2024-01-01":
             from .v2024_01_01.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2024-01-02-preview':
+        elif api_version == "2024-01-02-preview":
             from .v2024_01_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2024-02-01':
+        elif api_version == "2024-02-01":
             from .v2024_02_01.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2024-02-02-preview':
+        elif api_version == "2024-02-02-preview":
             from .v2024_02_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2024-03-02-preview':
+        elif api_version == "2024-03-02-preview":
             from .v2024_03_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2024-04-02-preview':
+        elif api_version == "2024-04-02-preview":
             from .v2024_04_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
-        elif api_version == '2024-05-01':
+        elif api_version == "2024-05-01":
             from .v2024_05_01.operations import TrustedAccessRoleBindingsOperations as OperationClass
+        elif api_version == "2024-05-02-preview":
+            from .v2024_05_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
+        elif api_version == "2024-06-02-preview":
+            from .v2024_06_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
+        elif api_version == "2024-07-01":
+            from .v2024_07_01.operations import TrustedAccessRoleBindingsOperations as OperationClass
+        elif api_version == "2024-07-02-preview":
+            from .v2024_07_02_preview.operations import TrustedAccessRoleBindingsOperations as OperationClass
+        elif api_version == "2024-08-01":
+            from .v2024_08_01.operations import TrustedAccessRoleBindingsOperations as OperationClass
+        elif api_version == "2024-09-01":
+            from .v2024_09_01.operations import TrustedAccessRoleBindingsOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'trusted_access_role_bindings'".format(api_version))
+            raise ValueError(
+                "API version {} does not have operation group 'trusted_access_role_bindings'".format(api_version)
+            )
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
+        return OperationClass(
+            self._client,
+            self._config,
+            Serializer(self._models_dict(api_version)),
+            Deserializer(self._models_dict(api_version)),
+            api_version,
+        )
 
     @property
     def trusted_access_roles(self):
         """Instance depends on the API version:
 
-           * 2022-04-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2022_04_02_preview.operations.TrustedAccessRolesOperations>`
-           * 2022-05-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2022_05_02_preview.operations.TrustedAccessRolesOperations>`
-           * 2022-06-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2022_06_02_preview.operations.TrustedAccessRolesOperations>`
-           * 2022-07-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2022_07_02_preview.operations.TrustedAccessRolesOperations>`
-           * 2022-08-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2022_08_02_preview.operations.TrustedAccessRolesOperations>`
-           * 2022-08-03-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2022_08_03_preview.operations.TrustedAccessRolesOperations>`
-           * 2022-09-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2022_09_02_preview.operations.TrustedAccessRolesOperations>`
-           * 2022-10-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2022_10_02_preview.operations.TrustedAccessRolesOperations>`
-           * 2022-11-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2022_11_02_preview.operations.TrustedAccessRolesOperations>`
-           * 2023-01-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_01_02_preview.operations.TrustedAccessRolesOperations>`
-           * 2023-02-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_02_02_preview.operations.TrustedAccessRolesOperations>`
-           * 2023-03-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_03_02_preview.operations.TrustedAccessRolesOperations>`
-           * 2023-04-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_04_02_preview.operations.TrustedAccessRolesOperations>`
-           * 2023-05-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_05_02_preview.operations.TrustedAccessRolesOperations>`
-           * 2023-06-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_06_02_preview.operations.TrustedAccessRolesOperations>`
-           * 2023-07-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_07_02_preview.operations.TrustedAccessRolesOperations>`
-           * 2023-08-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_08_02_preview.operations.TrustedAccessRolesOperations>`
-           * 2023-09-01: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_09_01.operations.TrustedAccessRolesOperations>`
-           * 2023-09-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_09_02_preview.operations.TrustedAccessRolesOperations>`
-           * 2023-10-01: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_10_01.operations.TrustedAccessRolesOperations>`
-           * 2023-10-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_10_02_preview.operations.TrustedAccessRolesOperations>`
-           * 2023-11-01: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_11_01.operations.TrustedAccessRolesOperations>`
-           * 2023-11-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_11_02_preview.operations.TrustedAccessRolesOperations>`
-           * 2024-01-01: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2024_01_01.operations.TrustedAccessRolesOperations>`
-           * 2024-01-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2024_01_02_preview.operations.TrustedAccessRolesOperations>`
-           * 2024-02-01: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2024_02_01.operations.TrustedAccessRolesOperations>`
-           * 2024-02-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2024_02_02_preview.operations.TrustedAccessRolesOperations>`
-           * 2024-03-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2024_03_02_preview.operations.TrustedAccessRolesOperations>`
-           * 2024-04-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2024_04_02_preview.operations.TrustedAccessRolesOperations>`
-           * 2024-05-01: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2024_05_01.operations.TrustedAccessRolesOperations>`
+        * 2022-04-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2022_04_02_preview.operations.TrustedAccessRolesOperations>`
+        * 2022-05-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2022_05_02_preview.operations.TrustedAccessRolesOperations>`
+        * 2022-06-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2022_06_02_preview.operations.TrustedAccessRolesOperations>`
+        * 2022-07-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2022_07_02_preview.operations.TrustedAccessRolesOperations>`
+        * 2022-08-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2022_08_02_preview.operations.TrustedAccessRolesOperations>`
+        * 2022-08-03-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2022_08_03_preview.operations.TrustedAccessRolesOperations>`
+        * 2022-09-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2022_09_02_preview.operations.TrustedAccessRolesOperations>`
+        * 2022-10-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2022_10_02_preview.operations.TrustedAccessRolesOperations>`
+        * 2022-11-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2022_11_02_preview.operations.TrustedAccessRolesOperations>`
+        * 2023-01-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_01_02_preview.operations.TrustedAccessRolesOperations>`
+        * 2023-02-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_02_02_preview.operations.TrustedAccessRolesOperations>`
+        * 2023-03-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_03_02_preview.operations.TrustedAccessRolesOperations>`
+        * 2023-04-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_04_02_preview.operations.TrustedAccessRolesOperations>`
+        * 2023-05-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_05_02_preview.operations.TrustedAccessRolesOperations>`
+        * 2023-06-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_06_02_preview.operations.TrustedAccessRolesOperations>`
+        * 2023-07-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_07_02_preview.operations.TrustedAccessRolesOperations>`
+        * 2023-08-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_08_02_preview.operations.TrustedAccessRolesOperations>`
+        * 2023-09-01: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_09_01.operations.TrustedAccessRolesOperations>`
+        * 2023-09-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_09_02_preview.operations.TrustedAccessRolesOperations>`
+        * 2023-10-01: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_10_01.operations.TrustedAccessRolesOperations>`
+        * 2023-10-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_10_02_preview.operations.TrustedAccessRolesOperations>`
+        * 2023-11-01: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_11_01.operations.TrustedAccessRolesOperations>`
+        * 2023-11-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2023_11_02_preview.operations.TrustedAccessRolesOperations>`
+        * 2024-01-01: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2024_01_01.operations.TrustedAccessRolesOperations>`
+        * 2024-01-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2024_01_02_preview.operations.TrustedAccessRolesOperations>`
+        * 2024-02-01: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2024_02_01.operations.TrustedAccessRolesOperations>`
+        * 2024-02-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2024_02_02_preview.operations.TrustedAccessRolesOperations>`
+        * 2024-03-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2024_03_02_preview.operations.TrustedAccessRolesOperations>`
+        * 2024-04-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2024_04_02_preview.operations.TrustedAccessRolesOperations>`
+        * 2024-05-01: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2024_05_01.operations.TrustedAccessRolesOperations>`
+        * 2024-05-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2024_05_02_preview.operations.TrustedAccessRolesOperations>`
+        * 2024-06-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2024_06_02_preview.operations.TrustedAccessRolesOperations>`
+        * 2024-07-01: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2024_07_01.operations.TrustedAccessRolesOperations>`
+        * 2024-07-02-preview: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2024_07_02_preview.operations.TrustedAccessRolesOperations>`
+        * 2024-08-01: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2024_08_01.operations.TrustedAccessRolesOperations>`
+        * 2024-09-01: :class:`TrustedAccessRolesOperations<azure.mgmt.containerservice.v2024_09_01.operations.TrustedAccessRolesOperations>`
         """
-        api_version = self._get_api_version('trusted_access_roles')
-        if api_version == '2022-04-02-preview':
+        api_version = self._get_api_version("trusted_access_roles")
+        if api_version == "2022-04-02-preview":
             from .v2022_04_02_preview.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2022-05-02-preview':
+        elif api_version == "2022-05-02-preview":
             from .v2022_05_02_preview.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2022-06-02-preview':
+        elif api_version == "2022-06-02-preview":
             from .v2022_06_02_preview.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2022-07-02-preview':
+        elif api_version == "2022-07-02-preview":
             from .v2022_07_02_preview.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2022-08-02-preview':
+        elif api_version == "2022-08-02-preview":
             from .v2022_08_02_preview.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2022-08-03-preview':
+        elif api_version == "2022-08-03-preview":
             from .v2022_08_03_preview.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2022-09-02-preview':
+        elif api_version == "2022-09-02-preview":
             from .v2022_09_02_preview.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2022-10-02-preview':
+        elif api_version == "2022-10-02-preview":
             from .v2022_10_02_preview.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2022-11-02-preview':
+        elif api_version == "2022-11-02-preview":
             from .v2022_11_02_preview.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2023-01-02-preview':
+        elif api_version == "2023-01-02-preview":
             from .v2023_01_02_preview.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2023-02-02-preview':
+        elif api_version == "2023-02-02-preview":
             from .v2023_02_02_preview.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2023-03-02-preview':
+        elif api_version == "2023-03-02-preview":
             from .v2023_03_02_preview.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2023-04-02-preview':
+        elif api_version == "2023-04-02-preview":
             from .v2023_04_02_preview.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2023-05-02-preview':
+        elif api_version == "2023-05-02-preview":
             from .v2023_05_02_preview.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2023-06-02-preview':
+        elif api_version == "2023-06-02-preview":
             from .v2023_06_02_preview.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2023-07-02-preview':
+        elif api_version == "2023-07-02-preview":
             from .v2023_07_02_preview.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2023-08-02-preview':
+        elif api_version == "2023-08-02-preview":
             from .v2023_08_02_preview.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2023-09-01':
+        elif api_version == "2023-09-01":
             from .v2023_09_01.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2023-09-02-preview':
+        elif api_version == "2023-09-02-preview":
             from .v2023_09_02_preview.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2023-10-01':
+        elif api_version == "2023-10-01":
             from .v2023_10_01.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2023-10-02-preview':
+        elif api_version == "2023-10-02-preview":
             from .v2023_10_02_preview.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2023-11-01':
+        elif api_version == "2023-11-01":
             from .v2023_11_01.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2023-11-02-preview':
+        elif api_version == "2023-11-02-preview":
             from .v2023_11_02_preview.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2024-01-01':
+        elif api_version == "2024-01-01":
             from .v2024_01_01.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2024-01-02-preview':
+        elif api_version == "2024-01-02-preview":
             from .v2024_01_02_preview.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2024-02-01':
+        elif api_version == "2024-02-01":
             from .v2024_02_01.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2024-02-02-preview':
+        elif api_version == "2024-02-02-preview":
             from .v2024_02_02_preview.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2024-03-02-preview':
+        elif api_version == "2024-03-02-preview":
             from .v2024_03_02_preview.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2024-04-02-preview':
+        elif api_version == "2024-04-02-preview":
             from .v2024_04_02_preview.operations import TrustedAccessRolesOperations as OperationClass
-        elif api_version == '2024-05-01':
+        elif api_version == "2024-05-01":
             from .v2024_05_01.operations import TrustedAccessRolesOperations as OperationClass
+        elif api_version == "2024-05-02-preview":
+            from .v2024_05_02_preview.operations import TrustedAccessRolesOperations as OperationClass
+        elif api_version == "2024-06-02-preview":
+            from .v2024_06_02_preview.operations import TrustedAccessRolesOperations as OperationClass
+        elif api_version == "2024-07-01":
+            from .v2024_07_01.operations import TrustedAccessRolesOperations as OperationClass
+        elif api_version == "2024-07-02-preview":
+            from .v2024_07_02_preview.operations import TrustedAccessRolesOperations as OperationClass
+        elif api_version == "2024-08-01":
+            from .v2024_08_01.operations import TrustedAccessRolesOperations as OperationClass
+        elif api_version == "2024-09-01":
+            from .v2024_09_01.operations import TrustedAccessRolesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'trusted_access_roles'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
+        return OperationClass(
+            self._client,
+            self._config,
+            Serializer(self._models_dict(api_version)),
+            Deserializer(self._models_dict(api_version)),
+            api_version,
+        )
 
     def close(self):
         self._client.close()
+
     def __enter__(self):
         self._client.__enter__()
         return self
+
     def __exit__(self, *exc_details):
         self._client.__exit__(*exc_details)

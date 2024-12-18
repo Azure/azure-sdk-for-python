@@ -2,6 +2,7 @@ from promptflow import tool
 from typing import List
 import numpy as np
 import re
+import ast
 
 
 def parse_single_sample(response: dict, selected_metrics: dict) -> list:
@@ -12,7 +13,7 @@ def parse_single_sample(response: dict, selected_metrics: dict) -> list:
         if selected_label_keys[harm_type]:
             parsed_harm_response = {}
             try:
-                harm_response = eval(response[key])
+                harm_response = ast.literal_eval(response[key])
             except NameError as e:
                 # fix the eval error if there's "true" in the response
                 m = re.findall("name '(.+)' is not defined", str(e))
@@ -20,7 +21,7 @@ def parse_single_sample(response: dict, selected_metrics: dict) -> list:
                     for word in m:
                         response[key] = response[key].replace(word,
                                                               word.title())
-                    harm_response = eval(response[key])
+                    harm_response = ast.literal_eval(response[key])
                 else:
                     harm_response = ""
             except Exception:

@@ -5,7 +5,7 @@
 import abc
 from typing import cast, Any, Optional, TypeVar
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 from .. import CredentialUnavailableError
 from .._internal.managed_identity_client import ManagedIdentityClient
 from .._internal.get_token_mixin import GetTokenMixin
@@ -47,10 +47,15 @@ class ManagedIdentityBase(GetTokenMixin):
             raise CredentialUnavailableError(message=self.get_unavailable_message())
         return super(ManagedIdentityBase, self).get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
 
-    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
+    def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
+        if not self._client:
+            raise CredentialUnavailableError(message=self.get_unavailable_message())
+        return super().get_token_info(*scopes, options=options)
+
+    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessTokenInfo]:
         # casting because mypy can't determine that these methods are called
         # only by get_token, which raises when self._client is None
         return cast(ManagedIdentityClient, self._client).get_cached_token(*scopes)
 
-    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
         return cast(ManagedIdentityClient, self._client).request_token(*scopes, **kwargs)

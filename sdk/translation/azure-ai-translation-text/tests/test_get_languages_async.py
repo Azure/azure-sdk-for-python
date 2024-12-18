@@ -12,7 +12,7 @@ class TestGetLanguagesAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_all_scopes(self, **kwargs):
-        endpoint = kwargs.get("translation_text_endpoint")
+        endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_async_getlanguage_client(endpoint)
         async with client:
             response = await client.get_supported_languages()
@@ -24,7 +24,7 @@ class TestGetLanguagesAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_translation_scope(self, **kwargs):
-        endpoint = kwargs.get("translation_text_endpoint")
+        endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_async_getlanguage_client(endpoint)
         async with client:
             response = await client.get_supported_languages(scope="translation")
@@ -38,7 +38,7 @@ class TestGetLanguagesAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_transliteration_scope(self, **kwargs):
-        endpoint = kwargs.get("translation_text_endpoint")
+        endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_async_getlanguage_client(endpoint)
         async with client:
             response = await client.get_supported_languages(scope="transliteration")
@@ -65,7 +65,7 @@ class TestGetLanguagesAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_transliteration_multiple_scripts(self, **kwargs):
-        endpoint = kwargs.get("translation_text_endpoint")
+        endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_async_getlanguage_client(endpoint)
         async with client:
             response = await client.get_supported_languages(scope="transliteration")
@@ -83,7 +83,7 @@ class TestGetLanguagesAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_dictionary_scope(self, **kwargs):
-        endpoint = kwargs.get("translation_text_endpoint")
+        endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_async_getlanguage_client(endpoint)
         async with client:
             response = await client.get_supported_languages(scope="dictionary")
@@ -102,7 +102,7 @@ class TestGetLanguagesAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_dictionary_multiple_translations(self, **kwargs):
-        endpoint = kwargs.get("translation_text_endpoint")
+        endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_async_getlanguage_client(endpoint)
         async with client:
             response = await client.get_supported_languages(scope="dictionary")
@@ -121,7 +121,7 @@ class TestGetLanguagesAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_with_culture(self, **kwargs):
-        endpoint = kwargs.get("translation_text_endpoint")
+        endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_async_getlanguage_client(endpoint)
         async with client:
             response = await client.get_supported_languages(accept_language="es")

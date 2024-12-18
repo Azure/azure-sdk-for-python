@@ -35,6 +35,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-01-01/examples/PrivateLinkServiceListAll.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-03-01/examples/PrivateLinkServiceListAll.json
 if __name__ == "__main__":
     main()

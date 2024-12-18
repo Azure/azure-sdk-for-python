@@ -1,10 +1,10 @@
 # coding: utf-8
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 
 # TEST SCENARIO COVERAGE
@@ -24,62 +24,49 @@ import pytest
 
 import azure.mgmt.network
 from azure.core.exceptions import ResourceExistsError
-from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import (
+    AzureMgmtRecordedTestCase,
+    ResourceGroupPreparer,
+    RandomNameResourceGroupPreparer,
+    recorded_by_proxy,
+)
 
-AZURE_LOCATION = 'eastus'
+AZURE_LOCATION = "eastus"
 
 
+@pytest.mark.live_test_only
 class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
-        self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.network.NetworkManagementClient
-        )
+        self.mgmt_client = self.create_mgmt_client(azure.mgmt.network.NetworkManagementClient)
 
     def create_firewall_policy(self, location, group_name, firewall_policy_name):
-        BODY = {
-          "tags": {
-            "key1": "value1"
-          },
-          "location": location,
-          "threat_intel_mode": "Alert"
-        }
+        BODY = {"tags": {"key1": "value1"}, "location": location, "threat_intel_mode": "Alert"}
         result = self.mgmt_client.firewall_policies.begin_create_or_update(
-            resource_group_name=group_name,
-            firewall_policy_name=firewall_policy_name,
-            parameters=BODY
+            resource_group_name=group_name, firewall_policy_name=firewall_policy_name, parameters=BODY
         )
         return result.result()
-    
+
     def create_virtual_hub(self, location, group_name, virtual_wan_name, virtual_hub_name):
 
         # VirtualWANCreate[put]
-        BODY = {
-          "location": "West US",
-          "tags": {
-            "key1": "value1"
-          },
-          "disable_vpn_encryption": False,
-          "type": "Basic"
-        }
+        BODY = {"location": "West US", "tags": {"key1": "value1"}, "disable_vpn_encryption": False, "type": "Basic"}
         result = self.mgmt_client.virtual_wans.begin_create_or_update(group_name, virtual_wan_name, BODY)
         wan = result.result()
 
         BODY = {
-          "location": "West US",
-          "tags": {
-            "key1": "value1"
-          },
-          "virtual_wan": {
-            # "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualWans/" + VIRTUAL_WAN_NAME + ""
-            "id": wan.id
-          },
-          "address_prefix": "10.168.0.0/24",
-          "sku": "Basic"
+            "location": "West US",
+            "tags": {"key1": "value1"},
+            "virtual_wan": {
+                # "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualWans/" + VIRTUAL_WAN_NAME + ""
+                "id": wan.id
+            },
+            "address_prefix": "10.168.0.0/24",
+            "sku": "Basic",
         }
         result = self.mgmt_client.virtual_hubs.begin_create_or_update(group_name, virtual_hub_name, BODY)
         return result.result()
-    
+
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_network(self, resource_group):
@@ -89,7 +76,7 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         VIRTUAL_WAN_NAME = "virtualwan"
         VIRTUAL_HUB_NAME = "virtualhub"
         FIREWALL_POLICY_NAME = "firewallpolicy"
-        
+
         AZURE_FIREWALL_NAME = "azurefirewall"
 
         self.create_virtual_hub(AZURE_LOCATION, RESOURCE_GROUP, VIRTUAL_WAN_NAME, VIRTUAL_HUB_NAME)
@@ -587,28 +574,30 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
         # Create Azure Firewall in virtual Hub[put]
         BODY = {
-          "tags": {
-            "key1": "value1"
-          },
-          "location": "West US",
-          "zones": [],
-          "sku": {
-            "name": "AZFW_Hub",
-            "tier": "Standard"
-          },
-          # "threat_intel_mode": "Off",
-          "virtual_hub": {
-            "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualHubs/" + VIRTUAL_HUB_NAME + ""
-          },
-          "hub_ip_addresses": {
-            "public_i_ps": {
-              "addresses": [],
-              "count": 1
-            }
-          },
-          "firewall_policy": {
-            "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/firewallPolicies/" + FIREWALL_POLICY_NAME + ""
-          }
+            "tags": {"key1": "value1"},
+            "location": "West US",
+            "zones": [],
+            "sku": {"name": "AZFW_Hub", "tier": "Standard"},
+            # "threat_intel_mode": "Off",
+            "virtual_hub": {
+                "id": "/subscriptions/"
+                + SUBSCRIPTION_ID
+                + "/resourceGroups/"
+                + RESOURCE_GROUP
+                + "/providers/Microsoft.Network/virtualHubs/"
+                + VIRTUAL_HUB_NAME
+                + ""
+            },
+            "hub_ip_addresses": {"public_i_ps": {"addresses": [], "count": 1}},
+            "firewall_policy": {
+                "id": "/subscriptions/"
+                + SUBSCRIPTION_ID
+                + "/resourceGroups/"
+                + RESOURCE_GROUP
+                + "/providers/Microsoft.Network/firewallPolicies/"
+                + FIREWALL_POLICY_NAME
+                + ""
+            },
         }
         result = self.mgmt_client.azure_firewalls.begin_create_or_update(resource_group.name, AZURE_FIREWALL_NAME, BODY)
         result = result.result()
@@ -958,12 +947,7 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         result = self.mgmt_client.azure_firewalls.list_all()
 
         # Update Azure Firewall Tags[patch]
-        BODY = {
-          "tags": {
-            "tag1": "value1",
-            "tag2": "value2"
-          }
-        }
+        BODY = {"tags": {"tag1": "value1", "tag2": "value2"}}
         result = self.mgmt_client.azure_firewalls.begin_update_tags(resource_group.name, AZURE_FIREWALL_NAME, BODY)
         result = result.result()
 
@@ -974,9 +958,8 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         except ResourceExistsError as e:
             if not str(e).startswith("(AnotherOperationInProgress)"):
                 raise e
-          
 
 
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
+# ------------------------------------------------------------------------------
+if __name__ == "__main__":
     unittest.main()

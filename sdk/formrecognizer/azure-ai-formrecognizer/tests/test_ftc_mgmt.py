@@ -15,20 +15,19 @@ from azure.ai.formrecognizer import (
     FormRecognizerApiVersion,
 )
 from testcase import FormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
-from preparers import FormRecognizerPreparer
+from preparers import FormRecognizerPreparer, get_sync_client
 from conftest import skip_flaky_test
 
-FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
+get_ft_client = functools.partial(get_sync_client, FormTrainingClient)
 
 
 class TestManagement(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy
-    def test_account_properties_v2(self, client):
+    def test_account_properties_v2(self):
+        client = get_ft_client(api_version="2.1")
         properties = client.get_account_properties()
 
         assert properties.custom_model_limit
@@ -37,10 +36,9 @@ class TestManagement(FormRecognizerTest):
     @pytest.mark.skip("Issue: https://github.com/Azure/azure-sdk-for-python/issues/31739")
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy
-    def test_mgmt_model_labeled_v2(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
-
+    def test_mgmt_model_labeled_v2(self, formrecognizer_storage_container_sas_url_v2, **kwargs):
+        client = get_ft_client(api_version="2.1")
         poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=True)
         labeled_model_from_train = poller.result()
 
@@ -76,10 +74,9 @@ class TestManagement(FormRecognizerTest):
     @pytest.mark.skip("Issue: https://github.com/Azure/azure-sdk-for-python/issues/31739")
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy
-    def test_mgmt_model_unlabeled_v2(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
-
+    def test_mgmt_model_unlabeled_v2(self, formrecognizer_storage_container_sas_url_v2, **kwargs):
+        client = get_ft_client(api_version="2.1")
         poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
         unlabeled_model_from_train = poller.result()
 
@@ -114,13 +111,13 @@ class TestManagement(FormRecognizerTest):
     @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy
-    def test_get_form_recognizer_client_v2(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
+    def test_get_form_recognizer_client_v2(self, **kwargs):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
         )  
         transport = RequestsTransport()
-        ftc = FormTrainingClient(endpoint=formrecognizer_test_endpoint, credential=AzureKeyCredential(formrecognizer_test_api_key), transport=transport, api_version="2.1")
+        ftc = get_ft_client(transport=transport, api_version="2.1")
 
         with ftc:
             ftc.get_account_properties()

@@ -160,6 +160,14 @@ class DefaultConsistencyLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CONSISTENT_PREFIX = "ConsistentPrefix"
 
 
+class DistanceFunction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The distance function to use for distance calculation in between vectors."""
+
+    EUCLIDEAN = "euclidean"
+    COSINE = "cosine"
+    DOTPRODUCT = "dotproduct"
+
+
 class IndexingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the indexing mode."""
 
@@ -324,7 +332,7 @@ class RoleDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ServerVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Describes the ServerVersion of an a MongoDB account."""
+    """Describes the version of the MongoDB account."""
 
     THREE2 = "3.2"
     THREE6 = "3.6"
@@ -332,6 +340,7 @@ class ServerVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FOUR2 = "4.2"
     FIVE0 = "5.0"
     SIX0 = "6.0"
+    SEVEN0 = "7.0"
 
 
 class ServiceSize(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -422,3 +431,19 @@ class UnitType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COUNT_PER_SECOND = "CountPerSecond"
     BYTES_PER_SECOND = "BytesPerSecond"
     MILLISECONDS = "Milliseconds"
+
+
+class VectorDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the data type of vector."""
+
+    FLOAT32 = "float32"
+    UINT8 = "uint8"
+    INT8 = "int8"
+
+
+class VectorIndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The index type of the vector. Currently, flat, diskANN, and quantizedFlat are supported."""
+
+    FLAT = "flat"
+    DISK_ANN = "diskANN"
+    QUANTIZED_FLAT = "quantizedFlat"

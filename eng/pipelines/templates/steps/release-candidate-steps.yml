@@ -1,0 +1,38 @@
+steps:
+  - template: /eng/pipelines/templates/steps/use-python-version.yml
+    parameters:
+      versionSpec: $(PythonVersion)
+
+  - template: /eng/pipelines/templates/steps/use-venv.yml
+    parameters:
+      Activate: false
+
+  - pwsh: |
+      $(VENV_ACTIVATION_SCRIPT)
+      $ErrorActionPreference = 'Stop'
+      $PSNativeCommandUseErrorActionPreference = $true
+      python -m pip install -r $(Build.SourcesDirectory)/eng/ci_tools.txt
+      python -m pip freeze --all
+      Write-Host (Get-Command python).Source
+    displayName: 'Install Dependencies'
+
+  - template: /eng/common/testproxy/test-proxy-tool.yml
+    parameters:
+      runProxy: false
+
+  - pwsh: |
+      $(VENV_ACTIVATION_SCRIPT)
+      python ./scripts/devops_tasks/dispatch_tox.py "$(TargetedPackages)" --junitxml="junit/test_results.xml" --toxenv="whl" --filter-type="Build"
+    displayName: 'Setup - Run Filtered Tests For Python $(PythonVersion)'
+    env:
+      YARL_NO_EXTENSIONS: 1
+      AIOHTTP_NO_EXTENSIONS: 1
+      PROXY_URL: "http://localhost:5000"
+    continueOnError: true
+
+  - task: PublishTestResults@2
+    condition: always()
+    inputs:
+      testResultsFiles: '**/*test*.xml'
+      testRunTitle: 'Python $(PythonVersion)'
+      failTaskOnFailedTests: true

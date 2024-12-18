@@ -34,7 +34,6 @@ class HttpMethods:
     Head = "HEAD"
     Options = "OPTIONS"
 
-
 class HttpHeaders:
     """Constants of http headers.
     """
@@ -135,6 +134,7 @@ class HttpHeaders:
     ResourceQuota = "x-ms-resource-quota"
     ResourceUsage = "x-ms-resource-usage"
     IntendedCollectionRID = "x-ms-cosmos-intended-collection-rid"
+    Prefer = "Prefer"
 
     # Quota Info
     MaxEntityCount = "x-ms-root-entity-max-count"
@@ -194,6 +194,7 @@ class HttpHeaders:
     PartitionKey = "x-ms-documentdb-partitionkey"
     EnableCrossPartitionQuery = "x-ms-documentdb-query-enablecrosspartition"
     PartitionKeyRangeID = "x-ms-documentdb-partitionkeyrangeid"
+    PhysicalPartitionId = "x-ms-cosmos-physical-partition-id"
     PartitionKeyDeletePending = "x-ms-cosmos-is-partition-key-delete-pending"
     StartEpkString = "x-ms-start-epk"
     EndEpkString = "x-ms-end-epk"
@@ -218,6 +219,11 @@ class HttpHeaders:
     # Change feed
     AIM = "A-IM"
     IncrementalFeedHeaderValue = "Incremental feed"
+    FullFidelityFeedHeaderValue = "Full-Fidelity Feed"
+    ChangeFeedWireFormatVersion = "x-ms-cosmos-changefeed-wire-format-version"
+
+    # Change feed wire format version
+    SeparateMetaWithCrts = "2021-09-15"
 
     # For Using Multiple Write Locations
     AllowTentativeWrites = "x-ms-cosmos-allow-tentative-writes"
@@ -240,6 +246,8 @@ class HttpHeaders:
     GlobalCommittedLsn = "x-ms-global-committed-lsn"
     NumberOfReadRegions = "x-ms-number-of-read-regions"
     TransportRequestId = "x-ms-transport-request-id"
+    ItemLsn = "x-ms-item-lsn"
+    CosmosItemLsn = "x-ms-cosmos-item-llsn"  # cspell:disable-line
     CosmosLsn = "x-ms-cosmos-llsn"  # cspell:disable-line
     CosmosQuorumAckedLsn = "x-ms-cosmos-quorum-acked-llsn"  # cspell:disable-line
     RequestDurationMs = "x-ms-request-duration-ms"

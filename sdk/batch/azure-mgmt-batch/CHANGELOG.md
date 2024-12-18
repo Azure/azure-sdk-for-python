@@ -1,5 +1,65 @@
 # Release History
 
+## 18.0.0 (2024-09-25)
+
+### Features Added
+
+  - Client `BatchManagementClient` added operation group `network_security_perimeter`
+  - Model `Application` added parameter `tags` in method `__init__`
+  - Model `ApplicationPackage` added parameter `tags` in method `__init__`
+  - Model `Certificate` added parameter `tags` in method `__init__`
+  - Model `CertificateCreateOrUpdateParameters` added parameter `tags` in method `__init__`
+  - Model `DetectorResponse` added parameter `tags` in method `__init__`
+  - Model `ImageReference` added property `shared_gallery_image_id`
+  - Model `ImageReference` added property `community_gallery_image_id`
+  - Model `ManagedDisk` added property `security_profile`
+  - Model `Pool` added parameter `tags` in method `__init__`
+  - Model `PrivateEndpointConnection` added parameter `tags` in method `__init__`
+  - Model `PrivateLinkResource` added parameter `tags` in method `__init__`
+  - Model `ProxyResource` added property `system_data`
+  - Model `ProxyResource` added property `additional_properties`
+  - Enum `PublicNetworkAccessType` added member `SECURED_BY_PERIMETER`
+  - Model `Resource` added property `system_data`
+  - Model `TaskContainerSettings` added property `container_host_batch_bind_mounts`
+  - Added model `AccessRule`
+  - Added enum `AccessRuleDirection`
+  - Added model `AccessRuleProperties`
+  - Added model `AccessRulePropertiesSubscriptionsItem`
+  - Added model `AzureProxyResource`
+  - Added model `AzureResource`
+  - Added model `ContainerHostBatchBindMountEntry`
+  - Added enum `ContainerHostDataPath`
+  - Added enum `CreatedByType`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `ErrorResponse`
+  - Added enum `IssueType`
+  - Added model `NetworkSecurityPerimeter`
+  - Added model `NetworkSecurityPerimeterConfiguration`
+  - Added model `NetworkSecurityPerimeterConfigurationListResult`
+  - Added model `NetworkSecurityPerimeterConfigurationProperties`
+  - Added enum `NetworkSecurityPerimeterConfigurationProvisioningState`
+  - Added model `NetworkSecurityProfile`
+  - Added model `ProvisioningIssue`
+  - Added model `ProvisioningIssueProperties`
+  - Added model `ResourceAssociation`
+  - Added enum `ResourceAssociationAccessMode`
+  - Added enum `SecurityEncryptionTypes`
+  - Added enum `SecurityTypes`
+  - Added enum `Severity`
+  - Added model `SystemData`
+  - Added model `VMDiskSecurityProfile`
+  - Added model `NetworkSecurityPerimeterOperations`
+
+### Breaking Changes
+
+  - Model `DeploymentConfiguration` deleted or renamed its instance variable `cloud_service_configuration`
+  - Model `ProxyResource` deleted or renamed its instance variable `etag`
+  - Model `Resource` deleted or renamed its instance variable `location`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Deleted or renamed model `CloudServiceConfiguration`
+  - Deleted or renamed method `LocationOperations.list_supported_cloud_service_skus`
+
 ## 17.3.0 (2024-03-19)
 
 ### Features Added

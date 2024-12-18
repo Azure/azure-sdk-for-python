@@ -24,18 +24,18 @@ from azure.servicebus.aio import ServiceBusClient
 
 def generate_sas_token(uri, sas_name, sas_value, token_ttl):
     """Performs the signing and encoding needed to generate a sas token from a sas key."""
-    sas = sas_value.encode('utf-8')
+    sas = sas_value.encode("utf-8")
     expiry = str(int(time.time() + token_ttl))
-    string_to_sign = (uri + '\n' + expiry).encode('utf-8')
+    string_to_sign = (uri + "\n" + expiry).encode("utf-8")
     signed_hmac_sha256 = hmac.HMAC(sas, string_to_sign, hashlib.sha256)
     signature = url_parse_quote(base64.b64encode(signed_hmac_sha256.digest()))
-    return 'SharedAccessSignature sr={}&sig={}&se={}&skn={}'.format(uri, signature, expiry, sas_name)
+    return "SharedAccessSignature sr={}&sig={}&se={}&skn={}".format(uri, signature, expiry, sas_name)
 
 
-FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
+FULLY_QUALIFIED_NAMESPACE = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
 QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
-SAS_POLICY = os.environ['SERVICEBUS_SAS_POLICY']
-SERVICEBUS_SAS_KEY = os.environ['SERVICEBUS_SAS_KEY']
+SAS_POLICY = os.environ["SERVICEBUS_SAS_POLICY"]
+SERVICEBUS_SAS_KEY = os.environ["SERVICEBUS_SAS_KEY"]
 
 auth_uri = "sb://{}/{}".format(FULLY_QUALIFIED_NAMESPACE, QUEUE_NAME)
 token_ttl = 3000  # seconds
@@ -44,7 +44,7 @@ sas_token = generate_sas_token(auth_uri, SAS_POLICY, SERVICEBUS_SAS_KEY, token_t
 
 
 async def send_message():
-    credential=AzureSasCredential(sas_token)
+    credential = AzureSasCredential(sas_token)
     async with ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential) as client:
         async with client.get_queue_sender(QUEUE_NAME) as sender:
             await sender.send_messages([ServiceBusMessage("hello")])

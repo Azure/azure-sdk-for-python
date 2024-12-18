@@ -10,6 +10,7 @@ from ._operations import Operations
 from ._traffic_controller_interface_operations import TrafficControllerInterfaceOperations
 from ._associations_interface_operations import AssociationsInterfaceOperations
 from ._frontends_interface_operations import FrontendsInterfaceOperations
+from ._security_policies_interface_operations import SecurityPoliciesInterfaceOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -20,6 +21,7 @@ __all__ = [
     "TrafficControllerInterfaceOperations",
     "AssociationsInterfaceOperations",
     "FrontendsInterfaceOperations",
+    "SecurityPoliciesInterfaceOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

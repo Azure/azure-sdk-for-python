@@ -70,14 +70,15 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
         Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
         Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
-        Optional[Union["uamqp_ConnectionState", "pyamqp_ConnectionState"]]]
+        Optional[Union["uamqp_ConnectionState", "pyamqp_ConnectionState"]],
+    ]
     # define symbols
     PRODUCT_SYMBOL: Union[uamqp_Types_AMQPSymbol, Literal["product"]]
     VERSION_SYMBOL: Union[uamqp_Types_AMQPSymbol, Literal["version"]]
     FRAMEWORK_SYMBOL: Union[uamqp_Types_AMQPSymbol, Literal["framework"]]
     PLATFORM_SYMBOL: Union[uamqp_Types_AMQPSymbol, Literal["platform"]]
     USER_AGENT_SYMBOL: Union[uamqp_Types_AMQPSymbol, Literal["user-agent"]]
-    PROP_PARTITION_KEY_AMQP_SYMBOL: Union[uamqp_Types_AMQPSymbol, Literal[b'x-opt-partition-key']]
+    PROP_PARTITION_KEY_AMQP_SYMBOL: Union[uamqp_Types_AMQPSymbol, Literal[b"x-opt-partition-key"]]
 
     @staticmethod
     @abstractmethod
@@ -89,7 +90,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def build_batch_message(**kwargs: Any)-> Union["uamqp_BatchMessage", "pyamqp_BatchMessage"]:
+    def build_batch_message(**kwargs: Any) -> Union["uamqp_BatchMessage", "pyamqp_BatchMessage"]:
         """
         Creates a uamqp.BatchMessage or pyamqp.BatchMessage with given arguments.
         :rtype: ~uamqp.BatchMessage or ~pyamqp.message.BatchMessage
@@ -149,13 +150,13 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         container_id: Optional[str] = None,
         max_frame_size: int,
         channel_max: int,
-        idle_timeout: float,
+        idle_timeout: Optional[float],
         properties: Optional[Dict[str, Any]],
         remote_idle_timeout_empty_frame_send_ratio: float,
         error_policy: Any,
         debug: bool,
         encoding: str,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Union[uamqp_Connection, pyamqp_Connection]:
         """
         Creates and returns the uamqp async Connection object.
@@ -197,14 +198,14 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         config: Configuration,
         target: str,
         auth: Union["uamqp_JWTTokenAuth", "pyamqp_JWTTokenAuth"],
-        idle_timeout: int,
+        idle_timeout: Optional[float],
         network_trace: bool,
         retry_policy: Any,
         keep_alive_interval: int,
         client_name: str,
         link_properties: Optional[Dict[str, Any]],
         properties: Optional[Dict[str, Any]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Union[uamqp_SendClient, pyamqp_SendClient]:
         """
         Creates and returns the send client.
@@ -224,10 +225,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     @staticmethod
     @abstractmethod
     async def send_messages_async(
-        producer: EventHubProducer,
-        timeout_time: Optional[float],
-        last_exception: Optional[Exception],
-        logger: Logger
+        producer: EventHubProducer, timeout_time: Optional[float], last_exception: Optional[Exception], logger: Logger
     ) -> None:
         """
         Handles sending of event data messages.
@@ -240,9 +238,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     @staticmethod
     @abstractmethod
     def set_message_partition_key(
-        message: Union["uamqp_Message", "pyamqp_Message"],
-        partition_key: Optional[Union[str, bytes]],
-        **kwargs: Any
+        message: Union["uamqp_Message", "pyamqp_Message"], partition_key: Optional[Union[str, bytes]], **kwargs: Any
     ) -> Union["uamqp_Message", "pyamqp_Message"]:
         """Set the partition key as an annotation on a uamqp message.
 
@@ -269,7 +265,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         config: Configuration,
         source: Union["uamqp_Source", "pyamqp_Source"],
         auth: Union["uamqp_JWTTokenAuth", "pyamqp_JWTTokenAuth"],
-        idle_timeout: int,
+        idle_timeout: Optional[float],
         network_trace: bool,
         retry_policy: Any,
         client_name: str,
@@ -281,7 +277,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         streaming_receive: bool,
         message_received_callback: Callable,
         timeout: int,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Union["uamqp_ReceiveClient", "pyamqp_ReceiveClient"]:
         """
         Creates and returns the receive client.
@@ -306,10 +302,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     @staticmethod
     @abstractmethod
     async def receive_messages_async(
-        consumer: EventHubConsumer,
-        batch: bool,
-        max_batch_size: int,
-        max_wait_time: Optional[int]
+        consumer: EventHubConsumer, batch: bool, max_batch_size: int, max_wait_time: Optional[int]
     ) -> None:
         """
         Receives messages, creates events, and returns them by calling the on received callback.
@@ -344,9 +337,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     @staticmethod
     @abstractmethod
     def create_mgmt_client(
-        address: _Address,
-        mgmt_auth: Union["uamqp_JWTTokenAuth", "pyamqp_JWTTokenAuth"],
-        config: Configuration
+        address: _Address, mgmt_auth: Union["uamqp_JWTTokenAuth", "pyamqp_JWTTokenAuth"], config: Configuration
     ) -> Union["uamqp_AMQPClient", "pyamqp_AMQPClient"]:
         """
         Creates and returns the mgmt AMQP client.
@@ -377,7 +368,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         operation_type: bytes,
         status_code_field: bytes,
         description_fields: bytes,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """
         Send mgmt request.

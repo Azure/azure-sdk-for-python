@@ -29,10 +29,16 @@
     "keyVaultResourceGroupName": {
         "value": ""
     },
+    "associatedResourcePNA": {
+        "value": "Enabled"
+    },
     "storageAccountOption": {
         "value": "new"
     },
     "storageAccountName": {
+        "value": ""
+    },
+    "storageAccountSubscriptionId": {
         "value": ""
     },
     "storageAccountResourceGroupName": {
@@ -127,6 +133,9 @@
     },
     "managedNetwork": {
         "value": {}
+    },
+    "provisionNetworkNow": {
+        "value": "false"
     },
     "spark_runtime_version" : {
         "value": null

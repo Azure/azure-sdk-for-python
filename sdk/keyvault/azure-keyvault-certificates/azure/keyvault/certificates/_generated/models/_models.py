@@ -21,7 +21,7 @@ class Action(_serialization.Model):
     """The action that will be executed.
 
     :ivar action_type: The type of the action. Known values are: "EmailContacts" and "AutoRenew".
-    :vartype action_type: str or ~azure.keyvault.v7_6_preview_1.models.ActionType
+    :vartype action_type: str or ~azure.keyvault.v7_5.models.ActionType
     """
 
     _attribute_map = {
@@ -32,7 +32,7 @@ class Action(_serialization.Model):
         """
         :keyword action_type: The type of the action. Known values are: "EmailContacts" and
          "AutoRenew".
-        :paramtype action_type: str or ~azure.keyvault.v7_6_preview_1.models.ActionType
+        :paramtype action_type: str or ~azure.keyvault.v7_5.models.ActionType
         """
         super().__init__(**kwargs)
         self.action_type = action_type
@@ -185,7 +185,7 @@ class CertificateAttributes(Attributes):
      retention interval. Known values are: "Purgeable", "Recoverable+Purgeable", "Recoverable",
      "Recoverable+ProtectedSubscription", "CustomizedRecoverable+Purgeable",
      "CustomizedRecoverable", and "CustomizedRecoverable+ProtectedSubscription".
-    :vartype recovery_level: str or ~azure.keyvault.v7_6_preview_1.models.DeletionRecoveryLevel
+    :vartype recovery_level: str or ~azure.keyvault.v7_5.models.DeletionRecoveryLevel
     """
 
     _validation = {
@@ -240,14 +240,14 @@ class CertificateBundle(_serialization.Model):
     :ivar x509_thumbprint: Thumbprint of the certificate.
     :vartype x509_thumbprint: bytes
     :ivar policy: The management policy.
-    :vartype policy: ~azure.keyvault.v7_6_preview_1.models.CertificatePolicy
+    :vartype policy: ~azure.keyvault.v7_5.models.CertificatePolicy
     :ivar cer: CER contents of x509 certificate.
     :vartype cer: bytes
     :ivar content_type: The content type of the secret. eg. 'application/x-pem-file' or
      'application/x-pkcs12',.
     :vartype content_type: str
     :ivar attributes: The certificate attributes.
-    :vartype attributes: ~azure.keyvault.v7_6_preview_1.models.CertificateAttributes
+    :vartype attributes: ~azure.keyvault.v7_5.models.CertificateAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     """
@@ -288,7 +288,7 @@ class CertificateBundle(_serialization.Model):
          'application/x-pkcs12',.
         :paramtype content_type: str
         :keyword attributes: The certificate attributes.
-        :paramtype attributes: ~azure.keyvault.v7_6_preview_1.models.CertificateAttributes
+        :paramtype attributes: ~azure.keyvault.v7_5.models.CertificateAttributes
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         """
@@ -308,9 +308,9 @@ class CertificateCreateParameters(_serialization.Model):
     """The certificate create parameters.
 
     :ivar certificate_policy: The management policy for the certificate.
-    :vartype certificate_policy: ~azure.keyvault.v7_6_preview_1.models.CertificatePolicy
+    :vartype certificate_policy: ~azure.keyvault.v7_5.models.CertificatePolicy
     :ivar certificate_attributes: The attributes of the certificate (optional).
-    :vartype certificate_attributes: ~azure.keyvault.v7_6_preview_1.models.CertificateAttributes
+    :vartype certificate_attributes: ~azure.keyvault.v7_5.models.CertificateAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     """
@@ -331,9 +331,9 @@ class CertificateCreateParameters(_serialization.Model):
     ) -> None:
         """
         :keyword certificate_policy: The management policy for the certificate.
-        :paramtype certificate_policy: ~azure.keyvault.v7_6_preview_1.models.CertificatePolicy
+        :paramtype certificate_policy: ~azure.keyvault.v7_5.models.CertificatePolicy
         :keyword certificate_attributes: The attributes of the certificate (optional).
-        :paramtype certificate_attributes: ~azure.keyvault.v7_6_preview_1.models.CertificateAttributes
+        :paramtype certificate_attributes: ~azure.keyvault.v7_5.models.CertificateAttributes
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         """
@@ -355,9 +355,9 @@ class CertificateImportParameters(_serialization.Model):
      for encryption.
     :vartype password: str
     :ivar certificate_policy: The management policy for the certificate.
-    :vartype certificate_policy: ~azure.keyvault.v7_6_preview_1.models.CertificatePolicy
+    :vartype certificate_policy: ~azure.keyvault.v7_5.models.CertificatePolicy
     :ivar certificate_attributes: The attributes of the certificate (optional).
-    :vartype certificate_attributes: ~azure.keyvault.v7_6_preview_1.models.CertificateAttributes
+    :vartype certificate_attributes: ~azure.keyvault.v7_5.models.CertificateAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     """
@@ -392,9 +392,9 @@ class CertificateImportParameters(_serialization.Model):
          used for encryption.
         :paramtype password: str
         :keyword certificate_policy: The management policy for the certificate.
-        :paramtype certificate_policy: ~azure.keyvault.v7_6_preview_1.models.CertificatePolicy
+        :paramtype certificate_policy: ~azure.keyvault.v7_5.models.CertificatePolicy
         :keyword certificate_attributes: The attributes of the certificate (optional).
-        :paramtype certificate_attributes: ~azure.keyvault.v7_6_preview_1.models.CertificateAttributes
+        :paramtype certificate_attributes: ~azure.keyvault.v7_5.models.CertificateAttributes
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         """
@@ -445,7 +445,7 @@ class CertificateIssuerListResult(_serialization.Model):
 
     :ivar value: A response message containing a list of certificate issuers in the key vault along
      with a link to the next page of certificate issuers.
-    :vartype value: list[~azure.keyvault.v7_6_preview_1.models.CertificateIssuerItem]
+    :vartype value: list[~azure.keyvault.v7_5.models.CertificateIssuerItem]
     :ivar next_link: The URL to get the next set of certificate issuers.
     :vartype next_link: str
     """
@@ -475,11 +475,11 @@ class CertificateIssuerSetParameters(_serialization.Model):
     :ivar provider: The issuer provider. Required.
     :vartype provider: str
     :ivar credentials: The credentials to be used for the issuer.
-    :vartype credentials: ~azure.keyvault.v7_6_preview_1.models.IssuerCredentials
+    :vartype credentials: ~azure.keyvault.v7_5.models.IssuerCredentials
     :ivar organization_details: Details of the organization as provided to the issuer.
-    :vartype organization_details: ~azure.keyvault.v7_6_preview_1.models.OrganizationDetails
+    :vartype organization_details: ~azure.keyvault.v7_5.models.OrganizationDetails
     :ivar attributes: Attributes of the issuer object.
-    :vartype attributes: ~azure.keyvault.v7_6_preview_1.models.IssuerAttributes
+    :vartype attributes: ~azure.keyvault.v7_5.models.IssuerAttributes
     """
 
     _validation = {
@@ -506,11 +506,11 @@ class CertificateIssuerSetParameters(_serialization.Model):
         :keyword provider: The issuer provider. Required.
         :paramtype provider: str
         :keyword credentials: The credentials to be used for the issuer.
-        :paramtype credentials: ~azure.keyvault.v7_6_preview_1.models.IssuerCredentials
+        :paramtype credentials: ~azure.keyvault.v7_5.models.IssuerCredentials
         :keyword organization_details: Details of the organization as provided to the issuer.
-        :paramtype organization_details: ~azure.keyvault.v7_6_preview_1.models.OrganizationDetails
+        :paramtype organization_details: ~azure.keyvault.v7_5.models.OrganizationDetails
         :keyword attributes: Attributes of the issuer object.
-        :paramtype attributes: ~azure.keyvault.v7_6_preview_1.models.IssuerAttributes
+        :paramtype attributes: ~azure.keyvault.v7_5.models.IssuerAttributes
         """
         super().__init__(**kwargs)
         self.provider = provider
@@ -525,11 +525,11 @@ class CertificateIssuerUpdateParameters(_serialization.Model):
     :ivar provider: The issuer provider.
     :vartype provider: str
     :ivar credentials: The credentials to be used for the issuer.
-    :vartype credentials: ~azure.keyvault.v7_6_preview_1.models.IssuerCredentials
+    :vartype credentials: ~azure.keyvault.v7_5.models.IssuerCredentials
     :ivar organization_details: Details of the organization as provided to the issuer.
-    :vartype organization_details: ~azure.keyvault.v7_6_preview_1.models.OrganizationDetails
+    :vartype organization_details: ~azure.keyvault.v7_5.models.OrganizationDetails
     :ivar attributes: Attributes of the issuer object.
-    :vartype attributes: ~azure.keyvault.v7_6_preview_1.models.IssuerAttributes
+    :vartype attributes: ~azure.keyvault.v7_5.models.IssuerAttributes
     """
 
     _attribute_map = {
@@ -552,11 +552,11 @@ class CertificateIssuerUpdateParameters(_serialization.Model):
         :keyword provider: The issuer provider.
         :paramtype provider: str
         :keyword credentials: The credentials to be used for the issuer.
-        :paramtype credentials: ~azure.keyvault.v7_6_preview_1.models.IssuerCredentials
+        :paramtype credentials: ~azure.keyvault.v7_5.models.IssuerCredentials
         :keyword organization_details: Details of the organization as provided to the issuer.
-        :paramtype organization_details: ~azure.keyvault.v7_6_preview_1.models.OrganizationDetails
+        :paramtype organization_details: ~azure.keyvault.v7_5.models.OrganizationDetails
         :keyword attributes: Attributes of the issuer object.
-        :paramtype attributes: ~azure.keyvault.v7_6_preview_1.models.IssuerAttributes
+        :paramtype attributes: ~azure.keyvault.v7_5.models.IssuerAttributes
         """
         super().__init__(**kwargs)
         self.provider = provider
@@ -571,7 +571,7 @@ class CertificateItem(_serialization.Model):
     :ivar id: Certificate identifier.
     :vartype id: str
     :ivar attributes: The certificate management attributes.
-    :vartype attributes: ~azure.keyvault.v7_6_preview_1.models.CertificateAttributes
+    :vartype attributes: ~azure.keyvault.v7_5.models.CertificateAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar x509_thumbprint: Thumbprint of the certificate.
@@ -598,7 +598,7 @@ class CertificateItem(_serialization.Model):
         :keyword id: Certificate identifier.
         :paramtype id: str
         :keyword attributes: The certificate management attributes.
-        :paramtype attributes: ~azure.keyvault.v7_6_preview_1.models.CertificateAttributes
+        :paramtype attributes: ~azure.keyvault.v7_5.models.CertificateAttributes
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         :keyword x509_thumbprint: Thumbprint of the certificate.
@@ -618,7 +618,7 @@ class CertificateListResult(_serialization.Model):
 
     :ivar value: A response message containing a list of certificates in the key vault along with a
      link to the next page of certificates.
-    :vartype value: list[~azure.keyvault.v7_6_preview_1.models.CertificateItem]
+    :vartype value: list[~azure.keyvault.v7_5.models.CertificateItem]
     :ivar next_link: The URL to get the next set of certificates.
     :vartype next_link: str
     """
@@ -648,7 +648,7 @@ class CertificateMergeParameters(_serialization.Model):
     :ivar x509_certificates: The certificate or the certificate chain to merge. Required.
     :vartype x509_certificates: list[bytes]
     :ivar certificate_attributes: The attributes of the certificate (optional).
-    :vartype certificate_attributes: ~azure.keyvault.v7_6_preview_1.models.CertificateAttributes
+    :vartype certificate_attributes: ~azure.keyvault.v7_5.models.CertificateAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     """
@@ -675,7 +675,7 @@ class CertificateMergeParameters(_serialization.Model):
         :keyword x509_certificates: The certificate or the certificate chain to merge. Required.
         :paramtype x509_certificates: list[bytes]
         :keyword certificate_attributes: The attributes of the certificate (optional).
-        :paramtype certificate_attributes: ~azure.keyvault.v7_6_preview_1.models.CertificateAttributes
+        :paramtype certificate_attributes: ~azure.keyvault.v7_5.models.CertificateAttributes
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         """
@@ -693,7 +693,7 @@ class CertificateOperation(_serialization.Model):
     :ivar id: The certificate id.
     :vartype id: str
     :ivar issuer_parameters: Parameters for the issuer of the X509 component of a certificate.
-    :vartype issuer_parameters: ~azure.keyvault.v7_6_preview_1.models.IssuerParameters
+    :vartype issuer_parameters: ~azure.keyvault.v7_5.models.IssuerParameters
     :ivar csr: The certificate signing request (CSR) that is being used in the certificate
      operation.
     :vartype csr: bytes
@@ -705,7 +705,7 @@ class CertificateOperation(_serialization.Model):
     :ivar status_details: The status details of the certificate operation.
     :vartype status_details: str
     :ivar error: Error encountered, if any, during the certificate operation.
-    :vartype error: ~azure.keyvault.v7_6_preview_1.models.Error
+    :vartype error: ~azure.keyvault.v7_5.models.Error
     :ivar target: Location which contains the result of the certificate operation.
     :vartype target: str
     :ivar request_id: Identifier for the certificate operation.
@@ -743,7 +743,7 @@ class CertificateOperation(_serialization.Model):
     ) -> None:
         """
         :keyword issuer_parameters: Parameters for the issuer of the X509 component of a certificate.
-        :paramtype issuer_parameters: ~azure.keyvault.v7_6_preview_1.models.IssuerParameters
+        :paramtype issuer_parameters: ~azure.keyvault.v7_5.models.IssuerParameters
         :keyword csr: The certificate signing request (CSR) that is being used in the certificate
          operation.
         :paramtype csr: bytes
@@ -755,7 +755,7 @@ class CertificateOperation(_serialization.Model):
         :keyword status_details: The status details of the certificate operation.
         :paramtype status_details: str
         :keyword error: Error encountered, if any, during the certificate operation.
-        :paramtype error: ~azure.keyvault.v7_6_preview_1.models.Error
+        :paramtype error: ~azure.keyvault.v7_5.models.Error
         :keyword target: Location which contains the result of the certificate operation.
         :paramtype target: str
         :keyword request_id: Identifier for the certificate operation.
@@ -809,19 +809,18 @@ class CertificatePolicy(_serialization.Model):
     :ivar id: The certificate id.
     :vartype id: str
     :ivar key_properties: Properties of the key backing a certificate.
-    :vartype key_properties: ~azure.keyvault.v7_6_preview_1.models.KeyProperties
+    :vartype key_properties: ~azure.keyvault.v7_5.models.KeyProperties
     :ivar secret_properties: Properties of the secret backing a certificate.
-    :vartype secret_properties: ~azure.keyvault.v7_6_preview_1.models.SecretProperties
+    :vartype secret_properties: ~azure.keyvault.v7_5.models.SecretProperties
     :ivar x509_certificate_properties: Properties of the X509 component of a certificate.
-    :vartype x509_certificate_properties:
-     ~azure.keyvault.v7_6_preview_1.models.X509CertificateProperties
+    :vartype x509_certificate_properties: ~azure.keyvault.v7_5.models.X509CertificateProperties
     :ivar lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a
      certificate.
-    :vartype lifetime_actions: list[~azure.keyvault.v7_6_preview_1.models.LifetimeAction]
+    :vartype lifetime_actions: list[~azure.keyvault.v7_5.models.LifetimeAction]
     :ivar issuer_parameters: Parameters for the issuer of the X509 component of a certificate.
-    :vartype issuer_parameters: ~azure.keyvault.v7_6_preview_1.models.IssuerParameters
+    :vartype issuer_parameters: ~azure.keyvault.v7_5.models.IssuerParameters
     :ivar attributes: The certificate attributes.
-    :vartype attributes: ~azure.keyvault.v7_6_preview_1.models.CertificateAttributes
+    :vartype attributes: ~azure.keyvault.v7_5.models.CertificateAttributes
     """
 
     _validation = {
@@ -851,19 +850,18 @@ class CertificatePolicy(_serialization.Model):
     ) -> None:
         """
         :keyword key_properties: Properties of the key backing a certificate.
-        :paramtype key_properties: ~azure.keyvault.v7_6_preview_1.models.KeyProperties
+        :paramtype key_properties: ~azure.keyvault.v7_5.models.KeyProperties
         :keyword secret_properties: Properties of the secret backing a certificate.
-        :paramtype secret_properties: ~azure.keyvault.v7_6_preview_1.models.SecretProperties
+        :paramtype secret_properties: ~azure.keyvault.v7_5.models.SecretProperties
         :keyword x509_certificate_properties: Properties of the X509 component of a certificate.
-        :paramtype x509_certificate_properties:
-         ~azure.keyvault.v7_6_preview_1.models.X509CertificateProperties
+        :paramtype x509_certificate_properties: ~azure.keyvault.v7_5.models.X509CertificateProperties
         :keyword lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a
          certificate.
-        :paramtype lifetime_actions: list[~azure.keyvault.v7_6_preview_1.models.LifetimeAction]
+        :paramtype lifetime_actions: list[~azure.keyvault.v7_5.models.LifetimeAction]
         :keyword issuer_parameters: Parameters for the issuer of the X509 component of a certificate.
-        :paramtype issuer_parameters: ~azure.keyvault.v7_6_preview_1.models.IssuerParameters
+        :paramtype issuer_parameters: ~azure.keyvault.v7_5.models.IssuerParameters
         :keyword attributes: The certificate attributes.
-        :paramtype attributes: ~azure.keyvault.v7_6_preview_1.models.CertificateAttributes
+        :paramtype attributes: ~azure.keyvault.v7_5.models.CertificateAttributes
         """
         super().__init__(**kwargs)
         self.id = None
@@ -907,9 +905,9 @@ class CertificateUpdateParameters(_serialization.Model):
     """The certificate update parameters.
 
     :ivar certificate_policy: The management policy for the certificate.
-    :vartype certificate_policy: ~azure.keyvault.v7_6_preview_1.models.CertificatePolicy
+    :vartype certificate_policy: ~azure.keyvault.v7_5.models.CertificatePolicy
     :ivar certificate_attributes: The attributes of the certificate (optional).
-    :vartype certificate_attributes: ~azure.keyvault.v7_6_preview_1.models.CertificateAttributes
+    :vartype certificate_attributes: ~azure.keyvault.v7_5.models.CertificateAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     """
@@ -930,9 +928,9 @@ class CertificateUpdateParameters(_serialization.Model):
     ) -> None:
         """
         :keyword certificate_policy: The management policy for the certificate.
-        :paramtype certificate_policy: ~azure.keyvault.v7_6_preview_1.models.CertificatePolicy
+        :paramtype certificate_policy: ~azure.keyvault.v7_5.models.CertificatePolicy
         :keyword certificate_attributes: The attributes of the certificate (optional).
-        :paramtype certificate_attributes: ~azure.keyvault.v7_6_preview_1.models.CertificateAttributes
+        :paramtype certificate_attributes: ~azure.keyvault.v7_5.models.CertificateAttributes
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         """
@@ -989,7 +987,7 @@ class Contacts(_serialization.Model):
     :ivar id: Identifier for the contacts collection.
     :vartype id: str
     :ivar contact_list: The contact list for the vault certificates.
-    :vartype contact_list: list[~azure.keyvault.v7_6_preview_1.models.Contact]
+    :vartype contact_list: list[~azure.keyvault.v7_5.models.Contact]
     """
 
     _validation = {
@@ -1004,7 +1002,7 @@ class Contacts(_serialization.Model):
     def __init__(self, *, contact_list: Optional[List["_models.Contact"]] = None, **kwargs: Any) -> None:
         """
         :keyword contact_list: The contact list for the vault certificates.
-        :paramtype contact_list: list[~azure.keyvault.v7_6_preview_1.models.Contact]
+        :paramtype contact_list: list[~azure.keyvault.v7_5.models.Contact]
         """
         super().__init__(**kwargs)
         self.id = None
@@ -1026,14 +1024,14 @@ class DeletedCertificateBundle(CertificateBundle):  # pylint: disable=too-many-i
     :ivar x509_thumbprint: Thumbprint of the certificate.
     :vartype x509_thumbprint: bytes
     :ivar policy: The management policy.
-    :vartype policy: ~azure.keyvault.v7_6_preview_1.models.CertificatePolicy
+    :vartype policy: ~azure.keyvault.v7_5.models.CertificatePolicy
     :ivar cer: CER contents of x509 certificate.
     :vartype cer: bytes
     :ivar content_type: The content type of the secret. eg. 'application/x-pem-file' or
      'application/x-pkcs12',.
     :vartype content_type: str
     :ivar attributes: The certificate attributes.
-    :vartype attributes: ~azure.keyvault.v7_6_preview_1.models.CertificateAttributes
+    :vartype attributes: ~azure.keyvault.v7_5.models.CertificateAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar recovery_id: The url of the recovery object, used to identify and recover the deleted
@@ -1087,7 +1085,7 @@ class DeletedCertificateBundle(CertificateBundle):  # pylint: disable=too-many-i
          'application/x-pkcs12',.
         :paramtype content_type: str
         :keyword attributes: The certificate attributes.
-        :paramtype attributes: ~azure.keyvault.v7_6_preview_1.models.CertificateAttributes
+        :paramtype attributes: ~azure.keyvault.v7_5.models.CertificateAttributes
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         :keyword recovery_id: The url of the recovery object, used to identify and recover the deleted
@@ -1108,7 +1106,7 @@ class DeletedCertificateItem(CertificateItem):
     :ivar id: Certificate identifier.
     :vartype id: str
     :ivar attributes: The certificate management attributes.
-    :vartype attributes: ~azure.keyvault.v7_6_preview_1.models.CertificateAttributes
+    :vartype attributes: ~azure.keyvault.v7_5.models.CertificateAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar x509_thumbprint: Thumbprint of the certificate.
@@ -1151,7 +1149,7 @@ class DeletedCertificateItem(CertificateItem):
         :keyword id: Certificate identifier.
         :paramtype id: str
         :keyword attributes: The certificate management attributes.
-        :paramtype attributes: ~azure.keyvault.v7_6_preview_1.models.CertificateAttributes
+        :paramtype attributes: ~azure.keyvault.v7_5.models.CertificateAttributes
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         :keyword x509_thumbprint: Thumbprint of the certificate.
@@ -1173,7 +1171,7 @@ class DeletedCertificateListResult(_serialization.Model):
 
     :ivar value: A response message containing a list of deleted certificates in the vault along
      with a link to the next page of deleted certificates.
-    :vartype value: list[~azure.keyvault.v7_6_preview_1.models.DeletedCertificateItem]
+    :vartype value: list[~azure.keyvault.v7_5.models.DeletedCertificateItem]
     :ivar next_link: The URL to get the next set of deleted certificates.
     :vartype next_link: str
     """
@@ -1205,7 +1203,7 @@ class Error(_serialization.Model):
     :ivar message: The error message.
     :vartype message: str
     :ivar inner_error: The key vault server error.
-    :vartype inner_error: ~azure.keyvault.v7_6_preview_1.models.Error
+    :vartype inner_error: ~azure.keyvault.v7_5.models.Error
     """
 
     _validation = {
@@ -1273,11 +1271,11 @@ class IssuerBundle(_serialization.Model):
     :ivar provider: The issuer provider.
     :vartype provider: str
     :ivar credentials: The credentials to be used for the issuer.
-    :vartype credentials: ~azure.keyvault.v7_6_preview_1.models.IssuerCredentials
+    :vartype credentials: ~azure.keyvault.v7_5.models.IssuerCredentials
     :ivar organization_details: Details of the organization as provided to the issuer.
-    :vartype organization_details: ~azure.keyvault.v7_6_preview_1.models.OrganizationDetails
+    :vartype organization_details: ~azure.keyvault.v7_5.models.OrganizationDetails
     :ivar attributes: Attributes of the issuer object.
-    :vartype attributes: ~azure.keyvault.v7_6_preview_1.models.IssuerAttributes
+    :vartype attributes: ~azure.keyvault.v7_5.models.IssuerAttributes
     """
 
     _validation = {
@@ -1305,11 +1303,11 @@ class IssuerBundle(_serialization.Model):
         :keyword provider: The issuer provider.
         :paramtype provider: str
         :keyword credentials: The credentials to be used for the issuer.
-        :paramtype credentials: ~azure.keyvault.v7_6_preview_1.models.IssuerCredentials
+        :paramtype credentials: ~azure.keyvault.v7_5.models.IssuerCredentials
         :keyword organization_details: Details of the organization as provided to the issuer.
-        :paramtype organization_details: ~azure.keyvault.v7_6_preview_1.models.OrganizationDetails
+        :paramtype organization_details: ~azure.keyvault.v7_5.models.OrganizationDetails
         :keyword attributes: Attributes of the issuer object.
-        :paramtype attributes: ~azure.keyvault.v7_6_preview_1.models.IssuerAttributes
+        :paramtype attributes: ~azure.keyvault.v7_5.models.IssuerAttributes
         """
         super().__init__(**kwargs)
         self.id = None
@@ -1398,14 +1396,14 @@ class KeyProperties(_serialization.Model):
     :vartype exportable: bool
     :ivar key_type: The type of key pair to be used for the certificate. Known values are: "EC",
      "EC-HSM", "RSA", "RSA-HSM", "oct", and "oct-HSM".
-    :vartype key_type: str or ~azure.keyvault.v7_6_preview_1.models.JsonWebKeyType
+    :vartype key_type: str or ~azure.keyvault.v7_5.models.JsonWebKeyType
     :ivar key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
     :vartype key_size: int
     :ivar reuse_key: Indicates if the same key pair will be used on certificate renewal.
     :vartype reuse_key: bool
     :ivar curve: Elliptic curve name. For valid values, see JsonWebKeyCurveName. Known values are:
      "P-256", "P-384", "P-521", and "P-256K".
-    :vartype curve: str or ~azure.keyvault.v7_6_preview_1.models.JsonWebKeyCurveName
+    :vartype curve: str or ~azure.keyvault.v7_5.models.JsonWebKeyCurveName
     """
 
     _attribute_map = {
@@ -1432,14 +1430,14 @@ class KeyProperties(_serialization.Model):
         :paramtype exportable: bool
         :keyword key_type: The type of key pair to be used for the certificate. Known values are: "EC",
          "EC-HSM", "RSA", "RSA-HSM", "oct", and "oct-HSM".
-        :paramtype key_type: str or ~azure.keyvault.v7_6_preview_1.models.JsonWebKeyType
+        :paramtype key_type: str or ~azure.keyvault.v7_5.models.JsonWebKeyType
         :keyword key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
         :paramtype key_size: int
         :keyword reuse_key: Indicates if the same key pair will be used on certificate renewal.
         :paramtype reuse_key: bool
         :keyword curve: Elliptic curve name. For valid values, see JsonWebKeyCurveName. Known values
          are: "P-256", "P-384", "P-521", and "P-256K".
-        :paramtype curve: str or ~azure.keyvault.v7_6_preview_1.models.JsonWebKeyCurveName
+        :paramtype curve: str or ~azure.keyvault.v7_5.models.JsonWebKeyCurveName
         """
         super().__init__(**kwargs)
         self.exportable = exportable
@@ -1455,7 +1453,7 @@ class KeyVaultError(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar error: The key vault server error.
-    :vartype error: ~azure.keyvault.v7_6_preview_1.models.Error
+    :vartype error: ~azure.keyvault.v7_5.models.Error
     """
 
     _validation = {
@@ -1476,9 +1474,9 @@ class LifetimeAction(_serialization.Model):
     """Action and its trigger that will be performed by Key Vault over the lifetime of a certificate.
 
     :ivar trigger: The condition that will execute the action.
-    :vartype trigger: ~azure.keyvault.v7_6_preview_1.models.Trigger
+    :vartype trigger: ~azure.keyvault.v7_5.models.Trigger
     :ivar action: The action that will be executed.
-    :vartype action: ~azure.keyvault.v7_6_preview_1.models.Action
+    :vartype action: ~azure.keyvault.v7_5.models.Action
     """
 
     _attribute_map = {
@@ -1491,9 +1489,9 @@ class LifetimeAction(_serialization.Model):
     ) -> None:
         """
         :keyword trigger: The condition that will execute the action.
-        :paramtype trigger: ~azure.keyvault.v7_6_preview_1.models.Trigger
+        :paramtype trigger: ~azure.keyvault.v7_5.models.Trigger
         :keyword action: The action that will be executed.
-        :paramtype action: ~azure.keyvault.v7_6_preview_1.models.Action
+        :paramtype action: ~azure.keyvault.v7_5.models.Action
         """
         super().__init__(**kwargs)
         self.trigger = trigger
@@ -1506,7 +1504,7 @@ class OrganizationDetails(_serialization.Model):
     :ivar id: Id of the organization.
     :vartype id: str
     :ivar admin_details: Details of the organization administrator.
-    :vartype admin_details: list[~azure.keyvault.v7_6_preview_1.models.AdministratorDetails]
+    :vartype admin_details: list[~azure.keyvault.v7_5.models.AdministratorDetails]
     """
 
     _attribute_map = {
@@ -1525,7 +1523,7 @@ class OrganizationDetails(_serialization.Model):
         :keyword id: Id of the organization.
         :paramtype id: str
         :keyword admin_details: Details of the organization administrator.
-        :paramtype admin_details: list[~azure.keyvault.v7_6_preview_1.models.AdministratorDetails]
+        :paramtype admin_details: list[~azure.keyvault.v7_5.models.AdministratorDetails]
         """
         super().__init__(**kwargs)
         self.id = id
@@ -1660,10 +1658,9 @@ class X509CertificateProperties(_serialization.Model):
     :ivar ekus: The enhanced key usage.
     :vartype ekus: list[str]
     :ivar subject_alternative_names: The subject alternative names.
-    :vartype subject_alternative_names:
-     ~azure.keyvault.v7_6_preview_1.models.SubjectAlternativeNames
+    :vartype subject_alternative_names: ~azure.keyvault.v7_5.models.SubjectAlternativeNames
     :ivar key_usage: Defines how the certificate's key may be used.
-    :vartype key_usage: list[str or ~azure.keyvault.v7_6_preview_1.models.KeyUsageType]
+    :vartype key_usage: list[str or ~azure.keyvault.v7_5.models.KeyUsageType]
     :ivar validity_in_months: The duration that the certificate is valid in months.
     :vartype validity_in_months: int
     """
@@ -1696,10 +1693,9 @@ class X509CertificateProperties(_serialization.Model):
         :keyword ekus: The enhanced key usage.
         :paramtype ekus: list[str]
         :keyword subject_alternative_names: The subject alternative names.
-        :paramtype subject_alternative_names:
-         ~azure.keyvault.v7_6_preview_1.models.SubjectAlternativeNames
+        :paramtype subject_alternative_names: ~azure.keyvault.v7_5.models.SubjectAlternativeNames
         :keyword key_usage: Defines how the certificate's key may be used.
-        :paramtype key_usage: list[str or ~azure.keyvault.v7_6_preview_1.models.KeyUsageType]
+        :paramtype key_usage: list[str or ~azure.keyvault.v7_5.models.KeyUsageType]
         :keyword validity_in_months: The duration that the certificate is valid in months.
         :paramtype validity_in_months: int
         """

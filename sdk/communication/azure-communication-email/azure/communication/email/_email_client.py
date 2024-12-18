@@ -33,21 +33,17 @@ class EmailClient(object):
     :param Union[TokenCredential, AzureKeyCredential] credential:
         The credential we use to authenticate against the service.
     :keyword api_version: Azure Communication Email API version.
-        Default value is "2023-03-31".
+        Default value is "2024-07-01-preview".
         Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
-    def __init__(
-            self,
-            endpoint: str,
-            credential: Union[TokenCredential, AzureKeyCredential],
-            **kwargs
-        ) -> None:
+
+    def __init__(self, endpoint: str, credential: Union[TokenCredential, AzureKeyCredential], **kwargs) -> None:
         try:
-            if not endpoint.lower().startswith('http'):
+            if not endpoint.lower().startswith("http"):
                 endpoint = "https://" + endpoint
         except AttributeError:
-            raise ValueError("Account URL must be a string.") # pylint: disable=raise-missing-from
+            raise ValueError("Account URL must be a string.")  # pylint: disable=raise-missing-from
 
         if endpoint.endswith("/"):
             endpoint = endpoint[:-1]
@@ -57,18 +53,11 @@ class EmailClient(object):
         authentication_policy = get_authentication_policy(endpoint, credential)
 
         self._generated_client = AzureCommunicationEmailService(
-            endpoint,
-            authentication_policy=authentication_policy,
-            sdk_moniker=SDK_MONIKER,
-            **kwargs
+            endpoint, authentication_policy=authentication_policy, sdk_moniker=SDK_MONIKER, **kwargs
         )
 
     @classmethod
-    def from_connection_string(
-        cls,
-        conn_str: str,
-        **kwargs
-    ) -> 'EmailClient':
+    def from_connection_string(cls, conn_str: str, **kwargs) -> "EmailClient":
         """Create EmailClient from a Connection String.
 
         :param str conn_str:
@@ -81,11 +70,7 @@ class EmailClient(object):
         return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
 
     @distributed_trace
-    def begin_send(
-        self,
-        message: Union[JSON, IO],
-        **kwargs: Any
-    ) -> LROPoller[JSON]:
+    def begin_send(self, message: Union[JSON, IO], **kwargs: Any) -> LROPoller[JSON]:
         # cSpell:disable
         """Queues an email message to be sent to one or more recipients.
 
@@ -137,7 +122,9 @@ class EmailClient(object):
                               attachment. Required.
                             "contentType": "str",  # MIME type of the content being
                               attached. Required.
-                            "name": "str"  # Name of the attachment. Required.
+                            "name": "str",  # Name of the attachment. Required.
+                            "contentId": "str"  # Optional. Unique identifier (CID) to
+                              reference an inline attachment.
                         }
                     ],
                     "userEngagementTrackingDisabled": bool,  # Optional. Indicates whether user

@@ -44,7 +44,11 @@ from ._utils import get_domain
 
 HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
 AllHttpResponseType = TypeVar(
-    "AllHttpResponseType", HttpResponse, LegacyHttpResponse, AsyncHttpResponse, LegacyAsyncHttpResponse
+    "AllHttpResponseType",
+    HttpResponse,
+    LegacyHttpResponse,
+    AsyncHttpResponse,
+    LegacyAsyncHttpResponse,
 )
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 ClsRedirectPolicy = TypeVar("ClsRedirectPolicy", bound="RedirectPolicyBase")
@@ -54,6 +58,7 @@ _LOGGER = logging.getLogger(__name__)
 
 def domain_changed(original_domain: Optional[str], url: str) -> bool:
     """Checks if the domain has changed.
+
     :param str original_domain: The original domain.
     :param str url: The new url.
     :rtype: bool
@@ -131,7 +136,10 @@ class RedirectPolicyBase:
         return False
 
     def increment(
-        self, settings: Dict[str, Any], response: PipelineResponse[Any, AllHttpResponseType], redirect_location: str
+        self,
+        settings: Dict[str, Any],
+        response: PipelineResponse[Any, AllHttpResponseType],
+        redirect_location: str,
     ) -> bool:
         """Increment the redirect attempts for this request.
 
@@ -186,9 +194,9 @@ class RedirectPolicy(RedirectPolicyBase, HTTPPolicy[HTTPRequestType, HTTPRespons
 
         :param request: The PipelineRequest object
         :type request: ~azure.core.pipeline.PipelineRequest
-        :return: Returns the PipelineResponse or raises error if maximum redirects exceeded.
+        :return: The PipelineResponse.
         :rtype: ~azure.core.pipeline.PipelineResponse
-        :raises: ~azure.core.exceptions.TooManyRedirectsError if maximum redirects exceeded.
+        :raises ~azure.core.exceptions.TooManyRedirectsError: if maximum redirects exceeded.
         """
         retryable: bool = True
         redirect_settings = self.configure_redirects(request.context.options)

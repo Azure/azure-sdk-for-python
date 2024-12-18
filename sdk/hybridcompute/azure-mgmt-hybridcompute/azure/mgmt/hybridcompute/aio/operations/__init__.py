@@ -8,6 +8,7 @@
 
 from ._licenses_operations import LicensesOperations
 from ._machines_operations import MachinesOperations
+from ._license_profiles_operations import LicenseProfilesOperations
 from ._machine_extensions_operations import MachineExtensionsOperations
 from ._hybrid_compute_management_client_operations import HybridComputeManagementClientOperationsMixin
 from ._extension_metadata_operations import ExtensionMetadataOperations
@@ -28,6 +29,7 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "LicensesOperations",
     "MachinesOperations",
+    "LicenseProfilesOperations",
     "MachineExtensionsOperations",
     "HybridComputeManagementClientOperationsMixin",
     "ExtensionMetadataOperations",

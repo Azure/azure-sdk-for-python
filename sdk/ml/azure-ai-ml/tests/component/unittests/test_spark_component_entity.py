@@ -29,6 +29,18 @@ class TestSparkComponentEntity:
         }
         assert spark_component.args == "--file_input ${{inputs.file_input}}"
 
+    def test_component_load_with_additional_include(self):
+        # code is specified in yaml, value is respected
+        component_yaml = "./tests/test_configs/components/hello_spark_component_with_additional_include.yml"
+        spark_component = load_component(
+            component_yaml,
+        )
+
+        assert (
+            isinstance(spark_component.additional_includes, list)
+            and spark_component.additional_includes[0] == "common_src"
+        )
+
     def test_spark_component_to_dict(self):
         # Test optional params exists in component dict
         yaml_path = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
@@ -36,6 +48,14 @@ class TestSparkComponentEntity:
         yaml_dict["mock_option_param"] = {"mock_key": "mock_val"}
         spark_component = SparkComponent._load(data=yaml_dict, yaml_path=yaml_path)
         assert spark_component._other_parameter.get("mock_option_param") == yaml_dict["mock_option_param"]
+
+    def test_spark_component_to_dict_additional_include(self):
+        # Test optional params exists in component dict
+        yaml_path = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
+        yaml_dict = load_yaml(yaml_path)
+        yaml_dict["additional_includes"] = ["common_src"]
+        spark_component = SparkComponent._load(data=yaml_dict, yaml_path=yaml_path)
+        assert spark_component.additional_includes[0] == yaml_dict["additional_includes"][0]
 
     def test_spark_component_entity(self):
         component = SparkComponent(
@@ -73,10 +93,43 @@ class TestSparkComponentEntity:
 
         assert component_dict == yaml_component_dict
 
+    def test_spark_component_entity_additional_include(self):
+        component = SparkComponent(
+            name="wordcount_spark_component",
+            display_name="Spark word count",
+            description="Spark word count",
+            version="3",
+            inputs={
+                "file_input": {"type": "uri_file", "mode": "direct"},
+            },
+            driver_cores=1,
+            driver_memory="2g",
+            executor_cores=2,
+            executor_memory="2g",
+            executor_instances=4,
+            entry={"file": "wordcount.py"},
+            args="--input1 ${{inputs.file_input}}",
+            base_path="./tests/test_configs/components",
+            additional_includes=["common_src"],
+        )
+        omit_fields = [
+            "properties.component_spec.$schema",
+            "properties.component_spec._source",
+            "properties.properties.client_component_hash",
+        ]
+        component_dict = component._to_rest_object().as_dict()
+        component_dict = pydash.omit(component_dict, *omit_fields)
+
+        yaml_path = "./tests/test_configs/components/hello_spark_component_with_additional_include.yml"
+        yaml_component = load_component(yaml_path)
+        yaml_component_dict = yaml_component._to_rest_object().as_dict()
+        yaml_component_dict = pydash.omit(yaml_component_dict, *omit_fields)
+        assert component_dict == yaml_component_dict
+
     def test_spark_component_version_as_a_function_with_inputs(self):
         expected_rest_component = {
             "type": "spark",
-            "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"},
+            "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.3.0"},
             "entry": {"file": "add_greeting_column.py", "spark_job_entry_type": "SparkJobPythonEntry"},
             "py_files": ["utils.zip"],
             "files": ["my_files.txt"],
@@ -99,7 +152,7 @@ class TestSparkComponentEntity:
         yaml_component_version = load_component(yaml_path)
         pipeline_input = PipelineInput(name="pipeline_input", owner="pipeline", meta=None)
         yaml_component = yaml_component_version(file_input=pipeline_input)
-        yaml_component.resources = {"instance_type": "Standard_E8S_V3", "runtime_version": "3.2.0"}
+        yaml_component.resources = {"instance_type": "Standard_E8S_V3", "runtime_version": "3.3.0"}
         yaml_component._component = "fake_component"
         rest_yaml_component = yaml_component._to_rest_object()
 

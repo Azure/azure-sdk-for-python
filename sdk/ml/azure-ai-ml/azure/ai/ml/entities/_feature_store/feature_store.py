@@ -9,9 +9,9 @@ from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_08_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml._restclient.v2024_10_01_preview.models import Workspace as RestWorkspace
 from azure.ai.ml._schema._feature_store.feature_store_schema import FeatureStoreSchema
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceKind
 from azure.ai.ml.entities._credentials import IdentityConfiguration, ManagedIdentityConfiguration
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._workspace.compute_runtime import ComputeRuntime
@@ -19,7 +19,7 @@ from azure.ai.ml.entities._workspace.customer_managed_key import CustomerManaged
 from azure.ai.ml.entities._workspace.feature_store_settings import FeatureStoreSettings
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
 from azure.ai.ml.entities._workspace.workspace import Workspace
-from azure.ai.ml.constants._common import WorkspaceKind
+
 from ._constants import DEFAULT_SPARK_RUNTIME_VERSION
 from .materialization_store import MaterializationStore
 
@@ -160,13 +160,18 @@ class FeatureStore(Workspace):
         self.identity = identity
         self.public_network_access = public_network_access
         self.managed_network = managed_network
+        # here, compute_runtime is used instead of feature_store_settings because
+        # it uses default spark version if no compute_runtime is specified during update
+        self.compute_runtime = compute_runtime
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspace) -> Optional["FeatureStore"]:
+    def _from_rest_object(
+        cls, rest_obj: RestWorkspace, v2_service_context: Optional[object] = None
+    ) -> Optional["FeatureStore"]:
         if not rest_obj:
             return None
 
-        workspace_object = Workspace._from_rest_object(rest_obj)
+        workspace_object = Workspace._from_rest_object(rest_obj, v2_service_context)
         if workspace_object is not None:
             return FeatureStore(
                 name=str(workspace_object.name),

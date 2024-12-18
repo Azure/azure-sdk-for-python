@@ -705,6 +705,9 @@ class TestCRUDOperations(unittest.TestCase):
                                'key': 'value',
                                'pk': 'pk'}
 
+        no_response = created_collection.create_item(body=document_definition, enable_automatic_id_generation=True, no_response=True)
+        self.assertDictEqual(no_response, {})
+
         created_document = created_collection.create_item(body=document_definition, enable_automatic_id_generation=True)
         self.assertEqual(created_document.get('name'),
                          document_definition['name'])
@@ -730,7 +733,7 @@ class TestCRUDOperations(unittest.TestCase):
         documents = list(created_collection.read_all_items())
         self.assertEqual(
             len(documents),
-            before_create_documents_count + 2,
+            before_create_documents_count + 3,
             'create should increase the number of documents')
         # query documents
         documents = list(created_collection.query_items(
@@ -1764,7 +1767,7 @@ class TestCRUDOperations(unittest.TestCase):
             ]
         }
 
-        custom_logger = logging.getLogger("CustomLogger")
+        # TODO:  custom_logger = logging.getLogger("CustomLogger") was in old code, check on later
         created_container = db.create_container(
             id='composite_index_spatial_index' + str(uuid.uuid4()),
             indexing_policy=indexing_policy,
@@ -1773,9 +1776,9 @@ class TestCRUDOperations(unittest.TestCase):
             user_agent="blah",
             user_agent_overwrite=True,
             logging_enable=True,
-            logger=custom_logger,
         )
-        created_properties = created_container.read(logger=custom_logger)
+        # TODO: logger was passed into read previously
+        created_properties = created_container.read()
         read_indexing_policy = created_properties['indexingPolicy']
 
         if 'localhost' in self.host or '127.0.0.1' in self.host:  # TODO: Differing result between live and emulator
@@ -2454,10 +2457,11 @@ class TestCRUDOperations(unittest.TestCase):
     def test_patch_operations(self):
         created_container = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
+        pkValue = "patch_item_pk" + str(uuid.uuid4())
         # Create item to patch
         item = {
             "id": "patch_item",
-            "pk": "patch_item_pk",
+            "pk": pkValue,
             "prop": "prop1",
             "address": {
                 "city": "Redmond"
@@ -2474,7 +2478,7 @@ class TestCRUDOperations(unittest.TestCase):
             {"op": "incr", "path": "/number", "value": 7},
             {"op": "move", "from": "/color", "path": "/favorite_color"}
         ]
-        patched_item = created_container.patch_item(item="patch_item", partition_key="patch_item_pk",
+        patched_item = created_container.patch_item(item="patch_item", partition_key=pkValue,
                                                     patch_operations=operations)
         # Verify results from patch operations
         self.assertTrue(patched_item.get("color") is None)
@@ -2487,37 +2491,38 @@ class TestCRUDOperations(unittest.TestCase):
         # Negative test - attempt to replace non-existent field
         operations = [{"op": "replace", "path": "/wrong_field", "value": "wrong_value"}]
         try:
-            created_container.patch_item(item="patch_item", partition_key="patch_item_pk", patch_operations=operations)
+            created_container.patch_item(item="patch_item", partition_key=pkValue, patch_operations=operations)
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
 
         # Negative test - attempt to remove non-existent field
         operations = [{"op": "remove", "path": "/wrong_field"}]
         try:
-            created_container.patch_item(item="patch_item", partition_key="patch_item_pk", patch_operations=operations)
+            created_container.patch_item(item="patch_item", partition_key=pkValue, patch_operations=operations)
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
 
         # Negative test - attempt to increment non-number field
         operations = [{"op": "incr", "path": "/company", "value": 3}]
         try:
-            created_container.patch_item(item="patch_item", partition_key="patch_item_pk", patch_operations=operations)
+            created_container.patch_item(item="patch_item", partition_key=pkValue, patch_operations=operations)
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
 
         # Negative test - attempt to move from non-existent field
         operations = [{"op": "move", "from": "/wrong_field", "path": "/other_field"}]
         try:
-            created_container.patch_item(item="patch_item", partition_key="patch_item_pk", patch_operations=operations)
+            created_container.patch_item(item="patch_item", partition_key=pkValue, patch_operations=operations)
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
 
     def test_conditional_patching(self):
         created_container = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # Create item to patch
+        pkValue = "patch_item_pk" + str(uuid.uuid4())
         item = {
             "id": "conditional_patch_item",
-            "pk": "patch_item_pk",
+            "pk": pkValue,
             "prop": "prop1",
             "address": {
                 "city": "Redmond"
@@ -2540,14 +2545,14 @@ class TestCRUDOperations(unittest.TestCase):
         num_false = item.get("number") + 1
         filter_predicate = "from root where root.number = " + str(num_false)
         try:
-            created_container.patch_item(item="conditional_patch_item", partition_key="patch_item_pk",
+            created_container.patch_item(item="conditional_patch_item", partition_key=pkValue,
                                          patch_operations=operations, filter_predicate=filter_predicate)
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, StatusCodes.PRECONDITION_FAILED)
 
         # Run patch operations with correct filter
         filter_predicate = "from root where root.number = " + str(item.get("number"))
-        patched_item = created_container.patch_item(item="conditional_patch_item", partition_key="patch_item_pk",
+        patched_item = created_container.patch_item(item="conditional_patch_item", partition_key=pkValue,
                                                     patch_operations=operations, filter_predicate=filter_predicate)
         # Verify results from patch operations
         self.assertTrue(patched_item.get("color") is None)

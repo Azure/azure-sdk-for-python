@@ -392,6 +392,8 @@ class CodegenTestPR:
                     )
 
     def check_model_flatten(self):
+        if self.whole_package_name in ["azure-mgmt-mysqlflexibleservers", "azure-mgmt-postgresqlflexibleservers"]:
+            return
         if self.from_swagger:
             last_version = self.get_last_release_version()
             if last_version == "" or last_version.startswith("1.0.0b"):
@@ -577,7 +579,7 @@ class CodegenTestPR:
             body = (
                 "Tips: If you have special needs for release date or other things, please let us know. "
                 "Otherwise we will follow "
-                "[Management-SDK-Release-Cycle](https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/761/Management-SDK-Release-Cycle) "
+                "[Management-SDK-Release-Cycle](https://eng.ms/docs/products/azure-developer-experience/develop/sdk-release/sdk-release?tabs=management) "
                 "to release it before target date"
             )
             api.issues.create_comment(issue_number=issue_number, body=body)

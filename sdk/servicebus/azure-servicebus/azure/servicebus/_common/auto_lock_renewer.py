@@ -26,9 +26,7 @@ if TYPE_CHECKING:
 _log = logging.getLogger(__name__)
 
 SHORT_RENEW_OFFSET = 0.5  # Seconds that if a renew period is longer than lock duration + offset, it's "too long"
-SHORT_RENEW_SCALING_FACTOR = (
-    0.75  # In this situation we need a "Short renew" and should scale by this factor.
-)
+SHORT_RENEW_SCALING_FACTOR = 0.75  # In this situation we need a "Short renew" and should scale by this factor.
 
 
 class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
@@ -108,8 +106,7 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
     def __enter__(self) -> "AutoLockRenewer":
         if self._shutdown.is_set():
             raise ServiceBusError(
-                "The AutoLockRenewer has already been shutdown. Please create a new instance for"
-                " auto lock renewing."
+                "The AutoLockRenewer has already been shutdown. Please create a new instance for auto lock renewing."
             )
 
         self._init_workers()
@@ -187,20 +184,12 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
         renew_period = renew_period_override or self._renew_period
         try:
             if self._renewable(renewable):
-                if (utc_now() - starttime) >= datetime.timedelta(
-                    seconds=max_lock_renewal_duration
-                ):
-                    _log.debug(
-                        "Reached max auto lock renew duration - letting lock expire."
-                    )
+                if (utc_now() - starttime) >= datetime.timedelta(seconds=max_lock_renewal_duration):
+                    _log.debug("Reached max auto lock renew duration - letting lock expire.")
                     raise AutoLockRenewTimeout(
-                        "Auto-renew period ({} seconds) elapsed.".format(
-                            max_lock_renewal_duration
-                        )
+                        "Auto-renew period ({} seconds) elapsed.".format(max_lock_renewal_duration)
                     )
-                if (renewable.locked_until_utc - utc_now()) <= datetime.timedelta(
-                    seconds=renew_period
-                ):
+                if (renewable.locked_until_utc - utc_now()) <= datetime.timedelta(seconds=renew_period):
                     _log.debug(
                         "%r seconds or less until lock expires - auto renewing.",
                         renew_period,
@@ -221,7 +210,7 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
                             starttime,
                             max_lock_renewal_duration,
                             on_lock_renew_failure,
-                            renew_period_override
+                            renew_period_override,
                         )
                     )
             clean_shutdown = not renewable._lock_expired
@@ -268,8 +257,7 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
             )
         if self._shutdown.is_set():
             raise ServiceBusError(
-                "The AutoLockRenewer has already been shutdown. Please create a new instance for"
-                " auto lock renewing."
+                "The AutoLockRenewer has already been shutdown. Please create a new instance for auto lock renewing."
             )
         if renewable.locked_until_utc is None:
             raise ValueError(
@@ -284,17 +272,13 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
         time_until_expiry = get_renewable_lock_duration(renewable)
         renew_period_override = None
         # Default is 10 seconds, but let's leave ourselves a small margin of error because clock skew is a real problem
-        if time_until_expiry <= datetime.timedelta(
-            seconds=self._renew_period + SHORT_RENEW_OFFSET
-        ):
-            renew_period_override = (
-                time_until_expiry.seconds * SHORT_RENEW_SCALING_FACTOR
-            )
+        if time_until_expiry <= datetime.timedelta(seconds=self._renew_period + SHORT_RENEW_OFFSET):
+            renew_period_override = time_until_expiry.seconds * SHORT_RENEW_SCALING_FACTOR
 
         _log.debug(
             "Running lock auto-renew for %r for %r seconds",
             renewable,
-            max_lock_renewal_duration or self._max_lock_renewal_duration
+            max_lock_renewal_duration or self._max_lock_renewal_duration,
         )
 
         self._init_workers()
@@ -306,7 +290,7 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
                 starttime,
                 max_lock_renewal_duration or self._max_lock_renewal_duration,
                 on_lock_renew_failure or self._on_lock_renew_failure,
-                renew_period_override
+                renew_period_override,
             )
         )
 

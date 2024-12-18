@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -160,7 +160,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource Id for the resource. Example -
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZoneName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZoneName}'.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -194,7 +194,7 @@ class TrackedResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource Id for the resource. Example -
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZoneName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZoneName}'.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -238,7 +238,7 @@ class PrivateZone(TrackedResource):  # pylint: disable=too-many-instance-attribu
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource Id for the resource. Example -
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZoneName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZoneName}'.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -382,29 +382,13 @@ class ProxyResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource Id for the resource. Example -
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZoneName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZoneName}'.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. Example - 'Microsoft.Network/privateDnsZones'.
     :vartype type: str
     """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
 
 
 class PtrRecord(_serialization.Model):
@@ -434,7 +418,7 @@ class RecordSet(ProxyResource):  # pylint: disable=too-many-instance-attributes
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource Id for the resource. Example -
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZoneName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZoneName}'.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -737,13 +721,13 @@ class TxtRecord(_serialization.Model):
         self.value = value
 
 
-class VirtualNetworkLink(TrackedResource):
+class VirtualNetworkLink(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """Describes a link to virtual network for a Private DNS zone.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource Id for the resource. Example -
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZoneName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/{privateDnsZoneName}'.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -760,6 +744,12 @@ class VirtualNetworkLink(TrackedResource):
     :ivar registration_enabled: Is auto-registration of virtual machine records in the virtual
      network in the Private DNS zone enabled?.
     :vartype registration_enabled: bool
+    :ivar resolution_policy: The resolution policy on the virtual network link. Only applicable for
+     virtual network links to privatelink zones, and for A,AAAA,CNAME queries. When set to
+     'NxDomainRedirect', Azure DNS resolver falls back to public resolution if private dns query
+     resolution results in non-existent domain response. Known values are: "Default" and
+     "NxDomainRedirect".
+    :vartype resolution_policy: str or ~azure.mgmt.privatedns.models.ResolutionPolicy
     :ivar virtual_network_link_state: The status of the virtual network link to the Private DNS
      zone. Possible values are 'InProgress' and 'Done'. This is a read-only property and any attempt
      to set this value will be ignored. Known values are: "InProgress" and "Completed".
@@ -788,6 +778,7 @@ class VirtualNetworkLink(TrackedResource):
         "etag": {"key": "etag", "type": "str"},
         "virtual_network": {"key": "properties.virtualNetwork", "type": "SubResource"},
         "registration_enabled": {"key": "properties.registrationEnabled", "type": "bool"},
+        "resolution_policy": {"key": "properties.resolutionPolicy", "type": "str"},
         "virtual_network_link_state": {"key": "properties.virtualNetworkLinkState", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
@@ -800,6 +791,7 @@ class VirtualNetworkLink(TrackedResource):
         etag: Optional[str] = None,
         virtual_network: Optional["_models.SubResource"] = None,
         registration_enabled: Optional[bool] = None,
+        resolution_policy: Optional[Union[str, "_models.ResolutionPolicy"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -814,11 +806,18 @@ class VirtualNetworkLink(TrackedResource):
         :keyword registration_enabled: Is auto-registration of virtual machine records in the virtual
          network in the Private DNS zone enabled?.
         :paramtype registration_enabled: bool
+        :keyword resolution_policy: The resolution policy on the virtual network link. Only applicable
+         for virtual network links to privatelink zones, and for A,AAAA,CNAME queries. When set to
+         'NxDomainRedirect', Azure DNS resolver falls back to public resolution if private dns query
+         resolution results in non-existent domain response. Known values are: "Default" and
+         "NxDomainRedirect".
+        :paramtype resolution_policy: str or ~azure.mgmt.privatedns.models.ResolutionPolicy
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.etag = etag
         self.virtual_network = virtual_network
         self.registration_enabled = registration_enabled
+        self.resolution_policy = resolution_policy
         self.virtual_network_link_state = None
         self.provisioning_state = None
 

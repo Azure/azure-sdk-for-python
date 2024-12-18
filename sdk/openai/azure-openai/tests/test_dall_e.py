@@ -9,6 +9,7 @@ from devtools_testutils import AzureRecordedTestCase
 from conftest import configure, DALLE_AZURE, OPENAI, PREVIEW, GA
 
 
+@pytest.mark.live_test_only
 class TestDallE(AzureRecordedTestCase):
 
     @configure

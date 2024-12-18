@@ -3032,7 +3032,7 @@ class ScriptParameter(_serialization.Model):
 
     :ivar type: The type of parameter the script is expecting. psCredential is a
      PSCredentialObject. Known values are: "String", "SecureString", "Credential", "Int", "Bool",
-     and "Float".
+     "Float", and "Int".
     :vartype type: str or ~azure.mgmt.avs.models.ScriptParameterTypes
     :ivar name: The parameter name that the script will expect a parameter value for.
     :vartype name: str

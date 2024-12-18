@@ -21,9 +21,9 @@ class TestComputeManagementSshPublicKeysOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_subscription(self, resource_group):
+    async def test_ssh_public_keys_list_by_subscription(self, resource_group):
         response = self.client.ssh_public_keys.list_by_subscription(
-            api_version="2019-12-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -31,10 +31,10 @@ class TestComputeManagementSshPublicKeysOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_ssh_public_keys_list_by_resource_group(self, resource_group):
         response = self.client.ssh_public_keys.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2019-12-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -42,7 +42,7 @@ class TestComputeManagementSshPublicKeysOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create(self, resource_group):
+    async def test_ssh_public_keys_create(self, resource_group):
         response = await self.client.ssh_public_keys.create(
             resource_group_name=resource_group.name,
             ssh_public_key_name="str",
@@ -54,7 +54,7 @@ class TestComputeManagementSshPublicKeysOperationsAsync(AzureMgmtRecordedTestCas
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2019-12-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -62,12 +62,12 @@ class TestComputeManagementSshPublicKeysOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_ssh_public_keys_update(self, resource_group):
         response = await self.client.ssh_public_keys.update(
             resource_group_name=resource_group.name,
             ssh_public_key_name="str",
             parameters={"publicKey": "str", "tags": {"str": "str"}},
-            api_version="2019-12-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -75,11 +75,11 @@ class TestComputeManagementSshPublicKeysOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_ssh_public_keys_delete(self, resource_group):
         response = await self.client.ssh_public_keys.delete(
             resource_group_name=resource_group.name,
             ssh_public_key_name="str",
-            api_version="2019-12-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -87,11 +87,11 @@ class TestComputeManagementSshPublicKeysOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_ssh_public_keys_get(self, resource_group):
         response = await self.client.ssh_public_keys.get(
             resource_group_name=resource_group.name,
             ssh_public_key_name="str",
-            api_version="2019-12-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -99,11 +99,11 @@ class TestComputeManagementSshPublicKeysOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_generate_key_pair(self, resource_group):
+    async def test_ssh_public_keys_generate_key_pair(self, resource_group):
         response = await self.client.ssh_public_keys.generate_key_pair(
             resource_group_name=resource_group.name,
             ssh_public_key_name="str",
-            api_version="2019-12-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself

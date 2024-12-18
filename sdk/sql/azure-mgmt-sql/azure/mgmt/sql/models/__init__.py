@@ -298,6 +298,7 @@ from ._models_py3 import RefreshExternalGovernanceStatusOperationResultMI
 from ._models_py3 import Remediation
 from ._models_py3 import ReplicationLink
 from ._models_py3 import ReplicationLinkListResult
+from ._models_py3 import ReplicationLinkUpdate
 from ._models_py3 import Resource
 from ._models_py3 import ResourceIdentity
 from ._models_py3 import ResourceMoveDefinition
@@ -474,6 +475,7 @@ from ._sql_management_client_enums import ElasticPoolLicenseType
 from ._sql_management_client_enums import ElasticPoolState
 from ._sql_management_client_enums import EncryptionProtectorName
 from ._sql_management_client_enums import ExternalGovernanceStatus
+from ._sql_management_client_enums import FailoverGroupDatabasesSecondaryType
 from ._sql_management_client_enums import FailoverGroupReplicationRole
 from ._sql_management_client_enums import FailoverModeType
 from ._sql_management_client_enums import FailoverType
@@ -892,6 +894,7 @@ __all__ = [
     "Remediation",
     "ReplicationLink",
     "ReplicationLinkListResult",
+    "ReplicationLinkUpdate",
     "Resource",
     "ResourceIdentity",
     "ResourceMoveDefinition",
@@ -1067,6 +1070,7 @@ __all__ = [
     "ElasticPoolState",
     "EncryptionProtectorName",
     "ExternalGovernanceStatus",
+    "FailoverGroupDatabasesSecondaryType",
     "FailoverGroupReplicationRole",
     "FailoverModeType",
     "FailoverType",

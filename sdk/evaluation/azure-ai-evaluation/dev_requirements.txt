@@ -1,0 +1,10 @@
+-e ../../../tools/azure-sdk-tools
+../../core/azure-core
+../../identity/azure-identity
+pytest
+pytest-asyncio
+pytest-cov
+pytest-mock
+pytest-xdist
+azure-ai-inference>=1.0.0b4
+-e ../azure-ai-evaluation

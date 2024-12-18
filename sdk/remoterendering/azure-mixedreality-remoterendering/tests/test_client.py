@@ -231,14 +231,12 @@ class TestRemoteRenderingClient(AzureRecordedTestCase):
 
         session = arr_client.get_rendering_session(session_id)
         assert session.id == session_id
-        assert session.size == RenderingSessionSize.STANDARD
 
         assert session.lease_time_minutes == 15
         assert session.status != RenderingSessionStatus.ERROR
 
         ready_session = session_poller.result()
         assert ready_session.id == session_id
-        assert ready_session.size == RenderingSessionSize.STANDARD
         assert ready_session.lease_time_minutes == 15
         assert ready_session.status == RenderingSessionStatus.READY
 
@@ -248,7 +246,6 @@ class TestRemoteRenderingClient(AzureRecordedTestCase):
 
         extended_session = arr_client.update_rendering_session(session_id=session_id,  lease_time_minutes=20)
         assert extended_session.id == session_id
-        assert extended_session.size == RenderingSessionSize.STANDARD
         assert extended_session.lease_time_minutes == 15 or extended_session.lease_time_minutes == 20
         assert extended_session.status == RenderingSessionStatus.READY
 

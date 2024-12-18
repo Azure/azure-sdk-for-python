@@ -70,6 +70,7 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     # Blob values
     APPEND_POSITION_CONDITION_NOT_MET = "AppendPositionConditionNotMet"
+    BLOB_ACCESS_TIER_NOT_SUPPORTED_FOR_ACCOUNT_TYPE = "BlobAccessTierNotSupportedForAccountType"
     BLOB_ALREADY_EXISTS = "BlobAlreadyExists"
     BLOB_NOT_FOUND = "BlobNotFound"
     BLOB_OVERWRITTEN = "BlobOverwritten"
@@ -154,6 +155,8 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETE_PENDING = "DeletePending"
     DIRECTORY_NOT_EMPTY = "DirectoryNotEmpty"
     FILE_LOCK_CONFLICT = "FileLockConflict"
+    FILE_SHARE_PROVISIONED_BANDWIDTH_DOWNGRADE_NOT_ALLOWED = "FileShareProvisionedBandwidthDowngradeNotAllowed"
+    FILE_SHARE_PROVISIONED_IOPS_DOWNGRADE_NOT_ALLOWED = "FileShareProvisionedIopsDowngradeNotAllowed"
     INVALID_FILE_OR_DIRECTORY_PATH_NAME = "InvalidFileOrDirectoryPathName"
     PARENT_NOT_FOUND = "ParentNotFound"
     READ_ONLY_ATTRIBUTE = "ReadOnlyAttribute"
@@ -311,7 +314,7 @@ class ResourceTypes(object):
         res_object = 'o' in string
 
         parsed = cls(res_service, res_container, res_object)
-        parsed._str = string  # pylint: disable = protected-access
+        parsed._str = string
         return parsed
 
 
@@ -495,7 +498,7 @@ class Services(object):
         res_file = 'f' in string
 
         parsed = cls(blob=res_blob, queue=res_queue, fileshare=res_file)
-        parsed._str = string  # pylint: disable = protected-access
+        parsed._str = string
         return parsed
 
 

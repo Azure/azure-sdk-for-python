@@ -127,6 +127,12 @@ class HotpatchEnablementStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ENABLED = "Enabled"
 
 
+class InstanceViewTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """InstanceViewTypes."""
+
+    INSTANCE_VIEW = "instanceView"
+
+
 class LastAttemptStatusEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the status of Agent Upgrade."""
 

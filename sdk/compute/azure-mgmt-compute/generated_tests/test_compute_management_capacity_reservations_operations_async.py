@@ -21,7 +21,7 @@ class TestComputeManagementCapacityReservationsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_capacity_reservations_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.capacity_reservations.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -41,18 +41,20 @@ class TestComputeManagementCapacityReservationsOperationsAsync(AzureMgmtRecorded
                                 "time": "2020-02-20 00:00:00",
                             }
                         ],
-                        "utilizationInfo": {"virtualMachinesAllocated": [{"id": "str"}]},
+                        "utilizationInfo": {"currentCapacity": 0, "virtualMachinesAllocated": [{"id": "str"}]},
                     },
                     "name": "str",
+                    "platformFaultDomainCount": 0,
                     "provisioningState": "str",
                     "provisioningTime": "2020-02-20 00:00:00",
                     "reservationId": "str",
                     "tags": {"str": "str"},
+                    "timeCreated": "2020-02-20 00:00:00",
                     "type": "str",
                     "virtualMachinesAssociated": [{"id": "str"}],
                     "zones": ["str"],
                 },
-                api_version="2021-04-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -61,7 +63,7 @@ class TestComputeManagementCapacityReservationsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_capacity_reservations_begin_update(self, resource_group):
         response = await (
             await self.client.capacity_reservations.begin_update(
                 resource_group_name=resource_group.name,
@@ -78,16 +80,18 @@ class TestComputeManagementCapacityReservationsOperationsAsync(AzureMgmtRecorded
                                 "time": "2020-02-20 00:00:00",
                             }
                         ],
-                        "utilizationInfo": {"virtualMachinesAllocated": [{"id": "str"}]},
+                        "utilizationInfo": {"currentCapacity": 0, "virtualMachinesAllocated": [{"id": "str"}]},
                     },
+                    "platformFaultDomainCount": 0,
                     "provisioningState": "str",
                     "provisioningTime": "2020-02-20 00:00:00",
                     "reservationId": "str",
                     "sku": {"capacity": 0, "name": "str", "tier": "str"},
                     "tags": {"str": "str"},
+                    "timeCreated": "2020-02-20 00:00:00",
                     "virtualMachinesAssociated": [{"id": "str"}],
                 },
-                api_version="2021-04-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -96,13 +100,13 @@ class TestComputeManagementCapacityReservationsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_capacity_reservations_begin_delete(self, resource_group):
         response = await (
             await self.client.capacity_reservations.begin_delete(
                 resource_group_name=resource_group.name,
                 capacity_reservation_group_name="str",
                 capacity_reservation_name="str",
-                api_version="2021-04-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -111,12 +115,12 @@ class TestComputeManagementCapacityReservationsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_capacity_reservations_get(self, resource_group):
         response = await self.client.capacity_reservations.get(
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
             capacity_reservation_name="str",
-            api_version="2021-04-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -124,11 +128,11 @@ class TestComputeManagementCapacityReservationsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_capacity_reservation_group(self, resource_group):
+    async def test_capacity_reservations_list_by_capacity_reservation_group(self, resource_group):
         response = self.client.capacity_reservations.list_by_capacity_reservation_group(
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
-            api_version="2021-04-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

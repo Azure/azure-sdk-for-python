@@ -19,7 +19,7 @@ from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
 from azure.identity import DefaultAzureCredential
 
 FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
 
 storage_account_name = os.environ["AZURE_STORAGE_ACCOUNT"]
 protocol = os.environ.get("PROTOCOL", "https")
@@ -39,9 +39,7 @@ def on_event_batch(partition_context, event_batch):
 
 def receive_batch():
     checkpoint_store = BlobCheckpointStore(
-        blob_account_url=BLOB_ACCOUNT_URL,
-        container_name=BLOB_CONTAINER_NAME,
-        credential=DefaultAzureCredential()
+        blob_account_url=BLOB_ACCOUNT_URL, container_name=BLOB_CONTAINER_NAME, credential=DefaultAzureCredential()
     )
     client = EventHubConsumerClient(
         fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
@@ -58,5 +56,5 @@ def receive_batch():
         )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     receive_batch()

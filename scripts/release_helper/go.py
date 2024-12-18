@@ -2,8 +2,8 @@ from common import IssueProcess, Common
 from typing import Any, List
 
 # assignee dict which will be assigned to handle issues
-_GO_OWNER = {'ArcturusZhang', 'azure-sdk'}
-_GO_ASSIGNEE = {'Alancere'}
+_GO_OWNER = {'ArcturusZhang', 'azure-sdk', 'tadelesh'}
+_GO_ASSIGNEE = {'jliusan'}
 
 
 class IssueProcessGo(IssueProcess):

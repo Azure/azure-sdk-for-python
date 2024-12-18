@@ -59,6 +59,7 @@ def test_link_should_not_detach(state):
     link.detach()
     link._outgoing_detach.assert_not_called()
 
+
 def test_receive_transfer_frame_multiple():
     session = None
     link = ReceiverLink(
@@ -71,16 +72,17 @@ def test_receive_transfer_frame_multiple():
         on_transfer=Mock(),
     )
 
-    link.current_link_credit = 2 # Set the link credit to 2
+    link.current_link_credit = 2  # Set the link credit to 2
 
     # frame: handle, delivery_id, delivery_tag, message_format, settled, more, rcv_settle_mode, state, resume, aborted, bathable, payload
-    transfer_frame_one = [3, 0, b'/blah', 0, True, True, None, None, None, None, False, ""]
-    transfer_frame_two = [3, None, b'/blah', 0, True, False, None, None, None, None, False, ""]
+    transfer_frame_one = [3, 0, b"/blah", 0, True, True, None, None, None, None, False, ""]
+    transfer_frame_two = [3, None, b"/blah", 0, True, False, None, None, None, None, False, ""]
 
     link._incoming_transfer(transfer_frame_one)
     assert link.current_link_credit == 2
     link._incoming_transfer(transfer_frame_two)
     assert link.current_link_credit == 1
+
 
 def test_receive_transfer_continuation_frame():
     session = None
@@ -94,18 +96,62 @@ def test_receive_transfer_continuation_frame():
         on_transfer=Mock(),
     )
 
-    link.current_link_credit = 3 # Set the link credit to 2
+    link.current_link_credit = 3  # Set the link credit to 2
 
     # frame: handle, delivery_id, delivery_tag, message_format, settled, more, rcv_settle_mode, state, resume, aborted, batchable, payload
-    transfer_frame_one = [3, 0, b'/blah', 0, True, False, None, None, None, None, False, ""]
-    transfer_frame_two = [3, 1, b'/blah', 0, True, True, None, None, None, None, False, ""]
-    transfer_frame_three = [3, None, b'/blah', 0, True, False, None, None, None, None, False, ""]
-
-
+    transfer_frame_one = [3, 0, b"/blah", 0, True, False, None, None, None, None, False, ""]
+    transfer_frame_two = [3, 1, b"/blah", 0, True, True, None, None, None, None, False, ""]
+    transfer_frame_three = [3, None, b"/blah", 0, True, False, None, None, None, None, False, ""]
 
     link._incoming_transfer(transfer_frame_one)
     assert link.current_link_credit == 2
+    assert link.delivery_count == 1
     link._incoming_transfer(transfer_frame_two)
     assert link.current_link_credit == 2
+    assert link.delivery_count == 1
     link._incoming_transfer(transfer_frame_three)
     assert link.current_link_credit == 1
+    assert link.delivery_count == 2
+
+
+def test_receive_transfer_and_flow():
+    def mock_outgoing():
+        pass
+
+    session = None
+    link = ReceiverLink(
+        session,
+        3,
+        source_address="test_source",
+        target_address="test_target",
+        network_trace=False,
+        network_trace_params={},
+        on_transfer=Mock(),
+    )
+
+    link._outgoing_flow = mock_outgoing
+    link.total_link_credit = 0  # Set the total link credit to 0 to start, no credit on the wire
+
+    link.flow(link_credit=100)  # Send a flow frame with desired link credit of 100
+
+    # frame: handle, delivery_id, delivery_tag, message_format, settled, more, rcv_settle_mode, state, resume, aborted, batchable, payload
+    transfer_frame_one = [3, 0, b"/blah", 0, True, False, None, None, None, None, False, ""]
+    transfer_frame_two = [3, 1, b"/blah", 0, True, False, None, None, None, None, False, ""]
+    transfer_frame_three = [3, 2, b"/blah", 0, True, False, None, None, None, None, False, ""]
+
+    link._incoming_transfer(transfer_frame_one)
+    assert link.current_link_credit == 99
+    assert link.total_link_credit == 99
+
+    # Only received 1 transfer frame per receive call, we set desired link credit again
+    # this will send a flow of 1
+    link.flow(link_credit=100)
+    assert link.current_link_credit == 1
+    assert link.total_link_credit == 100
+
+    link._incoming_transfer(transfer_frame_two)
+    assert link.current_link_credit == 0
+    assert link.total_link_credit == 99
+    link._incoming_transfer(transfer_frame_three)
+    assert link.current_link_credit == -1
+    assert link.total_link_credit == 98

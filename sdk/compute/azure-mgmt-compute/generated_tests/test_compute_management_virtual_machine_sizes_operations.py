@@ -20,10 +20,10 @@ class TestComputeManagementVirtualMachineSizesOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_virtual_machine_sizes_list(self, resource_group):
         response = self.client.virtual_machine_sizes.list(
             location="str",
-            api_version="2015-06-15",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

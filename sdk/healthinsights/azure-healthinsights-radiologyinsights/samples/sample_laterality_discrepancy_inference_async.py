@@ -29,6 +29,7 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.healthinsights.radiologyinsights.aio import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 
+
 async def radiology_insights_async() -> None:
 
     credential = DefaultAzureCredential()
@@ -36,7 +37,7 @@ async def radiology_insights_async() -> None:
 
     job_id = str(uuid.uuid4())
 
-    radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential = credential)
+    radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=credential)
 
     doc_content1 = """Exam:   US LT BREAST TARGETED
     Technique:  Targeted imaging of the  right breast  is performed.
@@ -105,10 +106,11 @@ async def radiology_insights_async() -> None:
                 resource=patient_data,
             )
             radiology_insights_result = await poller.result()
-            
+
             display_laterality_discrepancy(radiology_insights_result)
     except Exception as ex:
         raise ex
+
 
 def display_laterality_discrepancy(radiology_insights_result):
     # [START display_laterality_discrepancy]
@@ -122,6 +124,7 @@ def display_laterality_discrepancy(radiology_insights_result):
                 print(f"Laterality Discrepancy: Discrepancy Type: {ri_inference.discrepancy_type}")
 
     # [END display_laterality_discrepancy]
+
 
 if __name__ == "__main__":
     try:

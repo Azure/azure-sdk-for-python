@@ -33,10 +33,11 @@ def main():
     response = client.virtual_machine_scale_sets.force_recovery_service_fabric_platform_update_domain_walk(
         resource_group_name="rgcompute",
         vm_scale_set_name="aaaaaaaaaaaa",
+        platform_update_domain=9,
     )
     print(response)
 
 
-# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2024-03-01/examples/virtualMachineScaleSetExamples/VirtualMachineScaleSet_ForceRecoveryServiceFabricPlatformUpdateDomainWalk_MinimumSet_Gen.json
+# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2024-07-01/examples/virtualMachineScaleSetExamples/VirtualMachineScaleSet_ForceRecoveryServiceFabricPlatformUpdateDomainWalk_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

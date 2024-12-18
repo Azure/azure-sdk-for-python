@@ -72,6 +72,7 @@ from ._models_py3 import WebPubSubKeys
 from ._models_py3 import WebPubSubNetworkACLs
 from ._models_py3 import WebPubSubResource
 from ._models_py3 import WebPubSubResourceList
+from ._models_py3 import WebPubSubSocketIOSettings
 from ._models_py3 import WebPubSubTlsSettings
 
 from ._web_pub_sub_management_client_enums import ACLAction
@@ -159,6 +160,7 @@ __all__ = [
     "WebPubSubNetworkACLs",
     "WebPubSubResource",
     "WebPubSubResourceList",
+    "WebPubSubSocketIOSettings",
     "WebPubSubTlsSettings",
     "ACLAction",
     "CreatedByType",

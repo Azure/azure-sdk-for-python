@@ -83,10 +83,7 @@ class MapsSearchClient(SearchOperations):  # pylint: disable=client-accepts-api-
 
         # Initialize the base SearchOperations
         super().__init__(
-            client=self._client,
-            config=self._config,
-            serializer=self._serialize,
-            deserializer=self._deserialize
+            client=self._client, config=self._config, serializer=self._serialize, deserializer=self._deserialize
         )
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:

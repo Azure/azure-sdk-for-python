@@ -18,7 +18,8 @@ USAGE:
 """
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
+
 
 def begin_get_route_directions_batch():
     from azure.core.credentials import AzureKeyCredential
@@ -27,13 +28,12 @@ def begin_get_route_directions_batch():
     maps_route_client = MapsRouteClient(credential=AzureKeyCredential(subscription_key))
 
     result = maps_route_client.begin_get_route_directions_batch(
-        queries=[
-            "47.620659,-122.348934:47.610101,-122.342015&travelMode=bicycle&routeType=eco&traffic=false"
-        ]
+        queries=["47.620659,-122.348934:47.610101,-122.342015&travelMode=bicycle&routeType=eco&traffic=false"]
     )
 
-    print("Get route directions batch batch_id to fetch the result later")
-    print(result.batch_id)
+    print("Get route directions batch continuation_token to fetch the result later")
+    print(result.continuation_token())
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     begin_get_route_directions_batch()

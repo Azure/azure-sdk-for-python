@@ -50,14 +50,13 @@ from ._constants import (
     TIME_WINDOW_FILTER_KEY,
     TARGETING_FILTER_KEY,
 )
-from ._client_manager import ConfigurationClientWrapper, ConfigurationClientManager
-from ._discovery import find_auto_failover_endpoints
+from ._client_manager import ConfigurationClientManager
 from ._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
-JSON = Mapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = Mapping[str, Any]
 _T = TypeVar("_T")
 logger = logging.getLogger(__name__)
 
@@ -79,30 +78,28 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     refresh_interval: int = 30,
     on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], None]] = None,
-    **kwargs
+    feature_flag_enabled: bool = False,
+    feature_flag_selectors: Optional[List[SettingSelector]] = None,
+    feature_flag_refresh_enabled: bool = False,
+    **kwargs,
 ) -> "AzureAppConfigurationProvider":
     """
     Loads configuration settings from Azure App Configuration into a Python application.
 
     :param str endpoint: Endpoint for App Configuration resource.
-    :param credential: Credential for App Configuration resource.
-    :type credential: ~azure.core.credentials.TokenCredential
-    :keyword selects: List of setting selectors to filter configuration settings
-    :paramtype selects: Optional[List[~azure.appconfiguration.provider.SettingSelector]]
-    :keyword trim_prefixes: List of prefixes to trim from configuration keys
-    :paramtype trim_prefixes: Optional[List[str]]
-    :keyword keyvault_credential: A credential for authenticating with the key vault. This is optional if
-     keyvault_client_configs is provided.
-    :paramtype keyvault_credential: ~azure.core.credentials.TokenCredential
-    :keyword keyvault_client_configs: A Mapping of SecretClient endpoints to client configurations from
-     azure-keyvault-secrets. This is optional if keyvault_credential is provided. If a credential isn't provided a
-     credential will need to be in each set for each.
-    :paramtype keyvault_client_configs: Mapping[str, Mapping]
-    :keyword secret_resolver: A function that takes a URI and returns a value.
-    :paramtype secret_resolver: Callable[[str], str]
-    :keyword refresh_on: One or more settings whose modification will trigger a full refresh after a fixed interval.
-    This should be a list of Key-Label pairs for specific settings (filters and wildcards are not supported).
-    :paramtype refresh_on: List[Tuple[str, str]]
+    :param  ~azure.core.credentials.TokenCredential credential: Credential for App Configuration resource.
+    :keyword Optional[List[~azure.appconfiguration.provider.SettingSelector]] selects: List of setting selectors to
+    filter configuration settings
+    :keyword Optional[List[str]] trim_prefixes: List of prefixes to trim from configuration keys
+    :keyword  ~azure.core.credentials.TokenCredential keyvault_credential: A credential for authenticating with the key
+    vault. This is optional if keyvault_client_configs is provided.
+    :keyword Mapping[str, Mapping] keyvault_client_configs: A Mapping of SecretClient endpoints to client
+    configurations from azure-keyvault-secrets. This is optional if keyvault_credential is provided. If a credential
+    isn't provided a credential will need to be in each set for each.
+    :keyword Callable[[str], str] secret_resolver: A function that takes a URI and returns a value.
+    :keyword List[Tuple[str, str]] refresh_on: One or more settings whose modification will trigger a full refresh
+    after a fixed interval. This should be a list of Key-Label pairs for specific settings (filters and wildcards are
+    not supported).
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
     :keyword on_refresh_success: Optional callback to be invoked when a change is found and a successful refresh has
@@ -122,6 +119,9 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :keyword replica_discovery_enabled: Optional flag to enable or disable the discovery of replica endpoints. Default
      is True.
     :paramtype replica_discovery_enabled: bool
+    :keyword load_balancing_enabled: Optional flag to enable or disable the load balancing of replica endpoints. Default
+     is False.
+    :paramtype load_balancing_enabled: bool
     """
 
 
@@ -139,25 +139,27 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     refresh_interval: int = 30,
     on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], None]] = None,
-    **kwargs
+    feature_flag_enabled: bool = False,
+    feature_flag_selectors: Optional[List[SettingSelector]] = None,
+    feature_flag_refresh_enabled: bool = False,
+    **kwargs,
 ) -> "AzureAppConfigurationProvider":
     """
     Loads configuration settings from Azure App Configuration into a Python application.
 
     :keyword str connection_string: Connection string for App Configuration resource.
-    :keyword selects: List of setting selectors to filter configuration settings
-    :paramtype selects: Optional[List[~azure.appconfiguration.provider.SettingSelector]]
-    :keyword trim_prefixes: List of prefixes to trim from configuration keys
-    :paramtype trim_prefixes: Optional[List[str]]
-    :keyword keyvault_credential: A credential for authenticating with the key vault. This is optional if
-     keyvault_client_configs is provided.
-    :paramtype keyvault_credential: ~azure.core.credentials.TokenCredential
-    :keyword keyvault_client_configs: A Mapping of SecretClient endpoints to client configurations from
-     azure-keyvault-secrets. This is optional if keyvault_credential is provided. If a credential isn't provided a
-     credential will need to be in each set for each.
-    :paramtype keyvault_client_configs: Mapping[str, Mapping]
-    :keyword secret_resolver: A function that takes a URI and returns a value.
-    :paramtype secret_resolver: Callable[[str], str]
+    :keyword Optional[List[~azure.appconfiguration.provider.SettingSelector]] selects: List of setting selectors to
+    filter configuration settings
+    :keyword trim_prefixes: Optional[List[str]] trim_prefixes: List of prefixes to trim from configuration keys
+    :keyword  ~azure.core.credentials.TokenCredential keyvault_credential: A credential for authenticating with the key
+    vault. This is optional if keyvault_client_configs is provided.
+    :keyword Mapping[str, Mapping] keyvault_client_configs: A Mapping of SecretClient endpoints to client
+    configurations from azure-keyvault-secrets. This is optional if keyvault_credential is provided. If a credential
+    isn't provided a credential will need to be in each set for each.
+    :keyword Callable[[str], str] secret_resolver: A function that takes a URI and returns a value.
+    :keyword List[Tuple[str, str]] refresh_on: One or more settings whose modification will trigger a full refresh
+    after a fixed interval. This should be a list of Key-Label pairs for specific settings (filters and wildcards are
+    not supported).
     :keyword refresh_on: One or more settings whose modification will trigger a full refresh after a fixed interval.
     This should be a list of Key-Label pairs for specific settings (filters and wildcards are not supported).
     :paramtype refresh_on: List[Tuple[str, str]]
@@ -180,6 +182,9 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :keyword replica_discovery_enabled: Optional flag to enable or disable the discovery of replica endpoints. Default
      is True.
     :paramtype replica_discovery_enabled: bool
+    :keyword load_balancing_enabled: Optional flag to enable or disable the load balancing of replica endpoints. Default
+     is False.
+    :paramtype load_balancing_enabled: bool
     """
 
 
@@ -228,17 +233,9 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     )
 
     provider = _buildprovider(connection_string, endpoint, credential, uses_key_vault=uses_key_vault, **kwargs)
-    headers = _get_headers(
-        kwargs.pop("headers", {}),
-        "Startup",
-        provider._replica_client_manager.get_client_count() - 1,  # pylint:disable=protected-access
-        kwargs.pop("uses_feature_flags", False),
-        kwargs.pop("feature_filters_used", {}),
-        uses_key_vault,
-    )
 
     try:
-        provider._load_all(headers=headers)  # pylint:disable=protected-access
+        provider._load_all()  # pylint:disable=protected-access
     except Exception as e:
         _delay_failure(start_time)
         raise e
@@ -254,7 +251,16 @@ def _delay_failure(start_time: datetime.datetime) -> None:
         time.sleep((min_time - (current_time - start_time)).total_seconds())
 
 
-def _get_headers(headers, request_type, replica_count, uses_feature_flags, feature_filters_used, uses_key_vault) -> str:
+def _update_correlation_context_header(
+    headers,
+    request_type,
+    replica_count,
+    uses_feature_flags,
+    feature_filters_used,
+    uses_key_vault,
+    uses_load_balancing,
+    is_failover_request,
+) -> Dict[str, str]:
     if os.environ.get(REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE, default="").lower() == "true":
         return headers
     correlation_context = "RequestType=" + request_type
@@ -292,6 +298,12 @@ def _get_headers(headers, request_type, replica_count, uses_feature_flags, featu
     if replica_count > 0:
         correlation_context += ",ReplicaCount=" + str(replica_count)
 
+    if is_failover_request:
+        correlation_context += ",Failover"
+
+    if uses_load_balancing:
+        correlation_context += ",Features=LB"
+
     headers["Correlation-Context"] = correlation_context
     return headers
 
@@ -315,49 +327,14 @@ def _buildprovider(
     # pylint:disable=protected-access
     if connection_string:
         endpoint = connection_string.split(";")[0].split("=")[1]
-    provider = AzureAppConfigurationProvider(endpoint, **kwargs)
-    retry_total = kwargs.pop("retry_total", 2)
-    retry_backoff_max = kwargs.pop("retry_backoff_max", 60)
-    replica_discovery_enabled = kwargs.pop("replica_discovery_enabled", True)
+    if not endpoint:
+        raise ValueError("No endpoint specified.")
 
-    if "user_agent" in kwargs:
-        user_agent = kwargs.pop("user_agent") + " " + USER_AGENT
-    else:
-        user_agent = USER_AGENT
+    kwargs["endpoint"] = endpoint
+    kwargs["connection_string"] = connection_string
+    kwargs["credential"] = credential
 
-    clients = []
-    if connection_string and endpoint:
-        clients.append(
-            ConfigurationClientWrapper.from_connection_string(
-                endpoint, connection_string, user_agent, retry_total, retry_backoff_max, **kwargs
-            )
-        )
-        failover_endpoints = find_auto_failover_endpoints(endpoint, replica_discovery_enabled)
-        for failover_endpoint in failover_endpoints:
-            failover_connection_string = connection_string.replace(endpoint, failover_endpoint)
-            clients.append(
-                ConfigurationClientWrapper.from_connection_string(
-                    failover_endpoint, failover_connection_string, user_agent, retry_total, retry_backoff_max, **kwargs
-                )
-            )
-        provider._replica_client_manager.set_clients(clients)
-        return provider
-    if endpoint and credential:
-        clients.append(
-            ConfigurationClientWrapper.from_credential(
-                endpoint, credential, user_agent, retry_total, retry_backoff_max, **kwargs
-            )
-        )
-        failover_endpoints = find_auto_failover_endpoints(endpoint, replica_discovery_enabled)
-        for failover_endpoint in failover_endpoints:
-            clients.append(
-                ConfigurationClientWrapper.from_credential(
-                    endpoint, credential, user_agent, retry_total, retry_backoff_max, **kwargs
-                )
-            )
-        provider._replica_client_manager.set_clients(clients)
-        return provider
-    raise ValueError("Please pass either endpoint and credential, or a connection string with a value.")
+    return AzureAppConfigurationProvider(**kwargs)
 
 
 def _resolve_keyvault_reference(
@@ -476,7 +453,7 @@ class _RefreshTimer:
             calculated_milliseconds = max_backoff_milliseconds
 
         return min_backoff_milliseconds + (
-            random.uniform(0.0, 1.0) * (calculated_milliseconds - min_backoff_milliseconds)
+            random.uniform(0.0, 1.0) * (calculated_milliseconds - min_backoff_milliseconds)  # nosec
         )
 
 
@@ -487,16 +464,37 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
     keys. Enables resolution of Key Vault references in configuration settings.
     """
 
-    def __init__(self, endpoint, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
+        endpoint = kwargs.pop("endpoint", None)
         self._origin_endpoint = endpoint
+
+        if "user_agent" in kwargs:
+            user_agent = kwargs.pop("user_agent") + " " + USER_AGENT
+        else:
+            user_agent = USER_AGENT
 
         interval: int = kwargs.get("refresh_interval", 30)
         if interval < 1:
             raise ValueError("Refresh interval must be greater than or equal to 1 second.")
 
-        min_backoff: int = kwargs.get("min_backoff", 30) if kwargs.get("min_backoff", 30) <= interval else interval
-        max_backoff: int = 600 if 600 <= interval else interval
-        self._replica_client_manager = ConfigurationClientManager(min_backoff, max_backoff)
+        min_backoff: int = min(kwargs.pop("min_backoff", 30), interval)
+        max_backoff: int = min(kwargs.pop("max_backoff", 600), interval)
+
+        self._uses_load_balancing = kwargs.pop("load_balancing_enabled", False)
+
+        self._replica_client_manager = ConfigurationClientManager(
+            connection_string=kwargs.pop("connection_string", None),
+            endpoint=endpoint,
+            credential=kwargs.pop("credential", None),
+            user_agent=user_agent,
+            retry_total=kwargs.pop("retry_total", 2),
+            retry_backoff_max=kwargs.pop("retry_backoff_max", 60),
+            replica_discovery_enabled=kwargs.pop("replica_discovery_enabled", True),
+            min_backoff_sec=min_backoff,
+            max_backoff_sec=max_backoff,
+            load_balancing_enabled=self._uses_load_balancing,
+            **kwargs,
+        )
         self._dict: Dict[str, Any] = {}
         self._secret_clients: Dict[str, SecretClient] = {}
         self._selects: List[SettingSelector] = kwargs.pop(
@@ -528,39 +526,44 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         self._update_lock = Lock()
         self._refresh_lock = Lock()
 
-    def refresh(self, **kwargs) -> None:
+    def refresh(self, **kwargs) -> None:  # pylint: disable=too-many-statements
         if not self._refresh_on and not self._feature_flag_refresh_enabled:
-            logging.debug("Refresh called but no refresh enabled.")
+            logger.debug("Refresh called but no refresh enabled.")
             return
         if not self._refresh_timer.needs_refresh():
-            logging.debug("Refresh called but refresh interval not elapsed.")
+            logger.debug("Refresh called but refresh interval not elapsed.")
             return
         if not self._refresh_lock.acquire(blocking=False):  # pylint: disable= consider-using-with
-            logging.debug("Refresh called but refresh already in progress.")
+            logger.debug("Refresh called but refresh already in progress.")
             return
         success = False
         need_refresh = False
         error_message = """
-                        Failed to refresh configuration settings. No Azure App Configuration stores successfully
-                        refreshed.
+                        Failed to refresh configuration settings from Azure App Configuration.
                         """
         exception: Exception = RuntimeError(error_message)
+        is_failover_request = False
         try:
-            active_clients = self._replica_client_manager.get_active_clients()
+            self._replica_client_manager.refresh_clients()
+            self._replica_client_manager.find_active_clients()
+            replica_count = self._replica_client_manager.get_client_count() - 1
 
-            for client in active_clients:
+            while client := self._replica_client_manager.get_next_active_client():
+                headers = _update_correlation_context_header(
+                    kwargs.pop("headers", {}),
+                    "Watch",
+                    replica_count,
+                    self._feature_flag_enabled,
+                    self._feature_filter_usage,
+                    self._uses_key_vault,
+                    self._uses_load_balancing,
+                    is_failover_request,
+                )
+
                 try:
                     if self._refresh_on:
-                        headers = _get_headers(
-                            kwargs.pop("headers", {}),
-                            "Watch",
-                            self._replica_client_manager.get_client_count() - 1,
-                            self._feature_flag_enabled,
-                            self._feature_filter_usage,
-                            self._uses_key_vault,
-                        )
                         need_refresh, self._refresh_on, configuration_settings = client.refresh_configuration_settings(
-                            self._selects, self._refresh_on, headers, **kwargs
+                            self._selects, self._refresh_on, headers=headers, **kwargs
                         )
                         configuration_settings_processed = {}
                         for config in configuration_settings:
@@ -574,17 +577,14 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                         if need_refresh:
                             self._dict = configuration_settings_processed
                     if self._feature_flag_refresh_enabled:
-                        headers = _get_headers(
-                            kwargs.pop("headers", {}),
-                            "Watch",
-                            self._replica_client_manager.get_client_count() - 1,
-                            self._feature_flag_enabled,
-                            self._feature_filter_usage,
-                            self._uses_key_vault,
+                        need_ff_refresh, refresh_on_feature_flags, feature_flags, filters_used = (
+                            client.refresh_feature_flags(
+                                self._refresh_on_feature_flags, self._feature_flag_selectors, headers=headers, **kwargs
+                            )
                         )
-                        need_ff_refresh, self._refresh_on_feature_flags, feature_flags = client.refresh_feature_flags(
-                            self._refresh_on_feature_flags, self._feature_flag_selectors, headers, **kwargs
-                        )
+                        if refresh_on_feature_flags:
+                            self._refresh_on_feature_flags = refresh_on_feature_flags
+                        self._feature_filter_usage = filters_used
 
                         if need_refresh or need_ff_refresh:
                             self._dict[FEATURE_MANAGEMENT_KEY] = {}
@@ -595,8 +595,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     break
                 except AzureError as e:
                     exception = e
+                    logger.debug("Failed to refresh configurations from endpoint %s", client.endpoint)
                     self._replica_client_manager.backoff(client)
-
+                    is_failover_request = True
             if not success:
                 self._refresh_timer.backoff()
                 if self._on_refresh_error:
@@ -609,35 +610,49 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             self._refresh_lock.release()
 
     def _load_all(self, **kwargs):
-        active_clients = self._replica_client_manager.get_active_clients()
+        self._replica_client_manager.refresh_clients()
+        self._replica_client_manager.find_active_clients()
+        is_failover_request = False
+        replica_count = self._replica_client_manager.get_client_count() - 1
 
-        for client in active_clients:
+        while client := self._replica_client_manager.get_next_active_client():
+            headers = _update_correlation_context_header(
+                kwargs.pop("headers", {}),
+                "Startup",
+                replica_count,
+                self._feature_flag_enabled,
+                self._feature_filter_usage,
+                self._uses_key_vault,
+                self._uses_load_balancing,
+                is_failover_request,
+            )
             try:
                 configuration_settings, sentinel_keys = client.load_configuration_settings(
-                    self._selects, self._refresh_on, **kwargs
+                    self._selects, self._refresh_on, headers=headers, **kwargs
                 )
                 configuration_settings_processed = {}
                 for config in configuration_settings:
                     key = self._process_key_name(config)
                     value = self._process_key_value(config)
                     configuration_settings_processed[key] = value
+
                 if self._feature_flag_enabled:
-                    feature_flags, feature_flag_sentinel_keys = client.load_feature_flags(
-                        self._feature_flag_selectors, self._feature_flag_refresh_enabled, **kwargs
+                    feature_flags, feature_flag_sentinel_keys, used_filters = client.load_feature_flags(
+                        self._feature_flag_selectors, self._feature_flag_refresh_enabled, headers=headers, **kwargs
                     )
+                    self._feature_filter_usage = used_filters
                     configuration_settings_processed[FEATURE_MANAGEMENT_KEY] = {}
                     configuration_settings_processed[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags
                     self._refresh_on_feature_flags = feature_flag_sentinel_keys
                 for (key, label), etag in self._refresh_on.items():
                     if not etag:
                         try:
-                            headers = kwargs.get("headers", {})
                             sentinel = client.get_configuration_setting(key, label, headers=headers)  # type:ignore
                             self._refresh_on[(key, label)] = sentinel.etag  # type:ignore
                         except HttpResponseError as e:
                             if e.status_code == 404:
                                 # If the sentinel is not found a refresh should be triggered when it is created.
-                                logging.debug(
+                                logger.debug(
                                     """
                                     WatchKey key: %s label %s was configured but not found. Refresh will be triggered
                                     if created.
@@ -653,7 +668,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     self._dict = configuration_settings_processed
                 return
             except AzureError:
+                logger.debug("Failed to refresh configurations from endpoint %s", client.endpoint)
                 self._replica_client_manager.backoff(client)
+                is_failover_request = True
         raise RuntimeError(
             "Failed to load configuration settings. No Azure App Configuration stores successfully loaded from."
         )
@@ -684,7 +701,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         """
         Returns the value of the specified key.
         """
-        return self._dict[key]
+        with self._update_lock:
+            return self._dict[key]
 
     def __iter__(self) -> Iterator[str]:
         return self._dict.__iter__()

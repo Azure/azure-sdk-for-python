@@ -98,7 +98,7 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
                 id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/" + name,
             )
         if name != self.moniker:
-                add_general_string_sanitizer(target=name, value=self.moniker)
+            add_general_string_sanitizer(target=name, value=self.moniker)
         return {
             self.parameter_name: self.resource,
             self.parameter_name_for_location: self.location,
@@ -116,7 +116,9 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
                     raise AzureTestError("Timed out waiting for resource group to be deleted.")
                 else:
                     self.client.resource_groups.begin_delete(name, polling=False).result()
-            except Exception as err:  # NOTE: some track 1 libraries do not have azure-core installed. Cannot use HttpResponseError here
+            except (
+                Exception
+            ) as err:  # NOTE: some track 1 libraries do not have azure-core installed. Cannot use HttpResponseError here
                 logging.info("Failed to delete resource group with name {}".format(name))
                 logging.info("{}".format(err))
                 pass

@@ -13,7 +13,7 @@ import time
 from azure.eventhub import EventHubConsumerClient
 from azure.eventhub import parse_connection_string
 
-logger = logging.getLogger('RECEIVE_PERF_TEST')
+logger = logging.getLogger("RECEIVE_PERF_TEST")
 logger.setLevel(logging.INFO)
 logger.addHandler(RotatingFileHandler("receive_perf_test.log"))
 
@@ -22,10 +22,10 @@ CONN_STRS = [
     os.environ["EVENT_HUB_CONN_STR_BASIC_NORTHEU"],
     os.environ["EVENT_HUB_CONN_STR_STANDARD_NORTHEU"],
     os.environ["EVENT_HUB_CONN_STR_BASIC_WESTUS2"],
-    os.environ["EVENT_HUB_CONN_STR_STANDARD_WESTUS2"]
+    os.environ["EVENT_HUB_CONN_STR_STANDARD_WESTUS2"],
 ]
 EH_NAME_EVENT_SIZE_PAIR = [
-    ('pyamqp_512', 512),
+    ("pyamqp_512", 512),
 ]
 PREFETCH_LIST = [300, 3000]
 PARTITION_ID = "0"
@@ -41,14 +41,10 @@ def receive_fixed_time_interval(
     batch_receiving=False,
     description=None,
     run_duration=30,
-    partition_id="0"
+    partition_id="0",
 ):
 
-    consumer_client = EventHubConsumerClient(
-        conn_str,
-        consumer_group="$Default",
-        eventhub_name=eventhub_name
-    )
+    consumer_client = EventHubConsumerClient(conn_str, consumer_group="$Default", eventhub_name=eventhub_name)
 
     last_received_count = [0]
     received_count = [0]
@@ -74,7 +70,7 @@ def receive_fixed_time_interval(
     kwargs = {
         "partition_id": partition_id,
         "starting_position": "-1",  # "-1" is from the beginning of the partition.
-        "prefetch": prefetch
+        "prefetch": prefetch,
     }
     if batch_receiving:
         kwargs["max_batch_size"] = prefetch
@@ -82,14 +78,9 @@ def receive_fixed_time_interval(
     else:
         kwargs["on_event"] = on_event
 
-    thread = threading.Thread(
-        target=target,
-        kwargs=kwargs
-    )
+    thread = threading.Thread(target=target, kwargs=kwargs)
 
-    monitor_thread = threading.Thread(
-        target=monitor
-    )
+    monitor_thread = threading.Thread(target=monitor)
 
     thread.daemon = True
     monitor_thread.daemon = True
@@ -113,7 +104,7 @@ def receive_fixed_time_interval(
             avg_perf * single_event_size,
             single_event_size,
             run_duration,
-            prefetch
+            prefetch,
         )
     )
 
@@ -127,13 +118,10 @@ def receive_fixed_amount(
     description=None,
     partition_id="0",
     run_times=1,
-    fixed_amount=100_000
+    fixed_amount=100_000,
 ):
     consumer_client = EventHubConsumerClient(
-        conn_str,
-        consumer_group="$Default",
-        eventhub_name=eventhub_name,
-        prefetch=prefetch
+        conn_str, consumer_group="$Default", eventhub_name=eventhub_name, prefetch=prefetch
     )
     perf_records = []
     received_count = [0]
@@ -157,18 +145,15 @@ def receive_fixed_amount(
                     partition_id=partition_id,
                     starting_position="-1",
                     max_batch_size=prefetch,
-                    prefetch=prefetch
+                    prefetch=prefetch,
                 )
             else:
                 consumer_client.receive(
-                    on_event=on_event,
-                    partition_id=partition_id,
-                    starting_position="-1",
-                    prefetch=prefetch
+                    on_event=on_event, partition_id=partition_id, starting_position="-1", prefetch=prefetch
                 )
         end_time = time.time()
         total_time = end_time - start_time
-        speed = fixed_amount/total_time
+        speed = fixed_amount / total_time
         perf_records.append(speed)
         received_count[0] = 0
     avg_perf = sum(perf_records) / len(perf_records)
@@ -183,7 +168,7 @@ def receive_fixed_amount(
             avg_perf * single_event_size,
             single_event_size,
             fixed_amount,
-            prefetch
+            prefetch,
         )
     )
 
@@ -193,19 +178,19 @@ if __name__ == "__main__":
         for eh_name, single_event_size in EH_NAME_EVENT_SIZE_PAIR:
             for prefetch in PREFETCH_LIST:
                 for batch_receiving in [True, False]:
-                    print('------------------- receiving fixed amount -------------------')
+                    print("------------------- receiving fixed amount -------------------")
                     receive_fixed_amount(
                         conn_str=conn_str,
                         eventhub_name=eh_name,
                         single_event_size=single_event_size,
                         prefetch=prefetch,
-                        batch_receiving=batch_receiving
+                        batch_receiving=batch_receiving,
                     )
-                    print('------------------- receiving fixed interval -------------------')
+                    print("------------------- receiving fixed interval -------------------")
                     receive_fixed_time_interval(
                         conn_str=conn_str,
                         eventhub_name=eh_name,
                         single_event_size=single_event_size,
                         prefetch=prefetch,
-                        batch_receiving=batch_receiving
+                        batch_receiving=batch_receiving,
                     )

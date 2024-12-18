@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 # pylint: disable=client-method-missing-tracing-decorator
-from typing import Any, Union, Optional, TYPE_CHECKING
+from typing import Any, Union, Optional, TYPE_CHECKING, Type
 import logging
 from weakref import WeakSet
 from typing_extensions import Literal
@@ -37,7 +37,7 @@ NextAvailableSessionType = Literal[ServiceBusSessionFilter.NEXT_AVAILABLE]
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """The ServiceBusClient class defines a high level interface for
     getting ServiceBusSender and ServiceBusReceiver.
 
@@ -74,11 +74,15 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
     :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
      the Service Bus service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
+     Unless specified otherwise, default transport type is TransportType.AmqpOverWebsockets.
      The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
      If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
     :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
+    :keyword ssl_context: The SSLContext object to use in the underlying Pure Python AMQP transport. If specified,
+     connection_verify will be ignored.
+    :paramtype ssl_context: ssl.SSLContext or None
     :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
      False and the Pure Python AMQP library will be used as the underlying transport.
     :paramtype uamqp_transport: bool
@@ -97,27 +101,27 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
     def __init__(
         self,
         fully_qualified_namespace: str,
-        credential: Union[
-            "AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential
-        ],
+        credential: Union["AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential],
         *,
         retry_total: int = 3,
         retry_backoff_factor: float = 0.8,
         retry_backoff_max: float = 120,
         retry_mode: str = "exponential",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         uamqp_transport = kwargs.pop("uamqp_transport", False)
+        amqp_transport: Union[Type[PyamqpTransportAsync], Type["UamqpTransportAsync"]] = PyamqpTransportAsync
+
         if uamqp_transport:
             try:
                 from ._transport._uamqp_transport_async import UamqpTransportAsync
+                amqp_transport = UamqpTransportAsync
             except ImportError:
                 raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.3,<2.0.0`.") from None
-        self._amqp_transport = UamqpTransportAsync if uamqp_transport else PyamqpTransportAsync
+
+        self._amqp_transport = amqp_transport
         # If the user provided http:// or sb://, let's be polite and strip that.
-        self.fully_qualified_namespace: str = strip_protocol_from_uri(
-            fully_qualified_namespace.strip()
-        )
+        self.fully_qualified_namespace: str = strip_protocol_from_uri(fully_qualified_namespace.strip())
         self._credential = credential
         self._config = Configuration(
             retry_total=retry_total,
@@ -126,7 +130,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
             retry_mode=retry_mode,
             hostname=self.fully_qualified_namespace,
             amqp_transport=self._amqp_transport,
-            **kwargs
+            **kwargs,
         )
         self._connection = None
         # Optional entity name, can be the name of Queue or Topic.  Intentionally not advertised, typically be needed.
@@ -137,8 +141,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         # Internal flag for switching whether to apply connection sharing, pending fix in uamqp library
         self._connection_sharing = False
         self._handlers: WeakSet = WeakSet()
-        self._custom_endpoint_address = kwargs.get('custom_endpoint_address')
+        self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
         self._connection_verify = kwargs.get("connection_verify")
+        self._ssl_context = kwargs.get("ssl_context")
 
     async def __aenter__(self) -> "ServiceBusClient":
         if self._connection_sharing:
@@ -150,26 +155,30 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
 
     async def _create_connection(self):
         auth = await create_authentication(self)
+        if self._ssl_context:
+            ssl_opts = {"context": self._ssl_context}
+        else:
+            ssl_opts = {"ca_certs": self._connection_verify or certifi.where()}
         self._connection = self._amqp_transport.create_connection_async(
             host=self.fully_qualified_namespace,
             auth=auth.sasl,
             network_trace=self._config.logging_enable,
             custom_endpoint_address=self._custom_endpoint_address,
-            ssl_opts={'ca_certs':self._connection_verify or certifi.where()},
+            ssl_opts=ssl_opts,
             transport_type=self._config.transport_type,
-            http_proxy=self._config.http_proxy
+            http_proxy=self._config.http_proxy,
         )
 
     @classmethod
-    def from_connection_string(
+    def from_connection_string( # pylint: disable=docstring-keyword-should-match-keyword-only
         cls,
         conn_str: str,
         *,
         retry_total: int = 3,
         retry_backoff_factor: float = 0.8,
         retry_backoff_max: float = 120,
-        retry_mode: str = 'exponential',
-        **kwargs: Any
+        retry_mode: str = "exponential",
+        **kwargs: Any,
     ) -> "ServiceBusClient":
         """
         Create a ServiceBusClient from a connection string.
@@ -196,11 +205,15 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
          the Service Bus service, allowing network requests to be routed through any application gateways or
          other paths needed for the host environment. Default is None.
+         Unless specified otherwise, default transport type is TransportType.AmqpOverWebsockets.
          The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
          If port is not specified in the custom_endpoint_address, by default port 443 will be used.
         :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
          authenticate the identity of the connection endpoint.
          Default is None in which case `certifi.where()` will be used.
+        :keyword ssl_context: The SSLContext object to use in the underlying Pure Python AMQP transport. If specified,
+         connection_verify will be ignored.
+        :paramtype ssl_context: ssl.SSLContext or None
         :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
          False and the Pure Python AMQP library will be used as the underlying transport.
         :paramtype uamqp_transport: bool
@@ -217,9 +230,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
                 :caption: Create a new instance of the ServiceBusClient from connection string.
 
         """
-        host, policy, key, entity_in_conn_str, token, token_expiry = _parse_conn_str(
-            conn_str
-        )
+        host, policy, key, entity_in_conn_str, token, token_expiry, emulator = _parse_conn_str(conn_str)
+        kwargs["use_tls"] = not emulator
+        credential: Union[ServiceBusSASTokenCredential, ServiceBusSharedKeyCredential]
         if token and token_expiry:
             credential = ServiceBusSASTokenCredential(token, token_expiry)
         elif policy and key:
@@ -232,7 +245,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
             retry_backoff_factor=retry_backoff_factor,
             retry_backoff_max=retry_backoff_max,
             retry_mode=retry_mode,
-            **kwargs
+            **kwargs,
         )
 
     async def close(self) -> None:
@@ -256,7 +269,14 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         if self._connection_sharing and self._connection:
             await self._connection.close()
 
-    def get_queue_sender(self, queue_name: str, **kwargs: Any) -> ServiceBusSender:
+    def get_queue_sender(
+            self,
+            queue_name: str,
+            *,
+            client_identifier: Optional[str] = None,
+            socket_timeout: Optional[float] = None,
+            **kwargs: Any
+        ) -> ServiceBusSender:
         """Get ServiceBusSender for the specific queue.
 
         :param str queue_name: The path of specific Service Bus Queue the client connects to.
@@ -280,7 +300,6 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
                 :caption: Create a new instance of the ServiceBusClient from connection string.
 
         """
-        # pylint: disable=protected-access
 
         if self._entity_name and queue_name != self._entity_name:
             raise ValueError(
@@ -303,8 +322,12 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
             retry_backoff_max=self._config.retry_backoff_max,
             custom_endpoint_address=self._custom_endpoint_address,
             connection_verify=self._connection_verify,
+            ssl_context=self._ssl_context,
             amqp_transport=self._amqp_transport,
-            **kwargs
+            use_tls=self._config.use_tls,
+            client_identifier=client_identifier,
+            socket_timeout=socket_timeout,
+            **kwargs,
         )
         self._handlers.add(handler)
         return handler
@@ -313,15 +336,15 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         self,
         queue_name: str,
         *,
+        client_identifier: Optional[str] = None,
+        socket_timeout: Optional[float] = None,
         session_id: Optional[Union[str, NextAvailableSessionType]] = None,
         sub_queue: Optional[Union[ServiceBusSubQueue, str]] = None,
-        receive_mode: Union[
-            ServiceBusReceiveMode, str
-        ] = ServiceBusReceiveMode.PEEK_LOCK,
+        receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK,
         max_wait_time: Optional[float] = None,
         auto_lock_renewer: Optional[AutoLockRenewer] = None,
         prefetch_count: int = 0,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ServiceBusReceiver:
         """Get ServiceBusReceiver for the specific queue.
 
@@ -382,7 +405,6 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
                 :caption: Create a new instance of the ServiceBusSender from ServiceBusClient.
 
         """
-        # pylint: disable=protected-access
 
         if self._entity_name and queue_name != self._entity_name:
             raise ValueError(
@@ -399,15 +421,10 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         try:
             queue_name = generate_dead_letter_entity_name(
                 queue_name=queue_name,
-                transfer_deadletter=(
-                    ServiceBusSubQueue(sub_queue)
-                    == ServiceBusSubQueue.TRANSFER_DEAD_LETTER
-                ),
+                transfer_deadletter=(ServiceBusSubQueue(sub_queue) == ServiceBusSubQueue.TRANSFER_DEAD_LETTER),
             )
         except ValueError:
-            if (
-                sub_queue
-            ):  # If we got here and sub_queue is defined, it's an incorrect value or something unrelated.
+            if sub_queue:  # If we got here and sub_queue is defined, it's an incorrect value or something unrelated.
                 raise
         handler = ServiceBusReceiver(
             fully_qualified_namespace=self.fully_qualified_namespace,
@@ -430,13 +447,24 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
             prefetch_count=prefetch_count,
             custom_endpoint_address=self._custom_endpoint_address,
             connection_verify=self._connection_verify,
+            ssl_context=self._ssl_context,
             amqp_transport=self._amqp_transport,
-            **kwargs
+            use_tls=self._config.use_tls,
+            client_identifier=client_identifier,
+            socket_timeout=socket_timeout,
+            **kwargs,
         )
         self._handlers.add(handler)
         return handler
 
-    def get_topic_sender(self, topic_name: str, **kwargs: Any) -> ServiceBusSender:
+    def get_topic_sender(
+        self,
+        topic_name: str,
+        *,
+        client_identifier: Optional[str] = None,
+        socket_timeout: Optional[float] = None,
+        **kwargs: Any
+    ) -> ServiceBusSender:
         """Get ServiceBusSender for the specific topic.
 
         :param str topic_name: The path of specific Service Bus Topic the client connects to.
@@ -482,8 +510,12 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
             retry_backoff_max=self._config.retry_backoff_max,
             custom_endpoint_address=self._custom_endpoint_address,
             connection_verify=self._connection_verify,
+            ssl_context=self._ssl_context,
             amqp_transport=self._amqp_transport,
-            **kwargs
+            use_tls=self._config.use_tls,
+            client_identifier=client_identifier,
+            socket_timeout=socket_timeout,
+            **kwargs,
         )
         self._handlers.add(handler)
         return handler
@@ -495,13 +527,13 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         *,
         session_id: Optional[Union[str, NextAvailableSessionType]] = None,
         sub_queue: Optional[Union[ServiceBusSubQueue, str]] = None,
-        receive_mode: Union[
-            ServiceBusReceiveMode, str
-        ] = ServiceBusReceiveMode.PEEK_LOCK,
+        receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK,
         max_wait_time: Optional[float] = None,
         auto_lock_renewer: Optional[AutoLockRenewer] = None,
         prefetch_count: int = 0,
-        **kwargs: Any
+        client_identifier: Optional[str] = None,
+        socket_timeout: Optional[float] = None,
+        **kwargs: Any,
     ) -> ServiceBusReceiver:
         """Get ServiceBusReceiver for the specific subscription under the topic.
 
@@ -565,7 +597,6 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
 
 
         """
-        # pylint: disable=protected-access
 
         if self._entity_name and topic_name != self._entity_name:
             raise ValueError(
@@ -583,10 +614,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
             entity_name = generate_dead_letter_entity_name(
                 topic_name=topic_name,
                 subscription_name=subscription_name,
-                transfer_deadletter=(
-                    ServiceBusSubQueue(sub_queue)
-                    == ServiceBusSubQueue.TRANSFER_DEAD_LETTER
-                ),
+                transfer_deadletter=(ServiceBusSubQueue(sub_queue) == ServiceBusSubQueue.TRANSFER_DEAD_LETTER),
             )
             handler = ServiceBusReceiver(
                 fully_qualified_namespace=self.fully_qualified_namespace,
@@ -609,13 +637,15 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
                 prefetch_count=prefetch_count,
                 custom_endpoint_address=self._custom_endpoint_address,
                 connection_verify=self._connection_verify,
+                ssl_context=self._ssl_context,
                 amqp_transport=self._amqp_transport,
-                **kwargs
+                use_tls=self._config.use_tls,
+                client_identifier=client_identifier,
+                socket_timeout=socket_timeout,
+                **kwargs,
             )
         except ValueError:
-            if (
-                sub_queue
-            ):  # If we got here and sub_queue is defined, it's an incorrect value or something unrelated.
+            if sub_queue:  # If we got here and sub_queue is defined, it's an incorrect value or something unrelated.
                 raise
             handler = ServiceBusReceiver(
                 fully_qualified_namespace=self.fully_qualified_namespace,
@@ -639,8 +669,12 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
                 prefetch_count=prefetch_count,
                 custom_endpoint_address=self._custom_endpoint_address,
                 connection_verify=self._connection_verify,
+                ssl_context=self._ssl_context,
                 amqp_transport=self._amqp_transport,
-                **kwargs
+                use_tls=self._config.use_tls,
+                client_identifier=client_identifier,
+                socket_timeout=socket_timeout,
+                **kwargs,
             )
         self._handlers.add(handler)
         return handler

@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
+from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -51,13 +52,10 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class WebSiteManagementClient(
-    WebSiteManagementClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class WebSiteManagementClient(WebSiteManagementClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
     """WebSite Management Client.
 
     :ivar app_service_certificate_orders: AppServiceCertificateOrdersOperations operations
@@ -287,7 +285,7 @@ class WebSiteManagementClient(
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "WebSiteManagementClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

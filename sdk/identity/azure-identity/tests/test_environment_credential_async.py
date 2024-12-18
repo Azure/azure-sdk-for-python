@@ -10,7 +10,7 @@ from azure.identity.aio import EnvironmentCredential
 from azure.identity._constants import EnvironmentVariables
 import pytest
 
-from helpers import mock_response, Request
+from helpers import mock_response, Request, GET_TOKEN_METHODS
 from helpers_async import async_validating_transport, AsyncMockTransport
 from test_environment_credential import ALL_VARIABLES
 
@@ -56,17 +56,18 @@ async def test_context_manager_incomplete_configuration():
 
 
 @pytest.mark.asyncio
-async def test_incomplete_configuration():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_incomplete_configuration(get_token_method):
     """get_token should raise CredentialUnavailableError for incomplete configuration."""
 
     with mock.patch.dict(ENVIRON, {}, clear=True):
         with pytest.raises(CredentialUnavailableError) as ex:
-            await EnvironmentCredential().get_token("scope")
+            await getattr(EnvironmentCredential(), get_token_method)("scope")
 
     for a, b in itertools.combinations(ALL_VARIABLES, 2):  # all credentials require at least 3 variables set
         with mock.patch.dict(ENVIRON, {a: "a", b: "b"}, clear=True):
             with pytest.raises(CredentialUnavailableError) as ex:
-                await EnvironmentCredential().get_token("scope")
+                await getattr(EnvironmentCredential(), get_token_method)("scope")
 
 
 @pytest.mark.parametrize(
@@ -169,7 +170,8 @@ def test_certificate_with_password_configuration():
 
 
 @pytest.mark.asyncio
-async def test_client_secret_environment_credential():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_client_secret_environment_credential(get_token_method):
     client_id = "fake-client-id"
     secret = "fake-client-secret"
     tenant_id = "fake-tenant-id"
@@ -195,6 +197,6 @@ async def test_client_secret_environment_credential():
         EnvironmentVariables.AZURE_TENANT_ID: tenant_id,
     }
     with mock.patch.dict(ENVIRON, environment, clear=True):
-        token = await EnvironmentCredential(transport=transport).get_token("scope")
+        token = await getattr(EnvironmentCredential(transport=transport), get_token_method)("scope")
 
     assert token.token == access_token

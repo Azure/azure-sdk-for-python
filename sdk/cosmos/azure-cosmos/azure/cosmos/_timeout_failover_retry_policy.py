@@ -23,7 +23,7 @@ class _TimeoutFailoverRetryPolicy(object):
             self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
 
     def needsRetry(self):
-        if self.args:
+        if self.args and self.request:
             if (self.args[3].method == "GET") \
                     or http_constants.HttpHeaders.IsQueryPlanRequest in self.args[3].headers\
                     or http_constants.HttpHeaders.IsQuery in self.args[3].headers:

@@ -36,16 +36,10 @@ class CommunicationIdentityClient:  # pylint: disable=client-accepts-api-version
         self, endpoint: str, **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
-        self._config = CommunicationIdentityClientConfiguration(
-            endpoint=endpoint, **kwargs
-        )
-        self._client: AsyncPipelineClient = AsyncPipelineClient(
-            base_url=_endpoint, config=self._config, **kwargs
-        )
+        self._config = CommunicationIdentityClientConfiguration(endpoint=endpoint, **kwargs)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
-        client_models = {
-            k: v for k, v in _models.__dict__.items() if isinstance(v, type)
-        }
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -53,9 +47,7 @@ class CommunicationIdentityClient:  # pylint: disable=client-accepts-api-version
             self._client, self._config, self._serialize, self._deserialize
         )
 
-    def send_request(
-        self, request: HttpRequest, **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -75,14 +67,10 @@ class CommunicationIdentityClient:  # pylint: disable=client-accepts-api-version
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
-        request_copy.url = self._client.format_url(
-            request_copy.url, **path_format_arguments
-        )
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
     async def close(self) -> None:

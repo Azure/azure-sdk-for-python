@@ -2,9 +2,10 @@
 mypy = true
 pyright = false
 type_check_samples = false
-verifytypes = false
 pylint = true
-
+mindependency = false
+latestdependency = false
+black = true
 
 [tool.isort]
 profile = "black"
@@ -19,7 +20,7 @@ extend_skip_glob = [
   "*/.tox/*",
 ]
 
-[tool.mypy] 
+[tool.mypy]
 python_version = "3.10"
 exclude = [
   "azure/ai/ml/_restclient",
@@ -33,8 +34,8 @@ exclude = [
   "azure/ai/ml/_utils",
   "azure/ai/ml/exceptions.py",
   "azure/ai/ml/_exception_helper.py",
-]   
-warn_unused_configs = true 
+]
+warn_unused_configs = true
 follow_imports = "skip"
 ignore_missing_imports = true
 follow_imports_for_stubs = false

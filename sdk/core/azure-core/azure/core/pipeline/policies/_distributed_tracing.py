@@ -32,7 +32,10 @@ from types import TracebackType
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
+from azure.core.pipeline.transport import (
+    HttpResponse as LegacyHttpResponse,
+    HttpRequest as LegacyHttpRequest,
+)
 from azure.core.rest import HttpResponse, HttpRequest
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind
@@ -90,10 +93,11 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
                 return
 
             namer = ctxt.pop("network_span_namer", self._network_span_namer)
+            tracing_attributes = ctxt.pop("tracing_attributes", self._tracing_attributes)
             span_name = namer(request.http_request)
 
             span = span_impl_type(name=span_name, kind=SpanKind.CLIENT)
-            for attr, value in self._tracing_attributes.items():
+            for attr, value in tracing_attributes.items():
                 span.add_attribute(attr, value)
             span.start()
 
@@ -139,7 +143,9 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
                 span.finish()
 
     def on_response(
-        self, request: PipelineRequest[HTTPRequestType], response: PipelineResponse[HTTPRequestType, HTTPResponseType]
+        self,
+        request: PipelineRequest[HTTPRequestType],
+        response: PipelineResponse[HTTPRequestType, HTTPResponseType],
     ) -> None:
         self.end_span(request, response=response.http_response)
 

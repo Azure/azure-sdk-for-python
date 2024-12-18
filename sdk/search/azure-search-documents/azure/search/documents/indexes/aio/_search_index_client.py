@@ -77,6 +77,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
     async def close(self) -> None:
         """Close the session.
+
         :return: None
         :rtype: None
         """
@@ -109,7 +110,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :paramtype select: list[str]
         :return: List of indexes
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.SearchIndex]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         if select:
@@ -124,7 +125,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         :return: List of index names
         :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
 
@@ -133,13 +134,13 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
     @distributed_trace_async
     async def get_index(self, name: str, **kwargs: Any) -> SearchIndex:
-        """
+        """ Retrieve a named index in an Azure Search service
 
         :param name: The name of the index to retrieve.
         :type name: str
         :return: SearchIndex object
         :rtype: ~azure.search.documents.indexes.models.SearchIndex
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
 
         .. admonition:: Example:
 
@@ -152,7 +153,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.indexes.get(name, **kwargs)
-        return SearchIndex._from_generated(result)  # pylint:disable=protected-access
+        return cast(SearchIndex, SearchIndex._from_generated(result))  # pylint:disable=protected-access
 
     @distributed_trace_async
     async def get_index_statistics(self, index_name: str, **kwargs: Any) -> MutableMapping[str, Any]:
@@ -163,7 +164,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :type index_name: str
         :return: Statistics for the given index, including a document count and storage usage.
         :rtype: Dict
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.indexes.get_statistics(index_name, **kwargs)
@@ -184,7 +185,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :type index: str or ~azure.search.documents.indexes.models.SearchIndex
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
 
         .. admonition:: Example:
 
@@ -212,7 +213,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :type index: ~azure.search.documents.indexes.models.SearchIndex
         :return: The index created
         :rtype: ~azure.search.documents.indexes.models.SearchIndex
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
 
         .. admonition:: Example:
 
@@ -226,7 +227,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         patched_index = index._to_generated()  # pylint:disable=protected-access
         result = await self._client.indexes.create(patched_index, **kwargs)
-        return SearchIndex._from_generated(result)  # pylint:disable=protected-access
+        return cast(SearchIndex, SearchIndex._from_generated(result))  # pylint:disable=protected-access
 
     @distributed_trace_async
     async def create_or_update_index(
@@ -251,11 +252,11 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: The index created or updated
         :rtype: ~azure.search.documents.indexes.models.SearchIndex
-        :raises: ~azure.core.exceptions.ResourceNotFoundError or
-            ~azure.core.exceptions.ResourceModifiedError or
-            ~azure.core.exceptions.ResourceNotModifiedError or
-            ~azure.core.exceptions.ResourceNotFoundError or
-            ~azure.core.exceptions.ResourceExistsError
+        :raises ~azure.core.exceptions.ResourceNotFoundError: If the index doesn't exist.
+        :raises ~azure.core.exceptions.ResourceModifiedError: If the index has been modified.
+        :raises ~azure.core.exceptions.ResourceNotModifiedError: If the index has not been modified.
+        :raises ~azure.core.exceptions.ResourceNotFoundError: If the index is not found.
+        :raises ~azure.core.exceptions.ResourceExistsError: If the index already exists.
 
         .. admonition:: Example:
 
@@ -278,7 +279,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
             error_map=error_map,
             **kwargs
         )
-        return SearchIndex._from_generated(result)  # pylint:disable=protected-access
+        return cast(SearchIndex, SearchIndex._from_generated(result))  # pylint:disable=protected-access
 
     @distributed_trace_async
     async def analyze_text(self, index_name: str, analyze_request: AnalyzeTextOptions, **kwargs: Any) -> AnalyzeResult:
@@ -290,7 +291,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :type analyze_request: ~azure.search.documents.indexes.models.AnalyzeTextOptions
         :return: AnalyzeResult
         :rtype: ~azure.search.documents.indexes.models.AnalyzeRequest
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
 
         .. admonition:: Example:
 
@@ -319,7 +320,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :paramtype select: List[str]
         :return: List of synonym maps
         :rtype: List[~azure.search.documents.indexes.models.SynonymMap]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
 
         .. admonition:: Example:
 
@@ -345,7 +346,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         :return: List of synonym map names
         :rtype: List[str]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
@@ -361,7 +362,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :type name: str
         :return: The retrieved Synonym Map
         :rtype: ~azure.search.documents.indexes.models.SynonymMap
-        :raises: ~azure.core.exceptions.ResourceNotFoundError
+        :raises ~azure.core.exceptions.ResourceNotFoundError: If the Synonym Map doesn't exist.
 
         .. admonition:: Example:
 
@@ -375,7 +376,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.synonym_maps.get(name, **kwargs)
-        return SynonymMap._from_generated(result)  # pylint:disable=protected-access
+        return cast(SynonymMap, SynonymMap._from_generated(result))  # pylint:disable=protected-access
 
     @distributed_trace_async
     async def delete_synonym_map(
@@ -435,7 +436,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         patched_synonym_map = synonym_map._to_generated()  # pylint:disable=protected-access
         result = await self._client.synonym_maps.create(patched_synonym_map, **kwargs)
-        return SynonymMap._from_generated(result)  # pylint:disable=protected-access
+        return cast(SynonymMap, SynonymMap._from_generated(result))  # pylint:disable=protected-access
 
     @distributed_trace_async
     async def create_or_update_synonym_map(
@@ -466,7 +467,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
             error_map=error_map,
             **kwargs
         )
-        return SynonymMap._from_generated(result)  # pylint:disable=protected-access
+        return cast(SynonymMap, SynonymMap._from_generated(result))  # pylint:disable=protected-access
 
     @distributed_trace_async
     async def get_service_statistics(self, **kwargs) -> MutableMapping[str, Any]:
@@ -489,7 +490,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :paramtype select: list[str]
         :return: List of Aliases
         :rtype: ~azure.core.paging.AsyncItemPaged[~azure.search.documents.indexes.models.SearchAlias]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         if select:
@@ -503,8 +504,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         :return: List of alias names
         :rtype: ~azure.core.paging.AsyncItemPaged[str]
-        :raises: ~azure.core.exceptions.HttpResponseError
-
+        :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
 
@@ -513,13 +513,13 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
     @distributed_trace_async
     async def get_alias(self, name: str, **kwargs) -> SearchAlias:
-        """
+        """ Retrieve a named alias in an Azure Search service
 
         :param name: The name of the alias to retrieve.
         :type name: str
         :return: SearchAlias object
         :rtype: ~azure.search.documents.indexes.models.SearchAlias
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.aliases.get(name, **kwargs)
@@ -535,11 +535,12 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
     ) -> None:
         """Deletes a search alias and its associated mapping to an index.
         This operation is permanent, with no recovery option. The mapped index is untouched by this operation
+
         :param alias: The alias name or object to delete.
         :type alias: str or ~azure.search.documents.indexes.models.SearchAlias
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.exceptions.HttpResponseError: If the operation fails.
 
         .. admonition:: Example:
 
@@ -562,11 +563,12 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
     @distributed_trace_async
     async def create_alias(self, alias: SearchAlias, **kwargs: Any) -> SearchAlias:
         """Creates a new search alias.
+
         :param alias: The alias object.
         :type alias: ~azure.search.documents.indexes.models.SearchAlias
         :return: The alias created
         :rtype: ~azure.search.documents.indexes.models.SearchAlias
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
 
         .. admonition:: Example:
 
@@ -593,11 +595,11 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: The index created or updated
         :rtype: ~azure.search.documents.indexes.models.SearchAlias
-        :raises: ~azure.core.exceptions.ResourceNotFoundError
-            ~azure.core.exceptions.ResourceModifiedError or
-            ~azure.core.exceptions.ResourceNotModifiedError or
-            ~azure.core.exceptions.ResourceNotFoundError or
-            ~azure.core.exceptions.ResourceExistsError
+        :raises ~azure.core.exceptions.ResourceNotFoundError: If the alias doesn't exist.
+        :raises ~azure.core.exceptions.ResourceModifiedError: If the alias has been modified.
+        :raises ~azure.core.exceptions.ResourceNotModifiedError: If the alias has not been modified.
+        :raises ~azure.core.exceptions.ResourceNotFoundError: If the alias is not found.
+        :raises ~azure.core.exceptions.ResourceExistsError: If the alias already exists.
 
         .. admonition:: Example:
 

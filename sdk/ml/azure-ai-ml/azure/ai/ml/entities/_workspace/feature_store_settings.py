@@ -6,7 +6,7 @@
 
 from typing import Optional
 
-from azure.ai.ml._restclient.v2023_08_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
+from azure.ai.ml._restclient.v2024_10_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 from .compute_runtime import ComputeRuntime
@@ -39,7 +39,7 @@ class FeatureStoreSettings(RestTranslatableMixin):
         offline_store_connection_name: Optional[str] = None,
         online_store_connection_name: Optional[str] = None,
     ) -> None:
-        self.compute_runtime = compute_runtime if compute_runtime else ComputeRuntime(spark_runtime_version="3.2.0")
+        self.compute_runtime = compute_runtime if compute_runtime else ComputeRuntime(spark_runtime_version="3.3.0")
         self.offline_store_connection_name = offline_store_connection_name
         self.online_store_connection_name = online_store_connection_name
 

@@ -422,7 +422,8 @@ Our goal is to release a stable version by the end of March 2016.  Please send u
 
 **BREAKING CHANGES**
 
-We made our possible to document the breaking from ARM 1.0.0 version to 2.0.0 [here](https://github.com/Azure/azure-sdk-for-python/wiki/Migrate-from-1.0.0-ARM-preview-to-2.0.0).
+~~We made our possible to document the breaking from ARM 1.0.0 version to 2.0.0 here.~~
+The previously-linked documentation is no longer available.
 
 **Dependencies**
 

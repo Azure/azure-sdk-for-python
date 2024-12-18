@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from __future__ import unicode_literals, annotations
+from __future__ import annotations
 
 import time
 import uuid
@@ -41,9 +41,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class EventHubConsumer(
-    ConsumerProducerMixin
-):  # pylint:disable=too-many-instance-attributes
+class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instance-attributes
     """
     A consumer responsible for reading EventData from a specific Event Hub
     partition and as a member of a specific consumer group.
@@ -77,17 +75,13 @@ class EventHubConsumer(
         It is set to `False` by default.
     """
 
-    def __init__(
-        self, client: "EventHubConsumerClient", source: str, **kwargs: Any
-    ) -> None:
+    def __init__(self, client: "EventHubConsumerClient", source: str, **kwargs: Any) -> None:
         event_position = kwargs.get("event_position", None)
         prefetch = kwargs.get("prefetch", 300)
         owner_level = kwargs.get("owner_level", None)
         keep_alive = kwargs.get("keep_alive", 30)
         auto_reconnect = kwargs.get("auto_reconnect", True)
-        track_last_enqueued_event_properties = kwargs.get(
-            "track_last_enqueued_event_properties", False
-        )
+        track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
         idle_timeout = kwargs.get("idle_timeout", None)
 
         self.running = False
@@ -96,9 +90,7 @@ class EventHubConsumer(
         self.handler_ready = False
 
         self._amqp_transport: "AmqpTransport" = kwargs.pop("amqp_transport")
-        self._on_event_received: Callable[[EventData], None] = kwargs[
-            "on_event_received"
-        ]
+        self._on_event_received: Callable[[EventData], None] = kwargs["on_event_received"]
         self._client = client
         self._source = source
         self._offset = event_position
@@ -107,34 +99,26 @@ class EventHubConsumer(
         self._owner_level = owner_level
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
-        self._retry_policy = self._amqp_transport.create_retry_policy(
-            self._client._config
-        )
+        self._retry_policy = self._amqp_transport.create_retry_policy(self._client._config)
         self._reconnect_backoff = 1
         link_properties: Dict[bytes, int] = {}
         self._error = None
         self._timeout = 0
-        self._idle_timeout = (
-            (idle_timeout * self._amqp_transport.TIMEOUT_FACTOR)
-            if idle_timeout
-            else None
-        )
+        self._idle_timeout: Optional[float] = \
+            (idle_timeout * self._amqp_transport.TIMEOUT_FACTOR) if idle_timeout else None
         self._partition = self._source.split("/")[-1]
         self._name = f"EHConsumer-{uuid.uuid4()}-partition{self._partition}"
         if owner_level is not None:
             link_properties[EPOCH_SYMBOL] = int(owner_level)
         link_property_timeout_ms = (
-            self._client._config.receive_timeout
-            or self._timeout  # pylint:disable=protected-access
+            self._client._config.receive_timeout or self._timeout
         ) * self._amqp_transport.TIMEOUT_FACTOR
         link_properties[TIMEOUT_SYMBOL] = int(link_property_timeout_ms)
-        self._link_properties: Union[
-            Dict[uamqp_AMQPType, uamqp_AMQPType], Dict[types.AMQPTypes, types.AMQPTypes]
-        ] = self._amqp_transport.create_link_properties(link_properties)
-        self._handler: Optional[Union[uamqp_ReceiveClient, ReceiveClient]] = None
-        self._track_last_enqueued_event_properties = (
-            track_last_enqueued_event_properties
+        self._link_properties: Union[Dict[uamqp_AMQPType, uamqp_AMQPType], Dict[types.AMQPTypes, types.AMQPTypes]] = (
+            self._amqp_transport.create_link_properties(link_properties)
         )
+        self._handler: Optional[Union[uamqp_ReceiveClient, ReceiveClient]] = None
+        self._track_last_enqueued_event_properties = track_last_enqueued_event_properties
         self._message_buffer: Deque[uamqp_Message] = deque()
         self._last_received_event: Optional[EventData] = None
         self._receive_start_time: Optional[float] = None
@@ -147,11 +131,7 @@ class EventHubConsumer(
             self._offset,
             event_position_selector(self._offset, self._offset_inclusive),
         )
-        desired_capabilities = (
-            [RECEIVER_RUNTIME_METRIC_SYMBOL]
-            if self._track_last_enqueued_event_properties
-            else None
-        )
+        desired_capabilities = [RECEIVER_RUNTIME_METRIC_SYMBOL] if self._track_last_enqueued_event_properties else None
 
         self._handler = self._amqp_transport.create_receive_client(
             config=self._client._config,  # pylint:disable=protected-access
@@ -159,7 +139,7 @@ class EventHubConsumer(
             auth=auth,
             network_trace=self._client._config.network_tracing,  # pylint:disable=protected-access
             link_credit=self._prefetch,
-            link_properties=self._link_properties, # type: ignore
+            link_properties=self._link_properties,  # type: ignore
             timeout=self._timeout,
             idle_timeout=self._idle_timeout,
             retry_policy=self._retry_policy,
@@ -178,13 +158,19 @@ class EventHubConsumer(
         self._do_retryable_operation(self._open, operation_need_param=False)
 
     def _message_received(self, message: Union[uamqp_Message, Message]) -> None:
-        # pylint:disable=protected-access
         self._message_buffer.append(message)
 
     def _next_message_in_buffer(self):
         # pylint:disable=protected-access
         message = self._message_buffer.popleft()
         event_data = EventData._from_message(message)
+        if self._client._config.network_tracing and _LOGGER.isEnabledFor(logging.DEBUG):
+            _LOGGER.debug(
+                "Received message: seq-num: %r, offset: %r, partition-key: %r",
+                event_data.sequence_number,
+                event_data.offset,
+                event_data.partition_key,
+            )
         if self._amqp_transport.KIND == "uamqp":
             event_data._uamqp_message = message
         self._last_received_event = event_data
@@ -211,16 +197,14 @@ class EventHubConsumer(
             self.running = True
 
         if not self.handler_ready:
-            if self._handler.client_ready():    # type: ignore
+            if self._handler.client_ready():  # type: ignore
                 self.handler_ready = True
 
         return self.handler_ready
 
     def receive(self, batch=False, max_batch_size=300, max_wait_time=None):
         retried_times = 0
-        max_retries = (
-            self._client._config.max_retries  # pylint:disable=protected-access
-        )
+        max_retries = self._client._config.max_retries  # pylint:disable=protected-access
         self._receive_start_time = self._receive_start_time or time.time()
         deadline = self._receive_start_time + (max_wait_time or 0)
         if len(self._message_buffer) < max_batch_size:
@@ -236,11 +220,6 @@ class EventHubConsumer(
                     # If optional dependency is not installed, do not retry.
                     if isinstance(exception, ImportError):
                         raise exception
-
-                    # If authentication exception, do not retry.
-                    if isinstance(exception, self._amqp_transport.AUTHENTICATION_EXCEPTION):
-                        raise self._handle_exception(exception, is_consumer=True)
-
                     self._amqp_transport.check_link_stolen(self, exception)
                     # TODO: below block hangs when retry_total > 0
                     # need to remove/refactor, issue #27137
@@ -265,12 +244,8 @@ class EventHubConsumer(
             if batch:
                 events_for_callback = []
                 for _ in range(min(max_batch_size, len(self._message_buffer))):
-                    events_for_callback.append(
-                        self._next_message_in_buffer()  # pylint: disable=protected-access
-                    )
+                    events_for_callback.append(self._next_message_in_buffer())
                 self._on_event_received(events_for_callback)
             else:
-                self._on_event_received(
-                    self._next_message_in_buffer() if self._message_buffer else None
-                )
+                self._on_event_received(self._next_message_in_buffer() if self._message_buffer else None)
             self._receive_start_time = None

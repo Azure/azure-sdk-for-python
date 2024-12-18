@@ -13,6 +13,7 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 AZURE_LOCATION = "eastus"
 
 
+@pytest.mark.live_test_only
 class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ComputeManagementClient)
@@ -22,7 +23,6 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
     def test_list(self, resource_group):
         response = self.client.virtual_machines.list(
             resource_group_name=resource_group.name,
-            api_version="2024-03-01",
         )
         result = [r for r in response]
         assert result == []
@@ -30,8 +30,6 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_list_all(self, resource_group):
-        response = self.client.virtual_machines.list_all(
-            api_version="2024-03-01",
-        )
+        response = self.client.virtual_machines.list_all()
         result = [r for r in response]
         assert response

@@ -23,7 +23,7 @@ class TestAzureRedHatOpenShiftOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_list(self, resource_group):
         response = self.client.operations.list(
-            api_version="2023-09-04",
+            api_version="2023-11-22",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

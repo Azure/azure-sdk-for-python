@@ -1,14 +1,49 @@
 # Release History
 
-## 1.6.2 (Unreleased)
+## 1.6.5 (Unreleased)
 
 ### Features Added
+
+- Only add OpenTelemetry LoggingHandler if current logger does not have it
+    ([#38549](https://github.com/Azure/azure-sdk-for-python/pull/38549))
+- Distro to automatically configure event logger provider
+    ([#38543](https://github.com/Azure/azure-sdk-for-python/pull/38543))
+- Configure live metrics first in pipeline to detect statsbeat usage
+    ([#37694](https://github.com/Azure/azure-sdk-for-python/pull/37694))
+- Ignore backoff warning from distro if in functions environment
+    ([#38787](https://github.com/Azure/azure-sdk-for-python/pull/38787))
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.6.4 (2024-11-06)
+
+### Bugs Fixed
+
+- Fixed bug caused by migration from pkg_resources to importlib-metadata
+    ([#38371](https://github.com/Azure/azure-sdk-for-python/pull/38371))
+
+## 1.6.3 (2024-11-04)
+
+### Features Added
+
+- Enable Azure AI Inference instrumentation
+    ([#38071](https://github.com/Azure/azure-sdk-for-python/pull/38071))
+
+### Other Changes
+
+- Added AAD auth samples to distro
+    ([#37352](https://github.com/Azure/azure-sdk-for-python/pull/37352))
+
+## 1.6.2 (2024-09-05)
+
+### Bugs Fixed
+
+- Update OTel sdk and instrumentations to fix fastapi bug
+    ([#37206](https://github.com/Azure/azure-sdk-for-python/pull/37206))
 
 ## 1.6.1 (2024-07-30)
 

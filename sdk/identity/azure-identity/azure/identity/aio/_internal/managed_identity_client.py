@@ -5,7 +5,7 @@
 import time
 from typing import TypeVar
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessTokenInfo
 from azure.core.pipeline import AsyncPipeline
 from .._internal import AsyncContextManager
 from ..._internal import _scopes_to_resource
@@ -24,7 +24,7 @@ class AsyncManagedIdentityClient(AsyncContextManager, ManagedIdentityClientBase)
     async def close(self) -> None:
         await self._pipeline.__aexit__()
 
-    async def request_token(self, *scopes: str, **kwargs) -> AccessToken:
+    async def request_token(self, *scopes: str, **kwargs) -> AccessTokenInfo:
         # pylint:disable=invalid-overridden-method
         resource = _scopes_to_resource(*scopes)
         request = self._request_factory(resource, self._identity_config)

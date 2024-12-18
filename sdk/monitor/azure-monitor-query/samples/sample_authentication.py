@@ -77,7 +77,7 @@ def create_metrics_client_sovereign_cloud():
     # [END create_metrics_client_sovereign_cloud]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     create_logs_query_client()
     create_logs_query_client_sovereign_cloud()
     create_metrics_query_client()

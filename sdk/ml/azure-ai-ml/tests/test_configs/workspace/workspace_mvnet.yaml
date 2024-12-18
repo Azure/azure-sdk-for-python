@@ -18,4 +18,18 @@ managed_network:
   - name: pytorch
     destination: '*.pytorch.org'
     type: fqdn
+  - name: custom-address-prefixes-rule
+    destination:
+      port_ranges: 10,20-30
+      protocol: TCP
+      service_tag: AzureMonitor
+      address_prefixes: ["10.0.0.0/24"]
+    type: service_tag
+  - name: app-gw-pe-rule
+    destination:
+      service_resource_id: /subscriptions/0caf7ec9-615a-4491-bad8-64ce023324e1/resourceGroups/joharrin-sdk-tests/providers/Microsoft.Network/applicationGateways/mvnettestappgw
+      spark_enabled: false
+      subresource_target: appGwPrivateFrontendIpIPv4
+    fqdns: ["test.1.fake.com", "test.2.fake.com"]
+    type: private_endpoint
 tags: {}

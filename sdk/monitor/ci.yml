@@ -28,7 +28,6 @@ extends:
   parameters:
     ServiceDirectory: monitor
     TestProxy: true
-    BuildTargetingString: '*'
     Artifacts:
     - name: azure-mgmt-monitor
       safeName: azuremgmtmonitor

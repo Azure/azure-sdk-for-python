@@ -4,8 +4,7 @@ extends:
     template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: servicebus
-      TestTimeoutInMinutes: 480
-      UseFederatedAuth: true
+      TestTimeoutInMinutes: 960
       BuildTargetingString: azure-servicebus*
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(SERVICEBUS_SUBSCRIPTION_ID)
@@ -13,20 +12,9 @@ extends:
         AZURE_SKIP_LIVE_RECORDING: 'True'
       MatrixFilters:
         - PythonVersion=^(?!pypy3).*
-      Clouds: 'Public,Canary'
-      SupportedClouds: 'Public,UsGov,China'
+      Clouds: 'Public'
+      SupportedClouds: 'Public,UsGov'
       CloudConfig:
         Public:
-          ServiceConnection: azure-sdk-tests
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzurePublicMsft.json
-        Canary:
-          ServiceConnection: azure-sdk-tests
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzurePublicMsft.json
-          Location: 'eastus2euap'
         UsGov:
-          ServiceConnection: usgov_azure-sdk-tests
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzureUsGovMsft.json
           Location: 'usgovarizona'

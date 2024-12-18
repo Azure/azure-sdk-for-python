@@ -6,31 +6,61 @@ import collections.abc
 import re
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import CustomModelJobInput as RestCustomModelJobInput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import CustomModelJobOutput as RestCustomModelJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    CustomModelJobInput as RestCustomModelJobInput,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    CustomModelJobOutput as RestCustomModelJobOutput,
+)
 from azure.ai.ml._restclient.v2023_04_01_preview.models import InputDeliveryMode
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInputType
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutputType, LiteralJobInput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import MLFlowModelJobInput as RestMLFlowModelJobInput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import MLFlowModelJobOutput as RestMLFlowModelJobOutput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import MLTableJobInput as RestMLTableJobInput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import MLTableJobOutput as RestMLTableJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    MLFlowModelJobInput as RestMLFlowModelJobInput,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    MLFlowModelJobOutput as RestMLFlowModelJobOutput,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    MLTableJobInput as RestMLTableJobInput,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    MLTableJobOutput as RestMLTableJobOutput,
+)
 from azure.ai.ml._restclient.v2023_04_01_preview.models import OutputDeliveryMode
-from azure.ai.ml._restclient.v2023_04_01_preview.models import TritonModelJobInput as RestTritonModelJobInput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import TritonModelJobOutput as RestTritonModelJobOutput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFileJobInput as RestUriFileJobInput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFileJobOutput as RestUriFileJobOutput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFolderJobInput as RestUriFolderJobInput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    TritonModelJobInput as RestTritonModelJobInput,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    TritonModelJobOutput as RestTritonModelJobOutput,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    UriFileJobInput as RestUriFileJobInput,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    UriFileJobOutput as RestUriFileJobOutput,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    UriFolderJobInput as RestUriFolderJobInput,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    UriFolderJobOutput as RestUriFolderJobOutput,
+)
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes, InputOutputModes, JobType
 from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.input_output_entry import InputOutputEntry
 from azure.ai.ml.entities._util import normalize_job_input_output_type
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    JobException,
+    ValidationErrorType,
+    ValidationException,
+)
 
 INPUT_MOUNT_MAPPING_FROM_REST = {
     InputDeliveryMode.READ_WRITE_MOUNT: InputOutputModes.RW_MOUNT,
@@ -43,6 +73,7 @@ INPUT_MOUNT_MAPPING_FROM_REST = {
 
 INPUT_MOUNT_MAPPING_TO_REST = {
     InputOutputModes.MOUNT: InputDeliveryMode.READ_ONLY_MOUNT,
+    InputOutputModes.RW_MOUNT: InputDeliveryMode.READ_WRITE_MOUNT,
     InputOutputModes.RO_MOUNT: InputDeliveryMode.READ_ONLY_MOUNT,
     InputOutputModes.DOWNLOAD: InputDeliveryMode.DOWNLOAD,
     InputOutputModes.EVAL_MOUNT: InputDeliveryMode.EVAL_MOUNT,
@@ -228,9 +259,8 @@ def to_rest_dataset_literal_inputs(
                     if input_value.type in target_cls_dict:
                         input_data = target_cls_dict[input_value.type](
                             uri=input_value.path,
-                            mode=INPUT_MOUNT_MAPPING_TO_REST[input_value.mode.lower()] if input_value.mode else None,
+                            mode=(INPUT_MOUNT_MAPPING_TO_REST[input_value.mode.lower()] if input_value.mode else None),
                         )
-
                     else:
                         msg = f"Job input type {input_value.type} is not supported as job input."
                         raise ValidationException(
@@ -291,7 +321,7 @@ def from_rest_inputs_to_dataset_literal(inputs: Dict[str, RestJobInput]) -> Dict
                 input_data = Input(
                     type=type_transfer_dict[input_value.job_input_type],
                     path=path,
-                    mode=INPUT_MOUNT_MAPPING_FROM_REST[input_value.mode] if input_value.mode else None,
+                    mode=(INPUT_MOUNT_MAPPING_FROM_REST[input_value.mode] if input_value.mode else None),
                     path_on_compute=sourcePathOnCompute,
                 )
         elif input_value.job_input_type in (JobInputType.LITERAL, JobInputType.LITERAL):
@@ -336,7 +366,7 @@ def to_rest_data_outputs(outputs: Optional[Dict]) -> Dict[str, RestJobOutput]:
                         asset_name=output_value.name,
                         asset_version=output_value.version,
                         uri=output_value.path,
-                        mode=OUTPUT_MOUNT_MAPPING_TO_REST[output_value.mode.lower()] if output_value.mode else None,
+                        mode=(OUTPUT_MOUNT_MAPPING_TO_REST[output_value.mode.lower()] if output_value.mode else None),
                         pathOnCompute=getattr(output_value, "path_on_compute", None),
                         description=output_value.description,
                     )
@@ -379,11 +409,11 @@ def from_rest_data_outputs(outputs: Dict[str, RestJobOutput]) -> Dict[str, Outpu
             from_rest_outputs[output_name] = Output(
                 type=output_type_mapping[output_value.job_output_type],
                 path=output_value.uri,
-                mode=OUTPUT_MOUNT_MAPPING_FROM_REST[output_value.mode] if output_value.mode else None,
+                mode=(OUTPUT_MOUNT_MAPPING_FROM_REST[output_value.mode] if output_value.mode else None),
                 path_on_compute=sourcePathOnCompute,
                 description=output_value.description,
                 name=output_value.asset_name,
-                version=output_value.asset_version,
+                version=(output_value.asset_version if hasattr(output_value, "asset_version") else None),
             )
         else:
             msg = "unsupported JobOutput type: {}".format(output_value.job_output_type)

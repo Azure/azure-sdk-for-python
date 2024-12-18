@@ -22,7 +22,7 @@ class _QuickpulseRedirectPolicy(policies.RedirectPolicy):
         super().__init__(**kwargs)
 
     # Gets the redirect location from header
-    def get_redirect_location(self, response: PipelineResponse) -> Optional[str] :
+    def get_redirect_location(self, response: PipelineResponse) -> Optional[str]:
         redirect_location = response.http_response.headers.get(_QUICKPULSE_REDIRECT_HEADER_NAME)
         qp_client = None
         if redirect_location:

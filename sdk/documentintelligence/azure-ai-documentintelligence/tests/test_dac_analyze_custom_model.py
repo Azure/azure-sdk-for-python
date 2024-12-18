@@ -25,7 +25,7 @@ class TestDACAnalyzeCustomModel(DocumentIntelligenceTest):
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
         client = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential())
         with pytest.raises(ValueError) as e:
-            client.begin_analyze_document(model_id=None, analyze_request=b"xx")
+            client.begin_analyze_document(model_id=None, body=b"xx")
         assert "No value for given attribute" in str(e.value)
 
     @DocumentIntelligencePreparer()
@@ -33,9 +33,7 @@ class TestDACAnalyzeCustomModel(DocumentIntelligenceTest):
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
         client = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential())
         with pytest.raises(ValueError) as e:
-            client.begin_analyze_document(
-                model_id=None, analyze_request=AnalyzeDocumentRequest(url_source="https://badurl.jpg")
-            )
+            client.begin_analyze_document(model_id=None, body=AnalyzeDocumentRequest(url_source="https://badurl.jpg"))
         assert "No value for given attribute" in str(e.value)
 
     @DocumentIntelligencePreparer()
@@ -44,19 +42,16 @@ class TestDACAnalyzeCustomModel(DocumentIntelligenceTest):
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
         client = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential())
         with pytest.raises(ResourceNotFoundError) as e:
-            client.begin_analyze_document(model_id="", analyze_request=b"xx")
+            client.begin_analyze_document(model_id="", body=b"xx")
         assert "Resource not found" in str(e.value)
 
-    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     @DocumentIntelligencePreparer()
     @recorded_by_proxy
     def test_analyze_document_empty_model_id_from_url(self, **kwargs):
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
         client = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential())
         with pytest.raises(ResourceNotFoundError) as e:
-            client.begin_analyze_document(
-                model_id="", analyze_request=AnalyzeDocumentRequest(url_source="https://badurl.jpg")
-            )
+            client.begin_analyze_document(model_id="", body=AnalyzeDocumentRequest(url_source="https://badurl.jpg"))
         assert "Resource not found" in str(e.value)
 
     @skip_flaky_test
@@ -81,22 +76,24 @@ class TestDACAnalyzeCustomModel(DocumentIntelligenceTest):
 
         with open(self.form_jpg, "rb") as fd:
             my_file = fd.read()
-        poller = di_client.begin_analyze_document(model.model_id, my_file, content_type="application/octet-stream")
+        poller = di_client.begin_analyze_document(model.model_id, my_file)
         document = poller.result()
         assert document.model_id == model.model_id
         assert len(document.pages) == 1
         assert len(document.tables) == 2
-        assert len(document.paragraphs) == 52
+        assert len(document.paragraphs) == 42
         assert len(document.styles) == 1
         assert document.string_index_type == "textElements"
         assert document.content_format == "text"
 
         return recorded_variables
-    
+
     @skip_flaky_test
     @DocumentIntelligencePreparer()
     @recorded_by_proxy
-    def test_custom_document_transform_with_continuation_token(self, documentintelligence_storage_container_sas_url, **kwargs):
+    def test_custom_document_transform_with_continuation_token(
+        self, documentintelligence_storage_container_sas_url, **kwargs
+    ):
         set_bodiless_matcher()
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
         di_admin_client = DocumentIntelligenceAdministrationClient(documentintelligence_endpoint, get_credential())
@@ -117,7 +114,7 @@ class TestDACAnalyzeCustomModel(DocumentIntelligenceTest):
 
         with open(self.form_jpg, "rb") as fd:
             my_file = fd.read()
-        poller = di_client.begin_analyze_document(model.model_id, my_file, content_type="application/octet-stream")
+        poller = di_client.begin_analyze_document(model.model_id, my_file)
         continuation_token = poller.continuation_token()
         di_client2 = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential())
         poller2 = di_client2.begin_analyze_document(None, None, continuation_token=continuation_token)
@@ -125,7 +122,7 @@ class TestDACAnalyzeCustomModel(DocumentIntelligenceTest):
         assert document.model_id == model.model_id
         assert len(document.pages) == 1
         assert len(document.tables) == 2
-        assert len(document.paragraphs) == 52
+        assert len(document.paragraphs) == 42
         assert len(document.styles) == 1
         assert document.string_index_type == "textElements"
         assert document.content_format == "text"

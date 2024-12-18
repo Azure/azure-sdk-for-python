@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, Optional, Type, TypeVar
+from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -20,15 +20,13 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-from ..._vendor import _convert_request
 from ...operations._recommendations_operations import (
     build_disable_all_for_hosting_environment_request,
     build_disable_all_for_web_app_request,
@@ -46,12 +44,11 @@ from ...operations._recommendations_operations import (
     build_reset_all_filters_for_web_app_request,
     build_reset_all_filters_request,
 )
-from .._vendor import WebSiteManagementClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -103,7 +100,7 @@ class RecommendationsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.RecommendationCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -122,7 +119,6 @@ class RecommendationsOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -138,7 +134,6 @@ class RecommendationsOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -169,7 +164,7 @@ class RecommendationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def reset_all_filters(self, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    async def reset_all_filters(self, **kwargs: Any) -> None:
         """Reset all recommendation opt-out settings for a subscription.
 
         Description for Reset all recommendation opt-out settings for a subscription.
@@ -178,7 +173,7 @@ class RecommendationsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -198,7 +193,6 @@ class RecommendationsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -217,9 +211,7 @@ class RecommendationsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def disable_recommendation_for_subscription(  # pylint: disable=inconsistent-return-statements
-        self, name: str, **kwargs: Any
-    ) -> None:
+    async def disable_recommendation_for_subscription(self, name: str, **kwargs: Any) -> None:
         """Disables the specified rule so it will not apply to a subscription in the future.
 
         Description for Disables the specified rule so it will not apply to a subscription in the
@@ -231,7 +223,7 @@ class RecommendationsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -252,7 +244,6 @@ class RecommendationsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -306,7 +297,7 @@ class RecommendationsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.RecommendationCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -327,7 +318,6 @@ class RecommendationsOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -343,7 +333,6 @@ class RecommendationsOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -408,7 +397,7 @@ class RecommendationsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.RecommendationCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -429,7 +418,6 @@ class RecommendationsOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -445,7 +433,6 @@ class RecommendationsOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -476,7 +463,7 @@ class RecommendationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def disable_all_for_hosting_environment(  # pylint: disable=inconsistent-return-statements
+    async def disable_all_for_hosting_environment(
         self, resource_group_name: str, environment_name: str, hosting_environment_name: str, **kwargs: Any
     ) -> None:
         """Disable all recommendations for an app.
@@ -493,7 +480,7 @@ class RecommendationsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -516,7 +503,6 @@ class RecommendationsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -535,7 +521,7 @@ class RecommendationsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def reset_all_filters_for_hosting_environment(  # pylint: disable=inconsistent-return-statements,name-too-long
+    async def reset_all_filters_for_hosting_environment(  # pylint: disable=name-too-long
         self, resource_group_name: str, environment_name: str, hosting_environment_name: str, **kwargs: Any
     ) -> None:
         """Reset all recommendation opt-out settings for an app.
@@ -552,7 +538,7 @@ class RecommendationsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -575,7 +561,6 @@ class RecommendationsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -623,7 +608,7 @@ class RecommendationsOperations:
         :rtype: ~azure.mgmt.web.v2023_01_01.models.RecommendationRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -648,7 +633,6 @@ class RecommendationsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -663,7 +647,7 @@ class RecommendationsOperations:
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("RecommendationRule", pipeline_response)
+        deserialized = self._deserialize("RecommendationRule", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -671,7 +655,7 @@ class RecommendationsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def disable_recommendation_for_hosting_environment(  # pylint: disable=inconsistent-return-statements,name-too-long
+    async def disable_recommendation_for_hosting_environment(  # pylint: disable=name-too-long
         self, resource_group_name: str, environment_name: str, name: str, hosting_environment_name: str, **kwargs: Any
     ) -> None:
         """Disables the specific rule for a web site permanently.
@@ -690,7 +674,7 @@ class RecommendationsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -714,7 +698,6 @@ class RecommendationsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -768,7 +751,7 @@ class RecommendationsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.RecommendationCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -789,7 +772,6 @@ class RecommendationsOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -805,7 +787,6 @@ class RecommendationsOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -870,7 +851,7 @@ class RecommendationsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-01-01"))
         cls: ClsType[_models.RecommendationCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -891,7 +872,6 @@ class RecommendationsOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -907,7 +887,6 @@ class RecommendationsOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -938,9 +917,7 @@ class RecommendationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def disable_all_for_web_app(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, site_name: str, **kwargs: Any
-    ) -> None:
+    async def disable_all_for_web_app(self, resource_group_name: str, site_name: str, **kwargs: Any) -> None:
         """Disable all recommendations for an app.
 
         Description for Disable all recommendations for an app.
@@ -953,7 +930,7 @@ class RecommendationsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -975,7 +952,6 @@ class RecommendationsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -994,9 +970,7 @@ class RecommendationsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def reset_all_filters_for_web_app(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, site_name: str, **kwargs: Any
-    ) -> None:
+    async def reset_all_filters_for_web_app(self, resource_group_name: str, site_name: str, **kwargs: Any) -> None:
         """Reset all recommendation opt-out settings for an app.
 
         Description for Reset all recommendation opt-out settings for an app.
@@ -1009,7 +983,7 @@ class RecommendationsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1031,7 +1005,6 @@ class RecommendationsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1079,7 +1052,7 @@ class RecommendationsOperations:
         :rtype: ~azure.mgmt.web.v2023_01_01.models.RecommendationRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1104,7 +1077,6 @@ class RecommendationsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1119,7 +1091,7 @@ class RecommendationsOperations:
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("RecommendationRule", pipeline_response)
+        deserialized = self._deserialize("RecommendationRule", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1127,7 +1099,7 @@ class RecommendationsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def disable_recommendation_for_site(  # pylint: disable=inconsistent-return-statements
+    async def disable_recommendation_for_site(
         self, resource_group_name: str, site_name: str, name: str, **kwargs: Any
     ) -> None:
         """Disables the specific rule for a web site permanently.
@@ -1144,7 +1116,7 @@ class RecommendationsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1167,7 +1139,6 @@ class RecommendationsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False

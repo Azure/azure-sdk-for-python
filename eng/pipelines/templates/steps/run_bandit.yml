@@ -2,13 +2,9 @@ parameters:
   ServiceDirectory: ''
   TestMarkArgument: ''
   EnvVars: {}
+  AdditionalTestArgs: ''
 
-# The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
-#     eng/pipelines/templates/jobs/ci.tests.yml
-#     eng/pipelines/templates/jobs/ci.yml
-#     eng/pipelines/templates/jobs/live.test.yml
-
-# Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
+# Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
 steps:
   - script: |
       python -m pip install -r eng/ci_tools.txt
@@ -20,11 +16,12 @@ steps:
     inputs:
       scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
       arguments: >-
-        "$(TargetingString)" 
-        --mark_arg="${{ parameters.TestMarkArgument }}" 
-        --service="${{ parameters.ServiceDirectory }}" 
+        "$(TargetingString)"
+        --mark_arg="${{ parameters.TestMarkArgument }}"
+        --service="${{ parameters.ServiceDirectory }}"
         --toxenv="bandit"
         --disablecov
         --filter-type="Omit_management"
+        ${{ parameters.AdditionalTestArgs }}
     env: ${{ parameters.EnvVars }}
     condition: and(succeededOrFailed(), ne(variables['Skip.Bandit'],'true'))

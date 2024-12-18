@@ -1,8 +1,8 @@
-from typing import List, Any
+from typing import List, Any, Optional
 import os
 import bs4
 import urllib3
-from ci_tools.functions import str_to_bool
+from ci_tools.variables import str_to_bool
 
 http = urllib3.PoolManager()
 # arguments: |
@@ -124,7 +124,7 @@ class CondaConfiguration:
         common_root: str,
         in_batch: bool,
         checkout: List[CheckoutConfiguration],
-        created_sdist_path: str = None,
+        created_sdist_path: Optional[str] = None,
         service: str = "",
         conda_py_versions: List[str] = [],
         channels: List[str] = [],
@@ -133,17 +133,17 @@ class CondaConfiguration:
         self.common_root: str = common_root
         self.in_batch: bool = in_batch
         self.checkout: List[CheckoutConfiguration] = checkout
-        self.created_sdist_path: str = created_sdist_path
+        self.created_sdist_path: Optional[str] = created_sdist_path
         self.service: str = service
         self.conda_py_versions = conda_py_versions
         self.channels = channels
 
     @classmethod
     def from_json(cls, raw_json_blob: dict):
-        name = raw_json_blob.get("name")
+        name = raw_json_blob.get("name", None)
         common_root = raw_json_blob.get("common_root", None)
         in_batch = str_to_bool(raw_json_blob["in_batch"])
-        checkout_config = parse_checkout_config(raw_json_blob.get("checkout"))
+        checkout_config = parse_checkout_config(raw_json_blob.get("checkout", []))
         conda_py_versions = raw_json_blob.get("conda_py_versions", [])
         service = raw_json_blob.get("service", None)
         channels = raw_json_blob.get("channels", [])

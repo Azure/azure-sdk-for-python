@@ -4,10 +4,11 @@ import os, tempfile, shutil
 import pytest
 
 from ci_tools.parsing import update_build_config, get_build_config, get_config_setting
+from ci_tools.environment_exclusions import is_check_enabled
 
 integration_folder = os.path.join(os.path.dirname(__file__), "integration")
-pyproject_folder = os.path.join(integration_folder, "scenarios", "sample_pyprojects")
-pyproject_file = os.path.join(integration_folder, "scenarios", "sample_pyprojects", "pyproject.toml")
+pyproject_folder = os.path.join(integration_folder, "scenarios", "pyproject_build_config")
+pyproject_file = os.path.join(integration_folder, "scenarios", "pyproject_build_config", "pyproject.toml")
 
 
 @pytest.mark.parametrize(
@@ -59,12 +60,27 @@ def test_nonpresent_pyproject_update():
         assert reloaded_build_config == update_result
 
 
+@pytest.mark.parametrize(
+    "check_name, environment_value, expected_result",
+    [("mindependency", "true", True), ("mindependency", "false", False)],
+)
+def test_environment_override(check_name, environment_value, expected_result):
+    with tempfile.TemporaryDirectory() as temp_dir:
+        new_path = shutil.copy(pyproject_file, temp_dir)
+
+        os.environ[f"{os.path.basename(temp_dir).upper()}_{check_name.upper()}"] = environment_value
+        result = is_check_enabled(temp_dir, check_name)
+
+        assert result == expected_result
+
+
 def test_pyproject_update_check_override():
     with tempfile.TemporaryDirectory() as temp_dir:
         new_path = shutil.copy(pyproject_file, temp_dir)
 
         build_config = get_build_config(temp_dir)
 
+        assert build_config is not None
         build_config["pyright"] = True
 
         update_result = update_build_config(temp_dir, build_config)

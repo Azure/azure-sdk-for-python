@@ -26,13 +26,10 @@ from ._operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class DocumentIntelligenceClient(
-    DocumentIntelligenceClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class DocumentIntelligenceClient(DocumentIntelligenceClientOperationsMixin):
     """DocumentIntelligenceClient.
 
     :param endpoint: The Document Intelligence service endpoint. Required.
@@ -41,9 +38,8 @@ class DocumentIntelligenceClient(
      AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2024-07-31-preview". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Default value is "2024-11-30".
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -116,9 +112,7 @@ class DocumentIntelligenceClient(
         await self._client.__aexit__(*exc_details)
 
 
-class DocumentIntelligenceAdministrationClient(
-    DocumentIntelligenceAdministrationClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class DocumentIntelligenceAdministrationClient(DocumentIntelligenceAdministrationClientOperationsMixin):
     """DocumentIntelligenceAdministrationClient.
 
     :param endpoint: The Document Intelligence service endpoint. Required.
@@ -127,9 +121,8 @@ class DocumentIntelligenceAdministrationClient(
      AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2024-07-31-preview". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Default value is "2024-11-30".
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.

@@ -1,0 +1,22 @@
+[
+  {
+    "name": "azure-core",
+    "common_root": "azure",
+    "service": "core",
+    "in_batch": "True",
+    "checkout": [
+      {
+        "package": "azure-core",
+        "version": "1.32.0"
+      },
+      {
+        "package": "azure-mgmt-core",
+        "version": "1.5.0"
+      },
+      {
+        "package": "azure-common",
+        "version": "1.1.28"
+      }
+    ]
+  }
+]

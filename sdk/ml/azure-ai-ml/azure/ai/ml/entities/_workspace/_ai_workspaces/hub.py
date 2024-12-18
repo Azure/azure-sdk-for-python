@@ -5,14 +5,16 @@
 # pylint: disable=too-many-instance-attributes,protected-access
 from typing import Any, Dict, List, Optional
 
-from azure.ai.ml._restclient.v2023_08_01_preview.models import Workspace as RestWorkspace
-from azure.ai.ml._restclient.v2023_08_01_preview.models import WorkspaceHubConfig as RestWorkspaceHubConfig
+from azure.ai.ml._restclient.v2024_10_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml._restclient.v2024_10_01_preview.models import WorkspaceHubConfig as RestWorkspaceHubConfig
 from azure.ai.ml._schema.workspace import HubSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import WorkspaceKind
-from azure.ai.ml.entities import CustomerManagedKey, Workspace
 from azure.ai.ml.entities._credentials import IdentityConfiguration
+from azure.ai.ml.entities._workspace.customer_managed_key import CustomerManagedKey
+from azure.ai.ml.entities._workspace.network_acls import NetworkAcls
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
+from azure.ai.ml.entities._workspace.workspace import Workspace
 
 
 @experimental
@@ -54,6 +56,8 @@ class Hub(Workspace):
     :param public_network_access: Whether to allow public endpoint connectivity.
         when a workspace is private link enabled.
     :type public_network_access: str
+    :param network_acls: The network access control list (ACL) settings of the workspace.
+    :type network_acls: ~azure.ai.ml.entities.NetworkAcls
     :param identity: The hub's Managed Identity (user assigned, or system assigned).
     :type identity: ~azure.ai.ml.entities.IdentityConfiguration
     :param primary_user_assigned_identity: The hub's primary user assigned identity.
@@ -92,6 +96,7 @@ class Hub(Workspace):
         container_registry: Optional[str] = None,
         customer_managed_key: Optional[CustomerManagedKey] = None,
         public_network_access: Optional[str] = None,
+        network_acls: Optional[NetworkAcls] = None,
         identity: Optional[IdentityConfiguration] = None,
         primary_user_assigned_identity: Optional[str] = None,
         enable_data_isolation: bool = False,
@@ -115,6 +120,7 @@ class Hub(Workspace):
             resource_group=resource_group,
             customer_managed_key=customer_managed_key,
             public_network_access=public_network_access,
+            network_acls=network_acls,
             identity=identity,
             primary_user_assigned_identity=primary_user_assigned_identity,
             managed_network=managed_network,
@@ -129,11 +135,11 @@ class Hub(Workspace):
         return HubSchema
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspace) -> Optional["Hub"]:
+    def _from_rest_object(cls, rest_obj: RestWorkspace, v2_service_context: Optional[object] = None) -> Optional["Hub"]:
         if not rest_obj:
             return None
 
-        workspace_object = Workspace._from_rest_object(rest_obj)
+        workspace_object = Workspace._from_rest_object(rest_obj, v2_service_context)
 
         default_resource_group = None
 
@@ -152,6 +158,7 @@ class Hub(Workspace):
                 managed_network=workspace_object.managed_network,
                 customer_managed_key=workspace_object.customer_managed_key,
                 public_network_access=workspace_object.public_network_access,
+                network_acls=workspace_object.network_acls,
                 identity=workspace_object.identity,
                 primary_user_assigned_identity=workspace_object.primary_user_assigned_identity,
                 storage_account=rest_obj.storage_account,

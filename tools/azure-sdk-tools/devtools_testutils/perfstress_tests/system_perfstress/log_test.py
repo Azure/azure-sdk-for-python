@@ -9,6 +9,7 @@ import asyncio
 
 from devtools_testutils.perfstress_tests import PerfStressTest
 
+
 # Used for logging every step and property of the perf test
 class LogTest(PerfStressTest):
     _logged_global_completed_operations = 0
@@ -41,11 +42,13 @@ class LogTest(PerfStressTest):
 
     async def cleanup(self):
         await super().cleanup()
-        self.log(f'cleanup() - Completed Operations: {self._logged_completed_operations}')
+        self.log(f"cleanup() - Completed Operations: {self._logged_completed_operations}")
 
     async def global_cleanup(self):
         await super().global_cleanup()
-        self.log(f'global_cleanup() - Global Completed Operations: {self._logged_global_completed_operations}')
+        self.log(f"global_cleanup() - Global Completed Operations: {self._logged_global_completed_operations}")
 
     def log(self, message):
-        print(f'[{(time.time() - type(self).start_time):.3f}] [PID: {os.getpid()}] [Parallel: {self._parallel_index}] {message}')
+        print(
+            f"[{(time.time() - type(self).start_time):.3f}] [PID: {os.getpid()}] [Parallel: {self._parallel_index}] {message}"
+        )

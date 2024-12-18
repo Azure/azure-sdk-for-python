@@ -26,7 +26,10 @@
 from typing import TypeVar
 from azure.core.exceptions import TooManyRedirectsError
 from azure.core.pipeline import PipelineResponse, PipelineRequest
-from azure.core.pipeline.transport import AsyncHttpResponse as LegacyAsyncHttpResponse, HttpRequest as LegacyHttpRequest
+from azure.core.pipeline.transport import (
+    AsyncHttpResponse as LegacyAsyncHttpResponse,
+    HttpRequest as LegacyHttpRequest,
+)
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from . import AsyncHTTPPolicy
 from ._redirect import RedirectPolicyBase, domain_changed
@@ -62,9 +65,9 @@ class AsyncRedirectPolicy(RedirectPolicyBase, AsyncHTTPPolicy[HTTPRequestType, A
 
         :param request: The PipelineRequest object
         :type request: ~azure.core.pipeline.PipelineRequest
-        :return: Returns the PipelineResponse or raises error if maximum redirects exceeded.
+        :return: the PipelineResponse.
         :rtype: ~azure.core.pipeline.PipelineResponse
-        :raises: ~azure.core.exceptions.TooManyRedirectsError if maximum redirects exceeded.
+        :raises ~azure.core.exceptions.TooManyRedirectsError: if maximum redirects exceeded.
         """
         redirects_remaining = True
         redirect_settings = self.configure_redirects(request.context.options)

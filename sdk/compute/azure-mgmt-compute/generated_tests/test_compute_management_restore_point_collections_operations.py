@@ -20,7 +20,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_restore_point_collections_create_or_update(self, resource_group):
         response = self.client.restore_point_collections.create_or_update(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
@@ -35,11 +35,41 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                         "consistencyMode": "str",
                         "excludeDisks": [{"id": "str"}],
                         "id": "str",
+                        "instanceView": {
+                            "diskRestorePoints": [
+                                {
+                                    "id": "str",
+                                    "replicationStatus": {
+                                        "completionPercent": 0,
+                                        "status": {
+                                            "code": "str",
+                                            "displayStatus": "str",
+                                            "level": "str",
+                                            "message": "str",
+                                            "time": "2020-02-20 00:00:00",
+                                        },
+                                    },
+                                }
+                            ],
+                            "statuses": [
+                                {
+                                    "code": "str",
+                                    "displayStatus": "str",
+                                    "level": "str",
+                                    "message": "str",
+                                    "time": "2020-02-20 00:00:00",
+                                }
+                            ],
+                        },
                         "name": "str",
                         "provisioningState": "str",
                         "sourceMetadata": {
                             "diagnosticsProfile": {"bootDiagnostics": {"enabled": bool, "storageUri": "str"}},
-                            "hardwareProfile": {"vmSize": "str"},
+                            "hardwareProfile": {
+                                "vmSize": "str",
+                                "vmSizeProperties": {"vCPUsAvailable": 0, "vCPUsPerCore": 0},
+                            },
+                            "hyperVGeneration": "str",
                             "licenseType": "str",
                             "location": "str",
                             "osProfile": {
@@ -50,7 +80,15 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                                 "customData": "str",
                                 "linuxConfiguration": {
                                     "disablePasswordAuthentication": bool,
-                                    "patchSettings": {"assessmentMode": "str", "patchMode": "str"},
+                                    "enableVMAgentPlatformUpdates": bool,
+                                    "patchSettings": {
+                                        "assessmentMode": "str",
+                                        "automaticByPlatformSettings": {
+                                            "bypassPlatformSafetyChecksOnUserSchedule": bool,
+                                            "rebootSetting": "str",
+                                        },
+                                        "patchMode": "str",
+                                    },
                                     "provisionVMAgent": bool,
                                     "ssh": {"publicKeys": [{"keyData": "str", "path": "str"}]},
                                 },
@@ -71,8 +109,13 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                                         }
                                     ],
                                     "enableAutomaticUpdates": bool,
+                                    "enableVMAgentPlatformUpdates": bool,
                                     "patchSettings": {
                                         "assessmentMode": "str",
+                                        "automaticByPlatformSettings": {
+                                            "bypassPlatformSafetyChecksOnUserSchedule": bool,
+                                            "rebootSetting": "str",
+                                        },
                                         "enableHotpatching": bool,
                                         "patchMode": "str",
                                     },
@@ -83,6 +126,8 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                             },
                             "securityProfile": {
                                 "encryptionAtHost": bool,
+                                "encryptionIdentity": {"userAssignedIdentityResourceId": "str"},
+                                "proxyAgentSettings": {"enabled": bool, "keyIncarnationId": 0, "mode": "str"},
                                 "securityType": "str",
                                 "uefiSettings": {"secureBootEnabled": bool, "vTpmEnabled": bool},
                             },
@@ -90,20 +135,34 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                                 "dataDisks": [
                                     {
                                         "caching": "str",
-                                        "diskRestorePoint": {"id": "str"},
+                                        "diskRestorePoint": {
+                                            "encryption": {"diskEncryptionSet": {"id": "str"}, "type": "str"},
+                                            "id": "str",
+                                            "sourceDiskRestorePoint": {"id": "str"},
+                                        },
                                         "diskSizeGB": 0,
                                         "lun": 0,
                                         "managedDisk": {
                                             "diskEncryptionSet": {"id": "str"},
                                             "id": "str",
+                                            "securityProfile": {
+                                                "diskEncryptionSet": {"id": "str"},
+                                                "securityEncryptionType": "str",
+                                            },
                                             "storageAccountType": "str",
                                         },
                                         "name": "str",
+                                        "writeAcceleratorEnabled": bool,
                                     }
                                 ],
+                                "diskControllerType": "str",
                                 "osDisk": {
                                     "caching": "str",
-                                    "diskRestorePoint": {"id": "str"},
+                                    "diskRestorePoint": {
+                                        "encryption": {"diskEncryptionSet": {"id": "str"}, "type": "str"},
+                                        "id": "str",
+                                        "sourceDiskRestorePoint": {"id": "str"},
+                                    },
                                     "diskSizeGB": 0,
                                     "encryptionSettings": {
                                         "diskEncryptionKey": {"secretUrl": "str", "sourceVault": {"id": "str"}},
@@ -113,14 +172,21 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                                     "managedDisk": {
                                         "diskEncryptionSet": {"id": "str"},
                                         "id": "str",
+                                        "securityProfile": {
+                                            "diskEncryptionSet": {"id": "str"},
+                                            "securityEncryptionType": "str",
+                                        },
                                         "storageAccountType": "str",
                                     },
                                     "name": "str",
                                     "osType": "str",
+                                    "writeAcceleratorEnabled": bool,
                                 },
                             },
+                            "userData": "str",
                             "vmId": "str",
                         },
+                        "sourceRestorePoint": {"id": "str"},
                         "timeCreated": "2020-02-20 00:00:00",
                         "type": "str",
                     }
@@ -129,7 +195,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2021-03-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -137,7 +203,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_restore_point_collections_update(self, resource_group):
         response = self.client.restore_point_collections.update(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
@@ -149,11 +215,41 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                         "consistencyMode": "str",
                         "excludeDisks": [{"id": "str"}],
                         "id": "str",
+                        "instanceView": {
+                            "diskRestorePoints": [
+                                {
+                                    "id": "str",
+                                    "replicationStatus": {
+                                        "completionPercent": 0,
+                                        "status": {
+                                            "code": "str",
+                                            "displayStatus": "str",
+                                            "level": "str",
+                                            "message": "str",
+                                            "time": "2020-02-20 00:00:00",
+                                        },
+                                    },
+                                }
+                            ],
+                            "statuses": [
+                                {
+                                    "code": "str",
+                                    "displayStatus": "str",
+                                    "level": "str",
+                                    "message": "str",
+                                    "time": "2020-02-20 00:00:00",
+                                }
+                            ],
+                        },
                         "name": "str",
                         "provisioningState": "str",
                         "sourceMetadata": {
                             "diagnosticsProfile": {"bootDiagnostics": {"enabled": bool, "storageUri": "str"}},
-                            "hardwareProfile": {"vmSize": "str"},
+                            "hardwareProfile": {
+                                "vmSize": "str",
+                                "vmSizeProperties": {"vCPUsAvailable": 0, "vCPUsPerCore": 0},
+                            },
+                            "hyperVGeneration": "str",
                             "licenseType": "str",
                             "location": "str",
                             "osProfile": {
@@ -164,7 +260,15 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                                 "customData": "str",
                                 "linuxConfiguration": {
                                     "disablePasswordAuthentication": bool,
-                                    "patchSettings": {"assessmentMode": "str", "patchMode": "str"},
+                                    "enableVMAgentPlatformUpdates": bool,
+                                    "patchSettings": {
+                                        "assessmentMode": "str",
+                                        "automaticByPlatformSettings": {
+                                            "bypassPlatformSafetyChecksOnUserSchedule": bool,
+                                            "rebootSetting": "str",
+                                        },
+                                        "patchMode": "str",
+                                    },
                                     "provisionVMAgent": bool,
                                     "ssh": {"publicKeys": [{"keyData": "str", "path": "str"}]},
                                 },
@@ -185,8 +289,13 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                                         }
                                     ],
                                     "enableAutomaticUpdates": bool,
+                                    "enableVMAgentPlatformUpdates": bool,
                                     "patchSettings": {
                                         "assessmentMode": "str",
+                                        "automaticByPlatformSettings": {
+                                            "bypassPlatformSafetyChecksOnUserSchedule": bool,
+                                            "rebootSetting": "str",
+                                        },
                                         "enableHotpatching": bool,
                                         "patchMode": "str",
                                     },
@@ -197,6 +306,8 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                             },
                             "securityProfile": {
                                 "encryptionAtHost": bool,
+                                "encryptionIdentity": {"userAssignedIdentityResourceId": "str"},
+                                "proxyAgentSettings": {"enabled": bool, "keyIncarnationId": 0, "mode": "str"},
                                 "securityType": "str",
                                 "uefiSettings": {"secureBootEnabled": bool, "vTpmEnabled": bool},
                             },
@@ -204,20 +315,34 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                                 "dataDisks": [
                                     {
                                         "caching": "str",
-                                        "diskRestorePoint": {"id": "str"},
+                                        "diskRestorePoint": {
+                                            "encryption": {"diskEncryptionSet": {"id": "str"}, "type": "str"},
+                                            "id": "str",
+                                            "sourceDiskRestorePoint": {"id": "str"},
+                                        },
                                         "diskSizeGB": 0,
                                         "lun": 0,
                                         "managedDisk": {
                                             "diskEncryptionSet": {"id": "str"},
                                             "id": "str",
+                                            "securityProfile": {
+                                                "diskEncryptionSet": {"id": "str"},
+                                                "securityEncryptionType": "str",
+                                            },
                                             "storageAccountType": "str",
                                         },
                                         "name": "str",
+                                        "writeAcceleratorEnabled": bool,
                                     }
                                 ],
+                                "diskControllerType": "str",
                                 "osDisk": {
                                     "caching": "str",
-                                    "diskRestorePoint": {"id": "str"},
+                                    "diskRestorePoint": {
+                                        "encryption": {"diskEncryptionSet": {"id": "str"}, "type": "str"},
+                                        "id": "str",
+                                        "sourceDiskRestorePoint": {"id": "str"},
+                                    },
                                     "diskSizeGB": 0,
                                     "encryptionSettings": {
                                         "diskEncryptionKey": {"secretUrl": "str", "sourceVault": {"id": "str"}},
@@ -227,14 +352,21 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                                     "managedDisk": {
                                         "diskEncryptionSet": {"id": "str"},
                                         "id": "str",
+                                        "securityProfile": {
+                                            "diskEncryptionSet": {"id": "str"},
+                                            "securityEncryptionType": "str",
+                                        },
                                         "storageAccountType": "str",
                                     },
                                     "name": "str",
                                     "osType": "str",
+                                    "writeAcceleratorEnabled": bool,
                                 },
                             },
+                            "userData": "str",
                             "vmId": "str",
                         },
+                        "sourceRestorePoint": {"id": "str"},
                         "timeCreated": "2020-02-20 00:00:00",
                         "type": "str",
                     }
@@ -242,7 +374,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                 "source": {"id": "str", "location": "str"},
                 "tags": {"str": "str"},
             },
-            api_version="2021-03-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -250,11 +382,11 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_restore_point_collections_begin_delete(self, resource_group):
         response = self.client.restore_point_collections.begin_delete(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
-            api_version="2021-03-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -262,11 +394,11 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_restore_point_collections_get(self, resource_group):
         response = self.client.restore_point_collections.get(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
-            api_version="2021-03-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -274,10 +406,10 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_restore_point_collections_list(self, resource_group):
         response = self.client.restore_point_collections.list(
             resource_group_name=resource_group.name,
-            api_version="2021-03-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -285,9 +417,9 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_all(self, resource_group):
+    def test_restore_point_collections_list_all(self, resource_group):
         response = self.client.restore_point_collections.list_all(
-            api_version="2021-03-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

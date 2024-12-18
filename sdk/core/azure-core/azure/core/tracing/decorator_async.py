@@ -27,7 +27,16 @@
 
 import functools
 
-from typing import Awaitable, Callable, Any, TypeVar, overload, Optional, Mapping, TYPE_CHECKING
+from typing import (
+    Awaitable,
+    Callable,
+    Any,
+    TypeVar,
+    overload,
+    Optional,
+    Mapping,
+    TYPE_CHECKING,
+)
 from typing_extensions import ParamSpec
 from .common import change_context, get_function_and_class_name
 from . import SpanKind as _SpanKind
@@ -56,8 +65,8 @@ def distributed_trace_async(
     pass
 
 
-def distributed_trace_async(
-    __func: Optional[Callable[P, Awaitable[T]]] = None,  # pylint: disable=unused-argument
+def distributed_trace_async(  # pylint: disable=unused-argument
+    __func: Optional[Callable[P, Awaitable[T]]] = None,
     *,
     name_of_span: Optional[str] = None,
     kind: Optional["SpanKind"] = None,
@@ -67,6 +76,14 @@ def distributed_trace_async(
     """Decorator to apply to function to get traced automatically.
 
     Span will use the func name or "name_of_span".
+
+    Note:
+
+    This decorator SHOULD NOT be used by application developers. It's
+    intended to be called by Azure client libraries only.
+
+    Application developers should use OpenTelemetry or other tracing libraries to
+    instrument their applications.
 
     :param callable __func: A function to decorate
     :keyword name_of_span: The span name to replace func name if necessary
@@ -89,6 +106,9 @@ def distributed_trace_async(
             merge_span = kwargs.pop("merge_span", False)
             passed_in_parent = kwargs.pop("parent_span", None)
 
+            # Assume this will be popped in DistributedTracingPolicy.
+            func_tracing_attributes = kwargs.get("tracing_attributes", tracing_attributes)
+
             span_impl_type = settings.tracing_implementation()
             if span_impl_type is None:
                 return await func(*args, **kwargs)
@@ -100,7 +120,7 @@ def distributed_trace_async(
             with change_context(passed_in_parent):
                 name = name_of_span or get_function_and_class_name(func, *args)
                 with span_impl_type(name=name, kind=kind) as span:
-                    for key, value in tracing_attributes.items():
+                    for key, value in func_tracing_attributes.items():
                         span.add_attribute(key, value)
                     return await func(*args, **kwargs)
 

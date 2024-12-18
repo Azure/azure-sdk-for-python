@@ -196,8 +196,6 @@ class AutoMLImageSamples(object):
             max_trials=10,
             max_concurrent_trials=2,
         )
-        # Submit the AutoML job.
-        image_job.submit()
         # [END automl.automl_image_job.image_limit_settings]
 
         # [START automl.automl_image_job.image_classification_model_settings]

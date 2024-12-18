@@ -52,7 +52,11 @@ from ..._enum_meta import CaseInsensitiveEnumMeta
 
 HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
 AllHttpResponseType = TypeVar(
-    "AllHttpResponseType", HttpResponse, LegacyHttpResponse, AsyncHttpResponse, LegacyAsyncHttpResponse
+    "AllHttpResponseType",
+    HttpResponse,
+    LegacyHttpResponse,
+    AsyncHttpResponse,
+    LegacyAsyncHttpResponse,
 )
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 ClsRetryPolicy = TypeVar("ClsRetryPolicy", bound="RetryPolicyBase")
@@ -203,7 +207,9 @@ class RetryPolicyBase:
         return True
 
     def is_retry(
-        self, settings: Dict[str, Any], response: PipelineResponse[HTTPRequestType, AllHttpResponseType]
+        self,
+        settings: Dict[str, Any],
+        response: PipelineResponse[HTTPRequestType, AllHttpResponseType],
     ) -> bool:
         """Checks if method/status code is retryable.
 
@@ -257,7 +263,10 @@ class RetryPolicyBase:
         self,
         settings: Dict[str, Any],
         response: Optional[
-            Union[PipelineRequest[HTTPRequestType], PipelineResponse[HTTPRequestType, AllHttpResponseType]]
+            Union[
+                PipelineRequest[HTTPRequestType],
+                PipelineResponse[HTTPRequestType, AllHttpResponseType],
+            ]
         ] = None,
         error: Optional[Exception] = None,
     ) -> bool:
@@ -276,7 +285,11 @@ class RetryPolicyBase:
         """
         # FIXME This code is not None safe: https://github.com/Azure/azure-sdk-for-python/issues/31528
         response = cast(
-            Union[PipelineRequest[HTTPRequestType], PipelineResponse[HTTPRequestType, AllHttpResponseType]], response
+            Union[
+                PipelineRequest[HTTPRequestType],
+                PipelineResponse[HTTPRequestType, AllHttpResponseType],
+            ],
+            response,
         )
 
         settings["total"] -= 1
@@ -343,7 +356,10 @@ class RetryPolicyBase:
             context["history"] = retry_settings["history"]
 
     def _configure_timeout(
-        self, request: PipelineRequest[HTTPRequestType], absolute_timeout: float, is_response_error: bool
+        self,
+        request: PipelineRequest[HTTPRequestType],
+        absolute_timeout: float,
+        is_response_error: bool,
     ) -> None:
         if absolute_timeout <= 0:
             if is_response_error:
@@ -406,28 +422,21 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]
 
     :keyword int retry_total: Total number of retries to allow. Takes precedence over other counts.
      Default value is 10.
-
     :keyword int retry_connect: How many connection-related errors to retry on.
      These are errors raised before the request is sent to the remote server,
      which we assume has not triggered the server to process the request. Default value is 3.
-
     :keyword int retry_read: How many times to retry on read errors.
      These errors are raised after the request was sent to the server, so the
      request may have side-effects. Default value is 3.
-
     :keyword int retry_status: How many times to retry on bad status codes. Default value is 3.
-
     :keyword float retry_backoff_factor: A backoff factor to apply between attempts after the second try
      (most errors are resolved immediately by a second try without a delay).
      In fixed mode, retry policy will always sleep for {backoff factor}.
      In 'exponential' mode, retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))`
      seconds. If the backoff_factor is 0.1, then the retry will sleep
      for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
-
     :keyword int retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
-
     :keyword RetryMode retry_mode: Fixed or exponential delay between attemps, default is exponential.
-
     :keyword int timeout: Timeout setting for the operation in seconds, default is 604800s (7 days).
 
     .. admonition:: Example:
@@ -461,7 +470,9 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]
         return False
 
     def _sleep_backoff(
-        self, settings: Dict[str, Any], transport: HttpTransport[HTTPRequestType, HTTPResponseType]
+        self,
+        settings: Dict[str, Any],
+        transport: HttpTransport[HTTPRequestType, HTTPResponseType],
     ) -> None:
         """Sleep using exponential backoff. Immediately returns if backoff is 0.
 
@@ -504,10 +515,10 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]
 
         :param request: The PipelineRequest object
         :type request: ~azure.core.pipeline.PipelineRequest
-        :return: Returns the PipelineResponse or raises error if maximum retries exceeded.
+        :return: The PipelineResponse.
         :rtype: ~azure.core.pipeline.PipelineResponse
-        :raises: ~azure.core.exceptions.AzureError if maximum retries exceeded.
-        :raises: ~azure.core.exceptions.ClientAuthenticationError if authentication
+        :raises ~azure.core.exceptions.AzureError: if maximum retries exceeded.
+        :raises ~azure.core.exceptions.ClientAuthenticationError: if authentication fails.
         """
         retry_active = True
         response = None
@@ -524,7 +535,8 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]
             # The correct fix is to make PipelineContext generic, but that's a breaking change and a lot of
             # generic to update in Pipeline, PipelineClient, PipelineRequest, PipelineResponse, etc.
             transport: HttpTransport[HTTPRequestType, HTTPResponseType] = cast(
-                HttpTransport[HTTPRequestType, HTTPResponseType], request.context.transport
+                HttpTransport[HTTPRequestType, HTTPResponseType],
+                request.context.transport,
             )
             try:
                 self._configure_timeout(request, absolute_timeout, is_response_error)
@@ -537,7 +549,7 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]
                         is_response_error = True
                         continue
                 break
-            except ClientAuthenticationError:  # pylint:disable=try-except-raise
+            except ClientAuthenticationError:
                 # the authentication policy failed such that the client's request can't
                 # succeed--we'll never have a response to it, so propagate the exception
                 raise

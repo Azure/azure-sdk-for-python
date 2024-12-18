@@ -6,237 +6,655 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models_py3 import AcceptTransferRequest
 from ._models_py3 import AddressDetails
+from ._models_py3 import AddressValidationResponse
 from ._models_py3 import Agreement
 from ._models_py3 import AgreementListResult
+from ._models_py3 import AgreementProperties
 from ._models_py3 import Amount
+from ._models_py3 import AppliedScopeProperties
+from ._models_py3 import AssociatedTenant
+from ._models_py3 import AssociatedTenantListResult
+from ._models_py3 import AssociatedTenantProperties
 from ._models_py3 import AvailableBalance
+from ._models_py3 import AvailableBalanceProperties
+from ._models_py3 import AvailableBalancePropertiesAmount
+from ._models_py3 import AvailableBalancePropertiesTotalPaymentsOnAccount
 from ._models_py3 import AzurePlan
+from ._models_py3 import Beneficiary
 from ._models_py3 import BillingAccount
 from ._models_py3 import BillingAccountListResult
-from ._models_py3 import BillingAccountUpdateRequest
-from ._models_py3 import BillingPeriod
-from ._models_py3 import BillingPeriodsListResult
-from ._models_py3 import BillingPermissionsListResult
-from ._models_py3 import BillingPermissionsProperties
+from ._models_py3 import BillingAccountPatch
+from ._models_py3 import BillingAccountPolicy
+from ._models_py3 import BillingAccountPolicyProperties
+from ._models_py3 import BillingAccountPolicyPropertiesEnterpriseAgreementPolicies
+from ._models_py3 import BillingAccountProperties
+from ._models_py3 import BillingAccountPropertiesEnrollmentDetails
+from ._models_py3 import BillingAccountPropertiesRegistrationNumber
+from ._models_py3 import BillingAccountPropertiesSoldTo
+from ._models_py3 import BillingPermission
+from ._models_py3 import BillingPermissionListResult
+from ._models_py3 import BillingPlanInformation
 from ._models_py3 import BillingProfile
-from ._models_py3 import BillingProfileCreationRequest
 from ._models_py3 import BillingProfileInfo
 from ._models_py3 import BillingProfileListResult
-from ._models_py3 import BillingProfilesOnExpand
+from ._models_py3 import BillingProfilePolicy
+from ._models_py3 import BillingProfilePolicyProperties
+from ._models_py3 import BillingProfilePolicyPropertiesEnterpriseAgreementPolicies
+from ._models_py3 import BillingProfileProperties
+from ._models_py3 import BillingProfilePropertiesBillTo
+from ._models_py3 import BillingProfilePropertiesCurrentPaymentTerm
+from ._models_py3 import BillingProfilePropertiesIndirectRelationshipInfo
+from ._models_py3 import BillingProfilePropertiesShipTo
+from ._models_py3 import BillingProfilePropertiesSoldTo
 from ._models_py3 import BillingProperty
+from ._models_py3 import BillingPropertyProperties
+from ._models_py3 import BillingPropertyPropertiesEnrollmentDetails
+from ._models_py3 import BillingPropertyPropertiesSubscriptionServiceUsageAddress
+from ._models_py3 import BillingRequest
+from ._models_py3 import BillingRequestListResult
+from ._models_py3 import BillingRequestProperties
+from ._models_py3 import BillingRequestPropertiesCreatedBy
+from ._models_py3 import BillingRequestPropertiesLastUpdatedBy
+from ._models_py3 import BillingRequestPropertiesReviewedBy
 from ._models_py3 import BillingRoleAssignment
 from ._models_py3 import BillingRoleAssignmentListResult
+from ._models_py3 import BillingRoleAssignmentProperties
 from ._models_py3 import BillingRoleDefinition
 from ._models_py3 import BillingRoleDefinitionListResult
+from ._models_py3 import BillingRoleDefinitionProperties
 from ._models_py3 import BillingSubscription
-from ._models_py3 import BillingSubscriptionsListResult
+from ._models_py3 import BillingSubscriptionAlias
+from ._models_py3 import BillingSubscriptionAliasListResult
+from ._models_py3 import BillingSubscriptionAliasProperties
+from ._models_py3 import BillingSubscriptionListResult
+from ._models_py3 import BillingSubscriptionMergeRequest
+from ._models_py3 import BillingSubscriptionPatch
+from ._models_py3 import BillingSubscriptionProperties
+from ._models_py3 import BillingSubscriptionSplitRequest
+from ._models_py3 import BillingSubscriptionStatusDetails
+from ._models_py3 import CancelSubscriptionRequest
+from ._models_py3 import CheckAccessRequest
+from ._models_py3 import CheckAccessResponse
+from ._models_py3 import Commitment
 from ._models_py3 import Customer
 from ._models_py3 import CustomerListResult
 from ._models_py3 import CustomerPolicy
+from ._models_py3 import CustomerPolicyProperties
+from ._models_py3 import CustomerProperties
+from ._models_py3 import DeleteBillingProfileEligibilityDetail
+from ._models_py3 import DeleteBillingProfileEligibilityResult
+from ._models_py3 import DeleteInvoiceSectionEligibilityDetail
+from ._models_py3 import DeleteInvoiceSectionEligibilityResult
 from ._models_py3 import Department
-from ._models_py3 import Document
-from ._models_py3 import DownloadUrl
-from ._models_py3 import Enrollment
+from ._models_py3 import DepartmentListResult
+from ._models_py3 import DepartmentProperties
+from ._models_py3 import DetailedTransferStatus
+from ._models_py3 import DocumentDownloadRequest
+from ._models_py3 import DocumentDownloadResult
 from ._models_py3 import EnrollmentAccount
-from ._models_py3 import EnrollmentAccountContext
 from ._models_py3 import EnrollmentAccountListResult
-from ._models_py3 import EnrollmentAccountSummary
-from ._models_py3 import EnrollmentPolicies
-from ._models_py3 import ErrorDetails
+from ._models_py3 import EnrollmentAccountProperties
+from ._models_py3 import EnrollmentDetails
+from ._models_py3 import EnrollmentDetailsIndirectRelationshipInfo
+from ._models_py3 import EnterpriseAgreementPolicies
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
-from ._models_py3 import ErrorSubDetailsItem
+from ._models_py3 import ExtendedStatusDefinitionProperties
+from ._models_py3 import ExtendedStatusInfo
+from ._models_py3 import ExternalReference
+from ._models_py3 import FailedPayment
 from ._models_py3 import IndirectRelationshipInfo
-from ._models_py3 import Instruction
-from ._models_py3 import InstructionListResult
+from ._models_py3 import InitiateTransferRequest
 from ._models_py3 import Invoice
+from ._models_py3 import InvoiceDocument
 from ._models_py3 import InvoiceListResult
+from ._models_py3 import InvoiceProperties
+from ._models_py3 import InvoicePropertiesAmountDue
+from ._models_py3 import InvoicePropertiesAzurePrepaymentApplied
+from ._models_py3 import InvoicePropertiesBilledAmount
+from ._models_py3 import InvoicePropertiesCreditAmount
+from ._models_py3 import InvoicePropertiesFreeAzureCreditApplied
+from ._models_py3 import InvoicePropertiesRebillDetails
+from ._models_py3 import InvoicePropertiesRefundDetails
+from ._models_py3 import InvoicePropertiesSubTotal
+from ._models_py3 import InvoicePropertiesTaxAmount
+from ._models_py3 import InvoicePropertiesTotalAmount
 from ._models_py3 import InvoiceSection
-from ._models_py3 import InvoiceSectionCreationRequest
 from ._models_py3 import InvoiceSectionListResult
-from ._models_py3 import InvoiceSectionListWithCreateSubPermissionResult
+from ._models_py3 import InvoiceSectionProperties
 from ._models_py3 import InvoiceSectionWithCreateSubPermission
-from ._models_py3 import InvoiceSectionsOnExpand
+from ._models_py3 import InvoiceSectionWithCreateSubPermissionListResult
+from ._models_py3 import MoveBillingSubscriptionEligibilityResult
+from ._models_py3 import MoveBillingSubscriptionErrorDetails
+from ._models_py3 import MoveBillingSubscriptionRequest
+from ._models_py3 import MoveProductEligibilityResult
+from ._models_py3 import MoveProductEligibilityResultErrorDetails
+from ._models_py3 import MoveProductErrorDetails
+from ._models_py3 import MoveProductRequest
+from ._models_py3 import NextBillingCycleDetails
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
-from ._models_py3 import OperationsErrorDetails
-from ._models_py3 import OperationsErrorResponse
-from ._models_py3 import Participants
-from ._models_py3 import PaymentProperties
-from ._models_py3 import Policy
+from ._models_py3 import Participant
+from ._models_py3 import PartnerInitiateTransferRequest
+from ._models_py3 import PartnerTransferDetails
+from ._models_py3 import PartnerTransferDetailsListResult
+from ._models_py3 import Patch
+from ._models_py3 import Payment
+from ._models_py3 import PaymentAmount
+from ._models_py3 import PaymentDetail
+from ._models_py3 import PaymentMethod
+from ._models_py3 import PaymentMethodLink
+from ._models_py3 import PaymentMethodLinksListResult
+from ._models_py3 import PaymentMethodLogo
+from ._models_py3 import PaymentMethodProperties
+from ._models_py3 import PaymentMethodsListResult
+from ._models_py3 import PaymentOnAccount
+from ._models_py3 import PaymentOnAccountAmount
+from ._models_py3 import PaymentTerm
+from ._models_py3 import PaymentTermsEligibilityDetail
+from ._models_py3 import PaymentTermsEligibilityResult
+from ._models_py3 import PolicySummary
+from ._models_py3 import Price
+from ._models_py3 import Principal
 from ._models_py3 import Product
-from ._models_py3 import ProductsListResult
+from ._models_py3 import ProductDetails
+from ._models_py3 import ProductListResult
+from ._models_py3 import ProductPatch
+from ._models_py3 import ProductProperties
+from ._models_py3 import ProductPropertiesLastCharge
+from ._models_py3 import ProductPropertiesReseller
+from ._models_py3 import ProxyResource
+from ._models_py3 import ProxyResourceWithTags
+from ._models_py3 import PurchaseRequest
 from ._models_py3 import RebillDetails
+from ._models_py3 import RecipientTransferDetails
+from ._models_py3 import RecipientTransferDetailsListResult
+from ._models_py3 import RefundDetailsSummary
+from ._models_py3 import RefundDetailsSummaryAmountRefunded
+from ._models_py3 import RefundDetailsSummaryAmountRequested
+from ._models_py3 import RefundTransactionDetails
+from ._models_py3 import RefundTransactionDetailsAmountRefunded
+from ._models_py3 import RefundTransactionDetailsAmountRequested
+from ._models_py3 import RegistrationNumber
+from ._models_py3 import RenewProperties
+from ._models_py3 import RenewPropertiesResponse
+from ._models_py3 import RenewalTermDetails
 from ._models_py3 import Reseller
 from ._models_py3 import Reservation
-from ._models_py3 import ReservationPropertyUtilization
+from ._models_py3 import ReservationAppliedScopeProperties
+from ._models_py3 import ReservationExtendedStatusInfo
+from ._models_py3 import ReservationList
+from ._models_py3 import ReservationMergeProperties
+from ._models_py3 import ReservationOrder
+from ._models_py3 import ReservationOrderBillingPlanInformation
+from ._models_py3 import ReservationOrderList
+from ._models_py3 import ReservationPaymentDetail
+from ._models_py3 import ReservationPurchaseRequest
 from ._models_py3 import ReservationSkuProperty
+from ._models_py3 import ReservationSplitProperties
 from ._models_py3 import ReservationSummary
+from ._models_py3 import ReservationSwapProperties
 from ._models_py3 import ReservationUtilizationAggregates
 from ._models_py3 import ReservationsListResult
 from ._models_py3 import Resource
+from ._models_py3 import SavingsPlanModel
+from ._models_py3 import SavingsPlanModelList
+from ._models_py3 import SavingsPlanModelListResult
+from ._models_py3 import SavingsPlanOrderModel
+from ._models_py3 import SavingsPlanOrderModelList
+from ._models_py3 import SavingsPlanSummaryCount
+from ._models_py3 import SavingsPlanUpdateRequest
+from ._models_py3 import SavingsPlanUpdateRequestProperties
+from ._models_py3 import SavingsPlanUpdateValidateRequest
+from ._models_py3 import SavingsPlanValidResponseProperty
+from ._models_py3 import SavingsPlanValidateResponse
+from ._models_py3 import Sku
+from ._models_py3 import SkuName
+from ._models_py3 import SpendingLimitDetails
+from ._models_py3 import SubscriptionEnrollmentDetails
+from ._models_py3 import SubscriptionPolicy
+from ._models_py3 import SubscriptionPolicyProperties
+from ._models_py3 import SystemData
+from ._models_py3 import SystemOverrides
+from ._models_py3 import TaxIdentifier
 from ._models_py3 import Transaction
 from ._models_py3 import TransactionListResult
-from ._models_py3 import TransferBillingSubscriptionRequestProperties
-from ._models_py3 import TransferProductRequestProperties
-from ._models_py3 import ValidateAddressResponse
-from ._models_py3 import ValidateProductTransferEligibilityError
-from ._models_py3 import ValidateProductTransferEligibilityResult
-from ._models_py3 import ValidateSubscriptionTransferEligibilityError
-from ._models_py3 import ValidateSubscriptionTransferEligibilityResult
+from ._models_py3 import TransactionProperties
+from ._models_py3 import TransactionPropertiesAzureCreditApplied
+from ._models_py3 import TransactionPropertiesConsumptionCommitmentDecremented
+from ._models_py3 import TransactionPropertiesEffectivePrice
+from ._models_py3 import TransactionPropertiesMarketPrice
+from ._models_py3 import TransactionPropertiesRefundTransactionDetails
+from ._models_py3 import TransactionPropertiesSubTotal
+from ._models_py3 import TransactionPropertiesTax
+from ._models_py3 import TransactionPropertiesTransactionAmount
+from ._models_py3 import TransactionSummary
+from ._models_py3 import TransferDetails
+from ._models_py3 import TransferDetailsListResult
+from ._models_py3 import TransferError
+from ._models_py3 import TransferItemQueryParameter
+from ._models_py3 import TransitionDetails
+from ._models_py3 import Utilization
+from ._models_py3 import UtilizationAggregates
+from ._models_py3 import ValidateTransferListResponse
+from ._models_py3 import ValidateTransferResponse
+from ._models_py3 import ValidationResultProperties
 
 from ._billing_management_client_enums import AcceptanceMode
+from ._billing_management_client_enums import AccessDecision
 from ._billing_management_client_enums import AccountStatus
+from ._billing_management_client_enums import AccountSubType
 from ._billing_management_client_enums import AccountType
 from ._billing_management_client_enums import AddressValidationStatus
 from ._billing_management_client_enums import AgreementType
+from ._billing_management_client_enums import AppliedScopeType
 from ._billing_management_client_enums import AutoRenew
-from ._billing_management_client_enums import BillingFrequency
-from ._billing_management_client_enums import BillingProfileSpendingLimit
+from ._billing_management_client_enums import BillingAccountStatusReasonCode
+from ._billing_management_client_enums import BillingManagementTenantState
+from ._billing_management_client_enums import BillingPlan
 from ._billing_management_client_enums import BillingProfileStatus
 from ._billing_management_client_enums import BillingProfileStatusReasonCode
 from ._billing_management_client_enums import BillingRelationshipType
-from ._billing_management_client_enums import BillingSubscriptionStatusType
+from ._billing_management_client_enums import BillingRequestStatus
+from ._billing_management_client_enums import BillingRequestType
+from ._billing_management_client_enums import BillingSubscriptionOperationStatus
+from ._billing_management_client_enums import BillingSubscriptionStatus
+from ._billing_management_client_enums import Cancellation
+from ._billing_management_client_enums import CancellationReason
 from ._billing_management_client_enums import Category
+from ._billing_management_client_enums import CommitmentGrain
+from ._billing_management_client_enums import CreatedByType
+from ._billing_management_client_enums import CreditType
+from ._billing_management_client_enums import CustomerStatus
+from ._billing_management_client_enums import DeleteBillingProfileEligibilityCode
+from ._billing_management_client_enums import DeleteBillingProfileEligibilityStatus
+from ._billing_management_client_enums import DeleteInvoiceSectionEligibilityCode
+from ._billing_management_client_enums import DeleteInvoiceSectionEligibilityStatus
 from ._billing_management_client_enums import DocumentSource
-from ._billing_management_client_enums import DocumentType
+from ._billing_management_client_enums import EligibleProductType
+from ._billing_management_client_enums import EnrollmentAccountOwnerViewCharges
+from ._billing_management_client_enums import EnrollmentAuthLevelState
+from ._billing_management_client_enums import EnrollmentDepartmentAdminViewCharges
+from ._billing_management_client_enums import ExtendedTermOption
+from ._billing_management_client_enums import FailedPaymentReason
+from ._billing_management_client_enums import InitiatorCustomerType
+from ._billing_management_client_enums import InstanceFlexibility
 from ._billing_management_client_enums import InvoiceDocumentType
+from ._billing_management_client_enums import InvoiceSectionLabelManagementPolicy
 from ._billing_management_client_enums import InvoiceSectionState
+from ._billing_management_client_enums import InvoiceSectionStateReasonCode
 from ._billing_management_client_enums import InvoiceStatus
 from ._billing_management_client_enums import InvoiceType
 from ._billing_management_client_enums import MarketplacePurchasesPolicy
+from ._billing_management_client_enums import MarkupStatus
+from ._billing_management_client_enums import MoveValidationErrorCode
 from ._billing_management_client_enums import PaymentMethodFamily
-from ._billing_management_client_enums import ProductStatusType
-from ._billing_management_client_enums import ProductTransferValidationErrorCode
+from ._billing_management_client_enums import PaymentMethodStatus
+from ._billing_management_client_enums import PaymentStatus
+from ._billing_management_client_enums import PaymentTermsEligibilityCode
+from ._billing_management_client_enums import PaymentTermsEligibilityStatus
+from ._billing_management_client_enums import PolicyType
+from ._billing_management_client_enums import PrincipalType
+from ._billing_management_client_enums import ProductStatus
+from ._billing_management_client_enums import ProductTransferStatus
+from ._billing_management_client_enums import ProductType
+from ._billing_management_client_enums import ProvisioningState
+from ._billing_management_client_enums import ProvisioningTenantState
+from ._billing_management_client_enums import RefundReasonCode
+from ._billing_management_client_enums import RefundStatus
+from ._billing_management_client_enums import ReservationBillingPlan
 from ._billing_management_client_enums import ReservationPurchasesPolicy
-from ._billing_management_client_enums import ReservationType
+from ._billing_management_client_enums import ReservationStatusCode
+from ._billing_management_client_enums import SavingsPlanPurchasesPolicy
+from ._billing_management_client_enums import SavingsPlanTerm
+from ._billing_management_client_enums import ServiceDefinedResourceName
+from ._billing_management_client_enums import SpecialTaxationType
 from ._billing_management_client_enums import SpendingLimit
-from ._billing_management_client_enums import SpendingLimitForBillingProfile
-from ._billing_management_client_enums import StatusReasonCode
-from ._billing_management_client_enums import StatusReasonCodeForBillingProfile
+from ._billing_management_client_enums import SpendingLimitStatus
+from ._billing_management_client_enums import SpendingLimitType
+from ._billing_management_client_enums import SubscriptionBillingType
+from ._billing_management_client_enums import SubscriptionEnrollmentAccountStatus
+from ._billing_management_client_enums import SubscriptionStatusReason
 from ._billing_management_client_enums import SubscriptionTransferValidationErrorCode
-from ._billing_management_client_enums import TargetCloud
-from ._billing_management_client_enums import TransactionTypeKind
-from ._billing_management_client_enums import ViewCharges
+from ._billing_management_client_enums import SubscriptionWorkloadType
+from ._billing_management_client_enums import SupportLevel
+from ._billing_management_client_enums import SupportedAccountType
+from ._billing_management_client_enums import TaxIdentifierStatus
+from ._billing_management_client_enums import TaxIdentifierType
+from ._billing_management_client_enums import TransactionKind
+from ._billing_management_client_enums import TransactionType
+from ._billing_management_client_enums import TransferStatus
 from ._billing_management_client_enums import ViewChargesPolicy
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AcceptTransferRequest",
     "AddressDetails",
+    "AddressValidationResponse",
     "Agreement",
     "AgreementListResult",
+    "AgreementProperties",
     "Amount",
+    "AppliedScopeProperties",
+    "AssociatedTenant",
+    "AssociatedTenantListResult",
+    "AssociatedTenantProperties",
     "AvailableBalance",
+    "AvailableBalanceProperties",
+    "AvailableBalancePropertiesAmount",
+    "AvailableBalancePropertiesTotalPaymentsOnAccount",
     "AzurePlan",
+    "Beneficiary",
     "BillingAccount",
     "BillingAccountListResult",
-    "BillingAccountUpdateRequest",
-    "BillingPeriod",
-    "BillingPeriodsListResult",
-    "BillingPermissionsListResult",
-    "BillingPermissionsProperties",
+    "BillingAccountPatch",
+    "BillingAccountPolicy",
+    "BillingAccountPolicyProperties",
+    "BillingAccountPolicyPropertiesEnterpriseAgreementPolicies",
+    "BillingAccountProperties",
+    "BillingAccountPropertiesEnrollmentDetails",
+    "BillingAccountPropertiesRegistrationNumber",
+    "BillingAccountPropertiesSoldTo",
+    "BillingPermission",
+    "BillingPermissionListResult",
+    "BillingPlanInformation",
     "BillingProfile",
-    "BillingProfileCreationRequest",
     "BillingProfileInfo",
     "BillingProfileListResult",
-    "BillingProfilesOnExpand",
+    "BillingProfilePolicy",
+    "BillingProfilePolicyProperties",
+    "BillingProfilePolicyPropertiesEnterpriseAgreementPolicies",
+    "BillingProfileProperties",
+    "BillingProfilePropertiesBillTo",
+    "BillingProfilePropertiesCurrentPaymentTerm",
+    "BillingProfilePropertiesIndirectRelationshipInfo",
+    "BillingProfilePropertiesShipTo",
+    "BillingProfilePropertiesSoldTo",
     "BillingProperty",
+    "BillingPropertyProperties",
+    "BillingPropertyPropertiesEnrollmentDetails",
+    "BillingPropertyPropertiesSubscriptionServiceUsageAddress",
+    "BillingRequest",
+    "BillingRequestListResult",
+    "BillingRequestProperties",
+    "BillingRequestPropertiesCreatedBy",
+    "BillingRequestPropertiesLastUpdatedBy",
+    "BillingRequestPropertiesReviewedBy",
     "BillingRoleAssignment",
     "BillingRoleAssignmentListResult",
+    "BillingRoleAssignmentProperties",
     "BillingRoleDefinition",
     "BillingRoleDefinitionListResult",
+    "BillingRoleDefinitionProperties",
     "BillingSubscription",
-    "BillingSubscriptionsListResult",
+    "BillingSubscriptionAlias",
+    "BillingSubscriptionAliasListResult",
+    "BillingSubscriptionAliasProperties",
+    "BillingSubscriptionListResult",
+    "BillingSubscriptionMergeRequest",
+    "BillingSubscriptionPatch",
+    "BillingSubscriptionProperties",
+    "BillingSubscriptionSplitRequest",
+    "BillingSubscriptionStatusDetails",
+    "CancelSubscriptionRequest",
+    "CheckAccessRequest",
+    "CheckAccessResponse",
+    "Commitment",
     "Customer",
     "CustomerListResult",
     "CustomerPolicy",
+    "CustomerPolicyProperties",
+    "CustomerProperties",
+    "DeleteBillingProfileEligibilityDetail",
+    "DeleteBillingProfileEligibilityResult",
+    "DeleteInvoiceSectionEligibilityDetail",
+    "DeleteInvoiceSectionEligibilityResult",
     "Department",
-    "Document",
-    "DownloadUrl",
-    "Enrollment",
+    "DepartmentListResult",
+    "DepartmentProperties",
+    "DetailedTransferStatus",
+    "DocumentDownloadRequest",
+    "DocumentDownloadResult",
     "EnrollmentAccount",
-    "EnrollmentAccountContext",
     "EnrollmentAccountListResult",
-    "EnrollmentAccountSummary",
-    "EnrollmentPolicies",
-    "ErrorDetails",
+    "EnrollmentAccountProperties",
+    "EnrollmentDetails",
+    "EnrollmentDetailsIndirectRelationshipInfo",
+    "EnterpriseAgreementPolicies",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
     "ErrorResponse",
-    "ErrorSubDetailsItem",
+    "ExtendedStatusDefinitionProperties",
+    "ExtendedStatusInfo",
+    "ExternalReference",
+    "FailedPayment",
     "IndirectRelationshipInfo",
-    "Instruction",
-    "InstructionListResult",
+    "InitiateTransferRequest",
     "Invoice",
+    "InvoiceDocument",
     "InvoiceListResult",
+    "InvoiceProperties",
+    "InvoicePropertiesAmountDue",
+    "InvoicePropertiesAzurePrepaymentApplied",
+    "InvoicePropertiesBilledAmount",
+    "InvoicePropertiesCreditAmount",
+    "InvoicePropertiesFreeAzureCreditApplied",
+    "InvoicePropertiesRebillDetails",
+    "InvoicePropertiesRefundDetails",
+    "InvoicePropertiesSubTotal",
+    "InvoicePropertiesTaxAmount",
+    "InvoicePropertiesTotalAmount",
     "InvoiceSection",
-    "InvoiceSectionCreationRequest",
     "InvoiceSectionListResult",
-    "InvoiceSectionListWithCreateSubPermissionResult",
+    "InvoiceSectionProperties",
     "InvoiceSectionWithCreateSubPermission",
-    "InvoiceSectionsOnExpand",
+    "InvoiceSectionWithCreateSubPermissionListResult",
+    "MoveBillingSubscriptionEligibilityResult",
+    "MoveBillingSubscriptionErrorDetails",
+    "MoveBillingSubscriptionRequest",
+    "MoveProductEligibilityResult",
+    "MoveProductEligibilityResultErrorDetails",
+    "MoveProductErrorDetails",
+    "MoveProductRequest",
+    "NextBillingCycleDetails",
     "Operation",
     "OperationDisplay",
     "OperationListResult",
-    "OperationsErrorDetails",
-    "OperationsErrorResponse",
-    "Participants",
-    "PaymentProperties",
-    "Policy",
+    "Participant",
+    "PartnerInitiateTransferRequest",
+    "PartnerTransferDetails",
+    "PartnerTransferDetailsListResult",
+    "Patch",
+    "Payment",
+    "PaymentAmount",
+    "PaymentDetail",
+    "PaymentMethod",
+    "PaymentMethodLink",
+    "PaymentMethodLinksListResult",
+    "PaymentMethodLogo",
+    "PaymentMethodProperties",
+    "PaymentMethodsListResult",
+    "PaymentOnAccount",
+    "PaymentOnAccountAmount",
+    "PaymentTerm",
+    "PaymentTermsEligibilityDetail",
+    "PaymentTermsEligibilityResult",
+    "PolicySummary",
+    "Price",
+    "Principal",
     "Product",
-    "ProductsListResult",
+    "ProductDetails",
+    "ProductListResult",
+    "ProductPatch",
+    "ProductProperties",
+    "ProductPropertiesLastCharge",
+    "ProductPropertiesReseller",
+    "ProxyResource",
+    "ProxyResourceWithTags",
+    "PurchaseRequest",
     "RebillDetails",
+    "RecipientTransferDetails",
+    "RecipientTransferDetailsListResult",
+    "RefundDetailsSummary",
+    "RefundDetailsSummaryAmountRefunded",
+    "RefundDetailsSummaryAmountRequested",
+    "RefundTransactionDetails",
+    "RefundTransactionDetailsAmountRefunded",
+    "RefundTransactionDetailsAmountRequested",
+    "RegistrationNumber",
+    "RenewProperties",
+    "RenewPropertiesResponse",
+    "RenewalTermDetails",
     "Reseller",
     "Reservation",
-    "ReservationPropertyUtilization",
+    "ReservationAppliedScopeProperties",
+    "ReservationExtendedStatusInfo",
+    "ReservationList",
+    "ReservationMergeProperties",
+    "ReservationOrder",
+    "ReservationOrderBillingPlanInformation",
+    "ReservationOrderList",
+    "ReservationPaymentDetail",
+    "ReservationPurchaseRequest",
     "ReservationSkuProperty",
+    "ReservationSplitProperties",
     "ReservationSummary",
+    "ReservationSwapProperties",
     "ReservationUtilizationAggregates",
     "ReservationsListResult",
     "Resource",
+    "SavingsPlanModel",
+    "SavingsPlanModelList",
+    "SavingsPlanModelListResult",
+    "SavingsPlanOrderModel",
+    "SavingsPlanOrderModelList",
+    "SavingsPlanSummaryCount",
+    "SavingsPlanUpdateRequest",
+    "SavingsPlanUpdateRequestProperties",
+    "SavingsPlanUpdateValidateRequest",
+    "SavingsPlanValidResponseProperty",
+    "SavingsPlanValidateResponse",
+    "Sku",
+    "SkuName",
+    "SpendingLimitDetails",
+    "SubscriptionEnrollmentDetails",
+    "SubscriptionPolicy",
+    "SubscriptionPolicyProperties",
+    "SystemData",
+    "SystemOverrides",
+    "TaxIdentifier",
     "Transaction",
     "TransactionListResult",
-    "TransferBillingSubscriptionRequestProperties",
-    "TransferProductRequestProperties",
-    "ValidateAddressResponse",
-    "ValidateProductTransferEligibilityError",
-    "ValidateProductTransferEligibilityResult",
-    "ValidateSubscriptionTransferEligibilityError",
-    "ValidateSubscriptionTransferEligibilityResult",
+    "TransactionProperties",
+    "TransactionPropertiesAzureCreditApplied",
+    "TransactionPropertiesConsumptionCommitmentDecremented",
+    "TransactionPropertiesEffectivePrice",
+    "TransactionPropertiesMarketPrice",
+    "TransactionPropertiesRefundTransactionDetails",
+    "TransactionPropertiesSubTotal",
+    "TransactionPropertiesTax",
+    "TransactionPropertiesTransactionAmount",
+    "TransactionSummary",
+    "TransferDetails",
+    "TransferDetailsListResult",
+    "TransferError",
+    "TransferItemQueryParameter",
+    "TransitionDetails",
+    "Utilization",
+    "UtilizationAggregates",
+    "ValidateTransferListResponse",
+    "ValidateTransferResponse",
+    "ValidationResultProperties",
     "AcceptanceMode",
+    "AccessDecision",
     "AccountStatus",
+    "AccountSubType",
     "AccountType",
     "AddressValidationStatus",
     "AgreementType",
+    "AppliedScopeType",
     "AutoRenew",
-    "BillingFrequency",
-    "BillingProfileSpendingLimit",
+    "BillingAccountStatusReasonCode",
+    "BillingManagementTenantState",
+    "BillingPlan",
     "BillingProfileStatus",
     "BillingProfileStatusReasonCode",
     "BillingRelationshipType",
-    "BillingSubscriptionStatusType",
+    "BillingRequestStatus",
+    "BillingRequestType",
+    "BillingSubscriptionOperationStatus",
+    "BillingSubscriptionStatus",
+    "Cancellation",
+    "CancellationReason",
     "Category",
+    "CommitmentGrain",
+    "CreatedByType",
+    "CreditType",
+    "CustomerStatus",
+    "DeleteBillingProfileEligibilityCode",
+    "DeleteBillingProfileEligibilityStatus",
+    "DeleteInvoiceSectionEligibilityCode",
+    "DeleteInvoiceSectionEligibilityStatus",
     "DocumentSource",
-    "DocumentType",
+    "EligibleProductType",
+    "EnrollmentAccountOwnerViewCharges",
+    "EnrollmentAuthLevelState",
+    "EnrollmentDepartmentAdminViewCharges",
+    "ExtendedTermOption",
+    "FailedPaymentReason",
+    "InitiatorCustomerType",
+    "InstanceFlexibility",
     "InvoiceDocumentType",
+    "InvoiceSectionLabelManagementPolicy",
     "InvoiceSectionState",
+    "InvoiceSectionStateReasonCode",
     "InvoiceStatus",
     "InvoiceType",
     "MarketplacePurchasesPolicy",
+    "MarkupStatus",
+    "MoveValidationErrorCode",
     "PaymentMethodFamily",
-    "ProductStatusType",
-    "ProductTransferValidationErrorCode",
+    "PaymentMethodStatus",
+    "PaymentStatus",
+    "PaymentTermsEligibilityCode",
+    "PaymentTermsEligibilityStatus",
+    "PolicyType",
+    "PrincipalType",
+    "ProductStatus",
+    "ProductTransferStatus",
+    "ProductType",
+    "ProvisioningState",
+    "ProvisioningTenantState",
+    "RefundReasonCode",
+    "RefundStatus",
+    "ReservationBillingPlan",
     "ReservationPurchasesPolicy",
-    "ReservationType",
+    "ReservationStatusCode",
+    "SavingsPlanPurchasesPolicy",
+    "SavingsPlanTerm",
+    "ServiceDefinedResourceName",
+    "SpecialTaxationType",
     "SpendingLimit",
-    "SpendingLimitForBillingProfile",
-    "StatusReasonCode",
-    "StatusReasonCodeForBillingProfile",
+    "SpendingLimitStatus",
+    "SpendingLimitType",
+    "SubscriptionBillingType",
+    "SubscriptionEnrollmentAccountStatus",
+    "SubscriptionStatusReason",
     "SubscriptionTransferValidationErrorCode",
-    "TargetCloud",
-    "TransactionTypeKind",
-    "ViewCharges",
+    "SubscriptionWorkloadType",
+    "SupportLevel",
+    "SupportedAccountType",
+    "TaxIdentifierStatus",
+    "TaxIdentifierType",
+    "TransactionKind",
+    "TransactionType",
+    "TransferStatus",
     "ViewChargesPolicy",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

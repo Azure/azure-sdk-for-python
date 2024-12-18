@@ -348,8 +348,8 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
         await container.upsert_item({"id": "patch_item", "company": "Microsoft"})
         await container.upsert_item({"id": "delete_item", "company": "Microsoft"})
 
-        await container.read_item(item="read_item", partition_key="Microsoft")
-        lsn = container.client_connection.last_response_headers.get(HttpHeaders.LSN)
+        read_response = await container.read_item(item="read_item", partition_key="Microsoft")
+        lsn = read_response.get_response_headers().get(HttpHeaders.LSN)
 
         batch = [("create", ({"id": "create_item", "company": "Microsoft"},)),
                  ("replace", ("replace_item", {"id": "replace_item", "company": "Microsoft", "value": True})),
@@ -360,7 +360,7 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
 
         batch_response = await container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert len(batch_response) == 6
-        assert int(lsn) == int(container.client_connection.last_response_headers.get(HttpHeaders.LSN)) - 1
+        assert int(lsn) == int(batch_response.get_response_headers().get(HttpHeaders.LSN)) - 1
 
         await self.test_database.delete_container(container.id)
 

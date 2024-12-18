@@ -1,14 +1,50 @@
 # Release History
 
-## 1.3.0b1 (Unreleased)
+## 2.0.0b4 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
+### Features Added
+
+* Added support for load balancing between replicas.
+
 ### Bugs Fixed
 
 ### Other Changes
+
+## 2.0.0b3 (2024-11-13)
+
+### Breaking Changes
+
+* Allocation Id value changed so other providers can match the value.
+
+## 2.0.0b2 (2024-10-11)
+
+### Feature Added
+
+* Added AllocationId to the feature flag telemetry metadata when the feature flag has telemetry enabled.
+
+### Bugs Fixed
+
+* Fixed a number of cases where snake case was used instead of pascal case for feature flag telemetry.
+  * etag -> ETag
+  * feature_flag_reference -> FeatureFlagReference
+  * feature_flag_id -> FeatureFlagId
+
+## 2.0.0b1 (2024-09-11)
+
+### Features Added
+
+* Added support for feature flag telemetry.
+
+## 1.3.0 (2024-09-09)
+
+### Features Added
+
+* Added support for auto failover between replicas.
+* Added support for auto discovery of replicas.
 
 ## 1.2.0 (2024-05-24)
 

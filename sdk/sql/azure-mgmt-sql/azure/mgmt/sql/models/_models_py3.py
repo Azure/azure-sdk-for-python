@@ -1979,7 +1979,7 @@ class DatabaseColumn(ProxyResource):
      "date", "time", "datetime2", "datetimeoffset", "tinyint", "smallint", "int", "smalldatetime",
      "real", "money", "datetime", "float", "sql_variant", "ntext", "bit", "decimal", "numeric",
      "smallmoney", "bigint", "hierarchyid", "geometry", "geography", "varbinary", "varchar",
-     "binary", "char", "timestamp", "nvarchar", "nchar", "xml", and "sysname".
+     "binary", "char", "timestamp", "nvarchar", "nchar", "xml", "sysname", and "int".
     :vartype column_type: str or ~azure.mgmt.sql.models.ColumnDataType
     :ivar temporal_type: The table temporal type. Known values are: "NonTemporalTable",
      "HistoryTable", and "SystemVersionedTemporalTable".
@@ -2020,8 +2020,8 @@ class DatabaseColumn(ProxyResource):
          "uniqueidentifier", "date", "time", "datetime2", "datetimeoffset", "tinyint", "smallint",
          "int", "smalldatetime", "real", "money", "datetime", "float", "sql_variant", "ntext", "bit",
          "decimal", "numeric", "smallmoney", "bigint", "hierarchyid", "geometry", "geography",
-         "varbinary", "varchar", "binary", "char", "timestamp", "nvarchar", "nchar", "xml", and
-         "sysname".
+         "varbinary", "varchar", "binary", "char", "timestamp", "nvarchar", "nchar", "xml", "sysname",
+         and "int".
         :paramtype column_type: str or ~azure.mgmt.sql.models.ColumnDataType
         :keyword temporal_type: The table temporal type. Known values are: "NonTemporalTable",
          "HistoryTable", and "SystemVersionedTemporalTable".
@@ -4115,7 +4115,8 @@ class DistributedAvailabilityGroup(ProxyResource):  # pylint: disable=too-many-i
     :vartype distributed_availability_group_name: str
     :ivar distributed_availability_group_id: ID of the distributed availability group.
     :vartype distributed_availability_group_id: str
-    :ivar replication_mode: Replication mode of the link. Known values are: "Async" and "Sync".
+    :ivar replication_mode: Replication mode of the link. Known values are: "Async", "Sync", and
+     "Async".
     :vartype replication_mode: str or ~azure.mgmt.sql.models.ReplicationModeType
     :ivar partner_link_role: SQL server side link role. Known values are: "Primary" and
      "Secondary".
@@ -4180,7 +4181,8 @@ class DistributedAvailabilityGroup(ProxyResource):  # pylint: disable=too-many-i
         **kwargs: Any
     ) -> None:
         """
-        :keyword replication_mode: Replication mode of the link. Known values are: "Async" and "Sync".
+        :keyword replication_mode: Replication mode of the link. Known values are: "Async", "Sync", and
+         "Async".
         :paramtype replication_mode: str or ~azure.mgmt.sql.models.ReplicationModeType
         :keyword partner_availability_group_name: SQL server side availability group name.
         :paramtype partner_availability_group_name: str
@@ -6671,6 +6673,9 @@ class FailoverGroup(ProxyResource):  # pylint: disable=too-many-instance-attribu
     :vartype partner_servers: list[~azure.mgmt.sql.models.PartnerInfo]
     :ivar databases: List of databases in the failover group.
     :vartype databases: list[str]
+    :ivar secondary_type: Databases secondary type on partner server. Known values are: "Geo" and
+     "Standby".
+    :vartype secondary_type: str or ~azure.mgmt.sql.models.FailoverGroupDatabasesSecondaryType
     """
 
     _validation = {
@@ -6694,6 +6699,7 @@ class FailoverGroup(ProxyResource):  # pylint: disable=too-many-instance-attribu
         "replication_state": {"key": "properties.replicationState", "type": "str"},
         "partner_servers": {"key": "properties.partnerServers", "type": "[PartnerInfo]"},
         "databases": {"key": "properties.databases", "type": "[str]"},
+        "secondary_type": {"key": "properties.secondaryType", "type": "str"},
     }
 
     def __init__(
@@ -6704,6 +6710,7 @@ class FailoverGroup(ProxyResource):  # pylint: disable=too-many-instance-attribu
         read_only_endpoint: Optional["_models.FailoverGroupReadOnlyEndpoint"] = None,
         partner_servers: Optional[List["_models.PartnerInfo"]] = None,
         databases: Optional[List[str]] = None,
+        secondary_type: Optional[Union[str, "_models.FailoverGroupDatabasesSecondaryType"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6717,6 +6724,9 @@ class FailoverGroup(ProxyResource):  # pylint: disable=too-many-instance-attribu
         :paramtype partner_servers: list[~azure.mgmt.sql.models.PartnerInfo]
         :keyword databases: List of databases in the failover group.
         :paramtype databases: list[str]
+        :keyword secondary_type: Databases secondary type on partner server. Known values are: "Geo"
+         and "Standby".
+        :paramtype secondary_type: str or ~azure.mgmt.sql.models.FailoverGroupDatabasesSecondaryType
         """
         super().__init__(**kwargs)
         self.location = None
@@ -6727,6 +6737,7 @@ class FailoverGroup(ProxyResource):  # pylint: disable=too-many-instance-attribu
         self.replication_state = None
         self.partner_servers = partner_servers
         self.databases = databases
+        self.secondary_type = secondary_type
 
 
 class FailoverGroupListResult(_serialization.Model):
@@ -6853,6 +6864,9 @@ class FailoverGroupUpdate(_serialization.Model):
     :vartype databases: list[str]
     :ivar partner_servers: List of partner server information for the failover group.
     :vartype partner_servers: list[~azure.mgmt.sql.models.PartnerInfo]
+    :ivar secondary_type: Databases secondary type on partner server. Known values are: "Geo" and
+     "Standby".
+    :vartype secondary_type: str or ~azure.mgmt.sql.models.FailoverGroupDatabasesSecondaryType
     """
 
     _attribute_map = {
@@ -6861,6 +6875,7 @@ class FailoverGroupUpdate(_serialization.Model):
         "read_only_endpoint": {"key": "properties.readOnlyEndpoint", "type": "FailoverGroupReadOnlyEndpoint"},
         "databases": {"key": "properties.databases", "type": "[str]"},
         "partner_servers": {"key": "properties.partnerServers", "type": "[PartnerInfo]"},
+        "secondary_type": {"key": "properties.secondaryType", "type": "str"},
     }
 
     def __init__(
@@ -6871,6 +6886,7 @@ class FailoverGroupUpdate(_serialization.Model):
         read_only_endpoint: Optional["_models.FailoverGroupReadOnlyEndpoint"] = None,
         databases: Optional[List[str]] = None,
         partner_servers: Optional[List["_models.PartnerInfo"]] = None,
+        secondary_type: Optional[Union[str, "_models.FailoverGroupDatabasesSecondaryType"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6884,6 +6900,9 @@ class FailoverGroupUpdate(_serialization.Model):
         :paramtype databases: list[str]
         :keyword partner_servers: List of partner server information for the failover group.
         :paramtype partner_servers: list[~azure.mgmt.sql.models.PartnerInfo]
+        :keyword secondary_type: Databases secondary type on partner server. Known values are: "Geo"
+         and "Standby".
+        :paramtype secondary_type: str or ~azure.mgmt.sql.models.FailoverGroupDatabasesSecondaryType
         """
         super().__init__(**kwargs)
         self.tags = tags
@@ -6891,6 +6910,7 @@ class FailoverGroupUpdate(_serialization.Model):
         self.read_only_endpoint = read_only_endpoint
         self.databases = databases
         self.partner_servers = partner_servers
+        self.secondary_type = secondary_type
 
 
 class ResourceWithWritableName(_serialization.Model):
@@ -9801,8 +9821,8 @@ class MaintenanceWindowOptions(ProxyResource):
     :vartype type: str
     :ivar is_enabled: Whether maintenance windows are enabled for the database.
     :vartype is_enabled: bool
-    :ivar maintenance_window_cycles: Available maintenance cycles e.g. {Saturday, 0, 48\ *60},
-     {Wednesday, 0, 24*\ 60}.
+    :ivar maintenance_window_cycles: Available maintenance cycles e.g. {Saturday, 0, 48\\ *60},
+     {Wednesday, 0, 24*\\ 60}.
     :vartype maintenance_window_cycles: list[~azure.mgmt.sql.models.MaintenanceWindowTimeRange]
     :ivar min_duration_in_minutes: Minimum duration of maintenance window.
     :vartype min_duration_in_minutes: int
@@ -9857,8 +9877,8 @@ class MaintenanceWindowOptions(ProxyResource):
         """
         :keyword is_enabled: Whether maintenance windows are enabled for the database.
         :paramtype is_enabled: bool
-        :keyword maintenance_window_cycles: Available maintenance cycles e.g. {Saturday, 0, 48\ *60},
-         {Wednesday, 0, 24*\ 60}.
+        :keyword maintenance_window_cycles: Available maintenance cycles e.g. {Saturday, 0, 48\\ *60},
+         {Wednesday, 0, 24*\\ 60}.
         :paramtype maintenance_window_cycles: list[~azure.mgmt.sql.models.MaintenanceWindowTimeRange]
         :keyword min_duration_in_minutes: Minimum duration of maintenance window.
         :paramtype min_duration_in_minutes: int
@@ -11269,12 +11289,12 @@ class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-att
      Increments of 32 GB allowed only. Maximum value depends on the selected hardware family and
      number of vCores.
     :vartype storage_size_in_gb: int
-    :ivar storage_i_ops: Storage IOps. Minimum value: 300. Maximum value: 80000. Increments of 1
+    :ivar storage_iops: Storage IOps. Minimum value: 300. Maximum value: 80000. Increments of 1
      IOps allowed only. Maximum value depends on the selected hardware family and number of vCores.
-    :vartype storage_i_ops: int
-    :ivar storage_throughput_m_bps: Storage throughput MBps parameter is not supported in the
+    :vartype storage_iops: int
+    :ivar storage_throughput_mbps: Storage throughput MBps parameter is not supported in the
      instance create/update operation.
-    :vartype storage_throughput_m_bps: int
+    :vartype storage_throughput_mbps: int
     :ivar collation: Collation of the managed instance.
     :vartype collation: str
     :ivar dns_zone: The Dns Zone that the managed instance is in.
@@ -11295,7 +11315,7 @@ class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-att
     :vartype proxy_override: str or ~azure.mgmt.sql.models.ManagedInstanceProxyOverride
     :ivar timezone_id: Id of the timezone. Allowed values are timezones supported by Windows.
      Windows keeps details on supported timezones, including the id, in registry under
-     KEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones.
+     KEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones.
      You can get those registry values via SQL Server by querying SELECT name AS timezone_id FROM
      sys.time_zone_info.
      List of Ids can also be obtained by executing [System.TimeZoneInfo]::GetSystemTimeZones() in
@@ -11393,8 +11413,8 @@ class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-att
         "hybrid_secondary_usage_detected": {"key": "properties.hybridSecondaryUsageDetected", "type": "str"},
         "v_cores": {"key": "properties.vCores", "type": "int"},
         "storage_size_in_gb": {"key": "properties.storageSizeInGB", "type": "int"},
-        "storage_i_ops": {"key": "properties.storageIOps", "type": "int"},
-        "storage_throughput_m_bps": {"key": "properties.storageThroughputMBps", "type": "int"},
+        "storage_iops": {"key": "properties.storageIOps", "type": "int"},
+        "storage_throughput_mbps": {"key": "properties.storageThroughputMBps", "type": "int"},
         "collation": {"key": "properties.collation", "type": "str"},
         "dns_zone": {"key": "properties.dnsZone", "type": "str"},
         "dns_zone_partner": {"key": "properties.dnsZonePartner", "type": "str"},
@@ -11441,8 +11461,8 @@ class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-att
         hybrid_secondary_usage: Optional[Union[str, "_models.HybridSecondaryUsage"]] = None,
         v_cores: Optional[int] = None,
         storage_size_in_gb: Optional[int] = None,
-        storage_i_ops: Optional[int] = None,
-        storage_throughput_m_bps: Optional[int] = None,
+        storage_iops: Optional[int] = None,
+        storage_throughput_mbps: Optional[int] = None,
         collation: Optional[str] = None,
         dns_zone_partner: Optional[str] = None,
         public_data_endpoint_enabled: Optional[bool] = None,
@@ -11507,12 +11527,12 @@ class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-att
          Increments of 32 GB allowed only. Maximum value depends on the selected hardware family and
          number of vCores.
         :paramtype storage_size_in_gb: int
-        :keyword storage_i_ops: Storage IOps. Minimum value: 300. Maximum value: 80000. Increments of 1
+        :keyword storage_iops: Storage IOps. Minimum value: 300. Maximum value: 80000. Increments of 1
          IOps allowed only. Maximum value depends on the selected hardware family and number of vCores.
-        :paramtype storage_i_ops: int
-        :keyword storage_throughput_m_bps: Storage throughput MBps parameter is not supported in the
+        :paramtype storage_iops: int
+        :keyword storage_throughput_mbps: Storage throughput MBps parameter is not supported in the
          instance create/update operation.
-        :paramtype storage_throughput_m_bps: int
+        :paramtype storage_throughput_mbps: int
         :keyword collation: Collation of the managed instance.
         :paramtype collation: str
         :keyword dns_zone_partner: The resource id of another managed instance whose DNS zone this
@@ -11531,7 +11551,7 @@ class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-att
         :paramtype proxy_override: str or ~azure.mgmt.sql.models.ManagedInstanceProxyOverride
         :keyword timezone_id: Id of the timezone. Allowed values are timezones supported by Windows.
          Windows keeps details on supported timezones, including the id, in registry under
-         KEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones.
+         KEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones.
          You can get those registry values via SQL Server by querying SELECT name AS timezone_id FROM
          sys.time_zone_info.
          List of Ids can also be obtained by executing [System.TimeZoneInfo]::GetSystemTimeZones() in
@@ -11590,8 +11610,8 @@ class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-att
         self.hybrid_secondary_usage_detected = None
         self.v_cores = v_cores
         self.storage_size_in_gb = storage_size_in_gb
-        self.storage_i_ops = storage_i_ops
-        self.storage_throughput_m_bps = storage_throughput_m_bps
+        self.storage_iops = storage_iops
+        self.storage_throughput_mbps = storage_throughput_mbps
         self.collation = collation
         self.dns_zone = None
         self.dns_zone_partner = dns_zone_partner
@@ -13346,12 +13366,12 @@ class ManagedInstanceUpdate(_serialization.Model):  # pylint: disable=too-many-i
      Increments of 32 GB allowed only. Maximum value depends on the selected hardware family and
      number of vCores.
     :vartype storage_size_in_gb: int
-    :ivar storage_i_ops: Storage IOps. Minimum value: 300. Maximum value: 80000. Increments of 1
+    :ivar storage_iops: Storage IOps. Minimum value: 300. Maximum value: 80000. Increments of 1
      IOps allowed only. Maximum value depends on the selected hardware family and number of vCores.
-    :vartype storage_i_ops: int
-    :ivar storage_throughput_m_bps: Storage throughput MBps parameter is not supported in the
+    :vartype storage_iops: int
+    :ivar storage_throughput_mbps: Storage throughput MBps parameter is not supported in the
      instance create/update operation.
-    :vartype storage_throughput_m_bps: int
+    :vartype storage_throughput_mbps: int
     :ivar collation: Collation of the managed instance.
     :vartype collation: str
     :ivar dns_zone: The Dns Zone that the managed instance is in.
@@ -13372,7 +13392,7 @@ class ManagedInstanceUpdate(_serialization.Model):  # pylint: disable=too-many-i
     :vartype proxy_override: str or ~azure.mgmt.sql.models.ManagedInstanceProxyOverride
     :ivar timezone_id: Id of the timezone. Allowed values are timezones supported by Windows.
      Windows keeps details on supported timezones, including the id, in registry under
-     KEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones.
+     KEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones.
      You can get those registry values via SQL Server by querying SELECT name AS timezone_id FROM
      sys.time_zone_info.
      List of Ids can also be obtained by executing [System.TimeZoneInfo]::GetSystemTimeZones() in
@@ -13462,8 +13482,8 @@ class ManagedInstanceUpdate(_serialization.Model):  # pylint: disable=too-many-i
         "hybrid_secondary_usage_detected": {"key": "properties.hybridSecondaryUsageDetected", "type": "str"},
         "v_cores": {"key": "properties.vCores", "type": "int"},
         "storage_size_in_gb": {"key": "properties.storageSizeInGB", "type": "int"},
-        "storage_i_ops": {"key": "properties.storageIOps", "type": "int"},
-        "storage_throughput_m_bps": {"key": "properties.storageThroughputMBps", "type": "int"},
+        "storage_iops": {"key": "properties.storageIOps", "type": "int"},
+        "storage_throughput_mbps": {"key": "properties.storageThroughputMBps", "type": "int"},
         "collation": {"key": "properties.collation", "type": "str"},
         "dns_zone": {"key": "properties.dnsZone", "type": "str"},
         "dns_zone_partner": {"key": "properties.dnsZonePartner", "type": "str"},
@@ -13509,8 +13529,8 @@ class ManagedInstanceUpdate(_serialization.Model):  # pylint: disable=too-many-i
         hybrid_secondary_usage: Optional[Union[str, "_models.HybridSecondaryUsage"]] = None,
         v_cores: Optional[int] = None,
         storage_size_in_gb: Optional[int] = None,
-        storage_i_ops: Optional[int] = None,
-        storage_throughput_m_bps: Optional[int] = None,
+        storage_iops: Optional[int] = None,
+        storage_throughput_mbps: Optional[int] = None,
         collation: Optional[str] = None,
         dns_zone_partner: Optional[str] = None,
         public_data_endpoint_enabled: Optional[bool] = None,
@@ -13572,12 +13592,12 @@ class ManagedInstanceUpdate(_serialization.Model):  # pylint: disable=too-many-i
          Increments of 32 GB allowed only. Maximum value depends on the selected hardware family and
          number of vCores.
         :paramtype storage_size_in_gb: int
-        :keyword storage_i_ops: Storage IOps. Minimum value: 300. Maximum value: 80000. Increments of 1
+        :keyword storage_iops: Storage IOps. Minimum value: 300. Maximum value: 80000. Increments of 1
          IOps allowed only. Maximum value depends on the selected hardware family and number of vCores.
-        :paramtype storage_i_ops: int
-        :keyword storage_throughput_m_bps: Storage throughput MBps parameter is not supported in the
+        :paramtype storage_iops: int
+        :keyword storage_throughput_mbps: Storage throughput MBps parameter is not supported in the
          instance create/update operation.
-        :paramtype storage_throughput_m_bps: int
+        :paramtype storage_throughput_mbps: int
         :keyword collation: Collation of the managed instance.
         :paramtype collation: str
         :keyword dns_zone_partner: The resource id of another managed instance whose DNS zone this
@@ -13596,7 +13616,7 @@ class ManagedInstanceUpdate(_serialization.Model):  # pylint: disable=too-many-i
         :paramtype proxy_override: str or ~azure.mgmt.sql.models.ManagedInstanceProxyOverride
         :keyword timezone_id: Id of the timezone. Allowed values are timezones supported by Windows.
          Windows keeps details on supported timezones, including the id, in registry under
-         KEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones.
+         KEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones.
          You can get those registry values via SQL Server by querying SELECT name AS timezone_id FROM
          sys.time_zone_info.
          List of Ids can also be obtained by executing [System.TimeZoneInfo]::GetSystemTimeZones() in
@@ -13656,8 +13676,8 @@ class ManagedInstanceUpdate(_serialization.Model):  # pylint: disable=too-many-i
         self.hybrid_secondary_usage_detected = None
         self.v_cores = v_cores
         self.storage_size_in_gb = storage_size_in_gb
-        self.storage_i_ops = storage_i_ops
-        self.storage_throughput_m_bps = storage_throughput_m_bps
+        self.storage_iops = storage_iops
+        self.storage_throughput_mbps = storage_throughput_mbps
         self.collation = collation
         self.dns_zone = None
         self.dns_zone_partner = dns_zone_partner
@@ -16605,6 +16625,8 @@ class ReplicationLink(ProxyResource):  # pylint: disable=too-many-instance-attri
     :vartype partner_server: str
     :ivar partner_database: Resource partner database.
     :vartype partner_database: str
+    :ivar partner_database_id: Resource partner database Id.
+    :vartype partner_database_id: str
     :ivar partner_location: Resource partner location.
     :vartype partner_location: str
     :ivar role: Local replication role. Known values are: "Primary", "Secondary",
@@ -16624,8 +16646,8 @@ class ReplicationLink(ProxyResource):  # pylint: disable=too-many-instance-attri
     :vartype replication_state: str or ~azure.mgmt.sql.models.ReplicationState
     :ivar is_termination_allowed: Whether the user is currently allowed to terminate the link.
     :vartype is_termination_allowed: bool
-    :ivar link_type: Link type (GEO, NAMED, STANDBY). Known values are: "GEO", "NAMED", and
-     "STANDBY".
+    :ivar link_type: Link type (GEO, NAMED, STANDBY). Update operation does not support NAMED.
+     Known values are: "GEO", "NAMED", and "STANDBY".
     :vartype link_type: str or ~azure.mgmt.sql.models.ReplicationLinkType
     """
 
@@ -16635,6 +16657,7 @@ class ReplicationLink(ProxyResource):  # pylint: disable=too-many-instance-attri
         "type": {"readonly": True},
         "partner_server": {"readonly": True},
         "partner_database": {"readonly": True},
+        "partner_database_id": {"readonly": True},
         "partner_location": {"readonly": True},
         "role": {"readonly": True},
         "partner_role": {"readonly": True},
@@ -16643,7 +16666,6 @@ class ReplicationLink(ProxyResource):  # pylint: disable=too-many-instance-attri
         "percent_complete": {"readonly": True},
         "replication_state": {"readonly": True},
         "is_termination_allowed": {"readonly": True},
-        "link_type": {"readonly": True},
     }
 
     _attribute_map = {
@@ -16652,6 +16674,7 @@ class ReplicationLink(ProxyResource):  # pylint: disable=too-many-instance-attri
         "type": {"key": "type", "type": "str"},
         "partner_server": {"key": "properties.partnerServer", "type": "str"},
         "partner_database": {"key": "properties.partnerDatabase", "type": "str"},
+        "partner_database_id": {"key": "properties.partnerDatabaseId", "type": "str"},
         "partner_location": {"key": "properties.partnerLocation", "type": "str"},
         "role": {"key": "properties.role", "type": "str"},
         "partner_role": {"key": "properties.partnerRole", "type": "str"},
@@ -16663,11 +16686,16 @@ class ReplicationLink(ProxyResource):  # pylint: disable=too-many-instance-attri
         "link_type": {"key": "properties.linkType", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, link_type: Optional[Union[str, "_models.ReplicationLinkType"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword link_type: Link type (GEO, NAMED, STANDBY). Update operation does not support NAMED.
+         Known values are: "GEO", "NAMED", and "STANDBY".
+        :paramtype link_type: str or ~azure.mgmt.sql.models.ReplicationLinkType
+        """
         super().__init__(**kwargs)
         self.partner_server = None
         self.partner_database = None
+        self.partner_database_id = None
         self.partner_location = None
         self.role = None
         self.partner_role = None
@@ -16676,7 +16704,7 @@ class ReplicationLink(ProxyResource):  # pylint: disable=too-many-instance-attri
         self.percent_complete = None
         self.replication_state = None
         self.is_termination_allowed = None
-        self.link_type = None
+        self.link_type = link_type
 
 
 class ReplicationLinkListResult(_serialization.Model):
@@ -16705,6 +16733,45 @@ class ReplicationLinkListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value = None
         self.next_link = None
+
+
+class ReplicationLinkUpdate(ProxyResource):
+    """A replication link update request.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar link_type: Link type (GEO, NAMED, STANDBY). Update operation does not support NAMED.
+     Known values are: "GEO", "NAMED", and "STANDBY".
+    :vartype link_type: str or ~azure.mgmt.sql.models.ReplicationLinkType
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "link_type": {"key": "properties.linkType", "type": "str"},
+    }
+
+    def __init__(self, *, link_type: Optional[Union[str, "_models.ReplicationLinkType"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword link_type: Link type (GEO, NAMED, STANDBY). Update operation does not support NAMED.
+         Known values are: "GEO", "NAMED", and "STANDBY".
+        :paramtype link_type: str or ~azure.mgmt.sql.models.ReplicationLinkType
+        """
+        super().__init__(**kwargs)
+        self.link_type = link_type
 
 
 class ResourceIdentity(_serialization.Model):

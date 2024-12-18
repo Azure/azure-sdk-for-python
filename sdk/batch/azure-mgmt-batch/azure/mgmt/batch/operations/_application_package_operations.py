@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, Callable, Dict, IO, Iterable, Optional, Type, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -20,16 +21,18 @@ from azure.core.exceptions import (
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -48,7 +51,7 @@ def build_activate_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -95,7 +98,7 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -142,7 +145,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -186,7 +189,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -231,7 +234,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -313,7 +316,6 @@ class ApplicationPackageOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApplicationPackage or the result of cls(response)
         :rtype: ~azure.mgmt.batch.models.ApplicationPackage
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -326,7 +328,7 @@ class ApplicationPackageOperations:
         account_name: str,
         application_name: str,
         version_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -346,11 +348,10 @@ class ApplicationPackageOperations:
         :param version_name: The version of the application. Required.
         :type version_name: str
         :param parameters: The parameters for the request. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApplicationPackage or the result of cls(response)
         :rtype: ~azure.mgmt.batch.models.ApplicationPackage
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -363,7 +364,7 @@ class ApplicationPackageOperations:
         account_name: str,
         application_name: str,
         version_name: str,
-        parameters: Union[_models.ActivateApplicationPackageParameters, IO],
+        parameters: Union[_models.ActivateApplicationPackageParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.ApplicationPackage:
         """Activates the specified application package. This should be done after the
@@ -381,17 +382,13 @@ class ApplicationPackageOperations:
         :param version_name: The version of the application. Required.
         :type version_name: str
         :param parameters: The parameters for the request. Is either a
-         ActivateApplicationPackageParameters type or a IO type. Required.
-        :type parameters: ~azure.mgmt.batch.models.ActivateApplicationPackageParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ActivateApplicationPackageParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.batch.models.ActivateApplicationPackageParameters or IO[bytes]
         :return: ApplicationPackage or the result of cls(response)
         :rtype: ~azure.mgmt.batch.models.ApplicationPackage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -414,7 +411,7 @@ class ApplicationPackageOperations:
         else:
             _json = self._serialize.body(parameters, "ActivateApplicationPackageParameters")
 
-        request = build_activate_request(
+        _request = build_activate_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             application_name=application_name,
@@ -424,16 +421,14 @@ class ApplicationPackageOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.activate.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -442,16 +437,12 @@ class ApplicationPackageOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ApplicationPackage", pipeline_response)
+        deserialized = self._deserialize("ApplicationPackage", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    activate.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationName}/versions/{versionName}/activate"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def create(
@@ -485,7 +476,6 @@ class ApplicationPackageOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApplicationPackage or the result of cls(response)
         :rtype: ~azure.mgmt.batch.models.ApplicationPackage
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -498,7 +488,7 @@ class ApplicationPackageOperations:
         account_name: str,
         application_name: str,
         version_name: str,
-        parameters: Optional[IO] = None,
+        parameters: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -519,11 +509,10 @@ class ApplicationPackageOperations:
         :param version_name: The version of the application. Required.
         :type version_name: str
         :param parameters: The parameters for the request. Default value is None.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApplicationPackage or the result of cls(response)
         :rtype: ~azure.mgmt.batch.models.ApplicationPackage
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -536,7 +525,7 @@ class ApplicationPackageOperations:
         account_name: str,
         application_name: str,
         version_name: str,
-        parameters: Optional[Union[_models.ApplicationPackage, IO]] = None,
+        parameters: Optional[Union[_models.ApplicationPackage, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.ApplicationPackage:
         """Creates an application package record. The record contains a storageUrl where the package
@@ -554,18 +543,14 @@ class ApplicationPackageOperations:
         :type application_name: str
         :param version_name: The version of the application. Required.
         :type version_name: str
-        :param parameters: The parameters for the request. Is either a ApplicationPackage type or a IO
-         type. Default value is None.
-        :type parameters: ~azure.mgmt.batch.models.ApplicationPackage or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param parameters: The parameters for the request. Is either a ApplicationPackage type or a
+         IO[bytes] type. Default value is None.
+        :type parameters: ~azure.mgmt.batch.models.ApplicationPackage or IO[bytes]
         :return: ApplicationPackage or the result of cls(response)
         :rtype: ~azure.mgmt.batch.models.ApplicationPackage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -591,7 +576,7 @@ class ApplicationPackageOperations:
             else:
                 _json = None
 
-        request = build_create_request(
+        _request = build_create_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             application_name=application_name,
@@ -601,16 +586,14 @@ class ApplicationPackageOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -619,16 +602,12 @@ class ApplicationPackageOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ApplicationPackage", pipeline_response)
+        deserialized = self._deserialize("ApplicationPackage", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationName}/versions/{versionName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -646,12 +625,11 @@ class ApplicationPackageOperations:
         :type application_name: str
         :param version_name: The version of the application. Required.
         :type version_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -665,23 +643,21 @@ class ApplicationPackageOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             application_name=application_name,
             version_name=version_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -691,11 +667,7 @@ class ApplicationPackageOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationName}/versions/{versionName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def get(
@@ -713,12 +685,11 @@ class ApplicationPackageOperations:
         :type application_name: str
         :param version_name: The version of the application. Required.
         :type version_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApplicationPackage or the result of cls(response)
         :rtype: ~azure.mgmt.batch.models.ApplicationPackage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -732,23 +703,21 @@ class ApplicationPackageOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ApplicationPackage] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             application_name=application_name,
             version_name=version_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -757,16 +726,12 @@ class ApplicationPackageOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ApplicationPackage", pipeline_response)
+        deserialized = self._deserialize("ApplicationPackage", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationName}/versions/{versionName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list(
@@ -790,7 +755,6 @@ class ApplicationPackageOperations:
         :param maxresults: The maximum number of items to return in the response. Default value is
          None.
         :type maxresults: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ApplicationPackage or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.batch.models.ApplicationPackage]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -801,7 +765,7 @@ class ApplicationPackageOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ListApplicationPackagesResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -812,19 +776,17 @@ class ApplicationPackageOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     resource_group_name=resource_group_name,
                     account_name=account_name,
                     application_name=application_name,
                     subscription_id=self._config.subscription_id,
                     maxresults=maxresults,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -836,13 +798,12 @@ class ApplicationPackageOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ListApplicationPackagesResult", pipeline_response)
@@ -852,11 +813,11 @@ class ApplicationPackageOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -867,7 +828,3 @@ class ApplicationPackageOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationName}/versions"
-    }

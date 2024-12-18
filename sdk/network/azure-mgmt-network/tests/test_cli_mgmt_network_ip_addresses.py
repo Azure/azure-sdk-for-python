@@ -1,10 +1,10 @@
 # coding: utf-8
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 
 # TEST SCENARIO COVERAGE
@@ -26,16 +26,15 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 import pytest
 
 
-AZURE_LOCATION = 'eastus'
+AZURE_LOCATION = "eastus"
 
 
+@pytest.mark.live_test_only
 class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
-        self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.network.NetworkManagementClient
-        )
-    
+        self.mgmt_client = self.create_mgmt_client(azure.mgmt.network.NetworkManagementClient)
+
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_network(self, resource_group):
@@ -59,21 +58,17 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         # result = result.result()
 
         # Create public IP prefix defaults[put]
-        BODY = {
-          "location": "westus",
-          "prefix_length": "30",
-          "sku": {
-            "name": "Standard"
-          }
-        }
-        result = self.mgmt_client.public_ip_prefixes.begin_create_or_update(resource_group.name, PUBLIC_IPPREFIX_NAME, BODY)
+        BODY = {"location": "westus", "prefix_length": "30", "sku": {"name": "Standard"}}
+        result = self.mgmt_client.public_ip_prefixes.begin_create_or_update(
+            resource_group.name, PUBLIC_IPPREFIX_NAME, BODY
+        )
         result = result.result()
 
         # Create public IP address defaults[put]
-        BODY = {
-          "location": "eastus"
-        }
-        result = self.mgmt_client.public_ip_addresses.begin_create_or_update(resource_group.name, PUBLIC_IP_ADDRESS_NAME, BODY)
+        BODY = {"location": "eastus"}
+        result = self.mgmt_client.public_ip_addresses.begin_create_or_update(
+            resource_group.name, PUBLIC_IP_ADDRESS_NAME, BODY
+        )
         result = result.result()
 
         # # Create public IP address allocation method[put]
@@ -122,21 +117,11 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         result = self.mgmt_client.public_ip_prefixes.list_all()
 
         # Update public IP address tags[patch]
-        BODY = {
-          "tags": {
-            "tag1": "value1",
-            "tag2": "value2"
-          }
-        }
+        BODY = {"tags": {"tag1": "value1", "tag2": "value2"}}
         result = self.mgmt_client.public_ip_addresses.update_tags(resource_group.name, PUBLIC_IP_ADDRESS_NAME, BODY)
 
         # Update public IP prefix tags[patch]
-        BODY = {
-          "tags": {
-            "tag1": "value1",
-            "tag2": "value2"
-          }
-        }
+        BODY = {"tags": {"tag1": "value1", "tag2": "value2"}}
         result = self.mgmt_client.public_ip_prefixes.update_tags(resource_group.name, PUBLIC_IPPREFIX_NAME, BODY)
 
         # Delete public IP address[delete]
@@ -148,6 +133,6 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
         result = result.result()
 
 
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
+# ------------------------------------------------------------------------------
+if __name__ == "__main__":
     unittest.main()

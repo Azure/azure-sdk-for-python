@@ -38,9 +38,7 @@ class LocalFileBlob:
     def get(self):
         try:
             with open(self.fullpath, "r", encoding="utf-8") as file:
-                return tuple(
-                    json.loads(line.strip()) for line in file.readlines()
-                )
+                return tuple(json.loads(line.strip()) for line in file.readlines())
         except Exception:
             pass  # keep silent
         return None
@@ -141,7 +139,7 @@ class LocalFileStorage:
                         except Exception:
                             pass  # keep silent
                 if path.endswith(".lock"):
-                    if path[path.rindex("@") + 1: -5] > lease_deadline:
+                    if path[path.rindex("@") + 1 : -5] > lease_deadline:
                         continue  # under lease
                     new_path = path[: path.rindex("@")]
                     try:
@@ -182,9 +180,7 @@ class LocalFileStorage:
                 self._path,
                 "{}-{}.blob".format(
                     _fmt(_now()),
-                    "{:08x}".format(
-                        random.getrandbits(32)
-                    ),  # thread-safe random
+                    "{:08x}".format(random.getrandbits(32)),  # thread-safe random
                 ),
             )
         )
@@ -214,9 +210,7 @@ class LocalFileStorage:
                             "Persistent storage max capacity has been "
                             "reached. Currently at {}KB. Telemetry will be "
                             "lost. Please consider increasing the value of "
-                            "'storage_max_size' in exporter config.".format(
-                                str(size / 1024)
-                            )
+                            "'storage_max_size' in exporter config.".format(str(size / 1024))
                         )
                         return False
         return True

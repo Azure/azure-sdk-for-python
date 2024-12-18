@@ -1,5 +1,5 @@
 # coding=utf-8
-# pylint: disable=too-many-lines, line-too-long, too-many-locals
+# pylint: disable=too-many-lines, line-too-long
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -9,6 +9,8 @@
 
 import datetime
 from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+
+from azure.core.exceptions import HttpResponseError
 
 from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
@@ -40,11 +42,11 @@ class RadiologyInsightsInference(_model_base.Model):
     LateralityDiscrepancyInference, LimitedOrderDiscrepancyInference, RadiologyProcedureInference,
     SexMismatchInference
 
-    All required parameters must be populated in order to send to server.
 
-    :ivar kind: Required. Known values are: "ageMismatch", "lateralityDiscrepancy", "sexMismatch",
-     "completeOrderDiscrepancy", "limitedOrderDiscrepancy", "finding", "criticalResult",
-     "followupRecommendation", "followupCommunication", and "radiologyProcedure".
+    :ivar kind: Discriminator property for RadiologyInsightsInference. Required. Known values are:
+     "ageMismatch", "lateralityDiscrepancy", "sexMismatch", "completeOrderDiscrepancy",
+     "limitedOrderDiscrepancy", "finding", "criticalResult", "followupRecommendation",
+     "followupCommunication", and "radiologyProcedure".
     :vartype kind: str or
      ~azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceType
     :ivar extension: Additional Content defined by implementations.
@@ -53,9 +55,10 @@ class RadiologyInsightsInference(_model_base.Model):
 
     __mapping__: Dict[str, _model_base.Model] = {}
     kind: str = rest_discriminator(name="kind")
-    """Required. Known values are: \"ageMismatch\", \"lateralityDiscrepancy\", \"sexMismatch\",
-     \"completeOrderDiscrepancy\", \"limitedOrderDiscrepancy\", \"finding\", \"criticalResult\",
-     \"followupRecommendation\", \"followupCommunication\", and \"radiologyProcedure\"."""
+    """Discriminator property for RadiologyInsightsInference. Required. Known values are:
+     \"ageMismatch\", \"lateralityDiscrepancy\", \"sexMismatch\", \"completeOrderDiscrepancy\",
+     \"limitedOrderDiscrepancy\", \"finding\", \"criticalResult\", \"followupRecommendation\",
+     \"followupCommunication\", and \"radiologyProcedure\"."""
     extension: Optional[List["_models.Extension"]] = rest_field()
     """Additional Content defined by implementations."""
 
@@ -82,7 +85,6 @@ class AgeMismatchInference(RadiologyInsightsInference, discriminator="ageMismatc
     """A notification for age mismatch is displayed when the age mentioned in a document for a
     specific patient does not match the age specified in the patient information.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
@@ -113,7 +115,7 @@ class AgeMismatchInference(RadiologyInsightsInference, discriminator="ageMismatc
 
 class Element(_model_base.Model):
     """The base definition for all elements contained inside a resource.
-    Based on `FHIR Element <https://www.hl7.org/fhir/datatypes.html#Element>`_.
+    Based on `FHIR Element <https://www.hl7.org/fhir/R4/element.html>`__.
 
     :ivar id: Unique id for inter-element referencing.
     :vartype id: str
@@ -149,7 +151,6 @@ class Annotation(Element):
     """A text note which also  contains information about who made the statement and when
     Based on `FHIR Annotation <https://www.hl7.org/fhir/R4/datatypes.html#Annotation>`_.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: Unique id for inter-element referencing.
     :vartype id: str
@@ -280,7 +281,6 @@ class CompleteOrderDiscrepancyInference(RadiologyInsightsInference, discriminato
     """A complete order discrepancy is shown when one or more body parts and/or measurements that
     should be in the document (because there is a complete order) are not present.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
@@ -299,7 +299,7 @@ class CompleteOrderDiscrepancyInference(RadiologyInsightsInference, discriminato
      list[~azure.healthinsights.radiologyinsights.models.CodeableConcept]
     """
 
-    kind: Literal[RadiologyInsightsInferenceType.COMPLETE_ORDER_DISCREPANCY] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[RadiologyInsightsInferenceType.COMPLETE_ORDER_DISCREPANCY] = rest_discriminator(name="kind")  # type: ignore # pylint: disable=line-too-long
     """Inference type. Required. Complete order discrepancy inference type"""
     order_type: "_models.CodeableConcept" = rest_field(name="orderType")
     """Order type : CPT ultrasound complete code for abdomen, retroperitoneal, pelvis or breast.
@@ -332,416 +332,9 @@ class CompleteOrderDiscrepancyInference(RadiologyInsightsInference, discriminato
         super().__init__(*args, kind=RadiologyInsightsInferenceType.COMPLETE_ORDER_DISCREPANCY, **kwargs)
 
 
-class Resource(_model_base.Model):
-    """Resource is the ancestor of DomainResource from which most resources are derived. Bundle,
-    Parameters, and Binary extend Resource directly.
-    Based on [FHIR Resource](https://www.hl7.org/fhir/r4/resource.html.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar resource_type: The type of resource. Required.
-    :vartype resource_type: str
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar meta: Metadata about the resource.
-    :vartype meta: ~azure.healthinsights.radiologyinsights.models.Meta
-    :ivar implicit_rules: A set of rules under which this content was created.
-    :vartype implicit_rules: str
-    :ivar language: Language of the resource content.
-    :vartype language: str
-    """
-
-    resource_type: str = rest_field(name="resourceType")
-    """The type of resource. Required."""
-    id: Optional[str] = rest_field()
-    """Resource Id."""
-    meta: Optional["_models.Meta"] = rest_field()
-    """Metadata about the resource."""
-    implicit_rules: Optional[str] = rest_field(name="implicitRules")
-    """A set of rules under which this content was created."""
-    language: Optional[str] = rest_field()
-    """Language of the resource content."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource_type: str,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        meta: Optional["_models.Meta"] = None,
-        implicit_rules: Optional[str] = None,
-        language: Optional[str] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class DomainResource(Resource):
-    """A resource with narrative, extensions, and contained resources
-    Based on `FHIR DomainResource <https://www.hl7.org/fhir/domainresource.html>`_.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    Condition, Observation, ResearchStudy
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar meta: Metadata about the resource.
-    :vartype meta: ~azure.healthinsights.radiologyinsights.models.Meta
-    :ivar implicit_rules: A set of rules under which this content was created.
-    :vartype implicit_rules: str
-    :ivar language: Language of the resource content.
-    :vartype language: str
-    :ivar resource_type: Required. Default value is None.
-    :vartype resource_type: str
-    :ivar text: Text summary of the resource, for human interpretation.
-    :vartype text: ~azure.healthinsights.radiologyinsights.models.Narrative
-    :ivar contained: Contained, inline Resources.
-    :vartype contained: list[~azure.healthinsights.radiologyinsights.models.Resource]
-    :ivar extension: Additional Content defined by implementations.
-    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar modifier_extension: Extensions that cannot be ignored.
-    :vartype modifier_extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    """
-
-    __mapping__: Dict[str, _model_base.Model] = {}
-    resource_type: str = rest_discriminator(name="resourceType")
-    """Required. Default value is None."""
-    text: Optional["_models.Narrative"] = rest_field()
-    """Text summary of the resource, for human interpretation."""
-    contained: Optional[List["_models.Resource"]] = rest_field()
-    """Contained, inline Resources."""
-    extension: Optional[List["_models.Extension"]] = rest_field()
-    """Additional Content defined by implementations."""
-    modifier_extension: Optional[List["_models.Extension"]] = rest_field(name="modifierExtension")
-    """Extensions that cannot be ignored."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource_type: str,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        meta: Optional["_models.Meta"] = None,
-        implicit_rules: Optional[str] = None,
-        language: Optional[str] = None,
-        text: Optional["_models.Narrative"] = None,
-        contained: Optional[List["_models.Resource"]] = None,
-        extension: Optional[List["_models.Extension"]] = None,
-        modifier_extension: Optional[List["_models.Extension"]] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class Condition(DomainResource, discriminator="Condition"):  # pylint: disable=too-many-instance-attributes
-    """Detailed information about conditions, problems or diagnoses
-    Based on `FHIR Condition <https://www.hl7.org/fhir/R4/condition.html>`_.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar meta: Metadata about the resource.
-    :vartype meta: ~azure.healthinsights.radiologyinsights.models.Meta
-    :ivar implicit_rules: A set of rules under which this content was created.
-    :vartype implicit_rules: str
-    :ivar language: Language of the resource content.
-    :vartype language: str
-    :ivar text: Text summary of the resource, for human interpretation.
-    :vartype text: ~azure.healthinsights.radiologyinsights.models.Narrative
-    :ivar contained: Contained, inline Resources.
-    :vartype contained: list[~azure.healthinsights.radiologyinsights.models.Resource]
-    :ivar extension: Additional Content defined by implementations.
-    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar modifier_extension: Extensions that cannot be ignored.
-    :vartype modifier_extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar resource_type: resourceType. Required. Default value is "Condition".
-    :vartype resource_type: str
-    :ivar identifier: External Ids for this condition.
-    :vartype identifier: list[~azure.healthinsights.radiologyinsights.models.Identifier]
-    :ivar clinical_status: active | recurrence | relapse | inactive | remission | resolved.
-    :vartype clinical_status: ~azure.healthinsights.radiologyinsights.models.CodeableConcept
-    :ivar verification_status: unconfirmed | provisional | differential | confirmed | refuted |
-     entered-in-error.
-    :vartype verification_status: ~azure.healthinsights.radiologyinsights.models.CodeableConcept
-    :ivar category: problem-list-item | encounter-diagnosis.
-    :vartype category: list[~azure.healthinsights.radiologyinsights.models.CodeableConcept]
-    :ivar severity: Subjective severity of condition.
-    :vartype severity: ~azure.healthinsights.radiologyinsights.models.CodeableConcept
-    :ivar code: Identification of the condition, problem or diagnosis.
-    :vartype code: ~azure.healthinsights.radiologyinsights.models.CodeableConcept
-    :ivar body_site: Anatomical location, if relevant.
-    :vartype body_site: list[~azure.healthinsights.radiologyinsights.models.CodeableConcept]
-    :ivar encounter: Encounter created as part of.
-    :vartype encounter: ~azure.healthinsights.radiologyinsights.models.Reference
-    :ivar onset_date_time: Estimated or actual date,  date-time, or age.
-    :vartype onset_date_time: str
-    :ivar onset_age: Estimated or actual date,  date-time, or age.
-    :vartype onset_age: ~azure.healthinsights.radiologyinsights.models.Quantity
-    :ivar onset_period: Estimated or actual date,  date-time, or age.
-    :vartype onset_period: ~azure.healthinsights.radiologyinsights.models.Period
-    :ivar onset_range: Estimated or actual date,  date-time, or age.
-    :vartype onset_range: ~azure.healthinsights.radiologyinsights.models.Range
-    :ivar onset_string: Estimated or actual date,  date-time, or age.
-    :vartype onset_string: str
-    :ivar abatement_date_time: When in resolution/remission.
-    :vartype abatement_date_time: str
-    :ivar abatement_age: When in resolution/remission.
-    :vartype abatement_age: ~azure.healthinsights.radiologyinsights.models.Quantity
-    :ivar abatement_period: When in resolution/remission.
-    :vartype abatement_period: ~azure.healthinsights.radiologyinsights.models.Period
-    :ivar abatement_range: When in resolution/remission.
-    :vartype abatement_range: ~azure.healthinsights.radiologyinsights.models.Range
-    :ivar abatement_string: When in resolution/remission.
-    :vartype abatement_string: str
-    :ivar recorded_date: Date record was first recorded.
-    :vartype recorded_date: str
-    :ivar stage: stge/grade, usually assessed formally.
-    :vartype stage: list[~azure.healthinsights.radiologyinsights.models.ConditionStage]
-    :ivar note: Additional information about the Condition.
-    :vartype note: list[~azure.healthinsights.radiologyinsights.models.Annotation]
-    """
-
-    resource_type: Literal["Condition"] = rest_discriminator(name="resourceType")  # type: ignore
-    """resourceType. Required. Default value is \"Condition\"."""
-    identifier: Optional[List["_models.Identifier"]] = rest_field()
-    """External Ids for this condition."""
-    clinical_status: Optional["_models.CodeableConcept"] = rest_field(name="clinicalStatus")
-    """active | recurrence | relapse | inactive | remission | resolved."""
-    verification_status: Optional["_models.CodeableConcept"] = rest_field(name="verificationStatus")
-    """unconfirmed | provisional | differential | confirmed | refuted | entered-in-error."""
-    category: Optional[List["_models.CodeableConcept"]] = rest_field()
-    """problem-list-item | encounter-diagnosis."""
-    severity: Optional["_models.CodeableConcept"] = rest_field()
-    """Subjective severity of condition."""
-    code: Optional["_models.CodeableConcept"] = rest_field()
-    """Identification of the condition, problem or diagnosis."""
-    body_site: Optional[List["_models.CodeableConcept"]] = rest_field(name="bodySite")
-    """Anatomical location, if relevant."""
-    encounter: Optional["_models.Reference"] = rest_field()
-    """Encounter created as part of."""
-    onset_date_time: Optional[str] = rest_field(name="onsetDateTime")
-    """Estimated or actual date,  date-time, or age."""
-    onset_age: Optional["_models.Quantity"] = rest_field(name="onsetAge")
-    """Estimated or actual date,  date-time, or age."""
-    onset_period: Optional["_models.Period"] = rest_field(name="onsetPeriod")
-    """Estimated or actual date,  date-time, or age."""
-    onset_range: Optional["_models.Range"] = rest_field(name="onsetRange")
-    """Estimated or actual date,  date-time, or age."""
-    onset_string: Optional[str] = rest_field(name="onsetString")
-    """Estimated or actual date,  date-time, or age."""
-    abatement_date_time: Optional[str] = rest_field(name="abatementDateTime")
-    """When in resolution/remission."""
-    abatement_age: Optional["_models.Quantity"] = rest_field(name="abatementAge")
-    """When in resolution/remission."""
-    abatement_period: Optional["_models.Period"] = rest_field(name="abatementPeriod")
-    """When in resolution/remission."""
-    abatement_range: Optional["_models.Range"] = rest_field(name="abatementRange")
-    """When in resolution/remission."""
-    abatement_string: Optional[str] = rest_field(name="abatementString")
-    """When in resolution/remission."""
-    recorded_date: Optional[str] = rest_field(name="recordedDate")
-    """Date record was first recorded."""
-    stage: Optional[List["_models.ConditionStage"]] = rest_field()
-    """stge/grade, usually assessed formally."""
-    note: Optional[List["_models.Annotation"]] = rest_field()
-    """Additional information about the Condition."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        meta: Optional["_models.Meta"] = None,
-        implicit_rules: Optional[str] = None,
-        language: Optional[str] = None,
-        text: Optional["_models.Narrative"] = None,
-        contained: Optional[List["_models.Resource"]] = None,
-        extension: Optional[List["_models.Extension"]] = None,
-        modifier_extension: Optional[List["_models.Extension"]] = None,
-        identifier: Optional[List["_models.Identifier"]] = None,
-        clinical_status: Optional["_models.CodeableConcept"] = None,
-        verification_status: Optional["_models.CodeableConcept"] = None,
-        category: Optional[List["_models.CodeableConcept"]] = None,
-        severity: Optional["_models.CodeableConcept"] = None,
-        code: Optional["_models.CodeableConcept"] = None,
-        body_site: Optional[List["_models.CodeableConcept"]] = None,
-        encounter: Optional["_models.Reference"] = None,
-        onset_date_time: Optional[str] = None,
-        onset_age: Optional["_models.Quantity"] = None,
-        onset_period: Optional["_models.Period"] = None,
-        onset_range: Optional["_models.Range"] = None,
-        onset_string: Optional[str] = None,
-        abatement_date_time: Optional[str] = None,
-        abatement_age: Optional["_models.Quantity"] = None,
-        abatement_period: Optional["_models.Period"] = None,
-        abatement_range: Optional["_models.Range"] = None,
-        abatement_string: Optional[str] = None,
-        recorded_date: Optional[str] = None,
-        stage: Optional[List["_models.ConditionStage"]] = None,
-        note: Optional[List["_models.Annotation"]] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, resource_type="Condition", **kwargs)
-
-
-class ConditionStage(_model_base.Model):
-    """Stage/grade, usually assessed formally
-    Based on `FHIR Condition.Stage <https://www.hl7.org/fhir/R4/condition.html>`_.
-
-    :ivar summary: Simple summary (disease specific).
-    :vartype summary: ~azure.healthinsights.radiologyinsights.models.CodeableConcept
-    :ivar type: Kind of staging.
-    :vartype type: ~azure.healthinsights.radiologyinsights.models.CodeableConcept
-    """
-
-    summary: Optional["_models.CodeableConcept"] = rest_field()
-    """Simple summary (disease specific)."""
-    type: Optional["_models.CodeableConcept"] = rest_field()
-    """Kind of staging."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        summary: Optional["_models.CodeableConcept"] = None,
-        type: Optional["_models.CodeableConcept"] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class ContactDetail(Element):
-    """Contact details (See: https://www.hl7.org/fhir/R4/metadatatypes.html#ContactDetail).
-
-    :ivar id: Unique id for inter-element referencing.
-    :vartype id: str
-    :ivar extension: Additional Content defined by implementations.
-    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar name: Name of an individual to contact.
-    :vartype name: str
-    :ivar telecom: Contact details for individual or organization.
-    :vartype telecom: list[~azure.healthinsights.radiologyinsights.models.ContactPoint]
-    """
-
-    name: Optional[str] = rest_field()
-    """Name of an individual to contact."""
-    telecom: Optional[List["_models.ContactPoint"]] = rest_field()
-    """Contact details for individual or organization."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        extension: Optional[List["_models.Extension"]] = None,
-        name: Optional[str] = None,
-        telecom: Optional[List["_models.ContactPoint"]] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class ContactPoint(_model_base.Model):
-    """Details for all kinds of technology mediated contact points for a person or organization,
-    including telephone, email, etc.
-    See https://www.hl7.org/fhir/R4/datatypes.html#ContactPoint.
-
-    :ivar system: phone | fax | email | pager | url | sms | other. Known values are: "phone",
-     "fax", "email", "pager", "url", "sms", and "other".
-    :vartype system: str or ~azure.healthinsights.radiologyinsights.models.ContactPointSystem
-    :ivar value: The actual contact point details.
-    :vartype value: str
-    :ivar use: home | work | temp | old | mobile - purpose of this contact point. Known values are:
-     "home", "work", "temp", "old", and "mobile".
-    :vartype use: str or ~azure.healthinsights.radiologyinsights.models.ContactPointUse
-    :ivar rank: Specify preferred order of use (1 = highest).
-    :vartype rank: int
-    :ivar period: Time period when the contact point was/is in use.
-    :vartype period: ~azure.healthinsights.radiologyinsights.models.Period
-    """
-
-    system: Optional[Union[str, "_models.ContactPointSystem"]] = rest_field()
-    """phone | fax | email | pager | url | sms | other. Known values are: \"phone\", \"fax\",
-     \"email\", \"pager\", \"url\", \"sms\", and \"other\"."""
-    value: Optional[str] = rest_field()
-    """The actual contact point details."""
-    use: Optional[Union[str, "_models.ContactPointUse"]] = rest_field()
-    """home | work | temp | old | mobile - purpose of this contact point. Known values are: \"home\",
-     \"work\", \"temp\", \"old\", and \"mobile\"."""
-    rank: Optional[int] = rest_field()
-    """Specify preferred order of use (1 = highest)."""
-    period: Optional["_models.Period"] = rest_field()
-    """Time period when the contact point was/is in use."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        system: Optional[Union[str, "_models.ContactPointSystem"]] = None,
-        value: Optional[str] = None,
-        use: Optional[Union[str, "_models.ContactPointUse"]] = None,
-        rank: Optional[int] = None,
-        period: Optional["_models.Period"] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class CriticalResult(_model_base.Model):
     """Critical Result consists of two properties.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar description: Description : medical problem. Required.
     :vartype description: str
@@ -777,7 +370,6 @@ class CriticalResultInference(RadiologyInsightsInference, discriminator="critica
     """Critical results refer to findings of utmost importance that may require timely attention due
     to their potential impact on patient care.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
@@ -883,7 +475,6 @@ class DocumentAuthor(_model_base.Model):
 class DocumentContent(_model_base.Model):
     """The content of the patient document.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar source_type: The type of the content's source.
      In case the source type is 'inline', the content is given as a string (for instance, text).
@@ -924,44 +515,111 @@ class DocumentContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Error(_model_base.Model):
-    """The error object.
+class Resource(_model_base.Model):
+    """Resource is the ancestor of DomainResource from which most resources are derived. Bundle,
+    Parameters, and Binary extend Resource directly.
+    Based on [FHIR Resource](https://www.hl7.org/fhir/r4/resource.html.
 
-    All required parameters must be populated in order to send to server.
 
-    :ivar code: One of a server-defined set of error codes. Required.
-    :vartype code: str
-    :ivar message: A human-readable representation of the error. Required.
-    :vartype message: str
-    :ivar target: The target of the error.
-    :vartype target: str
-    :ivar details: An array of details about specific errors that led to this reported error.
-    :vartype details: list[~azure.healthinsights.radiologyinsights.models.Error]
-    :ivar innererror: An object containing more specific information than the current object about
-     the error.
-    :vartype innererror: ~azure.healthinsights.radiologyinsights.models.InnerError
+    :ivar resource_type: The type of resource. Required.
+    :vartype resource_type: str
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar meta: Metadata about the resource.
+    :vartype meta: ~azure.healthinsights.radiologyinsights.models.Meta
+    :ivar implicit_rules: A set of rules under which this content was created.
+    :vartype implicit_rules: str
+    :ivar language: Language of the resource content.
+    :vartype language: str
     """
 
-    code: str = rest_field()
-    """One of a server-defined set of error codes. Required."""
-    message: str = rest_field()
-    """A human-readable representation of the error. Required."""
-    target: Optional[str] = rest_field()
-    """The target of the error."""
-    details: Optional[List["_models.Error"]] = rest_field()
-    """An array of details about specific errors that led to this reported error."""
-    innererror: Optional["_models.InnerError"] = rest_field()
-    """An object containing more specific information than the current object about the error."""
+    resource_type: str = rest_field(name="resourceType")
+    """The type of resource. Required."""
+    id: Optional[str] = rest_field()
+    """Resource Id."""
+    meta: Optional["_models.Meta"] = rest_field()
+    """Metadata about the resource."""
+    implicit_rules: Optional[str] = rest_field(name="implicitRules")
+    """A set of rules under which this content was created."""
+    language: Optional[str] = rest_field()
+    """Language of the resource content."""
 
     @overload
     def __init__(
         self,
         *,
-        code: str,
-        message: str,
-        target: Optional[str] = None,
-        details: Optional[List["_models.Error"]] = None,
-        innererror: Optional["_models.InnerError"] = None,
+        resource_type: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        meta: Optional["_models.Meta"] = None,
+        implicit_rules: Optional[str] = None,
+        language: Optional[str] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class DomainResource(Resource):
+    """A resource with narrative, extensions, and contained resources
+    Based on `FHIR DomainResource <https://www.hl7.org/fhir/domainresource.html>`_.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    Condition, Observation, ResearchStudy
+
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar meta: Metadata about the resource.
+    :vartype meta: ~azure.healthinsights.radiologyinsights.models.Meta
+    :ivar implicit_rules: A set of rules under which this content was created.
+    :vartype implicit_rules: str
+    :ivar language: Language of the resource content.
+    :vartype language: str
+    :ivar resource_type: Discriminator property for DomainResource. Required. Default value is
+     None.
+    :vartype resource_type: str
+    :ivar text: Text summary of the resource, for human interpretation.
+    :vartype text: ~azure.healthinsights.radiologyinsights.models.Narrative
+    :ivar contained: Contained, inline Resources.
+    :vartype contained: list[~azure.healthinsights.radiologyinsights.models.Resource]
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
+    :ivar modifier_extension: Extensions that cannot be ignored.
+    :vartype modifier_extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    resource_type: str = rest_discriminator(name="resourceType")
+    """Discriminator property for DomainResource. Required. Default value is None."""
+    text: Optional["_models.Narrative"] = rest_field()
+    """Text summary of the resource, for human interpretation."""
+    contained: Optional[List["_models.Resource"]] = rest_field()
+    """Contained, inline Resources."""
+    extension: Optional[List["_models.Extension"]] = rest_field()
+    """Additional Content defined by implementations."""
+    modifier_extension: Optional[List["_models.Extension"]] = rest_field(name="modifierExtension")
+    """Extensions that cannot be ignored."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_type: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        meta: Optional["_models.Meta"] = None,
+        implicit_rules: Optional[str] = None,
+        language: Optional[str] = None,
+        text: Optional["_models.Narrative"] = None,
+        contained: Optional[List["_models.Resource"]] = None,
+        extension: Optional[List["_models.Extension"]] = None,
+        modifier_extension: Optional[List["_models.Extension"]] = None,
     ): ...
 
     @overload
@@ -979,7 +637,6 @@ class Extension(Element):  # pylint: disable=too-many-instance-attributes
     """Base for all elements
     Based on `FHIR Element <https://www.hl7.org/fhir/datatypes.html#Element>`_.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar url: Source of the definition for the extension code - a logical name or a URL. Required.
     :vartype url: str
@@ -1070,7 +727,6 @@ class FindingInference(RadiologyInsightsInference, discriminator="finding"):
     """Findings in a radiology report typically describe abnormalities, lesions, or other notable
     observations related to the anatomy or pathology of the imaged area.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
@@ -1142,7 +798,6 @@ class FollowupCommunicationInference(RadiologyInsightsInference, discriminator="
     """Follow-up communication involves the exchange of important information, recommendations, or
     updates between radiologists and other healthcare professionals involved in a patient's care.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
@@ -1191,7 +846,6 @@ class FollowupRecommendationInference(RadiologyInsightsInference, discriminator=
     """Follow-up recommendations offer guidance to healthcare providers on managing and monitoring
     patients based on the findings of imaging studies.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
@@ -1331,9 +985,9 @@ class ProcedureRecommendation(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     GenericProcedureRecommendation, ImagingProcedureRecommendation
 
-    All required parameters must be populated in order to send to server.
 
-    :ivar kind: Required. Default value is None.
+    :ivar kind: Discriminator property for ProcedureRecommendation. Required. Default value is
+     None.
     :vartype kind: str
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
@@ -1341,7 +995,7 @@ class ProcedureRecommendation(_model_base.Model):
 
     __mapping__: Dict[str, _model_base.Model] = {}
     kind: str = rest_discriminator(name="kind")
-    """Required. Default value is None."""
+    """Discriminator property for ProcedureRecommendation. Required. Default value is None."""
     extension: Optional[List["_models.Extension"]] = rest_field()
     """Additional Content defined by implementations."""
 
@@ -1367,7 +1021,6 @@ class ProcedureRecommendation(_model_base.Model):
 class GenericProcedureRecommendation(ProcedureRecommendation, discriminator="genericProcedureRecommendation"):
     """Generic procedure information.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
@@ -1412,20 +1065,19 @@ class GenericProcedureRecommendation(ProcedureRecommendation, discriminator="gen
 class HealthInsightsErrorResponse(_model_base.Model):
     """A response containing error details.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar error: The error object. Required.
-    :vartype error: ~azure.healthinsights.radiologyinsights.models.Error
+    :vartype error: ~azure.core.HttpResponseError
     """
 
-    error: "_models.Error" = rest_field()
+    error: HttpResponseError = rest_field()
     """The error object. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        error: "_models.Error",
+        error: HttpResponseError,
     ): ...
 
     @overload
@@ -1496,7 +1148,6 @@ class Identifier(Element):
 class ImagingProcedure(_model_base.Model):
     """Imaging procedure.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar modality: Modality : SNOMED CT code. Required.
     :vartype modality: ~azure.healthinsights.radiologyinsights.models.CodeableConcept
@@ -1546,7 +1197,6 @@ class ImagingProcedure(_model_base.Model):
 class ImagingProcedureRecommendation(ProcedureRecommendation, discriminator="imagingProcedureRecommendation"):
     """Imaging procedures.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
@@ -1587,47 +1237,11 @@ class ImagingProcedureRecommendation(ProcedureRecommendation, discriminator="ima
         super().__init__(*args, kind="imagingProcedureRecommendation", **kwargs)
 
 
-class InnerError(_model_base.Model):
-    """An object containing more specific information about the error. As per Microsoft One API
-    guidelines -
-    https://github.com/Microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses.
-
-    :ivar code: One of a server-defined set of error codes.
-    :vartype code: str
-    :ivar innererror: Inner error.
-    :vartype innererror: ~azure.healthinsights.radiologyinsights.models.InnerError
-    """
-
-    code: Optional[str] = rest_field()
-    """One of a server-defined set of error codes."""
-    innererror: Optional["_models.InnerError"] = rest_field()
-    """Inner error."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        innererror: Optional["_models.InnerError"] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class LateralityDiscrepancyInference(RadiologyInsightsInference, discriminator="lateralityDiscrepancy"):
     """A laterality mismatch occurs when there is a discrepancy between the clinical documentation and
     the ordered procedure (orderLateralityMismatch), a contradiction within the clinical document
     (textLateralityContradiction), or when no laterality is mentioned (textLateralityMissing).
 
-    All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
@@ -1676,7 +1290,6 @@ class LimitedOrderDiscrepancyInference(RadiologyInsightsInference, discriminator
     """A limited order discrepancy occurs when there is a limited order, but all body parts and
     measurements that are needed for a complete order are present in the document.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
@@ -1694,7 +1307,7 @@ class LimitedOrderDiscrepancyInference(RadiologyInsightsInference, discriminator
      list[~azure.healthinsights.radiologyinsights.models.CodeableConcept]
     """
 
-    kind: Literal[RadiologyInsightsInferenceType.LIMITED_ORDER_DISCREPANCY] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[RadiologyInsightsInferenceType.LIMITED_ORDER_DISCREPANCY] = rest_discriminator(name="kind")  # type: ignore # pylint: disable=line-too-long
     """Inference type. Required. Limited order discrepancy inference type"""
     order_type: "_models.CodeableConcept" = rest_field(name="orderType")
     """Order type : CPT ultrasound complete code for abdomen, retroperitoneal, pelvis or breast.
@@ -1806,7 +1419,6 @@ class Narrative(Element):
     represent the content of the resource to a human.
     Based on `FHIR Narrative <https://www.hl7.org/fhir/R4/narrative.html#Narrative>`_.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: Unique id for inter-element referencing.
     :vartype id: str
@@ -1848,7 +1460,6 @@ class Observation(DomainResource, discriminator="Observation"):  # pylint: disab
     """Detailed information about observations
     Based on `FHIR Observation <https://www.hl7.org/fhir/R4/observation.html>`_.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -2000,7 +1611,7 @@ class Observation(DomainResource, discriminator="Observation"):  # pylint: disab
     """Component results."""
 
     @overload
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         status: Union[str, "_models.ObservationStatusCodeType"],
@@ -2058,7 +1669,6 @@ class ObservationComponent(Element):  # pylint: disable=too-many-instance-attrib
     """Component results
     Based on `FHIR Observation.component <https://www.hl7.org/fhir/R4/observation.html>`_.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: Unique id for inter-element referencing.
     :vartype id: str
@@ -2302,7 +1912,6 @@ class PatientDocument(_model_base.Model):
     """A clinical document related to a patient. Document here is in the wide sense - not just a text
     document (note).
 
-    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the patient document, such as 'note' (text document) or 'fhirBundle'
      (FHIR JSON document). Required. Known values are: "note", "fhirBundle", "dicom", and
@@ -2387,7 +1996,6 @@ class PatientDocument(_model_base.Model):
 class PatientEncounter(_model_base.Model):
     """visit/encounter information.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: The id of the visit. Required.
     :vartype id: str
@@ -2433,7 +2041,6 @@ class PatientEncounter(_model_base.Model):
 class PatientRecord(_model_base.Model):
     """A patient record, including their clinical information and data.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: A given identifier for the patient. Has to be unique across all patients in a single
      request. Required.
@@ -2566,7 +2173,6 @@ class Quantity(Element):
 class RadiologyCodeWithTypes(_model_base.Model):
     """Radiology code with types : used in imaging procedure recommendation for contrast and view.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar code: The SNOMED CT code indicates whether imaging was conducted with or without contrast
      in the case of contrast, and in the case of views, it denotes the number of views. Required.
@@ -2607,7 +2213,6 @@ class RadiologyCodeWithTypes(_model_base.Model):
 class RadiologyInsightsData(_model_base.Model):
     """Contains the list of patients, and configuration data.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar patients: The list of patients, including their clinical information and data. Required.
     :vartype patients: list[~azure.healthinsights.radiologyinsights.models.PatientRecord]
@@ -2680,7 +2285,6 @@ class RadiologyInsightsInferenceResult(_model_base.Model):
     """The inference results for the Radiology Insights request. If field 'status' has value
     'succeeded', then field 'result' will contain an instance of RadiologyInsightsInferenceResult.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar patient_results: Results for the patients given in the request. Required.
     :vartype patient_results:
@@ -2719,7 +2323,6 @@ class RadiologyInsightsJob(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar job_data: The request data for the operation.
     :vartype job_data: ~azure.healthinsights.radiologyinsights.models.RadiologyInsightsData
@@ -2738,7 +2341,7 @@ class RadiologyInsightsJob(_model_base.Model):
     :ivar updated_at: The date and time when the processing job was last updated.
     :vartype updated_at: ~datetime.datetime
     :ivar error: Error object that describes the error when status is "Failed".
-    :vartype error: ~azure.healthinsights.radiologyinsights.models.Error
+    :vartype error: ~azure.core.HttpResponseError
     """
 
     job_data: Optional["_models.RadiologyInsightsData"] = rest_field(name="jobData", visibility=["read", "create"])
@@ -2756,7 +2359,7 @@ class RadiologyInsightsJob(_model_base.Model):
     """The date and time when the processing job is set to expire."""
     updated_at: Optional[datetime.datetime] = rest_field(name="updatedAt", visibility=["read"], format="rfc3339")
     """The date and time when the processing job was last updated."""
-    error: Optional["_models.Error"] = rest_field(visibility=["read"])
+    error: Optional[HttpResponseError] = rest_field(visibility=["read"])
     """Error object that describes the error when status is \"Failed\"."""
 
     @overload
@@ -2839,7 +2442,6 @@ class RadiologyInsightsModelConfiguration(_model_base.Model):
 class RadiologyInsightsPatientResult(_model_base.Model):
     """Results of the model's work for a single patient.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar patient_id: Identifier given for the patient in the request. Required.
     :vartype patient_id: str
@@ -2876,7 +2478,6 @@ class RadiologyProcedureInference(RadiologyInsightsInference, discriminator="rad
     """Radiology procedures are the specific imaging studies or examinations ordered for the patient,
     extracted from the document information and text.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
@@ -2993,7 +2594,6 @@ class Ratio(Element):
 class RecommendationFinding(_model_base.Model):
     """Finding reference for recommendation.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar finding: Finding linked to a recommendation.
     :vartype finding: ~azure.healthinsights.radiologyinsights.models.Observation
@@ -3084,274 +2684,10 @@ class Reference(Element):
         super().__init__(*args, **kwargs)
 
 
-class ResearchStudy(DomainResource, discriminator="ResearchStudy"):  # pylint: disable=too-many-instance-attributes
-    """Detailed information about Research Study
-    Based on `FHIR ResearchStudy <https://www.hl7.org/fhir/R4/researchstudy.html>`_.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar meta: Metadata about the resource.
-    :vartype meta: ~azure.healthinsights.radiologyinsights.models.Meta
-    :ivar implicit_rules: A set of rules under which this content was created.
-    :vartype implicit_rules: str
-    :ivar language: Language of the resource content.
-    :vartype language: str
-    :ivar text: Text summary of the resource, for human interpretation.
-    :vartype text: ~azure.healthinsights.radiologyinsights.models.Narrative
-    :ivar contained: Contained, inline Resources.
-    :vartype contained: list[~azure.healthinsights.radiologyinsights.models.Resource]
-    :ivar extension: Additional Content defined by implementations.
-    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar modifier_extension: Extensions that cannot be ignored.
-    :vartype modifier_extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
-    :ivar resource_type: resourceType. Required. Default value is "ResearchStudy".
-    :vartype resource_type: str
-    :ivar identifier: Business Identifier for study.
-    :vartype identifier: list[~azure.healthinsights.radiologyinsights.models.Identifier]
-    :ivar title: Name for this study.
-    :vartype title: str
-    :ivar protocol: Steps followed in executing study.
-    :vartype protocol: list[~azure.healthinsights.radiologyinsights.models.Reference]
-    :ivar part_of: Part of larger study.
-    :vartype part_of: list[~azure.healthinsights.radiologyinsights.models.Reference]
-    :ivar status: active | administratively-completed | approved | closed-to-accrual |
-     closed-to-accrual-and-intervention | completed | disapproved | in-review |
-     temporarily-closed-to-accrual | temporarily-closed-to-accrual-and-intervention | withdrawn.
-     Required. Known values are: "active", "administratively-completed", "approved",
-     "closed-to-accrual", "closed-to-accrual-and-intervention", "completed", "disapproved",
-     "in-review", "temporarily-closed-to-accrual", "temporarily-closed-to-accrual-and-intervention",
-     and "withdrawn".
-    :vartype status: str or
-     ~azure.healthinsights.radiologyinsights.models.ResearchStudyStatusCodeType
-    :ivar primary_purpose_type: treatment | prevention | diagnostic | supportive-care | screening |
-     health-services-research | basic-science | device-feasibility.
-    :vartype primary_purpose_type: ~azure.healthinsights.radiologyinsights.models.CodeableConcept
-    :ivar phase: n-a | early-phase-1 | phase-1 | phase-1-phase-2 | phase-2 | phase-2-phase-3 |
-     phase-3 | phase-4.
-    :vartype phase: ~azure.healthinsights.radiologyinsights.models.CodeableConcept
-    :ivar category: Classifications for the study.
-    :vartype category: list[~azure.healthinsights.radiologyinsights.models.CodeableConcept]
-    :ivar focus: Drugs, devices, etc. under study.
-    :vartype focus: list[~azure.healthinsights.radiologyinsights.models.CodeableConcept]
-    :ivar condition: Condition being studied.
-    :vartype condition: list[~azure.healthinsights.radiologyinsights.models.CodeableConcept]
-    :ivar contact: Contact details for the study.
-    :vartype contact: list[~azure.healthinsights.radiologyinsights.models.ContactDetail]
-    :ivar keyword: Used to search for the study.
-    :vartype keyword: list[~azure.healthinsights.radiologyinsights.models.CodeableConcept]
-    :ivar location: Geographic region(s) for study.
-    :vartype location: list[~azure.healthinsights.radiologyinsights.models.CodeableConcept]
-    :ivar description: What this is study doing.
-    :vartype description: str
-    :ivar enrollment: Inclusion & exclusion criteria.
-    :vartype enrollment: list[~azure.healthinsights.radiologyinsights.models.Reference]
-    :ivar period: When the study began and ended.
-    :vartype period: ~azure.healthinsights.radiologyinsights.models.Period
-    :ivar sponsor: Organization that initiates and is legally responsible for the study.
-    :vartype sponsor: ~azure.healthinsights.radiologyinsights.models.Reference
-    :ivar principal_investigator: Researcher who oversees multiple aspects of the study.
-    :vartype principal_investigator: ~azure.healthinsights.radiologyinsights.models.Reference
-    :ivar site: Facility where study activities are conducted.
-    :vartype site: list[~azure.healthinsights.radiologyinsights.models.Reference]
-    :ivar reason_stopped: accrual-goal-met | closed-due-to-toxicity |
-     closed-due-to-lack-of-study-progress | temporarily-closed-per-study-design.
-    :vartype reason_stopped: ~azure.healthinsights.radiologyinsights.models.CodeableConcept
-    :ivar note: Comments made about the study.
-    :vartype note: list[~azure.healthinsights.radiologyinsights.models.Annotation]
-    :ivar arm: Defined path through the study for a subject.
-    :vartype arm: list[~azure.healthinsights.radiologyinsights.models.ResearchStudyArm]
-    :ivar objective: A goal for the study.
-    :vartype objective: list[~azure.healthinsights.radiologyinsights.models.ResearchStudyObjective]
-    """
-
-    resource_type: Literal["ResearchStudy"] = rest_discriminator(name="resourceType")  # type: ignore
-    """resourceType. Required. Default value is \"ResearchStudy\"."""
-    identifier: Optional[List["_models.Identifier"]] = rest_field()
-    """Business Identifier for study."""
-    title: Optional[str] = rest_field()
-    """Name for this study."""
-    protocol: Optional[List["_models.Reference"]] = rest_field()
-    """Steps followed in executing study."""
-    part_of: Optional[List["_models.Reference"]] = rest_field(name="partOf")
-    """Part of larger study."""
-    status: Union[str, "_models.ResearchStudyStatusCodeType"] = rest_field()
-    """active | administratively-completed | approved | closed-to-accrual |
-     closed-to-accrual-and-intervention | completed | disapproved | in-review |
-     temporarily-closed-to-accrual | temporarily-closed-to-accrual-and-intervention | withdrawn.
-     Required. Known values are: \"active\", \"administratively-completed\", \"approved\",
-     \"closed-to-accrual\", \"closed-to-accrual-and-intervention\", \"completed\", \"disapproved\",
-     \"in-review\", \"temporarily-closed-to-accrual\",
-     \"temporarily-closed-to-accrual-and-intervention\", and \"withdrawn\"."""
-    primary_purpose_type: Optional["_models.CodeableConcept"] = rest_field(name="primaryPurposeType")
-    """treatment | prevention | diagnostic | supportive-care | screening | health-services-research |
-     basic-science | device-feasibility."""
-    phase: Optional["_models.CodeableConcept"] = rest_field()
-    """n-a | early-phase-1 | phase-1 | phase-1-phase-2 | phase-2 | phase-2-phase-3 | phase-3 |
-     phase-4."""
-    category: Optional[List["_models.CodeableConcept"]] = rest_field()
-    """Classifications for the study."""
-    focus: Optional[List["_models.CodeableConcept"]] = rest_field()
-    """Drugs, devices, etc. under study."""
-    condition: Optional[List["_models.CodeableConcept"]] = rest_field()
-    """Condition being studied."""
-    contact: Optional[List["_models.ContactDetail"]] = rest_field()
-    """Contact details for the study."""
-    keyword: Optional[List["_models.CodeableConcept"]] = rest_field()
-    """Used to search for the study."""
-    location: Optional[List["_models.CodeableConcept"]] = rest_field()
-    """Geographic region(s) for study."""
-    description: Optional[str] = rest_field()
-    """What this is study doing."""
-    enrollment: Optional[List["_models.Reference"]] = rest_field()
-    """Inclusion & exclusion criteria."""
-    period: Optional["_models.Period"] = rest_field()
-    """When the study began and ended."""
-    sponsor: Optional["_models.Reference"] = rest_field()
-    """Organization that initiates and is legally responsible for the study."""
-    principal_investigator: Optional["_models.Reference"] = rest_field(name="principalInvestigator")
-    """Researcher who oversees multiple aspects of the study."""
-    site: Optional[List["_models.Reference"]] = rest_field()
-    """Facility where study activities are conducted."""
-    reason_stopped: Optional["_models.CodeableConcept"] = rest_field(name="reasonStopped")
-    """accrual-goal-met | closed-due-to-toxicity | closed-due-to-lack-of-study-progress |
-     temporarily-closed-per-study-design."""
-    note: Optional[List["_models.Annotation"]] = rest_field()
-    """Comments made about the study."""
-    arm: Optional[List["_models.ResearchStudyArm"]] = rest_field()
-    """Defined path through the study for a subject."""
-    objective: Optional[List["_models.ResearchStudyObjective"]] = rest_field()
-    """A goal for the study."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        status: Union[str, "_models.ResearchStudyStatusCodeType"],
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        meta: Optional["_models.Meta"] = None,
-        implicit_rules: Optional[str] = None,
-        language: Optional[str] = None,
-        text: Optional["_models.Narrative"] = None,
-        contained: Optional[List["_models.Resource"]] = None,
-        extension: Optional[List["_models.Extension"]] = None,
-        modifier_extension: Optional[List["_models.Extension"]] = None,
-        identifier: Optional[List["_models.Identifier"]] = None,
-        title: Optional[str] = None,
-        protocol: Optional[List["_models.Reference"]] = None,
-        part_of: Optional[List["_models.Reference"]] = None,
-        primary_purpose_type: Optional["_models.CodeableConcept"] = None,
-        phase: Optional["_models.CodeableConcept"] = None,
-        category: Optional[List["_models.CodeableConcept"]] = None,
-        focus: Optional[List["_models.CodeableConcept"]] = None,
-        condition: Optional[List["_models.CodeableConcept"]] = None,
-        contact: Optional[List["_models.ContactDetail"]] = None,
-        keyword: Optional[List["_models.CodeableConcept"]] = None,
-        location: Optional[List["_models.CodeableConcept"]] = None,
-        description: Optional[str] = None,
-        enrollment: Optional[List["_models.Reference"]] = None,
-        period: Optional["_models.Period"] = None,
-        sponsor: Optional["_models.Reference"] = None,
-        principal_investigator: Optional["_models.Reference"] = None,
-        site: Optional[List["_models.Reference"]] = None,
-        reason_stopped: Optional["_models.CodeableConcept"] = None,
-        note: Optional[List["_models.Annotation"]] = None,
-        arm: Optional[List["_models.ResearchStudyArm"]] = None,
-        objective: Optional[List["_models.ResearchStudyObjective"]] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, resource_type="ResearchStudy", **kwargs)
-
-
-class ResearchStudyArm(_model_base.Model):
-    """ResearchStudyArm.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar name: Label for study arm. Required.
-    :vartype name: str
-    :ivar type: Categorization of study arm.
-    :vartype type: ~azure.healthinsights.radiologyinsights.models.CodeableConcept
-    :ivar description: Short explanation of study path.
-    :vartype description: str
-    """
-
-    name: str = rest_field()
-    """Label for study arm. Required."""
-    type: Optional["_models.CodeableConcept"] = rest_field()
-    """Categorization of study arm."""
-    description: Optional[str] = rest_field()
-    """Short explanation of study path."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        type: Optional["_models.CodeableConcept"] = None,
-        description: Optional[str] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class ResearchStudyObjective(_model_base.Model):
-    """ResearchStudyObjective.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar name: Label for the objective. Required.
-    :vartype name: str
-    :ivar type: primary | secondary | exploratory.
-    :vartype type: ~azure.healthinsights.radiologyinsights.models.CodeableConcept
-    """
-
-    name: str = rest_field()
-    """Label for the objective. Required."""
-    type: Optional["_models.CodeableConcept"] = rest_field()
-    """primary | secondary | exploratory."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        type: Optional["_models.CodeableConcept"] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class SampledData(Element):
     """A series of measurements taken by a device
     Based on `FHIR SampledData <https://www.hl7.org/fhir/R4/datatypes.html#SampledData>`_.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar origin: Zero value and units. Required.
     :vartype origin: ~azure.healthinsights.radiologyinsights.models.Quantity
@@ -3414,7 +2750,6 @@ class SexMismatchInference(RadiologyInsightsInference, discriminator="sexMismatc
     document are either inconsistent or do not match the gender specified in the patient
     information.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar extension: Additional Content defined by implementations.
     :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]

@@ -30,13 +30,14 @@ def main():
         subscription_id="4adb32ad-8327-4cbb-b775-b84b4465bb38",
     )
 
-    response = client.resource_health_metadata.get_by_site(
+    response = client.resource_health_metadata.get_by_site_slot(
         resource_group_name="Default-Web-NorthCentralUS",
         name="newsiteinnewASE-NCUS",
+        slot="Production",
     )
     print(response)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2023-12-01/examples/GetResourceHealthMetadataBySite.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2024-04-01/examples/GetResourceHealthMetadataBySite.json
 if __name__ == "__main__":
     main()

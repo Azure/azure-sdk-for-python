@@ -20,24 +20,28 @@ class TestComputeManagementVirtualMachineScaleSetExtensionsOperations(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_virtual_machine_scale_set_extensions_begin_create_or_update(self, resource_group):
         response = self.client.virtual_machine_scale_set_extensions.begin_create_or_update(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             vmss_extension_name="str",
             extension_parameters={
                 "autoUpgradeMinorVersion": bool,
+                "enableAutomaticUpgrade": bool,
                 "forceUpdateTag": "str",
                 "id": "str",
                 "name": "str",
                 "protectedSettings": {},
+                "protectedSettingsFromKeyVault": {"secretUrl": "str", "sourceVault": {"id": "str"}},
+                "provisionAfterExtensions": ["str"],
                 "provisioningState": "str",
                 "publisher": "str",
                 "settings": {},
+                "suppressFailures": bool,
                 "type": "str",
                 "typeHandlerVersion": "str",
             },
-            api_version="2017-03-30",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -45,12 +49,41 @@ class TestComputeManagementVirtualMachineScaleSetExtensionsOperations(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_virtual_machine_scale_set_extensions_begin_update(self, resource_group):
+        response = self.client.virtual_machine_scale_set_extensions.begin_update(
+            resource_group_name=resource_group.name,
+            vm_scale_set_name="str",
+            vmss_extension_name="str",
+            extension_parameters={
+                "autoUpgradeMinorVersion": bool,
+                "enableAutomaticUpgrade": bool,
+                "forceUpdateTag": "str",
+                "id": "str",
+                "name": "str",
+                "protectedSettings": {},
+                "protectedSettingsFromKeyVault": {"secretUrl": "str", "sourceVault": {"id": "str"}},
+                "provisionAfterExtensions": ["str"],
+                "provisioningState": "str",
+                "publisher": "str",
+                "settings": {},
+                "suppressFailures": bool,
+                "type": "str",
+                "typeHandlerVersion": "str",
+            },
+            api_version="2024-07-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_virtual_machine_scale_set_extensions_begin_delete(self, resource_group):
         response = self.client.virtual_machine_scale_set_extensions.begin_delete(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             vmss_extension_name="str",
-            api_version="2017-03-30",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -58,12 +91,12 @@ class TestComputeManagementVirtualMachineScaleSetExtensionsOperations(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_virtual_machine_scale_set_extensions_get(self, resource_group):
         response = self.client.virtual_machine_scale_set_extensions.get(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             vmss_extension_name="str",
-            api_version="2017-03-30",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -71,11 +104,11 @@ class TestComputeManagementVirtualMachineScaleSetExtensionsOperations(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_virtual_machine_scale_set_extensions_list(self, resource_group):
         response = self.client.virtual_machine_scale_set_extensions.list(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
-            api_version="2017-03-30",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

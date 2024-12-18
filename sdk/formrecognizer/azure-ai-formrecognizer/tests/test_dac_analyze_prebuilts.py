@@ -16,21 +16,20 @@ from azure.core.serialization import AzureJSONEncoder
 from azure.ai.formrecognizer._generated.v2023_07_31.models import AnalyzeResultOperation
 from azure.ai.formrecognizer import DocumentAnalysisClient, AnalyzeResult, FormContentType, AddressValue
 from testcase import FormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
-from preparers import FormRecognizerPreparer
+from preparers import FormRecognizerPreparer, get_sync_client
 from conftest import skip_flaky_test
 
 
-DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
+get_da_client = functools.partial(get_sync_client, DocumentAnalysisClient)
 
 
 class TestDACAnalyzePrebuilts(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_business_card_multipage_pdf(self, client):
+    def test_business_card_multipage_pdf(self):
+        client = get_da_client()
         with open(self.business_card_multipage_pdf, "rb") as fd:
             business_card = fd.read()
 
@@ -97,9 +96,9 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_w2_png_value_address(self, client):
+    def test_w2_png_value_address(self):
+        client = get_da_client()
         with open(self.w2_png, "rb") as fd:
             document = fd.read()
 
@@ -142,9 +141,9 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_identity_document_jpg_passport(self, client):
+    def test_identity_document_jpg_passport(self):
+        client = get_da_client()
         with open(self.identity_document_passport_jpg, "rb") as fd:
             id_document = fd.read()
 
@@ -166,9 +165,9 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_identity_document_jpg(self, client):
+    def test_identity_document_jpg(self):
+        client = get_da_client()
         with open(self.identity_document_license_jpg, "rb") as fd:
             id_document = fd.read()
 
@@ -198,9 +197,9 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
     @pytest.mark.skip("Tracking issue: https://github.com/Azure/azure-sdk-for-python/issues/31214")
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_invoice_stream_transform_tiff(self, client):
+    def test_invoice_stream_transform_tiff(self):
+        client = get_da_client()
         responses = []
 
         def callback(raw_response, _, headers):
@@ -239,9 +238,9 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
     @pytest.mark.skip("Tracking issue: https://github.com/Azure/azure-sdk-for-python/issues/31214")
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_invoice_jpg(self, client, **kwargs):
+    def test_invoice_jpg(self, **kwargs):
+        client = get_da_client()
         with open(self.invoice_jpg, "rb") as fd:
             invoice = fd.read()
         poller = client.begin_analyze_document("prebuilt-invoice", invoice)
@@ -295,9 +294,8 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         assert invoice.fields.get("Items").value[0].value["UnitPrice"].value.symbol ==  None
 
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     def test_fail_passing_content_type(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_da_client()
         with open(self.receipt_png, "rb") as fd:
             my_file = fd.read()
         with pytest.raises(TypeError):
@@ -309,7 +307,7 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     def test_receipt_bad_endpoint(self, **kwargs):
-        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
+        formrecognizer_test_api_key = "fakeZmFrZV9hY29jdW50X2tleQ=="
         with open(self.receipt_jpg, "rb") as fd:
             my_file = fd.read()
         with pytest.raises(ServiceRequestError):
@@ -318,15 +316,15 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @recorded_by_proxy
-    def test_authentication_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
-        client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
+    def test_authentication_bad_key(self, **kwargs):
+        client = get_da_client(api_key="xxxx")
         with pytest.raises(ClientAuthenticationError):
             poller = client.begin_analyze_document("prebuilt-receipt", b"xx")
 
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_damaged_file_passed_as_bytes(self, client):
+    def test_damaged_file_passed_as_bytes(self):
+        client = get_da_client()
         damaged_pdf = b"\x25\x50\x44\x46\x55\x55\x55"  # still has correct bytes to be recognized as PDF
         with pytest.raises(HttpResponseError):
             poller = client.begin_analyze_document(
@@ -335,9 +333,9 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
             )
 
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_damaged_file_passed_as_bytes_io(self, client):
+    def test_damaged_file_passed_as_bytes_io(self):
+        client = get_da_client()
         damaged_pdf = BytesIO(b"\x25\x50\x44\x46\x55\x55\x55")  # still has correct bytes to be recognized as PDF
         with pytest.raises(HttpResponseError):
             poller = client.begin_analyze_document(
@@ -347,10 +345,9 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_blank_page(self, client):
-
+    def test_blank_page(self):
+        client = get_da_client()
         with open(self.blank_pdf, "rb") as fd:
             blank = fd.read()
         poller = client.begin_analyze_document(
@@ -361,10 +358,9 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         assert result is not None
 
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_auto_detect_unsupported_stream_content(self, client):
-
+    def test_auto_detect_unsupported_stream_content(self):
+        client = get_da_client()
         with open(self.unsupported_content_py, "rb") as fd:
             my_file = fd.read()
 
@@ -377,9 +373,9 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_receipt_stream_transform_png(self, client):
+    def test_receipt_stream_transform_png(self):
+        client = get_da_client()
         responses = []
 
         def callback(raw_response, _, headers):
@@ -417,9 +413,9 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_receipt_stream_transform_jpg(self, client):
+    def test_receipt_stream_transform_jpg(self):
+        client = get_da_client()
         responses = []
 
         def callback(raw_response, _, headers):
@@ -458,10 +454,9 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_receipt_png(self, client):
-
+    def test_receipt_png(self):
+        client = get_da_client()
         with open(self.receipt_png, "rb") as stream:
             poller = client.begin_analyze_document("prebuilt-receipt", stream)
 
@@ -481,10 +476,9 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_receipt_multipage(self, client):
-
+    def test_receipt_multipage(self):
+        client = get_da_client()
         with open(self.multipage_receipt_pdf, "rb") as fd:
             receipt = fd.read()
         poller = client.begin_analyze_document("prebuilt-receipt", receipt)
@@ -521,10 +515,9 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_receipt_multipage_transform(self, client):
-
+    def test_receipt_multipage_transform(self):
+        client = get_da_client()
         responses = []
 
         def callback(raw_response, _, headers):
@@ -564,10 +557,8 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     def test_receipt_continuation_token(self, **kwargs):
-        client = kwargs.pop("client")
-
+        client = get_da_client()
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
 
@@ -580,9 +571,9 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_receipt_locale_specified(self, client):
+    def test_receipt_locale_specified(self):
+        client = get_da_client()
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
         poller = client.begin_analyze_document("prebuilt-receipt", receipt, locale="en-IN")
@@ -591,9 +582,9 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         assert result
 
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_receipt_locale_error(self, client):
+    def test_receipt_locale_error(self):
+        client = get_da_client()
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
         with pytest.raises(HttpResponseError) as e:
@@ -602,9 +593,9 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_pages_kwarg_specified(self, client):
+    def test_pages_kwarg_specified(self):
+        client = get_da_client()
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
 

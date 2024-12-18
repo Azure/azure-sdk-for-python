@@ -8,35 +8,47 @@
 
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
+from typing_extensions import Self
 
+from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 
-from . import models
+from . import models as _models
 from ._configuration import BillingManagementClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import (
     AddressOperations,
     AgreementsOperations,
+    AssociatedTenantsOperations,
     AvailableBalancesOperations,
     BillingAccountsOperations,
-    BillingPeriodsOperations,
     BillingPermissionsOperations,
     BillingProfilesOperations,
     BillingPropertyOperations,
+    BillingRequestsOperations,
     BillingRoleAssignmentsOperations,
-    BillingRoleDefinitionsOperations,
+    BillingRoleDefinitionOperations,
+    BillingSubscriptionsAliasesOperations,
     BillingSubscriptionsOperations,
     CustomersOperations,
+    DepartmentsOperations,
     EnrollmentAccountsOperations,
-    InstructionsOperations,
     InvoiceSectionsOperations,
     InvoicesOperations,
     Operations,
+    PartnerTransfersOperations,
+    PaymentMethodsOperations,
     PoliciesOperations,
     ProductsOperations,
+    RecipientTransfersOperations,
+    ReservationOrdersOperations,
     ReservationsOperations,
+    SavingsPlanOrdersOperations,
+    SavingsPlansOperations,
     TransactionsOperations,
+    TransfersOperations,
 )
 
 if TYPE_CHECKING:
@@ -45,58 +57,79 @@ if TYPE_CHECKING:
 
 
 class BillingManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
-    """Billing client provides access to billing resources for Azure subscriptions.
+    """Billing Client.
 
+    :ivar agreements: AgreementsOperations operations
+    :vartype agreements: azure.mgmt.billing.operations.AgreementsOperations
+    :ivar associated_tenants: AssociatedTenantsOperations operations
+    :vartype associated_tenants: azure.mgmt.billing.operations.AssociatedTenantsOperations
+    :ivar available_balances: AvailableBalancesOperations operations
+    :vartype available_balances: azure.mgmt.billing.operations.AvailableBalancesOperations
     :ivar billing_accounts: BillingAccountsOperations operations
     :vartype billing_accounts: azure.mgmt.billing.operations.BillingAccountsOperations
     :ivar address: AddressOperations operations
     :vartype address: azure.mgmt.billing.operations.AddressOperations
-    :ivar available_balances: AvailableBalancesOperations operations
-    :vartype available_balances: azure.mgmt.billing.operations.AvailableBalancesOperations
-    :ivar instructions: InstructionsOperations operations
-    :vartype instructions: azure.mgmt.billing.operations.InstructionsOperations
-    :ivar billing_profiles: BillingProfilesOperations operations
-    :vartype billing_profiles: azure.mgmt.billing.operations.BillingProfilesOperations
-    :ivar customers: CustomersOperations operations
-    :vartype customers: azure.mgmt.billing.operations.CustomersOperations
-    :ivar invoice_sections: InvoiceSectionsOperations operations
-    :vartype invoice_sections: azure.mgmt.billing.operations.InvoiceSectionsOperations
     :ivar billing_permissions: BillingPermissionsOperations operations
     :vartype billing_permissions: azure.mgmt.billing.operations.BillingPermissionsOperations
-    :ivar billing_subscriptions: BillingSubscriptionsOperations operations
-    :vartype billing_subscriptions: azure.mgmt.billing.operations.BillingSubscriptionsOperations
-    :ivar products: ProductsOperations operations
-    :vartype products: azure.mgmt.billing.operations.ProductsOperations
-    :ivar invoices: InvoicesOperations operations
-    :vartype invoices: azure.mgmt.billing.operations.InvoicesOperations
-    :ivar transactions: TransactionsOperations operations
-    :vartype transactions: azure.mgmt.billing.operations.TransactionsOperations
-    :ivar policies: PoliciesOperations operations
-    :vartype policies: azure.mgmt.billing.operations.PoliciesOperations
+    :ivar billing_profiles: BillingProfilesOperations operations
+    :vartype billing_profiles: azure.mgmt.billing.operations.BillingProfilesOperations
     :ivar billing_property: BillingPropertyOperations operations
     :vartype billing_property: azure.mgmt.billing.operations.BillingPropertyOperations
-    :ivar billing_role_definitions: BillingRoleDefinitionsOperations operations
-    :vartype billing_role_definitions:
-     azure.mgmt.billing.operations.BillingRoleDefinitionsOperations
+    :ivar billing_requests: BillingRequestsOperations operations
+    :vartype billing_requests: azure.mgmt.billing.operations.BillingRequestsOperations
     :ivar billing_role_assignments: BillingRoleAssignmentsOperations operations
     :vartype billing_role_assignments:
      azure.mgmt.billing.operations.BillingRoleAssignmentsOperations
-    :ivar agreements: AgreementsOperations operations
-    :vartype agreements: azure.mgmt.billing.operations.AgreementsOperations
-    :ivar reservations: ReservationsOperations operations
-    :vartype reservations: azure.mgmt.billing.operations.ReservationsOperations
+    :ivar billing_role_definition: BillingRoleDefinitionOperations operations
+    :vartype billing_role_definition: azure.mgmt.billing.operations.BillingRoleDefinitionOperations
+    :ivar savings_plan_orders: SavingsPlanOrdersOperations operations
+    :vartype savings_plan_orders: azure.mgmt.billing.operations.SavingsPlanOrdersOperations
+    :ivar savings_plans: SavingsPlansOperations operations
+    :vartype savings_plans: azure.mgmt.billing.operations.SavingsPlansOperations
+    :ivar billing_subscriptions: BillingSubscriptionsOperations operations
+    :vartype billing_subscriptions: azure.mgmt.billing.operations.BillingSubscriptionsOperations
+    :ivar billing_subscriptions_aliases: BillingSubscriptionsAliasesOperations operations
+    :vartype billing_subscriptions_aliases:
+     azure.mgmt.billing.operations.BillingSubscriptionsAliasesOperations
+    :ivar customers: CustomersOperations operations
+    :vartype customers: azure.mgmt.billing.operations.CustomersOperations
+    :ivar departments: DepartmentsOperations operations
+    :vartype departments: azure.mgmt.billing.operations.DepartmentsOperations
     :ivar enrollment_accounts: EnrollmentAccountsOperations operations
     :vartype enrollment_accounts: azure.mgmt.billing.operations.EnrollmentAccountsOperations
-    :ivar billing_periods: BillingPeriodsOperations operations
-    :vartype billing_periods: azure.mgmt.billing.operations.BillingPeriodsOperations
+    :ivar invoices: InvoicesOperations operations
+    :vartype invoices: azure.mgmt.billing.operations.InvoicesOperations
+    :ivar invoice_sections: InvoiceSectionsOperations operations
+    :vartype invoice_sections: azure.mgmt.billing.operations.InvoiceSectionsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.billing.operations.Operations
+    :ivar payment_methods: PaymentMethodsOperations operations
+    :vartype payment_methods: azure.mgmt.billing.operations.PaymentMethodsOperations
+    :ivar policies: PoliciesOperations operations
+    :vartype policies: azure.mgmt.billing.operations.PoliciesOperations
+    :ivar products: ProductsOperations operations
+    :vartype products: azure.mgmt.billing.operations.ProductsOperations
+    :ivar reservations: ReservationsOperations operations
+    :vartype reservations: azure.mgmt.billing.operations.ReservationsOperations
+    :ivar reservation_orders: ReservationOrdersOperations operations
+    :vartype reservation_orders: azure.mgmt.billing.operations.ReservationOrdersOperations
+    :ivar transactions: TransactionsOperations operations
+    :vartype transactions: azure.mgmt.billing.operations.TransactionsOperations
+    :ivar transfers: TransfersOperations operations
+    :vartype transfers: azure.mgmt.billing.operations.TransfersOperations
+    :ivar partner_transfers: PartnerTransfersOperations operations
+    :vartype partner_transfers: azure.mgmt.billing.operations.PartnerTransfersOperations
+    :ivar recipient_transfers: RecipientTransfersOperations operations
+    :vartype recipient_transfers: azure.mgmt.billing.operations.RecipientTransfersOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The ID that uniquely identifies an Azure subscription. Required.
+    :param subscription_id: The ID that uniquely identifies a billing subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2024-04-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -111,55 +144,96 @@ class BillingManagementClient:  # pylint: disable=client-accepts-api-version-key
         self._config = BillingManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                ARMAutoResourceProviderRegistrationPolicy(),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
+        self.agreements = AgreementsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.associated_tenants = AssociatedTenantsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.available_balances = AvailableBalancesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.billing_accounts = BillingAccountsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.address = AddressOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.available_balances = AvailableBalancesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.instructions = InstructionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.billing_profiles = BillingProfilesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.customers = CustomersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.invoice_sections = InvoiceSectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.billing_permissions = BillingPermissionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.billing_subscriptions = BillingSubscriptionsOperations(
+        self.billing_profiles = BillingProfilesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.products = ProductsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.invoices = InvoicesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.transactions = TransactionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.policies = PoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.billing_property = BillingPropertyOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.billing_role_definitions = BillingRoleDefinitionsOperations(
+        self.billing_requests = BillingRequestsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.billing_role_assignments = BillingRoleAssignmentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.agreements = AgreementsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.reservations = ReservationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.billing_role_definition = BillingRoleDefinitionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.savings_plan_orders = SavingsPlanOrdersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.savings_plans = SavingsPlansOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.billing_subscriptions = BillingSubscriptionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.billing_subscriptions_aliases = BillingSubscriptionsAliasesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.customers = CustomersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.departments = DepartmentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.enrollment_accounts = EnrollmentAccountsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.billing_periods = BillingPeriodsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.invoices = InvoicesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.invoice_sections = InvoiceSectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.payment_methods = PaymentMethodsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.policies = PoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.products = ProductsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.reservations = ReservationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.reservation_orders = ReservationOrdersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.transactions = TransactionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.transfers = TransfersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.partner_transfers = PartnerTransfersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.recipient_transfers = RecipientTransfersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -179,17 +253,14 @@ class BillingManagementClient:  # pylint: disable=client-accepts-api-version-key
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> BillingManagementClient
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)

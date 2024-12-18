@@ -20,9 +20,7 @@ namespace_name = PACKAGE_NAME.replace("-", ".")
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, "_version.py"), "r") as fd:
-    version = re.search(
-        r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE
-    ).group(1)
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)
 if not version:
     raise RuntimeError("Cannot find version information")
 
@@ -32,9 +30,7 @@ with open("README.md", encoding="utf-8") as f:
 setup(
     name=PACKAGE_NAME,
     version=version,
-    description="Microsoft Azure {} Client Library for Python".format(
-        PACKAGE_PPRINT_NAME
-    ),
+    description="Microsoft Azure {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
     long_description_content_type="text/markdown",
     # ensure that these are updated to reflect the package owners' information
     long_description=long_description,
@@ -69,7 +65,7 @@ setup(
         "pytyped": ["py.typed"],
     },
     python_requires=">=3.8",
-    install_requires=["msrest>=0.7.1", "azure-core>=1.24.0"],
+    install_requires=["msrest>=0.7.1", "azure-core>=1.27.0"],
     extras_require={":python_version<'3.8'": ["typing-extensions"]},
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",

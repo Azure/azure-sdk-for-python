@@ -12,9 +12,6 @@ from asynctestcase import AppConfigTestCase, setup_configs, has_feature_flag
 from test_constants import FEATURE_MANAGEMENT_KEY
 
 
-from azure.appconfiguration.provider._azureappconfigurationprovider import _delay_failure
-
-
 class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
     # method: load
     @app_config_decorator_async

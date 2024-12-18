@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
+from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -44,11 +45,10 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class DataFactoryManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class DataFactoryManagementClient:  # pylint: disable=too-many-instance-attributes
     """The Azure Data Factory V2 management API provides a RESTful set of web services that interact
     with Azure Data Factory V2 services.
 
@@ -233,7 +233,7 @@ class DataFactoryManagementClient:  # pylint: disable=client-accepts-api-version
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "DataFactoryManagementClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 

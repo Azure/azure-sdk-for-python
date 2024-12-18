@@ -68,3 +68,7 @@ yarl
 azure-identity
 openai
 dnspython
+promptflow-core
+promptflow-devkit
+nltk
+azure-monitor-opentelemetry

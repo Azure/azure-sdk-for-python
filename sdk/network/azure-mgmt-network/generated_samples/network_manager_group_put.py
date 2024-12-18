@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.network import NetworkManagementClient
@@ -36,11 +34,11 @@ def main():
         resource_group_name="rg1",
         network_manager_name="testNetworkManager",
         network_group_name="testNetworkGroup",
-        parameters={"properties": {"description": "A sample group"}},
+        parameters={"properties": {"description": "A sample group", "memberType": "VirtualNetwork"}},
     )
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-01-01/examples/NetworkManagerGroupPut.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-03-01/examples/NetworkManagerGroupPut.json
 if __name__ == "__main__":
     main()

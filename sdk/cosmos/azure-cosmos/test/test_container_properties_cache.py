@@ -599,7 +599,7 @@ class TestContainerPropertiesCache(unittest.TestCase):
         client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
 
         # Query change feed for the new items
-        change_feed = list(created_container.query_items_change_feed())
+        change_feed = list(created_container.query_items_change_feed(start_time='Beginning'))
         self.assertEqual(len(change_feed), 2)
 
         # Verify that the change feed contains the new items

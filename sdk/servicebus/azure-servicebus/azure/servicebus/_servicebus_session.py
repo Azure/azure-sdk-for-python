@@ -30,11 +30,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class BaseSession(object):
-    def __init__(
-        self,
-        session_id: str,
-        receiver: Union["ServiceBusReceiver", "ServiceBusReceiverAsync"]
-    ) -> None:
+    def __init__(self, session_id: str, receiver: Union["ServiceBusReceiver", "ServiceBusReceiverAsync"]) -> None:
         self._session_id = session_id
         self._receiver = receiver
         self._encoding = "UTF-8"
@@ -151,9 +147,7 @@ class ServiceBusSession(BaseSession):
         self._receiver._check_live()  # pylint: disable=protected-access
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
-        state = (
-            state.encode(self._encoding) if isinstance(state, str) else state
-        )
+        state = state.encode(self._encoding) if isinstance(state, str) else state
         return self._receiver._mgmt_request_response_with_retry(  # type: ignore
             REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
             {

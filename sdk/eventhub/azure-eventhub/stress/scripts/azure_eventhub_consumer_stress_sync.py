@@ -21,7 +21,7 @@ from logger import get_logger
 from process_monitor import ProcessMonitor
 from app_insights_metric import AzureMonitorMetric
 
-ENV_FILE = os.environ.get('ENV_FILE')
+ENV_FILE = os.environ.get("ENV_FILE")
 load_dotenv(dotenv_path=ENV_FILE, override=True)
 
 
@@ -32,7 +32,7 @@ def parse_starting_position(args):
     if args.starting_sequence_number:
         starting_position = int(args.starting_sequence_number)
     if args.starting_datetime:
-        starting_position = datetime.datetime.strptime(str(args.starting_datetime), '%Y-%m-%d %H:%M:%S')
+        starting_position = datetime.datetime.strptime(str(args.starting_datetime), "%Y-%m-%d %H:%M:%S")
 
     if not starting_position:
         starting_position = "-1"
@@ -43,35 +43,53 @@ def parse_starting_position(args):
 parser = argparse.ArgumentParser()
 parser.add_argument("--link_credit", default=int(os.environ.get("LINK_CREDIT", 3000)), type=int)
 parser.add_argument("--output_interval", type=float, default=int(os.environ.get("OUTPUT_INTERVAL", 5000)))
-parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=int(os.environ.get("DURATION", 999999999)))
-parser.add_argument("--consumer_group", help="Consumer group name", default=os.environ.get("CONSUMER_GROUP", "$default"))
+parser.add_argument(
+    "--duration", help="Duration in seconds of the test", type=int, default=int(os.environ.get("DURATION", 999999999))
+)
+parser.add_argument(
+    "--consumer_group", help="Consumer group name", default=os.environ.get("CONSUMER_GROUP", "$default")
+)
 parser.add_argument("--auth_timeout", help="Authorization Timeout", type=float, default=60)
-parser.add_argument("--starting_offset", help="Starting offset", type=str, default=os.environ.get("STARTING_OFFSET", "-1"))
+parser.add_argument(
+    "--starting_offset", help="Starting offset", type=str, default=os.environ.get("STARTING_OFFSET", "-1")
+)
 parser.add_argument("--starting_sequence_number", help="Starting sequence number", type=int)
 parser.add_argument("--starting_datetime", help="Starting datetime string, should be format of YYYY-mm-dd HH:mm:ss")
-parser.add_argument("--partitions", help="Number of partitions. 0 means to get partitions from eventhubs", type=int, default=0)
+parser.add_argument(
+    "--partitions", help="Number of partitions. 0 means to get partitions from eventhubs", type=int, default=0
+)
 parser.add_argument("--owner_level", help="The owner level, or epoch, of the consumer", type=int, default=None)
 parser.add_argument("--recv_partition_id", help="Receive from a specific partition if this is set", type=int)
-parser.add_argument("--max_batch_size", type=int, default=int(os.environ.get("MAX_BATCH_SIZE", 0)),
-                    help="Call EventHubConsumerClient.receive_batch() if not 0, otherwise call receive()")
-parser.add_argument("--max_wait_time", type=float, default=0,
-                    help="max_wait_time of EventHubConsumerClient.receive_batch() or EventHubConsumerClient.receive()")
+parser.add_argument(
+    "--max_batch_size",
+    type=int,
+    default=int(os.environ.get("MAX_BATCH_SIZE", 0)),
+    help="Call EventHubConsumerClient.receive_batch() if not 0, otherwise call receive()",
+)
+parser.add_argument(
+    "--max_wait_time",
+    type=float,
+    default=0,
+    help="max_wait_time of EventHubConsumerClient.receive_batch() or EventHubConsumerClient.receive()",
+)
 
 parser.add_argument("--track_last_enqueued_event_properties", action="store_true")
-parser.add_argument("--load_balancing_interval", help="time duration in seconds between two load balance", type=float, default=10)
-parser.add_argument("--conn_str", help="EventHub connection string",
-                    default=os.environ.get('EVENT_HUB_CONN_STR'))
+parser.add_argument(
+    "--load_balancing_interval", help="time duration in seconds between two load balance", type=float, default=10
+)
+parser.add_argument("--conn_str", help="EventHub connection string", default=os.environ.get("EVENT_HUB_CONN_STR"))
 parser.add_argument("--azure_identity", help="Use identity", type=bool, default=False)
-parser.add_argument("--hostname", help="The fully qualified host name for the Event Hubs namespace.", default=os.environ.get("EVENT_HUB_HOSTNAME"))
-parser.add_argument("--eventhub", help="Name of EventHub", default=os.environ.get('EVENT_HUB_NAME'))
+parser.add_argument(
+    "--hostname",
+    help="The fully qualified host name for the Event Hubs namespace.",
+    default=os.environ.get("EVENT_HUB_HOSTNAME"),
+)
+parser.add_argument("--eventhub", help="Name of EventHub", default=os.environ.get("EVENT_HUB_NAME"))
 parser.add_argument("--address", help="Address URI to the EventHub entity")
 parser.add_argument("--sas-policy", help="Name of the shared access policy to authenticate with")
 parser.add_argument("--sas-key", help="Shared access key")
 parser.add_argument(
-    "--transport_type",
-    help="Transport type, 0 means AMQP, 1 means AMQP over WebSocket",
-    type=int,
-    default=0
+    "--transport_type", help="Transport type, 0 means AMQP, 1 means AMQP over WebSocket", type=int, default=0
 )
 parser.add_argument("--parallel_recv_cnt", help="Number of receive clients doing parallel receiving", type=int)
 parser.add_argument("--proxy_hostname", type=str)
@@ -88,7 +106,12 @@ parser.add_argument("--pyamqp_logging_enable", help="pyamqp logging enable", act
 parser.add_argument("--print_console", help="print to console", action="store_true")
 parser.add_argument("--log_filename", help="log file name", type=str)
 parser.add_argument("--uamqp_mode", help="Flag for uamqp or pyamqp", action="store_true")
-parser.add_argument("--debug_level", help="Flag for setting a debug level, can be Info, Debug, Warning, Error or Critical", type=str, default="Error")
+parser.add_argument(
+    "--debug_level",
+    help="Flag for setting a debug level, can be Info, Debug, Warning, Error or Critical",
+    type=str,
+    default="Error",
+)
 
 
 args = parser.parse_args()
@@ -97,18 +120,20 @@ print_console = args.print_console or (os.environ.get("PRINT_CONSOLE") == "1")
 debug_level = getattr(logging, args.debug_level.upper(), logging.ERROR)
 
 
-LOGGER = get_logger(
-    args.log_filename,
-    "stress_receive_sync",
-    level=debug_level,
-    print_console=print_console
-)
+log_filename = args.log_filename if args.log_filename else "consumer_sync"
+if args.transport_type == 1:
+    log_filename += "_ws.log"
+else:
+    log_filename += ".log"
+logdir = os.environ.get("DEBUG_SHARE")
+logfilepath = f"{logdir}/{log_filename}"
+LOGGER = get_logger(logfilepath, "stress_receive_sync", level=debug_level, print_console=print_console)
 LOG_PER_COUNT = args.output_interval
 
 start_time = time.perf_counter()
 recv_cnt_map = defaultdict(int)
 recv_cnt_iteration_map = defaultdict(int)
-recv_time_map = dict()
+recv_time_map = {}
 
 azure_metric_monitor = AzureMonitorMetric("Sync EventHubConsumerClient")
 
@@ -128,17 +153,16 @@ def on_event_received(process_monitor, partition_context, event):
         partition_previous_time = recv_time_map.get(partition_context.partition_id)
         partition_current_time = time.perf_counter()
         recv_time_map[partition_context.partition_id] = partition_current_time
-        LOGGER.info("Partition: %r, Total received: %r, Time elapsed: %r, Speed since start: %r/s, Current speed: %r/s",
-                    partition_context.partition_id,
-                    recv_cnt_map[partition_context.partition_id],
-                    total_time_elapsed,
-                    recv_cnt_map[partition_context.partition_id] / total_time_elapsed,
-                    LOG_PER_COUNT / (partition_current_time - partition_previous_time) if partition_previous_time else None
-                    )
+        LOGGER.info(
+            "Partition: %r, Total received: %r, Time elapsed: %r, Speed since start: %r/s, Current speed: %r/s",
+            partition_context.partition_id,
+            recv_cnt_map[partition_context.partition_id],
+            total_time_elapsed,
+            recv_cnt_map[partition_context.partition_id] / total_time_elapsed,
+            LOG_PER_COUNT / (partition_current_time - partition_previous_time) if partition_previous_time else None,
+        )
         azure_metric_monitor.record_events_cpu_memory(
-            LOG_PER_COUNT,
-            process_monitor.cpu_usage_percent,
-            process_monitor.memory_usage_percent
+            LOG_PER_COUNT, process_monitor.cpu_usage_percent, process_monitor.memory_usage_percent
         )
         partition_context.update_checkpoint(event)
 
@@ -151,18 +175,22 @@ def on_event_batch_received(process_monitor, partition_context, event_batch):
         partition_previous_time = recv_time_map.get(partition_context.partition_id)
         partition_current_time = time.perf_counter()
         recv_time_map[partition_context.partition_id] = partition_current_time
-        LOGGER.info("Partition: %r, Total received: %r, Time elapsed: %r, Speed since start: %r/s, Current speed: %r/s",
-                    partition_context.partition_id,
-                    recv_cnt_map[partition_context.partition_id],
-                    total_time_elapsed,
-                    recv_cnt_map[partition_context.partition_id] / total_time_elapsed,
-                    recv_cnt_iteration_map[partition_context.partition_id] / (partition_current_time - partition_previous_time) if partition_previous_time else None
-                    )
+        LOGGER.info(
+            "Partition: %r, Total received: %r, Time elapsed: %r, Speed since start: %r/s, Current speed: %r/s",
+            partition_context.partition_id,
+            recv_cnt_map[partition_context.partition_id],
+            total_time_elapsed,
+            recv_cnt_map[partition_context.partition_id] / total_time_elapsed,
+            (
+                recv_cnt_iteration_map[partition_context.partition_id]
+                / (partition_current_time - partition_previous_time)
+                if partition_previous_time
+                else None
+            ),
+        )
         recv_cnt_iteration_map[partition_context.partition_id] = 0
         azure_metric_monitor.record_events_cpu_memory(
-            LOG_PER_COUNT,
-            process_monitor.cpu_usage_percent,
-            process_monitor.memory_usage_percent
+            LOG_PER_COUNT, process_monitor.cpu_usage_percent, process_monitor.memory_usage_percent
         )
         partition_context.update_checkpoint()
 
@@ -173,7 +201,9 @@ def on_error(partition_context, exception):
 
 def create_client(args):
     try:
-        checkpoint_store = BlobCheckpointStore(args.storage_account, DefaultAzureCredential(), args.storage_container_name)
+        checkpoint_store = BlobCheckpointStore(
+            args.storage_account, DefaultAzureCredential(), args.storage_container_name
+        )
     except:
         checkpoint_store = None
 
@@ -205,9 +235,7 @@ def create_client(args):
 def run(args):
 
     with ProcessMonitor(
-        "monitor_{}".format(args.log_filename),
-        "consumer_stress_sync",
-        print_console=print_console
+        "monitor_{}".format(args.log_filename), "consumer_stress_sync", print_console=print_console
     ) as process_monitor:
         kwargs_dict = {
             "prefetch": args.link_credit,
@@ -215,7 +243,7 @@ def run(args):
             "track_last_enqueued_event_properties": args.track_last_enqueued_event_properties,
             "starting_position": starting_position,
             "owner_level": args.owner_level,
-            "on_error": on_error
+            "on_error": on_error,
         }
         if args.max_batch_size:
             kwargs_dict["max_batch_size"] = args.max_batch_size
@@ -230,19 +258,34 @@ def run(args):
             threads = [
                 threading.Thread(
                     target=clients[i].receive_batch if args.max_batch_size else clients[i].receive,
-                    args=(on_event_batch_received_with_process_monitor if args.max_batch_size else on_event_received_with_process_monitor,),
+                    args=(
+                        (
+                            on_event_batch_received_with_process_monitor
+                            if args.max_batch_size
+                            else on_event_received_with_process_monitor
+                        ),
+                    ),
                     kwargs=kwargs_dict,
-                    daemon=True
-                ) for i in range(args.parallel_recv_cnt)
+                    daemon=True,
+                )
+                for i in range(args.parallel_recv_cnt)
             ]
         else:
             clients = [create_client(args)]
-            threads = [threading.Thread(
-                target=clients[0].receive_batch if args.max_batch_size else clients[0].receive,
-                args=(on_event_batch_received_with_process_monitor if args.max_batch_size else on_event_received_with_process_monitor,),
-                kwargs=kwargs_dict,
-                daemon=True
-            )]
+            threads = [
+                threading.Thread(
+                    target=clients[0].receive_batch if args.max_batch_size else clients[0].receive,
+                    args=(
+                        (
+                            on_event_batch_received_with_process_monitor
+                            if args.max_batch_size
+                            else on_event_received_with_process_monitor
+                        ),
+                    ),
+                    kwargs=kwargs_dict,
+                    daemon=True,
+                )
+            ]
 
         for thread in threads:
             thread.start()
@@ -253,5 +296,5 @@ def run(args):
             thread.join()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run(args)

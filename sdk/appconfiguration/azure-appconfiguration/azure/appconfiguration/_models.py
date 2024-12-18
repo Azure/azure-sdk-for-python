@@ -488,7 +488,11 @@ class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
         if generated.filters:
             for config_setting_filter in generated.filters:
                 filters.append(
-                    ConfigurationSettingsFilter(key=config_setting_filter.key, label=config_setting_filter.label)
+                    ConfigurationSettingsFilter(
+                        key=config_setting_filter.key,
+                        label=config_setting_filter.label,
+                        tags=config_setting_filter.tags,
+                    )
                 )
         snapshot = cls(
             filters=filters,
@@ -519,7 +523,11 @@ class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
         if deserialized.filters:
             for config_setting_filter in deserialized.filters:
                 filters.append(
-                    ConfigurationSettingsFilter(key=config_setting_filter.key, label=config_setting_filter.label)
+                    ConfigurationSettingsFilter(
+                        key=config_setting_filter.key,
+                        label=config_setting_filter.label,
+                        tags=config_setting_filter.tags,
+                    )
                 )
         snapshot = cls(
             filters=filters,
@@ -540,7 +548,7 @@ class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
     def _to_generated(self) -> GeneratedConfigurationSnapshot:
         config_setting_filters = []
         for kv_filter in self.filters:
-            config_setting_filters.append(KeyValueFilter(key=kv_filter.key, label=kv_filter.label))
+            config_setting_filters.append(KeyValueFilter(key=kv_filter.key, label=kv_filter.label, tags=kv_filter.tags))
         return GeneratedConfigurationSnapshot(
             filters=config_setting_filters,
             composition_type=self.composition_type,
@@ -573,7 +581,7 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
     etag: str
     """The etag of current page."""
 
-    def __init__(self, command: Callable, **kwargs):
+    def __init__(self, command: Callable, **kwargs: Any):
         super(ConfigurationSettingPropertiesPaged, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,
@@ -612,7 +620,7 @@ class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
     etag: str
     """The etag of current page."""
 
-    def __init__(self, command: Callable, **kwargs):
+    def __init__(self, command: Callable, **kwargs: Any):
         super(ConfigurationSettingPropertiesPagedAsync, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,

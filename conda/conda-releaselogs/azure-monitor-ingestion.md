@@ -1,5 +1,17 @@
 # Azure Monitor Ingestion client library for Python (conda)
 
+## 2024.12.01
+
+### Packages included
+
+- azure-monitor-ingestion-1.0.4
+
+## 2024.09.01
+
+### Packages included
+
+- azure-monitor-ingestion-1.0.4
+
 ## 2024.06.01
 
 ### Packages included

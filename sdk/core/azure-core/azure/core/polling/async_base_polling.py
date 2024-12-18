@@ -81,7 +81,9 @@ class AsyncLROBasePolling(
     """Store the latest received HTTP response, initialized by the first answer."""
 
     @property
-    def _transport(self) -> AsyncHttpTransport[HttpRequestTypeVar, AsyncHttpResponseTypeVar]:
+    def _transport(
+        self,
+    ) -> AsyncHttpTransport[HttpRequestTypeVar, AsyncHttpResponseTypeVar]:
         return self._client._pipeline._transport  # pylint: disable=protected-access
 
     async def run(self) -> None:

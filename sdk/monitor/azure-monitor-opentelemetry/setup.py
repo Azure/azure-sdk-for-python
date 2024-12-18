@@ -28,8 +28,7 @@ try:
     try:
         ver = azure.__version__
         raise Exception(
-            "This package is incompatible with azure=={}. ".format(ver)
-            + 'Uninstall it with "pip uninstall azure".'
+            "This package is incompatible with azure=={}. ".format(ver) + 'Uninstall it with "pip uninstall azure".'
         )
     except AttributeError:
         pass
@@ -38,9 +37,7 @@ except ImportError:
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, "_version.py"), "r") as fd:
-    version = re.search(
-        r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE
-    ).group(1)
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)
 
 if not version:
     raise RuntimeError("Cannot find version information")
@@ -48,9 +45,7 @@ if not version:
 setup(
     name=PACKAGE_NAME,
     version=version,
-    description="Microsoft {} Client Library for Python".format(
-        PACKAGE_PPRINT_NAME
-    ),
+    description="Microsoft {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
     long_description=open("README.md", "r").read(),
     long_description_content_type="text/markdown",
     license="MIT License",
@@ -88,16 +83,16 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.28.0",
         "azure-core-tracing-opentelemetry~=1.0.0b11",
-        "azure-monitor-opentelemetry-exporter~=1.0.0b28",
-        "opentelemetry-instrumentation-django~=0.47b0",
-        "opentelemetry-instrumentation-fastapi~=0.47b0",
-        "opentelemetry-instrumentation-flask~=0.47b0",
-        "opentelemetry-instrumentation-psycopg2~=0.47b0",
-        "opentelemetry-instrumentation-requests~=0.47b0",
-        "opentelemetry-instrumentation-urllib~=0.47b0",
-        "opentelemetry-instrumentation-urllib3~=0.47b0",
+        "azure-monitor-opentelemetry-exporter~=1.0.0b31",
+        "opentelemetry-instrumentation-django~=0.49b0",
+        "opentelemetry-instrumentation-fastapi~=0.49b0",
+        "opentelemetry-instrumentation-flask~=0.49b0",
+        "opentelemetry-instrumentation-psycopg2~=0.49b0",
+        "opentelemetry-instrumentation-requests~=0.49b0",
+        "opentelemetry-instrumentation-urllib~=0.49b0",
+        "opentelemetry-instrumentation-urllib3~=0.49b0",
         "opentelemetry-resource-detector-azure~=0.1.4",
-        "opentelemetry-sdk~=1.26",
+        "opentelemetry-sdk~=1.28",
     ],
     entry_points={
         "opentelemetry_distro": [

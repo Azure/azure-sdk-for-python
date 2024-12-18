@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.1 (Unreleased)
+## 1.3.0b2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,25 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.3.0b1 (2024-11-05)
+
+### Features Added
+
+- Added broker on macOS support.
+
+## 1.2.0 (2024-10-08)
+
+### Other Changes
+
+- Stable release for the Proof-of-Possession (PoP) token support to `InteractiveBrowserBrokerCredential`.
+
+## 1.2.0b1 (2024-09-20)
+
+### Features Added
+
+- `InteractiveBrowserBrokerCredential` now implements the `SupportsTokenInfo` protocol. It now has a `get_token_info` method which returns an `AccessTokenInfo` object. The `get_token_info` method is an alternative method to `get_token` that improves support for more complex authentication scenarios.
+- Added Proof-of-Possession (PoP) token support to `InteractiveBrowserBrokerCredential`.
 
 ## 1.1.0 (2024-04-09)
 

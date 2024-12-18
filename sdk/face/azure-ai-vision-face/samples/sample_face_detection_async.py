@@ -37,12 +37,8 @@ from shared.helpers import beautify_json, get_logger
 class DetectFaces:
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.endpoint = os.getenv(
-            CONFIGURATION_NAME_FACE_API_ENDPOINT, DEFAULT_FACE_API_ENDPOINT
-        )
-        self.key = os.getenv(
-            CONFIGURATION_NAME_FACE_API_ACCOUNT_KEY, DEFAULT_FACE_API_ACCOUNT_KEY
-        )
+        self.endpoint = os.getenv(CONFIGURATION_NAME_FACE_API_ENDPOINT, DEFAULT_FACE_API_ENDPOINT)
+        self.key = os.getenv(CONFIGURATION_NAME_FACE_API_ACCOUNT_KEY, DEFAULT_FACE_API_ACCOUNT_KEY)
         self.logger = get_logger("sample_face_detection_async")
 
     async def detect(self):
@@ -55,14 +51,12 @@ class DetectFaces:
             FaceAttributeTypeRecognition04,
         )
 
-        async with FaceClient(
-            endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
-        ) as face_client:
+        async with FaceClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key)) as face_client:
             sample_file_path = helpers.get_image_path(TestImages.IMAGE_DETECTION_5)
             result = await face_client.detect(
                 helpers.read_file_content(sample_file_path),
-                detection_model=FaceDetectionModel.DETECTION_03,
-                recognition_model=FaceRecognitionModel.RECOGNITION_04,
+                detection_model=FaceDetectionModel.DETECTION03,
+                recognition_model=FaceRecognitionModel.RECOGNITION04,
                 return_face_id=True,
                 return_face_attributes=[
                     FaceAttributeTypeDetection03.BLUR,
@@ -89,14 +83,12 @@ class DetectFaces:
             FaceAttributeTypeDetection01,
         )
 
-        async with FaceClient(
-            endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
-        ) as face_client:
+        async with FaceClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key)) as face_client:
             sample_url = TestImages.DEFAULT_IMAGE_URL
             result = await face_client.detect_from_url(
                 url=sample_url,
-                detection_model=FaceDetectionModel.DETECTION_01,
-                recognition_model=FaceRecognitionModel.RECOGNITION_04,
+                detection_model=FaceDetectionModel.DETECTION01,
+                recognition_model=FaceRecognitionModel.RECOGNITION04,
                 return_face_id=False,
                 return_face_attributes=[
                     FaceAttributeTypeDetection01.ACCESSORIES,

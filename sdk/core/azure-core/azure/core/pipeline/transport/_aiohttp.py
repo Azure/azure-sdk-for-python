@@ -56,7 +56,10 @@ from azure.core.pipeline import AsyncPipeline
 
 from ._base import HttpRequest
 from ._base_async import AsyncHttpTransport, AsyncHttpResponse, _ResponseStopIteration
-from ...utils._pipeline_transport_rest_shared import _aiohttp_body_helper, get_file_items
+from ...utils._pipeline_transport_rest_shared import (
+    _aiohttp_body_helper,
+    get_file_items,
+)
 from .._tools import is_rest as _is_rest
 from .._tools_async import (
     handle_no_stream_rest_response as _handle_no_stream_rest_response,
@@ -82,7 +85,6 @@ class AioHttpTransport(AsyncHttpTransport):
     :keyword session: The client session.
     :paramtype session: ~aiohttp.ClientSession
     :keyword bool session_owner: Session owner. Defaults True.
-
     :keyword bool use_env_settings: Uses proxy settings from environment. Defaults to True.
 
     .. admonition:: Example:
@@ -540,7 +542,11 @@ class AioHttpTransportResponse(AsyncHttpResponse):
             raise ServiceRequestError(err, error=err) from err
 
     def stream_download(
-        self, pipeline: AsyncPipeline[HttpRequest, AsyncHttpResponse], *, decompress: bool = True, **kwargs
+        self,
+        pipeline: AsyncPipeline[HttpRequest, AsyncHttpResponse],
+        *,
+        decompress: bool = True,
+        **kwargs,
     ) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.
 

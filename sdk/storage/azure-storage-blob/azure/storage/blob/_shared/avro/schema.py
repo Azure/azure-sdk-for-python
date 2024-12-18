@@ -957,6 +957,7 @@ class RecordSchema(NamedSchema):
             raise SchemaParseException(
                 f'Invalid record type: {record_type!r}.')
 
+        nested_names = []
         if record_type in [RECORD, ERROR]:
             avro_name = names.get_name(name=name, namespace=namespace)
             nested_names = names.new_with_default_namespace(namespace=avro_name.namespace)

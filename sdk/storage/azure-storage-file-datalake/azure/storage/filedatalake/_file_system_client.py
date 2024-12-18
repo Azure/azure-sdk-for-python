@@ -122,12 +122,12 @@ class FileSystemClient(StorageAccountHostsMixin):
         self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url,
                                                    file_system=file_system_name, pipeline=self._pipeline)
         api_version = get_api_version(kwargs)
-        self._client._config.version = api_version  # pylint: disable=protected-access
+        self._client._config.version = api_version
         self._datalake_client_for_blob_operation = AzureDataLakeStorageRESTAPI(self._container_client.url,
                                                                                base_url=self._container_client.url,
                                                                                file_system=file_system_name,
                                                                                pipeline=self._pipeline)
-        self._datalake_client_for_blob_operation._config.version = api_version  # pylint: disable=protected-access
+        self._datalake_client_for_blob_operation._config.version = api_version
 
     def _format_url(self, hostname):
         file_system_name = self.file_system_name
@@ -562,10 +562,10 @@ class FileSystemClient(StorageAccountHostsMixin):
         The generator will lazily follow the continuation tokens returned by
         the service.
 
-        :param str path:
+        :param Optional[str] path:
             Filters the results to return only paths under the specified path.
         :param Optional[bool] recursive: Optional. Set True for recursive, False for iterative.
-        :param int max_results: An optional value that specifies the maximum
+        :param Optional[int] max_results: An optional value that specifies the maximum
             number of items to return per page. If omitted or greater than 5,000, the
             response will include up to 5,000 items per page.
         :keyword bool upn:

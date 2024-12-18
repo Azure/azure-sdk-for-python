@@ -140,7 +140,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         self.next_incoming_id = frame[1]  # next_outgoing_id
         self.remote_incoming_window = frame[2]  # incoming_window
         self.remote_outgoing_window = frame[3]  # outgoing_window
-        self.remote_properties = frame[7] # incoming map of properties about the session
+        self.remote_properties = frame[7]  # incoming map of properties about the session
         if self.state == SessionState.BEGIN_SENT:
             self.remote_channel = frame[0]  # remote_channel
             await self._set_state(SessionState.MAPPED)
@@ -182,14 +182,13 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                 outgoing_handle = self._get_next_output_handle()
             except ValueError:
                 _LOGGER.error(
-                    "Unable to attach new link - cannot allocate more handles.",
-                    extra=self.network_trace_params
+                    "Unable to attach new link - cannot allocate more handles.", extra=self.network_trace_params
                 )
                 # detach the link that would have been set.
                 await self.links[frame[0].decode("utf-8")].detach(
                     error=AMQPError(
                         condition=ErrorCondition.LinkDetachForced,
-                        description=f"Cannot allocate more handles, the max number of handles is {self.handle_max}. Detaching link", # pylint: disable=line-too-long
+                        description=f"Cannot allocate more handles, the max number of handles is {self.handle_max}. Detaching link",  # pylint: disable=line-too-long
                         info=None,
                     )
                 )
@@ -204,11 +203,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             self._input_handles[frame[1]] = new_link
         except ValueError as e:
             # Reject Link
-            _LOGGER.debug(
-                    "Unable to attach new link: %r",
-                    e,
-                    extra=self.network_trace_params
-            )
+            _LOGGER.debug("Unable to attach new link: %r", e, extra=self.network_trace_params)
             await self._input_handles[frame[1]].detach()
 
     async def _outgoing_flow(self, frame=None):
@@ -286,15 +281,11 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                     # delivery IDs.
                     # TODO: Obscuring the payload for now to investigate the potential for leaks.
                     _LOGGER.debug(
-                        "-> %r", TransferFrame(payload=b"***", **tmp_delivery_frame),
-                        extra=network_trace_params
+                        "-> %r", TransferFrame(payload=b"***", **tmp_delivery_frame), extra=network_trace_params
                     )
                 await self._connection._process_outgoing_frame(  # pylint: disable=protected-access
                     self.channel,
-                    TransferFrame(
-                        payload=payload[start_idx : start_idx + available_frame_size],
-                        **tmp_delivery_frame
-                    )
+                    TransferFrame(payload=payload[start_idx : start_idx + available_frame_size], **tmp_delivery_frame),
                 )
                 start_idx += available_frame_size
                 remaining_payload_cnt -= available_frame_size
@@ -319,13 +310,9 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                 # level that we can determine how many outgoing frames are needed and their
                 # delivery IDs.
                 # TODO: Obscuring the payload for now to investigate the potential for leaks.
-                _LOGGER.debug(
-                    "-> %r", TransferFrame(payload=b"***", **tmp_delivery_frame),
-                    extra=network_trace_params
-                )
+                _LOGGER.debug("-> %r", TransferFrame(payload=b"***", **tmp_delivery_frame), extra=network_trace_params)
             await self._connection._process_outgoing_frame(  # pylint: disable=protected-access
-                self.channel,
-                TransferFrame(payload=payload[start_idx:], **tmp_delivery_frame)
+                self.channel, TransferFrame(payload=payload[start_idx:], **tmp_delivery_frame)
             )
             self.next_outgoing_id += 1
             self.remote_incoming_window -= 1
@@ -334,6 +321,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             delivery.transfer_state = SessionTransferState.OKAY
 
     async def _incoming_transfer(self, frame):
+        # TODO: should this be only if more=False?
         self.next_incoming_id += 1
         self.remote_outgoing_window -= 1
         self.incoming_window -= 1
@@ -341,8 +329,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             await self._input_handles[frame[0]]._incoming_transfer(frame)  # pylint: disable=protected-access
         except KeyError:
             _LOGGER.error(
-                "Received Transfer frame on unattached link. Ending session.",
-                extra=self.network_trace_params
+                "Received Transfer frame on unattached link. Ending session.", extra=self.network_trace_params
             )
             await self._set_state(SessionState.DISCARDING)
             await self.end(

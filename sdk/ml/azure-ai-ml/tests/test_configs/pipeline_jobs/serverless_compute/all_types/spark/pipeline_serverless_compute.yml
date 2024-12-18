@@ -25,7 +25,7 @@ jobs:
       output1: ${{parent.outputs.output1}}
     resources:
       instance_type: Standard_E8S_V3
-      runtime_version: 3.2.0
+      runtime_version: 3.3.0
   count_word:
     type: spark
     component: file:./src/wordcount.yml
@@ -33,4 +33,4 @@ jobs:
       input1: ${{parent.jobs.sample_word.outputs.output1}}
     resources:
       instance_type: Standard_E8S_V3
-      runtime_version: 3.2.0
+      runtime_version: 3.3.0

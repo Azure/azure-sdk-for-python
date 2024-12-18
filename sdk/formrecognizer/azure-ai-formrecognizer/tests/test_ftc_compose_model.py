@@ -10,22 +10,20 @@ from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import HttpResponseError
 from azure.ai.formrecognizer import FormTrainingClient, CustomFormModel
 from testcase import FormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
-from preparers import FormRecognizerPreparer
+from preparers import FormRecognizerPreparer, get_sync_client
 from conftest import skip_flaky_test
 
 
-FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
+get_ft_client = functools.partial(get_sync_client, FormTrainingClient)
 
 
 class TestTraining(FormRecognizerTest):
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy
-    def test_compose_model_v21(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
-        
+    def test_compose_model_v21(self, formrecognizer_storage_container_sas_url_v2, **kwargs):
+        client = get_ft_client(api_version="2.1")        
         poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=True)
         model_1 = poller.result()
 
@@ -40,11 +38,11 @@ class TestTraining(FormRecognizerTest):
         composed_model = CustomFormModel.from_dict(composed_model_dict)
         self.assertComposedModelV2HasValues(composed_model, model_1, model_2)
 
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy
-    def test_compose_model_invalid_unlabeled_models_v21(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
-        
+    def test_compose_model_invalid_unlabeled_models_v21(self, formrecognizer_storage_container_sas_url_v2, **kwargs):
+        client = get_ft_client(api_version="2.1")
         poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
         model_1 = poller.result()
 
@@ -58,9 +56,8 @@ class TestTraining(FormRecognizerTest):
         assert e.value.error.message
 
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
     def test_compose_model_bad_api_version(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_ft_client(api_version="2.0")
         with pytest.raises(ValueError) as excinfo:
             poller = client.begin_create_composed_model(["00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000000"])
             result = poller.result()

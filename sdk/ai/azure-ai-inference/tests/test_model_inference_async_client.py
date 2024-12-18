@@ -3,8 +3,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+import json
 import azure.ai.inference as sdk
 import azure.ai.inference.aio as async_sdk
+from azure.ai.inference.tracing import AIInferenceInstrumentor
 
 from model_inference_test_base import (
     ModelClientTestBase,
@@ -13,13 +15,27 @@ from model_inference_test_base import (
     ServicePreparerEmbeddings,
 )
 from azure.core.pipeline.transport import AioHttpTransport
+from azure.core.settings import settings
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import AzureError, ServiceRequestError
 from azure.core.credentials import AzureKeyCredential
+from memory_trace_exporter import MemoryTraceExporter
+from gen_ai_trace_verifier import GenAiTraceVerifier
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+
+CONTENT_TRACING_ENV_VARIABLE = "AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED"
+content_tracing_initial_value = os.getenv(CONTENT_TRACING_ENV_VARIABLE)
 
 
 # The test class name needs to start with "Test" to get collected by pytest
 class TestModelAsyncClient(ModelClientTestBase):
+
+    @classmethod
+    def teardown_class(cls):
+        if content_tracing_initial_value is not None:
+            os.environ[CONTENT_TRACING_ENV_VARIABLE] = content_tracing_initial_value
 
     # **********************************************************************************
     #
@@ -159,7 +175,9 @@ class TestModelAsyncClient(ModelClientTestBase):
 
         response1 = await client.get_model_info()
         self._print_model_info_result(response1)
-        self._validate_model_info_result(response1, "embedding") # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
+        self._validate_model_info_result(
+            response1, "embedding"
+        )  # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
         await client.close()
 
     @ServicePreparerEmbeddings()
@@ -186,10 +204,18 @@ class TestModelAsyncClient(ModelClientTestBase):
     @recorded_by_proxy_async
     async def test_async_embeddings(self, **kwargs):
         client = self._create_async_embeddings_client(**kwargs)
-        response = await client.embed(input=["first phrase", "second phrase", "third phrase"])
-        self._print_embeddings_result(response)
-        self._validate_embeddings_result(response)
-        await client.close()
+        input = ["first phrase", "second phrase", "third phrase"]
+
+        # Request embeddings with default service format (list of floats)
+        response1 = await client.embed(input=input)
+        self._print_embeddings_result(response1)
+        self._validate_embeddings_result(response1)
+        assert json.dumps(response1.as_dict(), indent=2) == response1.__str__()
+
+        # Request embeddings as base64 encoded strings
+        response2 = await client.embed(input=input, encoding_format=sdk.models.EmbeddingEncodingFormat.BASE64)
+        self._print_embeddings_result(response2, sdk.models.EmbeddingEncodingFormat.BASE64)
+        self._validate_embeddings_result(response2, sdk.models.EmbeddingEncodingFormat.BASE64)
 
     # **********************************************************************************
     #
@@ -217,16 +243,18 @@ class TestModelAsyncClient(ModelClientTestBase):
                         sdk.models.UserMessage(content="user prompt 1"),
                         sdk.models.AssistantMessage(
                             tool_calls=[
-                                sdk.models.ChatCompletionsFunctionToolCall(
+                                sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-first-function-name",
                                         arguments={"first_argument": "value1", "second_argument": "value2"},
-                                    )
+                                    ),
+                                    id="some-id",
                                 ),
-                                sdk.models.ChatCompletionsFunctionToolCall(
+                                sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-second-function-name", arguments={"first_argument": "value1"}
-                                    )
+                                    ),
+                                    id="some-other-id",
                                 ),
                             ]
                         ),
@@ -255,12 +283,12 @@ class TestModelAsyncClient(ModelClientTestBase):
                     max_tokens=321,
                     model="some-model-id",
                     presence_penalty=4.567,
-                    response_format=sdk.models.ChatCompletionsResponseFormat.JSON_OBJECT,
+                    response_format=sdk.models.ChatCompletionsResponseFormatJSON(),
                     seed=654,
                     stop=["stop1", "stop2"],
                     stream=True,
                     temperature=8.976,
-                    tool_choice=sdk.models.ChatCompletionsToolSelectionPreset.AUTO,
+                    tool_choice=sdk.models.ChatCompletionsToolChoicePreset.AUTO,
                     tools=[ModelClientTestBase.TOOL1, ModelClientTestBase.TOOL2],
                     top_p=9.876,
                     raw_request_hook=self.request_callback,
@@ -295,11 +323,11 @@ class TestModelAsyncClient(ModelClientTestBase):
             max_tokens=321,
             model="some-model-id",
             presence_penalty=4.567,
-            response_format=sdk.models.ChatCompletionsResponseFormat.JSON_OBJECT,
+            response_format=sdk.models.ChatCompletionsResponseFormatJSON(),
             seed=654,
             stop=["stop1", "stop2"],
             temperature=8.976,
-            tool_choice=sdk.models.ChatCompletionsToolSelectionPreset.AUTO,
+            tool_choice=sdk.models.ChatCompletionsToolChoicePreset.AUTO,
             tools=[ModelClientTestBase.TOOL1, ModelClientTestBase.TOOL2],
             top_p=9.876,
         )
@@ -312,16 +340,18 @@ class TestModelAsyncClient(ModelClientTestBase):
                         sdk.models.UserMessage(content="user prompt 1"),
                         sdk.models.AssistantMessage(
                             tool_calls=[
-                                sdk.models.ChatCompletionsFunctionToolCall(
+                                sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-first-function-name",
                                         arguments={"first_argument": "value1", "second_argument": "value2"},
-                                    )
+                                    ),
+                                    id="some-id",
                                 ),
-                                sdk.models.ChatCompletionsFunctionToolCall(
+                                sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-second-function-name", arguments={"first_argument": "value1"}
-                                    )
+                                    ),
+                                    id="some-other-id",
                                 ),
                             ]
                         ),
@@ -371,11 +401,11 @@ class TestModelAsyncClient(ModelClientTestBase):
             max_tokens=768,
             model="some-other-model-id",
             presence_penalty=1.234,
-            response_format=sdk.models.ChatCompletionsResponseFormat.TEXT,
+            response_format=sdk.models.ChatCompletionsResponseFormatText(),
             seed=987,
             stop=["stop3", "stop5"],
             temperature=5.432,
-            tool_choice=sdk.models.ChatCompletionsToolSelectionPreset.REQUIRED,
+            tool_choice=sdk.models.ChatCompletionsToolChoicePreset.REQUIRED,
             tools=[ModelClientTestBase.TOOL2],
             top_p=3.456,
         )
@@ -388,16 +418,18 @@ class TestModelAsyncClient(ModelClientTestBase):
                         sdk.models.UserMessage(content="user prompt 1"),
                         sdk.models.AssistantMessage(
                             tool_calls=[
-                                sdk.models.ChatCompletionsFunctionToolCall(
+                                sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-first-function-name",
                                         arguments={"first_argument": "value1", "second_argument": "value2"},
-                                    )
+                                    ),
+                                    id="some-id",
                                 ),
-                                sdk.models.ChatCompletionsFunctionToolCall(
+                                sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-second-function-name", arguments={"first_argument": "value1"}
-                                    )
+                                    ),
+                                    id="some-other-id",
                                 ),
                             ]
                         ),
@@ -426,12 +458,12 @@ class TestModelAsyncClient(ModelClientTestBase):
                     max_tokens=321,
                     model="some-model-id",
                     presence_penalty=4.567,
-                    response_format=sdk.models.ChatCompletionsResponseFormat.JSON_OBJECT,
+                    response_format=sdk.models.ChatCompletionsResponseFormatJSON(),
                     seed=654,
                     stop=["stop1", "stop2"],
                     stream=True,
                     temperature=8.976,
-                    tool_choice=sdk.models.ChatCompletionsToolSelectionPreset.AUTO,
+                    tool_choice=sdk.models.ChatCompletionsToolChoicePreset.AUTO,
                     tools=[ModelClientTestBase.TOOL1, ModelClientTestBase.TOOL2],
                     top_p=9.876,
                     raw_request_hook=self.request_callback,
@@ -461,7 +493,7 @@ class TestModelAsyncClient(ModelClientTestBase):
         response1 = await client.get_model_info()
         self._print_model_info_result(response1)
         self._validate_model_info_result(
-            response1, "completion"
+            response1, "chat-completion"  # TODO: This should be chat_completions based on REST API spec...
         )  # TODO: This should be ModelType.CHAT once the model is fixed
         await client.close()
 
@@ -475,7 +507,7 @@ class TestModelAsyncClient(ModelClientTestBase):
         assert client._model_info  # pylint: disable=protected-access
         self._print_model_info_result(response1)
         self._validate_model_info_result(
-            response1, "completion"
+            response1, "chat-completion"
         )  # TODO: This should be ModelType.CHAT once the model is fixed
 
         # Get the model info again. No network calls should be made here,
@@ -496,6 +528,7 @@ class TestModelAsyncClient(ModelClientTestBase):
         response = await client.complete(messages=messages)
         self._print_chat_completions_result(response)
         self._validate_chat_completions_result(response, ["5280", "5,280"])
+        assert json.dumps(response.as_dict(), indent=2) == response.__str__()
         messages.append(sdk.models.AssistantMessage(content=response.choices[0].message.content))
         messages.append(sdk.models.UserMessage(content="and how many yards?"))
         response = await client.complete(messages=messages)
@@ -569,7 +602,7 @@ class TestModelAsyncClient(ModelClientTestBase):
         await client.close()
 
     # We use AOAI endpoint here because at the moment there is no MaaS model that supports
-    # input input.
+    # input image.
     @ServicePreparerAOAIChatCompletions()
     @recorded_by_proxy_async
     async def test_async_chat_completions_with_input_image_file(self, **kwargs):
@@ -601,12 +634,11 @@ class TestModelAsyncClient(ModelClientTestBase):
         await client.close()
 
     # We use AOAI endpoint here because at the moment there is no MaaS model that supports
-    # input input.
+    # input image.
     @ServicePreparerAOAIChatCompletions()
     @recorded_by_proxy_async
     async def test_async_chat_completions_with_input_image_url(self, **kwargs):
-        # TODO: Update this to point to Main branch
-        url = "https://aka.ms/azsdk/azure-ai-inference/python/tests/test_image1.png"
+        url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/ai/azure-ai-inference/tests/test_image1.png"
         client = self._create_async_aoai_chat_client(**kwargs)
         response = await client.complete(
             messages=[
@@ -623,6 +655,20 @@ class TestModelAsyncClient(ModelClientTestBase):
         )
         self._print_chat_completions_result(response)
         self._validate_chat_completions_result(response, ["juggling", "balls", "blue", "red", "green", "yellow"], True)
+        await client.close()
+
+    # We use AOAI endpoint here because at the moment MaaS does not support Entra ID auth.
+    @ServicePreparerAOAIChatCompletions()
+    @recorded_by_proxy_async
+    async def test_async_chat_completions_with_entra_id_auth(self, **kwargs):
+        client = self._create_async_aoai_chat_client(key_auth=False, **kwargs)
+        messages = [
+            sdk.models.SystemMessage(content="You are a helpful assistant answering questions regarding length units."),
+            sdk.models.UserMessage(content="How many feet are in a mile?"),
+        ]
+        response = await client.complete(messages=messages)
+        self._print_chat_completions_result(response)
+        self._validate_chat_completions_result(response, ["5280", "5,280"], True)
         await client.close()
 
     # **********************************************************************************
@@ -646,3 +692,75 @@ class TestModelAsyncClient(ModelClientTestBase):
             assert "auth token validation failed" in e.message.lower()
         await client.close()
         assert exception_caught
+
+    # **********************************************************************************
+    #
+    #                            TRACING TESTS - CHAT COMPLETIONS
+    #
+    # **********************************************************************************
+
+    def setup_memory_trace_exporter(self) -> MemoryTraceExporter:
+        # Setup Azure Core settings to use OpenTelemetry tracing
+        settings.tracing_implementation = "OpenTelemetry"
+        trace.set_tracer_provider(TracerProvider())
+        tracer = trace.get_tracer(__name__)
+        memoryExporter = MemoryTraceExporter()
+        span_processor = SimpleSpanProcessor(memoryExporter)
+        trace.get_tracer_provider().add_span_processor(span_processor)
+        return span_processor, memoryExporter
+
+    def modify_env_var(self, name, new_value):
+        current_value = os.getenv(name)
+        os.environ[name] = new_value
+        return current_value
+
+    @ServicePreparerChatCompletions()
+    @recorded_by_proxy_async
+    async def test_chat_completion_async_tracing_content_recording_disabled(self, **kwargs):
+        # Make sure code is not instrumented due to a previous test exception
+        try:
+            AIInferenceInstrumentor().uninstrument()
+        except RuntimeError as e:
+            pass
+        self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
+        client = self._create_async_chat_client(**kwargs)
+        processor, exporter = self.setup_memory_trace_exporter()
+        AIInferenceInstrumentor().instrument()
+        response = await client.complete(
+            messages=[
+                sdk.models.SystemMessage(content="You are a helpful assistant."),
+                sdk.models.UserMessage(content="What is the capital of France?"),
+            ],
+        )
+        processor.force_flush()
+        spans = exporter.get_spans_by_name_starts_with("chat ")
+        if len(spans) == 0:
+            spans = exporter.get_spans_by_name("chat")
+        assert len(spans) == 1
+        span = spans[0]
+        expected_attributes = [
+            ("gen_ai.operation.name", "chat"),
+            ("gen_ai.system", "az.ai.inference"),
+            ("gen_ai.request.model", "chat"),
+            ("server.address", ""),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.response.model", "mistral-large"),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+            ("gen_ai.response.finish_reasons", ("stop",)),
+        ]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+        assert attributes_match == True
+
+        expected_events = [
+            {
+                "name": "gen_ai.choice",
+                "attributes": {
+                    "gen_ai.system": "az.ai.inference",
+                    "gen_ai.event.content": '{"finish_reason": "stop", "index": 0}',
+                },
+            }
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+        AIInferenceInstrumentor().uninstrument()

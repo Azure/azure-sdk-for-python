@@ -1,10 +1,10 @@
 # coding: utf-8
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 # covered ops:
 #   snapshots: 8/8
@@ -20,8 +20,10 @@ import azure.mgmt.compute
 from azure.profiles import ProfileDefinition
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
-AZURE_LOCATION = 'eastus'
+AZURE_LOCATION = "eastus"
 
+
+@pytest.mark.live_test_only
 class TestMgmtComputeMultiVersion(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
@@ -29,37 +31,37 @@ class TestMgmtComputeMultiVersion(AzureMgmtRecordedTestCase):
         #   '\"accessSAS\": \"https://.*\"',
         #   '\"accessSAS\": \"FakeUrl\"'
         # )
-        self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.compute.ComputeManagementClient
-        )
-        self.mgmt_client.profile = ProfileDefinition({
-            self.mgmt_client._PROFILE_TAG: {
-                None: "2019-07-01",
-                'availability_sets': '2019-07-01',
-                'dedicated_host_groups': '2019-07-01',
-                'dedicated_hosts': '2019-07-01',
-                'disk_encryption_sets': '2019-11-01',
-                'disks': '2019-03-01',  # test old version
-                'images': '2019-07-01',
-                'log_analytics': '2019-07-01',
-                'operations': '2019-07-01',
-                'proximity_placement_groups': '2019-07-01',
-                'resource_skus': '2019-04-01',
-                'snapshots': '2019-11-01',
-                'usage': '2019-07-01',
-                'virtual_machine_extension_images': '2019-07-01',
-                'virtual_machine_extensions': '2019-07-01',
-                'virtual_machine_images': '2019-07-01',
-                'virtual_machine_run_commands': '2019-07-01',
-                'virtual_machine_scale_set_extensions': '2019-07-01',
-                'virtual_machine_scale_set_rolling_upgrades': '2019-07-01',
-                'virtual_machine_scale_set_vm_extensions': '2019-07-01',
-                'virtual_machine_scale_set_vms': '2019-07-01',
-                'virtual_machine_scale_sets': '2019-07-01',
-                'virtual_machine_sizes': '2019-07-01',
-                'virtual_machines': '2019-07-01',
-            }},
-            self.mgmt_client._PROFILE_TAG + " test"
+        self.mgmt_client = self.create_mgmt_client(azure.mgmt.compute.ComputeManagementClient)
+        self.mgmt_client.profile = ProfileDefinition(
+            {
+                self.mgmt_client._PROFILE_TAG: {
+                    None: "2019-07-01",
+                    "availability_sets": "2019-07-01",
+                    "dedicated_host_groups": "2019-07-01",
+                    "dedicated_hosts": "2019-07-01",
+                    "disk_encryption_sets": "2019-11-01",
+                    "disks": "2019-03-01",  # test old version
+                    "images": "2019-07-01",
+                    "log_analytics": "2019-07-01",
+                    "operations": "2019-07-01",
+                    "proximity_placement_groups": "2019-07-01",
+                    "resource_skus": "2019-04-01",
+                    "snapshots": "2019-11-01",
+                    "usage": "2019-07-01",
+                    "virtual_machine_extension_images": "2019-07-01",
+                    "virtual_machine_extensions": "2019-07-01",
+                    "virtual_machine_images": "2019-07-01",
+                    "virtual_machine_run_commands": "2019-07-01",
+                    "virtual_machine_scale_set_extensions": "2019-07-01",
+                    "virtual_machine_scale_set_rolling_upgrades": "2019-07-01",
+                    "virtual_machine_scale_set_vm_extensions": "2019-07-01",
+                    "virtual_machine_scale_set_vms": "2019-07-01",
+                    "virtual_machine_scale_sets": "2019-07-01",
+                    "virtual_machine_sizes": "2019-07-01",
+                    "virtual_machines": "2019-07-01",
+                }
+            },
+            self.mgmt_client._PROFILE_TAG + " test",
         )
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
@@ -69,13 +71,7 @@ class TestMgmtComputeMultiVersion(AzureMgmtRecordedTestCase):
         DISK_NAME = self.get_resource_name("disknamex")
 
         # Create an empty managed disk.[put]
-        BODY = {
-          "location": "eastus",
-          "creation_data": {
-            "create_option": "Empty"
-          },
-          "disk_size_gb": "200"
-        }
+        BODY = {"location": "eastus", "creation_data": {"create_option": "Empty"}, "disk_size_gb": "200"}
         result = self.mgmt_client.disks.begin_create_or_update(resource_group.name, DISK_NAME, BODY)
         result = result.result()
 
@@ -89,21 +85,16 @@ class TestMgmtComputeMultiVersion(AzureMgmtRecordedTestCase):
         result = self.mgmt_client.disks.list()
 
         # Update disk.[patch]
-        BODY = {
-          "disk_size_gb": "200"
-        }
+        BODY = {"disk_size_gb": "200"}
         result = self.mgmt_client.disks.begin_update(resource_group.name, DISK_NAME, BODY)
         result = result.result()
 
         # Grant acess disk
-        BODY = {
-          "access": "Read",
-          "duration_in_seconds": "1800"
-        }
+        BODY = {"access": "Read", "duration_in_seconds": "1800"}
         result = self.mgmt_client.disks.begin_grant_access(resource_group.name, DISK_NAME, BODY)
         result = result.result()
 
-         # Revoke access disk
+        # Revoke access disk
         result = self.mgmt_client.disks.begin_revoke_access(resource_group.name, DISK_NAME)
         result = result.result()
 
@@ -111,6 +102,8 @@ class TestMgmtComputeMultiVersion(AzureMgmtRecordedTestCase):
         result = self.mgmt_client.disks.begin_delete(resource_group.name, DISK_NAME)
         result = result.result()
 
+
+@pytest.mark.live_test_only
 class TestMgmtCompute(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
@@ -118,14 +111,11 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
         #   '\"accessSAS\": \"https://.*\"',
         #   '\"accessSAS\": \"FakeUrl\"'
         # )
-        self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.compute.ComputeManagementClient
-        )
+        self.mgmt_client = self.create_mgmt_client(azure.mgmt.compute.ComputeManagementClient)
         if self.is_live:
             from azure.mgmt.keyvault import KeyVaultManagementClient
-            self.keyvault_client = self.create_mgmt_client(
-                KeyVaultManagementClient
-            )
+
+            self.keyvault_client = self.create_mgmt_client(KeyVaultManagementClient)
             # self.network_client = self.create_mgmt_client(
             #     azure.mgmt.network.NetworkManagementClient
             # )
@@ -136,63 +126,57 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
                 group_name,
                 key_vault,
                 {
-                  'location': location,
-                  'properties': {
-                    'sku': {
-                      'family': "A",
-                      'name': 'standard'
-                    },
-                    'tenant_id': tenant_id,
-                    "access_policies": [
-                      {
+                    "location": location,
+                    "properties": {
+                        "sku": {"family": "A", "name": "standard"},
                         "tenant_id": tenant_id,
-                        "object_id": object_id,
-                        "permissions": {
-                          "keys": [
-                            "encrypt",
-                            "decrypt",
-                            "wrapKey",
-                            "unwrapKey",
-                            "sign",
-                            "verify",
-                            "get",
-                            "list",
-                            "create",
-                            "update",
-                            "import",
-                            "delete",
-                            "backup",
-                            "restore",
-                            "recover",
-                            "purge"
-                          ]
-                        }
-                      }
-                    ],
-                    'enabled_for_disk_encryption': True,
-                  }
-                }
+                        "access_policies": [
+                            {
+                                "tenant_id": tenant_id,
+                                "object_id": object_id,
+                                "permissions": {
+                                    "keys": [
+                                        "encrypt",
+                                        "decrypt",
+                                        "wrapKey",
+                                        "unwrapKey",
+                                        "sign",
+                                        "verify",
+                                        "get",
+                                        "list",
+                                        "create",
+                                        "update",
+                                        "import",
+                                        "delete",
+                                        "backup",
+                                        "restore",
+                                        "recover",
+                                        "purge",
+                                    ]
+                                },
+                            }
+                        ],
+                        "enabled_for_disk_encryption": True,
+                    },
+                },
             ).result()
             vault_url = result.properties.vault_uri
             vault_id = result.id
 
             from azure.keyvault.keys import KeyClient
+
             credentials = self.settings.get_azure_core_credentials()
             key_client = KeyClient(vault_url, credentials)
 
             # [START create_key]
             from dateutil import parser as date_parse
+
             expires_on = date_parse.parse("2050-02-02T08:00:00.000Z")
 
-            key = key_client.create_key(
-              "testkey",
-              "RSA",
-              size=2048,
-              expires_on=expires_on
-            )
+            key = key_client.create_key("testkey", "RSA", size=2048, expires_on=expires_on)
             return (vault_id, key.id)
         else:
-            return ('000', '000')
+            return ("000", "000")
 
     @unittest.skip("The KEY_VAULT_NAME need artificially generated,skip for now")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
@@ -209,20 +193,20 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
 
         # Create a disk encryption set.[put]
         BODY = {
-          "location": "eastus",
-          "identity": {
-            "type": "SystemAssigned"
-          },
-          "active_key": {
-            "source_vault": {
-              # "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.KeyVault/vaults/" + VAULT_NAME + ""
-              "id": VAULT_ID
+            "location": "eastus",
+            "identity": {"type": "SystemAssigned"},
+            "active_key": {
+                "source_vault": {
+                    # "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.KeyVault/vaults/" + VAULT_NAME + ""
+                    "id": VAULT_ID
+                },
+                # "key_url": "https://myvmvault.vault-int.azure-int.net/keys/{key}/{key_version}"
+                "key_url": KEY_URI,
             },
-            # "key_url": "https://myvmvault.vault-int.azure-int.net/keys/{key}/{key_version}"
-            "key_url": KEY_URI
-          }
         }
-        result = self.mgmt_client.disk_encryption_sets.begin_create_or_update(resource_group.name, DISK_ENCRYPTION_SET_NAME, BODY)
+        result = self.mgmt_client.disk_encryption_sets.begin_create_or_update(
+            resource_group.name, DISK_ENCRYPTION_SET_NAME, BODY
+        )
         result = result.result()
 
         # # Get information about a disk encryption set.[get]
@@ -236,18 +220,15 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
 
         # Update a disk encryption set.[patch]
         BODY = {
-          "active_key": {
-            "source_vault": {
-              # "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.KeyVault/vaults/" + VAULT_NAME + ""
-              "id": VAULT_ID
+            "active_key": {
+                "source_vault": {
+                    # "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.KeyVault/vaults/" + VAULT_NAME + ""
+                    "id": VAULT_ID
+                },
+                "key_url": KEY_URI,
+                # "key_url": "https://myvmvault.vault-int.azure-int.net/keys/{key}/{key_version}"
             },
-            "key_url": KEY_URI
-            # "key_url": "https://myvmvault.vault-int.azure-int.net/keys/{key}/{key_version}"
-          },
-          "tags": {
-            "department": "Development",
-            "project": "Encryption"
-          }
+            "tags": {"department": "Development", "project": "Encryption"},
         }
         result = self.mgmt_client.disk_encryption_sets.begin_update(resource_group.name, DISK_ENCRYPTION_SET_NAME, BODY)
         result = result.result()
@@ -266,41 +247,45 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
         IMAGE_NAME = self.get_resource_name("imagex")
 
         # Create an empty managed disk.[put]
-        BODY = {
-          "location": "eastus",
-          "creation_data": {
-            "create_option": "Empty"
-          },
-          "disk_size_gb": "200"
-        }
+        BODY = {"location": "eastus", "creation_data": {"create_option": "Empty"}, "disk_size_gb": "200"}
         result = self.mgmt_client.disks.begin_create_or_update(resource_group.name, DISK_NAME, BODY)
         result = result.result()
 
         # Create a snapshot by copying a disk.
         BODY = {
-          "location": "eastus",
-          "creation_data": {
-            "create_option": "Copy",
-            "source_uri": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/disks/" + DISK_NAME
-          }
+            "location": "eastus",
+            "creation_data": {
+                "create_option": "Copy",
+                "source_uri": "/subscriptions/"
+                + SUBSCRIPTION_ID
+                + "/resourceGroups/"
+                + RESOURCE_GROUP
+                + "/providers/Microsoft.Compute/disks/"
+                + DISK_NAME,
+            },
         }
         result = self.mgmt_client.snapshots.begin_create_or_update(resource_group.name, SNAPSHOT_NAME, BODY)
         result = result.result()
 
         # Create a virtual machine image from a snapshot.[put]
         BODY = {
-          "location": "eastus",
-          "storage_profile": {
-            "os_disk": {
-              "os_type": "Linux",
-              "snapshot": {
-                "id": "subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/snapshots/" + SNAPSHOT_NAME
-              },
-              "os_state": "Generalized"
+            "location": "eastus",
+            "storage_profile": {
+                "os_disk": {
+                    "os_type": "Linux",
+                    "snapshot": {
+                        "id": "subscriptions/"
+                        + SUBSCRIPTION_ID
+                        + "/resourceGroups/"
+                        + RESOURCE_GROUP
+                        + "/providers/Microsoft.Compute/snapshots/"
+                        + SNAPSHOT_NAME
+                    },
+                    "os_state": "Generalized",
+                },
+                "zone_resilient": False,
             },
-            "zone_resilient": False
-          },
-          "hyper_v_generation": "V1"  # TODO: required
+            "hyper_v_generation": "V1",  # TODO: required
         }
         result = self.mgmt_client.images.begin_create_or_update(resource_group.name, IMAGE_NAME, BODY)
         result = result.result()
@@ -325,34 +310,34 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
 
         # Updates tags of an Image.[patch]
         BODY = {
-          # "properties": {
-          #   "source_virtual_machine": {
-          #     "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/virtualMachines/" + VIRTUAL_MACHINE_NAME + ""
-          #   },
-          #   "hyper_vgeneration": "V1"
-          # },
-          "tags": {
-            "department": "HR"
-          }
+            # "properties": {
+            #   "source_virtual_machine": {
+            #     "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/virtualMachines/" + VIRTUAL_MACHINE_NAME + ""
+            #   },
+            #   "hyper_vgeneration": "V1"
+            # },
+            "tags": {"department": "HR"}
         }
         result = self.mgmt_client.images.begin_update(resource_group.name, IMAGE_NAME, BODY)
         result = result.result()
 
         # Update a snapshot by
         BODY = {
-          "creation_data": {
-            "create_option": "Copy",
-            "source_uri": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/disks/" + DISK_NAME
-          }
+            "creation_data": {
+                "create_option": "Copy",
+                "source_uri": "/subscriptions/"
+                + SUBSCRIPTION_ID
+                + "/resourceGroups/"
+                + RESOURCE_GROUP
+                + "/providers/Microsoft.Compute/disks/"
+                + DISK_NAME,
+            }
         }
         result = self.mgmt_client.snapshots.begin_update(resource_group.name, SNAPSHOT_NAME, BODY)
         result = result.result()
 
         # Grant acess snapshot (TODO: need swagger file)
-        BODY = {
-          "access": "Read",
-          "duration_in_seconds": "1800"
-        }
+        BODY = {"access": "Read", "duration_in_seconds": "1800"}
         result = self.mgmt_client.snapshots.begin_grant_access(resource_group.name, SNAPSHOT_NAME, BODY)
         result = result.result()
 
@@ -375,13 +360,7 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
         DISK_NAME = self.get_resource_name("disknamex")
 
         # Create an empty managed disk.[put]
-        BODY = {
-          "location": "eastus",
-          "creation_data": {
-            "create_option": "Empty"
-          },
-          "disk_size_gb": "200"
-        }
+        BODY = {"location": "eastus", "creation_data": {"create_option": "Empty"}, "disk_size_gb": "200"}
         result = self.mgmt_client.disks.begin_create_or_update(resource_group.name, DISK_NAME, BODY)
         result = result.result()
 
@@ -395,21 +374,16 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
         result = self.mgmt_client.disks.list()
 
         # Update disk.[patch]
-        BODY = {
-          "disk_size_gb": "200"
-        }
+        BODY = {"disk_size_gb": "200"}
         result = self.mgmt_client.disks.begin_update(resource_group.name, DISK_NAME, BODY)
         result = result.result()
 
         # Grant acess diski
-        BODY = {
-          "access": "Read",
-          "duration_in_seconds": "1800"
-        }
+        BODY = {"access": "Read", "duration_in_seconds": "1800"}
         result = self.mgmt_client.disks.begin_grant_access(resource_group.name, DISK_NAME, BODY)
         result = result.result()
 
-         # Revoke access disk
+        # Revoke access disk
         result = self.mgmt_client.disks.begin_revoke_access(resource_group.name, DISK_NAME)
         result = result.result()
 

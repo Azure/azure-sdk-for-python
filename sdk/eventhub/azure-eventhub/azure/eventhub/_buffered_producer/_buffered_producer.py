@@ -34,7 +34,7 @@ class BufferedProducer:
         *,
         amqp_transport: AmqpTransport,
         max_buffer_length: int,
-        max_wait_time: float = 1
+        max_wait_time: float = 1,
     ):
         self._buffered_queue: queue.Queue = queue.Queue()
         self._max_buffer_len = max_buffer_length
@@ -59,9 +59,7 @@ class BufferedProducer:
             self._running = True
             if self._max_wait_time:
                 self._last_send_time = time.time()
-                self._check_max_wait_time_future = self._executor.submit(
-                    self.check_max_wait_time_worker
-                )
+                self._check_max_wait_time_future = self._executor.submit(self.check_max_wait_time_worker)
 
     def stop(self, flush=True, timeout_time=None, raise_error=False):
         self._running = False
@@ -80,9 +78,7 @@ class BufferedProducer:
             try:
                 self._check_max_wait_time_future.result(remain_timeout)
             except Exception as exc:  # pylint: disable=broad-except
-                _LOGGER.warning(
-                    "Partition %r stopped with error %r", self.partition_id, exc
-                )
+                _LOGGER.warning("Partition %r stopped with error %r", self.partition_id, exc)
         self._producer.close()
 
     def put_events(self, events, timeout_time=None):
@@ -102,9 +98,7 @@ class BufferedProducer:
             # flush the buffer
             self.flush(timeout_time=timeout_time)
         if timeout_time and time.time() > timeout_time:
-            raise OperationTimeoutError(
-                "Failed to enqueue events into buffer due to timeout."
-            )
+            raise OperationTimeoutError("Failed to enqueue events into buffer due to timeout.")
         with self._lock:
             try:
                 # add single event into current batch
@@ -157,9 +151,7 @@ class BufferedProducer:
                         _LOGGER.info("Partition %r is sending.", self.partition_id)
                         self._producer.send(
                             batch,
-                            timeout=timeout_time - time.time()
-                            if timeout_time
-                            else None,
+                            timeout=timeout_time - time.time() if timeout_time else None,
                         )
                         _LOGGER.info(
                             "Partition %r sending %r events succeeded.",
@@ -184,14 +176,10 @@ class BufferedProducer:
                     finally:
                         self._cur_buffered_len -= len(batch)
                 else:
-                    _LOGGER.info(
-                        "Partition %r fails to flush due to timeout.", self.partition_id
-                    )
+                    _LOGGER.info("Partition %r fails to flush due to timeout.", self.partition_id)
                     if raise_error:
                         raise OperationTimeoutError(
-                            "Failed to flush {!r} within {}".format(
-                                self.partition_id, timeout_time
-                            )
+                            "Failed to flush {!r} within {}".format(self.partition_id, timeout_time)
                         )
                     break
             # after finishing flushing, reset cur batch and put it into the buffer
@@ -202,9 +190,7 @@ class BufferedProducer:
         while self._running:
             if self._cur_buffered_len > 0:
                 now_time = time.time()
-                _LOGGER.info(
-                    "Partition %r worker is checking max_wait_time.", self.partition_id
-                )
+                _LOGGER.info("Partition %r worker is checking max_wait_time.", self.partition_id)
                 # flush the partition if the producer is running beyond the waiting time
                 # or the buffer is at max capacity
                 if (now_time - self._last_send_time > self._max_wait_time) or (

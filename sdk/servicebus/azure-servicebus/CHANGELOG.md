@@ -1,16 +1,40 @@
 # Release History
 
-## 7.12.3 (Unreleased)
+## 7.13.1 (Unreleased)
 
 ### Features Added
+- Added in emulator support, ServiceBusAdministrationClient is currently not supported by the emulator.
 
 ### Breaking Changes
 
 ### Bugs Fixed
- 
- - Fixed a bug where token refreshes were not happening on long running operations ([35717](https://github.com/Azure/azure-sdk-for-python/issues/35717))
 
 ### Other Changes
+
+## 7.13.0 (2024-11-12)
+
+### Features Added
+
+- Added `ssl_context` parameter to the clients to allow users to pass in the SSL context, in which case, `connection_verify` will be ignored if specified.([#37246](https://github.com/Azure/azure-sdk-for-python/issues/37246))
+
+### Bugs Fixed
+
+- Fixed a broken f-string present in a `ValueError` when using the async client. ([37695](https://github.com/Azure/azure-sdk-for-python/issues/37695))
+- Fixed a bug with the incorrect error being raised for larger than allowed batch size. ([38260](https://github.com/Azure/azure-sdk-for-python/issues/38260))
+- Fixed a bug with an error being raised when the fully-qualified namespace included a port, rather than ignoring the port. ([37547](https://github.com/Azure/azure-sdk-for-python/issues/37547))
+
+### Other Changes
+
+- Added debug logging to track received messages.
+
+## 7.12.3 (2024-09-19)
+
+### Bugs Fixed
+
+ - Fixed a bug where token refreshes were not happening on long running operations ([35717](https://github.com/Azure/azure-sdk-for-python/issues/35717))
+ - Fixed a bug where using TokenCredential to create a subscription with forwarding caused a `ResourceNotFoundError` ([36545](https://github.com/Azure/azure-sdk-for-python/pull/36545))
+ - Fixed a bug where messages received on one receiver could not be settled on another receiver over mgmt link ([35304](https://github.com/Azure/azure-sdk-for-python/issues/35304))
+ - Addressed a bug where excess Link Credits were being allocated when large messages were being received ([34270](https://github.com/Azure/azure-sdk-for-python/issues/34270))
 
 ## 7.12.2 (2024-05-08)
 
