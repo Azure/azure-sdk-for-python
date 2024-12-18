@@ -233,9 +233,7 @@ key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
 document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 with open(path_to_sample_documents, "rb") as f:
-    poller = document_intelligence_client.begin_analyze_document(
-        "prebuilt-layout", body=f
-    )
+    poller = document_intelligence_client.begin_analyze_document("prebuilt-layout", body=f)
 result: AnalyzeResult = poller.result()
 
 if result.styles and any([style.is_handwritten for style in result.styles]):
@@ -503,6 +501,8 @@ from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import AnalyzeResult
 
 def _format_price(price_dict):
+    if price_dict is None:
+        return "N/A"
     return "".join([f"{p}" for p in price_dict.values()])
 
 endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
@@ -510,9 +510,7 @@ key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
 document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 with open(path_to_sample_documents, "rb") as f:
-    poller = document_intelligence_client.begin_analyze_document(
-        "prebuilt-receipt", body=f, locale="en-US"
-    )
+    poller = document_intelligence_client.begin_analyze_document("prebuilt-receipt", body=f, locale="en-US")
 receipts: AnalyzeResult = poller.result()
 
 if receipts.documents:
@@ -665,9 +663,7 @@ document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, cre
 
 # Make sure your document's type is included in the list of document types the custom model can analyze
 with open(path_to_sample_documents, "rb") as f:
-    poller = document_intelligence_client.begin_analyze_document(
-        model_id=model_id, body=f
-    )
+    poller = document_intelligence_client.begin_analyze_document(model_id=model_id, body=f)
 result: AnalyzeResult = poller.result()
 
 if result.documents:
@@ -921,7 +917,7 @@ def callback(response):
 
 client.get_resource_details(raw_response_hook=callback)
 
-print(f"Response status code is: {responses["status_code"]}")
+print(f"Response status code is: {responses['status_code']}")
 response_body = responses["response_body"]
 print(
     f"Our resource has {response_body['customDocumentModels']['count']} custom models, "
