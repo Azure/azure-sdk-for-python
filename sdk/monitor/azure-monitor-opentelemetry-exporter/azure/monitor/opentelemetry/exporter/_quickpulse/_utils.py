@@ -1,17 +1,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from typing import List, Optional, Tuple, Union
 
-from opentelemetry.sdk._logs import LogRecord
 from opentelemetry.sdk.metrics._internal.point import (
     NumberDataPoint,
     HistogramDataPoint,
 )
 from opentelemetry.sdk.metrics.export import MetricsData as OTMetricsData
-from opentelemetry.sdk.trace import ReadableSpan
-from opentelemetry.semconv.trace import SpanAttributes
-from opentelemetry.trace import SpanKind
 
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _QUICKPULSE_METRIC_NAME_MAPPINGS,
@@ -115,7 +111,7 @@ def _get_span_document(data: Union[_DependencyData, _RequestData]) -> Union[Remo
 
 
 # mypy: disable-error-code="assignment"
-def _get_log_record_document(data: Union[_ExceptionData, _TraceData], exc_type: Optional[str] = None) -> Union[ExceptionDocument, TraceDocument]:
+def _get_log_record_document(data: Union[_ExceptionData, _TraceData], exc_type: Optional[str] = None) -> Union[ExceptionDocument, TraceDocument]:  # pylint: disable=C0301
     if isinstance(data, _ExceptionData):
         document = ExceptionDocument(
             document_type=DocumentType.EXCEPTION,
