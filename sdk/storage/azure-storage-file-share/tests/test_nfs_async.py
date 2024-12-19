@@ -103,9 +103,9 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
     @FileSharePreparer()
     @recorded_by_proxy_async
     async def test_create_directory_and_set_directory_properties(self, **kwargs: Any):
-        storage_account_name = kwargs.pop('storage_account_name')
+        premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
 
-        await self._setup(storage_account_name)
+        await self._setup(premium_storage_file_account_name)
 
         create_owner, create_group, create_file_mode = '345', '123', '7777'
         set_owner, set_group, set_file_mode = '0', '0', '0755'
@@ -129,9 +129,9 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
     @FileSharePreparer()
     @recorded_by_proxy_async
     async def test_create_file_and_set_file_properties(self, **kwargs: Any):
-        storage_account_name = kwargs.pop("storage_account_name")
+        premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
 
-        await self._setup(storage_account_name)
+        await self._setup(premium_storage_file_account_name)
 
         file_name = self._get_file_name()
         file_client = ShareFileClient(
@@ -165,9 +165,9 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
     @FileSharePreparer()
     @recorded_by_proxy_async
     async def test_download_and_copy_file(self, **kwargs: Any):
-        storage_account_name = kwargs.pop("storage_account_name")
+        premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
 
-        await self._setup(storage_account_name)
+        await self._setup(premium_storage_file_account_name)
 
         default_owner, default_group, default_file_mode = '0', '0', '0664'
         source_owner, source_group, source_file_mode = '999', '888', '0111'
@@ -234,9 +234,9 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
     @FileSharePreparer()
     @recorded_by_proxy_async
     async def test_create_hard_link(self, **kwargs: Any):
-        storage_account_name = kwargs.pop('storage_account_name')
+        premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
 
-        await self._setup(storage_account_name)
+        await self._setup(premium_storage_file_account_name)
 
         share_client = self.fsc.get_share_client(self.share_name)
         directory_name = self._get_directory_name()
@@ -268,9 +268,9 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
     @FileSharePreparer()
     @recorded_by_proxy_async
     async def test_create_hard_link_error(self, **kwargs: Any):
-        storage_account_name = kwargs.pop('storage_account_name')
+        premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
 
-        await self._setup(storage_account_name)
+        await self._setup(premium_storage_file_account_name)
 
         share_client = self.fsc.get_share_client(self.share_name)
         directory_name = self._get_directory_name()
