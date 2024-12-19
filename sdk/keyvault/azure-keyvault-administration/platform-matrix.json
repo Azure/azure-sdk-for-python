@@ -1,0 +1,19 @@
+{
+  "matrix": {
+    "$IMPORT": "eng/pipelines/templates/stages/platform-matrix.json",
+    "ArmTemplateParameters": "@{ enableAttestation = $true }"
+  },
+  "include": [
+    {
+      "Agent": {
+        "ubuntu-20.04_ManagedHSM": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL"
+        }
+      },
+      "ArmTemplateParameters": "@{ enableHsm = $true }",
+      "PythonVersion": "3.12",
+      "CoverageArg": ""
+    }
+  ]
+}
