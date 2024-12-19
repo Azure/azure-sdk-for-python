@@ -4,7 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 from io import IOBase, UnsupportedOperation
-from typing import Optional
+from typing import Any, Dict, Optional
+
+from azure.core.pipeline.transport import AsyncHttpTransport, AioHttpTransportResponse
+from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.rest._aiohttp import RestAioHttpTransportResponse
+from aiohttp import ClientResponse
+
 
 
 class ProgressTracker:
@@ -60,3 +66,76 @@ class AsyncStream:
         self._offset += len(data)
 
         return data
+
+class MockAioHttpClientResponse(ClientResponse):
+    def __init__(self, url: str, body_bytes: bytes, headers: Optional[Dict[str, Any]] = None):
+        self._url = url
+        self._body = body_bytes
+        self._headers = headers
+        self._cache = {}
+        self._loop = None
+        self.status = 200
+        self.reason = "OK"
+
+class MockStorageTransport(AsyncHttpTransport):
+    async def send(self, request: HttpRequest, **kwargs: Any) -> AioHttpTransportResponse:
+        if request.method == 'GET':
+            # download blob
+            return AioHttpTransportResponse(
+                request,
+                MockAioHttpClientResponse(
+                    request.url,
+                    b"test content",
+                    {
+                        "Content-Type": "application/octet-stream",
+                        "Content-Range": "bytes 0-27/28",
+                        "Content-Length": "28",
+                    },
+                ),
+            )
+        elif request.method == 'HEAD':
+            # get blob properties
+            core_response = RestAioHttpTransportResponse(
+                request=request,
+                internal_response=MockAioHttpClientResponse(
+                    request.url,
+                    b"",
+                    {
+                        "Content-Type": "application/octet-stream",
+                        "Content-Length": "1024",
+                        "Content-MD5": "yaNM/IXZgmmMasifdgcavQ=="
+                    },
+                ),
+                decompress=False
+            )
+            # resp = AioHttpTransportResponse(
+            #     request,
+            #     MockAioHttpClientResponse(
+            #         request.url,
+            #         b"",
+            #         {
+            #             "Content-Type": "application/octet-stream",
+            #             "Content-Length": "1024",
+            #             "Content-MD5": "yaNM/IXZgmmMasifdgcavQ=="
+            #         },
+            #     ),
+            # )
+            # await resp.read()
+
+            # Emulate the logic that would call into read()
+            await core_response.read()
+            return core_response
+
+        return None
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *args):
+        pass
+
+    async def open(self):
+        pass
+
+    async def close(self):
+        pass

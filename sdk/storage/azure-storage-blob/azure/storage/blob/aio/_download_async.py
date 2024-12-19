@@ -46,8 +46,13 @@ T = TypeVar('T', bytes, str)
 async def process_content(data: Any, start_offset: int, end_offset: int, encryption: Dict[str, Any]) -> bytes:
     if data is None:
         raise ValueError("Response cannot be None.")
-    await data.response.read()
-    content = cast(bytes, data.response.content)
+    # Fix Start
+    await data.response.load_body()  # Load the body in memory and close the socket
+    # Fix End
+
+    # This is where the content is received. Place a breakpoint on the line below.
+
+    content = cast(bytes, data.response.body())
     if encryption.get('key') is not None or encryption.get('resolver') is not None:
         try:
             return decrypt_blob(

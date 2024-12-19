@@ -53,7 +53,7 @@ from devtools_testutils.fake_credentials_async import AsyncFakeCredential
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
-from test_helpers_async import AsyncStream
+from test_helpers_async import AsyncStream, MockStorageTransport
 
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
@@ -187,7 +187,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    async def test_blob_exists(self, **kwargs):
+    async def test_blob_existseeeeaaaaaaa(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -201,6 +201,30 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert exists
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_mock_transport(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        transport = MockStorageTransport()
+        blob_service_client = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            transport=transport,
+            retry_total=0
+        )
+
+        blob_client = BlobClient(
+            blob_service_client.url, container_name='test_cont', blob_name='test_blob', credential=storage_account_key,
+            transport=transport, retry_total=0)
+
+        # content = await blob_client.download_blob()
+        # assert content is not None
+
+        props = await blob_client.get_blob_properties()
+        assert props is not None
 
     @BlobPreparer()
     @recorded_by_proxy_async
