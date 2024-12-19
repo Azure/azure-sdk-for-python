@@ -8,6 +8,7 @@ from typing import Any, Dict, Optional
 
 from azure.core.pipeline.transport import AsyncHttpTransport, AioHttpTransportResponse
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.rest._aiohttp import RestAioHttpTransportResponse
 from aiohttp import ClientResponse
 
 
@@ -71,6 +72,7 @@ class MockAioHttpClientResponse(ClientResponse):
         self._body = body_bytes
         self._headers = headers
         self._cache = {}
+        self._loop = None
         self.status = 200
         self.reason = "OK"
 
@@ -92,9 +94,9 @@ class MockStorageTransport(AsyncHttpTransport):
             )
         elif request.method == 'HEAD':
             # get blob properties
-            return AioHttpTransportResponse(
-                request,
-                MockAioHttpClientResponse(
+            rest_response = RestAioHttpTransportResponse(
+                request=request,
+                internal_response=MockAioHttpClientResponse(
                     request.url,
                     b"",
                     {
@@ -103,7 +105,11 @@ class MockStorageTransport(AsyncHttpTransport):
                         "Content-MD5": "yaNM/IXZgmmMasifdgcavQ=="
                     },
                 ),
+                decompress=False
             )
+
+            await rest_response.read()
+            return rest_response
         return None
 
     async def __aenter__(self):
