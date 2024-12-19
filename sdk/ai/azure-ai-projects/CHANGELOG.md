@@ -1,18 +1,17 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
+## 1.0.0b4 (2024-12-20)
+
+### Bugs Fixed
+
+* Fix for Agent streaming issue (see [GitHub issue 38918](https://github.com/Azure/azure-sdk-for-python/issues/38918))
+* Fix for Agent async function `send_email_async` is not called (see [GitHub issue 38898](https://github.com/Azure/azure-sdk-for-python/issues/38898))
+* Fix for Agent streaming with event handler fails with "AttributeError: 'MyEventHandler' object has no attribute 'buffer'" (see [GitHub issue 38897](https://github.com/Azure/azure-sdk-for-python/issues/38897))
 
 ### Features Added
 
 * Add optional input argument `connection_name` to methods `.inference.get_chat_completions_client`,
  `.inference.get_embeddings_client` and `.inference.get_azure_openai_client`.
-
-### Breaking Changes
-
-### Bugs Fixed
-* Fix for streaming issue, https://github.com/Azure/azure-sdk-for-python/issues/38918
-* Fix for Async function send_email_async is not called, https://github.com/Azure/azure-sdk-for-python/issues/38898
-* Fix for Streaming with eventhandler fails with AttributeError: 'MyEventHandler' object has no attribute 'buffer', https://github.com/Azure/azure-sdk-for-python/issues/38897
 
 ## 1.0.0b3 (2024-12-13)
 

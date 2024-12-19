@@ -45,7 +45,7 @@ class TestInferenceAsync(InferenceTestBase):
     @servicePreparerInferenceTests()
     @recorded_by_proxy_async
     async def test_inference_get_azure_openai_client_entra_id_auth_async(self, **kwargs):
-        connection_name = kwargs.pop("azure_ai_projects_inference_tests_aoai_connection_name")
+        connection_name = kwargs.pop("azure_ai_projects_inference_tests_entraid_auth_aoai_connection_name")
         api_version = kwargs.pop("azure_ai_projects_inference_tests_aoai_api_version")
         model = kwargs.pop("azure_ai_projects_inference_tests_aoai_model_deployment_name")
         async with self.get_async_client(**kwargs) as project_client:
@@ -121,10 +121,9 @@ class TestInferenceAsync(InferenceTestBase):
                 assert any(item in response.choices[0].message.content for item in contains)
 
     @servicePreparerInferenceTests()
-    @pytest.mark.skip("Entra ID auth not yet supported for models in AI Services connection")
     @recorded_by_proxy_async
     async def test_inference_get_chat_completions_client_entra_id_auth_async(self, **kwargs):
-        connection_name = kwargs.pop("azure_ai_projects_inference_tests_aiservices_connection_name")
+        connection_name = kwargs.pop("azure_ai_projects_inference_tests_entraid_auth_aiservices_connection_name")
         model = kwargs.pop("azure_ai_projects_inference_tests_chat_completions_model_deployment_name")
         async with self.get_async_client(**kwargs) as project_client:
             async with await project_client.inference.get_chat_completions_client(
@@ -192,10 +191,9 @@ class TestInferenceAsync(InferenceTestBase):
                     assert item.embedding[-1] != 0
 
     @servicePreparerInferenceTests()
-    @pytest.mark.skip("Entra ID auth not yet supported for models in AI Services connection")
     @recorded_by_proxy_async
     async def test_inference_get_embeddings_client_entra_id_auth_async(self, **kwargs):
-        connection_name = kwargs.pop("azure_ai_projects_inference_tests_aiservices_connection_name")
+        connection_name = kwargs.pop("azure_ai_projects_inference_tests_entraid_auth_aiservices_connection_name")
         model = kwargs.pop("azure_ai_projects_inference_tests_embeddings_model_deployment_name")
         async with self.get_async_client(**kwargs) as project_client:
             async with await project_client.inference.get_embeddings_client(
