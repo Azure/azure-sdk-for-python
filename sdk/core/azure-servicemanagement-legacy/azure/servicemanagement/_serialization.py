@@ -31,6 +31,7 @@ from ._common_conversion import (
     _decode_base64_to_text,
     _encode_base64,
     _lower,
+    _str,
     _decode_base64_to_bytes,
 )
 from ._common_serialization import (
@@ -471,9 +472,9 @@ def _data_to_xml(data):
 
         if val is not None:
             if converter is not None:
-                text = str(converter(str(val)))
+                text = _str(converter(_str(val)))
             else:
-                text = str(val)
+                text = _str(val)
 
             xml += ''.join(['<', name, '>', text, '</', name, '>'])
     return xml
@@ -1307,10 +1308,10 @@ class _XmlSerializer(object):
             for key, val in extended_properties.items():
                 xml += ''.join(['<ExtendedProperty>',
                                 '<Name>',
-                                str(key),
+                                _str(key),
                                 '</Name>',
                                '<Value>',
-                               str(val),
+                               _str(val),
                                '</Value>',
                                '</ExtendedProperty>'])
             xml += '</ExtendedProperties>'
@@ -1561,13 +1562,13 @@ class _ServiceBusManagementXmlSerializer(object):
         To be completed
         '''
         if not str_type:
-            return str(data)
+            return _str(data)
         if str_type in ["Edm.Single", "Edm.Double"]:
             return float(data)
         elif "Edm.Int" in str_type:
             return int(data)
         else:
-            return str(data)
+            return _str(data)
 
     @staticmethod
     def xml_to_metrics(xmlstr, object_type):

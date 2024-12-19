@@ -24,6 +24,9 @@ from .models import (
     CloudServices,
     Resource,
 )
+from ._common_conversion import (
+    _str,
+)
 from ._common_error import (
     _validate_not_none
 )
@@ -171,7 +174,7 @@ class SchedulerManagementService(_ServiceManagementClient):
         path = self._get_cloud_services_path(
             cloud_service_id, "scheduler", "jobCollections")
 
-        path += '/' + str(job_collection_id)
+        path += '/' + _str(job_collection_id)
         body = _SchedulerManagementXmlSerializer.create_job_collection_to_xml(
             plan)
 
@@ -194,7 +197,7 @@ class SchedulerManagementService(_ServiceManagementClient):
         path = self._get_cloud_services_path(
             cloud_service_id, "scheduler", "jobCollections")
 
-        path += '/' + str(job_collection_id)
+        path += '/' + _str(job_collection_id)
 
         return self._perform_delete(path, as_async=True)
 
@@ -311,7 +314,7 @@ class SchedulerManagementService(_ServiceManagementClient):
         path = self._get_cloud_services_path(
             cloud_service_id, "scheduler", "~/jobCollections")
 
-        path += '/' + str(job_collection_id)
+        path += '/' + _str(job_collection_id)
         if job_id is not None:
             path += '/jobs/' + job_id
 
