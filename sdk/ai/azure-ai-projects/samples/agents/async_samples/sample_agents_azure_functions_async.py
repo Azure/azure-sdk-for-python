@@ -17,7 +17,7 @@ USAGE:
     pip install azure-ai-projects azure-identity
  
     Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry Project.
+    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
     STORAGE_SERVICE_ENDPONT - the storage service queue endpoint, triggering Azure function.
     Please see Getting Started with Azure Functions page for more information on Azure Functions:
     https://learn.microsoft.com/azure/azure-functions/functions-get-started
