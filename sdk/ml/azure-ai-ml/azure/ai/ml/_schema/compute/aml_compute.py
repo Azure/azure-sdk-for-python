@@ -45,4 +45,3 @@ class AmlComputeSchema(ComputeSchema):
     enable_node_public_ip = fields.Bool(
         metadata={"description": "Enable or disable node public IP address provisioning."}
     )
-    #tempchange

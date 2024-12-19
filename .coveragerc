@@ -6,12 +6,13 @@ omit =
 	*/test*
 	env*
 	*/_serialization.py
-	*/azure/ai/ml/_restclient
+	*/azure/ai/ml/_restclient/*
 
 [paths]
 source =
 	sdk/
 	**/sdk
+	*/_restclient/*
 
 [report]
 exclude_lines =
