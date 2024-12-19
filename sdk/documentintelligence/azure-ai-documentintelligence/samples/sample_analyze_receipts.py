@@ -42,6 +42,8 @@ def analyze_receipts():
     from azure.ai.documentintelligence.models import AnalyzeResult
 
     def _format_price(price_dict):
+        if price_dict is None:
+            return "N/A"
         return "".join([f"{p}" for p in price_dict.values()])
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]

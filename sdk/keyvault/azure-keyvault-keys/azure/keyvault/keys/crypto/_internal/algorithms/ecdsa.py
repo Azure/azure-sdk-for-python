@@ -2,9 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import abc
-import sys
-
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.asymmetric import utils
@@ -31,11 +28,6 @@ class _EcdsaSignatureTransform(SignatureTransform):
 class _Ecdsa(SignatureAlgorithm):
     def create_signature_transform(self, key):
         return _EcdsaSignatureTransform(key, self.default_hash_algorithm)
-
-    @property
-    @abc.abstractmethod
-    def coordinate_length(self):
-        pass
 
 
 class Ecdsa256(_Ecdsa):
