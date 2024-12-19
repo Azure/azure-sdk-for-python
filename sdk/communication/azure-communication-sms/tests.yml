@@ -14,6 +14,7 @@ extends:
           MatrixReplace:
             - TestSamples=.*/true
       EnvVars:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'False'
       TestResourceDirectories:
