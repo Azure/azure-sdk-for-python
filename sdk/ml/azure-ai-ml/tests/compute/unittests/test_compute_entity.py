@@ -98,7 +98,7 @@ class TestComputeEntity:
         assert rest_intermediate.properties.properties.enable_node_public_ip
         assert rest_intermediate.properties.disable_local_auth is True
         assert rest_intermediate.location == compute.location
-    
+
     def test_aml_compute_from_yaml_with_disable_public_access_when_no_sshSettings(self):
 
         compute: AmlCompute = verify_entity_load_and_dump(
