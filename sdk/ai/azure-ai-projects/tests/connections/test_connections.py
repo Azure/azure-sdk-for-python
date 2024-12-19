@@ -112,7 +112,7 @@ class TestConnections(ConnectionsTestBase):
                     expected_connection_type=ConnectionType.AZURE_AI_SERVICES,
                     expected_authentication_type=AuthenticationType.ENTRA_ID,
                 )
-                if (include_credentials):
+                if include_credentials:
                     ConnectionsTestBase.validate_inference(connection, chat_completions_model_deployment_name)
 
     @servicePreparerConnectionsTests()

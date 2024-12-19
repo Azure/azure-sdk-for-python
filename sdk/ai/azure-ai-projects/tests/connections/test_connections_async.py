@@ -112,8 +112,10 @@ class TestConnectionsAsync(ConnectionsTestBase):
                     expected_connection_type=ConnectionType.AZURE_AI_SERVICES,
                     expected_authentication_type=AuthenticationType.ENTRA_ID,
                 )
-                if (include_credentials):
-                    await ConnectionsTestBase.validate_async_inference(connection, chat_completions_model_deployment_name)
+                if include_credentials:
+                    await ConnectionsTestBase.validate_async_inference(
+                        connection, chat_completions_model_deployment_name
+                    )
 
     @servicePreparerConnectionsTests()
     @recorded_by_proxy_async
