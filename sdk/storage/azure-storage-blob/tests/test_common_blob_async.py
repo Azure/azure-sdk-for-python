@@ -53,7 +53,7 @@ from devtools_testutils.fake_credentials_async import AsyncFakeCredential
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
-from test_helpers_async import AsyncStream
+from test_helpers_async import AsyncStream, MockStorageTransport
 
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
@@ -3455,4 +3455,28 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         # Assert
         result = await (await blob.download_blob()).readall()
         assert result == data[:length]
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_mock_transport(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        transport = MockStorageTransport()
+        blob_service_client = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            transport=transport,
+            retry_total=0
+        )
+
+        blob_client = BlobClient(
+            blob_service_client.url, container_name='test_cont', blob_name='test_blob', credential=storage_account_key,
+            transport=transport, retry_total=0)
+
+        # Assert
+        content = await blob_client.download_blob()
+        assert content is not None
+        # service_properties = await blob_service_client.get_service_properties()
+        # assert service_properties is not None
 # ------------------------------------------------------------------------------
