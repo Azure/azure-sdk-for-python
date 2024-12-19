@@ -5,16 +5,16 @@
 # --------------------------------------------------------------------------
 import os
 import logging
+import sys
 
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import get_credential, is_live
 from azure.communication.sms.aio import SmsClient
 from azure.core.exceptions import HttpResponseError
-from azure.identity.aio import AzurePipelinesCredential, DefaultAzureCredential
-from _shared.utils import get_http_logging_policy
+from _shared.utils import async_create_token_credential, get_http_logging_policy
 from acs_sms_test_case import ACSSMSTestCase
-from devtools_testutils.fake_credentials_async import AsyncFakeCredential
+
+logger = logging.getLogger(__name__)
 
 
 @pytest.mark.asyncio
@@ -57,30 +57,22 @@ class TestClientAsync(ACSSMSTestCase):
 
     @recorded_by_proxy_async
     async def test_send_sms_from_managed_identity_async(self):
+        logger.setLevel(logging.WARNING)
+        handler = logging.StreamHandler()
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+
         service_connection_id = os.getenv("AZURESUBSCRIPTION_SERVICE_CONNECTION_ID")
         system_access_token = os.getenv("SYSTEM_ACCESSTOKEN")
         client_id = os.getenv("AZURESUBSCRIPTION_CLIENT_ID")
         tenant_id = os.getenv("AZURESUBSCRIPTION_TENANT_ID")
 
-        if not is_live():
-            credential = AsyncFakeCredential()
-        else:
-            if (client_id is not None and
-                    service_connection_id is not None and
-                    tenant_id is not None and
-                    system_access_token is not None):
-                credential = AzurePipelinesCredential(
-                    tenant_id=tenant_id,
-                    client_id=client_id,
-                    service_connection_id=service_connection_id,
-                    system_access_token=system_access_token
-                )
-            else:
-                logging.info(f'client_id is {client_id is not None}')
-                logging.info(f'tenant_id is {tenant_id is not None}')
-                logging.info(f'service_connection_id is {service_connection_id is not None}')
-                logging.info(f'system_access_token is {system_access_token is not None}')
-                credential = DefaultAzureCredential()
+        logger.warning(f'client_id is {client_id is not None}')
+        logger.warning(f'tenant_id is {tenant_id is not None}')
+        logger.warning(f'service_connection_id is {service_connection_id is not None}')
+        logger.warning(f'system_access_token is {system_access_token is not None}')
+        credential = async_create_token_credential()
         sms_client = SmsClient(self.endpoint, credential, http_logging_policy=get_http_logging_policy())
 
         async with sms_client:
