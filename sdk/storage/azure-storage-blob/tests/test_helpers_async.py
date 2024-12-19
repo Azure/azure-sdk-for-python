@@ -76,8 +76,8 @@ class MockAioHttpClientResponse(ClientResponse):
 
 class MockStorageTransport(AsyncHttpTransport):
     async def send(self, request: HttpRequest, **kwargs: Any) -> AioHttpTransportResponse:
-        # download_blob
         if request.method == 'GET':
+            # download blob
             return AioHttpTransportResponse(
                 request,
                 MockAioHttpClientResponse(
@@ -87,6 +87,20 @@ class MockStorageTransport(AsyncHttpTransport):
                         "Content-Type": "application/octet-stream",
                         "Content-Range": "bytes 0-27/28",
                         "Content-Length": "28",
+                    },
+                ),
+            )
+        elif request.method == 'HEAD':
+            # get blob properties
+            return AioHttpTransportResponse(
+                request,
+                MockAioHttpClientResponse(
+                    request.url,
+                    b"",
+                    {
+                        "Content-Type": "application/octet-stream",
+                        "Content-Length": "1024",
+                        "Content-MD5": "yaNM/IXZgmmMasifdgcavQ=="
                     },
                 ),
             )
