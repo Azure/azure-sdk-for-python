@@ -1,6 +1,6 @@
 # Release History
 
-## 13.6.0 (2024-12-23)
+## 13.6.0 (2024-12-19)
 
 ### Features Added
 
