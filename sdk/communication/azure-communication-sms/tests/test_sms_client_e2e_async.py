@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import os
+import logging
 
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -75,10 +76,10 @@ class TestClientAsync(ACSSMSTestCase):
                     system_access_token=system_access_token
                 )
             else:
-                print(f'client_id is {client_id is not None}')
-                print(f'tenant_id is {tenant_id is not None}')
-                print(f'service_connection_id is {service_connection_id is not None}')
-                print(f'system_access_token is {system_access_token is not None}')
+                logging.info(f'client_id is {client_id is not None}')
+                logging.info(f'tenant_id is {tenant_id is not None}')
+                logging.info(f'service_connection_id is {service_connection_id is not None}')
+                logging.info(f'system_access_token is {system_access_token is not None}')
                 credential = DefaultAzureCredential()
         sms_client = SmsClient(self.endpoint, credential, http_logging_policy=get_http_logging_policy())
 
