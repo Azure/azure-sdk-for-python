@@ -98,6 +98,21 @@ class TestComputeEntity:
         assert rest_intermediate.properties.properties.enable_node_public_ip
         assert rest_intermediate.properties.disable_local_auth is True
         assert rest_intermediate.location == compute.location
+    
+    def test_aml_compute_from_yaml_with_disable_public_access_when_no_sshSettings(self):
+
+        compute: AmlCompute = verify_entity_load_and_dump(
+            load_compute,
+            self._test_loaded_compute,
+            "tests/test_configs/compute/compute-aml-public-access-no-ssh.yaml",
+        )[0]
+
+        rest_intermediate = compute._to_rest_object()
+
+        assert rest_intermediate.properties.compute_type == "AmlCompute"
+        assert rest_intermediate.properties.properties.enable_node_public_ip
+        assert rest_intermediate.properties.disable_local_auth is True
+        assert rest_intermediate.location == compute.location
 
     def test_compute_vm_from_yaml(self):
         resource_id = "/subscriptions/13e50845-67bc-4ac5-94db-48d493a6d9e8/resourceGroups/myrg/providers/Microsoft.Compute/virtualMachines/myvm"
