@@ -155,7 +155,7 @@ def _ms_to_iso8601_string(ms: float) -> str:
     days, hours = divmod(hours, 24)
     years, days = divmod(days, 365)
     months, days = divmod(days, 30)
-    duration = f"P{years}Y{months}M{days}DT{hours}H{minutes}M{seconds}.{ms:03d}S"
+    duration = f"P{years}Y{months}M{days}DT{hours}H{minutes}M{seconds}.{int(ms):03d}S"
     return duration
 
 
