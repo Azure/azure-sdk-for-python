@@ -1,7 +1,9 @@
-# Function Tool Specifications
-Function tools are the utility allowing developers to provide functions within their code and invoke during streaming or running.   
+# FunctionTool Specifications
+
+FunctionTool is the utility allowing developers to provide functions within their code and invoke during streaming or running.   
 
 ## Example of Function
+
 Here is an example of a function:
 ```python
 def fetch_weather(location: str) -> str:
@@ -23,55 +25,62 @@ Here is an example to attach this function definition to create_agent
 
 ```python
 functions = FunctionTool({fetch_weather})
-toolset = ToolSet()
-toolset.add(functions)
 
 agent = project_client.agents.create_agent(
     model=os.environ["MODEL_DEPLOYMENT_NAME"],
     name="my-assistant",
     instructions="You are a helpful assistant",
-    toolset=toolset,
+    tools=functions.definitions,
 )
 ```
 
-To verify the SDK parse the docstring properly, you can print the definition:
+To verify that the SDK parsed the docstring properly, you can print the definition:
 
 ```python
- print(json.dumps(functions.definitions[1].as_dict(), indent=4))
- ```
+[print(json.dumps(tool.as_dict(), indent=4)) for tool in functions.definitions]
+```
+
+Alternatively user can check the tools property in newly created agent:
+
+```python
+[print(json.dumps(tool.as_dict(), indent=4)) for tool in agent.tools if tool.type == "function"]
+```
 
 The terminal will display the definition as below:
 
 ```json
-{
-    "type": "function",
-    "function": {
-        "name": "fetch_weather",
-        "description": "Fetches the weather information for the specified location.",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "location": {
-                    "type": "string",
-                    "description": "The location to fetch weather for."
-                }
-            },
-            "required": [
-                "location"
-            ]
+[
+    {
+        "type": "function",
+        "function": {
+            "name": "fetch_weather",
+            "description": "Fetches the weather information for the specified location.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "location": {
+                        "type": "string",
+                        "description": "The location to fetch weather for."
+                    }
+                },
+                "required": [
+                    "location"
+                ]
+            }
         }
     }
-}
+]
 ```
 
-## Requirements for Functions
+## Requirements for FunctionTool
+
 To ensure `FunctionTool` operates correctly and generates accurate function definitions that agents can reliably call, adhere to the following standards:
  
 1. **Type Annotations**
    - All function parameters and return types should be explicitly type-annotated using Python's type hinting.
  
 2. **Structured Docstrings**
-   - Utilize a consistent docstring format similar to the example below (see also related agent samples in this repository).
+   - Utilize a consistent docstring format similar to the example above (see also related agent samples in this repository).
    - Include clear descriptions for each function and parameter.
  
 3. **Supported Types**
