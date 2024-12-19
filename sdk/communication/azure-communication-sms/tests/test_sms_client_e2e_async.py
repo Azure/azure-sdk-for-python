@@ -68,10 +68,12 @@ class TestClientAsync(ACSSMSTestCase):
         client_id = os.getenv("AZURESUBSCRIPTION_CLIENT_ID")
         tenant_id = os.getenv("AZURESUBSCRIPTION_TENANT_ID")
 
-        logger.warning(f'client_id is {client_id is not None}')
-        logger.warning(f'tenant_id is {tenant_id is not None}')
-        logger.warning(f'service_connection_id is {service_connection_id is not None}')
-        logger.warning(f'system_access_token is {system_access_token is not None}')
+        cid_is_none = client_id is None
+        tid_is_none = tenant_id is None
+        scid_is_none = service_connection_id is None
+        sat_is_none = system_access_token is None
+
+        logger.warning(cid_is_none, tid_is_none, scid_is_none, sat_is_none)
         credential = async_create_token_credential()
         sms_client = SmsClient(self.endpoint, credential, http_logging_policy=get_http_logging_policy())
 
