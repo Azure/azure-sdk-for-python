@@ -5,12 +5,11 @@
 # --------------------------------------------------------------------------
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import is_live
+from devtools_testutils import get_credential, is_live
 from azure.communication.sms.aio import SmsClient
 from azure.core.exceptions import HttpResponseError
 from _shared.utils import get_http_logging_policy
 from acs_sms_test_case import ACSSMSTestCase
-from azure.identity.aio import DefaultAzureCredential
 from devtools_testutils.fake_credentials_async import AsyncFakeCredential
 
 
@@ -57,7 +56,7 @@ class TestClientAsync(ACSSMSTestCase):
         if not is_live():
             credential = AsyncFakeCredential()
         else:
-            credential = DefaultAzureCredential()
+            credential = get_credential()
         sms_client = SmsClient(self.endpoint, credential, http_logging_policy=get_http_logging_policy())
 
         async with sms_client:
