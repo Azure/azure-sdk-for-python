@@ -97,7 +97,6 @@ class CallAutomationClient:
         *,
         api_version: Optional[str] = None,
         source: Optional["CommunicationUserIdentifier"] = None,
-        ops_source: Optional["MicrosoftTeamsAppIdentifier"] = None,
         **kwargs,
     ) -> None:
         if not credential:
@@ -137,7 +136,6 @@ class CallAutomationClient:
         self._call_recording_client = self._client.call_recording
         self._downloader = ContentDownloader(self._call_recording_client)
         self.source = source
-        self.ops_source = ops_source
 
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs) -> "CallAutomationClient":
@@ -324,6 +322,7 @@ class CallAutomationClient:
         voip_headers: Optional[Dict[str, str]] = None,
         media_streaming: Optional['MediaStreamingOptions'] = None,
         transcription: Optional['TranscriptionOptions'] = None,
+        teams_app_source: Optional['MicrosoftTeamsAppIdentifier'] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """Create a call connection request to a target identity.
@@ -354,6 +353,10 @@ class CallAutomationClient:
         :keyword transcription: Configuration of live transcription.
         :paramtype transcription: ~azure.communication.callautomation.TranscriptionOptions
          or None
+        :keyword teams_app_source: Overrides default client source by a MicrosoftTeamsAppIdentifier type source.
+         Required for creating call with Teams resource account ID.
+         This is per-operation setting and does not change the client's default source.
+        :paramtype teams_app_source: ~azure.communication.callautomation.MicrosoftTeamsAppIdentifier or None
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -386,7 +389,7 @@ class CallAutomationClient:
             source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
             source_display_name=source_display_name,
             source=serialize_communication_user_identifier(self.source),
-            ops_source=serialize_msft_teams_app_identifier(self.ops_source),
+            teams_app_source=serialize_msft_teams_app_identifier(teams_app_source),
             operation_context=operation_context,
             call_intelligence_options=call_intelligence_options,
             media_streaming_options=media_config,
