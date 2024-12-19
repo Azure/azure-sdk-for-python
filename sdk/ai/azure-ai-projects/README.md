@@ -363,7 +363,7 @@ agent = project_client.agents.create_agent(
 
 <!-- END SNIPPET -->
 
-We also can attach files to the existing vector vector store. In the code snippet below, we first create an empty vector store and add file to it.
+We also can attach files to the existing vector store. In the code snippet below, we first create an empty vector store and add file to it.
 
 <!-- SNIPPET:sample_agents_vector_store_batch_enterprise_file_search.attach_files_to_store -->
 
@@ -672,7 +672,7 @@ message = project_client.agents.create_message(
 
 #### Create Message with Code Interpreter Attachment
 
-To attach a file to a message for data analysis, you use `MessageAttachment` and `CodeInterpreterTool`. You must pass `CodeInterpreterTool` as `tools` or `toolset` in `create_agent` call or the file attachment cannot be opened for code interpreter.  
+To attach a file to a message for data analysis, use `MessageAttachment` and `CodeInterpreterTool` classes. You must pass `CodeInterpreterTool` as `tools` or `toolset` in `create_agent` call or the file attachment cannot be opened for code interpreter.  
 
 Here is an example to pass `CodeInterpreterTool` as tool:
 
@@ -706,7 +706,7 @@ message = project_client.agents.create_message(
 
 <!-- END SNIPPET -->
 
-Azure blob storage can be used as a message attachment. In this case `VectorStoreDataSource` have to be used as a data source:
+Azure blob storage can be used as a message attachment. In this case, use `VectorStoreDataSource` as a data source:
 
 <!-- SNIPPET:sample_agents_code_interpreter_attachment_enterprise_search.upload_file_and_create_message_with_code_interpreter -->
 
