@@ -13,7 +13,7 @@
 ## 1.1.0 (2024-12-12)
 
 ### Features Added
-- Added image support in `ContentSafetyEvaluator`, `ViolenceEvaluator`, `SexualEvaluator`, `SelfHarmEvaluator`, `HateUnfairnessEvaluator` and `ProtectedMaterialEvaluator`. Image URL or base64 encoded image can be passed in as part `conversation` input to the evaluators. See below for an example:
+- Added image support in `ContentSafetyEvaluator`, `ViolenceEvaluator`, `SexualEvaluator`, `SelfHarmEvaluator`, `HateUnfairnessEvaluator` and `ProtectedMaterialEvaluator`. Provide image URLs or base64 encoded images in `conversation` input for image evaluation. See below for an example:
 
 ```python
 evaluator = ContentSafetyEvaluator(credential=azure_cred, azure_ai_project=project_scope)
