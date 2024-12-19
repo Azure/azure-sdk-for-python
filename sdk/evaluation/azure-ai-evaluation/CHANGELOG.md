@@ -55,7 +55,7 @@ score = evaluator(conversation=conversation)
 - Please switch to generic evaluators for image evaluations as mentioned above. `ContentSafetyMultimodalEvaluator`, `ContentSafetyMultimodalEvaluatorBase`, `ViolenceMultimodalEvaluator`, `SexualMultimodalEvaluator`, `SelfHarmMultimodalEvaluator`, `HateUnfairnessMultimodalEvaluator` and `ProtectedMaterialMultimodalEvaluator` will be deprecated in the next release.
 
 ### Bugs Fixed
-- Removed `[remote]` extra. This is no longer needed when tracking results in Azure AI Studio.
+- Removed `[remote]` extra. This is no longer needed when tracking results in Azure AI Foundry portal.
 - Fixed `AttributeError: 'NoneType' object has no attribute 'get'` while running simulator with 1000+ results
 
 ## 1.0.1 (2024-11-15)
