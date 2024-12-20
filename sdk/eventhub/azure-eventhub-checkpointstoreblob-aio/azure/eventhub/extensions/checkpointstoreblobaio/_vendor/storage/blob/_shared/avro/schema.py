@@ -29,7 +29,6 @@ from abc import ABCMeta, abstractmethod
 import json
 import logging
 import re
-import sys
 
 logger = logging.getLogger(__name__)
 
@@ -278,7 +277,7 @@ class Name(object):
 # ------------------------------------------------------------------------------
 
 
-class Names(object):
+class Names:
     """Tracks Avro named schemas and default namespace during parsing."""
 
     def __init__(self, default_namespace=None, names=None):
@@ -1156,7 +1155,7 @@ def _schema_from_json_object(json_object, names):
 
 # Parsers for the JSON data types:
 _JSONDataParserTypeMap = {
-    _str: _schema_from_json_string,
+    str: _schema_from_json_string,
     list: _schema_from_json_array,
     dict: _schema_from_json_object,
 }
