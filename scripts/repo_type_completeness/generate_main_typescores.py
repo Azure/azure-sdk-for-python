@@ -9,15 +9,15 @@ import os
 import sys
 import datetime
 import logging
-import requests
 import json
 import pathlib
 import glob
-import datetime
 import subprocess
 import csv
+import calendar
 from typing import Any
 
+import requests
 from github import Github, Auth
 
 from ci_tools.parsing import ParsedSetup
@@ -262,7 +262,27 @@ def append_results_to_csv(entities: list[dict[str, Any]]) -> None:
     )
 
 
+def should_run() -> bool:
+    """We only update the typing dashboard once a month on the Monday after release week.
+    """
+    today = datetime.date.today()
+    c = calendar.Calendar(firstweekday=calendar.SUNDAY)
+    month_dates = c.monthdatescalendar(today.year, today.month)
+
+    monday_after_release_week = None
+    for week in month_dates:
+        for day in week:
+            if day.weekday() == calendar.FRIDAY and day.month == today.month:
+                monday_after_release_week = day + datetime.timedelta(days=10)
+                return today == monday_after_release_week
+
+    return False
+
+
 def update_main_typescores() -> None:
+    if not should_run():
+        return
+
     packages_to_score = get_packages_to_score()
 
     first_round, second_round = get_alpha_installs(packages_to_score)
