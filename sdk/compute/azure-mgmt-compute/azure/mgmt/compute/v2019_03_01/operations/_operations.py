@@ -18953,8 +18953,8 @@ class GalleryImageVersionsOperations:
         :type gallery_image_name: str
         :param gallery_image_version_name: The name of the gallery Image Version to be created. Needs
          to follow semantic version name pattern: The allowed characters are digit and period. Digits
-         must be within the range of a 32-bit integer. Format:
-         :code:`<MajorVersion>`.:code:`<MinorVersion>`.:code:`<Patch>`. Required.
+         must be within the range of a 32-bit integer. Format: :code:`<MajorVersion>`.\\
+         :code:`<MinorVersion>`.\\ :code:`<Patch>`. Required.
         :type gallery_image_version_name: str
         :param gallery_image_version: Parameters supplied to the create or update gallery Image Version
          operation. Required.
@@ -18993,8 +18993,8 @@ class GalleryImageVersionsOperations:
         :type gallery_image_name: str
         :param gallery_image_version_name: The name of the gallery Image Version to be created. Needs
          to follow semantic version name pattern: The allowed characters are digit and period. Digits
-         must be within the range of a 32-bit integer. Format:
-         :code:`<MajorVersion>`.:code:`<MinorVersion>`.:code:`<Patch>`. Required.
+         must be within the range of a 32-bit integer. Format: :code:`<MajorVersion>`.\\
+         :code:`<MinorVersion>`.\\ :code:`<Patch>`. Required.
         :type gallery_image_version_name: str
         :param gallery_image_version: Parameters supplied to the create or update gallery Image Version
          operation. Required.
@@ -19031,8 +19031,8 @@ class GalleryImageVersionsOperations:
         :type gallery_image_name: str
         :param gallery_image_version_name: The name of the gallery Image Version to be created. Needs
          to follow semantic version name pattern: The allowed characters are digit and period. Digits
-         must be within the range of a 32-bit integer. Format:
-         :code:`<MajorVersion>`.:code:`<MinorVersion>`.:code:`<Patch>`. Required.
+         must be within the range of a 32-bit integer. Format: :code:`<MajorVersion>`.\\
+         :code:`<MinorVersion>`.\\ :code:`<Patch>`. Required.
         :type gallery_image_version_name: str
         :param gallery_image_version: Parameters supplied to the create or update gallery Image Version
          operation. Is either a GalleryImageVersion type or a IO[bytes] type. Required.
@@ -19988,8 +19988,8 @@ class GalleryApplicationVersionsOperations:
         :type gallery_application_name: str
         :param gallery_application_version_name: The name of the gallery Application Version to be
          created. Needs to follow semantic version name pattern: The allowed characters are digit and
-         period. Digits must be within the range of a 32-bit integer. Format:
-         :code:`<MajorVersion>`.:code:`<MinorVersion>`.:code:`<Patch>`. Required.
+         period. Digits must be within the range of a 32-bit integer. Format: :code:`<MajorVersion>`.\\
+         :code:`<MinorVersion>`.\\ :code:`<Patch>`. Required.
         :type gallery_application_version_name: str
         :param gallery_application_version: Parameters supplied to the create or update gallery
          Application Version operation. Required.
@@ -20029,8 +20029,8 @@ class GalleryApplicationVersionsOperations:
         :type gallery_application_name: str
         :param gallery_application_version_name: The name of the gallery Application Version to be
          created. Needs to follow semantic version name pattern: The allowed characters are digit and
-         period. Digits must be within the range of a 32-bit integer. Format:
-         :code:`<MajorVersion>`.:code:`<MinorVersion>`.:code:`<Patch>`. Required.
+         period. Digits must be within the range of a 32-bit integer. Format: :code:`<MajorVersion>`.\\
+         :code:`<MinorVersion>`.\\ :code:`<Patch>`. Required.
         :type gallery_application_version_name: str
         :param gallery_application_version: Parameters supplied to the create or update gallery
          Application Version operation. Required.
@@ -20067,8 +20067,8 @@ class GalleryApplicationVersionsOperations:
         :type gallery_application_name: str
         :param gallery_application_version_name: The name of the gallery Application Version to be
          created. Needs to follow semantic version name pattern: The allowed characters are digit and
-         period. Digits must be within the range of a 32-bit integer. Format:
-         :code:`<MajorVersion>`.:code:`<MinorVersion>`.:code:`<Patch>`. Required.
+         period. Digits must be within the range of a 32-bit integer. Format: :code:`<MajorVersion>`.\\
+         :code:`<MinorVersion>`.\\ :code:`<Patch>`. Required.
         :type gallery_application_version_name: str
         :param gallery_application_version: Parameters supplied to the create or update gallery
          Application Version operation. Is either a GalleryApplicationVersion type or a IO[bytes] type.
