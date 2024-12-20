@@ -8,13 +8,12 @@ This troubleshooting guide covers failure investigation techniques, common error
 - [Permission issues](#permission-issues)
 - [Connectivity issues](#connectivity-issues)
   - [Timeout when connecting to service](#timeout-when-connecting-to-service)
-  - [SSL handshake failures](#ssl-handshake-failures)
-  - [Managing clients](#managing-clients)
-  - [Cannot add to the connection string](#cannot-add-connection-string)
-    - ["TransportType=AmqpOverWebsocket" Alternative](#adding-transporttypeamqpoverwebsocket)
-    - ["Authentication=Managed Identity" Alternative](#adding-authenticationmanaged-identity)
-  - [Connect using an IoT connection string](#connect-using-an-iot-connection-string)
-  - [Cannot add components to the connection string](#cannot-add-components-to-the-connection-string)
+    - [SSL handshake failures](#ssl-handshake-failures)
+    - [Managing clients](#managing-clients)
+    - [Cannot add components to the connection string](#cannot-add-components-to-the-connection-string)
+    - [Connect using an IoT connection string](#connect-using-an-iot-connection-string)
+      - ["TransportType=AmqpOverWebsocket" Alternative](#adding-transporttypeamqpoverwebsocket)
+      - ["Authentication=Managed Identity" Alternative](#adding-authenticationmanaged-identity)
 - [Enable and configure logging](#enable-and-configure-logging)
   - [Enable AMQP transport logging](#enable-amqp-transport-logging)
 - [Troubleshoot EventProducerAsyncClient/EventProducerClient issues](#troubleshoot-eventproducerasyncclienteventproducerclient-issues)
@@ -196,7 +195,7 @@ However, if no instances are being added or removed, there is an underlying issu
 
 ### Blocking Calls in Async
 
-When working with the async client, applications should ensure that they are not blocking the event loop as the load balancing operation runs as a task in the background. Blocking the event loop can impact load balancing, error handling, checkpointing, and recovering after an error. CPU-bound code that can block the event loop should be run in [executor] [executor](https://docs.python.org/3/library/asyncio-dev.html#running-blocking-code)
+When working with the async client, applications should ensure that they are not blocking the event loop as the load balancing operation runs as a task in the background. Blocking the event loop can impact load balancing, error handling, checkpointing, and recovering after an error. CPU-bound code that can block the event loop should be run in [executor](https://docs.python.org/3/library/asyncio-dev.html#running-blocking-code)
 
 ### High CPU usage
 
@@ -245,7 +244,7 @@ When filing GitHub issues, the following details are requested:
 * What is the traffic pattern like in your Event Hub?  (i.e. # messages/minute and if the EventHubConsumerClient is always busy or has slow traffic periods.)
 * Repro code and steps
   * This is important as we often cannot reproduce the issue in our environment.
-* Logs.  We need DEBUG logs, but if that is not possible, INFO at least.  Error and warning level logs do not provide enough information.  The period of at least +/- 10 minutes from when the issue occurred.
+* Logs.  We need DEBUG logs, but if that is not possible, INFO at least.  Error and warning level logs do not provide enough information.  The period of at least +/- 10 minutes from when the issue occurred. 
 
 <!-- repo links -->
 [IoTConnectionString]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/samples/async_samples/iot_hub_connection_string_receive_async.py
