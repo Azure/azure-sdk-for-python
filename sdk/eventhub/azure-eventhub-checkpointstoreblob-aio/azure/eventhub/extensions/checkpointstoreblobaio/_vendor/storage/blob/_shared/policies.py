@@ -15,20 +15,12 @@ import uuid
 import types
 from typing import Any, TYPE_CHECKING
 from wsgiref.handlers import format_date_time
-try:
-    from urllib.parse import (
-        urlparse,
-        parse_qsl,
-        urlunparse,
-        urlencode,
-    )
-except ImportError:
-    from urllib import urlencode # type: ignore
-    from urlparse import ( # type: ignore
-        urlparse,
-        parse_qsl,
-        urlunparse,
-    )
+from urllib.parse import (
+    urlparse,
+    parse_qsl,
+    urlunparse,
+    urlencode,
+)
 
 from azure.core.pipeline.policies import (
     HeadersPolicy,
@@ -41,10 +33,6 @@ from azure.core.exceptions import AzureError, ServiceRequestError, ServiceRespon
 
 from .models import LocationMode
 
-try:
-    _unicode_type = unicode # type: ignore
-except NameError:
-    _unicode_type = str
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineRequest, PipelineResponse
@@ -54,8 +42,6 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def encode_base64(data):
-    if isinstance(data, _unicode_type):
-        data = data.encode('utf-8')
     encoded = base64.b64encode(data)
     return encoded.decode('utf-8')
 
