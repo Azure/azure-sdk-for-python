@@ -1,5 +1,82 @@
 # Release History
 
+## 28.1.0 (2024-12-20)
+
+### Features Added
+
+  - Client `NetworkManagementClient` added operation group `ipam_pools`
+  - Client `NetworkManagementClient` added operation group `static_cidrs`
+  - Client `NetworkManagementClient` added operation group `reachability_analysis_intents`
+  - Client `NetworkManagementClient` added operation group `reachability_analysis_runs`
+  - Client `NetworkManagementClient` added operation group `verifier_workspaces`
+  - Enum `AddressPrefixType` added member `NETWORK_GROUP`
+  - Model `AddressSpace` added property `ipam_pool_prefix_allocations`
+  - Model `BastionHost` added property `enable_private_only_bastion`
+  - Enum `FirewallPolicyIDPSSignatureDirection` added member `FIVE`
+  - Model `NetworkInterface` added property `default_outbound_connectivity_enabled`
+  - Enum `ProvisioningState` added member `CANCELED`
+  - Enum `ProvisioningState` added member `CREATING`
+  - Model `SecurityAdminConfiguration` added property `network_group_address_space_aggregation_option`
+  - Model `Subnet` added property `ipam_pool_prefix_allocations`
+  - Added enum `AddressSpaceAggregationOption`
+  - Added model `CommonErrorAdditionalInfo`
+  - Added model `CommonErrorDetail`
+  - Added model `CommonErrorResponse`
+  - Added model `CommonProxyResource`
+  - Added model `CommonResource`
+  - Added model `CommonTrackedResource`
+  - Added model `ExpressRouteFailoverCircuitResourceDetails`
+  - Added model `ExpressRouteFailoverConnectionResourceDetails`
+  - Added model `ExpressRouteFailoverRedundantRoute`
+  - Added model `ExpressRouteFailoverSingleTestDetails`
+  - Added model `ExpressRouteFailoverStopApiParameters`
+  - Added model `ExpressRouteFailoverTestDetails`
+  - Added model `FailoverConnectionDetails`
+  - Added enum `FailoverConnectionStatus`
+  - Added enum `FailoverTestStatus`
+  - Added enum `FailoverTestStatusForSingleTest`
+  - Added enum `FailoverTestType`
+  - Added model `IPTraffic`
+  - Added model `IntentContent`
+  - Added enum `IpType`
+  - Added model `IpamPool`
+  - Added model `IpamPoolList`
+  - Added model `IpamPoolPrefixAllocation`
+  - Added model `IpamPoolProperties`
+  - Added model `IpamPoolUpdate`
+  - Added model `IpamPoolUpdateProperties`
+  - Added model `LoadBalancerHealthPerRule`
+  - Added model `LoadBalancerHealthPerRulePerBackendAddress`
+  - Added enum `NetworkProtocol`
+  - Added model `PoolAssociation`
+  - Added model `PoolAssociationList`
+  - Added model `PoolUsage`
+  - Added model `ReachabilityAnalysisIntent`
+  - Added model `ReachabilityAnalysisIntentListResult`
+  - Added model `ReachabilityAnalysisIntentProperties`
+  - Added model `ReachabilityAnalysisRun`
+  - Added model `ReachabilityAnalysisRunListResult`
+  - Added model `ReachabilityAnalysisRunProperties`
+  - Added model `ResourceBasics`
+  - Added model `StaticCidr`
+  - Added model `StaticCidrList`
+  - Added model `StaticCidrProperties`
+  - Added model `VerifierWorkspace`
+  - Added model `VerifierWorkspaceListResult`
+  - Added model `VerifierWorkspaceProperties`
+  - Added model `VerifierWorkspaceUpdate`
+  - Added model `VerifierWorkspaceUpdateProperties`
+  - Operation group `LoadBalancerLoadBalancingRulesOperations` added method `begin_health`
+  - Operation group `VirtualNetworkGatewaysOperations` added method `begin_get_failover_all_test_details`
+  - Operation group `VirtualNetworkGatewaysOperations` added method `begin_get_failover_single_test_details`
+  - Operation group `VirtualNetworkGatewaysOperations` added method `begin_start_express_route_site_failover_simulation`
+  - Operation group `VirtualNetworkGatewaysOperations` added method `begin_stop_express_route_site_failover_simulation`
+  - Added operation group `IpamPoolsOperations`
+  - Added operation group `ReachabilityAnalysisIntentsOperations`
+  - Added operation group `ReachabilityAnalysisRunsOperations`
+  - Added operation group `StaticCidrsOperations`
+  - Added operation group `VerifierWorkspacesOperations`
+
 ## 28.0.0 (2024-11-01)
 
 ### Breaking Changes

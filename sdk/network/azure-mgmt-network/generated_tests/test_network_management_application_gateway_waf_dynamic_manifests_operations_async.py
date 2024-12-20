@@ -21,10 +21,10 @@ class TestNetworkManagementApplicationGatewayWafDynamicManifestsOperationsAsync(
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_application_gateway_waf_dynamic_manifests_get(self, resource_group):
         response = self.client.application_gateway_waf_dynamic_manifests.get(
             location="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
