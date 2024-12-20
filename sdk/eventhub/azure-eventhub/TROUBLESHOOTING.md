@@ -11,8 +11,8 @@ This troubleshooting guide covers failure investigation techniques, common error
   - [SSL handshake failures](#ssl-handshake-failures)
   - [Managing clients](#managing-clients)
   - [Adding components to the connection string does not work](#adding-components-to-the-connection-string-does-not-work)
-    - ["TransportType=AmqpWebSockets" Alternative](#transporttypeamqpwebsockets-alternative)
-    - ["Authentication=Managed Identity" Alternative](#authenticationmanaged-identity-alternative)
+    - ["TransportType=AmqpOverWebsocket" Alternative](#adding-transporttypeamqpoverwebsocket)
+    - ["Authentication=Managed Identity" Alternative](#adding-authenticationmanaged-identity)
   - [Connect using an IoT connection string](#connect-using-an-iot-connection-string)
   - [Cannot add components to the connection string](#cannot-add-components-to-the-connection-string)
 - [Enable and configure logging](#enable-and-configure-logging)
@@ -36,7 +36,13 @@ This troubleshooting guide covers failure investigation techniques, common error
 
 ## Handle Event Hubs exceptions
 
-All Event Hubs exceptions are wrapped in an [EventHubError][EventHubError].  They often have an underlying AMQP error code which specifies whether an error should be retried.  For retryable errors (ie. `amqp:connection:forced` or `amqp:link:detach-forced`), the client libraries will attempt to recover from these errors based on the [retry options][AmqpRetryOptions] specified when instantiating the client.  To configure retry options, follow the sample [Client Creation][ClientCreation].  If the error is non-retryable, there is some configuration issue that needs to be resolved.
+All Event Hubs exceptions are wrapped in an [EventHubError][EventHubError].  They often have an underlying AMQP error code which specifies whether an error should be retried.  For retryable errors (ie. `amqp:connection:forced` or `amqp:link:detach-forced`), the client libraries will attempt to recover from these errors based on the retry options specified when instantiating the client:
+* `retry_total`: The total number of attempts to redo a failed operation when an error occurs
+* `retry_backoff_factor`: A backoff factor to apply between attempts after the second try
+* `retry_backoff_max`: The maximum back off time
+* `retry_mode`: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential'
+
+To configure retry options, follow the sample [client_retry][ClientCreation].  If the error is non-retryable, there is some configuration issue that needs to be resolved.
 
 The recommended way to solve the specific exception the AMQP exception represents is to follow the
 [Event Hubs Messaging Exceptions][EventHubsMessagingExceptions] guidance.
@@ -91,7 +97,7 @@ This error can occur when an intercepting proxy is used.  We recommend testing i
 
 ### Managing Clients
 
-Applications should manage how they open and close the eventhub client.  It is essential to be aware that your application is responsible for calling `close()` when it is finished using a client or to use the `with statement` for clients so that they are automatically closed after the flow execution leaves that block. This make sures that the socket connection to the server is closed correctly.
+Applications should manage how they open and close the eventhub client.  It is essential to be aware that your application is responsible for calling `close()` when it is finished using a client or to use the `with` statement for clients so that they are automatically closed after the flow execution leaves that block. This make sures that the socket connection to the server is closed correctly. If the client is not closed this can leave AMQP connections open, sockets open and prevent other clean up activities from running.
 
 ### Adding components to the connection string does not work
 
@@ -105,7 +111,7 @@ Further reading:
 * [Control access to IoT Hub using Shared Access Signatures][IoTHubSAS]
 * [Read device-to-cloud messages from the built-in endpoint][IoTEventHubEndpoint]
 
-#### Adding "TransportType=AmqpWebSockets"
+#### Adding "TransportType=AmqpOverWebsocket"
 
 To use web sockets, pass in a kwarg `transport_type = TransportType.AmqpOverWebsocket` during client [creation][WebsocketConfig].
 
@@ -119,7 +125,27 @@ For more information about the `azure.identity` library, check out our [Authenti
 
 The Azure SDK for Python offers a consistent logging story to help troubleshoot application errors and expedite their resolution.  The logs produced will capture the flow of an application before reaching the terminal state to help locate the root issue.
 
-This library uses the standard [Logging] library for logging and an example to set up debug logging with transport level logging is [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub#logging). 
+This library uses the standard [Logging] library for logging and an example to set up debug logging with transport level logging is [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub#logging).
+
+```python
+import logging
+import sys
+
+handler = logging.StreamHandler(stream=sys.stdout)
+log_fmt = logging.Formatter(fmt="%(asctime)s | %(threadName)s | %(levelname)s | %(name)s | %(message)s")
+handler.setFormatter(log_fmt)
+logger = logging.getLogger('azure.eventhub')
+logger.setLevel(logging.DEBUG)
+logger.addHandler(handler)
+
+...
+
+from azure.eventhub import EventHubProducerClient, EventHubConsumerClient
+
+producer = EventHubProducerClient(..., logging_enable=True)
+consumer = EventHubConsumerClient(..., logging_enable=True)
+
+```
 
 - Enable `azure.eventhub` logger to collect traces from the library.
 
@@ -168,7 +194,7 @@ However, if no instances are being added or removed, there is an underlying issu
 
 ### Blocking Calls in Async
 
-When working with the async client, Applications should ensure that they are not blocking the event loop as the load balancing operation runs as a task in the background. Blocking the event loop can impact load balancing, error handling, check pointing and recovering after an error. CPU bound code that can block the event loop should be run in [executor](https://docs.python.org/3/library/asyncio-dev.html#running-blocking-code)
+When working with the async client, applications should ensure that they are not blocking the event loop as the load balancing operation runs as a task in the background. Blocking the event loop can impact load balancing, error handling, checkpointing, and recovering after an error. CPU-bound code that can block the event loop should be run in [executor] [executor](https://docs.python.org/3/library/asyncio-dev.html#running-blocking-code)
 
 ### High CPU usage
 
@@ -222,9 +248,9 @@ When filing GitHub issues, the following details are requested:
 <!-- repo links -->
 [IoTConnectionString]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/samples/async_samples/iot_hub_connection_string_receive_async.py
 [PublishEventsWithWebSocketsAndProxy]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/samples/async_samples/proxy_async.py
-[WebsocketConfig]: https://github.com/Azure/azure-sdk-for-python/blob/
-ab0ed5efa371db62dd820fdaed70b1e6821f4e0c/sdk/eventhub/azure-eventhub/samples/async_samples/send_and_receive_amqp_annotated_message_async.py#L95
+[WebsocketConfig]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/samples/async_samples/send_and_receive_amqp_annotated_message_async.py#L95
 [MigrationGuide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/migration_guide.md
+[ClientCreation]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/samples/sync_samples/client_creation.py
 [SUPPORT]: https://github.com/Azure/azure-sdk-for-python/blob/main/SUPPORT.md
 
 <!-- learn.microsoft.com links -->
