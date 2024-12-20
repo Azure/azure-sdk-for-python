@@ -10827,8 +10827,8 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         """Sets the OS state of the virtual machine to generalized. It is recommended to sysprep the
         virtual machine before performing this operation. :code:`<br>`For Windows, please refer to
         `Create a managed image of a generalized VM in Azure
-        <https://docs.microsoft.com/en-us/azure/virtual-machines/windows/capture-image-resource>`_.:code:`<br>`For
-        Linux, please refer to `How to create an image of a virtual machine or VHD
+        <https://docs.microsoft.com/en-us/azure/virtual-machines/windows/capture-image-resource>`_.\\
+        :code:`<br>`For Linux, please refer to `How to create an image of a virtual machine or VHD
         <https://docs.microsoft.com/en-us/azure/virtual-machines/linux/capture-image>`_.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -11835,7 +11835,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
         :keyword sas_uri_expiration_time_in_minutes: Expiration duration in minutes for the SAS URIs
-         with a value between 1 to 1440 minutes. :code:`<br>`:code:`<br>`NOTE: If not specified, SAS
+         with a value between 1 to 1440 minutes. :code:`<br>`\\ :code:`<br>`NOTE: If not specified, SAS
          URIs will be generated with a default expiration duration of 120 minutes. Default value is
          None.
         :paramtype sas_uri_expiration_time_in_minutes: int
@@ -20001,7 +20001,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
         :keyword sas_uri_expiration_time_in_minutes: Expiration duration in minutes for the SAS URIs
-         with a value between 1 to 1440 minutes. :code:`<br>`:code:`<br>`NOTE: If not specified, SAS
+         with a value between 1 to 1440 minutes. :code:`<br>`\\ :code:`<br>`NOTE: If not specified, SAS
          URIs will be generated with a default expiration duration of 120 minutes. Default value is
          None.
         :paramtype sas_uri_expiration_time_in_minutes: int
