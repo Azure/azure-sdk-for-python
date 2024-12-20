@@ -17,7 +17,7 @@ from azure.ai.evaluation.simulator._model_tools._identity_manager import TokenSc
 from ._models import BlobStoreInfo, Workspace
 
 
-API_VERSION: Final[str] = "2024-10-01"
+API_VERSION: Final[str] = "2024-07-01-preview"
 QUERY_KEY_API_VERSION: Final[str] = "api-version"
 PATH_ML_WORKSPACES = ("providers", "Microsoft.MachineLearningServices", "workspaces")
 
@@ -69,7 +69,9 @@ class LiteMLClient:
         self._get_token_manager()
         return cast(TokenCredential, self._credential)
 
-    def workspace_get_default_datastore(self, workspace_name: str, include_credentials: bool = False) -> BlobStoreInfo:
+    def workspace_get_default_datastore(
+        self, workspace_name: str, *, include_credentials: bool = False, **kwargs
+    ) -> BlobStoreInfo:
         # 1. Get the default blob store
         # REST API documentation:
         # https://learn.microsoft.com/rest/api/azureml/datastores/list?view=rest-azureml-2024-10-01
@@ -92,18 +94,25 @@ class LiteMLClient:
         account_name = props_json["accountName"]
         endpoint = props_json["endpoint"]
         container_name = props_json["containerName"]
+        credential_type = props_json.get("credentials", {}).get("credentialsType")
 
         # 2. Get the SAS token to use for accessing the blob store
         # REST API documentation:
         # https://learn.microsoft.com/rest/api/azureml/datastores/list-secrets?view=rest-azureml-2024-10-01
+        # If storage account key access is disabled, and only Microsoft Entra ID authentication is available,
+        # the credentialsType will be "None" and we should not attempt to get the secrets.
         blob_store_credential: Optional[Union[AzureSasCredential, str]] = None
-        if include_credentials:
+        if include_credentials and credential_type and credential_type.lower() != "none":
             url = self._generate_path(
                 *PATH_ML_WORKSPACES, workspace_name, "datastores", "workspaceblobstore", "listSecrets"
             )
             secrets_response = self._http_client.request(
                 method="POST",
                 url=url,
+                json={
+                    "expirableSecret": True if not kwargs.get("get_access_key", False) else False,
+                    "expireAfterHours": int(kwargs.get("key_expiration_hours", 1)),
+                },
                 params={
                     QUERY_KEY_API_VERSION: self._api_version,
                 },
@@ -164,19 +173,19 @@ class LiteMLClient:
             # nothing to see here, move along
             return
 
-        additional_info: Optional[str] = None
+        message = f"The {description} request failed with HTTP {response.status_code}"
         try:
             error_json = response.json()["error"]
             additional_info = f"({error_json['code']}) {error_json['message']}"
+            message += f" - {additional_info}"
         except (JSONDecodeError, ValueError, KeyError):
             pass
 
         raise EvaluationException(
-            message=f"The {description} request failed with HTTP {response.status_code}",
+            message=message,
             target=ErrorTarget.EVALUATE,
             category=ErrorCategory.FAILED_EXECUTION,
             blame=ErrorBlame.SYSTEM_ERROR,
-            internal_message=additional_info,
         )
 
     def _generate_path(self, *paths: str) -> str:
