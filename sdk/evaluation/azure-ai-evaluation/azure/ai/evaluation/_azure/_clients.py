@@ -127,7 +127,8 @@ class LiteMLClient:
             secrets_json = secrets_response.json()
             secrets_type = secrets_json["secretsType"].lower()
 
-            # As per this website, only SAS tokens, access tokens, or Entra IDs are valid for accessing blob data stores:
+            # As per this website, only SAS tokens, access tokens, or Entra IDs are valid for accessing blob data
+            # stores:
             # https://learn.microsoft.com/rest/api/storageservices/authorize-requests-to-azure-storage.
             if secrets_type == "sas":
                 blob_store_credential = AzureSasCredential(secrets_json["sasToken"])
