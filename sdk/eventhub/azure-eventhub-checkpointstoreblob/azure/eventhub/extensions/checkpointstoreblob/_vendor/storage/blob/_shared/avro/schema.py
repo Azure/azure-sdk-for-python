@@ -29,8 +29,6 @@ import abc
 import json
 import logging
 import re
-
-
 logger = logging.getLogger(__name__)
 
 # ------------------------------------------------------------------------------
@@ -146,8 +144,9 @@ class Schema(metaclass=abc.ABCMeta):
             raise SchemaParseException(f'{data_type!r} is not a valid Avro type.')
 
         # All properties of this schema, as a map: property name -> property value
-        self._props = {'type': data_type}
+        self._props = {}
 
+        self._props['type'] = data_type
         self._type = data_type
 
         if other_props:
@@ -211,7 +210,7 @@ _RE_FULL_NAME = re.compile(
 )
 
 
-class Name:
+class Name(object):
     """Representation of an Avro name."""
 
     def __init__(self, name, namespace=None):
@@ -468,10 +467,10 @@ class Field(object):
           doc:
           other_props:
         """
-        if not isinstance(name, str) or not name:
-            raise SchemaParseException('Invalid record field name: %r.' % name)
-        if order is not None and order not in VALID_FIELD_SORT_ORDERS:
-            raise SchemaParseException('Invalid record field order: %r.' % order)
+        if (not isinstance(name, str)) or (not name):
+            raise SchemaParseException(f'Invalid record field name: {name!r}.')
+        if (order is not None) and (order not in VALID_FIELD_SORT_ORDERS):
+            raise SchemaParseException(f'Invalid record field order: {order!r}.')
 
         # All properties of this record field:
         self._props = {}

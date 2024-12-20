@@ -25,14 +25,10 @@ A schema may be one of:
  - Null.
 """
 
-from abc import ABCMeta, abstractmethod
+import abc
 import json
 import logging
 import re
-<<<<<<< HEAD
-=======
-
->>>>>>> main
 logger = logging.getLogger(__name__)
 
 # ------------------------------------------------------------------------------
@@ -134,7 +130,7 @@ class SchemaParseException(AvroException):
     """Error while parsing a JSON schema descriptor."""
 
 
-class Schema(metaclass=ABCMeta):
+class Schema(metaclass=abc.ABCMeta):
     """Abstract base class for all Schema classes."""
 
     def __init__(self, data_type, other_props=None):
@@ -192,7 +188,11 @@ class Schema(metaclass=ABCMeta):
         """Returns: the JSON representation of this schema."""
         return json.dumps(self.to_json(names=None))
 
-    @abstractmethod
+    # Converts the schema object into its AVRO specification representation.
+
+    # Schema types that have names (records, enums, and fixed) must be aware of not
+    # re-defining schemas that are already listed in the parameter names.
+    @abc.abstractmethod
     def to_json(self, names):
         ...
 
@@ -273,7 +273,7 @@ class Name(object):
 # ------------------------------------------------------------------------------
 
 
-class Names:
+class Names(object):
     """Tracks Avro named schemas and default namespace during parsing."""
 
     def __init__(self, default_namespace=None, names=None):
@@ -427,7 +427,11 @@ class NamedSchema(Schema):
             return self.name
         return self.fullname
 
-    @abstractmethod
+    # Converts the schema object into its AVRO specification representation.
+
+    # Schema types that have names (records, enums, and fixed) must be aware
+    # of not re-defining schemas that are already listed in the parameter names.
+    @abc.abstractmethod
     def to_json(self, names):
         ...
 
@@ -464,7 +468,7 @@ class Field(object):
           other_props:
         """
         if (not isinstance(name, str)) or (not name):
-            raise SchemaParseException('Invalid record field name: %r.' % name)
+            raise SchemaParseException(f'Invalid record field name: {name!r}.')
         if (order is not None) and (order not in VALID_FIELD_SORT_ORDERS):
             raise SchemaParseException(f'Invalid record field order: {order!r}.')
 
