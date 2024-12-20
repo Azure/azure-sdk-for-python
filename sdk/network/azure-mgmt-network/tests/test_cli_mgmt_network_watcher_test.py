@@ -42,9 +42,7 @@ class TestMgmtNetwork(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
         self.mgmt_client = self.create_mgmt_client(azure.mgmt.network.NetworkManagementClient)
-        self.mgmt_client_v190601 = self.create_mgmt_client(
-            azure.mgmt.network.NetworkManagementClient, api_version="2019-06-01"
-        )
+        self.mgmt_client_v190601 = self.create_mgmt_client(azure.mgmt.network.NetworkManagementClient, "2019-06-01")
         if self.is_live:
             from azure.mgmt.compute import ComputeManagementClient
 
