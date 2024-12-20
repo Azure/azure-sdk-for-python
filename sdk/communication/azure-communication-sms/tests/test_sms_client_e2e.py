@@ -53,23 +53,6 @@ class TestClient(ACSSMSTestCase):
 
     @recorded_by_proxy
     def test_send_sms_from_managed_identity(self):
-        logger.setLevel(logging.WARNING)
-        handler = logging.StreamHandler()
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
-
-        service_connection_id = os.getenv("AZURESUBSCRIPTION_SERVICE_CONNECTION_ID")
-        system_access_token = os.getenv("SYSTEM_ACCESSTOKEN")
-        client_id = os.getenv("AZURESUBSCRIPTION_CLIENT_ID")
-        tenant_id = os.getenv("AZURESUBSCRIPTION_TENANT_ID")
-
-        cid_is_none = client_id is None
-        tid_is_none = tenant_id is None
-        scid_is_none = service_connection_id is None
-        sat_is_none = system_access_token is None
-
-        logger.warning(cid_is_none, tid_is_none, scid_is_none, sat_is_none)
         credential = create_token_credential()
         sms_client = SmsClient(self.endpoint, credential, http_logging_policy=get_http_logging_policy())
 
