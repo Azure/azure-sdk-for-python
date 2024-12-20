@@ -285,7 +285,9 @@ class _AIInferenceInstrumentorPreview:
 
         return "none"
 
-    def _add_response_chat_message_events(self, span: "AbstractSpan", result: _models.ChatCompletions, last_event_timestamp_ns: int) -> None:
+    def _add_response_chat_message_events(self, span: "AbstractSpan",
+        result: _models.ChatCompletions, last_event_timestamp_ns: int
+    ) -> None:
         for choice in result.choices:
             attributes = {}
             if _trace_inference_content:
@@ -532,13 +534,20 @@ class _AIInferenceInstrumentorPreview:
                     "gen_ai.system": _INFERENCE_GEN_AI_SYSTEM_NAME,
                     "gen_ai.event.content": json.dumps(self._accumulate),
                 }
-                self._previous_event_timestamp = self._instrumentor._record_event(span, "gen_ai.choice", attributes, self._last_event_timestamp_ns)
+                self._last_event_timestamp_ns = self._instrumentor._record_event( # pylint: disable=protected-access, line-too-long # pyright: ignore [reportFunctionMemberAccess]
+                        span,
+                        "gen_ai.choice",
+                        attributes,
+                        self._last_event_timestamp_ns
+                    )
                 span.finish()
 
         async_stream_wrapper = AsyncStreamWrapper(stream_obj, self, span, last_event_timestamp_ns)
         return async_stream_wrapper
 
-    def _record_event(self, span: "AbstractSpan", name: str, attributes: Dict[str, Any], last_event_timestamp_ns: int) -> int:
+    def _record_event(self, span: "AbstractSpan", name: str,
+        attributes: Dict[str, Any], last_event_timestamp_ns: int
+    ) -> int:
         timestamp = time_ns()
 
         # we're recording multiple events, some of them are emitted within (hundreds of) nanoseconds of each other.
