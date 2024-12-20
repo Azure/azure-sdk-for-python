@@ -10,7 +10,7 @@ This troubleshooting guide covers failure investigation techniques, common error
   - [Timeout when connecting to service](#timeout-when-connecting-to-service)
   - [SSL handshake failures](#ssl-handshake-failures)
   - [Managing clients](#managing-clients)
-  - [Adding components to the connection string does not work](#adding-components-to-the-connection-string-does-not-work)
+  - [Cannot add to the connection string](#cannot-add-connection-string)
     - ["TransportType=AmqpOverWebsocket" Alternative](#adding-transporttypeamqpoverwebsocket)
     - ["Authentication=Managed Identity" Alternative](#adding-authenticationmanaged-identity)
   - [Connect using an IoT connection string](#connect-using-an-iot-connection-string)
@@ -97,13 +97,15 @@ This error can occur when an intercepting proxy is used.  We recommend testing i
 
 ### Managing Clients
 
-Applications should manage how they open and close the eventhub client.  It is essential to be aware that your application is responsible for calling `close()` when it is finished using a client or to use the `with` statement for clients so that they are automatically closed after the flow execution leaves that block. This make sures that the socket connection to the server is closed correctly. If the client is not closed this can leave AMQP connections open, sockets open and prevent other clean up activities from running.
+Applications should manage how they open and close the eventhub client.  It is essential to be aware that your application is responsible for calling `close()` when it is finished using a client or to use the `with` statement for clients so that they are automatically closed after the flow execution leaves that block. This make sures that the socket connection to the server is closed correctly. If the client is not closed this can leave AMQP connections open, underlying socket connections open and prevent other clean up activities from running.
 
-### Adding components to the connection string does not work
+### Cannot add connection string
 
 The current generation of the Event Hubs client library supports connection strings only in the form published by the Azure portal. These are intended to provide basic location and shared key information only; configuring behavior of the clients is done through its options.
 
 Previous generations of the Event Hub clients allowed for some behavior to be configured by adding key/value components to a connection string. These components are no longer recognized and have no effect on client behavior.
+
+### Connect using an IoT connection string
 
 Because translating a connection string requires querying the IoT Hub service, the Event Hubs client library cannot use it directly.  The [IoT Hub Connection String Sample][IoTConnectionString] sample describes how to query IoT Hub to translate an IoT connection string into one that can be used with Event Hubs.
 
