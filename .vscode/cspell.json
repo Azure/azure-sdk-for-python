@@ -1328,6 +1328,8 @@
     {
       "filename": "sdk/ai/azure-ai-projects/**",
       "words": [
+        "ENTRAID",
+        "entraid",
         "aiservices",
         "OTEL",
         "GENAI",

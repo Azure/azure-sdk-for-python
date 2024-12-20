@@ -20,9 +20,8 @@ USAGE:
     Set this environment variables with your own values:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
 """
-import io
 import json
-from typing import Generator, Generator, Optional
+from typing import Generator, Optional
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -75,7 +74,7 @@ project_client = AIProjectClient.from_connection_string(
 
 with project_client:
     agent = project_client.agents.create_agent(
-        model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
+        model=os.environ["MODEL_DEPLOYMENT_NAME"], name="my-assistant", instructions="You are helpful assistant"
     )
     print(f"Created agent, agent ID: {agent.id}")
 
