@@ -44,7 +44,7 @@ async def main() -> None:
             functions = AsyncFunctionTool(functions=user_async_functions)
 
             # fetch_weather function has a parameter named "unit" that can be either "Celsius" or "Fahrenheit"
-            # You can specify this constraint in the description of unit parameter to be picked up by OpenAI.
+            # You can specify this constraint in the description of unit parameter to be picked up by the agent.
             # But to ensure this constraint is enforced, we add this enum constraint as well.
             functions.update_parameter_property_value(
                 function_name="fetch_weather",

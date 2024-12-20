@@ -110,7 +110,7 @@ To ensure `FunctionTool` operates correctly and generates accurate function defi
 
 2. **Enum enforcement**
     
-    To use an Enum, the parameter should be of type `str`. You can specify the constraint of the values in the parameter's description. In most cases, OpenAI can understand the description and apply the constraint accordingly. However, the `FunctionTool` class cannot parse the description to generate this constraint in the definition. Therefore, it is recommended to add this constraint programmatically. Here is an example:
+    To use an Enum, the parameter should be of type `str`. You can specify the constraint of the values in the parameter's description. In most cases, agents can understand the description and apply the constraint accordingly. However, the `FunctionTool` class cannot parse the description to generate this constraint in the definition. Therefore, it is recommended to add this constraint programmatically. Here is an example:
 
     ```python
     def fetch_weather(location: str, unit: str) -> str:
