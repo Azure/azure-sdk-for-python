@@ -20,6 +20,7 @@ This troubleshooting guide covers failure investigation techniques, common error
 - [Troubleshoot EventProducerAsyncClient/EventProducerClient issues](#troubleshoot-eventproducerasyncclienteventproducerclient-issues)
   - [Cannot set multiple partition keys for events in EventDataBatch](#cannot-set-multiple-partition-keys-for-events-in-eventdatabatch)
   - [Setting partition key on EventData is not set in Kafka consumer](#setting-partition-key-on-eventdata-is-not-set-in-kafka-consumer)
+  - [Buffer producer not sending events](#buffered-producer-not-sending-events)
 - [Troubleshoot EventHubConsumerClient issues](#troubleshoot-eventprocessorclient-issues)
   - [412 precondition failures when using an event processor](#412-precondition-failures-when-using-an-event-processor)
   - [Partition ownership changes frequently](#partition-ownership-changes-frequently)
@@ -137,6 +138,10 @@ When publishing messages, the Event Hubs service supports a single partition key
 The partition key of the EventHubs event is available in the Kafka record headers, the protocol specific key being "x-opt-partition-key" in the header.
 
 By design, Event Hubs does not promote the Kafka message key to be the Event Hubs partition key nor the reverse because with the same value, the Kafka client and the Event Hub client likely send the message to two different partitions.  It might cause some confusion if we set the value in the cross-protocol communication case.  Exposing the properties with a protocol specific key to the other protocol client should be good enough.
+
+### Buffered producer not sending events
+
+The sync buffered producer client uses the ThreadpoolExecutor to manage the partitions and ensure that messages are sent in a timely manner. If its observed that messages are not being sent for a particular partition, ensure that there are enough workers available for all the partitions. By default ThreadpoolExecutor uses the formula described [here](https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor) to allocate max_workers. Keyword argument `buffer_concurrency` can be used to set the desired number of workers or accept a ThreadpoolExecutor with max_workers specified. We recommend a worker per partition.
 
 ## Troubleshoot EventHubConsumerClient issues
 
