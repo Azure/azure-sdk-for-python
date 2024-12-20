@@ -31,7 +31,6 @@ from ._models import DirectoryPropertiesPaged, Handle, HandlesPaged
 from ._parser import _datetime_to_str, _get_file_permission, _parse_snapshot
 from ._serialize import get_api_version, get_dest_access_conditions, get_rename_smb_properties
 from ._shared.base_client import parse_connection_str, parse_query, StorageAccountHostsMixin, TransportWrapper
-from ._shared.parser import _str
 from ._shared.request_handlers import add_metadata_headers
 from ._shared.response_handlers import process_storage_error, return_response_headers
 
@@ -811,7 +810,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         file_change_time = kwargs.pop('file_change_time', None)
         try:
             return cast(Dict[str, Any], self._client.directory.set_properties(
-                file_attributes=_str(file_attributes),
+                file_attributes=str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
                 file_change_time=_datetime_to_str(file_change_time),
