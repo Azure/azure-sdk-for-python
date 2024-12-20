@@ -2,19 +2,6 @@ import pytest
 import logging
 from azure.core.credentials import AzureSasCredential, TokenCredential
 from azure.ai.evaluation._azure._clients import LiteMLClient
-from azure.core.pipeline.policies import ProxyPolicy
-
-
-@pytest.fixture
-def datastore_project_scopes(connection_file, project_scope):
-    entra_id = connection_file.get("azure_ai_entra_id_project_scope", None)
-    if not entra_id:
-        raise ValueError("azure_ai_entra_id_project_scope not found in connection file")
-
-    return {
-        "sas": project_scope,
-        "none": entra_id,
-    }
 
 
 @pytest.mark.usefixtures("model_config", "project_scope", "recording_injection", "recorded_test")
@@ -58,7 +45,6 @@ class TestLiteAzureManagementClient(object):
             resource_group=project_scope["resource_group_name"],
             credential=azure_cred,
             logger=logging.getLogger(__name__),
-            proxy_policy=ProxyPolicy(proxies={"https": "http://localhost:8888", "http": "http://localhost:8888"}),
         )
 
         store = client.workspace_get_default_datastore(
