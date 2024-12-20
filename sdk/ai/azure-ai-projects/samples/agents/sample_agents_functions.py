@@ -21,7 +21,13 @@ USAGE:
 import os, time
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import FunctionTool, RequiredFunctionToolCall, SubmitToolOutputsAction, ToolOutput
+from azure.ai.projects.models import (
+    FunctionTool,
+    FunctionToolParameterProperty,
+    RequiredFunctionToolCall,
+    SubmitToolOutputsAction,
+    ToolOutput,
+)
 from user_functions import user_functions
 
 project_client = AIProjectClient.from_connection_string(
@@ -30,6 +36,17 @@ project_client = AIProjectClient.from_connection_string(
 
 # Initialize function tool with user functions
 functions = FunctionTool(functions=user_functions)
+
+# fetch_weather function has a parameter named "unit" that can be either "Celsius" or "Fahrenheit"
+# You can specify this constraint in the description of unit parameter to be picked up by OpenAI.
+# But to ensure this constraint is enforced, we add this enum constraint as well.
+functions.update_parameter_property_value(
+    function_name="fetch_weather",
+    parameter_name="unit",
+    property_name=FunctionToolParameterProperty.ENUM,
+    value=["Celsius", "Fahrenheit"],
+)
+
 
 with project_client:
     # Create an agent and run user's request with function calls
@@ -47,7 +64,7 @@ with project_client:
     message = project_client.agents.create_message(
         thread_id=thread.id,
         role="user",
-        content="Hello, send an email with the datetime and weather information in New York?",
+        content="Hello, send an email with the datetime and weather information in both celsius and fahrenheit in New York?",
     )
     print(f"Created message, ID: {message.id}")
 

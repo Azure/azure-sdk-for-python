@@ -10,6 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import asyncio
 import base64
 import datetime
+from enum import Enum
 import inspect
 import json
 import logging
@@ -553,6 +554,12 @@ class Tool(ABC, Generic[ToolDefinitionT]):
         """
 
 
+class FunctionToolParameterProperty(Enum):
+    TYPE = "type"
+    DESCRIPTION = "description"
+    ENUM = "enum"
+
+
 class BaseFunctionTool(Tool[FunctionToolDefinition]):
     """
     A tool that executes user-defined functions.
@@ -646,6 +653,39 @@ class BaseFunctionTool(Tool[FunctionToolDefinition]):
             raise TypeError("Arguments must be a JSON object.")
 
         return function, parsed_arguments
+
+    def update_parameter_property_value(
+        self,
+        *,
+        function_name: str,
+        parameter_name: str,
+        property_name: FunctionToolParameterProperty,
+        value: Union[str, List[Any]],
+    ) -> None:
+        """
+        Updates the property value of a specified parameter within a function definition.
+
+        :keyword function_name: The name of the function containing the parameter.
+        :type function_name: str
+        :keyword parameter_name: The name of the parameter to update.
+        :type parameter_name: str
+        :keyword property_name: The name of the property to update within the parameter.
+        :type property_name: FunctionToolParameterProperty
+        :keyword value: The new value to set for the specified property.
+        :type value: Union[str, List[Any]]
+
+        :raises ValueError: If the specified function or parameter is not found.
+        """
+
+        for function in self._definitions:
+            if function.function.name == function_name:
+                if not function.function["parameters"]["properties"].get(parameter_name):
+                    raise ValueError(f"Parameter '{parameter_name}' not found in function '{function_name}'.")
+
+                function.function["parameters"]["properties"][parameter_name].update({property_name.value: value})
+                return
+
+        raise ValueError(f"Function '{function_name}' not found.")
 
     @property
     def definitions(self) -> List[FunctionToolDefinition]:
@@ -1707,6 +1747,7 @@ __all__: List[str] = [
     "MessageTextFileCitationAnnotation",
     "MessageDeltaChunk",
     "MessageAttachment",
+    "FunctionToolParameterProperty",
 ]  # Add all objects you want publicly available to users at this package level
 
 

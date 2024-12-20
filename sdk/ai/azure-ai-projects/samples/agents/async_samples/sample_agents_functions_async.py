@@ -24,7 +24,13 @@ import asyncio
 import time
 import os
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import AsyncFunctionTool, RequiredFunctionToolCall, SubmitToolOutputsAction, ToolOutput
+from azure.ai.projects.models import (
+    FunctionToolParameterProperty,
+    AsyncFunctionTool,
+    RequiredFunctionToolCall,
+    SubmitToolOutputsAction,
+    ToolOutput,
+)
 from azure.identity.aio import DefaultAzureCredential
 from user_async_functions import user_async_functions
 
@@ -36,6 +42,16 @@ async def main() -> None:
         ) as project_client:
             # Initialize assistant functions
             functions = AsyncFunctionTool(functions=user_async_functions)
+
+            # fetch_weather function has a parameter named "unit" that can be either "Celsius" or "Fahrenheit"
+            # You can specify this constraint in the description of unit parameter to be picked up by OpenAI.
+            # But to ensure this constraint is enforced, we add this enum constraint as well.
+            functions.update_parameter_property_value(
+                function_name="fetch_weather",
+                parameter_name="unit",
+                property_name=FunctionToolParameterProperty.ENUM,
+                value=["Celsius", "Fahrenheit"],
+            )
 
             # Create agent
             agent = await project_client.agents.create_agent(
@@ -52,7 +68,9 @@ async def main() -> None:
 
             # Create and send message
             message = await project_client.agents.create_message(
-                thread_id=thread.id, role="user", content="Hello, what's the time?"
+                thread_id=thread.id,
+                role="user",
+                content="Hello, send an email with the datetime and weather information in both celsius and fahrenheit in New York?",
             )
             print(f"Created message, ID: {message.id}")
 
