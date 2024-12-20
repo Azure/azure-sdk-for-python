@@ -57,20 +57,14 @@ class TableServiceClient(AsyncTablesBaseClient):
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-02-02'.
         Setting to an older version may result in reduced feature compatibility.
-    :keyword encode_types:
-        A dictionary maps the type and the convertion function of this type used in encoding.
-    :paramtype encode_types:
-        dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-    :keyword decode_types:
-        A dictionary maps the type and the convertion function of this type used in decoding.
-    :paramtype decode_types:
-        dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-    :keyword bool trim_timestamp:
-        Whether to remove the system property 'Timestamp' from the entity in deserialization. Default is
-        True. This can still be found the the `metadata` property of `TableEntity`.
-    :keyword bool trim_metadata:
-        Whether to remove entity odata metadata in deserialization. Default is True,
-        which means the metadata would be deserialized to property `metadata` in `TableEntity`.
+    :keyword custom_encode:
+        A mapping of types and properties and how they should be encoded.
+    :paramtype custom_encode:
+        Mapping[Union[Type, str], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, datetime, bytes]]]] or None  # pylint: disable=line-too-long
+    :keyword custom_decode:
+        A mapping of types and properties and how they should be decoded.
+    :paramtype custom_decode:
+        Mapping[Union[EdmType, str], Union[EdmType, Callable[[Union[str, bool, int, float]], Any]]] or None
 
     .. admonition:: Example:
 
@@ -95,10 +89,8 @@ class TableServiceClient(AsyncTablesBaseClient):
         conn_str: str,
         *,
         api_version: Optional[str] = None,
-        encode_types: Optional[EncoderMapType] = None,
-        decode_types: Optional[DecoderMapType] = None,
-        trim_timestamp: bool = True,
-        trim_metadata: bool = True,
+        custom_encode: Optional[EncoderMapType] = None,
+        custom_decode: Optional[DecoderMapType] = None,
         **kwargs: Any,
     ) -> "TableServiceClient":
         """Create TableServiceClient from a Connection String.
@@ -107,20 +99,14 @@ class TableServiceClient(AsyncTablesBaseClient):
         :keyword api_version: Specifies the version of the operation to use for this request. Default value
             is "2019-02-02".
         :paramtype api_version: str or None
-        :keyword encode_types:
-            A dictionary maps the type and the convertion function of this type used in encoding.
-        :paramtype encode_types:
-            dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-        :keyword decode_types:
-            A dictionary maps the type and the convertion function of this type used in decoding.
-        :paramtype decode_types:
-            dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-        :keyword bool trim_timestamp:
-            Whether to remove the system property 'Timestamp' from the entity in deserialization. Default is
-            True. This can still be found the the `metadata` property of `TableEntity`.
-        :keyword bool trim_metadata:
-            Whether to remove entity odata metadata in deserialization. Default is True,
-            which means the metadata would be deserialized to property `metadata` in `TableEntity`.
+        :keyword custom_encode:
+            A mapping of types and properties and how they should be encoded.
+        :paramtype custom_encode:
+            Mapping[Union[Type, str], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, datetime, bytes]]]] or None  # pylint: disable=line-too-long
+        :keyword custom_decode:
+            A mapping of types and properties and how they should be decoded.
+        :paramtype custom_decode:
+            Mapping[Union[EdmType, str], Union[EdmType, Callable[[Union[str, bool, int, float]], Any]]] or None
         :returns: A Table service client.
         :rtype: ~azure.data.tables.aio.TableServiceClient
 
@@ -139,10 +125,8 @@ class TableServiceClient(AsyncTablesBaseClient):
             endpoint,
             credential=credential,
             api_version=api_version,
-            encode_types=encode_types,
-            decode_types=decode_types,
-            trim_metadata=trim_metadata,
-            trim_timestamp=trim_timestamp,
+            custom_encode=custom_encode,
+            custom_decode=custom_decode,
             **kwargs,
         )
 
@@ -228,21 +212,21 @@ class TableServiceClient(AsyncTablesBaseClient):
         self,
         table_name: str,
         *,
-        encode_types: Optional[EncoderMapType] = None,
-        decode_types: Optional[DecoderMapType] = None,
+        custom_encode: Optional[EncoderMapType] = None,
+        custom_decode: Optional[DecoderMapType] = None,
         **kwargs,
     ) -> TableClient:
         """Creates a new table under the given account.
 
         :param str table_name: The Table name.
-        :keyword encode_types:
-            A dictionary maps the type and the convertion function of this type used in encoding.
-        :paramtype encode_types:
-            dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-        :keyword decode_types:
-            A dictionary maps the type and the convertion function of this type used in decoding.
-        :paramtype decode_types:
-            dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
+        :keyword custom_encode:
+            A mapping of types and properties and how they should be encoded.
+        :paramtype custom_encode:
+            Mapping[Union[Type, str], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, datetime, bytes]]]] or None  # pylint: disable=line-too-long
+        :keyword custom_decode:
+            A mapping of types and properties and how they should be decoded.
+        :paramtype custom_decode:
+            Mapping[Union[EdmType, str], Union[EdmType, Callable[[Union[str, bool, int, float]], Any]]] or None
         :return: TableClient, or the result of cls(response)
         :rtype: ~azure.data.tables.aio.TableClient
         :raises: :class:`~azure.core.exceptions.ResourceExistsError`
@@ -256,7 +240,11 @@ class TableServiceClient(AsyncTablesBaseClient):
                 :dedent: 8
                 :caption: Creating a table from TableServiceClient.
         """
-        table = self.get_table_client(table_name=table_name, encode_types=encode_types, decode_types=decode_types)
+        table = self.get_table_client(
+            table_name=table_name,
+            custom_encode=custom_encode,
+            custom_decode=custom_decode,
+        )
         await table.create_table(**kwargs)
         return table
 
@@ -265,8 +253,8 @@ class TableServiceClient(AsyncTablesBaseClient):
         self,
         table_name: str,
         *,
-        encode_types: Optional[EncoderMapType] = None,
-        decode_types: Optional[DecoderMapType] = None,
+        custom_encode: Optional[EncoderMapType] = None,
+        custom_decode: Optional[DecoderMapType] = None,
         **kwargs,
     ) -> TableClient:
         """Creates a new table if it does not currently exist.
@@ -275,14 +263,14 @@ class TableServiceClient(AsyncTablesBaseClient):
 
         :param table_name: The Table name.
         :type table_name: str
-        :keyword encode_types:
-            A dictionary maps the type and the convertion function of this type used in encoding.
-        :paramtype encode_types:
-            dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-        :keyword decode_types:
-            A dictionary maps the type and the convertion function of this type used in decoding.
-        :paramtype decode_types:
-            dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
+        :keyword custom_encode:
+            A mapping of types and properties and how they should be encoded.
+        :paramtype custom_encode:
+            Mapping[Union[Type, str], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, datetime, bytes]]]] or None  # pylint: disable=line-too-long
+        :keyword custom_decode:
+            A mapping of types and properties and how they should be decoded.
+        :paramtype custom_decode:
+            Mapping[Union[EdmType, str], Union[EdmType, Callable[[Union[str, bool, int, float]], Any]]] or None
         :return: TableClient
         :rtype: ~azure.data.tables.aio.TableClient
 
@@ -295,7 +283,11 @@ class TableServiceClient(AsyncTablesBaseClient):
                 :dedent: 8
                 :caption: Creating a table if it does not already exist
         """
-        table = self.get_table_client(table_name=table_name, encode_types=encode_types, decode_types=decode_types)
+        table = self.get_table_client(
+            table_name=table_name,
+            custom_encode=custom_encode,
+            custom_decode=custom_decode,
+        )
         try:
             await table.create_table(**kwargs)
         except ResourceExistsError:
@@ -389,8 +381,8 @@ class TableServiceClient(AsyncTablesBaseClient):
         self,
         table_name: str,
         *,
-        encode_types: Optional[EncoderMapType] = None,
-        decode_types: Optional[DecoderMapType] = None,
+        custom_encode: Optional[EncoderMapType] = None,
+        custom_decode: Optional[DecoderMapType] = None,
         **kwargs: Any,
     ) -> TableClient:
         """Get a client to interact with the specified table.
@@ -398,22 +390,22 @@ class TableServiceClient(AsyncTablesBaseClient):
         The table need not already exist.
 
         :param str table_name: The table name
-        :keyword encode_types:
-            A dictionary maps the type and the convertion function of this type used in encoding.
-        :paramtype encode_types:
-            dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-        :keyword decode_types:
-            A dictionary maps the type and the convertion function of this type used in decoding.
-        :paramtype decode_types:
-            dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
+        :keyword custom_encode:
+            A mapping of types and properties and how they should be encoded.
+        :paramtype custom_encode:
+            Mapping[Union[Type, str], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, datetime, bytes]]]] or None  # pylint: disable=line-too-long
+        :keyword custom_decode:
+            A mapping of types and properties and how they should be decoded.
+        :paramtype custom_decode:
+            Mapping[Union[EdmType, str], Union[EdmType, Callable[[Union[str, bool, int, float]], Any]]] or None
         :returns: A :class:`~azure.data.tables.aio.TableClient` object.
         :rtype: ~azure.data.tables.aio.TableClient
 
         """
         encoder_map = dict(self._encoder_map)
-        encoder_map.update(encode_types or {})
+        encoder_map.update(custom_encode or {})
         decoder_map = dict(self._decoder_map)
-        decoder_map.update(decode_types or {})
+        decoder_map.update(custom_decode or {})
         pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(
                 self._client._client._pipeline._transport  # pylint:disable=protected-access
@@ -425,10 +417,8 @@ class TableServiceClient(AsyncTablesBaseClient):
             table_name=table_name,
             credential=self.credential,
             api_version=self.api_version,
-            encode_types=encoder_map,
-            decode_types=decoder_map,
-            trim_metadata=self._trim_metadata,
-            trim_timestamp=self._trim_timestamp,
+            custom_encode=encoder_map,
+            custom_decode=decoder_map,
             pipeline=pipeline,
             location_mode=self._location_mode,
             _hosts=self._hosts,

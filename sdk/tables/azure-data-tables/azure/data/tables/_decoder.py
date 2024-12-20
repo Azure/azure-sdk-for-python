@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Mapping, Protocol, Union, Dict, Callable
+from typing import Any, Mapping, Union, Dict, Callable
 from datetime import timezone
 from uuid import UUID
 from base64 import b64decode
@@ -16,7 +16,7 @@ from ._entity import (
 )
 
 DecodeCallable = Union[Callable[[str], Any], Callable[[int], Any], Callable[[bool], Any], Callable[[float], Any]]
-DecoderMapType = Dict[Union[str, EdmType], Union[DecodeCallable, EdmType]]
+DecoderMapType = Mapping[Union[str, EdmType], Union[DecodeCallable, EdmType]]
 NO_ODATA = {
     int: EdmType.INT32,
     str: EdmType.STRING,
@@ -25,20 +25,12 @@ NO_ODATA = {
 }
 
 
-class TableEntityDecoder(Protocol):
-    def __call__(self, response_data: Mapping[str, Any], /) -> TableEntity: ...
+def _no_op(_: Any) -> None:
+    return None
 
 
-class _TableEntityDecoder:
-    def __init__(
-        self,
-        *,
-        trim_timestamp: bool = True,
-        trim_odata: bool = True,
-        convert_map: DecoderMapType,
-    ) -> None:
-        self._trim_timestamp = trim_timestamp
-        self._trim_odata = trim_odata
+class TableEntityDecoder:
+    def __init__(self, *, convert_map: DecoderMapType) -> None:
         self._edm_types: Dict[EdmType, DecodeCallable] = {
             EdmType.BINARY: b64decode,
             EdmType.INT32: int,
@@ -49,7 +41,7 @@ class _TableEntityDecoder:
             EdmType.STRING: str,
             EdmType.BOOLEAN: self._decode_boolean,
         }
-        self._property_types: Dict[str, DecodeCallable] = {"Timestamp": deserialize_iso}
+        self._property_types: Dict[str, DecodeCallable] = {"Timestamp": _no_op}
         # First we want to update the callables
         for key, value in convert_map.items():
             if not isinstance(value, EdmType):
@@ -94,31 +86,29 @@ class _TableEntityDecoder:
         entity._metadata = {"etag": None, "timestamp": None}
         for key, value in response_data.items():
             if key.startswith("odata."):
-                if self._trim_odata:
-                    # TODO: replace with match statement once we drop 3.9
-                    if key == "odata.etag":
-                        entity._metadata["etag"] = value
-                    elif key == "odata.type":
-                        entity._metadata["type"] = value
-                    elif key == "odata.id":
-                        entity._metadata["id"] = value
-                    elif key == "odata.editLink":
-                        entity._metadata["editLink"] = value
-                else:
-                    entity[key] = value
+                # TODO: replace with match statement once we drop 3.9
+                if key == "odata.etag":
+                    entity._metadata["etag"] = value
+                elif key == "odata.type":
+                    entity._metadata["type"] = value
+                elif key == "odata.id":
+                    entity._metadata["id"] = value
+                elif key == "odata.editLink":
+                    entity._metadata["editLink"] = value
             elif key.endswith("@odata.type"):
                 continue
             else:
                 try:
-                    entity[key] = self._property_types[key](value)
+                    if key == "Timestamp":
+                        entity._metadata["timestamp"] = deserialize_iso(entity["Timestamp"])
+                    value = self._property_types[key](value)
+                    if value is not None:
+                        entity[key] = value
                     continue
                 except KeyError:
                     pass
                 edm_type = EdmType(response_data.get(key + "@odata.type", NO_ODATA[type(value)]))
                 entity[key] = self._edm_types[edm_type](value)
-        entity._metadata["timestamp"] = entity.get("Timestamp")
-        if self._trim_timestamp:
-            entity.pop("Timestamp", None)
         return entity
 
     def _decode_int64(self, value: str) -> EntityProperty:

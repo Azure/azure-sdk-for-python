@@ -18,20 +18,18 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._common_conversion import (
-    SupportedDataTypes,
     _prepare_key,
     _return_headers_and_deserialized,
     _trim_service_metadata,
 )
 from .._base_client import parse_connection_str
 from .._encoder import (
-    _TableEntityEncoder,
     TableEntityEncoder,
     EncoderMapType,
     TableEntityJSONEncoder,
 )
 from .._entity import TableEntity
-from .._decoder import _TableEntityDecoder, TableEntityDecoder, deserialize_iso, DecoderMapType
+from .._decoder import TableEntityDecoder, deserialize_iso, DecoderMapType
 from .._generated.models import SignedIdentifier, TableProperties
 from .._models import TableAccessPolicy, TableItem, UpdateMode
 from .._serialize import (
@@ -68,14 +66,7 @@ class TableClient(AsyncTablesBaseClient):
         ~azure.core.credentials.AzureNamedKeyCredential or
         ~azure.core.credentials.AzureSasCredential or
         ~azure.core.credentials_async.AsyncTokenCredential or None
-    :ivar encoder: An encoder for converting entities into valid JSON payloads.
-    :vartype encoder: ~azure.data.tables.TableEntityEncoder
-    :ivar decoder: A decoder for converting response entities into typed TableEntity objects.
-    :vartype decoder: ~azure.data.tables.TableEntityDecoder
     """
-
-    encoder: TableEntityEncoder
-    decoder: TableEntityDecoder
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
         self,
@@ -84,10 +75,8 @@ class TableClient(AsyncTablesBaseClient):
         *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]] = None,
         api_version: Optional[str] = None,
-        encode_types: Optional[EncoderMapType] = None,
-        decode_types: Optional[DecoderMapType] = None,
-        trim_timestamp: bool = True,
-        trim_metadata: bool = True,
+        custom_encode: Optional[EncoderMapType] = None,
+        custom_decode: Optional[DecoderMapType] = None,
         **kwargs: Any,
     ) -> None:
         """Creates TableClient from a Credential.
@@ -105,31 +94,21 @@ class TableClient(AsyncTablesBaseClient):
         :keyword api_version: Specifies the version of the operation to use for this request. Default value
             is "2019-02-02".
         :paramtype api_version: str or None
-        :keyword encode_types:
-            A dictionary maps the type and the convertion function of this type used in encoding.
-        :paramtype encode_types:
-            dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-        :keyword decode_types:
-            A dictionary maps the type and the convertion function of this type used in decoding.
-        :paramtype decode_types:
-            dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-        :keyword bool trim_timestamp:
-            Whether to remove the system property 'Timestamp' from the entity in deserialization. Default is
-            True. This can still be found the the `metadata` property of `TableEntity`.
-        :keyword bool trim_metadata:
-            Whether to remove entity odata metadata in deserialization. Default is True,
-            which means the metadata would be deserialized to property `metadata` in `TableEntity`.
+        :keyword custom_encode:
+            A mapping of types and properties and how they should be encoded.
+        :paramtype custom_encode:
+            Mapping[Union[Type, str], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, datetime, bytes]]]] or None  # pylint: disable=line-too-long
+        :keyword custom_decode:
+            A mapping of types and properties and how they should be decoded.
+        :paramtype custom_decode:
+            Mapping[Union[EdmType, str], Union[EdmType, Callable[[Union[str, bool, int, float]], Any]]] or None
         :returns: None
         """
         if not table_name:
             raise ValueError("Please specify a table name.")
         self.table_name: str = table_name
-        self.encoder = _TableEntityEncoder(convert_map=encode_types or {})
-        self.decoder = _TableEntityDecoder(
-            convert_map=decode_types or {},
-            trim_odata=trim_metadata,
-            trim_timestamp=trim_timestamp,
-        )
+        self._encoder = TableEntityEncoder(convert_map=custom_encode or {})
+        self._decoder = TableEntityDecoder(convert_map=custom_decode or {})
         super(TableClient, self).__init__(endpoint, credential=credential, api_version=api_version, **kwargs)
 
     @classmethod
@@ -139,10 +118,8 @@ class TableClient(AsyncTablesBaseClient):
         table_name: str,
         *,
         api_version: Optional[str] = None,
-        encode_types: Optional[EncoderMapType] = None,
-        decode_types: Optional[DecoderMapType] = None,
-        trim_timestamp: bool = True,
-        trim_metadata: bool = True,
+        custom_encode: Optional[EncoderMapType] = None,
+        custom_decode: Optional[DecoderMapType] = None,
         **kwargs: Any,
     ) -> "TableClient":
         """Create TableClient from a Connection string.
@@ -152,20 +129,14 @@ class TableClient(AsyncTablesBaseClient):
         :keyword api_version: Specifies the version of the operation to use for this request. Default value
             is "2019-02-02".
         :paramtype api_version: str or None
-        :keyword encode_types:
-            A dictionary maps the type and the convertion function of this type used in encoding.
-        :paramtype encode_types:
-            dict[Union[Type, EdmType], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-        :keyword decode_types:
-            A dictionary maps the type and the convertion function of this type used in decoding.
-        :paramtype decode_types:
-            dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int]]]] or None
-        :keyword bool trim_timestamp:
-            Whether to remove the system property 'Timestamp' from the entity in deserialization. Default is
-            True. This can still be found the the `metadata` property of `TableEntity`.
-        :keyword bool trim_metadata:
-            Whether to remove entity odata metadata in deserialization. Default is True,
-            which means the metadata would be deserialized to property `metadata` in `TableEntity`.
+        :keyword custom_encode:
+            A mapping of types and properties and how they should be encoded.
+        :paramtype custom_encode:
+            Mapping[Union[Type, str], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, datetime, bytes]]]] or None  # pylint: disable=line-too-long
+        :keyword custom_decode:
+            A mapping of types and properties and how they should be decoded.
+        :paramtype custom_decode:
+            Mapping[Union[EdmType, str], Union[EdmType, Callable[[Union[str, bool, int, float]], Any]]] or None
         :returns: A table client.
         :rtype: ~azure.data.tables.TableClient
 
@@ -184,10 +155,8 @@ class TableClient(AsyncTablesBaseClient):
             table_name=table_name,
             credential=credential,
             api_version=api_version,
-            encode_types=encode_types,
-            decode_types=decode_types,
-            trim_metadata=trim_metadata,
-            trim_timestamp=trim_timestamp,
+            custom_encode=custom_encode,
+            custom_decode=custom_decode,
             **kwargs,
         )
 
@@ -197,6 +166,8 @@ class TableClient(AsyncTablesBaseClient):
         table_url: str,
         *,
         credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential]] = None,
+        custom_encode: Optional[EncoderMapType] = None,
+        custom_decode: Optional[DecoderMapType] = None,
         **kwargs: Any,
     ) -> "TableClient":
         """A client to interact with a specific Table.
@@ -209,6 +180,14 @@ class TableClient(AsyncTablesBaseClient):
         :paramtype credential:
             ~azure.core.credentials.AzureNamedKeyCredential or
             ~azure.core.credentials.AzureSasCredential or None
+        :keyword custom_encode:
+            A mapping of types and properties and how they should be encoded.
+        :paramtype custom_encode:
+            Mapping[Union[Type, str], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, datetime, bytes]]]] or None  # pylint: disable=line-too-long
+        :keyword custom_decode:
+            A mapping of types and properties and how they should be decoded.
+        :paramtype custom_decode:
+            Mapping[Union[EdmType, str], Union[EdmType, Callable[[Union[str, bool, int, float]], Any]]] or None
         :returns: A table client.
         :rtype: ~azure.data.tables.TableClient
         """
@@ -232,7 +211,14 @@ class TableClient(AsyncTablesBaseClient):
             table_name = table_name[8:-2]
         if not table_name:
             raise ValueError("Invalid URL. Please provide a URL with a valid table name")
-        return cls(endpoint, table_name=table_name, credential=credential, **kwargs)
+        return cls(
+            endpoint,
+            table_name=table_name,
+            credential=credential,
+            custom_encode=custom_encode,
+            custom_decode=custom_decode,
+            **kwargs,
+        )
 
     @distributed_trace_async
     async def get_table_access_policy(self, **kwargs) -> Mapping[str, Optional[TableAccessPolicy]]:
@@ -351,9 +337,9 @@ class TableClient(AsyncTablesBaseClient):
                 _reprocess_error(decoded_error)
                 raise
 
-    def _encode_key(self, key_name: str, key_value: Any) -> SupportedDataTypes:
+    def _encode_key(self, key_name: str, key_value: Any) -> str:
         try:
-            _, encoded_key = self.encoder(key_name, key_value)
+            _, encoded_key = self._encoder(key_name, key_value)
             return encoded_key
         except (KeyError, TypeError):
             return cast(str, key_value)
@@ -430,7 +416,7 @@ class TableClient(AsyncTablesBaseClient):
         try:
             if not entity:
                 entity = args[0]
-            entity_json = self.encoder(entity)
+            entity_json = self._encoder(entity)
             partition_key = entity_json.get("PartitionKey")
             row_key = entity_json.get("RowKey")
         except (TypeError, IndexError, AttributeError):
@@ -485,7 +471,7 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 12
                 :caption: Creating and adding an entity to a Table
         """
-        entity_json = self.encoder(entity)
+        entity_json = self._encoder(entity)
         payload = json.dumps(entity_json, cls=TableEntityJSONEncoder).encode()
         try:
             metadata, content = cast(
@@ -544,7 +530,7 @@ class TableClient(AsyncTablesBaseClient):
         match_condition = _get_match_condition(
             etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
-        entity_json = self.encoder(entity)
+        entity_json = self._encoder(entity)
         partition_key = entity_json.get("PartitionKey")
         row_key = entity_json.get("RowKey")
         payload = json.dumps(entity_json, cls=TableEntityJSONEncoder).encode()
@@ -620,7 +606,7 @@ class TableClient(AsyncTablesBaseClient):
             table=self.table_name,
             results_per_page=results_per_page,
             select=select,
-            decoder=self.decoder,
+            decoder=self._decoder,
             page_iterator_class=TableEntityPropertiesPaged,
         )
 
@@ -669,7 +655,7 @@ class TableClient(AsyncTablesBaseClient):
             results_per_page=results_per_page,
             filter=query_filter,
             select=select,
-            decoder=self.decoder,
+            decoder=self._decoder,
             page_iterator_class=TableEntityPropertiesPaged,
         )
 
@@ -720,7 +706,7 @@ class TableClient(AsyncTablesBaseClient):
             )
         except HttpResponseError as error:
             _process_table_error(error, table_name=self.table_name)
-        return self.decoder(entity_json)
+        return self._decoder(entity_json)
 
     @distributed_trace_async
     async def upsert_entity(
@@ -748,7 +734,7 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 16
                 :caption: Replacing/Merging or Inserting an entity into a table
         """
-        entity_json = self.encoder(entity)
+        entity_json = self._encoder(entity)
         partition_key = entity_json.get("PartitionKey")
         row_key = entity_json.get("RowKey")
         payload = json.dumps(entity_json, cls=TableEntityJSONEncoder).encode()
@@ -823,7 +809,7 @@ class TableClient(AsyncTablesBaseClient):
             endpoint=f"{self.scheme}://{self._primary_hostname}",
             table_name=self.table_name,
             is_cosmos_endpoint=self._cosmos_endpoint,
-            encoder=self.encoder,
+            encoder=self._encoder,
         )
         if isinstance(operations, AsyncIterable):
             async for operation in operations:
