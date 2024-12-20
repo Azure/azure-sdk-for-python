@@ -6,8 +6,7 @@
 import asyncio
 import logging
 import random
-from typing import Any, Callable, Dict, List, Literal, Optional, Union, cast
-from itertools import zip_longest
+from typing import Any, Callable, Dict, List, Optional, Union, cast
 
 from tqdm import tqdm
 
@@ -211,7 +210,6 @@ class AdversarialSimulator:
             ncols=100,
             unit="simulations",
         )
-
         if randomize_order:
             # The template parameter lists are persistent across sim runs within a session,
             # So randomize a the selection instead of the parameter list directly,
@@ -220,11 +218,11 @@ class AdversarialSimulator:
                 random.seed(randomization_seed)
             random.shuffle(templates)
         parameter_lists = [t.template_parameters for t in templates]
-        zipped_parameters = list(zip_longest(*parameter_lists))
+        zipped_parameters = list(zip(*parameter_lists))
         for param_group in zipped_parameters:
             for template, parameter in zip(templates, param_group):
                 if _jailbreak_type == "upia":
-                    parameter = self._join_conversation_starter(parameter, random.choice(jailbreak_dataset))
+                    parameter = self._add_jailbreak_parameter(parameter, random.choice(jailbreak_dataset))
                 tasks.append(
                     asyncio.create_task(
                         self._simulate_async(
@@ -384,8 +382,8 @@ class AdversarialSimulator:
                     pass
 
             if scenario in [
-                AdversarialScenario.ADVERSARIAL_IMAGE_GEN,
-                AdversarialScenario.ADVERSARIAL_IMAGE_UNDERSTANDING,
+                _UnstableAdversarialScenario.ADVERSARIAL_IMAGE_GEN,
+                _UnstableAdversarialScenario.ADVERSARIAL_IMAGE_MULTIMODAL,
             ]:
                 return MultiModalConversationBot(
                     callback=target,
@@ -417,13 +415,8 @@ class AdversarialSimulator:
             blame=ErrorBlame.SYSTEM_ERROR,
         )
 
-    def _join_conversation_starter(self, parameters: TemplateParameters, to_join: str) -> TemplateParameters:
-        key: Literal["conversation_starter"] = "conversation_starter"
-        if key in parameters.keys():
-            parameters[key] = f"{to_join} {parameters[key]}"
-        else:
-            parameters[key] = to_join
-
+    def _add_jailbreak_parameter(self, parameters: TemplateParameters, to_join: str) -> TemplateParameters:
+        parameters["jailbreak_string"] = to_join
         return parameters
 
     def call_sync(

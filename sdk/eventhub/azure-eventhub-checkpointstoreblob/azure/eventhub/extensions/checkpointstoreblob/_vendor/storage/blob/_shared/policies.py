@@ -10,14 +10,22 @@ import logging
 import random
 import re
 import uuid
-from io import SEEK_SET, UnsupportedOperation
-from time import time
-from typing import Any, Dict, Optional, TYPE_CHECKING
+import types
+from typing import Any, TYPE_CHECKING
 from urllib.parse import (
-    parse_qsl,
-    urlencode,
     urlparse,
+    parse_qsl,
     urlunparse,
+    urlencode,
+)
+from wsgiref.handlers import format_date_time
+
+from azure.core.pipeline.policies import (
+    HeadersPolicy,
+    SansIOHTTPPolicy,
+    NetworkTraceLoggingPolicy,
+    HTTPPolicy,
+    RequestHistory
 )
 from wsgiref.handlers import format_date_time
 
@@ -47,8 +55,6 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def encode_base64(data):
-    if isinstance(data, str):
-        data = data.encode('utf-8')
     encoded = base64.b64encode(data)
     return encoded.decode('utf-8')
 

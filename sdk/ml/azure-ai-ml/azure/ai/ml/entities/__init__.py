@@ -38,7 +38,9 @@ from ._assets._artifacts.model import Model
 from ._assets.asset import Asset
 from ._assets.environment import BuildContext, Environment
 from ._assets.intellectual_property import IntellectualProperty
-from ._assets.workspace_asset_reference import WorkspaceAssetReference as WorkspaceModelReference
+from ._assets.workspace_asset_reference import (
+    WorkspaceAssetReference as WorkspaceModelReference,
+)
 from ._autogen_entities.models import (
     AzureOpenAIDeployment,
     MarketplacePlan,
@@ -76,9 +78,16 @@ from ._compute.compute_instance import (
     ComputeInstanceSshSettings,
 )
 from ._compute.kubernetes_compute import KubernetesCompute
-from ._compute.synapsespark_compute import AutoPauseSettings, AutoScaleSettings, SynapseSparkCompute
+from ._compute.synapsespark_compute import (
+    AutoPauseSettings,
+    AutoScaleSettings,
+    SynapseSparkCompute,
+)
 from ._compute.unsupported_compute import UnsupportedCompute
-from ._compute.virtual_machine_compute import VirtualMachineCompute, VirtualMachineSshSettings
+from ._compute.virtual_machine_compute import (
+    VirtualMachineCompute,
+    VirtualMachineSshSettings,
+)
 from ._credentials import (
     AadCredentialConfiguration,
     AccessKeyConfiguration,
@@ -125,7 +134,9 @@ from ._deployment.online_deployment import (
     ManagedOnlineDeployment,
     OnlineDeployment,
 )
-from ._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
+from ._deployment.pipeline_component_batch_deployment import (
+    PipelineComponentBatchDeployment,
+)
 from ._deployment.request_logging import RequestLogging
 from ._deployment.resource_requirements_settings import ResourceRequirementsSettings
 from ._deployment.scale_settings import (
@@ -147,10 +158,14 @@ from ._feature_set.data_availability_status import DataAvailabilityStatus
 from ._feature_set.feature import Feature
 from ._feature_set.feature_set_backfill_metadata import FeatureSetBackfillMetadata
 from ._feature_set.feature_set_backfill_request import FeatureSetBackfillRequest
-from ._feature_set.feature_set_materialization_metadata import FeatureSetMaterializationMetadata
+from ._feature_set.feature_set_materialization_metadata import (
+    FeatureSetMaterializationMetadata,
+)
 from ._feature_set.feature_set_specification import FeatureSetSpecification
 from ._feature_set.feature_window import FeatureWindow
-from ._feature_set.materialization_compute_resource import MaterializationComputeResource
+from ._feature_set.materialization_compute_resource import (
+    MaterializationComputeResource,
+)
 from ._feature_set.materialization_settings import MaterializationSettings
 from ._feature_set.materialization_type import MaterializationType
 from ._feature_store.feature_store import FeatureStore
@@ -283,6 +298,10 @@ from ._workspace.networking import (
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.serverless_compute import ServerlessComputeSettings
 from ._workspace.workspace import Workspace
+from ._workspace._ai_workspaces.capability_host import (
+    CapabilityHost,
+    CapabilityHostKind,
+)
 from ._workspace.workspace_keys import (
     ContainerRegistryCredential,
     NotebookAccessKeys,
@@ -437,6 +456,8 @@ __all__ = [
     "WorkspaceModelReference",
     "Hub",
     "Project",
+    "CapabilityHost",
+    "CapabilityHostKind",
     "Feature",
     "FeatureSet",
     "FeatureSetBackfillRequest",

@@ -8,7 +8,6 @@ import warnings
 from ._version import VERSION
 from ._call_automation_client import CallAutomationClient
 from ._call_connection_client import CallConnectionClient
-from .streaming.streaming_data_parser import StreamingDataParser
 from ._models import (
     CallConnectionProperties,
     FileSource,
@@ -20,12 +19,14 @@ from ._models import (
     AddParticipantResult,
     RemoveParticipantResult,
     TransferCallResult,
-    MediaStreamingConfiguration,
-    TranscriptionConfiguration,
+    MediaStreamingOptions,
+    TranscriptionOptions,
     ChannelAffinity,
     MuteParticipantResult,
     SendDtmfTonesResult,
     CancelAddParticipantOperationResult,
+    AzureBlobContainerRecordingStorage,
+    AzureCommunicationsRecordingStorage,
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -52,23 +53,25 @@ from ._generated.models._enums import (
     CallConnectionState,
     RecordingState,
     VoiceKind,
+    AudioFormat
 )
-from .streaming.models import TranscriptionMetadata, TranscriptionData
 
 __all__ = [
     # clients
     "CallAutomationClient",
     "CallConnectionClient",
-    # parser
-    "StreamingDataParser",
+
     # models for input
     "FileSource",
     "TextSource",
     "SsmlSource",
     "RecognitionChoice",
     "ChannelAffinity",
-    "MediaStreamingConfiguration",
-    "TranscriptionConfiguration",
+    "MediaStreamingOptions",
+    "TranscriptionOptions",
+    "AzureBlobContainerRecordingStorage",
+    "AzureCommunicationsRecordingStorage",
+
     # models for output
     "CallConnectionProperties",
     "CallParticipant",
@@ -88,9 +91,7 @@ __all__ = [
     "CommunicationIdentifierKind",
     "CommunicationCloudEnvironment",
     "UnknownIdentifier",
-    # streaming models
-    "TranscriptionMetadata",
-    "TranscriptionData",
+
     # enums
     "CallRejectReason",
     "RecordingContent",
@@ -106,6 +107,7 @@ __all__ = [
     "CallConnectionState",
     "RecordingState",
     "VoiceKind",
+    "AudioFormat"
 ]
 __version__ = VERSION
 

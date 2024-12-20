@@ -8,7 +8,7 @@ import copy
 from collections import defaultdict
 import asyncio
 from azure.eventhub.exceptions import OwnershipLostError  # type: ignore
-from azure.eventhub.aio import CheckpointStore  # type: ignore  # pylint: disable=no-name-in-module
+from azure.eventhub.aio import CheckpointStore  # type: ignore
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError, ResourceNotFoundError  # type: ignore
 from ._vendor.storage.blob.aio import ContainerClient, BlobClient
 from ._vendor.storage.blob._shared.base_client import parse_connection_str
@@ -67,7 +67,7 @@ class BlobCheckpointStore(CheckpointStore):
         self._cached_blob_clients = defaultdict()  # type: Dict[str, BlobClient]
 
     @classmethod
-    def from_connection_string(
+    def from_connection_string( # pylint:disable=docstring-keyword-should-match-keyword-only
         cls,
         conn_str: str,
         container_name: str,
@@ -222,7 +222,7 @@ class BlobCheckpointStore(CheckpointStore):
                 }
                 result.append(ownership)
             return result
-        except Exception as error:  # pylint:disable=broad-except
+        except Exception as error:
             logger.warning(
                 "An exception occurred during list_ownership for "
                 "namespace %r eventhub %r consumer group %r. "

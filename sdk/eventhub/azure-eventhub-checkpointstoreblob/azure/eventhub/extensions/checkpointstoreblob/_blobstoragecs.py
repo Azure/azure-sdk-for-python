@@ -89,7 +89,7 @@ class BlobCheckpointStore(CheckpointStore):
         self._cached_blob_clients = defaultdict()  # type: Dict[str, BlobClient]
 
     @classmethod
-    def from_connection_string(
+    def from_connection_string( # pylint:disable=docstring-keyword-should-match-keyword-only
         cls,
         conn_str: str,
         container_name: str,
@@ -243,7 +243,7 @@ class BlobCheckpointStore(CheckpointStore):
                 }
                 result.append(ownership)
             return result
-        except Exception as error:  # pylint:disable=broad-except
+        except Exception as error:
             logger.warning(
                 "An exception occurred during list_ownership for "
                 "namespace %r eventhub %r consumer group %r. "
