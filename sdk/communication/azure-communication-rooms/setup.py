@@ -42,7 +42,7 @@ setup(
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/communication/azure-communication-rooms",
     keywords="azure, azure sdk",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
@@ -63,7 +63,7 @@ setup(
         ]
     ),
     install_requires=[
-        "azure-core>=1.29.0",
+        "azure-core>=1.32.0",
         "isodate>=0.6.1",
     ],
     python_requires=">=3.8",

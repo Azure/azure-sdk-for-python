@@ -80,6 +80,8 @@ class AgentStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ThreadRun"""
     THREAD_RUN_COMPLETED = "thread.run.completed"
     """Event sent when a run is completed. The data of this event is of type ThreadRun"""
+    THREAD_RUN_INCOMPLETE = "thread.run.incomplete"
+    """Event sent when a run ends incomplete. The data of this event is of type ThreadRun"""
     THREAD_RUN_FAILED = "thread.run.failed"
     """Event sent when a run fails. The data of this event is of type ThreadRun"""
     THREAD_RUN_CANCELLING = "thread.run.cancelling"
@@ -121,15 +123,6 @@ class AgentStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Event sent when an error occurs, such as an internal server error or a timeout."""
     DONE = "done"
     """Event sent when the stream is done."""
-
-
-class ApiResponseFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Possible API response formats."""
-
-    TEXT = "text"
-    """``text`` format should be used for requests involving any sort of ToolCall."""
-    JSON_OBJECT = "json_object"
-    """Using ``json_object`` format will limit the usage of ToolCall to only functions."""
 
 
 class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -229,7 +222,7 @@ class Frequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MINUTE = "Minute"
 
 
-class IncompleteRunDetails(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class IncompleteDetailsReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The reason why the run is incomplete. This will point to which specific token limit was reached
     over the course of the run.
     """
@@ -299,6 +292,36 @@ class MessageStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Event sent when a message is completed. The data of this event is of type ThreadMessage"""
     THREAD_MESSAGE_INCOMPLETE = "thread.message.incomplete"
     """Event sent before a message is completed. The data of this event is of type ThreadMessage"""
+
+
+class OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Authentication type for OpenApi endpoint. Allowed types are:
+
+
+    * Anonymous (no authentication required)
+    * Connection (requires connection_id to endpoint, as setup in AI Foundry)
+    * Managed_Identity (requires audience for identity based auth).
+    """
+
+    ANONYMOUS = "anonymous"
+    CONNECTION = "connection"
+    MANAGED_IDENTITY = "managed_identity"
+
+
+class ResponseFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Possible API response formats."""
+
+    TEXT = "text"
+    """``text`` format should be used for requests involving any sort of ToolCall."""
+    JSON_OBJECT = "json_object"
+    """Using ``json_object`` format will limit the usage of ToolCall to only functions."""
+
+
+class RunAdditionalFieldList(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A list of additional fields to include in the response."""
+
+    FILE_SEARCH_CONTENTS = "step_details.tool_calls[*].file_search.results[*].content"
+    """File search result content."""
 
 
 class RunStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -391,6 +414,8 @@ class RunStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ThreadRun"""
     THREAD_RUN_COMPLETED = "thread.run.completed"
     """Event sent when a run is completed. The data of this event is of type ThreadRun"""
+    THREAD_RUN_INCOMPLETE = "thread.run.incomplete"
+    """Event sent when a run ends incomplete. The data of this event is of type ThreadRun"""
     THREAD_RUN_FAILED = "thread.run.failed"
     """Event sent when a run fails. The data of this event is of type ThreadRun"""
     THREAD_RUN_CANCELLING = "thread.run.cancelling"
@@ -440,7 +465,9 @@ class VectorStoreDataSourceAssetType(str, Enum, metaclass=CaseInsensitiveEnumMet
     """
 
     URI_ASSET = "uri_asset"
+    """Azure URI"""
     ID_ASSET = "id_asset"
+    """The data ID"""
 
 
 class VectorStoreExpirationPolicyAnchor(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -466,14 +493,12 @@ class VectorStoreFileBatchStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class VectorStoreFileErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Error code variants for vector store file processing."""
 
-    INTERNAL_ERROR = "internal_error"
-    """An internal error occurred."""
-    FILE_NOT_FOUND = "file_not_found"
-    """The file was not found."""
-    PARSING_ERROR = "parsing_error"
-    """The file could not be parsed."""
-    UNHANDLED_MIME_TYPE = "unhandled_mime_type"
-    """The file has an unhandled mime type."""
+    SERVER_ERROR = "server_error"
+    """An server error occurred."""
+    INVALID_FILE = "invalid_file"
+    """The file is not valid."""
+    UNSUPPORTED_FILE = "unsupported_file"
+    """The file is of unsupported type."""
 
 
 class VectorStoreFileStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
