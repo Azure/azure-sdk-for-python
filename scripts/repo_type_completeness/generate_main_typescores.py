@@ -23,8 +23,6 @@ from github import Github, Auth
 from ci_tools.parsing import ParsedSetup
 from ci_tools.environment_exclusions import (
     IGNORE_PACKAGES,
-    FILTER_EXCLUSIONS,
-    IGNORE_FILTER,
     is_check_enabled,
 )
 
@@ -32,6 +30,8 @@ logging.getLogger().setLevel(logging.INFO)
 
 INACTIVE_CLASSIFIER = "Development Status :: 7 - Inactive"
 
+IGNORE_FILTER = ["nspkg", "mgmt", "cognitiveservices"]
+FILTER_EXCLUSIONS = ["azure-mgmt-core"]
 IGNORE_PACKAGES.extend([
     "azure-openai",
     "azure-storage-extensions",
