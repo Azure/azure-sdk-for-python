@@ -70,7 +70,7 @@ class LiteMLClient:
         return cast(TokenCredential, self._credential)
 
     def workspace_get_default_datastore(
-        self, workspace_name: str, *, include_credentials: bool = False, **kwargs
+        self, workspace_name: str, *, include_credentials: bool = False, **kwargs: Any
     ) -> BlobStoreInfo:
         # 1. Get the default blob store
         # REST API documentation:
@@ -99,10 +99,14 @@ class LiteMLClient:
         # 2. Get the SAS token to use for accessing the blob store
         # REST API documentation:
         # https://learn.microsoft.com/rest/api/azureml/datastores/list-secrets?view=rest-azureml-2024-10-01
-        # If storage account key access is disabled, and only Microsoft Entra ID authentication is available,
-        # the credentialsType will be "None" and we should not attempt to get the secrets.
-        blob_store_credential: Optional[Union[AzureSasCredential, str]] = None
-        if include_credentials and credential_type and credential_type.lower() != "none":
+        blob_store_credential: Optional[Union[AzureSasCredential, TokenCredential, str]]
+        if not include_credentials:
+            blob_store_credential = None
+        elif credential_type and credential_type.lower() == "none":
+            # If storage account key access is disabled, and only Microsoft Entra ID authentication is available,
+            # the credentialsType will be "None" and we should not attempt to get the secrets.
+            blob_store_credential = self.get_credential()
+        else:
             url = self._generate_path(
                 *PATH_ML_WORKSPACES, workspace_name, "datastores", "workspaceblobstore", "listSecrets"
             )
@@ -110,7 +114,7 @@ class LiteMLClient:
                 method="POST",
                 url=url,
                 json={
-                    "expirableSecret": True if not kwargs.get("get_access_key", False) else False,
+                    "expirableSecret": True,
                     "expireAfterHours": int(kwargs.get("key_expiration_hours", 1)),
                 },
                 params={
@@ -123,10 +127,12 @@ class LiteMLClient:
             secrets_json = secrets_response.json()
             secrets_type = secrets_json["secretsType"].lower()
 
+            # As per this website, only SAS tokens, access tokens, or Entra IDs are valid for accessing blob data stores:
+            # https://learn.microsoft.com/rest/api/storageservices/authorize-requests-to-azure-storage.
             if secrets_type == "sas":
                 blob_store_credential = AzureSasCredential(secrets_json["sasToken"])
             elif secrets_type == "accountkey":
-                # To support olders versions of azure-storage-blob better, we return a string here instead of
+                # To support older versions of azure-storage-blob better, we return a string here instead of
                 # an AzureNamedKeyCredential
                 blob_store_credential = secrets_json["key"]
             else:

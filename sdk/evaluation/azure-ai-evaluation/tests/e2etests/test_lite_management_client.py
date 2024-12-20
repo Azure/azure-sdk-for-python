@@ -2,15 +2,19 @@ import pytest
 import logging
 from azure.core.credentials import AzureSasCredential, TokenCredential
 from azure.ai.evaluation._azure._clients import LiteMLClient
+from azure.core.pipeline.policies import ProxyPolicy
 
 
-@pytest.fixture(scope="session")
-def datastore_auth_variants(connection_file):
-    variants = connection_file.get("datastore_auth_variants", None)
-    if not variants:
-        raise ValueError("datastore_auth_variants not found in connection file")
+@pytest.fixture
+def datastore_project_scopes(connection_file, project_scope):
+    entra_id = connection_file.get("azure_ai_entra_id_project_scope", None)
+    if not entra_id:
+        raise ValueError("azure_ai_entra_id_project_scope not found in connection file")
 
-    return variants
+    return {
+        "sas": project_scope,
+        "none": entra_id,
+    }
 
 
 @pytest.mark.usefixtures("model_config", "project_scope", "recording_injection", "recorded_test")
@@ -43,24 +47,22 @@ class TestLiteAzureManagementClient(object):
 
     @pytest.mark.azuretest
     @pytest.mark.parametrize("include_credentials", [False, True])
-    @pytest.mark.parametrize("config_name", ["sas", "account_key", "none"])
+    @pytest.mark.parametrize("config_name", ["sas", "none"])
     def test_workspace_get_default_store(
-        self, azure_cred, datastore_auth_variants, config_name: str, include_credentials: bool
+        self, azure_cred, datastore_project_scopes, config_name: str, include_credentials: bool
     ):
-        get_access_key: bool = include_credentials and config_name == "account_key"
-        project_scope = datastore_auth_variants[config_name]
+        project_scope = datastore_project_scopes[config_name]
 
         client = LiteMLClient(
             subscription_id=project_scope["subscription_id"],
             resource_group=project_scope["resource_group_name"],
             credential=azure_cred,
             logger=logging.getLogger(__name__),
+            proxy_policy=ProxyPolicy(proxies={"https": "http://localhost:8888", "http": "http://localhost:8888"}),
         )
 
         store = client.workspace_get_default_datastore(
-            workspace_name=project_scope["project_name"],
-            include_credentials=include_credentials,
-            get_access_key=get_access_key,
+            workspace_name=project_scope["project_name"], include_credentials=include_credentials
         )
 
         assert store
@@ -72,7 +74,7 @@ class TestLiteAzureManagementClient(object):
             assert (
                 (config_name == "account_key" and isinstance(store.credential, str))
                 or (config_name == "sas" and isinstance(store.credential, AzureSasCredential))
-                or (config_name == "none" and store.credential == None)
+                or (config_name == "none" and isinstance(store.credential, TokenCredential))
             )
         else:
             assert store.credential == None
