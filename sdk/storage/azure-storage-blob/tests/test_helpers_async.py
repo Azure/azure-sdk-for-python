@@ -66,6 +66,7 @@ class AsyncStream:
 
         return data
 
+
 class MockAioHttpClientResponse(ClientResponse):
     def __init__(
         self, url: str,
@@ -74,6 +75,7 @@ class MockAioHttpClientResponse(ClientResponse):
         status: int = 200,
         reason: str = "OK"
     ) -> None:
+        super(MockAioHttpClientResponse).__init__()
         self._url = url
         self._body = body_bytes
         self._headers = headers
@@ -81,6 +83,7 @@ class MockAioHttpClientResponse(ClientResponse):
         self._loop = None
         self.status = status
         self.reason = reason
+
 
 class MockStorageTransport(AsyncHttpTransport):
     async def send(self, request: HttpRequest, **kwargs: Any) -> RestAioHttpTransportResponse:
