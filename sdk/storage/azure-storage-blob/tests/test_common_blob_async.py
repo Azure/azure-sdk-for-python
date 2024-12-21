@@ -3458,7 +3458,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    async def test_mock_transport(self, **kwargs):
+    async def test_mock_transport_no_content_validation(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -3480,9 +3480,40 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         props = await blob_client.get_blob_properties()
         assert props is not None
 
-        resp = await blob_client.upload_blob(AsyncStream(b"Hello Async World!"), overwrit=True)
+        data = b"Hello Async World!"
+        stream = AsyncStream(data)
+        resp = await blob_client.upload_blob(stream, overwrite=True)
         assert resp is not None
+
+        blob_data = await (await blob_client.download_blob()).read()
+        assert data == blob_data
 
         resp = await blob_client.delete_blob()
         assert resp is None
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_mock_transport_with_content_validation(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        transport = MockStorageTransport()
+        blob_service_client = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            transport=transport,
+            retry_total=0
+        )
+
+        blob_client = BlobClient(
+            blob_service_client.url, container_name='test_cont', blob_name='test_blob', credential=storage_account_key,
+            transport=transport, retry_total=0)
+
+        data = b"Hello Async World!"
+        stream = AsyncStream(data)
+        resp = await blob_client.upload_blob(stream, overwrite=True, validate_content=True)
+        assert resp is not None
+
+        blob_data = await (await blob_client.download_blob(validate_content=True)).read()
+        assert data == blob_data
 # ------------------------------------------------------------------------------

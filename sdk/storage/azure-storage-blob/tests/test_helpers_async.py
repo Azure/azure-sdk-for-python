@@ -93,7 +93,7 @@ class MockStorageTransport(AsyncHttpTransport):
                 request=request,
                 internal_response=MockAioHttpClientResponse(
                     request.url,
-                    b"test content",
+                    b"Hello Async World!",
                     {
                         "Content-Type": "application/octet-stream",
                         "Content-Range": "bytes 0-27/28",
