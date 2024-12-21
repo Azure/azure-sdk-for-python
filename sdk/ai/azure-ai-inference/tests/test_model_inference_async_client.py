@@ -724,6 +724,7 @@ class TestModelAsyncClient(ModelClientTestBase):
             pass
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
         client = self._create_async_chat_client(**kwargs)
+        model = kwargs.pop("azure_ai_chat_model").lower()
         processor, exporter = self.setup_memory_trace_exporter()
         AIInferenceInstrumentor().instrument()
         response = await client.complete(
@@ -744,7 +745,7 @@ class TestModelAsyncClient(ModelClientTestBase):
             ("gen_ai.request.model", "chat"),
             ("server.address", ""),
             ("gen_ai.response.id", ""),
-            ("gen_ai.response.model", "mistral-large"),
+            ("gen_ai.response.model", model),
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
             ("gen_ai.response.finish_reasons", ("stop",)),

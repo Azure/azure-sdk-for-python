@@ -994,6 +994,7 @@ class TestModelClient(ModelClientTestBase):
             pass
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
         client = self._create_chat_client(**kwargs)
+        model = kwargs.pop("azure_ai_chat_model").lower()
         processor, exporter = self.setup_memory_trace_exporter()
         AIInferenceInstrumentor().instrument()
         response = client.complete(
@@ -1014,7 +1015,7 @@ class TestModelClient(ModelClientTestBase):
             ("gen_ai.request.model", "chat"),
             ("server.address", ""),
             ("gen_ai.response.id", ""),
-            ("gen_ai.response.model", "mistral-large"),
+            ("gen_ai.response.model", model),
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
             ("gen_ai.response.finish_reasons", ("stop",)),
@@ -1045,6 +1046,7 @@ class TestModelClient(ModelClientTestBase):
             pass
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
         client = self._create_chat_client(**kwargs)
+        model = kwargs.pop("azure_ai_chat_model").lower()
         processor, exporter = self.setup_memory_trace_exporter()
         AIInferenceInstrumentor().instrument()
         response = client.complete(
@@ -1065,7 +1067,7 @@ class TestModelClient(ModelClientTestBase):
             ("gen_ai.request.model", "chat"),
             ("server.address", ""),
             ("gen_ai.response.id", ""),
-            ("gen_ai.response.model", "mistral-large"),
+            ("gen_ai.response.model", model),
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
             ("gen_ai.response.finish_reasons", ("stop",)),
@@ -1110,6 +1112,7 @@ class TestModelClient(ModelClientTestBase):
             pass
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
         client = self._create_chat_client(**kwargs)
+        model = kwargs.pop("azure_ai_chat_model").lower()
         processor, exporter = self.setup_memory_trace_exporter()
         AIInferenceInstrumentor().instrument()
         response = client.complete(
@@ -1137,7 +1140,7 @@ class TestModelClient(ModelClientTestBase):
             ("gen_ai.request.model", "chat"),
             ("server.address", ""),
             ("gen_ai.response.id", ""),
-            ("gen_ai.response.model", "mistral-large"),
+            ("gen_ai.response.model", model),
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
             ("gen_ai.response.finish_reasons", ("stop",)),
@@ -1168,6 +1171,7 @@ class TestModelClient(ModelClientTestBase):
             pass
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
         client = self._create_chat_client(**kwargs)
+        model = kwargs.pop("azure_ai_chat_model").lower()
         processor, exporter = self.setup_memory_trace_exporter()
         AIInferenceInstrumentor().instrument()
         response = client.complete(
@@ -1195,7 +1199,7 @@ class TestModelClient(ModelClientTestBase):
             ("gen_ai.request.model", "chat"),
             ("server.address", ""),
             ("gen_ai.response.id", ""),
-            ("gen_ai.response.model", "mistral-large"),
+            ("gen_ai.response.model", model),
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
             ("gen_ai.response.finish_reasons", ("stop",)),
@@ -1240,8 +1244,6 @@ class TestModelClient(ModelClientTestBase):
             pass
         import json
         from azure.ai.inference.models import (
-            SystemMessage,
-            UserMessage,
             CompletionsFinishReason,
             ToolMessage,
             AssistantMessage,
@@ -1253,6 +1255,7 @@ class TestModelClient(ModelClientTestBase):
 
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
         client = self._create_chat_client(**kwargs)
+        model = kwargs.pop("azure_ai_chat_model").lower()
         processor, exporter = self.setup_memory_trace_exporter()
         AIInferenceInstrumentor().instrument()
 
@@ -1314,7 +1317,7 @@ class TestModelClient(ModelClientTestBase):
             ("gen_ai.request.model", "chat"),
             ("server.address", ""),
             ("gen_ai.response.id", ""),
-            ("gen_ai.response.model", "mistral-large"),
+            ("gen_ai.response.model", model),
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
             ("gen_ai.response.finish_reasons", ("tool_calls",)),
@@ -1327,7 +1330,7 @@ class TestModelClient(ModelClientTestBase):
             ("gen_ai.request.model", "chat"),
             ("server.address", ""),
             ("gen_ai.response.id", ""),
-            ("gen_ai.response.model", "mistral-large"),
+            ("gen_ai.response.model", model),
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
             ("gen_ai.response.finish_reasons", ("stop",)),
@@ -1421,8 +1424,6 @@ class TestModelClient(ModelClientTestBase):
             pass
         import json
         from azure.ai.inference.models import (
-            SystemMessage,
-            UserMessage,
             CompletionsFinishReason,
             ToolMessage,
             AssistantMessage,
@@ -1434,6 +1435,7 @@ class TestModelClient(ModelClientTestBase):
 
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
         client = self._create_chat_client(**kwargs)
+        model = kwargs.pop("azure_ai_chat_model").lower()        
         processor, exporter = self.setup_memory_trace_exporter()
         AIInferenceInstrumentor().instrument()
 
@@ -1495,7 +1497,7 @@ class TestModelClient(ModelClientTestBase):
             ("gen_ai.request.model", "chat"),
             ("server.address", ""),
             ("gen_ai.response.id", ""),
-            ("gen_ai.response.model", "mistral-large"),
+            ("gen_ai.response.model", model),
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
             ("gen_ai.response.finish_reasons", ("tool_calls",)),
@@ -1508,7 +1510,7 @@ class TestModelClient(ModelClientTestBase):
             ("gen_ai.request.model", "chat"),
             ("server.address", ""),
             ("gen_ai.response.id", ""),
-            ("gen_ai.response.model", "mistral-large"),
+            ("gen_ai.response.model", model),
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
             ("gen_ai.response.finish_reasons", ("stop",)),
@@ -1554,9 +1556,6 @@ class TestModelClient(ModelClientTestBase):
             pass
         import json
         from azure.ai.inference.models import (
-            SystemMessage,
-            UserMessage,
-            CompletionsFinishReason,
             FunctionCall,
             ToolMessage,
             AssistantMessage,
@@ -1568,6 +1567,7 @@ class TestModelClient(ModelClientTestBase):
 
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
         client = self._create_chat_client(**kwargs)
+        model = kwargs.pop("azure_ai_chat_model").lower()
         processor, exporter = self.setup_memory_trace_exporter()
         AIInferenceInstrumentor().instrument()
 
@@ -1651,7 +1651,7 @@ class TestModelClient(ModelClientTestBase):
             ("gen_ai.request.model", "chat"),
             ("server.address", ""),
             ("gen_ai.response.id", ""),
-            ("gen_ai.response.model", "mistral-large"),
+            ("gen_ai.response.model", model),
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
             ("gen_ai.response.finish_reasons", ("tool_calls",)),
@@ -1664,7 +1664,7 @@ class TestModelClient(ModelClientTestBase):
             ("gen_ai.request.model", "chat"),
             ("server.address", ""),
             ("gen_ai.response.id", ""),
-            ("gen_ai.response.model", "mistral-large"),
+            ("gen_ai.response.model", model),
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
             ("gen_ai.response.finish_reasons", ("stop",)),
@@ -1758,9 +1758,6 @@ class TestModelClient(ModelClientTestBase):
             pass
         import json
         from azure.ai.inference.models import (
-            SystemMessage,
-            UserMessage,
-            CompletionsFinishReason,
             FunctionCall,
             ToolMessage,
             AssistantMessage,
@@ -1772,6 +1769,7 @@ class TestModelClient(ModelClientTestBase):
 
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
         client = self._create_chat_client(**kwargs)
+        model = kwargs.pop("azure_ai_chat_model").lower()
         processor, exporter = self.setup_memory_trace_exporter()
         AIInferenceInstrumentor().instrument()
 
@@ -1855,7 +1853,7 @@ class TestModelClient(ModelClientTestBase):
             ("gen_ai.request.model", "chat"),
             ("server.address", ""),
             ("gen_ai.response.id", ""),
-            ("gen_ai.response.model", "mistral-large"),
+            ("gen_ai.response.model", model),
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
             ("gen_ai.response.finish_reasons", ("tool_calls",)),
@@ -1868,7 +1866,7 @@ class TestModelClient(ModelClientTestBase):
             ("gen_ai.request.model", "chat"),
             ("server.address", ""),
             ("gen_ai.response.id", ""),
-            ("gen_ai.response.model", "mistral-large"),
+            ("gen_ai.response.model", model),
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
             ("gen_ai.response.finish_reasons", ("stop",)),

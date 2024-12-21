@@ -41,6 +41,7 @@ ServicePreparerChatCompletions = functools.partial(
     "azure_ai_chat",
     azure_ai_chat_endpoint="https://your-deployment-name.eastus2.inference.ai.azure.com",
     azure_ai_chat_key="00000000000000000000000000000000",
+    azure_ai_chat_model="model-name"
 )
 
 #
