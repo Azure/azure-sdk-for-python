@@ -67,22 +67,28 @@ class AsyncStream:
         return data
 
 class MockAioHttpClientResponse(ClientResponse):
-    def __init__(self, url: str, body_bytes: bytes, headers: Optional[Dict[str, Any]] = None):
+    def __init__(
+        self, url: str,
+        body_bytes: bytes,
+        headers: Optional[Dict[str, Any]] = None,
+        status: int = 200,
+        reason: str = "OK"
+    ) -> None:
         self._url = url
         self._body = body_bytes
         self._headers = headers
         self._cache = {}
         self._loop = None
-        self.status = 200
-        self.reason = "OK"
+        self.status = status
+        self.reason = reason
 
 class MockStorageTransport(AsyncHttpTransport):
-    async def send(self, request: HttpRequest, **kwargs: Any) -> AioHttpTransportResponse:
+    async def send(self, request: HttpRequest, **kwargs: Any) -> RestAioHttpTransportResponse:
         if request.method == 'GET':
-            # download blob
-            return AioHttpTransportResponse(
-                request,
-                MockAioHttpClientResponse(
+            # download_blob
+            rest_response = RestAioHttpTransportResponse(
+                request=request,
+                internal_response=MockAioHttpClientResponse(
                     request.url,
                     b"test content",
                     {
@@ -91,9 +97,10 @@ class MockStorageTransport(AsyncHttpTransport):
                         "Content-Length": "28",
                     },
                 ),
+                decompress=False
             )
         elif request.method == 'HEAD':
-            # get blob properties
+            # get_blob_properties
             rest_response = RestAioHttpTransportResponse(
                 request=request,
                 internal_response=MockAioHttpClientResponse(
@@ -107,10 +114,42 @@ class MockStorageTransport(AsyncHttpTransport):
                 ),
                 decompress=False
             )
+        elif request.method == 'PUT':
+            # upload_blob
+            rest_response = RestAioHttpTransportResponse(
+                request=request,
+                internal_response=MockAioHttpClientResponse(
+                    request.url,
+                    b"",
+                    {
+                        "Content-Length": "0",
+                        "Content-MD5": "I3pVbaOCUTom\u002BG9F9uKFoA==",
+                    },
+                    201,
+                    "Created"
+                ),
+                decompress=False
+            )
+        elif request.method == 'DELETE':
+            # delete_blob
+            rest_response = RestAioHttpTransportResponse(
+                request=request,
+                internal_response=MockAioHttpClientResponse(
+                    request.url,
+                    b"",
+                    {
+                        "Content-Length": "0",
+                    },
+                    202,
+                    "Accepted"
+                ),
+                decompress=False
+            )
+        else:
+            raise ValueError("The request is not accepted as part of MockStorageTransport.")
 
-            await rest_response.read()
-            return rest_response
-        return None
+        await rest_response.read()
+        return rest_response
 
     async def __aenter__(self):
         return self

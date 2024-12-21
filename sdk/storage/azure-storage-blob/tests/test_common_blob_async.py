@@ -3474,11 +3474,15 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
             blob_service_client.url, container_name='test_cont', blob_name='test_blob', credential=storage_account_key,
             transport=transport, retry_total=0)
 
-        # content = await blob_client.download_blob()
-        # assert content is not None
+        content = await blob_client.download_blob()
+        assert content is not None
 
         props = await blob_client.get_blob_properties()
         assert props is not None
-        # service_properties = await blob_service_client.get_service_properties()
-        # assert service_properties is not None
+
+        resp = await blob_client.upload_blob(AsyncStream(b"Hello Async World!"), overwrit=True)
+        assert resp is not None
+
+        resp = await blob_client.delete_blob()
+        assert resp is None
 # ------------------------------------------------------------------------------
