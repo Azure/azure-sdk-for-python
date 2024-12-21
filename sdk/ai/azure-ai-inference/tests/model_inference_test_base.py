@@ -57,6 +57,7 @@ ServicePreparerAOAIChatCompletions = functools.partial(
     "azure_openai_chat",
     azure_openai_chat_endpoint="https://your-deployment-name.openai.azure.com/openai/deployments/gpt-4o",
     azure_openai_chat_key="00000000000000000000000000000000",
+    azure_openai_chat_api_version="yyyy-mm-dd-preview"
 )
 
 #
@@ -149,6 +150,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
     # https://aka.ms/azsdk/azure-ai-inference/azure-openai-api-versions
     def _load_aoai_chat_credentials(self, *, key_auth: bool, bad_key: bool, **kwargs):
         endpoint = kwargs.pop("azure_openai_chat_endpoint")
+        api_version = kwargs.pop("azure_openai_chat_api_version")
         if key_auth:
             key = "00000000000000000000000000000000" if bad_key else kwargs.pop("azure_openai_chat_key")
             headers = {"api-key": key}
@@ -158,7 +160,6 @@ class ModelClientTestBase(AzureRecordedTestCase):
             credential = self.get_credential(sdk.ChatCompletionsClient, is_async=False)
             credential_scopes: list[str] = ["https://cognitiveservices.azure.com/.default"]
             headers = {}
-        api_version = "2024-08-01-preview"
         return endpoint, credential, credential_scopes, headers, api_version
 
     def _load_embeddings_credentials(self, *, bad_key: bool, **kwargs):
