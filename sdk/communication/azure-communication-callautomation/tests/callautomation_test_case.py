@@ -13,6 +13,7 @@ from typing import Dict, Any, List, Optional
 
 import requests
 from azure.servicebus import ServiceBusClient
+from azure.identity import AzureCliCredential
 from devtools_testutils import AzureRecordedTestCase, is_live
 from devtools_testutils.helpers import get_test_id
 
@@ -26,14 +27,13 @@ from azure.communication.callautomation._shared.models import identifier_from_ra
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.phonenumbers import PhoneNumbersClient
 
-
 class CallAutomationRecordedTestCase(AzureRecordedTestCase):
     @classmethod
     def setup_class(cls):
         if is_live():
             print("Live Test")
             cls.connection_str = os.environ.get('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
-            cls.servicebus_connection_str = os.environ.get('SERVICEBUS_STRING')
+            cls.servicebus_str = os.environ.get('SERVICEBUS_STRING')
             cls.dispatcher_endpoint = os.environ.get('DISPATCHER_ENDPOINT')
             cls.file_source_url = os.environ.get('FILE_SOURCE_URL')
             cls.cognitive_service_endpoint = os.environ.get('COGNITIVE_SERVICE_ENDPOINT')
@@ -41,18 +41,20 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
         else:
             print("Recorded Test")
             cls.connection_str = "endpoint=https://someEndpoint/;accesskey=someAccessKeyw=="
-            cls.servicebus_connection_str = (
-                "Endpoint=sb://someEndpoint/;SharedAccessKeyName=somekey;SharedAccessKey=someAccessKey="
-            )
+            cls.servicebus_str = "redacted.servicebus.windows.net"
             cls.dispatcher_endpoint = "https://REDACTED.azurewebsites.net"
             cls.file_source_url = "https://REDACTED/prompt.wav"
             cls.cognitive_service_endpoint = "https://sanitized/"
-            cls.transport_url ="wss://REDACTED"
+            cls.transport_url ="wss://sanitized/ws"
 
+
+        cls.credential = AzureCliCredential()
         cls.dispatcher_callback = cls.dispatcher_endpoint + "/api/servicebuscallback/events"
         cls.identity_client = CommunicationIdentityClient.from_connection_string(cls.connection_str)
         cls.phonenumber_client = PhoneNumbersClient.from_connection_string(cls.connection_str)
-        cls.service_bus_client = ServiceBusClient.from_connection_string(cls.servicebus_connection_str)
+        cls.service_bus_client = ServiceBusClient(
+            fully_qualified_namespace=cls.servicebus_str,
+            credential=cls.credential)
 
         cls.wait_for_event_flags = []
         cls.event_store: Dict[str, Dict[str, Any]] = {}
@@ -85,17 +87,13 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
         return f"{s1}_{s2}"
 
     @staticmethod
-    def _format_phonenumber_string(s) -> str:
-        return s.replace(":+", "u002B")
-
-    @staticmethod
     def _parse_ids_from_identifier(identifier: CommunicationIdentifier) -> str:
         if identifier is None:
             raise ValueError("Identifier cannot be None")
         elif identifier.kind == CommunicationIdentifierKind.COMMUNICATION_USER:
             return CallAutomationRecordedTestCase._format_string("".join(filter(str.isalnum, identifier.raw_id)))
         elif identifier.kind == CommunicationIdentifierKind.PHONE_NUMBER:
-            return CallAutomationRecordedTestCase._format_phonenumber_string(identifier.raw_id)
+            return identifier.raw_id
         else:
             raise ValueError("Identifier type not supported")
 
@@ -159,8 +157,10 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
         if is_live():
             file_path = self._get_test_event_file_name()
             try:
+                keys_to_redact = ["incomingCallContext", "callerDisplayName"]
+                redacted_dict  = self.redact_by_key(self.event_to_save, keys_to_redact)
                 with open(file_path, "w") as json_file:
-                    json.dump(self.event_to_save, json_file)
+                    json.dump(redacted_dict, json_file)
             except IOError as e:
                 raise SystemExit(f"File write operation failed: {e}")
 
@@ -395,3 +395,10 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
         self.open_call_connections[unique_id] = call_connection_caller
 
         return unique_id, call_connection_caller, call_connection_target, call_automation_client_caller, callback_url
+    
+    def redact_by_key(self, data: Dict[str, Dict[str, any]], keys_to_redact: List[str]) -> Dict[str, Dict[str, any]]:
+        for _, inner_dict in data.items():
+            for key in keys_to_redact:
+                if key in inner_dict:
+                    inner_dict[key] = "REDACTED"
+        return data

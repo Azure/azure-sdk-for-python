@@ -161,10 +161,13 @@ class TestEvaluate:
 
     def test_evaluate_missing_required_inputs(self, missing_columns_jsonl_file):
         with pytest.raises(EvaluationException) as exc_info:
-            evaluate(data=missing_columns_jsonl_file, evaluators={"g": F1ScoreEvaluator()})
-
-        expected_message = "Some evaluators are missing required inputs:\n" "- g: ['ground_truth']\n"
+            evaluate(
+                data=missing_columns_jsonl_file, evaluators={"g": F1ScoreEvaluator()}, fail_on_evaluator_errors=True
+            )
+        expected_message = "Either 'conversation' or individual inputs must be provided."
         assert expected_message in exc_info.value.args[0]
+        # Same call without failure flag shouldn't produce an exception.
+        evaluate(data=missing_columns_jsonl_file, evaluators={"g": F1ScoreEvaluator()})
 
     def test_evaluate_missing_required_inputs_target(self, questions_wrong_file):
         with pytest.raises(EvaluationException) as exc_info:
@@ -174,15 +177,19 @@ class TestEvaluate:
     def test_target_not_generate_required_columns(self, questions_file):
         with pytest.raises(EvaluationException) as exc_info:
             # target_fn will generate the "response", but not "ground_truth".
-            evaluate(data=questions_file, evaluators={"g": F1ScoreEvaluator()}, target=_target_fn)
+            evaluate(
+                data=questions_file,
+                evaluators={"g": F1ScoreEvaluator()},
+                target=_target_fn,
+                fail_on_evaluator_errors=True,
+            )
 
-        expected_message = "Some evaluators are missing required inputs:\n" "- g: ['ground_truth']\n"
-
-        expected_message2 = "Verify that the target is generating the necessary columns for the evaluators. "
-        expected_message2 += "Currently generated columns: {'response'}"
+        expected_message = "Either 'conversation' or individual inputs must be provided."
 
         assert expected_message in exc_info.value.args[0]
-        assert expected_message2 in exc_info.value.args[0]
+
+        # Same call without failure flag shouldn't produce an exception.
+        evaluate(data=questions_file, evaluators={"g": F1ScoreEvaluator()}, target=_target_fn)
 
     def test_target_raises_on_outputs(self):
         """Test we are raising exception if the output is column is present in the input."""
@@ -674,13 +681,3 @@ class TestEvaluate:
         )  # type: ignore
         assert double_override_results["rows"][0]["outputs.echo.echo_query"] == "new query"
         assert double_override_results["rows"][0]["outputs.echo.echo_response"] == "new response"
-
-    def test_missing_inputs(self, questions_file):
-        """Test we are raising exception if required input is missing in data."""
-        with pytest.raises(EvaluationException) as cm:
-            evaluate(
-                data=questions_file,
-                target=_target_fn,
-                evaluators={"f1": F1ScoreEvaluator()},
-            )
-        assert "Some evaluators are missing required inputs:\n- f1: ['ground_truth']\n\n" in cm.value.args[0]

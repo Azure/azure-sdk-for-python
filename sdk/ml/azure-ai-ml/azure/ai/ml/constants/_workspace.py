@@ -3,8 +3,8 @@
 # ---------------------------------------------------------
 from enum import Enum
 
-from azure.core import CaseInsensitiveEnumMeta
 from azure.ai.ml._utils._experimental import experimental
+from azure.core import CaseInsensitiveEnumMeta
 
 
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -24,6 +24,7 @@ class IsolationMode:
     ALLOW_ONLY_APPROVED_OUTBOUND = "AllowOnlyApprovedOutbound"
 
 
+@experimental
 class FirewallSku:
     """Firewall Sku for FQDN rules in AllowOnlyApprovedOutbound."""
 

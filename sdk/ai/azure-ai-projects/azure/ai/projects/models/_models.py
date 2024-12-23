@@ -15,6 +15,7 @@ from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
 from ._enums import (
     AuthenticationType,
+    OpenApiAuthType,
     RunStepType,
     VectorStoreChunkingStrategyRequestType,
     VectorStoreChunkingStrategyResponseType,
@@ -65,9 +66,10 @@ class Agent(_model_base.Model):
     :vartype top_p: float
     :ivar response_format: The response format of the tool calls used by this agent. Is one of the
      following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-     AgentsApiResponseFormat
+     AgentsApiResponseFormat, ResponseFormatJsonSchemaType
     :vartype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
-     or ~azure.ai.projects.models.AgentsApiResponseFormat
+     or ~azure.ai.projects.models.AgentsApiResponseFormat or
+     ~azure.ai.projects.models.ResponseFormatJsonSchemaType
     :ivar metadata: A set of up to 16 key/value pairs that can be attached to an object, used for
      storing additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required.
@@ -107,7 +109,8 @@ class Agent(_model_base.Model):
      We generally recommend altering this or temperature but not both. Required."""
     response_format: Optional["_types.AgentsApiResponseFormatOption"] = rest_field()
     """The response format of the tool calls used by this agent. Is one of the following types: str,
-     Union[str, \"_models.AgentsApiResponseFormatMode\"], AgentsApiResponseFormat"""
+     Union[str, \"_models.AgentsApiResponseFormatMode\"], AgentsApiResponseFormat,
+     ResponseFormatJsonSchemaType"""
     metadata: Dict[str, str] = rest_field()
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
      additional information about that object in a structured format. Keys may be up to 64
@@ -193,17 +196,17 @@ class AgentsApiResponseFormat(_model_base.Model):
 
     :ivar type: Must be one of ``text`` or ``json_object``. Known values are: "text" and
      "json_object".
-    :vartype type: str or ~azure.ai.projects.models.ApiResponseFormat
+    :vartype type: str or ~azure.ai.projects.models.ResponseFormat
     """
 
-    type: Optional[Union[str, "_models.ApiResponseFormat"]] = rest_field()
+    type: Optional[Union[str, "_models.ResponseFormat"]] = rest_field()
     """Must be one of ``text`` or ``json_object``. Known values are: \"text\" and \"json_object\"."""
 
     @overload
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "_models.ApiResponseFormat"]] = None,
+        type: Optional[Union[str, "_models.ResponseFormat"]] = None,
     ) -> None: ...
 
     @overload
@@ -499,9 +502,9 @@ class ToolDefinition(_model_base.Model):
     """An abstract representation of an input tool definition that an agent can use.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AzureAISearchToolDefinition, BingGroundingToolDefinition, CodeInterpreterToolDefinition,
-    MicrosoftFabricToolDefinition, FileSearchToolDefinition, FunctionToolDefinition,
-    SharepointToolDefinition
+    AzureAISearchToolDefinition, AzureFunctionToolDefinition, BingGroundingToolDefinition,
+    CodeInterpreterToolDefinition, MicrosoftFabricToolDefinition, FileSearchToolDefinition,
+    FunctionToolDefinition, OpenApiToolDefinition, SharepointToolDefinition
 
 
     :ivar type: The object type. Required. Default value is None.
@@ -557,6 +560,158 @@ class AzureAISearchToolDefinition(ToolDefinition, discriminator="azure_ai_search
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type="azure_ai_search", **kwargs)
+
+
+class AzureFunctionBinding(_model_base.Model):
+    """The structure for keeping storage queue name and URI.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar type: The type of binding, which is always 'storage_queue'. Required. Default value is
+     "storage_queue".
+    :vartype type: str
+    :ivar storage_queue: Storage queue. Required.
+    :vartype storage_queue: ~azure.ai.projects.models.AzureFunctionStorageQueue
+    """
+
+    type: Literal["storage_queue"] = rest_field()
+    """The type of binding, which is always 'storage_queue'. Required. Default value is
+     \"storage_queue\"."""
+    storage_queue: "_models.AzureFunctionStorageQueue" = rest_field()
+    """Storage queue. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        storage_queue: "_models.AzureFunctionStorageQueue",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["storage_queue"] = "storage_queue"
+
+
+class AzureFunctionDefinition(_model_base.Model):
+    """The definition of Azure function.
+
+
+    :ivar function: The definition of azure function and its parameters. Required.
+    :vartype function: ~azure.ai.projects.models.FunctionDefinition
+    :ivar input_binding: Input storage queue. The queue storage trigger runs a function as messages
+     are added to it. Required.
+    :vartype input_binding: ~azure.ai.projects.models.AzureFunctionBinding
+    :ivar output_binding: Output storage queue. The function writes output to this queue when the
+     input items are processed. Required.
+    :vartype output_binding: ~azure.ai.projects.models.AzureFunctionBinding
+    """
+
+    function: "_models.FunctionDefinition" = rest_field()
+    """The definition of azure function and its parameters. Required."""
+    input_binding: "_models.AzureFunctionBinding" = rest_field()
+    """Input storage queue. The queue storage trigger runs a function as messages are added to it.
+     Required."""
+    output_binding: "_models.AzureFunctionBinding" = rest_field()
+    """Output storage queue. The function writes output to this queue when the input items are
+     processed. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        function: "_models.FunctionDefinition",
+        input_binding: "_models.AzureFunctionBinding",
+        output_binding: "_models.AzureFunctionBinding",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AzureFunctionStorageQueue(_model_base.Model):
+    """The structure for keeping storage queue name and URI.
+
+
+    :ivar storage_service_endpoint: URI to the Azure Storage Queue service allowing you to
+     manipulate a queue. Required.
+    :vartype storage_service_endpoint: str
+    :ivar queue_name: The name of an Azure function storage queue. Required.
+    :vartype queue_name: str
+    """
+
+    storage_service_endpoint: str = rest_field(name="queue_service_endpoint")
+    """URI to the Azure Storage Queue service allowing you to manipulate a queue. Required."""
+    queue_name: str = rest_field()
+    """The name of an Azure function storage queue. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        storage_service_endpoint: str,
+        queue_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AzureFunctionToolDefinition(ToolDefinition, discriminator="azure_function"):
+    """The input definition information for a azure function tool as used to configure an agent.
+
+
+    :ivar type: The object type, which is always 'azure_function'. Required. Default value is
+     "azure_function".
+    :vartype type: str
+    :ivar azure_function: The definition of the concrete function that the function tool should
+     call. Required.
+    :vartype azure_function: ~azure.ai.projects.models.AzureFunctionDefinition
+    """
+
+    type: Literal["azure_function"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'azure_function'. Required. Default value is
+     \"azure_function\"."""
+    azure_function: "_models.AzureFunctionDefinition" = rest_field()
+    """The definition of the concrete function that the function tool should call. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        azure_function: "_models.AzureFunctionDefinition",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="azure_function", **kwargs)
 
 
 class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"):
@@ -799,8 +954,8 @@ class Evaluation(_model_base.Model):
     :vartype id: str
     :ivar data: Data for evaluation. Required.
     :vartype data: ~azure.ai.projects.models.InputData
-    :ivar display_name: Display Name for evaluation. It helps to find evaluation easily in AI
-     Studio. It does not need to be unique.
+    :ivar display_name: Display Name for evaluation. It helps to find the evaluation easily in AI
+     Foundry. It does not need to be unique.
     :vartype display_name: str
     :ivar description: Description of the evaluation. It can be used to store additional
      information about the evaluation and is mutable.
@@ -823,8 +978,8 @@ class Evaluation(_model_base.Model):
     data: "_models.InputData" = rest_field(visibility=["read", "create"])
     """Data for evaluation. Required."""
     display_name: Optional[str] = rest_field(name="displayName")
-    """Display Name for evaluation. It helps to find evaluation easily in AI Studio. It does not need
-     to be unique."""
+    """Display Name for evaluation. It helps to find the evaluation easily in AI Foundry. It does not
+     need to be unique."""
     description: Optional[str] = rest_field()
     """Description of the evaluation. It can be used to store additional information about the
      evaluation and is mutable."""
@@ -1091,6 +1246,42 @@ class FileSearchRankingOptions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class FileSearchToolCallContent(_model_base.Model):
+    """The file search result content object.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar type: The type of the content. Required. Default value is "text".
+    :vartype type: str
+    :ivar text: The text content of the file. Required.
+    :vartype text: str
+    """
+
+    type: Literal["text"] = rest_field()
+    """The type of the content. Required. Default value is \"text\"."""
+    text: str = rest_field()
+    """The text content of the file. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["text"] = "text"
+
+
 class FileSearchToolDefinition(ToolDefinition, discriminator="file_search"):
     """The input definition information for a file search tool as used to configure an agent.
 
@@ -1135,7 +1326,7 @@ class FileSearchToolDefinitionDetails(_model_base.Model):
      Note that the file search tool may output fewer than ``max_num_results`` results. See the file
      search tool documentation for more information.
     :vartype max_num_results: int
-    :ivar ranking_options:
+    :ivar ranking_options: Ranking options for file search.
     :vartype ranking_options: ~azure.ai.projects.models.FileSearchRankingOptions
     """
 
@@ -1146,6 +1337,7 @@ class FileSearchToolDefinitionDetails(_model_base.Model):
      Note that the file search tool may output fewer than ``max_num_results`` results. See the file
      search tool documentation for more information."""
     ranking_options: Optional["_models.FileSearchRankingOptions"] = rest_field()
+    """Ranking options for file search."""
 
     @overload
     def __init__(
@@ -1371,6 +1563,39 @@ class GetWorkspaceResponse(_model_base.Model):
     """The properties of the resource. Required."""
 
 
+class IncompleteRunDetails(_model_base.Model):
+    """Details on why the run is incomplete. Will be ``null`` if the run is not incomplete.
+
+
+    :ivar reason: The reason why the run is incomplete. This indicates which specific token limit
+     was reached during the run. Required. Known values are: "max_completion_tokens" and
+     "max_prompt_tokens".
+    :vartype reason: str or ~azure.ai.projects.models.IncompleteDetailsReason
+    """
+
+    reason: Union[str, "_models.IncompleteDetailsReason"] = rest_field()
+    """The reason why the run is incomplete. This indicates which specific token limit was reached
+     during the run. Required. Known values are: \"max_completion_tokens\" and
+     \"max_prompt_tokens\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        reason: Union[str, "_models.IncompleteDetailsReason"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class IndexResource(_model_base.Model):
     """A Index resource.
 
@@ -1517,8 +1742,8 @@ class MessageAttachment(_model_base.Model):
 
     :ivar file_id: The ID of the file to attach to the message.
     :vartype file_id: str
-    :ivar data_sources: Azure asset ID.
-    :vartype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
+    :ivar data_source: Azure asset ID.
+    :vartype data_source: ~azure.ai.projects.models.VectorStoreDataSource
     :ivar tools: The tools to add to this file. Required.
     :vartype tools: list[~azure.ai.projects.models.CodeInterpreterToolDefinition or
      ~azure.ai.projects.models.FileSearchToolDefinition]
@@ -1526,7 +1751,7 @@ class MessageAttachment(_model_base.Model):
 
     file_id: Optional[str] = rest_field()
     """The ID of the file to attach to the message."""
-    data_sources: Optional[List["_models.VectorStoreDataSource"]] = rest_field()
+    data_source: Optional["_models.VectorStoreDataSource"] = rest_field()
     """Azure asset ID."""
     tools: List["_types.MessageAttachmentToolDefinition"] = rest_field()
     """The tools to add to this file. Required."""
@@ -1537,7 +1762,7 @@ class MessageAttachment(_model_base.Model):
         *,
         tools: List["_types.MessageAttachmentToolDefinition"],
         file_id: Optional[str] = None,
-        data_sources: Optional[List["_models.VectorStoreDataSource"]] = None,
+        data_source: Optional["_models.VectorStoreDataSource"] = None,
     ) -> None: ...
 
     @overload
@@ -2837,6 +3062,271 @@ class OpenAIPageableListOfVectorStoreFile(_model_base.Model):
         self.object: Literal["list"] = "list"
 
 
+class OpenApiAuthDetails(_model_base.Model):
+    """authentication details for OpenApiFunctionDefinition.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    OpenApiAnonymousAuthDetails, OpenApiConnectionAuthDetails, OpenApiManagedAuthDetails
+
+
+    :ivar type: The type of authentication, must be anonymous/connection/managed_identity.
+     Required. Known values are: "anonymous", "connection", and "managed_identity".
+    :vartype type: str or ~azure.ai.projects.models.OpenApiAuthType
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    type: str = rest_discriminator(name="type")
+    """The type of authentication, must be anonymous/connection/managed_identity. Required. Known
+     values are: \"anonymous\", \"connection\", and \"managed_identity\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OpenApiAnonymousAuthDetails(OpenApiAuthDetails, discriminator="anonymous"):
+    """Security details for OpenApi anonymous authentication.
+
+
+    :ivar type: The object type, which is always 'anonymous'. Required.
+    :vartype type: str or ~azure.ai.projects.models.ANONYMOUS
+    """
+
+    type: Literal[OpenApiAuthType.ANONYMOUS] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'anonymous'. Required."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type=OpenApiAuthType.ANONYMOUS, **kwargs)
+
+
+class OpenApiConnectionAuthDetails(OpenApiAuthDetails, discriminator="connection"):
+    """Security details for OpenApi connection authentication.
+
+
+    :ivar type: The object type, which is always 'connection'. Required.
+    :vartype type: str or ~azure.ai.projects.models.CONNECTION
+    :ivar security_scheme: Connection auth security details. Required.
+    :vartype security_scheme: ~azure.ai.projects.models.OpenApiConnectionSecurityScheme
+    """
+
+    type: Literal[OpenApiAuthType.CONNECTION] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'connection'. Required."""
+    security_scheme: "_models.OpenApiConnectionSecurityScheme" = rest_field()
+    """Connection auth security details. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        security_scheme: "_models.OpenApiConnectionSecurityScheme",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type=OpenApiAuthType.CONNECTION, **kwargs)
+
+
+class OpenApiConnectionSecurityScheme(_model_base.Model):
+    """Security scheme for OpenApi managed_identity authentication.
+
+
+    :ivar connection_id: Connection id for Connection auth type. Required.
+    :vartype connection_id: str
+    """
+
+    connection_id: str = rest_field()
+    """Connection id for Connection auth type. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OpenApiFunctionDefinition(_model_base.Model):
+    """The input definition information for an openapi function.
+
+
+    :ivar name: The name of the function to be called. Required.
+    :vartype name: str
+    :ivar description: A description of what the function does, used by the model to choose when
+     and how to call the function.
+    :vartype description: str
+    :ivar spec: The openapi function shape, described as a JSON Schema object. Required.
+    :vartype spec: any
+    :ivar auth: Open API authentication details. Required.
+    :vartype auth: ~azure.ai.projects.models.OpenApiAuthDetails
+    """
+
+    name: str = rest_field()
+    """The name of the function to be called. Required."""
+    description: Optional[str] = rest_field()
+    """A description of what the function does, used by the model to choose when and how to call the
+     function."""
+    spec: Any = rest_field()
+    """The openapi function shape, described as a JSON Schema object. Required."""
+    auth: "_models.OpenApiAuthDetails" = rest_field()
+    """Open API authentication details. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        spec: Any,
+        auth: "_models.OpenApiAuthDetails",
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OpenApiManagedAuthDetails(OpenApiAuthDetails, discriminator="managed_identity"):
+    """Security details for OpenApi managed_identity authentication.
+
+
+    :ivar type: The object type, which is always 'managed_identity'. Required.
+    :vartype type: str or ~azure.ai.projects.models.MANAGED_IDENTITY
+    :ivar security_scheme: Connection auth security details. Required.
+    :vartype security_scheme: ~azure.ai.projects.models.OpenApiManagedSecurityScheme
+    """
+
+    type: Literal[OpenApiAuthType.MANAGED_IDENTITY] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'managed_identity'. Required."""
+    security_scheme: "_models.OpenApiManagedSecurityScheme" = rest_field()
+    """Connection auth security details. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        security_scheme: "_models.OpenApiManagedSecurityScheme",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type=OpenApiAuthType.MANAGED_IDENTITY, **kwargs)
+
+
+class OpenApiManagedSecurityScheme(_model_base.Model):
+    """Security scheme for OpenApi managed_identity authentication.
+
+
+    :ivar audience: Authentication scope for managed_identity auth type. Required.
+    :vartype audience: str
+    """
+
+    audience: str = rest_field()
+    """Authentication scope for managed_identity auth type. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        audience: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OpenApiToolDefinition(ToolDefinition, discriminator="openapi"):
+    """The input definition information for an OpenAPI tool as used to configure an agent.
+
+
+    :ivar type: The object type, which is always 'openapi'. Required. Default value is "openapi".
+    :vartype type: str
+    :ivar openapi: The openapi function definition. Required.
+    :vartype openapi: ~azure.ai.projects.models.OpenApiFunctionDefinition
+    """
+
+    type: Literal["openapi"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'openapi'. Required. Default value is \"openapi\"."""
+    openapi: "_models.OpenApiFunctionDefinition" = rest_field()
+    """The openapi function definition. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        openapi: "_models.OpenApiFunctionDefinition",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="openapi", **kwargs)
+
+
 class RecurrenceSchedule(_model_base.Model):
     """RecurrenceSchedule Definition.
 
@@ -3078,6 +3568,84 @@ class RequiredFunctionToolCallDetails(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class ResponseFormatJsonSchema(_model_base.Model):
+    """A description of what the response format is for, used by the model to determine how to respond
+    in the format.
+
+
+    :ivar description: A description of what the response format is for, used by the model to
+     determine how to respond in the format.
+    :vartype description: str
+    :ivar name: The name of a schema. Required.
+    :vartype name: str
+    :ivar schema: The JSON schema object, describing the response format. Required.
+    :vartype schema: any
+    """
+
+    description: Optional[str] = rest_field()
+    """A description of what the response format is for, used by the model to determine how to respond
+     in the format."""
+    name: str = rest_field()
+    """The name of a schema. Required."""
+    schema: Any = rest_field()
+    """The JSON schema object, describing the response format. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        schema: Any,
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResponseFormatJsonSchemaType(_model_base.Model):
+    """The type of response format being defined: ``json_schema``.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar type: Type. Required. Default value is "json_schema".
+    :vartype type: str
+    :ivar json_schema: The JSON schema, describing response format. Required.
+    :vartype json_schema: ~azure.ai.projects.models.ResponseFormatJsonSchema
+    """
+
+    type: Literal["json_schema"] = rest_field()
+    """Type. Required. Default value is \"json_schema\"."""
+    json_schema: "_models.ResponseFormatJsonSchema" = rest_field()
+    """The JSON schema, describing response format. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        json_schema: "_models.ResponseFormatJsonSchema",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["json_schema"] = "json_schema"
 
 
 class RunCompletionUsage(_model_base.Model):
@@ -4317,27 +4885,27 @@ class RunStepFileSearchToolCall(RunStepToolCall, discriminator="file_search"):
     executed file search.
 
 
-    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
-     Required.
-    :vartype id: str
     :ivar type: The object type, which is always 'file_search'. Required. Default value is
      "file_search".
     :vartype type: str
-    :ivar file_search: Reserved for future use. Required.
-    :vartype file_search: dict[str, str]
+    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
+     Required.
+    :vartype id: str
+    :ivar file_search: For now, this is always going to be an empty object. Required.
+    :vartype file_search: ~azure.ai.projects.models.RunStepFileSearchToolCallResults
     """
 
     type: Literal["file_search"] = rest_discriminator(name="type")  # type: ignore
     """The object type, which is always 'file_search'. Required. Default value is \"file_search\"."""
-    file_search: Dict[str, str] = rest_field()
-    """Reserved for future use. Required."""
+    file_search: "_models.RunStepFileSearchToolCallResults" = rest_field()
+    """For now, this is always going to be an empty object. Required."""
 
     @overload
     def __init__(
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        file_search: Dict[str, str],
+        file_search: "_models.RunStepFileSearchToolCallResults",
     ) -> None: ...
 
     @overload
@@ -4349,6 +4917,87 @@ class RunStepFileSearchToolCall(RunStepToolCall, discriminator="file_search"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type="file_search", **kwargs)
+
+
+class RunStepFileSearchToolCallResult(_model_base.Model):
+    """File search tool call result.
+
+
+    :ivar file_id: The ID of the file that result was found in. Required.
+    :vartype file_id: str
+    :ivar file_name: The name of the file that result was found in. Required.
+    :vartype file_name: str
+    :ivar score: The score of the result. All values must be a floating point number between 0 and
+     1. Required.
+    :vartype score: float
+    :ivar content: The content of the result that was found. The content is only included if
+     requested via the include query parameter.
+    :vartype content: list[~azure.ai.projects.models.FileSearchToolCallContent]
+    """
+
+    file_id: str = rest_field()
+    """The ID of the file that result was found in. Required."""
+    file_name: str = rest_field()
+    """The name of the file that result was found in. Required."""
+    score: float = rest_field()
+    """The score of the result. All values must be a floating point number between 0 and 1. Required."""
+    content: Optional[List["_models.FileSearchToolCallContent"]] = rest_field()
+    """The content of the result that was found. The content is only included if requested via the
+     include query parameter."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        file_id: str,
+        file_name: str,
+        score: float,
+        content: Optional[List["_models.FileSearchToolCallContent"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RunStepFileSearchToolCallResults(_model_base.Model):
+    """The results of the file search.
+
+
+    :ivar ranking_options: Ranking options for file search.
+    :vartype ranking_options: ~azure.ai.projects.models.FileSearchRankingOptions
+    :ivar results: The array of a file search results. Required.
+    :vartype results: list[~azure.ai.projects.models.RunStepFileSearchToolCallResult]
+    """
+
+    ranking_options: Optional["_models.FileSearchRankingOptions"] = rest_field()
+    """Ranking options for file search."""
+    results: List["_models.RunStepFileSearchToolCallResult"] = rest_field()
+    """The array of a file search results. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        results: List["_models.RunStepFileSearchToolCallResult"],
+        ranking_options: Optional["_models.FileSearchRankingOptions"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class RunStepFunctionToolCall(RunStepToolCall, discriminator="function"):
@@ -5014,8 +5663,8 @@ class ThreadRun(_model_base.Model):
     :ivar failed_at: The Unix timestamp, in seconds, representing when this failed. Required.
     :vartype failed_at: ~datetime.datetime
     :ivar incomplete_details: Details on why the run is incomplete. Will be ``null`` if the run is
-     not incomplete. Required. Known values are: "max_completion_tokens" and "max_prompt_tokens".
-    :vartype incomplete_details: str or ~azure.ai.projects.models.IncompleteRunDetails
+     not incomplete. Required.
+    :vartype incomplete_details: ~azure.ai.projects.models.IncompleteRunDetails
     :ivar usage: Usage statistics related to the run. This value will be ``null`` if the run is not
      in a terminal state (i.e. ``in_progress``\\ , ``queued``\\ , etc.). Required.
     :vartype usage: ~azure.ai.projects.models.RunCompletionUsage
@@ -5039,9 +5688,10 @@ class ThreadRun(_model_base.Model):
      ~azure.ai.projects.models.AgentsNamedToolChoice
     :ivar response_format: The response format of the tool calls used in this run. Required. Is one
      of the following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
-     AgentsApiResponseFormat
+     AgentsApiResponseFormat, ResponseFormatJsonSchemaType
     :vartype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
-     or ~azure.ai.projects.models.AgentsApiResponseFormat
+     or ~azure.ai.projects.models.AgentsApiResponseFormat or
+     ~azure.ai.projects.models.ResponseFormatJsonSchemaType
     :ivar metadata: A set of up to 16 key/value pairs that can be attached to an object, used for
      storing additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required.
@@ -5050,6 +5700,7 @@ class ThreadRun(_model_base.Model):
      modifying the behavior on a per-run basis.
     :vartype tool_resources: ~azure.ai.projects.models.UpdateToolResourcesOptions
     :ivar parallel_tool_calls: Determines if tools can be executed in parallel within the run.
+     Required.
     :vartype parallel_tool_calls: bool
     """
 
@@ -5086,9 +5737,8 @@ class ThreadRun(_model_base.Model):
     """The Unix timestamp, in seconds, representing when this was cancelled. Required."""
     failed_at: datetime.datetime = rest_field(format="unix-timestamp")
     """The Unix timestamp, in seconds, representing when this failed. Required."""
-    incomplete_details: Union[str, "_models.IncompleteRunDetails"] = rest_field()
-    """Details on why the run is incomplete. Will be ``null`` if the run is not incomplete. Required.
-     Known values are: \"max_completion_tokens\" and \"max_prompt_tokens\"."""
+    incomplete_details: "_models.IncompleteRunDetails" = rest_field()
+    """Details on why the run is incomplete. Will be ``null`` if the run is not incomplete. Required."""
     usage: "_models.RunCompletionUsage" = rest_field()
     """Usage statistics related to the run. This value will be ``null`` if the run is not in a
      terminal state (i.e. ``in_progress``\ , ``queued``\ , etc.). Required."""
@@ -5110,7 +5760,8 @@ class ThreadRun(_model_base.Model):
      AgentsNamedToolChoice"""
     response_format: "_types.AgentsApiResponseFormatOption" = rest_field()
     """The response format of the tool calls used in this run. Required. Is one of the following
-     types: str, Union[str, \"_models.AgentsApiResponseFormatMode\"], AgentsApiResponseFormat"""
+     types: str, Union[str, \"_models.AgentsApiResponseFormatMode\"], AgentsApiResponseFormat,
+     ResponseFormatJsonSchemaType"""
     metadata: Dict[str, str] = rest_field()
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
      additional information about that object in a structured format. Keys may be up to 64
@@ -5118,8 +5769,8 @@ class ThreadRun(_model_base.Model):
     tool_resources: Optional["_models.UpdateToolResourcesOptions"] = rest_field()
     """Override the tools the agent can use for this run. This is useful for modifying the behavior on
      a per-run basis."""
-    parallel_tool_calls: Optional[bool] = rest_field(name="parallelToolCalls")
-    """Determines if tools can be executed in parallel within the run."""
+    parallel_tool_calls: bool = rest_field()
+    """Determines if tools can be executed in parallel within the run. Required."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -5139,7 +5790,7 @@ class ThreadRun(_model_base.Model):
         completed_at: datetime.datetime,
         cancelled_at: datetime.datetime,
         failed_at: datetime.datetime,
-        incomplete_details: Union[str, "_models.IncompleteRunDetails"],
+        incomplete_details: "_models.IncompleteRunDetails",
         usage: "_models.RunCompletionUsage",
         max_prompt_tokens: int,
         max_completion_tokens: int,
@@ -5147,11 +5798,11 @@ class ThreadRun(_model_base.Model):
         tool_choice: "_types.AgentsApiToolChoiceOption",
         response_format: "_types.AgentsApiResponseFormatOption",
         metadata: Dict[str, str],
+        parallel_tool_calls: bool,
         required_action: Optional["_models.RequiredAction"] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         tool_resources: Optional["_models.UpdateToolResourcesOptions"] = None,
-        parallel_tool_calls: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -6098,7 +6749,7 @@ class VectorStoreFileError(_model_base.Model):
 
 
     :ivar code: One of ``server_error`` or ``rate_limit_exceeded``. Required. Known values are:
-     "internal_error", "file_not_found", "parsing_error", and "unhandled_mime_type".
+     "server_error", "invalid_file", and "unsupported_file".
     :vartype code: str or ~azure.ai.projects.models.VectorStoreFileErrorCode
     :ivar message: A human-readable description of the error. Required.
     :vartype message: str
@@ -6106,7 +6757,7 @@ class VectorStoreFileError(_model_base.Model):
 
     code: Union[str, "_models.VectorStoreFileErrorCode"] = rest_field()
     """One of ``server_error`` or ``rate_limit_exceeded``. Required. Known values are:
-     \"internal_error\", \"file_not_found\", \"parsing_error\", and \"unhandled_mime_type\"."""
+     \"server_error\", \"invalid_file\", and \"unsupported_file\"."""
     message: str = rest_field()
     """A human-readable description of the error. Required."""
 

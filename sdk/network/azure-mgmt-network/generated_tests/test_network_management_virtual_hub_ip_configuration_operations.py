@@ -20,12 +20,12 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_virtual_hub_ip_configuration_get(self, resource_group):
         response = self.client.virtual_hub_ip_configuration.get(
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             ip_config_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_virtual_hub_ip_configuration_begin_create_or_update(self, resource_group):
         response = self.client.virtual_hub_ip_configuration.begin_create_or_update(
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
@@ -106,6 +106,9 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                 }
                             ],
                             "ipConfigurations": [...],
+                            "ipamPoolPrefixAllocations": [
+                                {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                            ],
                             "name": "str",
                             "natGateway": {"id": "str"},
                             "networkSecurityGroup": {
@@ -199,6 +202,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                     {
                                         "auxiliaryMode": "str",
                                         "auxiliarySku": "str",
+                                        "defaultOutboundConnectivityEnabled": bool,
                                         "disableTcpStateTracking": bool,
                                         "dnsSettings": {
                                             "appliedDnsServers": ["str"],
@@ -849,6 +853,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                         {
                                             "auxiliaryMode": "str",
                                             "auxiliarySku": "str",
+                                            "defaultOutboundConnectivityEnabled": bool,
                                             "disableTcpStateTracking": bool,
                                             "dnsSettings": {
                                                 "appliedDnsServers": ["str"],
@@ -1640,6 +1645,9 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                             "subnet": ...,
                         }
                     ],
+                    "ipamPoolPrefixAllocations": [
+                        {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                    ],
                     "name": "str",
                     "natGateway": {"id": "str"},
                     "networkSecurityGroup": {
@@ -1731,6 +1739,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                             {
                                 "auxiliaryMode": "str",
                                 "auxiliarySku": "str",
+                                "defaultOutboundConnectivityEnabled": bool,
                                 "disableTcpStateTracking": bool,
                                 "dnsSettings": {
                                     "appliedDnsServers": ["str"],
@@ -2660,6 +2669,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                                 {
                                     "auxiliaryMode": "str",
                                     "auxiliarySku": "str",
+                                    "defaultOutboundConnectivityEnabled": bool,
                                     "disableTcpStateTracking": bool,
                                     "dnsSettings": {
                                         "appliedDnsServers": ["str"],
@@ -3603,7 +3613,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
                 },
                 "type": "str",
             },
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -3611,12 +3621,12 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_virtual_hub_ip_configuration_begin_delete(self, resource_group):
         response = self.client.virtual_hub_ip_configuration.begin_delete(
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             ip_config_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -3624,11 +3634,11 @@ class TestNetworkManagementVirtualHubIpConfigurationOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_virtual_hub_ip_configuration_list(self, resource_group):
         response = self.client.virtual_hub_ip_configuration.list(
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
