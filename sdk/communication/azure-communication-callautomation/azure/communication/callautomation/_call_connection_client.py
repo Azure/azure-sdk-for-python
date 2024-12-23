@@ -1144,7 +1144,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     def interrupt_audio_and_announce(
         self,
         target_participant: "CommunicationIdentifier",
-        play_sources: Union[List[Union['FileSource', 'TextSource', 'SsmlSource']]],
+        play_sources: List[Union['FileSource', 'TextSource', 'SsmlSource']],
         *,
         operation_context: Optional[str] = None,
         **kwargs,
