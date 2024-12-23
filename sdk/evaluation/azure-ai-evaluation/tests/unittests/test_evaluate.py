@@ -48,6 +48,9 @@ def missing_columns_jsonl_file():
 def evaluate_test_data_jsonl_file():
     return _get_file("evaluate_test_data.jsonl")
 
+@pytest.fixture
+def evaluate_test_data_korean_jsonl_file():
+    return _get_file("questions_answers_korean.jsonl")
 
 @pytest.fixture
 def pf_client() -> PFClient:
@@ -433,6 +436,24 @@ class TestEvaluate:
             content = f.read()
             data_from_file = json.loads(content)
             assert result["metrics"] == data_from_file["metrics"]
+
+    def test_evaluate_korean_characters_result_output_path(self, evaluate_test_data_korean_jsonl_file, tmpdir, use_relative_path):
+        output_path = "eval_test_results_korean.jsonl"
+
+        result = evaluate(
+            data=evaluate_test_data_korean_jsonl_file,
+            evaluators={"g": F1ScoreEvaluator()},
+            output_path=output_path,
+        )
+
+        assert result is not None
+
+        with open(output_path, "r") as f:
+            content = f.read()
+            data_from_file = json.loads(content)
+            assert result["rows"][0]["inputs.question"] == data_from_file[0]["query"]
+
+        os.remove(output_path)
 
     def test_evaluate_with_errors(self):
         """Test evaluate_handle_errors"""
