@@ -434,7 +434,7 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
         initial_data_df = data_loader.load()
     except Exception as e:
         raise EvaluationException(
-            message=f"Unable to load data from '{data}'. Detailed error: {e}.",
+            message=f"Unable to load data from '{data}'. Please ensure the input is a valid format. Detailed error: {e}.",
             target=ErrorTarget.EVALUATE,
             category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
