@@ -35,6 +35,11 @@ def _get_file(name):
 
 
 @pytest.fixture
+def csv_file():
+    return _get_file("evaluate_test_data.csv")
+
+
+@pytest.fixture
 def invalid_jsonl_file():
     return _get_file("invalid_evaluate_test_data.jsonl")
 
