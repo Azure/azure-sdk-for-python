@@ -1,6 +1,6 @@
 # Release History
 
-## 10.0.0b5 (2024-12-16)
+## 10.0.0b5 (2024-12-23)
 
 ### Features Added
 
