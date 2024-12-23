@@ -437,7 +437,7 @@ class TestEvaluate:
             data_from_file = json.loads(content)
             assert result["metrics"] == data_from_file["metrics"]
 
-    def test_evaluate_korean_characters_result_output_path(self, evaluate_test_data_korean_jsonl_file, tmpdir, use_relative_path):
+    def test_evaluate_korean_characters_result_output_path(self, evaluate_test_data_korean_jsonl_file):
         output_path = "eval_test_results_korean.jsonl"
 
         result = evaluate(
