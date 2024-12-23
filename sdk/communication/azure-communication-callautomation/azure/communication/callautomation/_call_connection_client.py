@@ -1171,5 +1171,4 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             kwargs=kwargs,
         )
 
-        self._call_media_client.interrupt_audio_and_announce(call_connection_id=self._call_connection_id, interrupt_request=interrupt_audio_announce_request)
-
+        self._call_media_client.interrupt_audio_and_announce(self._call_connection_id, interrupt_audio_announce_request)

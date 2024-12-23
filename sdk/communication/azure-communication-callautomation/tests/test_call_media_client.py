@@ -749,25 +749,23 @@ class TestCallMediaClient(unittest.TestCase):
         self.assertEqual(expected_hold_request.operation_context, actual_hold_request.operation_context)
         
         play_sources = [FileSource(url=self.url),  TextSource(text='test test test')]
-        self.call_connection_client.interrupt_audio_and_announce(target_participant=[self.target_user], play_sources=play_sources)
+        self.call_connection_client.interrupt_audio_and_announce(target_participant=self.target_user, play_sources=play_sources)
 
-        expected_play_request = PlayRequest(
+        expected_interrupt_audio_announce_request = InterruptAudioAndAnnounceRequest(
             play_sources=[play_source._to_generated()],
-            play_to=[serialize_identifier(self.target_user)],
-            play_options=PlayOptions(loop=False)
-        )
-        interrupt_audio_announce_request = InterruptAudioAndAnnounceRequest(
-            play_sources=[play_source._to_generated()],
-            play_to=[serialize_identifier(self.target_user)],
+            play_to=serialize_identifier(self.target_user),
             operation_context=operation_context,
         )
         mock_interrupt_audio_and_announce.assert_called_once()
         actual_interrupt_audio_and_announce_request = mock_interrupt_audio_and_announce.call_args[0][1]
+
+        self.assertEqual(expected_interrupt_audio_announce_request.play_sources[0].kind, actual_interrupt_audio_and_announce_request.play_sources[0].kind)
+        self.assertEqual(expected_interrupt_audio_announce_request.play_to, actual_interrupt_audio_and_announce_request.play_to)
         
         self.call_connection_client.unhold(target_participant=self.target_user, operation_context=operation_context)
 
         expected_hold_request = UnholdRequest(
-            target_participant=[serialize_identifier(self.target_user)], operation_context=operation_context
+            target_participant=serialize_identifier(self.target_user), operation_context=operation_context
         )
         mock_unhold.assert_called_once()
         actual_hold_request = mock_unhold.call_args[0][1]
