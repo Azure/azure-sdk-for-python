@@ -433,15 +433,12 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
         data_loader = DataLoaderFactory.get_loader(data)
         initial_data_df = data_loader.load()
     except Exception as e:
-        if isinstance(e, EvaluationException):
-            raise e
-        else:
-            raise EvaluationException(
-                message=f"Unable to load data from '{data}'. Please ensure the input is valid JSONL or CSV format. Detailed error: {e}.",
-                target=ErrorTarget.EVALUATE,
-                category=ErrorCategory.INVALID_VALUE,
-                blame=ErrorBlame.USER_ERROR,
-            ) from e
+        raise EvaluationException(
+            message=f"Unable to load data from '{data}'. Detailed error: {e}.",
+            target=ErrorTarget.EVALUATE,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.USER_ERROR,
+        ) from e
 
     return initial_data_df
 
