@@ -451,7 +451,7 @@ class TestEvaluate:
         with open(output_path, "r") as f:
             content = f.read()
             data_from_file = json.loads(content)
-            assert result["rows"][0]["inputs.response"] == data_from_file[0]["response"]
+            assert result["rows"][0]["inputs.query"] == data_from_file[0]["query"]
 
         os.remove(output_path)
 
