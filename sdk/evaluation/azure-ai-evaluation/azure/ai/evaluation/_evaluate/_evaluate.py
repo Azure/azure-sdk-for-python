@@ -429,14 +429,26 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
             )
 
     try:
-        initial_data_df = pd.read_json(data, lines=True)
+        _, ext = os.path.splitext(data)
+
+        if ext == ".jsonl":
+            initial_data_df = pd.read_json(data, lines=True)
+        elif ext == ".csv":
+            print("Loading data from CSV")
+            initial_data_df = pd.read_csv(data)
+            print("Data loaded from CSV")
+        else:
+            raise EvaluationException("Input data files must be in .jsonl or .csv format.")
     except Exception as e:
-        raise EvaluationException(
-            message=f"Unable to load data from '{data}'. Please ensure the input is valid JSONL format. Detailed error: {e}.",
-            target=ErrorTarget.EVALUATE,
-            category=ErrorCategory.INVALID_VALUE,
-            blame=ErrorBlame.USER_ERROR,
-        ) from e
+        if isinstance(e, EvaluationException):
+            raise e
+        else:
+            raise EvaluationException(
+                message=f"Unable to load data from '{data}'. Please ensure the input is valid JSONL or CSV format. Detailed error: {e}.",
+                target=ErrorTarget.EVALUATE,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            ) from e
 
     return initial_data_df
 
