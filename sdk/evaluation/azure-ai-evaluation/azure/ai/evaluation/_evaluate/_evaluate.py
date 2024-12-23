@@ -31,6 +31,7 @@ from ._utils import (
     _log_metrics_and_instance_results,
     _trace_destination_from_project_scope,
     _write_output,
+    DataLoaderFactory,
 )
 
 TClient = TypeVar("TClient", ProxyClient, CodeClient)
@@ -429,14 +430,8 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
             )
 
     try:
-        _, ext = os.path.splitext(data)
-
-        if ext == ".jsonl":
-            initial_data_df = pd.read_json(data, lines=True)
-        elif ext == ".csv":
-            initial_data_df = pd.read_csv(data)
-        else:
-            raise EvaluationException("Input data files must be in .jsonl or .csv format.")
+        data_loader = DataLoaderFactory.get_loader(data)
+        initial_data_df = data_loader.load()
     except Exception as e:
         if isinstance(e, EvaluationException):
             raise e

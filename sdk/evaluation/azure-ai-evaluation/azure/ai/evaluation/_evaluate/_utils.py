@@ -328,3 +328,33 @@ def set_event_loop_policy() -> None:
         # Reference: https://stackoverflow.com/questions/45600579/asyncio-event-loop-is-closed-when-getting-loop
         # On Windows seems to be a problem with EventLoopPolicy, use this snippet to work around it
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())  # type: ignore[attr-defined]
+
+
+class JSONLDataFileLoader:
+    def __init__(self, filename: Union[os.PathLike, str]):
+        self.filename = filename
+
+    def load(self) -> pd.DataFrame:
+        return pd.read_json(self.filename, lines=True)
+    
+class CSVDataFileLoader:
+    def __init__(self, filename: Union[os.PathLike, str]):
+        self.filename = filename
+
+    def load(self) -> pd.DataFrame:
+        return pd.read_csv(self.filename)
+
+class DataLoaderFactory:
+    @staticmethod
+    def get_loader(filename: Union[os.PathLike, str]) -> Union[JSONLDataFileLoader, CSVDataFileLoader]:
+        if str(filename).endswith(".jsonl"):
+            return JSONLDataFileLoader(filename)
+        elif str(filename).endswith(".csv"):
+            return CSVDataFileLoader(filename)
+        else:
+            raise EvaluationException(
+                message=f"Unsupported file format: {filename}. Supported formats are .jsonl and .csv",
+                internal_message=f"Unsupported file format: {filename}. Supported formats are .jsonl and .csv",
+                target=ErrorTarget.EVALUATE,
+                category=ErrorCategory.INVALID_VALUE,
+            )
