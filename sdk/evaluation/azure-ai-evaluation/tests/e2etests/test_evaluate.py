@@ -136,13 +136,9 @@ def _get_run_from_run_history(flow_run_id, azure_ml_client: LiteMLClient, projec
 @pytest.mark.localtest
 class TestEvaluate:
     @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
-    def test_evaluate_with_groundedness_evaluator(self, model_config, csv_file):
-        print("csv_file", csv_file)
-
-        data_file = csv_file
-
+    def test_evaluate_with_groundedness_evaluator(self, model_config, data_file):
         # data
-        input_data = pd.read_csv(data_file)
+        input_data = pd.read_json(data_file, lines=True)
 
         groundedness_eval = GroundednessEvaluator(model_config)
         f1_score_eval = F1ScoreEvaluator()
