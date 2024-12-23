@@ -35,9 +35,8 @@ def _get_file(name):
 
 
 @pytest.fixture
-def csv_file():
-    return _get_file("evaluate_test_data.csv")
-
+def unsupported_file_type():
+    return _get_file("unsupported_file_type.txt")
 
 @pytest.fixture
 def invalid_jsonl_file():
@@ -689,3 +688,11 @@ class TestEvaluate:
                 evaluators={"f1": F1ScoreEvaluator()},
             )
         assert "Some evaluators are missing required inputs:\n- f1: ['ground_truth']\n\n" in cm.value.args[0]
+
+    def test_unsupported_file_inputs(self, mock_model_config, unsupported_file_type):
+        with pytest.raises(EvaluationException) as cm:
+            evaluate(
+                data=unsupported_file_type,
+                evaluators={"groundedness": GroundednessEvaluator(model_config=mock_model_config)},
+            )
+        assert "Unsupported file format: " in cm.value.args[0]
