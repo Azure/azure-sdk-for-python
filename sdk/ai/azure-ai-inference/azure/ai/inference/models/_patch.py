@@ -19,6 +19,7 @@ from azure.core.rest import HttpResponse, AsyncHttpResponse
 from ._models import ImageUrl as ImageUrlGenerated
 from ._models import ChatCompletions as ChatCompletionsGenerated
 from ._models import EmbeddingsResult as EmbeddingsResultGenerated
+from ._models import ImageEmbeddingInput as EmbeddingInputGenerated
 from .. import models as _models
 
 if sys.version_info >= (3, 11):
@@ -104,6 +105,32 @@ class ImageUrl(ImageUrlGenerated):
             image_data = base64.b64encode(f.read()).decode("utf-8")
         url = f"data:image/{image_format};base64,{image_data}"
         return cls(url=url, detail=detail)
+
+
+class ImageEmbeddingInput(EmbeddingInputGenerated):
+
+    @classmethod
+    def load(cls, *, image_file: str, image_format: str, text: str = None) -> Self:
+        """
+        Create an ImageEmbeddingInput object from a local image file. The method reads the image
+        file and encodes it as a base64 string, which together with the image format
+        is then used to format the JSON `url` value passed in the request payload.
+
+        :ivar image_file: The name of the local image file to load. Required.
+        :vartype image_file: str
+        :ivar image_format: The MIME type format of the image. For example: "jpeg", "png". Required.
+        :vartype image_format: str
+        :ivar text: Optional. The text input to feed into the model (like DINO, CLIP).
+         Returns a 422 error if the model doesn't support the value or parameter.
+        :vartype text: str
+        :return: An ImageEmbeddingInput object with the image data encoded as a base64 string.
+        :rtype: ~azure.ai.inference.models.EmbeddingsInput
+        :raises FileNotFoundError: when the image file could not be opened.
+        """
+        with open(image_file, "rb") as f:
+            image_data = base64.b64encode(f.read()).decode("utf-8")
+        image_uri = f"data:image/{image_format};base64,{image_data}"
+        return cls(image=image_uri, text=text)
 
 
 class BaseStreamingChatCompletions:
@@ -268,6 +295,7 @@ class AsyncStreamingChatCompletions(BaseStreamingChatCompletions):
 
 __all__: List[str] = [
     "ImageUrl",
+    "ImageEmbeddingInput",
     "ChatCompletions",
     "EmbeddingsResult",
     "StreamingChatCompletions",

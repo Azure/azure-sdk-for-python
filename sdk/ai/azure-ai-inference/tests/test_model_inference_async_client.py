@@ -25,6 +25,7 @@ from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 
+
 # The test class name needs to start with "Test" to get collected by pytest
 class TestModelAsyncClient(ModelClientTestBase):
 

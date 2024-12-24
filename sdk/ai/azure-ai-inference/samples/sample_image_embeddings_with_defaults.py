@@ -4,8 +4,8 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to get image embeddings vectors for
-    two input images, using a synchronous client. The sample also shows
+    This sample demonstrates how to get image embeddings vector for
+    an input image, using a synchronous client. The sample also shows
     how to set default image embeddings configuration in the client constructor,
     which will be applied to all `embed` calls to the service.
 
@@ -28,7 +28,6 @@ USAGE:
 
 def sample_image_embeddings_with_defaults():
     import os
-    import base64
 
     try:
         endpoint = os.environ["AZURE_AI_IMAGE_EMBEDDINGS_ENDPOINT"]
@@ -39,21 +38,16 @@ def sample_image_embeddings_with_defaults():
         exit()
 
     from azure.ai.inference import ImageEmbeddingsClient
-    from azure.ai.inference.models import EmbeddingInput, EmbeddingInputType
+    from azure.ai.inference.models import ImageEmbeddingInput, EmbeddingInputType
     from azure.core.credentials import AzureKeyCredential
 
-    with open("sample1.png", "rb") as f:
-        image1: str = base64.b64encode(f.read()).decode("utf-8")
-    with open("sample2.png", "rb") as f:
-        image2: str = base64.b64encode(f.read()).decode("utf-8")
-
-    # Create a client with default embeddings settings
+    # Create a client with some default embeddings settings
     client = ImageEmbeddingsClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key), dimensions=1024, input_type=EmbeddingInputType.QUERY
+        endpoint=endpoint, credential=AzureKeyCredential(key), input_type=EmbeddingInputType.QUERY
     )
 
     # Call the service with the defaults specified above
-    response = client.embed(input=[EmbeddingInput(image=image1), EmbeddingInput(image=image2)])
+    response = client.embed(input=[ImageEmbeddingInput.load(image_file="sample1.png", image_format="png")])
 
     for item in response.data:
         length = len(item.embedding)
@@ -64,7 +58,7 @@ def sample_image_embeddings_with_defaults():
 
     # You can always override one or more of the defaults for a specific call, as shown here
     response = client.embed(
-        input=[EmbeddingInput(image=image1), EmbeddingInput(image=image2)],
+        input=[ImageEmbeddingInput.load(image_file="sample1.png", image_format="png")],
         input_type=EmbeddingInputType.TEXT,
     )
 

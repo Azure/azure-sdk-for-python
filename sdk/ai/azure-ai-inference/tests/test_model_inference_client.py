@@ -25,6 +25,7 @@ from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 
+
 # The test class name needs to start with "Test" to get collected by pytest
 class TestModelClient(ModelClientTestBase):
 
@@ -802,4 +803,3 @@ class TestModelClient(ModelClientTestBase):
             assert "not found" in e.message.lower() or "not allowed" in e.message.lower()
         client.close()
         assert exception_caught
-

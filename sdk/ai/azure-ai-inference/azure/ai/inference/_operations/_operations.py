@@ -703,7 +703,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
     def _embed(
         self,
         *,
-        input: List[_models.EmbeddingInput],
+        input: List[_models.ImageEmbeddingInput],
         extra_params: Optional[Union[str, _models._enums.ExtraParameters]] = None,
         content_type: str = "application/json",
         dimensions: Optional[int] = None,
@@ -727,7 +727,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        input: List[_models.EmbeddingInput] = _Unset,
+        input: List[_models.ImageEmbeddingInput] = _Unset,
         extra_params: Optional[Union[str, _models._enums.ExtraParameters]] = None,
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
@@ -743,7 +743,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         :keyword input: Input image to embed. To embed multiple inputs in a single request, pass an
          array.
          The input must not exceed the max input tokens for the model. Required.
-        :paramtype input: list[~azure.ai.inference.models.EmbeddingInput]
+        :paramtype input: list[~azure.ai.inference.models.ImageEmbeddingInput]
         :keyword extra_params: Controls what happens if extra parameters, undefined by the REST API,
          are passed in the JSON request payload.
          This sets the HTTP request header ``extra-parameters``. Known values are: "error", "drop", and

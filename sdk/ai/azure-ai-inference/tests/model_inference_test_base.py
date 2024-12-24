@@ -41,7 +41,7 @@ ServicePreparerChatCompletions = functools.partial(
     "azure_ai_chat",
     azure_ai_chat_endpoint="https://your-deployment-name.eastus2.models.ai.azure.com",
     azure_ai_chat_key="00000000000000000000000000000000",
-    azure_ai_chat_model="mistral-large-2411"
+    azure_ai_chat_model="mistral-large-2411",
 )
 
 #
@@ -58,7 +58,7 @@ ServicePreparerAOAIChatCompletions = functools.partial(
     "azure_openai_chat",
     azure_openai_chat_endpoint="https://your-deployment-name.openai.azure.com/openai/deployments/gpt-4o-deployment",
     azure_openai_chat_key="00000000000000000000000000000000",
-    azure_openai_chat_api_version="yyyy-mm-dd-preview"
+    azure_openai_chat_api_version="yyyy-mm-dd-preview",
 )
 
 #
