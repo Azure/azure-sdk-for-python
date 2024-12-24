@@ -1139,7 +1139,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             stop_media_streaming_request,
             **kwargs
             )
-        
+
     @distributed_trace
     def interrupt_audio_and_announce(
         self,
@@ -1153,8 +1153,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
         :param target_participant: The participant being added.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
-        :keyword play_sources: A PlaySource representing the source to play.
-        :paramtype play_sources: list[~azure.communication.callautomation.FileSource] or
+        :param play_sources: A PlaySource representing the source to play.
+        :type play_sources: list[~azure.communication.callautomation.FileSource] or
          list[~azure.communication.callautomation.TextSource] or
          list[~azure.communication.callautomation.SsmlSource]
         :keyword operation_context: Value that can be used to track this call and its associated events.
@@ -1165,10 +1165,14 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         """
 
         interrupt_audio_announce_request = InterruptAudioAndAnnounceRequest(
-            play_sources=[source._to_generated() for source in play_sources] if play_sources else None,
+            play_sources=[source._to_generated() for source in play_sources] if play_sources else None, # pylint: disable=protected-access
             play_to=serialize_identifier(target_participant),
             operation_context=operation_context,
             kwargs=kwargs,
         )
 
-        self._call_media_client.interrupt_audio_and_announce(self._call_connection_id, interrupt_audio_announce_request)
+        self._call_media_client.interrupt_audio_and_announce(
+            self._call_connection_id,
+            interrupt_audio_announce_request,
+            **kwargs
+            )
