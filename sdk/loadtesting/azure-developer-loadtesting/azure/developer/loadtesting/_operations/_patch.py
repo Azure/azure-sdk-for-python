@@ -11,9 +11,8 @@ import time
 from functools import partial
 from typing import Any, IO, List, Optional, overload, Union
 
-from azure.core.polling import PollingMethod
+from azure.core.polling import PollingMethod, LROPoller
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.polling import LROPoller
 
 from ._operations import JSON
 from ._operations import LoadTestAdministrationClientOperationsMixin as GeneratedAdministrationClientOperations
@@ -58,7 +57,6 @@ class LoadTestingPollingMethod(PollingMethod):
             logger.error(e)
             raise e
 
-
 class ValidationCheckPoller(LoadTestingPollingMethod):
     """Polling method for long-running file validation operation."""
 
@@ -72,7 +70,6 @@ class ValidationCheckPoller(LoadTestingPollingMethod):
 
     def _update_status(self) -> None:
         self._status = self._resource["validationStatus"]
-
 
 class TestRunStatusPoller(LoadTestingPollingMethod):
     """Polling method for polling a Test Run."""
