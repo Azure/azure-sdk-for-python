@@ -27,11 +27,9 @@ class TestServiceFabricmanagedclustersManagementManagedClustersOperations(AzureM
         result = [r for r in response]
         assert result == []
 
-
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_list_by_subscription(self, resource_group):
         response = self.client.managed_clusters.list_by_subscription()
         result = [r for r in response]
         assert response
-        

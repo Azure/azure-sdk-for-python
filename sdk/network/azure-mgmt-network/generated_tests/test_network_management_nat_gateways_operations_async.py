@@ -21,12 +21,12 @@ class TestNetworkManagementNatGatewaysOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_nat_gateways_begin_delete(self, resource_group):
         response = await (
             await self.client.nat_gateways.begin_delete(
                 resource_group_name=resource_group.name,
                 nat_gateway_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -35,11 +35,11 @@ class TestNetworkManagementNatGatewaysOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_nat_gateways_get(self, resource_group):
         response = await self.client.nat_gateways.get(
             resource_group_name=resource_group.name,
             nat_gateway_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -47,7 +47,7 @@ class TestNetworkManagementNatGatewaysOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_nat_gateways_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.nat_gateways.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -68,7 +68,7 @@ class TestNetworkManagementNatGatewaysOperationsAsync(AzureMgmtRecordedTestCase)
                     "type": "str",
                     "zones": ["str"],
                 },
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -77,12 +77,12 @@ class TestNetworkManagementNatGatewaysOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update_tags(self, resource_group):
+    async def test_nat_gateways_update_tags(self, resource_group):
         response = await self.client.nat_gateways.update_tags(
             resource_group_name=resource_group.name,
             nat_gateway_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -90,9 +90,9 @@ class TestNetworkManagementNatGatewaysOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_all(self, resource_group):
+    async def test_nat_gateways_list_all(self, resource_group):
         response = self.client.nat_gateways.list_all(
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -100,10 +100,10 @@ class TestNetworkManagementNatGatewaysOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_nat_gateways_list(self, resource_group):
         response = self.client.nat_gateways.list(
             resource_group_name=resource_group.name,
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

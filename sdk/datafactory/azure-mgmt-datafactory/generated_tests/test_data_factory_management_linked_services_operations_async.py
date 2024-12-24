@@ -21,7 +21,7 @@ class TestDataFactoryManagementLinkedServicesOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_factory(self, resource_group):
+    async def test_linked_services_list_by_factory(self, resource_group):
         response = self.client.linked_services.list_by_factory(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -33,7 +33,7 @@ class TestDataFactoryManagementLinkedServicesOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_linked_services_create_or_update(self, resource_group):
         response = await self.client.linked_services.create_or_update(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -47,7 +47,7 @@ class TestDataFactoryManagementLinkedServicesOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_linked_services_get(self, resource_group):
         response = await self.client.linked_services.get(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -60,7 +60,7 @@ class TestDataFactoryManagementLinkedServicesOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_linked_services_delete(self, resource_group):
         response = await self.client.linked_services.delete(
             resource_group_name=resource_group.name,
             factory_name="str",

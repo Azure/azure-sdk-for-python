@@ -23,23 +23,15 @@ from azure.ai.ml._azure_environments import (
     _resource_to_scopes,
 )
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.dataset_dataplane import (
-    AzureMachineLearningWorkspaces as ServiceClientDatasetDataplane,
-)
-from azure.ai.ml._restclient.model_dataplane import (
-    AzureMachineLearningWorkspaces as ServiceClientModelDataplane,
-)
-from azure.ai.ml._restclient.runhistory import (
-    AzureMachineLearningWorkspaces as ServiceClientRunHistory,
-)
+from azure.ai.ml._restclient.dataset_dataplane import AzureMachineLearningWorkspaces as ServiceClientDatasetDataplane
+from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspaces as ServiceClientModelDataplane
+from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as ServiceClientRunHistory
 from azure.ai.ml._restclient.runhistory.models import Run
-from azure.ai.ml._restclient.v2023_04_01_preview import (
-    AzureMachineLearningWorkspaces as ServiceClient022023Preview,
-)
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, ListViewType, UserIdentity
 from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_2401
-from azure.ai.ml._restclient.v2024_01_01_preview.models import JobType as RestJobType_20240101
+from azure.ai.ml._restclient.v2024_10_01_preview.models import JobType as RestJobType_20241001Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -113,11 +105,7 @@ from ..entities._job.pipeline._io import InputOutputBase, PipelineInput, _GroupA
 from ._component_operations import ComponentOperations
 from ._compute_operations import ComputeOperations
 from ._dataset_dataplane_operations import DatasetDataplaneOperations
-from ._job_ops_helper import (
-    get_git_properties,
-    get_job_output_uris_from_dataplane,
-    stream_logs_until_completion,
-)
+from ._job_ops_helper import get_git_properties, get_job_output_uris_from_dataplane, stream_logs_until_completion
 from ._local_job_invoker import is_local_run, start_run_if_local
 from ._model_dataplane_operations import ModelDataplaneOperations
 from ._operation_orchestrator import (
@@ -172,7 +160,7 @@ class JobOperations(_ScopeDependentOperations):
         **kwargs: Any,
     ) -> None:
         super(JobOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
 
         self._operation_2023_02_preview = service_client_02_2023_preview.jobs
         self._service_client = service_client_02_2023_preview
@@ -192,6 +180,7 @@ class JobOperations(_ScopeDependentOperations):
         )  # pylint: disable=line-too-long
 
         self.service_client_01_2024_preview = kwargs.pop("service_client_01_2024_preview", None)
+        self.service_client_10_2024_preview = kwargs.pop("service_client_10_2024_preview", None)
         self._kwargs = kwargs
 
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
@@ -744,8 +733,8 @@ class JobOperations(_ScopeDependentOperations):
         self, rest_job_resource: JobBase, **kwargs: Any
     ) -> JobBase:
         service_client_operation = self._operation_2023_02_preview
-        if rest_job_resource.properties.job_type == RestJobType_20240101.FINE_TUNING:
-            service_client_operation = self.service_client_01_2024_preview.jobs
+        if rest_job_resource.properties.job_type == RestJobType_20241001Preview.FINE_TUNING:
+            service_client_operation = self.service_client_10_2024_preview.jobs
         if rest_job_resource.properties.job_type == RestJobType.PIPELINE:
             service_client_operation = self.service_client_01_2024_preview.jobs
         if rest_job_resource.properties.job_type == RestJobType.AUTO_ML:
@@ -1074,12 +1063,27 @@ class JobOperations(_ScopeDependentOperations):
         return uri
 
     def _get_job(self, name: str) -> JobBase:
-        return self.service_client_01_2024_preview.jobs.get(
+        job = self.service_client_01_2024_preview.jobs.get(
             id=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
             **self._kwargs,
         )
+
+        if (
+            hasattr(job, "properties")
+            and job.properties
+            and hasattr(job.properties, "job_type")
+            and job.properties.job_type == RestJobType_20241001Preview.FINE_TUNING
+        ):
+            return self.service_client_10_2024_preview.jobs.get(
+                id=name,
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                **self._kwargs,
+            )
+
+        return job
 
     # Upgrade api from 2023-04-01-preview to 2024-01-01-preview for pipeline job
     # We can remove this function once `_get_job` function has also been upgraded to the same version with pipeline
