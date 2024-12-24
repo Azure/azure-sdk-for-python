@@ -448,10 +448,11 @@ class TestEvaluate:
 
         assert result is not None
 
-        with open(output_path, "r") as f:
-            content = f.read()
-            data_from_file = json.loads(content)
-            assert result["rows"][0]["inputs.query"] == data_from_file[0]["query"]
+        with open(evaluate_test_data_korean_jsonl_file, "r", encoding="utf-8") as f:
+            first_line = f.readline()
+            data_from_file = json.loads(first_line)
+
+        assert result["rows"][0]["inputs.query"] == data_from_file["query"]
 
         os.remove(output_path)
 
