@@ -29,7 +29,6 @@ class TestLoadTestAdministrationClient(LoadtestingTest):
                 "description": "",
                 "displayName": DISPLAY_NAME,
                 "loadTestConfig": {
-                    "engineSize": "m",
                     "engineInstances": 1,
                     "splitAllCSVs": False,
                 },
