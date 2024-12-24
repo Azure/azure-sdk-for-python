@@ -93,6 +93,19 @@ class TestModelClient(ModelClientTestBase):
         assert image_url.url.startswith("data:image/png;base64,iVBORw")
         assert image_url.detail == sdk.models.ImageDetailLevel.AUTO
 
+    # Test custom code in ImageEmbeddingInput class to load an image file
+    def test_image_embedding_input_load(self, **kwargs):
+        local_folder = os.path.dirname(os.path.abspath(__file__))
+        image_file = os.path.join(local_folder, "test_image1.png")
+        image_embedding_input = sdk.models.ImageEmbeddingInput.load(
+            image_file=image_file,
+            image_format="png",
+            text="some text",
+        )
+        assert image_embedding_input
+        assert image_embedding_input.image.startswith("data:image/png;base64,iVBORw")
+        assert image_embedding_input.text == "some text"
+
     # **********************************************************************************
     #
     #         EMBEDDINGS REGRESSION TESTS - NO SERVICE RESPONSE REQUIRED
