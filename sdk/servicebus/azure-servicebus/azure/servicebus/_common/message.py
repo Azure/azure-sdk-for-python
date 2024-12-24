@@ -47,7 +47,6 @@ from .tracing import trace_message
 
 if TYPE_CHECKING:
     try:
-        # pylint:disable=unused-import
         from uamqp import Message, BatchMessage
     except ImportError:
         pass
@@ -59,7 +58,7 @@ if TYPE_CHECKING:
 PrimitiveTypes = Union[int, float, bytes, bool, str, uuid.UUID]
 
 
-class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
+class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
     """A Service Bus Message.
 
     :param body: The data to send in a single message.
@@ -671,7 +670,7 @@ class ServiceBusMessageBatch(object):
             raise MessageSizeExceededError(
                 message=f"ServiceBusMessageBatch has reached its size limit: {self.max_size_in_bytes}"
             )
-        self._amqp_transport.add_batch(self, outgoing_sb_message)  # pylint: disable=protected-access
+        self._amqp_transport.add_batch(self, outgoing_sb_message)
         self._size = size_after_add
         self._count += 1
         self._messages.append(outgoing_sb_message)

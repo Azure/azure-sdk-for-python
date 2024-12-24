@@ -43,7 +43,7 @@ with project_client:
 
     # Create agent with code interpreter tool and tools_resources
     agent = project_client.agents.create_agent(
-        model="gpt-4-1106-preview",
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-assistant",
         instructions="You are helpful assistant",
         tools=code_interpreter.definitions,

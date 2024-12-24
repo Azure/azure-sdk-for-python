@@ -25,6 +25,7 @@ from typing import (
     Generic,
     Iterator,
     List,
+    Mapping,
     Optional,
     Set,
     Tuple,
@@ -34,6 +35,7 @@ from typing import (
     cast,
     get_args,
     get_origin,
+    overload,
 )
 
 from azure.core.credentials import AccessToken, TokenCredential
@@ -75,11 +77,15 @@ from ._models import (
     ToolDefinition,
     ToolResources,
     MessageDeltaTextContent,
+    VectorStoreDataSource,
 )
 
 from ._models import MessageDeltaChunk as MessageDeltaChunkGenerated
 from ._models import ThreadMessage as ThreadMessageGenerated
 from ._models import OpenAIPageableListOfThreadMessage as OpenAIPageableListOfThreadMessageGenerated
+from ._models import MessageAttachment as MessageAttachmentGenerated
+
+from .. import _types
 
 logger = logging.getLogger(__name__)
 
@@ -482,14 +488,54 @@ class ThreadMessage(ThreadMessageGenerated):
         ]
 
 
-class Tool(ABC):
+class MessageAttachment(MessageAttachmentGenerated):
+    @overload
+    def __init__(
+        self,
+        *,
+        tools: List["FileSearchToolDefinition"],
+        file_id: Optional[str] = None,
+        data_source: Optional["VectorStoreDataSource"] = None,
+    ) -> None: ...
+    @overload
+    def __init__(
+        self,
+        *,
+        tools: List["CodeInterpreterToolDefinition"],
+        file_id: Optional[str] = None,
+        data_source: Optional["VectorStoreDataSource"] = None,
+    ) -> None: ...
+    @overload
+    def __init__(
+        self,
+        *,
+        tools: List["_types.MessageAttachmentToolDefinition"],
+        file_id: Optional[str] = None,
+        data_source: Optional["VectorStoreDataSource"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+ToolDefinitionT = TypeVar("ToolDefinitionT", bound=ToolDefinition)
+
+
+class Tool(ABC, Generic[ToolDefinitionT]):
     """
     An abstract class representing a tool that can be used by an agent.
     """
 
     @property
     @abstractmethod
-    def definitions(self) -> List[ToolDefinition]:
+    def definitions(self) -> List[ToolDefinitionT]:
         """Get the tool definitions."""
 
     @property
@@ -507,7 +553,7 @@ class Tool(ABC):
         """
 
 
-class BaseFunctionTool(Tool):
+class BaseFunctionTool(Tool[FunctionToolDefinition]):
     """
     A tool that executes user-defined functions.
     """
@@ -602,14 +648,14 @@ class BaseFunctionTool(Tool):
         return function, parsed_arguments
 
     @property
-    def definitions(self) -> List[ToolDefinition]:
+    def definitions(self) -> List[FunctionToolDefinition]:
         """
         Get the function definitions.
 
         :return: A list of function definitions.
         :rtype: List[ToolDefinition]
         """
-        return cast(List[ToolDefinition], self._definitions)
+        return self._definitions
 
     @property
     def resources(self) -> ToolResources:
@@ -654,7 +700,7 @@ class AsyncFunctionTool(BaseFunctionTool):
             return json.dumps({"error": error_message})
 
 
-class AzureAISearchTool(Tool):
+class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
     """
     A tool that searches for information using Azure AI Search.
     """
@@ -663,7 +709,7 @@ class AzureAISearchTool(Tool):
         self.index_list = [IndexResource(index_connection_id=index_connection_id, index_name=index_name)]
 
     @property
-    def definitions(self) -> List[ToolDefinition]:
+    def definitions(self) -> List[AzureAISearchToolDefinition]:
         """
         Get the Azure AI search tool definitions.
 
@@ -690,7 +736,7 @@ class AzureAISearchTool(Tool):
         """
 
 
-class OpenApiTool(Tool):
+class OpenApiTool(Tool[OpenApiToolDefinition]):
     """
     A tool that retrieves information using an OpenAPI spec.
     """
@@ -703,14 +749,14 @@ class OpenApiTool(Tool):
         ]
 
     @property
-    def definitions(self) -> List[ToolDefinition]:
+    def definitions(self) -> List[OpenApiToolDefinition]:
         """
         Get the OpenApi tool definitions.
 
         :return: A list of tool definitions.
         :rtype: List[ToolDefinition]
         """
-        return cast(List[ToolDefinition], self._definitions)
+        return self._definitions
 
     @property
     def resources(self) -> ToolResources:
@@ -730,7 +776,7 @@ class OpenApiTool(Tool):
         """
 
 
-class AzureFunctionTool(Tool):
+class AzureFunctionTool(Tool[AzureFunctionToolDefinition]):
     """
     A tool that is used to inform agent about available the Azure function.
 
@@ -764,13 +810,13 @@ class AzureFunctionTool(Tool):
         ]
 
     @property
-    def definitions(self) -> List[ToolDefinition]:
+    def definitions(self) -> List[AzureFunctionToolDefinition]:
         """
         Get the Azure AI search tool definitions.
 
         :rtype: List[ToolDefinition]
         """
-        return cast(List[ToolDefinition], self._definitions)
+        return self._definitions
 
     @property
     def resources(self) -> ToolResources:
@@ -785,7 +831,7 @@ class AzureFunctionTool(Tool):
         pass
 
 
-class ConnectionTool(Tool):
+class ConnectionTool(Tool[ToolDefinitionT]):
     """
     A tool that requires connection ids.
     Used as base class for Bing Grounding, Sharepoint, and Microsoft Fabric
@@ -812,13 +858,13 @@ class ConnectionTool(Tool):
         pass
 
 
-class BingGroundingTool(ConnectionTool):
+class BingGroundingTool(ConnectionTool[BingGroundingToolDefinition]):
     """
     A tool that searches for information using Bing.
     """
 
     @property
-    def definitions(self) -> List[ToolDefinition]:
+    def definitions(self) -> List[BingGroundingToolDefinition]:
         """
         Get the Bing grounding tool definitions.
 
@@ -827,13 +873,13 @@ class BingGroundingTool(ConnectionTool):
         return [BingGroundingToolDefinition(bing_grounding=ToolConnectionList(connection_list=self.connection_ids))]
 
 
-class FabricTool(ConnectionTool):
+class FabricTool(ConnectionTool[MicrosoftFabricToolDefinition]):
     """
     A tool that searches for information using Microsoft Fabric.
     """
 
     @property
-    def definitions(self) -> List[ToolDefinition]:
+    def definitions(self) -> List[MicrosoftFabricToolDefinition]:
         """
         Get the Microsoft Fabric tool definitions.
 
@@ -842,13 +888,13 @@ class FabricTool(ConnectionTool):
         return [MicrosoftFabricToolDefinition(fabric_aiskill=ToolConnectionList(connection_list=self.connection_ids))]
 
 
-class SharepointTool(ConnectionTool):
+class SharepointTool(ConnectionTool[SharepointToolDefinition]):
     """
     A tool that searches for information using Sharepoint.
     """
 
     @property
-    def definitions(self) -> List[ToolDefinition]:
+    def definitions(self) -> List[SharepointToolDefinition]:
         """
         Get the Sharepoint tool definitions.
 
@@ -857,7 +903,7 @@ class SharepointTool(ConnectionTool):
         return [SharepointToolDefinition(sharepoint_grounding=ToolConnectionList(connection_list=self.connection_ids))]
 
 
-class FileSearchTool(Tool):
+class FileSearchTool(Tool[FileSearchToolDefinition]):
     """
     A tool that searches for uploaded file information from the created vector stores.
 
@@ -892,7 +938,7 @@ class FileSearchTool(Tool):
         self.vector_store_ids.remove(store_id)
 
     @property
-    def definitions(self) -> List[ToolDefinition]:
+    def definitions(self) -> List[FileSearchToolDefinition]:
         """
         Get the file search tool definitions.
 
@@ -913,7 +959,7 @@ class FileSearchTool(Tool):
         pass
 
 
-class CodeInterpreterTool(Tool):
+class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
     """
     A tool that interprets code files uploaded to the agent.
 
@@ -946,7 +992,7 @@ class CodeInterpreterTool(Tool):
         self.file_ids.remove(file_id)
 
     @property
-    def definitions(self) -> List[ToolDefinition]:
+    def definitions(self) -> List[CodeInterpreterToolDefinition]:
         """
         Get the code interpreter tool definitions.
 
@@ -1182,10 +1228,10 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
         self.submit_tool_outputs: Optional[Callable[[ThreadRun, "BaseAsyncAgentEventHandler[T]"], Awaitable[None]]] = (
             None
         )
-        self.done = False
-        self.buffer = ""
+        self.done: bool
+        self.buffer: str
 
-    def _init(
+    def initialize(
         self,
         response_iterator: AsyncIterator[bytes],
         submit_tool_outputs: Callable[[ThreadRun, "BaseAsyncAgentEventHandler[T]"], Awaitable[None]],
@@ -1194,29 +1240,28 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
         self.response_iterator = response_iterator
         self.event_handler = event_handler
         self.submit_tool_outputs = submit_tool_outputs
+        self.done = False
+        self.buffer = ""
 
     async def __anext__(self) -> T:
         if self.response_iterator is None:
             raise ValueError("The response handler was not initialized.")
-        while True:
-            try:
-                chunk = await self.response_iterator.__anext__()
-                self.buffer += chunk.decode("utf-8")
-            except StopAsyncIteration:
-                if self.buffer:
-                    event_data_str, self.buffer = self.buffer, ""
-                    if event_data_str:
-                        event = await self._process_event(event_data_str)
-                        if event:
-                            return event
-                        continue
-                raise
 
-            while "\n\n" in self.buffer:
-                event_data_str, self.buffer = self.buffer.split("\n\n", 1)
-                event = await self._process_event(event_data_str)
+        async for chunk in self.response_iterator:
+            self.buffer += chunk.decode("utf-8")
+            split_buffer = self.buffer.split("\n\n")
+            self.buffer = split_buffer[-1]
+            for ln in split_buffer[:-1]:
+                event = await self._process_event(ln)
                 if event:
                     return event
+
+        if self.buffer:
+            event = await self._process_event(self.buffer)
+            if event:
+                return event
+
+        raise StopAsyncIteration()
 
     async def _process_event(self, event_data_str: str) -> Optional[T]:
         raise NotImplementedError("This method needs to be implemented.")
@@ -1239,10 +1284,10 @@ class BaseAgentEventHandler(Iterator[T]):
         self.response_iterator: Optional[Iterator[bytes]] = None
         self.event_handler: Optional["BaseAgentEventHandler[T]"] = None
         self.submit_tool_outputs: Optional[Callable[[ThreadRun, "BaseAgentEventHandler[T]"], Awaitable[None]]] = None
-        self.done = False
-        self.buffer = ""
+        self.done: bool
+        self.buffer: str
 
-    def _init(
+    def initialize(
         self,
         response_iterator: Iterator[bytes],
         submit_tool_outputs: Callable[[ThreadRun, "BaseAgentEventHandler[T]"], Awaitable[None]],
@@ -1251,29 +1296,28 @@ class BaseAgentEventHandler(Iterator[T]):
         self.response_iterator = response_iterator
         self.event_handler = event_handler
         self.submit_tool_outputs = submit_tool_outputs
+        self.done = False
+        self.buffer = ""
 
     def __next__(self) -> T:
         if self.response_iterator is None:
             raise ValueError("The response handler was not initialized.")
-        while True:
-            try:
-                chunk = self.response_iterator.__next__()
-                self.buffer += chunk.decode("utf-8")
-            except StopAsyncIteration:
-                if self.buffer:
-                    event_data_str, self.buffer = self.buffer, ""
-                    if event_data_str:
-                        event = self._process_event(event_data_str)
-                        if event:
-                            return event
-                        continue
-                raise
 
-            while "\n\n" in self.buffer:
-                event_data_str, self.buffer = self.buffer.split("\n\n", 1)
-                event = self._process_event(event_data_str)
+        for chunk in self.response_iterator:
+            self.buffer += chunk.decode("utf-8")
+            split_buffer = self.buffer.split("\n\n")
+            self.buffer = split_buffer[-1]
+            for ln in split_buffer[:-1]:
+                event = self._process_event(ln)
                 if event:
                     return event
+
+        if self.buffer:
+            event = self._process_event(self.buffer)
+            if event:
+                return event
+
+        raise StopIteration()
 
     def _process_event(self, event_data_str: str) -> Optional[T]:
         raise NotImplementedError("This method needs to be implemented.")
@@ -1286,7 +1330,7 @@ class BaseAgentEventHandler(Iterator[T]):
         try:
             for _ in self:
                 pass
-        except StopAsyncIteration:
+        except StopIteration:
             pass
 
 
@@ -1521,10 +1565,8 @@ class AsyncAgentRunStream(Generic[BaseAsyncAgentEventHandlerT]):
     ):
         self.response_iterator = response_iterator
         self.event_handler = event_handler
-        self.done = False
-        self.buffer = ""
         self.submit_tool_outputs = submit_tool_outputs
-        self.event_handler._init(
+        self.event_handler.initialize(
             self.response_iterator,
             cast(Callable[[ThreadRun, BaseAsyncAgentEventHandler], Awaitable[None]], submit_tool_outputs),
             self.event_handler,
@@ -1550,10 +1592,8 @@ class AgentRunStream(Generic[BaseAgentEventHandlerT]):
     ):
         self.response_iterator = response_iterator
         self.event_handler = event_handler
-        self.done = False
-        self.buffer = ""
         self.submit_tool_outputs = submit_tool_outputs
-        self.event_handler._init(
+        self.event_handler.initialize(
             self.response_iterator,
             cast(Callable[[ThreadRun, BaseAgentEventHandler], Awaitable[None]], submit_tool_outputs),
             self.event_handler,
@@ -1666,6 +1706,7 @@ __all__: List[str] = [
     "ThreadMessage",
     "MessageTextFileCitationAnnotation",
     "MessageDeltaChunk",
+    "MessageAttachment",
 ]  # Add all objects you want publicly available to users at this package level
 
 

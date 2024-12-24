@@ -148,11 +148,11 @@
 # ServiceOwners: @PallabPaul
 
 # PRLabel: %Confidential Ledger
-/sdk/confidentialledger/azure-confidentialledger/                    @PallabPaul @lynshi
+/sdk/confidentialledger/azure-confidentialledger/                    @PallabPaul @lynshi @amruthashree18
 
 # ServiceLabel: %Content Safety
 # PRLabel: %Content Safety
-/sdk/contentsafety/                                                  @mengaims @JieZhou000
+/sdk/contentsafety/                                                  @mengaims
 
 # ServiceLabel: %DevCenter
 # PRLabel: %DevCenter
