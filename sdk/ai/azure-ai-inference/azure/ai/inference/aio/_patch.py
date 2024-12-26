@@ -86,7 +86,7 @@ async def load_client(
             "The AI model information is missing a value for `model type`. Cannot create an appropriate client."
         )
 
-    # TODO: Remove "completions" and "embedding" once Mistral Large and Cohere fixes their model type
+    # TODO: Remove "completions", "chat-comletions" and "embedding" once Mistral Large and Cohere fixes their model type
     if model_info.model_type in (_models.ModelType.CHAT, "completion", "chat-completion", "chat-completions"):
         chat_completion_client = ChatCompletionsClient(endpoint, credential, **kwargs)
         chat_completion_client._model_info = (  # pylint: disable=protected-access,attribute-defined-outside-init
@@ -1035,7 +1035,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
     async def embed(
         self,
         *,
-        input: List[_models.EmbeddingInput],
+        input: List[_models.ImageEmbeddingInput],
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
@@ -1049,7 +1049,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         :keyword input: Input image to embed. To embed multiple inputs in a single request, pass an
          array.
          The input must not exceed the max input tokens for the model. Required.
-        :paramtype input: list[~azure.ai.inference.models.EmbeddingInput]
+        :paramtype input: list[~azure.ai.inference.models.ImageEmbeddingInput]
         :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
          have. Default value is None.
         :paramtype dimensions: int
@@ -1121,7 +1121,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        input: List[_models.EmbeddingInput] = _Unset,
+        input: List[_models.ImageEmbeddingInput] = _Unset,
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
@@ -1139,7 +1139,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         :keyword input: Input image to embed. To embed multiple inputs in a single request, pass an
          array.
          The input must not exceed the max input tokens for the model. Required.
-        :paramtype input: list[~azure.ai.inference.models.EmbeddingInput]
+        :paramtype input: list[~azure.ai.inference.models.ImageEmbeddingInput]
         :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
          have. Default value is None.
         :paramtype dimensions: int

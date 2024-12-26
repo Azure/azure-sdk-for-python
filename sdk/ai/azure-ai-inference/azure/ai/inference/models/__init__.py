@@ -20,7 +20,7 @@ from ._models import ChatRequestMessage
 from ._models import ChatResponseMessage
 from ._models import CompletionsUsage
 from ._models import ContentItem
-from ._models import EmbeddingInput
+from ._patch import ImageEmbeddingInput
 from ._models import EmbeddingItem
 from ._patch import EmbeddingsResult
 from ._models import EmbeddingsUsage
@@ -67,7 +67,7 @@ __all__ = [
     "ChatResponseMessage",
     "CompletionsUsage",
     "ContentItem",
-    "EmbeddingInput",
+    "ImageEmbeddingInput",
     "EmbeddingItem",
     "EmbeddingsResult",
     "EmbeddingsUsage",

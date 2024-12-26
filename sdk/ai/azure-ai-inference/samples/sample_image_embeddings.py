@@ -4,8 +4,8 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to get image embeddings vectors for 
-    two input images, using a synchronous client.
+    This sample demonstrates how to get image embeddings vector for
+    an input image, using a synchronous client.
 
     This sample assumes the AI model is hosted on a Serverless API or
     Managed Compute endpoint. For GitHub Models or Azure OpenAI endpoints,
@@ -26,7 +26,6 @@ USAGE:
 
 def sample_image_embeddings():
     import os
-    import base64
 
     try:
         endpoint = os.environ["AZURE_AI_IMAGE_EMBEDDINGS_ENDPOINT"]
@@ -38,17 +37,12 @@ def sample_image_embeddings():
 
     # [START image_embeddings]
     from azure.ai.inference import ImageEmbeddingsClient
-    from azure.ai.inference.models import EmbeddingInput
+    from azure.ai.inference.models import ImageEmbeddingInput
     from azure.core.credentials import AzureKeyCredential
-
-    with open("sample1.png", "rb") as f:
-        image1: str = base64.b64encode(f.read()).decode("utf-8")
-    with open("sample2.png", "rb") as f:
-        image2: str = base64.b64encode(f.read()).decode("utf-8")
 
     client = ImageEmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-    response = client.embed(input=[EmbeddingInput(image=image1), EmbeddingInput(image=image2)])
+    response = client.embed(input=[ImageEmbeddingInput.load(image_file="sample1.png", image_format="png")])
 
     for item in response.data:
         length = len(item.embedding)

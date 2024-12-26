@@ -6,7 +6,7 @@ Use the Inference client library (in preview) to:
 * Get information about the AI model
 * Do chat completions
 * Get text embeddings
-<!-- * Get image embeddings -->
+* Get image embeddings
 
 The Inference client library supports AI models deployed to the following services:
 
@@ -219,17 +219,15 @@ See simple chat completion examples below. More can be found in the [samples](ht
 
 ### Text Embeddings
 
-The `EmbeddingsClient` has a method named `embedding`. The method makes a REST API call to the `/embeddings` route on the provided endpoint, as documented in [the REST API reference](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-embeddings).
+The `EmbeddingsClient` has a method named `embed`. The method makes a REST API call to the `/embeddings` route on the provided endpoint, as documented in [the REST API reference](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-embeddings).
 
 See simple text embedding example below. More can be found in the [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples) folder.
 
-<!--
 ### Image Embeddings
 
-TODO: Add overview and link to explain image embeddings.
+The `ImageEmbeddingsClient` has a method named `embed`. The method makes a REST API call to the `/images/embeddings` route on the provided endpoint, as documented in [the REST API reference](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-images-embeddings).
 
-Embeddings operations target the URL route `images/embeddings` on the provided endpoint.
--->
+See simple image embedding example below. More can be found in the [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples) folder.
 
 ## Examples
 
@@ -239,7 +237,7 @@ In the following sections you will find simple examples of:
 * [Streaming chat completions](#streaming-chat-completions-example)
 * [Chat completions with additional model-specific parameters](#chat-completions-with-additional-model-specific-parameters)
 * [Text Embeddings](#text-embeddings-example)
-<!-- * [Image Embeddings](#image-embeddings-example) -->
+* [Image Embeddings](#image-embeddings-example)
 
 The examples create a synchronous client assuming a Serverless API or Managed Compute endpoint. Modify client
 construction code as descirbed in [Key concepts](#key-concepts) to have it work with GitHub Models endpoint or Azure OpenAI
@@ -412,6 +410,39 @@ data[2]: length=1024, [0.04196167, 0.029083252, ..., -0.0027484894, 0.0073127747
 
 To generate embeddings for additional phrases, simply call `client.embed` multiple times using the same `client`.
 
+### Image Embeddings example
+
+This example demonstrates how to get image embeddings, for a Serverless API or Managed Compute endpoint, with key authentication, assuming `endpoint` and `key` are already defined. For Entra ID authentication, GitHub models endpoint or Azure OpenAI endpoint, modify the code to create the client as specified in the above sections.
+
+<!-- SNIPPET:sample_image_embeddings.image_embeddings -->
+
+```python
+from azure.ai.inference import ImageEmbeddingsClient
+from azure.ai.inference.models import ImageEmbeddingInput
+from azure.core.credentials import AzureKeyCredential
+
+client = ImageEmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
+response = client.embed(input=[ImageEmbeddingInput.load(image_file="sample1.png", image_format="png")])
+
+for item in response.data:
+    length = len(item.embedding)
+    print(
+        f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "
+        f"..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
+    )
+```
+
+<!-- END SNIPPET -->
+
+The length of the embedding vector depends on the model, but you should see something like this:
+
+```text
+data[0]: length=1024, [0.0103302, -0.04425049, ..., -0.011543274, -0.0009088516]
+```
+
+To generate image embeddings for additional images, simply call `client.embed` multiple times using the same `client`.
+
 <!--
 ### Image Embeddings example
 
@@ -421,7 +452,7 @@ This example demonstrates how to get image embeddings.
 
 ```python
 from azure.ai.inference import ImageEmbeddingsClient
-from azure.ai.inference.models import EmbeddingInput
+from azure.ai.inference.models import ImageEmbeddingInput
 from azure.core.credentials import AzureKeyCredential
 
 with open("sample1.png", "rb") as f:
@@ -431,7 +462,7 @@ with open("sample2.png", "rb") as f:
 
 client = ImageEmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-response = client.embed(input=[EmbeddingInput(image=image1), EmbeddingInput(image=image2)])
+response = client.embed(input=[ImageEmbeddingInput(image=image1), ImageEmbeddingInput(image=image2)])
 
 for item in response.data:
     length = len(item.embedding)

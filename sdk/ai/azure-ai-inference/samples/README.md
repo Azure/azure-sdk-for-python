@@ -56,10 +56,9 @@ Note that the client library does not directly read these environment variable a
 | Sample type | Endpoint environment variable name | Key environment variable name  |
 |----------|----------|----------|
 | Chat completions | `AZURE_AI_CHAT_ENDPOINT` | `AZURE_AI_CHAT_KEY` |
-| Embeddings | `AZURE_AI_EMBEDDINGS_ENDPOINT` | `AZURE_AI_EMBEDDINGS_KEY` |
-<!--
-| Image generation | `IMAGE_GENERATION_ENDPOINT` | `IMAGE_GENERATION_KEY` |
--->
+| Test embeddings | `AZURE_AI_EMBEDDINGS_ENDPOINT` | `AZURE_AI_EMBEDDINGS_KEY` |
+| Image embeddings | `AZURE_AI_IMAGE_EMBEDDINGS_ENDPOINT` | `AZURE_AI_IMAGE_EMBEDDINGS_KEY` |
+
 
 To run against a Managed Compute Endpoint, some samples also have an optional environment variable `AZURE_AI_CHAT_DEPLOYMENT_NAME`. This is the value used to set the HTTP request header `azureml-model-deployment` when constructing the client.
 
@@ -118,13 +117,12 @@ similarly for the other samples.
 |[sample_embeddings_with_defaults.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_embeddings_with_defaults.py) | One embeddings operation using a synchronous client, with default embeddings configuration set in the client constructor. |
 |[sample_embeddings_azure_openai.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_embeddings_azure_openai.py) | One embeddings operation using a synchronous client, against Azure OpenAI endpoint. |
 
-<!--
 ### Image embeddings
 
 |**File Name**|**Description**|
 |----------------|-------------|
-|[sample_image_embeddings.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_image_embeddings.py) | One image embeddings operation, on two input images, using a synchronous client. |
--->
+|[sample_image_embeddings.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_image_embeddings.py) | One image embeddings operation, using a synchronous client. |
+|[sample_image_embeddings_with_defaults.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_image_embeddings_with_defaults.py) | One image embeddings operation using a synchronous client, with default embeddings configuration set in the client constructor. |
 
 ## Asynchronous client samples
 
@@ -145,13 +143,11 @@ similarly for the other samples.
 |----------------|-------------|
 |[sample_embeddings_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_embeddings_async.py) | One embeddings operation using an asynchronous client. |
 
-<!--
 ### Image embeddings
 
 |**File Name**|**Description**|
 |----------------|-------------|
-|[sample_image_embeddings_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_image_embeddings_async.py) | One image embeddings operation, on two input images, using an asynchronous client. |
--->
+|[sample_image_embeddings_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/async_samples/sample_image_embeddings_async.py) | One image embeddings operation, using an asynchronous client. |
 
 ## Troubleshooting
 

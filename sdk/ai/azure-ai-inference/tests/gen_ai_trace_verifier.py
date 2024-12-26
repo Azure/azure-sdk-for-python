@@ -26,12 +26,16 @@ class GenAiTraceVerifier:
             if isinstance(attribute_value, list):
                 # Check if the attribute value in the span matches the provided list
                 if span.attributes[attribute_name] != attribute_value:
-                    print(f"Case 1: Attribute values do not match (`{span.attributes[attribute_name]}` != `{attribute_value}`). Return False.")
+                    print(
+                        f"Case 1: Attribute values do not match (`{span.attributes[attribute_name]}` != `{attribute_value}`). Return False."
+                    )
                     return False
             elif isinstance(attribute_value, tuple):
                 # Check if the attribute value in the span matches the provided list
                 if span.attributes[attribute_name] != attribute_value:
-                    print(f"Case 2: Attribute values do not match (`{span.attributes[attribute_name]}` != `{attribute_value}`). Return False.")
+                    print(
+                        f"Case 2: Attribute values do not match (`{span.attributes[attribute_name]}` != `{attribute_value}`). Return False."
+                    )
                     return False
             else:
                 # Check if the attribute value matches the provided value
@@ -43,7 +47,9 @@ class GenAiTraceVerifier:
                         print(f"Actual attribute value is negative.")
                         return False
                 elif attribute_value != "" and span.attributes[attribute_name] != attribute_value:
-                    print(f"Case 3: Attribute values do not match (`{span.attributes[attribute_name]}` != `{attribute_value}`). Return False.")
+                    print(
+                        f"Case 3: Attribute values do not match (`{span.attributes[attribute_name]}` != `{attribute_value}`). Return False."
+                    )
                     return False
                 # Check if the attribute value in the span is not empty when the provided value is ""
                 elif attribute_value == "" and not span.attributes[attribute_name]:

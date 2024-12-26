@@ -656,7 +656,7 @@ class TestModelClientTracing(ModelClientTestBase):
 
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
         client = self._create_chat_client(**kwargs)
-        model = kwargs.pop("azure_ai_chat_model").lower()        
+        model = kwargs.pop("azure_ai_chat_model").lower()
         processor, exporter = self.setup_memory_trace_exporter()
         AIInferenceInstrumentor().instrument()
 
