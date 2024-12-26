@@ -95,9 +95,11 @@ class TestModelClient(ModelClientTestBase):
 
     # Test custom code in ImageEmbeddingInput class to load an image file
     def test_image_embedding_input_load(self, **kwargs):
-        image_embedding_input=ModelClientTestBase._get_image_embeddings_input()
+        image_embedding_input = ModelClientTestBase._get_image_embeddings_input()
         assert image_embedding_input
-        assert image_embedding_input.image.startswith("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEsAAAApCAYAAAB9ctS7AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsEAAA7BAbiRa+0AAB0CSURBVGhDRZpZzK33ddbXnufh2")
+        assert image_embedding_input.image.startswith(
+            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEsAAAApCAYAAAB9ctS7AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsEAAA7BAbiRa+0AAB0CSURBVGhDRZpZzK33ddbXnufh2"
+        )
         assert image_embedding_input.text == "some text"
 
     # **********************************************************************************
@@ -313,7 +315,7 @@ class TestModelClient(ModelClientTestBase):
                 self._validate_image_embeddings_json_request_payload()
                 continue
             assert False
-    
+
     # Regression test. Send a request that includes all supported types of input objects, with embedding settings
     # specified in the constructor. Make sure the resulting JSON payload that goes up to the service
     # is the correct one after hand-inspection.
@@ -338,15 +340,13 @@ class TestModelClient(ModelClientTestBase):
         image_embedding_input = ModelClientTestBase._get_image_embeddings_input()
         for _ in range(2):
             try:
-                response = client.embed(
-                    input=[image_embedding_input], raw_request_hook=self.request_callback
-                )
+                response = client.embed(input=[image_embedding_input], raw_request_hook=self.request_callback)
             except ServiceRequestError as _:
                 # The test should throw this exception!
                 self._validate_image_embeddings_json_request_payload()
                 continue
             assert False
-    
+
     # Regression test. Send a request that includes all supported types of input objects, with embeddings settings
     # specified in the constructor and all of them overwritten in the 'embed' call.
     # Make sure the resulting JSON payload that goes up to the service is the correct one after hand-inspection.
@@ -390,7 +390,7 @@ class TestModelClient(ModelClientTestBase):
                 self._validate_image_embeddings_json_request_payload()
                 continue
             assert False
-    
+
     # **********************************************************************************
     #
     #                      HAPPY PATH SERVICE TESTS - IMAGE EMBEDDINGS
