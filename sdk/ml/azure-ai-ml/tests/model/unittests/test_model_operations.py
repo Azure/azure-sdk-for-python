@@ -235,6 +235,63 @@ path: ./model.pkl"""
             resource_group_name=mock_model_operation._resource_group_name,
         )
 
+    def test_download_from_gen2_with_none_cred(self, mock_model_operation: ModelOperations) -> None:
+        name = "random_string"
+        version = "1"
+        model = Model(
+            name=name,
+            version=version,
+            path="azureml://subscriptions/subscription_id/resourcegroups/rg-name/workspaces/gen2test/datastores/adls_gen2/paths/gen2test/",
+        )
+        from azure.ai.ml.entities import AzureDataLakeGen2Datastore
+
+        datastore = AzureDataLakeGen2Datastore(name="gen2_datastore", account_name="gen2_account", filesystem="gen2")
+        storage_client = Mock()
+        with patch(
+            "azure.ai.ml.operations._model_operations.get_storage_client", return_value=storage_client
+        ) as get_client_mock, patch(
+            "azure.ai.ml.operations._model_operations.Model._from_rest_object",
+            return_value=model,
+        ), patch(
+            "azure.ai.ml.operations._model_operations.DatastoreOperations.get", return_value=datastore
+        ):
+            mock_model_operation.download(name=name, version=version)
+            get_client_mock.assert_called_once()
+
+    def test_download_from_gen2_with_sp_cred(self, mock_model_operation: ModelOperations) -> None:
+        name = "random_string"
+        version = "1"
+        model = Model(
+            name=name,
+            version=version,
+            path="azureml://subscriptions/subscription_id/resourcegroups/rg-name/workspaces/gen2test/datastores/adls_gen2/paths/gen2test/",
+        )
+        from azure.ai.ml.entities import AzureDataLakeGen2Datastore
+        from azure.ai.ml.entities._credentials import ServicePrincipalConfiguration
+
+        datastore = AzureDataLakeGen2Datastore(
+            name="adls_gen2_example",
+            description="Datastore pointing to an Azure Data Lake Storage Gen2.",
+            account_name="mytestdatalakegen2",
+            filesystem="my-gen2-container",
+            credentials=ServicePrincipalConfiguration(
+                tenant_id="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
+                client_id="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
+                client_secret="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+            ),
+        )
+        storage_client = Mock()
+        with patch(
+            "azure.ai.ml.operations._model_operations.get_storage_client", return_value=storage_client
+        ) as get_client_mock, patch(
+            "azure.ai.ml.operations._model_operations.Model._from_rest_object",
+            return_value=model,
+        ), patch(
+            "azure.ai.ml.operations._model_operations.DatastoreOperations.get", return_value=datastore
+        ):
+            mock_model_operation.download(name=name, version=version)
+            get_client_mock.assert_called_once()
+
     def test_create_with_datastore(
         self,
         mock_workspace_scope: OperationScope,

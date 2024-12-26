@@ -428,13 +428,12 @@ class ModelOperations(_ScopeDependentOperations):
                         authority=ds.credentials["authority_url"],
                     )
                     credential = token_credential
-                except KeyError:
+                except (KeyError, TypeError):
                     pass
 
             else:
                 container = ds.container_name
             datastore_type = ds.type
-
             storage_client = get_storage_client(
                 credential=credential,
                 container_name=container,
