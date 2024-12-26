@@ -120,7 +120,7 @@ class TestModelClient(ModelClientTestBase):
         )
         for _ in range(2):
             try:
-                response = client.embed(
+                _ = client.embed(
                     input=["first phrase", "second phrase", "third phrase"],
                     dimensions=2048,
                     encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
@@ -135,11 +135,11 @@ class TestModelClient(ModelClientTestBase):
                     model="some-model-id",
                     raw_request_hook=self.request_callback,
                 )
+                assert False
             except ServiceRequestError as _:
                 # The test should throw this exception!
                 self._validate_embeddings_json_request_payload()
                 continue
-            assert False
 
     # Regression test. Send a request that includes all supported types of input objects, with embedding settings
     # specified in the constructor. Make sure the resulting JSON payload that goes up to the service
@@ -165,14 +165,14 @@ class TestModelClient(ModelClientTestBase):
 
         for _ in range(2):
             try:
-                response = client.embed(
+                _ = client.embed(
                     input=["first phrase", "second phrase", "third phrase"], raw_request_hook=self.request_callback
                 )
+                assert False
             except ServiceRequestError as _:
                 # The test should throw this exception!
                 self._validate_embeddings_json_request_payload()
                 continue
-            assert False
 
     # Regression test. Send a request that includes all supported types of input objects, with embeddings settings
     # specified in the constructor and all of them overwritten in the 'embed' call.
@@ -196,7 +196,7 @@ class TestModelClient(ModelClientTestBase):
         )
         for _ in range(2):
             try:
-                response = client.embed(
+                _ = client.embed(
                     input=["first phrase", "second phrase", "third phrase"],
                     dimensions=2048,
                     encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
@@ -211,11 +211,11 @@ class TestModelClient(ModelClientTestBase):
                     model="some-model-id",
                     raw_request_hook=self.request_callback,
                 )
+                assert False
             except ServiceRequestError as _:
                 # The test should throw this exception!
                 self._validate_embeddings_json_request_payload()
                 continue
-            assert False
 
     # **********************************************************************************
     #
@@ -296,7 +296,7 @@ class TestModelClient(ModelClientTestBase):
         image_embedding_input = ModelClientTestBase._get_image_embeddings_input()
         for _ in range(2):
             try:
-                response = client.embed(
+                _ = client.embed(
                     input=[image_embedding_input],
                     dimensions=2048,
                     encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
@@ -311,11 +311,11 @@ class TestModelClient(ModelClientTestBase):
                     model="some-model-id",
                     raw_request_hook=self.request_callback,
                 )
+                assert False
             except ServiceRequestError as _:
                 # The test should throw this exception!
                 self._validate_image_embeddings_json_request_payload()
                 continue
-            assert False
 
     # Regression test. Send a request that includes all supported types of input objects, with embedding settings
     # specified in the constructor. Make sure the resulting JSON payload that goes up to the service
@@ -342,11 +342,11 @@ class TestModelClient(ModelClientTestBase):
         for _ in range(2):
             try:
                 response = client.embed(input=[image_embedding_input], raw_request_hook=self.request_callback)
+                assert False
             except ServiceRequestError as _:
                 # The test should throw this exception!
                 self._validate_image_embeddings_json_request_payload()
                 continue
-            assert False
 
     # Regression test. Send a request that includes all supported types of input objects, with embeddings settings
     # specified in the constructor and all of them overwritten in the 'embed' call.
@@ -371,7 +371,7 @@ class TestModelClient(ModelClientTestBase):
         image_embedding_input = ModelClientTestBase._get_image_embeddings_input()
         for _ in range(2):
             try:
-                response = client.embed(
+                _ = client.embed(
                     input=[image_embedding_input],
                     dimensions=2048,
                     encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
@@ -386,11 +386,11 @@ class TestModelClient(ModelClientTestBase):
                     model="some-model-id",
                     raw_request_hook=self.request_callback,
                 )
+                assert False
             except ServiceRequestError as _:
                 # The test should throw this exception!
                 self._validate_image_embeddings_json_request_payload()
                 continue
-            assert False
 
     # **********************************************************************************
     #
@@ -406,13 +406,11 @@ class TestModelClient(ModelClientTestBase):
     def test_load_image_embeddings_client(self, **kwargs):
 
         client = self._load_image_embeddings_client(**kwargs)
-        assert isinstance(client, sdk.EmbeddingsClient) 
+        assert isinstance(client, sdk.EmbeddingsClient)
         assert client._model_info
         response1 = client.get_model_info()
         self._print_model_info_result(response1)
-        self._validate_model_info_result(
-            response1, "embedding"
-        )  # TODO: What should this be?
+        self._validate_model_info_result(response1, "embedding")  # TODO: What should this be?
         client.close()
 
     # TODO: At the moment the /info route shows  "model_type": "embedding", so load_client
@@ -429,9 +427,7 @@ class TestModelClient(ModelClientTestBase):
         assert client._model_info  # pylint: disable=protected-access
 
         self._print_model_info_result(response1)
-        self._validate_model_info_result(
-            response1, "embedding"
-        )  # TODO: what should this be?
+        self._validate_model_info_result(response1, "embedding")  # TODO: what should this be?
 
         # Get the model info again. No network calls should be made here,
         # as the response is cached in the client.
@@ -439,7 +435,7 @@ class TestModelClient(ModelClientTestBase):
         self._print_model_info_result(response2)
         assert response1 == response2
         client.close()
-    
+
     @ServicePreparerImageEmbeddings()
     @recorded_by_proxy
     def test_image_embeddings(self, **kwargs):
@@ -453,12 +449,14 @@ class TestModelClient(ModelClientTestBase):
         assert json.dumps(response1.as_dict(), indent=2) == response1.__str__()
 
         # Request embeddings as base64 encoded strings
-        response2 = client.embed(input=[image_embedding_input], encoding_format=sdk.models.EmbeddingEncodingFormat.BASE64)
+        response2 = client.embed(
+            input=[image_embedding_input], encoding_format=sdk.models.EmbeddingEncodingFormat.BASE64
+        )
         self._print_embeddings_result(response2, sdk.models.EmbeddingEncodingFormat.BASE64)
         self._validate_image_embeddings_result(response2, sdk.models.EmbeddingEncodingFormat.BASE64)
 
         client.close()
-    
+
     # **********************************************************************************
     #
     #         CHAT COMPLETIONS REGRESSION TESTS - NO SERVICE RESPONSE REQUIRED
@@ -478,7 +476,7 @@ class TestModelClient(ModelClientTestBase):
 
         for _ in range(2):
             try:
-                response = client.complete(
+                _ = client.complete(
                     messages=[
                         sdk.models.SystemMessage(content="system prompt"),
                         sdk.models.UserMessage(content="user prompt 1"),
@@ -534,11 +532,11 @@ class TestModelClient(ModelClientTestBase):
                     top_p=9.876,
                     raw_request_hook=self.request_callback,
                 )
+                assert False
             except ServiceRequestError as _:
                 # The test should throw this exception!
                 self._validate_chat_completions_json_request_payload()
                 continue
-            assert False
 
     # Regression test. Send a request that includes all supported types of input objects, with chat settings
     # specified in the constructor. Make sure the resulting JSON payload that goes up to the service
@@ -572,7 +570,7 @@ class TestModelClient(ModelClientTestBase):
 
         for _ in range(2):
             try:
-                response = client.complete(
+                _ = client.complete(
                     messages=[
                         sdk.models.SystemMessage(content="system prompt"),
                         sdk.models.UserMessage(content="user prompt 1"),
@@ -610,11 +608,11 @@ class TestModelClient(ModelClientTestBase):
                     stream=True,
                     raw_request_hook=self.request_callback,
                 )
+                assert False
             except ServiceRequestError as _:
                 # The test should throw this exception!
                 self._validate_chat_completions_json_request_payload()
                 continue
-            assert False
 
     # Regression test. Send a request that includes all supported types of input objects, with chat settings
     # specified in the constructor and all of them overwritten in the 'complete' call.
@@ -649,7 +647,7 @@ class TestModelClient(ModelClientTestBase):
 
         for _ in range(2):
             try:
-                response = client.complete(
+                _ = client.complete(
                     messages=[
                         sdk.models.SystemMessage(content="system prompt"),
                         sdk.models.UserMessage(content="user prompt 1"),
@@ -705,11 +703,11 @@ class TestModelClient(ModelClientTestBase):
                     top_p=9.876,
                     raw_request_hook=self.request_callback,
                 )
+                assert False
             except ServiceRequestError as _:
                 # The test should throw this exception!
                 self._validate_chat_completions_json_request_payload()
                 continue
-            assert False
 
     # **********************************************************************************
     #
