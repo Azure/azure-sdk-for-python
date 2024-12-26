@@ -110,7 +110,7 @@ class ImageUrl(ImageUrlGenerated):
 class ImageEmbeddingInput(EmbeddingInputGenerated):
 
     @classmethod
-    def load(cls, *, image_file: str, image_format: str, text: str = None) -> Self:
+    def load(cls, *, image_file: str, image_format: str, text: Optional[str] = None) -> Self:
         """
         Create an ImageEmbeddingInput object from a local image file. The method reads the image
         file and encodes it as a base64 string, which together with the image format

@@ -40,7 +40,6 @@ async def sample_image_embeddings_async():
     from azure.ai.inference.models import ImageEmbeddingInput
     from azure.core.credentials import AzureKeyCredential
 
-
     async with ImageEmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as client:
 
         # Do a single image embeddings operation. Start the operation and get a Future object.

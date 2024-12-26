@@ -589,7 +589,8 @@ class ImageEmbeddingInput(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar image: The input image encoded in base64 string as a data URL. Example: `data:image/{format};base64,{data}`. Required.
+    :ivar image: The input image encoded in base64 string as a data URL.
+     Example: `data:image/{format};base64,{data}`. Required.
     :vartype image: str
     :ivar text: Optional. The text input to feed into the model (like DINO, CLIP).
      Returns a 422 error if the model doesn't support the value or parameter.
