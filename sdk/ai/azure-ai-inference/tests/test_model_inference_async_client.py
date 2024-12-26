@@ -574,7 +574,7 @@ class TestModelAsyncClient(ModelClientTestBase):
     @recorded_by_proxy_async
     async def test_async_chat_completions_with_bytes_input(self, **kwargs):
         client = self._create_async_chat_client(**kwargs)
-        response = await client.complete(self.read_text_file("chat.test.json"))
+        response = await client.complete(self._read_text_file("chat.test.json"))
         self._validate_chat_completions_result(response, ["5280", "5,280"])
         await client.close()
 
