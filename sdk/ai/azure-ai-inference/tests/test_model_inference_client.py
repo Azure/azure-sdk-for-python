@@ -13,6 +13,7 @@ from model_inference_test_base import (
     ServicePreparerChatCompletions,
     ServicePreparerAOAIChatCompletions,
     ServicePreparerEmbeddings,
+    ServicePreparerImageEmbeddings,
 )
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.settings import settings
@@ -396,22 +397,28 @@ class TestModelClient(ModelClientTestBase):
     #                      HAPPY PATH SERVICE TESTS - IMAGE EMBEDDINGS
     #
     # **********************************************************************************
-    """
-    @ServicePreparerEmbeddings()
+
+    # TODO: At the moment the /info route shows  "model_type": "embedding", so load_client
+    # will return an EmbeddingsClient instead of ImageEmbeddingsClient. How can we resolve this?
+    # This Cohere model (cohere-embed-v2-english) supports both text embeddings and image embeddings.
+    @ServicePreparerImageEmbeddings()
     @recorded_by_proxy
     def test_load_image_embeddings_client(self, **kwargs):
 
         client = self._load_image_embeddings_client(**kwargs)
-        assert isinstance(client, sdk.EmbeddingsClient)
+        assert isinstance(client, sdk.EmbeddingsClient) 
         assert client._model_info
         response1 = client.get_model_info()
         self._print_model_info_result(response1)
         self._validate_model_info_result(
             response1, "embedding"
-        )  # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
+        )  # TODO: What should this be?
         client.close()
 
-    @ServicePreparerEmbeddings()
+    # TODO: At the moment the /info route shows  "model_type": "embedding", so load_client
+    # will return an EmbeddingsClient instead of ImageEmbeddingsClient. How can we resolve this?
+    # This Cohere model (cohere-embed-v2-english) supports both text embeddings and image embeddings.
+    @ServicePreparerImageEmbeddings()
     @recorded_by_proxy
     def test_get_model_info_on_image_embeddings_client(self, **kwargs):
 
@@ -424,7 +431,7 @@ class TestModelClient(ModelClientTestBase):
         self._print_model_info_result(response1)
         self._validate_model_info_result(
             response1, "embedding"
-        )  # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
+        )  # TODO: what should this be?
 
         # Get the model info again. No network calls should be made here,
         # as the response is cached in the client.
@@ -432,26 +439,26 @@ class TestModelClient(ModelClientTestBase):
         self._print_model_info_result(response2)
         assert response1 == response2
         client.close()
-
-    @ServicePreparerEmbeddings()
+    
+    @ServicePreparerImageEmbeddings()
     @recorded_by_proxy
     def test_image_embeddings(self, **kwargs):
         client = self._create_image_embeddings_client(**kwargs)
-        input = ["first phrase", "second phrase", "third phrase"]
+        image_embedding_input = ModelClientTestBase._get_image_embeddings_input(False)
 
-        # Request embeddings with default service format (list of floats)
-        response1 = client.embed(input=input)
+        # Request image embeddings with default service format (list of floats)
+        response1 = client.embed(input=[image_embedding_input])
         self._print_embeddings_result(response1)
-        self._validate_embeddings_result(response1)
+        self._validate_image_embeddings_result(response1)
         assert json.dumps(response1.as_dict(), indent=2) == response1.__str__()
 
         # Request embeddings as base64 encoded strings
-        response2 = client.embed(input=input, encoding_format=sdk.models.EmbeddingEncodingFormat.BASE64)
+        response2 = client.embed(input=[image_embedding_input], encoding_format=sdk.models.EmbeddingEncodingFormat.BASE64)
         self._print_embeddings_result(response2, sdk.models.EmbeddingEncodingFormat.BASE64)
-        self._validate_embeddings_result(response2, sdk.models.EmbeddingEncodingFormat.BASE64)
+        self._validate_image_embeddings_result(response2, sdk.models.EmbeddingEncodingFormat.BASE64)
 
         client.close()
-    """
+    
     # **********************************************************************************
     #
     #         CHAT COMPLETIONS REGRESSION TESTS - NO SERVICE RESPONSE REQUIRED

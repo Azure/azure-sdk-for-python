@@ -74,6 +74,18 @@ ServicePreparerEmbeddings = functools.partial(
     azure_ai_embeddings_key="00000000000000000000000000000000",
 )
 
+#
+# Define these environment variables. They should point to a Cohere model
+# hosted on MaaS, or any other MaaS model that text embeddings.
+# AZURE_AI_IMAGE_EMBEDDINGS_ENDPOINT=https://<endpoint-name>.<azure-region>.models.ai.azure.com
+# AZURE_AI_IMAGE_EMBEDDINGS_KEY=<32-char-api-key>
+#
+ServicePreparerImageEmbeddings = functools.partial(
+    EnvironmentVariableLoader,
+    "azure_ai_image_embeddings",
+    azure_ai_image_embeddings_endpoint="https://your-deployment-name.eastus2.models.ai.azure.com",
+    azure_ai_image_embeddings_key="00000000000000000000000000000000",
+)
 
 # The test class name needs to start with "Test" to get collected by pytest
 class ModelClientTestBase(AzureRecordedTestCase):
@@ -171,6 +183,12 @@ class ModelClientTestBase(AzureRecordedTestCase):
         credential = AzureKeyCredential(key)
         return endpoint, credential
 
+    def _load_image_embeddings_credentials(self, *, bad_key: bool, **kwargs):
+        endpoint = kwargs.pop("azure_ai_image_embeddings_endpoint")
+        key = "00000000000000000000000000000000" if bad_key else kwargs.pop("azure_ai_image_embeddings_key")
+        credential = AzureKeyCredential(key)
+        return endpoint, credential
+
     # Methods to create sync and async clients using Load_client() function
     async def _load_async_chat_client(self, *, bad_key: bool = False, **kwargs) -> async_sdk.ChatCompletionsClient:
         endpoint, credential = self._load_chat_credentials(bad_key=bad_key, **kwargs)
@@ -186,6 +204,10 @@ class ModelClientTestBase(AzureRecordedTestCase):
 
     def _load_embeddings_client(self, *, bad_key: bool = False, **kwargs) -> sdk.EmbeddingsClient:
         endpoint, credential = self._load_embeddings_credentials(bad_key=bad_key, **kwargs)
+        return sdk.load_client(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
+
+    def _load_image_embeddings_client(self, *, bad_key: bool = False, **kwargs) -> sdk.ImageEmbeddingsClient:
+        endpoint, credential = self._load_image_embeddings_credentials(bad_key=bad_key, **kwargs)
         return sdk.load_client(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
 
     def _create_chat_client(self, *, bad_key: bool = False, **kwargs) -> sdk.ChatCompletionsClient:
@@ -247,6 +269,10 @@ class ModelClientTestBase(AzureRecordedTestCase):
         credential = AzureKeyCredential(key)
         return sdk.EmbeddingsClient(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
 
+    def _create_image_embeddings_client(self, *, bad_key: bool = False, **kwargs) -> sdk.ImageEmbeddingsClient:
+        endpoint, credential = self._load_image_embeddings_credentials(bad_key=bad_key, **kwargs)
+        return sdk.ImageEmbeddingsClient(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED, **kwargs)
+
     def request_callback(self, pipeline_request) -> None:
         self.pipeline_request = pipeline_request
 
@@ -296,14 +322,20 @@ class ModelClientTestBase(AzureRecordedTestCase):
         assert self.pipeline_request.http_request.data == self.CHAT_COMPLETIONS_JSON_REQUEST_PAYLOAD
 
     @staticmethod
-    def _get_image_embeddings_input() -> sdk.models.ImageEmbeddingInput:
+    def _get_image_embeddings_input(with_text:Optional[bool] = True) -> sdk.models.ImageEmbeddingInput:
         local_folder = path.dirname(path.abspath(__file__))
         image_file = path.join(local_folder, "test_image1.png")
-        return sdk.models.ImageEmbeddingInput.load(
-            image_file=image_file,
-            image_format="png",
-            text="some text",
-        )
+        if with_text:
+            return sdk.models.ImageEmbeddingInput.load(
+                image_file=image_file,
+                image_format="png",
+                text="some text",
+            )
+        else:
+            return sdk.models.ImageEmbeddingInput.load(
+                image_file=image_file,
+                image_format="png",
+            )
 
     @staticmethod
     def _read_text_file(file_name: str) -> io.BytesIO:
@@ -464,6 +496,33 @@ class ModelClientTestBase(AzureRecordedTestCase):
         assert response.data is not None
         assert len(response.data) == 3
         for i in [0, 1, 2]:
+            assert response.data[i] is not None
+            assert response.data[i].index == i
+            if encoding_format == sdk.models.EmbeddingEncodingFormat.FLOAT:
+                assert isinstance(response.data[i].embedding, List)
+                assert len(response.data[i].embedding) > 0
+                assert response.data[i].embedding[0] != 0.0
+                assert response.data[i].embedding[-1] != 0.0
+            elif encoding_format == sdk.models.EmbeddingEncodingFormat.BASE64:
+                assert isinstance(response.data[i].embedding, str)
+                assert len(response.data[i].embedding) > 0
+                assert bool(ModelClientTestBase.REGEX_BASE64_STRING.match(response.data[i].embedding))  # type: ignore[arg-type]
+            else:
+                raise ValueError(f"Unsupported encoding format: {encoding_format}")
+        assert bool(ModelClientTestBase.REGEX_RESULT_ID.match(response.id))
+        # assert len(response.model) > 0  # At the time of writing this test, this JSON field existed but was empty
+        assert response.usage.prompt_tokens > 0
+        assert response.usage.total_tokens == response.usage.prompt_tokens
+
+    @staticmethod
+    def _validate_image_embeddings_result(
+        response: sdk.models.EmbeddingsResult,
+        encoding_format: sdk.models.EmbeddingEncodingFormat = sdk.models.EmbeddingEncodingFormat.FLOAT,
+    ):
+        assert response is not None
+        assert response.data is not None
+        assert len(response.data) == 1
+        for i in [0]:
             assert response.data[i] is not None
             assert response.data[i].index == i
             if encoding_format == sdk.models.EmbeddingEncodingFormat.FLOAT:
