@@ -1247,23 +1247,27 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
         if self.response_iterator is None:
             raise ValueError("The response handler was not initialized.")
 
-        async for chunk in self.response_iterator:
-            self.buffer += chunk.decode("utf-8")
-            split_buffer = self.buffer.split("\n\n")
-            self.buffer = split_buffer[-1]
-            for ln in split_buffer[:-1]:
-                event = await self._process_event(ln)
-                if event:
-                    return event
+        if not "\n\n" in self.buffer:
+            async for chunk in self.response_iterator:
+                self.buffer += chunk.decode("utf-8")
+                if "\n\n" in self.buffer:
+                    break
 
-        if self.buffer:
-            event = await self._process_event(self.buffer)
-            if event:
-                return event
+        if self.buffer == "":
+            raise StopAsyncIteration()
 
-        raise StopAsyncIteration()
+        event_str = ""
+        if "\n\n" in self.buffer:
+            event_end_index = self.buffer.index("\n\n")
+            event_str = self.buffer[:event_end_index]
+            self.buffer = self.buffer[event_end_index + 4 :]
+        else:
+            event_str = self.buffer
+            self.buffer = ""
 
-    async def _process_event(self, event_data_str: str) -> Optional[T]:
+        return await self._process_event(event_str)
+
+    async def _process_event(self, event_data_str: str) -> T:
         raise NotImplementedError("This method needs to be implemented.")
 
     async def until_done(self) -> None:
@@ -1303,23 +1307,27 @@ class BaseAgentEventHandler(Iterator[T]):
         if self.response_iterator is None:
             raise ValueError("The response handler was not initialized.")
 
-        for chunk in self.response_iterator:
-            self.buffer += chunk.decode("utf-8")
-            split_buffer = self.buffer.split("\n\n")
-            self.buffer = split_buffer[-1]
-            for ln in split_buffer[:-1]:
-                event = self._process_event(ln)
-                if event:
-                    return event
+        if not "\n\n" in self.buffer:
+            for chunk in self.response_iterator:
+                self.buffer += chunk.decode("utf-8")
+                if "\n\n" in self.buffer:
+                    break
 
-        if self.buffer:
-            event = self._process_event(self.buffer)
-            if event:
-                return event
+        if self.buffer == "":
+            raise StopIteration()
 
-        raise StopIteration()
+        event_str = ""
+        if "\n\n" in self.buffer:
+            event_end_index = self.buffer.index("\n\n")
+            event_str = self.buffer[:event_end_index]
+            self.buffer = self.buffer[event_end_index + 4 :]
+        else:
+            event_str = self.buffer
+            self.buffer = ""
 
-    def _process_event(self, event_data_str: str) -> Optional[T]:
+        return self._process_event(event_str)
+
+    def _process_event(self, event_data_str: str) -> T:
         raise NotImplementedError("This method needs to be implemented.")
 
     def until_done(self) -> None:
