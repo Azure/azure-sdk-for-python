@@ -3,8 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-import json
-import pytest
 import azure.ai.inference as sdk
 from azure.ai.inference.tracing import AIInferenceInstrumentor
 
@@ -25,7 +23,7 @@ content_tracing_initial_value = os.getenv(CONTENT_TRACING_ENV_VARIABLE)
 
 
 # The test class name needs to start with "Test" to get collected by pytest
-class TestModelClientTracing(ModelClientTestBase):
+class TestClientTracing(ModelClientTestBase):
 
     @classmethod
     def teardown_class(cls):

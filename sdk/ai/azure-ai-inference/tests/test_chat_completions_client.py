@@ -4,458 +4,21 @@
 # ------------------------------------
 import os
 import json
-import pytest
 import azure.ai.inference as sdk
-from azure.ai.inference.tracing import AIInferenceInstrumentor
 
 from model_inference_test_base import (
     ModelClientTestBase,
     ServicePreparerChatCompletions,
     ServicePreparerAOAIChatCompletions,
-    ServicePreparerEmbeddings,
-    ServicePreparerImageEmbeddings,
 )
-from azure.core.pipeline.transport import RequestsTransport
-from azure.core.settings import settings
+
 from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import AzureError, ServiceRequestError
 from azure.core.credentials import AzureKeyCredential
-from memory_trace_exporter import MemoryTraceExporter
-from gen_ai_trace_verifier import GenAiTraceVerifier
-from opentelemetry import trace
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 
 
 # The test class name needs to start with "Test" to get collected by pytest
-class TestModelClient(ModelClientTestBase):
-
-    # **********************************************************************************
-    #
-    #                               UNIT TESTS
-    #
-    # **********************************************************************************
-
-    # Test custom code in ChatCompletions class to print its content in a nice multi-line JSON format
-    def test_print_method_of_chat_completions_class(self, **kwargs):
-        response = sdk.models.ChatCompletions(
-            {
-                "choices": [
-                    {
-                        "message": {
-                            "content": "some content",
-                            "role": "assistant",
-                        }
-                    }
-                ]
-            }
-        )
-        print(response)  # This will invoke the customized __str__ method
-        assert json.dumps(response.as_dict(), indent=2) == response.__str__()
-
-    # Test custom code in EmbeddingsResult class to print its content in a nice multi-line JSON format
-    def test_print_method_of_embeddings_result_class(self, **kwargs):
-        response = sdk.models.ChatCompletions(
-            {
-                "id": "f060ce24-0bbf-4aef-8341-62659b6e19be",
-                "data": [
-                    {
-                        "index": 0,
-                        "embedding": [
-                            0.0013399124,
-                            -0.01576233,
-                        ],
-                    },
-                    {
-                        "index": 1,
-                        "embedding": [
-                            0.036590576,
-                            -0.0059547424,
-                        ],
-                    },
-                ],
-                "model": "model-name",
-                "usage": {"prompt_tokens": 6, "completion_tokens": 0, "total_tokens": 6},
-            }
-        )
-        print(response)  # This will invoke the customized __str__ method
-        assert json.dumps(response.as_dict(), indent=2) == response.__str__()
-
-    # Test custom code in ImageUrl class to load an image file
-    def test_image_url_load(self, **kwargs):
-        local_folder = os.path.dirname(os.path.abspath(__file__))
-        image_file = os.path.join(local_folder, "test_image1.png")
-        image_url = sdk.models.ImageUrl.load(
-            image_file=image_file,
-            image_format="png",
-            detail=sdk.models.ImageDetailLevel.AUTO,
-        )
-        assert image_url
-        assert image_url.url.startswith("data:image/png;base64,iVBORw")
-        assert image_url.detail == sdk.models.ImageDetailLevel.AUTO
-
-    # Test custom code in ImageEmbeddingInput class to load an image file
-    def test_image_embedding_input_load(self, **kwargs):
-        image_embedding_input = ModelClientTestBase._get_image_embeddings_input()
-        assert image_embedding_input
-        assert image_embedding_input.image.startswith(
-            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEsAAAApCAYAAAB9ctS7AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsEAAA7BAbiRa+0AAB0CSURBVGhDRZpZzK33ddbXnufh2"
-        )
-        assert image_embedding_input.text == "some text"
-
-    # **********************************************************************************
-    #
-    #         EMBEDDINGS REGRESSION TESTS - NO SERVICE RESPONSE REQUIRED
-    #
-    # **********************************************************************************
-
-    # Regression test. Send a request that includes all supported types of input objects. Make sure the resulting
-    # JSON payload that goes up to the service (including headers) is the correct one after hand-inspection.
-    def test_embeddings_request_payload(self, **kwargs):
-        client = sdk.EmbeddingsClient(
-            endpoint="http://does.not.exist",
-            credential=AzureKeyCredential("key-value"),
-            headers={"some_header": "some_header_value"},
-            user_agent="MyAppId",
-        )
-        for _ in range(2):
-            try:
-                _ = client.embed(
-                    input=["first phrase", "second phrase", "third phrase"],
-                    dimensions=2048,
-                    encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
-                    input_type=sdk.models.EmbeddingInputType.QUERY,
-                    model_extras={
-                        "key1": 1,
-                        "key2": True,
-                        "key3": "Some value",
-                        "key4": [1, 2, 3],
-                        "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
-                    },
-                    model="some-model-id",
-                    raw_request_hook=self.request_callback,
-                )
-                assert False
-            except ServiceRequestError as _:
-                # The test should throw this exception!
-                self._validate_embeddings_json_request_payload()
-                continue
-
-    # Regression test. Send a request that includes all supported types of input objects, with embedding settings
-    # specified in the constructor. Make sure the resulting JSON payload that goes up to the service
-    # is the correct one after hand-inspection.
-    def test_embeddings_request_payload_with_defaults(self, **kwargs):
-        client = sdk.EmbeddingsClient(
-            endpoint="http://does.not.exist",
-            credential=AzureKeyCredential("key-value"),
-            headers={"some_header": "some_header_value"},
-            user_agent="MyAppId",
-            dimensions=2048,
-            encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
-            input_type=sdk.models.EmbeddingInputType.QUERY,
-            model_extras={
-                "key1": 1,
-                "key2": True,
-                "key3": "Some value",
-                "key4": [1, 2, 3],
-                "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
-            },
-            model="some-model-id",
-        )
-
-        for _ in range(2):
-            try:
-                _ = client.embed(
-                    input=["first phrase", "second phrase", "third phrase"], raw_request_hook=self.request_callback
-                )
-                assert False
-            except ServiceRequestError as _:
-                # The test should throw this exception!
-                self._validate_embeddings_json_request_payload()
-                continue
-
-    # Regression test. Send a request that includes all supported types of input objects, with embeddings settings
-    # specified in the constructor and all of them overwritten in the 'embed' call.
-    # Make sure the resulting JSON payload that goes up to the service is the correct one after hand-inspection.
-    def test_embeddings_request_payload_with_defaults_and_overrides(self, **kwargs):
-        client = sdk.EmbeddingsClient(
-            endpoint="http://does.not.exist",
-            credential=AzureKeyCredential("key-value"),
-            headers={"some_header": "some_header_value"},
-            user_agent="MyAppId",
-            dimensions=1024,
-            encoding_format=sdk.models.EmbeddingEncodingFormat.UINT8,
-            input_type=sdk.models.EmbeddingInputType.DOCUMENT,
-            model_extras={
-                "hey1": 2,
-                "key2": False,
-                "key3": "Some other value",
-                "key9": "Yet another value",
-            },
-            model="some-other-model-id",
-        )
-        for _ in range(2):
-            try:
-                _ = client.embed(
-                    input=["first phrase", "second phrase", "third phrase"],
-                    dimensions=2048,
-                    encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
-                    input_type=sdk.models.EmbeddingInputType.QUERY,
-                    model_extras={
-                        "key1": 1,
-                        "key2": True,
-                        "key3": "Some value",
-                        "key4": [1, 2, 3],
-                        "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
-                    },
-                    model="some-model-id",
-                    raw_request_hook=self.request_callback,
-                )
-                assert False
-            except ServiceRequestError as _:
-                # The test should throw this exception!
-                self._validate_embeddings_json_request_payload()
-                continue
-
-    # **********************************************************************************
-    #
-    #                      HAPPY PATH SERVICE TESTS - TEXT EMBEDDINGS
-    #
-    # **********************************************************************************
-
-    @ServicePreparerEmbeddings()
-    @recorded_by_proxy
-    def test_load_embeddings_client(self, **kwargs):
-
-        client = self._load_embeddings_client(**kwargs)
-        assert isinstance(client, sdk.EmbeddingsClient)
-        assert client._model_info
-        response1 = client.get_model_info()
-        self._print_model_info_result(response1)
-        self._validate_model_info_result(
-            response1, "embedding"
-        )  # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
-        client.close()
-
-    @ServicePreparerEmbeddings()
-    @recorded_by_proxy
-    def test_get_model_info_on_embeddings_client(self, **kwargs):
-
-        client = self._create_embeddings_client(**kwargs)
-        assert not client._model_info  # pylint: disable=protected-access
-
-        response1 = client.get_model_info()
-        assert client._model_info  # pylint: disable=protected-access
-
-        self._print_model_info_result(response1)
-        self._validate_model_info_result(
-            response1, "embedding"
-        )  # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
-
-        # Get the model info again. No network calls should be made here,
-        # as the response is cached in the client.
-        response2 = client.get_model_info()
-        self._print_model_info_result(response2)
-        assert response1 == response2
-        client.close()
-
-    @ServicePreparerEmbeddings()
-    @recorded_by_proxy
-    def test_embeddings(self, **kwargs):
-        client = self._create_embeddings_client(**kwargs)
-        input = ["first phrase", "second phrase", "third phrase"]
-
-        # Request embeddings with default service format (list of floats)
-        response1 = client.embed(input=input)
-        self._print_embeddings_result(response1)
-        self._validate_embeddings_result(response1)
-        assert json.dumps(response1.as_dict(), indent=2) == response1.__str__()
-
-        # Request embeddings as base64 encoded strings
-        response2 = client.embed(input=input, encoding_format=sdk.models.EmbeddingEncodingFormat.BASE64)
-        self._print_embeddings_result(response2, sdk.models.EmbeddingEncodingFormat.BASE64)
-        self._validate_embeddings_result(response2, sdk.models.EmbeddingEncodingFormat.BASE64)
-
-        client.close()
-
-    # **********************************************************************************
-    #
-    #         IMAGE EMBEDDINGS REGRESSION TESTS - NO SERVICE RESPONSE REQUIRED
-    #
-    # **********************************************************************************
-
-    # Regression test. Send a request that includes all supported types of input objects. Make sure the resulting
-    # JSON payload that goes up to the service (including headers) is the correct one after hand-inspection.
-    def test_image_embeddings_request_payload(self, **kwargs):
-        client = sdk.ImageEmbeddingsClient(
-            endpoint="http://does.not.exist",
-            credential=AzureKeyCredential("key-value"),
-            headers={"some_header": "some_header_value"},
-            user_agent="MyAppId",
-        )
-        image_embedding_input = ModelClientTestBase._get_image_embeddings_input()
-        for _ in range(2):
-            try:
-                _ = client.embed(
-                    input=[image_embedding_input],
-                    dimensions=2048,
-                    encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
-                    input_type=sdk.models.EmbeddingInputType.QUERY,
-                    model_extras={
-                        "key1": 1,
-                        "key2": True,
-                        "key3": "Some value",
-                        "key4": [1, 2, 3],
-                        "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
-                    },
-                    model="some-model-id",
-                    raw_request_hook=self.request_callback,
-                )
-                assert False
-            except ServiceRequestError as _:
-                # The test should throw this exception!
-                self._validate_image_embeddings_json_request_payload()
-                continue
-
-    # Regression test. Send a request that includes all supported types of input objects, with embedding settings
-    # specified in the constructor. Make sure the resulting JSON payload that goes up to the service
-    # is the correct one after hand-inspection.
-    def test_image_embeddings_request_payload_with_defaults(self, **kwargs):
-        client = sdk.ImageEmbeddingsClient(
-            endpoint="http://does.not.exist",
-            credential=AzureKeyCredential("key-value"),
-            headers={"some_header": "some_header_value"},
-            user_agent="MyAppId",
-            dimensions=2048,
-            encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
-            input_type=sdk.models.EmbeddingInputType.QUERY,
-            model_extras={
-                "key1": 1,
-                "key2": True,
-                "key3": "Some value",
-                "key4": [1, 2, 3],
-                "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
-            },
-            model="some-model-id",
-        )
-        image_embedding_input = ModelClientTestBase._get_image_embeddings_input()
-        for _ in range(2):
-            try:
-                response = client.embed(input=[image_embedding_input], raw_request_hook=self.request_callback)
-                assert False
-            except ServiceRequestError as _:
-                # The test should throw this exception!
-                self._validate_image_embeddings_json_request_payload()
-                continue
-
-    # Regression test. Send a request that includes all supported types of input objects, with embeddings settings
-    # specified in the constructor and all of them overwritten in the 'embed' call.
-    # Make sure the resulting JSON payload that goes up to the service is the correct one after hand-inspection.
-    def test_image_embeddings_request_payload_with_defaults_and_overrides(self, **kwargs):
-        client = sdk.ImageEmbeddingsClient(
-            endpoint="http://does.not.exist",
-            credential=AzureKeyCredential("key-value"),
-            headers={"some_header": "some_header_value"},
-            user_agent="MyAppId",
-            dimensions=1024,
-            encoding_format=sdk.models.EmbeddingEncodingFormat.UINT8,
-            input_type=sdk.models.EmbeddingInputType.DOCUMENT,
-            model_extras={
-                "hey1": 2,
-                "key2": False,
-                "key3": "Some other value",
-                "key9": "Yet another value",
-            },
-            model="some-other-model-id",
-        )
-        image_embedding_input = ModelClientTestBase._get_image_embeddings_input()
-        for _ in range(2):
-            try:
-                _ = client.embed(
-                    input=[image_embedding_input],
-                    dimensions=2048,
-                    encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
-                    input_type=sdk.models.EmbeddingInputType.QUERY,
-                    model_extras={
-                        "key1": 1,
-                        "key2": True,
-                        "key3": "Some value",
-                        "key4": [1, 2, 3],
-                        "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
-                    },
-                    model="some-model-id",
-                    raw_request_hook=self.request_callback,
-                )
-                assert False
-            except ServiceRequestError as _:
-                # The test should throw this exception!
-                self._validate_image_embeddings_json_request_payload()
-                continue
-
-    # **********************************************************************************
-    #
-    #                      HAPPY PATH SERVICE TESTS - IMAGE EMBEDDINGS
-    #
-    # **********************************************************************************
-
-    # TODO: At the moment the /info route shows  "model_type": "embedding", so load_client
-    # will return an EmbeddingsClient instead of ImageEmbeddingsClient. How can we resolve this?
-    # This Cohere model (cohere-embed-v2-english) supports both text embeddings and image embeddings.
-    @ServicePreparerImageEmbeddings()
-    @recorded_by_proxy
-    def test_load_image_embeddings_client(self, **kwargs):
-
-        client = self._load_image_embeddings_client(**kwargs)
-        assert isinstance(client, sdk.EmbeddingsClient)
-        assert client._model_info
-        response1 = client.get_model_info()
-        self._print_model_info_result(response1)
-        self._validate_model_info_result(response1, "embedding")  # TODO: What should this be?
-        client.close()
-
-    # TODO: At the moment the /info route shows  "model_type": "embedding", so load_client
-    # will return an EmbeddingsClient instead of ImageEmbeddingsClient. How can we resolve this?
-    # This Cohere model (cohere-embed-v2-english) supports both text embeddings and image embeddings.
-    @ServicePreparerImageEmbeddings()
-    @recorded_by_proxy
-    def test_get_model_info_on_image_embeddings_client(self, **kwargs):
-
-        client = self._create_image_embeddings_client(**kwargs)
-        assert not client._model_info  # pylint: disable=protected-access
-
-        response1 = client.get_model_info()
-        assert client._model_info  # pylint: disable=protected-access
-
-        self._print_model_info_result(response1)
-        self._validate_model_info_result(response1, "embedding")  # TODO: what should this be?
-
-        # Get the model info again. No network calls should be made here,
-        # as the response is cached in the client.
-        response2 = client.get_model_info()
-        self._print_model_info_result(response2)
-        assert response1 == response2
-        client.close()
-
-    @ServicePreparerImageEmbeddings()
-    @recorded_by_proxy
-    def test_image_embeddings(self, **kwargs):
-        client = self._create_image_embeddings_client(**kwargs)
-        image_embedding_input = ModelClientTestBase._get_image_embeddings_input(False)
-
-        # Request image embeddings with default service format (list of floats)
-        response1 = client.embed(input=[image_embedding_input])
-        self._print_embeddings_result(response1)
-        self._validate_image_embeddings_result(response1)
-        assert json.dumps(response1.as_dict(), indent=2) == response1.__str__()
-
-        # Request embeddings as base64 encoded strings
-        response2 = client.embed(
-            input=[image_embedding_input], encoding_format=sdk.models.EmbeddingEncodingFormat.BASE64
-        )
-        self._print_embeddings_result(response2, sdk.models.EmbeddingEncodingFormat.BASE64)
-        self._validate_image_embeddings_result(response2, sdk.models.EmbeddingEncodingFormat.BASE64)
-
-        client.close()
+class TestChatCompletionsClient(ModelClientTestBase):
 
     # **********************************************************************************
     #
@@ -754,6 +317,21 @@ class TestModelClient(ModelClientTestBase):
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
+    def test_chat_completions_with_entra_id_auth(self, **kwargs):
+        with self._create_chat_client(key_auth=False, **kwargs) as client:
+            messages = [
+                sdk.models.SystemMessage(
+                    content="You are a helpful assistant answering questions regarding length units."
+                ),
+                sdk.models.UserMessage(content="How many feet are in a mile?"),
+            ]
+            response = client.complete(messages=messages)
+            self._print_chat_completions_result(response)
+            self._validate_chat_completions_result(response, ["5280", "5,280"])
+            assert json.dumps(response.as_dict(), indent=2) == response.__str__()
+
+    @ServicePreparerChatCompletions()
+    @recorded_by_proxy
     def test_chat_completions_multi_turn(self, **kwargs):
         client = self._create_chat_client(**kwargs)
         messages = [
@@ -944,7 +522,7 @@ class TestModelClient(ModelClientTestBase):
     # We use AOAI endpoint here because at the moment MaaS does not support Entra ID auth.
     @ServicePreparerAOAIChatCompletions()
     @recorded_by_proxy
-    def test_chat_completions_with_entra_id_auth(self, **kwargs):
+    def test_chat_aoai_completions_with_entra_id_auth(self, **kwargs):
         client = self._create_aoai_chat_client(key_auth=False, **kwargs)
         messages = [
             sdk.models.SystemMessage(content="You are a helpful assistant answering questions regarding length units."),
