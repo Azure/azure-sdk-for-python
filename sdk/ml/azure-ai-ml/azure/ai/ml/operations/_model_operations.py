@@ -52,6 +52,7 @@ from azure.ai.ml._utils._registry_utils import (
 from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_storage_client
 from azure.ai.ml._utils.utils import _is_evaluator, resolve_short_datastore_url, validate_ml_flow_folder
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ID_FORMAT, REGISTRY_URI_FORMAT, AzureMLResourceType
+from azure.ai.ml.entities import AzureDataLakeGen2Datastore
 from azure.ai.ml.entities._assets import Environment, Model, ModelPackage
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._assets.workspace_asset_reference import WorkspaceAssetReference
@@ -415,9 +416,24 @@ class ModelOperations(_ScopeDependentOperations):
                     else:
                         raise e
 
-            container = ds.container_name
-            datastore_type = ds.type
+            if isinstance(ds, AzureDataLakeGen2Datastore):
+                container = ds.filesystem
+                try:
+                    from azure.identity import ClientSecretCredential
 
+                    token_credential = ClientSecretCredential(
+                        tenant_id=ds.credentials["tenant_id"],
+                        client_id=ds.credentials["client_id"],
+                        client_secret=ds.credentials["client_secret"],
+                        authority=ds.credentials["authority_url"],
+                    )
+                    credential = token_credential
+                except (KeyError, TypeError):
+                    pass
+
+            else:
+                container = ds.container_name
+            datastore_type = ds.type
             storage_client = get_storage_client(
                 credential=credential,
                 container_name=container,
