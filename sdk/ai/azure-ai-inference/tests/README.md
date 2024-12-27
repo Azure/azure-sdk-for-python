@@ -5,7 +5,8 @@ The instructions below are for running tests locally against the live service.
 ## Prerequisites
 
 Follow the comments in the `tests.env` file in this folder, to set up an AI Foundry project with the
-appropriate AI models deployed. Then populate all the environment variables there.
+appropriate AI models deployed. Then populate all the environment variables there, and sign in on the console
+using "az login --tenant <tenant-id>".
 
 ## Setup
 
@@ -30,7 +31,8 @@ appropriate AI models deployed. Then populate all the environment variables ther
 
 ## Set environment variables
 
-The following additional environment values **must be** defined, although not used. Assign any value to them:
+In addition to the ones in `tests.env`, the following additional environment values **must be** defined,
+although not used. Assign any value to them:
 
 ```bash
 set AI_TENANT_ID=not-used
@@ -59,4 +61,5 @@ pytest
 
 ## Additional information
 
-See [test documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md) for additional information, including how to set proxy recordings and run tests using recordings.
+See [test documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md)
+for additional information, including how to set proxy recordings and run tests using recordings.
