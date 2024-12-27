@@ -8,6 +8,7 @@ import azure.ai.inference as sdk
 
 from model_inference_test_base import ModelClientTestBase
 
+
 # The test class name needs to start with "Test" to get collected by pytest
 class TestUnitTests(ModelClientTestBase):
 

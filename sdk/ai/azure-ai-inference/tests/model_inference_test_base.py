@@ -190,8 +190,8 @@ class ModelClientTestBase(AzureRecordedTestCase):
         else:
             credential = self.get_credential(sdk.ChatCompletionsClient, is_async=is_async)
             credential_scopes: list[str] = ["https://cognitiveservices.azure.com/.default"]
-            #headers = {}
-        return endpoint, credential, credential_scopes, api_version #, headers
+            # headers = {}
+        return endpoint, credential, credential_scopes, api_version  # , headers
 
     def _load_embeddings_credentials_api_key(self, *, bad_key: bool, **kwargs):
         endpoint = kwargs.pop("azure_ai_embeddings_endpoint")
@@ -588,7 +588,6 @@ class ModelClientTestBase(AzureRecordedTestCase):
             print("\tmodel_type: {}".format(model_info.model_type))
             print("\tmodel_provider_name: {}".format(model_info.model_provider_name))
 
-
     @staticmethod
     def _print_chat_completions_result(response: sdk.models.ChatCompletions):
         if ModelClientTestBase.PRINT_RESULT:
@@ -666,4 +665,3 @@ class ModelClientTestBase(AzureRecordedTestCase):
         """
         with Path(__file__).with_name(file_name).open("r") as f:
             return io.BytesIO(f.read().encode("utf-8"))
-

@@ -22,6 +22,7 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 CONTENT_TRACING_ENV_VARIABLE = "AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED"
 content_tracing_initial_value = os.getenv(CONTENT_TRACING_ENV_VARIABLE)
 
+
 # The test class name needs to start with "Test" to get collected by pytest
 class TestClientTracingAsync(ModelClientTestBase):
 

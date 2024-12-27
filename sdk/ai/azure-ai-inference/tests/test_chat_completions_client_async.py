@@ -17,6 +17,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import ServiceRequestError
 from azure.core.credentials import AzureKeyCredential
 
+
 # The test class name needs to start with "Test" to get collected by pytest
 class TestChatCompletionsClientAsync(ModelClientTestBase):
 

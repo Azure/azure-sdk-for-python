@@ -13,6 +13,7 @@ from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import ServiceRequestError
 from azure.core.credentials import AzureKeyCredential
 
+
 # The test class name needs to start with "Test" to get collected by pytest
 class TestEmbeddingsClient(ModelClientTestBase):
 
