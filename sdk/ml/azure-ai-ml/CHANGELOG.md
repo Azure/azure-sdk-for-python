@@ -5,6 +5,7 @@
 
 ### Bugs Fixed
   - Fixed disableLocalAuthentication handling while creating amlCompute
+  - Fixed model download issue
 
 ## 1.23.0 (2024-12-05)
 
