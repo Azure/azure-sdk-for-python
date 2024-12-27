@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Callable, Dict, List, Union
+from typing import Dict, List, Union
 
 from typing_extensions import overload, override
 
@@ -43,13 +43,13 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     def __init__(self, credential, azure_ai_project, **kwargs):
-        super().__init__(**kwargs)
-        self._evaluators: List[Callable[..., Dict[str, Union[str, float]]]] = [
+        evaluators = [
             ViolenceEvaluator(credential, azure_ai_project),
             SexualEvaluator(credential, azure_ai_project),
             SelfHarmEvaluator(credential, azure_ai_project),
             HateUnfairnessEvaluator(credential, azure_ai_project),
         ]
+        super().__init__(evaluators=evaluators, **kwargs)
 
     @overload
     def __call__(

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Callable, Dict, List, Union
+from typing import Union
 
 from typing_extensions import overload, override
 
@@ -47,9 +47,7 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     def __init__(self, model_config, **kwargs):
-        super().__init__(**kwargs)
-
-        self._evaluators: List[Union[Callable[..., Dict[str, Union[str, float]]], Callable[..., Dict[str, float]]]] = [
+        evaluators = [
             GroundednessEvaluator(model_config),
             RelevanceEvaluator(model_config),
             CoherenceEvaluator(model_config),
@@ -57,6 +55,7 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
             SimilarityEvaluator(model_config),
             F1ScoreEvaluator(),
         ]
+        super().__init__(evaluators=evaluators, **kwargs)
 
     @overload  # type: ignore
     def __call__(self, *, query: str, response: str, context: str, ground_truth: str):

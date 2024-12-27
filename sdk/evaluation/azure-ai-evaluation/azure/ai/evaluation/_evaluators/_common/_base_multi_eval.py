@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from concurrent.futures import as_completed
-from typing import TypeVar, Dict
+from typing import TypeVar, Dict, List
 
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 from typing_extensions import override
@@ -18,13 +18,18 @@ class MultiEvaluatorBase(EvaluatorBase[T]):
     suite of metrics.
 
     Child classes still need to implement the __call__ methods, but they shouldn't need a _do_eval.
+
+    :param evaluators: The list of evaluators to run when this evaluator is called.
+    :type evaluators: List[~azure.ai.evaluation._evaluators._common.EvaluatorBase]
+    :param kwargs: Additional arguments to pass to the evaluator.
+    :type kwargs: Any
+    :return: An evaluator that runs multiple other evaluators and combines their results.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, evaluators: List[EvaluatorBase[T]], **kwargs):
         super().__init__()
         self._parallel = kwargs.pop("_parallel", True)
-        if not hasattr(self, "_evaluators"):
-            self._evaluators = []
+        self._evaluators = evaluators
 
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, T]:
@@ -49,6 +54,8 @@ class MultiEvaluatorBase(EvaluatorBase[T]):
         else:
             for evaluator in self._evaluators:
                 result = evaluator(**eval_input)
-                results.update(result)
+                # Ignore is to avoid mypy getting upset over the amount of duck-typing
+                # that's going on to shove evaluators around like this.
+                results.update(result)  # type: ignore[arg-type]
 
         return results
