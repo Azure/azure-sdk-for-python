@@ -240,12 +240,26 @@ def _parse_name_version(
     return ":".join(name), version
 
 
-def _get_file_hash(filename: Union[str, os.PathLike], _hash: hash_type) -> hash_type:
+def _get_file_hash(filename: Union[str, os.PathLike], _hash: hash_type, chunk_size: int = 1024) -> hash_type:
     with open(str(filename), "rb") as f:
-        for chunk in iter(lambda: f.read(CHUNK_SIZE), b""):
+        for chunk in iter(lambda: f.read(chunk_size), b""):
             _hash.update(chunk)
     return _hash
 
+def delete_two_catalog_files(path):
+    """
+    Function that deletes the "catalog.json" and "catalog.json.sig" files located at 'path', if they exist
+    """
+    # catalog.json
+    file_path_json = os.path.join(path, "catalog.json")
+    if os.path.exists(file_path_json):
+        module_logger.warning(f"{file_path_json} already exists. Deleting it")
+        os.remove(file_path_json)
+    # catalog.json.sig
+    file_path_json_sig = os.path.join(path, "catalog.json.sig")
+    if os.path.exists(file_path_json_sig):
+        module_logger.warning(f"{file_path_json_sig} already exists. Deleting it")
+        os.remove(file_path_json_sig)
 
 def _get_dir_hash(directory: Union[str, os.PathLike], _hash: hash_type, ignore_file: IgnoreFile) -> hash_type:
     dir_contents = Path(directory).iterdir()

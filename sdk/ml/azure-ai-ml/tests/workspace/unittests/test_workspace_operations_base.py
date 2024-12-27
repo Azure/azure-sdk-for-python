@@ -32,7 +32,6 @@ from azure.ai.ml.entities import (
 )
 from azure.ai.ml.operations._workspace_operations_base import WorkspaceOperationsBase
 from azure.core.polling import LROPoller
-import urllib.parse
 
 
 @pytest.fixture

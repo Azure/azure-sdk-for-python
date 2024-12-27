@@ -4,12 +4,16 @@
 
 # pylint: disable=protected-access,too-many-lines
 import time
+import collections
+import json
+import os
 import types
 from functools import partial
 from inspect import Parameter, signature
 from os import PathLike
 from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union, cast
+import hashlib
 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
@@ -26,9 +30,14 @@ from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _create_or_update_autoincrement,
+    _get_file_hash,
     _get_latest,
     _get_next_version_from_container,
     _resolve_label_to_asset,
+    get_ignore_file,
+    get_upload_files_from_folder,
+    IgnoreFile,
+    delete_two_catalog_files
 )
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import polling_wait
@@ -651,6 +660,33 @@ class ComponentOperations(_ScopeDependentOperations):
             jobs_only=True,
         )
         return component
+
+    @experimental
+    def prepare_for_sign(self, component: Component):
+        ignore_file = IgnoreFile()
+        
+        if isinstance(component, ComponentCodeMixin):
+            with component._build_code() as code:
+                delete_two_catalog_files(code.path)
+                ignore_file = get_ignore_file(code.path) if code._ignore_file is None else ignore_file
+                file_list = get_upload_files_from_folder(code.path, ignore_file=ignore_file)
+                json_stub = {}
+                json_stub["HashAlgorithm"] = "SHA256"
+                json_stub["CatalogItems"] = {}
+                
+                for file_path, file_name in sorted(file_list, key=lambda x: str(x[1]).lower()):
+                    file_hash = _get_file_hash(file_path, hashlib.sha256(), 4096).hexdigest().upper()
+                    json_stub["CatalogItems"][file_name] = file_hash
+                
+                json_stub["CatalogItems"] = collections.OrderedDict(
+                    sorted(json_stub["CatalogItems"].items())
+                )
+                
+                print(type(json_stub), type (json_stub["CatalogItems"]))
+                with open(os.path.join(code.path, "catalog.json"), "w") as jsonFile1:
+                    json.dump(json_stub, jsonFile1)
+                with open(os.path.join(code.path, "catalog.json.sig"), "w") as jsonFile2:
+                    json.dump(json_stub, jsonFile2)
 
     @monitor_with_telemetry_mixin(ops_logger, "Component.Archive", ActivityType.PUBLICAPI)
     def archive(
