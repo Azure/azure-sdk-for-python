@@ -261,6 +261,18 @@ class TestModelClient(ModelClientTestBase):
 
     @ServicePreparerEmbeddings()
     @recorded_by_proxy
+    def test_embeddings_with_entra_id_auth(self, **kwargs):
+        with self._create_embeddings_client(key_auth=False, **kwargs) as client:
+            input = ["first phrase", "second phrase", "third phrase"]
+
+            # Request embeddings with default service format (list of floats)
+            response1 = client.embed(input=input)
+            self._print_embeddings_result(response1)
+            self._validate_embeddings_result(response1)
+            assert json.dumps(response1.as_dict(), indent=2) == response1.__str__()
+
+    @ServicePreparerEmbeddings()
+    @recorded_by_proxy
     def test_embeddings(self, **kwargs):
         client = self._create_embeddings_client(**kwargs)
         input = ["first phrase", "second phrase", "third phrase"]
@@ -435,6 +447,18 @@ class TestModelClient(ModelClientTestBase):
         self._print_model_info_result(response2)
         assert response1 == response2
         client.close()
+
+    @ServicePreparerImageEmbeddings()
+    @recorded_by_proxy
+    def test_image_embeddings_with_entra_id_auth(self, **kwargs):
+        with self._create_image_embeddings_client(key_auth=False, **kwargs) as client:
+            image_embedding_input = ModelClientTestBase._get_image_embeddings_input(False)
+
+            # Request image embeddings with default service format (list of floats)
+            response1 = client.embed(input=[image_embedding_input])
+            self._print_embeddings_result(response1)
+            self._validate_image_embeddings_result(response1)
+            assert json.dumps(response1.as_dict(), indent=2) == response1.__str__()
 
     @ServicePreparerImageEmbeddings()
     @recorded_by_proxy
@@ -754,6 +778,21 @@ class TestModelClient(ModelClientTestBase):
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
+    def test_chat_completions_with_entra_id_auth(self, **kwargs):
+        with self._create_chat_client(key_auth=False, **kwargs) as client:
+            messages = [
+                sdk.models.SystemMessage(
+                    content="You are a helpful assistant answering questions regarding length units."
+                ),
+                sdk.models.UserMessage(content="How many feet are in a mile?"),
+            ]
+            response = client.complete(messages=messages)
+            self._print_chat_completions_result(response)
+            self._validate_chat_completions_result(response, ["5280", "5,280"])
+            assert json.dumps(response.as_dict(), indent=2) == response.__str__()
+
+    @ServicePreparerChatCompletions()
+    @recorded_by_proxy
     def test_chat_completions_multi_turn(self, **kwargs):
         client = self._create_chat_client(**kwargs)
         messages = [
@@ -944,7 +983,7 @@ class TestModelClient(ModelClientTestBase):
     # We use AOAI endpoint here because at the moment MaaS does not support Entra ID auth.
     @ServicePreparerAOAIChatCompletions()
     @recorded_by_proxy
-    def test_chat_completions_with_entra_id_auth(self, **kwargs):
+    def test_chat_aoai_completions_with_entra_id_auth(self, **kwargs):
         client = self._create_aoai_chat_client(key_auth=False, **kwargs)
         messages = [
             sdk.models.SystemMessage(content="You are a helpful assistant answering questions regarding length units."),
