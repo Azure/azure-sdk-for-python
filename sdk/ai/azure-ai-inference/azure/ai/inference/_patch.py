@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -104,19 +105,19 @@ def load_client(
         )
 
     # TODO: Remove "completions", "chat-comletions" and "embedding" once Mistral Large and Cohere fixes their model type
-    if model_info.model_type in (_models.ModelType.CHAT, "completion", "chat-completion", "chat-completions"):
+    if model_info.model_type in (_models.ModelType.CHAT_COMPLETION, "chat_completions", "chat", "completion", "chat-completion", "chat-completions", "chat completion", "chat completions"):
         chat_completion_client = ChatCompletionsClient(endpoint, credential, **kwargs)
         chat_completion_client._model_info = (  # pylint: disable=protected-access,attribute-defined-outside-init
             model_info
         )
         return chat_completion_client
 
-    if model_info.model_type in (_models.ModelType.EMBEDDINGS, "embedding"):
+    if model_info.model_type in (_models.ModelType.EMBEDDINGS, "embedding", "text_embedding", "text-embeddings", "text embedding", "text embeddings"):
         embedding_client = EmbeddingsClient(endpoint, credential, **kwargs)
         embedding_client._model_info = model_info  # pylint: disable=protected-access,attribute-defined-outside-init
         return embedding_client
 
-    if model_info.model_type == _models.ModelType.IMAGE_EMBEDDINGS:
+    if model_info.model_type in (_models.ModelType.IMAGE_EMBEDDINGS, "image_embedding", "image-embeddings", "image-embedding", "image embedding", "image embeddings"):
         image_embedding_client = ImageEmbeddingsClient(endpoint, credential, **kwargs)
         image_embedding_client._model_info = (  # pylint: disable=protected-access,attribute-defined-outside-init
             model_info

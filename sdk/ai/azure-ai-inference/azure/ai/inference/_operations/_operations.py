@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +8,7 @@
 from io import IOBase
 import json
 import sys
-from typing import Any, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -34,7 +33,7 @@ from .._vendor import ChatCompletionsClientMixinABC, EmbeddingsClientMixinABC, I
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 _Unset: Any = object()
 T = TypeVar("T")
@@ -246,7 +245,6 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         model: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ChatCompletions:
-        # pylint: disable=too-many-locals
         """Gets chat completions for the provided chat messages.
         Completions support a wide variety of tasks and generate text that continues from or
         "completes"
@@ -303,11 +301,20 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         :paramtype top_p: float
         :keyword max_tokens: The maximum number of tokens to generate. Default value is None.
         :paramtype max_tokens: int
-        :keyword response_format: The format that the model must output. Use this to enable JSON mode
-         instead of the default text mode.
-         Note that to enable JSON mode, some AI models may also require you to instruct the model to
-         produce JSON
-         via a system or user message. Default value is None.
+        :keyword response_format: An object specifying the format that the model must output.
+
+         Setting to ``{ "type": "json_schema", "json_schema": {...} }`` enables Structured Outputs
+         which ensures the model will match your supplied JSON schema.
+
+         Setting to ``{ "type": "json_object" }`` enables JSON mode, which ensures the message the
+         model generates is valid JSON.
+
+         **Important:** when using JSON mode, you **must** also instruct the model to produce JSON
+         yourself via a system or user message. Without this, the model may generate an unending stream
+         of whitespace until the generation reaches the token limit, resulting in a long-running and
+         seemingly "stuck" request. Also note that the message content may be partially cut off if
+         ``finish_reason="length"``\\ , which indicates the generation exceeded ``max_tokens`` or the
+         conversation exceeded the max context length. Default value is None.
         :paramtype response_format: ~azure.ai.inference.models.ChatCompletionsResponseFormat
         :keyword stop: A collection of textual sequences that will end completions generation. Default
          value is None.
@@ -335,7 +342,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         :rtype: ~azure.ai.inference.models.ChatCompletions
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -425,7 +432,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         :rtype: ~azure.ai.inference.models.ModelInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -556,7 +563,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -638,7 +645,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         :rtype: ~azure.ai.inference.models.ModelInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -772,7 +779,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -854,7 +861,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         :rtype: ~azure.ai.inference.models.ModelInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

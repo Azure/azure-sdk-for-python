@@ -22,7 +22,11 @@ USAGE:
         `your-azure-region` is the Azure region where your model is deployed.
     2) AZURE_AI_CHAT_KEY - Your model key (a 32-character string). Keep it secret.
 """
-
+import sys
+import logging
+logger = logging.getLogger("azure")
+logger.setLevel(logging.DEBUG)
+logger.addHandler(logging.StreamHandler(stream=sys.stdout))
 
 def sample_chat_completions():
     import os
@@ -40,7 +44,7 @@ def sample_chat_completions():
     from azure.ai.inference.models import SystemMessage, UserMessage
     from azure.core.credentials import AzureKeyCredential
 
-    client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key), logging_enable=True)
 
     response = client.complete(
         messages=[

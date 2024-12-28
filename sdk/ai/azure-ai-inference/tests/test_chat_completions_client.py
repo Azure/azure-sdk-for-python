@@ -85,7 +85,7 @@ class TestChatCompletionsClient(ModelClientTestBase):
                     max_tokens=321,
                     model="some-model-id",
                     presence_penalty=4.567,
-                    response_format=sdk.models.ChatCompletionsResponseFormatJSON(),
+                    response_format=sdk.models.ChatCompletionsResponseFormatJsonObject(),
                     seed=654,
                     stop=["stop1", "stop2"],
                     stream=True,
@@ -122,7 +122,7 @@ class TestChatCompletionsClient(ModelClientTestBase):
             max_tokens=321,
             model="some-model-id",
             presence_penalty=4.567,
-            response_format=sdk.models.ChatCompletionsResponseFormatJSON(),
+            response_format=sdk.models.ChatCompletionsResponseFormatJsonObject(),
             seed=654,
             stop=["stop1", "stop2"],
             temperature=8.976,
@@ -256,7 +256,7 @@ class TestChatCompletionsClient(ModelClientTestBase):
                     max_tokens=321,
                     model="some-model-id",
                     presence_penalty=4.567,
-                    response_format=sdk.models.ChatCompletionsResponseFormatJSON(),
+                    response_format=sdk.models.ChatCompletionsResponseFormatJsonObject(),
                     seed=654,
                     stop=["stop1", "stop2"],
                     stream=True,
@@ -290,7 +290,7 @@ class TestChatCompletionsClient(ModelClientTestBase):
         self._print_model_info_result(response1)
         self._validate_model_info_result(
             response1, "chat-completion"
-        )  # TODO: This should be ModelType.CHAT once the model is fixed
+        )  # TODO: This should be ModelType.CHAT_COMPLETION once the model is fixed
         client.close()
 
     @ServicePreparerChatCompletions()
@@ -306,7 +306,7 @@ class TestChatCompletionsClient(ModelClientTestBase):
         self._print_model_info_result(response1)
         self._validate_model_info_result(
             response1, "chat-completion"  # TODO: This should be chat_comletions according to REST API spec...
-        )  # TODO: This should be ModelType.CHAT once the model is fixed
+        )  # TODO: This should be ModelType.CHAT_COMPLETION once the model is fixed
 
         # Get the model info again. No network calls should be made here,
         # as the response is cached in the client.

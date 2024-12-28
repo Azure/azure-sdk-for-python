@@ -5,6 +5,12 @@
 ### Features Added
 
 * Added a client for Image Embeddings, named `ImageEmbeddingsClient`. See package README.md and new samples.
+* Added support for specifying the JSON schema of the Chat Completion response. See new class `ChatCompletionsResponseFormatJsonSchema`. See sample ...
+
+### Breaking Changes
+
+* class `ChatCompletionsResponseFormatJson` renamed to `ChatCompletionsResponseFormatJsonObject`, to accommodate
+the new class `ChatCompletionsResponseFormatJsonSchema`.
 
 ### Bugs Fixed
 

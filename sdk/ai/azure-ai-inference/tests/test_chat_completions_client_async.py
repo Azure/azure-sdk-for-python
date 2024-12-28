@@ -87,7 +87,7 @@ class TestChatCompletionsClientAsync(ModelClientTestBase):
                     max_tokens=321,
                     model="some-model-id",
                     presence_penalty=4.567,
-                    response_format=sdk.models.ChatCompletionsResponseFormatJSON(),
+                    response_format=sdk.models.ChatCompletionsResponseFormatJsonObject(),
                     seed=654,
                     stop=["stop1", "stop2"],
                     stream=True,
@@ -127,7 +127,7 @@ class TestChatCompletionsClientAsync(ModelClientTestBase):
             max_tokens=321,
             model="some-model-id",
             presence_penalty=4.567,
-            response_format=sdk.models.ChatCompletionsResponseFormatJSON(),
+            response_format=sdk.models.ChatCompletionsResponseFormatJsonObject(),
             seed=654,
             stop=["stop1", "stop2"],
             temperature=8.976,
@@ -262,7 +262,7 @@ class TestChatCompletionsClientAsync(ModelClientTestBase):
                     max_tokens=321,
                     model="some-model-id",
                     presence_penalty=4.567,
-                    response_format=sdk.models.ChatCompletionsResponseFormatJSON(),
+                    response_format=sdk.models.ChatCompletionsResponseFormatJsonObject(),
                     seed=654,
                     stop=["stop1", "stop2"],
                     stream=True,
@@ -298,7 +298,7 @@ class TestChatCompletionsClientAsync(ModelClientTestBase):
         self._print_model_info_result(response1)
         self._validate_model_info_result(
             response1, "chat-completion"  # TODO: This should be chat_completions based on REST API spec...
-        )  # TODO: This should be ModelType.CHAT once the model is fixed
+        )  # TODO: This should be ModelType.CHAT_COMPLETION once the model is fixed
         await client.close()
 
     @ServicePreparerChatCompletions()
@@ -312,7 +312,7 @@ class TestChatCompletionsClientAsync(ModelClientTestBase):
         self._print_model_info_result(response1)
         self._validate_model_info_result(
             response1, "chat-completion"
-        )  # TODO: This should be ModelType.CHAT once the model is fixed
+        )  # TODO: This should be ModelType.CHAT_COMPLETION once the model is fixed
 
         # Get the model info again. No network calls should be made here,
         # as the response is cached in the client.
