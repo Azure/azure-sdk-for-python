@@ -461,8 +461,6 @@ class CallAutomationClient:
         operation_context: Optional[str] = None,
         media_streaming: Optional['MediaStreamingOptions'] = None,
         transcription: Optional['TranscriptionOptions'] = None,
-        sip_headers: Optional[Dict[str, str]] = None,
-        voip_headers: Optional[Dict[str, str]] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """Answer incoming call with Azure Communication Service's IncomingCall event
