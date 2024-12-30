@@ -486,10 +486,6 @@ class CallAutomationClient:
         :keyword transcription: Configuration of live transcription.
         :paramtype transcription: ~azure.communication.callautomation.TranscriptionOptions
          or None
-        :keyword sip_headers: Sip Headers for PSTN Call
-        :paramtype sip_headers: Dict[str, str] or None
-        :keyword voip_headers: Voip Headers for Voip Call
-        :paramtype voip_headers: Dict[str, str] or None
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
