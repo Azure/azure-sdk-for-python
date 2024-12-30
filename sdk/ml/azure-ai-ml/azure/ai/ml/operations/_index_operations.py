@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 import json
-from typing import Any, Dict, Iterable, Optional, Union, Callable, List
+from typing import Any, Callable, Dict, Iterable, List, Optional, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
 
@@ -23,25 +23,27 @@ from azure.ai.ml._scope_dependent_operations import (
     _ScopeDependentOperations,
 )
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
-from azure.ai.ml._utils._asset_utils import _resolve_label_to_asset
+from azure.ai.ml._utils._asset_utils import (
+    _resolve_label_to_asset,
+    _validate_auto_delete_setting_in_data_output,
+    _validate_workspace_managed_datastore,
+)
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _get_base_urls_from_discovery_service
-from azure.ai.ml.constants._common import AzureMLResourceType, WorkspaceDiscoveryUrlKey, AssetTypes
-from azure.ai.ml.entities._assets import Index
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-from azure.ai.ml.operations._datastore_operations import DatastoreOperations
-from azure.core.credentials import TokenCredential
-
+from azure.ai.ml.constants._common import AssetTypes, AzureMLResourceType, WorkspaceDiscoveryUrlKey
+from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities import PipelineJob, PipelineJobSettings
-from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.entities._assets import Index
+from azure.ai.ml.entities._credentials import ManagedIdentityConfiguration, UserIdentityConfiguration
 from azure.ai.ml.entities._indexes import (
     AzureAISearchConfig,
+    GitSource,
     IndexDataSource,
     LocalSource,
-    GitSource,
     ModelConfiguration,
 )
+from azure.ai.ml.entities._indexes.data_index_func import index_data as index_data_func
 from azure.ai.ml.entities._indexes.entities.data_index import (
     CitationRegex,
     Data,
@@ -50,14 +52,11 @@ from azure.ai.ml.entities._indexes.entities.data_index import (
     IndexSource,
     IndexStore,
 )
-from azure.ai.ml.entities._indexes.utils._open_ai_utils import build_open_ai_protocol, build_connection_id
-from azure.ai.ml.entities._credentials import ManagedIdentityConfiguration, UserIdentityConfiguration
-from azure.ai.ml.dsl import pipeline
-from azure.ai.ml.entities._indexes.data_index_func import index_data as index_data_func
-from azure.ai.ml._utils._asset_utils import (
-    _validate_auto_delete_setting_in_data_output,
-    _validate_workspace_managed_datastore,
-)
+from azure.ai.ml.entities._indexes.utils._open_ai_utils import build_connection_id, build_open_ai_protocol
+from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.operations._datastore_operations import DatastoreOperations
+from azure.core.credentials import TokenCredential
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -81,7 +80,7 @@ class IndexOperations(_ScopeDependentOperations):
         **kwargs: Any,
     ):
         super().__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self._credential = credential
         # Dataplane service clients are lazily created as they are needed
         self.__azure_ai_assets_client: Optional[AzureAiAssetsClient042024] = None

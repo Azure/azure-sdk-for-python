@@ -20,7 +20,7 @@ class TestDataFactoryManagementIntegrationRuntimeObjectMetadataOperations(AzureM
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_refresh(self, resource_group):
+    def test_integration_runtime_object_metadata_begin_refresh(self, resource_group):
         response = self.client.integration_runtime_object_metadata.begin_refresh(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -33,7 +33,7 @@ class TestDataFactoryManagementIntegrationRuntimeObjectMetadataOperations(AzureM
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_integration_runtime_object_metadata_get(self, resource_group):
         response = self.client.integration_runtime_object_metadata.get(
             resource_group_name=resource_group.name,
             factory_name="str",

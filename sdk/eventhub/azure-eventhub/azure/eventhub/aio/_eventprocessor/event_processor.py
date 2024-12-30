@@ -81,7 +81,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
     ):
         self._consumer_group = consumer_group
         self._eventhub_client = eventhub_client
-        self._namespace = eventhub_client._address.hostname  # pylint: disable=protected-access
+        self._namespace = eventhub_client._address.hostname
         self._eventhub_name = eventhub_client.eventhub_name
         self._partition_id = partition_id
         self._event_handler = event_handler
@@ -249,8 +249,8 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
 
     async def _receive(
         self, partition_id: str, checkpoint: Optional[Dict[str, Any]] = None
-    ) -> None:  # pylint: disable=too-many-statements
-        try:  # pylint:disable=too-many-nested-blocks
+    ) -> None:
+        try:
             _LOGGER.info("start ownership %r, checkpoint %r", partition_id, checkpoint)
             (
                 initial_event_position,

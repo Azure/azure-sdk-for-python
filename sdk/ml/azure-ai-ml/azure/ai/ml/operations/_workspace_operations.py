@@ -61,7 +61,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
             kwargs.pop("dataplane_client").workspaces if kwargs.get("dataplane_client") else None
         )
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline", None)
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self._provision_network_operation = service_client.managed_network_provisions
         super().__init__(
             operation_scope=operation_scope,

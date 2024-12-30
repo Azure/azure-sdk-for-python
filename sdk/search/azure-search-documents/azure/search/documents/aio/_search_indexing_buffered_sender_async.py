@@ -102,6 +102,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     @property
     def actions(self) -> List[IndexAction]:
         """The list of currently index actions in queue to index.
+
         :return: The list of currently index actions in queue to index.
         :rtype: list[IndexAction]
         """
@@ -110,6 +111,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     @distributed_trace_async
     async def close(self, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         """Close the session.
+
         :return: None
         :rtype: None
         """
@@ -119,10 +121,11 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     @distributed_trace_async
     async def flush(self, timeout: int = 86400, **kwargs) -> bool:  # pylint:disable=unused-argument
         """Flush the batch.
+
         :param int timeout: time out setting. Default is 86400s (one day)
         :return: True if there are errors. Else False
         :rtype: bool
-        :raises ~azure.core.exceptions.ServiceResponseTimeoutError:
+        :raises ~azure.core.exceptions.ServiceResponseTimeoutError: if there is a timeout
         """
         has_error = False
         begin_time = int(time.time())
@@ -197,6 +200,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         will be triggered. It checks the actions already queued and flushes them if:
         1. Auto_flush is on
         2. There are self._batch_action_count actions queued
+
         :return: True if proces is needed, False otherwise
         :rtype: bool
         """
@@ -220,6 +224,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     @distributed_trace_async
     async def upload_documents(self, documents: List[Dict], **kwargs: Any) -> None:  # pylint: disable=unused-argument
         """Queue upload documents actions.
+
         :param documents: A list of documents to upload.
         :type documents: list[dict]
         """
@@ -230,6 +235,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     @distributed_trace_async
     async def delete_documents(self, documents: List[Dict], **kwargs: Any) -> None:  # pylint: disable=unused-argument
         """Queue delete documents actions
+
         :param documents: A list of documents to delete.
         :type documents: list[Dict]
         """
@@ -240,6 +246,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     @distributed_trace_async
     async def merge_documents(self, documents: List[Dict], **kwargs: Any) -> None:  # pylint: disable=unused-argument
         """Queue merge documents actions
+
         :param documents: A list of documents to merge.
         :type documents: list[dict]
         """
@@ -251,6 +258,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     async def merge_or_upload_documents(self, documents: List[Dict], **kwargs: Any) -> None:
         # pylint: disable=unused-argument
         """Queue merge documents or upload documents actions
+
         :param documents: A list of documents to merge or upload.
         :type documents: list[dict]
         """
@@ -266,8 +274,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         :type batch: IndexDocumentsBatch
         :return: Indexing result for each action in the batch.
         :rtype:  list[IndexingResult]
-
-        :raises ~azure.search.documents.RequestEntityTooLargeError
+        :raises ~azure.search.documents.RequestEntityTooLargeError: The request is too large.
         """
         return await self._index_documents_actions(actions=batch.actions, **kwargs)
 
