@@ -1287,14 +1287,14 @@ class BaseAgentEventHandler(Iterator[T]):
     def __init__(self) -> None:
         self.response_iterator: Optional[Iterator[bytes]] = None
         self.event_handler: Optional["BaseAgentEventHandler[T]"] = None
-        self.submit_tool_outputs: Optional[Callable[[ThreadRun, "BaseAgentEventHandler[T]"], Awaitable[None]]] = None
+        self.submit_tool_outputs: Optional[Callable[[ThreadRun, "BaseAgentEventHandler[T]"], None]] = None
         self.done: bool
         self.buffer: str
 
     def initialize(
         self,
         response_iterator: Iterator[bytes],
-        submit_tool_outputs: Callable[[ThreadRun, "BaseAgentEventHandler[T]"], Awaitable[None]],
+        submit_tool_outputs: Callable[[ThreadRun, "BaseAgentEventHandler[T]"], None],
         event_handler: Optional["BaseAgentEventHandler[T]"] = None,
     ) -> None:
         self.response_iterator = response_iterator
@@ -1603,7 +1603,7 @@ class AgentRunStream(Generic[BaseAgentEventHandlerT]):
         self.submit_tool_outputs = submit_tool_outputs
         self.event_handler.initialize(
             self.response_iterator,
-            cast(Callable[[ThreadRun, BaseAgentEventHandler], Awaitable[None]], submit_tool_outputs),
+            cast(Callable[[ThreadRun, BaseAgentEventHandler], None], submit_tool_outputs),
             self.event_handler,
         )
 
