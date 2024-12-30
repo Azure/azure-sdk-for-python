@@ -26,9 +26,8 @@ import json
 from typing import AsyncGenerator, Optional
 
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models._models import (
+from azure.ai.projects.models import (
     MessageDeltaChunk,
-    MessageDeltaTextContent,
 )
 from azure.ai.projects.models import AgentStreamEvent, BaseAsyncAgentEventHandler
 from azure.identity.aio import DefaultAzureCredential
@@ -60,11 +59,8 @@ class MyEventHandler(BaseAsyncAgentEventHandler[str]):
 
             event_obj: MessageDeltaChunk = MessageDeltaChunk(**json.loads(event_data))
 
-            for content_part in event_obj.delta.content:
-                if isinstance(content_part, MessageDeltaTextContent):
-                    if content_part.text is not None:
-                        return content_part.text.value
-        return None
+            return event_obj.text
+        return ""
 
     async def get_stream_chunks(self) -> AsyncGenerator[str, None]:
         async for chunk in self:

@@ -26,7 +26,6 @@ from typing import Generator, Optional
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     MessageDeltaChunk,
-    MessageDeltaTextContent,
 )
 from azure.ai.projects.models import AgentStreamEvent, BaseAgentEventHandler
 from azure.identity import DefaultAzureCredential
@@ -40,7 +39,7 @@ import os
 # The get_stream_chunks method is defined to return the chunks as strings because the iteration is a string.
 class MyEventHandler(BaseAgentEventHandler[str]):
 
-    def _process_event(self, event_data_str: str) -> Optional[str]:  # type: ignore[return]
+    def _process_event(self, event_data_str: str) -> str:  # type: ignore[return]
         event_lines = event_data_str.strip().split("\n")
         event_type: Optional[str] = None
         event_data = ""
@@ -57,11 +56,8 @@ class MyEventHandler(BaseAgentEventHandler[str]):
 
             event_obj: MessageDeltaChunk = MessageDeltaChunk(**json.loads(event_data))
 
-            for content_part in event_obj.delta.content:
-                if isinstance(content_part, MessageDeltaTextContent):
-                    if content_part.text is not None:
-                        return content_part.text.value
-        return None
+            return event_obj.text
+        return ""
 
     def get_stream_chunks(self) -> Generator[str, None, None]:
         for chunk in self:
