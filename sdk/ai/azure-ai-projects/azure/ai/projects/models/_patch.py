@@ -1260,7 +1260,7 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
         if "\n\n" in self.buffer:
             event_end_index = self.buffer.index("\n\n")
             event_str = self.buffer[:event_end_index]
-            self.buffer = self.buffer[event_end_index + 4 :]
+            self.buffer = self.buffer[event_end_index:].lstrip()
         else:
             event_str = self.buffer
             self.buffer = ""
@@ -1320,7 +1320,7 @@ class BaseAgentEventHandler(Iterator[T]):
         if "\n\n" in self.buffer:
             event_end_index = self.buffer.index("\n\n")
             event_str = self.buffer[:event_end_index]
-            self.buffer = self.buffer[event_end_index + 4 :]
+            self.buffer = self.buffer[event_end_index:].lstrip()
         else:
             event_str = self.buffer
             self.buffer = ""
