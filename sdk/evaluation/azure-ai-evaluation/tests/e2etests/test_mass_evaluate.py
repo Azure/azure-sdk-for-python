@@ -313,8 +313,10 @@ class TestMassEvaluate:
         # - It fails in playback mode for some reason
         # - It's imminently being removed in favor of the ContentSafetyEvaluator.
         evaluators = {
-            "protected_material_old": ProtectedMaterialMultimodalEvaluator(credential=azure_cred, azure_ai_project=project_scope),
-            "content_safety" : ContentSafetyEvaluator(credential=azure_cred, azure_ai_project=project_scope),
+            "protected_material_old": ProtectedMaterialMultimodalEvaluator(
+                credential=azure_cred, azure_ai_project=project_scope
+            ),
+            "content_safety": ContentSafetyEvaluator(credential=azure_cred, azure_ai_project=project_scope),
             "protected_material": ProtectedMaterialEvaluator(credential=azure_cred, azure_ai_project=project_scope),
             "sexual_old": SexualMultimodalEvaluator(credential=azure_cred, azure_ai_project=project_scope),
             "sexual": SexualEvaluator(credential=azure_cred, azure_ai_project=project_scope),
@@ -328,6 +330,7 @@ class TestMassEvaluate:
             for key in evaluators.keys():
                 evaluator_config[key] = {"conversation": "${target.conversation}"}
             from .target_fn import target_multimodal_fn1
+
             target = target_multimodal_fn1
 
         # run the evaluation
@@ -381,11 +384,10 @@ class TestMassEvaluate:
         assert "outputs.protected_material_old.fictional_characters_reason" in row_result_df.columns.to_list()
         assert "outputs.protected_material_old.logos_and_brands_label" in row_result_df.columns.to_list()
         assert "outputs.protected_material_old.logos_and_brands_reason" in row_result_df.columns.to_list()
-        
+
         assert "outputs.sexual_old.sexual_score" in row_result_df.columns.to_list()
         assert "outputs.sexual_old.sexual_reason" in row_result_df.columns.to_list()
         assert "outputs.sexual_old.sexual" in row_result_df.columns.to_list()
-
 
         assert len(metrics) == 12
         assert 0 <= metrics.get("content_safety.sexual_defect_rate") <= 1

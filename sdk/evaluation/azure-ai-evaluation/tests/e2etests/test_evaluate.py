@@ -22,6 +22,7 @@ def data_file():
     data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
     return os.path.join(data_path, "evaluate_test_data.jsonl")
 
+
 @pytest.fixture
 def questions_file():
     data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
@@ -38,6 +39,7 @@ def answer_evaluator_int(response):
 
 def answer_evaluator_int_dict(response):
     return {42: len(response)}
+
 
 def question_evaluator(query):
     return {"length": len(query)}
