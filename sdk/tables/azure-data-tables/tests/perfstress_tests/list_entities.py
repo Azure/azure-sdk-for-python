@@ -14,6 +14,8 @@ class ListEntitiesTest(_TableTest):
 
     async def global_setup(self):
         await super().global_setup()
+        if not self.args.online:
+            return
         batch_size = 0
         batch = []
         for row in range(self.args.count):
@@ -30,11 +32,17 @@ class ListEntitiesTest(_TableTest):
             await self.async_table_client.submit_transaction(batch)
 
     def run_sync(self):
-        for _ in self.table_client.list_entities():
+        for _ in self.table_client.list_entities(
+            entity_count=self.args.count,
+            entity_metadata=self.args.full_edm
+        ):
             pass
 
     async def run_async(self):
-        async for _ in self.async_table_client.list_entities():
+        async for _ in self.async_table_client.list_entities(
+            entity_count=self.args.count,
+            entity_metadata=self.args.full_edm
+        ):
             pass
 
     @staticmethod

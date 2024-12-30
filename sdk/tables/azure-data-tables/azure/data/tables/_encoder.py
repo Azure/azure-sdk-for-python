@@ -141,7 +141,7 @@ class TableEntityEncoder:
     def _encode_tuple(self, value: Tuple[Any, Union[str, EdmType]]) -> Tuple[EdmType, SupportedDataTypes]:
         if len(value) == 2:
             unencoded_value = value[0]
-            unencoded_edm = EdmType(value[1])  # thid will raise error for invalid edmtypes
+            unencoded_edm = EdmType(value[1])  # this will raise error for invalid edmtypes
         else:
             raise ValueError("Tuple should have 2 items")
         if unencoded_value is None:
