@@ -6,8 +6,10 @@
 
 from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AmlCompute as AmlComputeRest
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2022_12_01_preview.models import (
+    AmlCompute as AmlComputeRest,
+)
+from azure.ai.ml._restclient.v2022_12_01_preview.models import (
     AmlComputeProperties,
     ComputeResource,
     ResourceId,
@@ -16,7 +18,11 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
 )
 from azure.ai.ml._schema._utils.utils import get_subnet_str
 from azure.ai.ml._schema.compute.aml_compute import AmlComputeSchema
-from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal, to_iso_duration_format
+from azure.ai.ml._utils.utils import (
+    camel_to_snake,
+    snake_to_pascal,
+    to_iso_duration_format,
+)
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeDefaults, ComputeType
 from azure.ai.ml.entities._credentials import IdentityConfiguration
@@ -180,7 +186,7 @@ class AmlCompute(Compute):
             name=rest_obj.name,
             id=rest_obj.id,
             description=prop.description,
-            location=prop.compute_location if prop.compute_location else rest_obj.location,
+            location=(prop.compute_location if prop.compute_location else rest_obj.location),
             tags=rest_obj.tags if rest_obj.tags else None,
             provisioning_state=prop.provisioning_state,
             provisioning_errors=(
@@ -190,8 +196,8 @@ class AmlCompute(Compute):
             ),
             size=prop.properties.vm_size,
             tier=camel_to_snake(prop.properties.vm_priority),
-            min_instances=prop.properties.scale_settings.min_node_count if prop.properties.scale_settings else None,
-            max_instances=prop.properties.scale_settings.max_node_count if prop.properties.scale_settings else None,
+            min_instances=(prop.properties.scale_settings.min_node_count if prop.properties.scale_settings else None),
+            max_instances=(prop.properties.scale_settings.max_node_count if prop.properties.scale_settings else None),
             network_settings=network_settings or None,
             ssh_settings=ssh_settings,
             ssh_public_access_enabled=(prop.properties.remote_login_port_public_access == "Enabled"),
@@ -200,7 +206,9 @@ class AmlCompute(Compute):
                 if prop.properties.scale_settings and prop.properties.scale_settings.node_idle_time_before_scale_down
                 else None
             ),
-            identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None,
+            identity=(
+                IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None
+            ),
             created_on=prop.additional_properties.get("createdOn", None),
             enable_node_public_ip=(
                 prop.properties.enable_node_public_ip if prop.properties.enable_node_public_ip is not None else True
@@ -244,21 +252,28 @@ class AmlCompute(Compute):
             ),
         )
         remote_login_public_access = "Enabled"
+        disableLocalAuth = not (self.ssh_public_access_enabled and self.ssh_settings is not None)
         if self.ssh_public_access_enabled is not None:
             remote_login_public_access = "Enabled" if self.ssh_public_access_enabled else "Disabled"
+
         else:
             remote_login_public_access = "NotSpecified"
         aml_prop = AmlComputeProperties(
             vm_size=self.size if self.size else ComputeDefaults.VMSIZE,
             vm_priority=snake_to_pascal(self.tier),
-            user_account_credentials=self.ssh_settings._to_user_account_credentials() if self.ssh_settings else None,
+            user_account_credentials=(self.ssh_settings._to_user_account_credentials() if self.ssh_settings else None),
             scale_settings=scale_settings,
             subnet=subnet_resource,
             remote_login_port_public_access=remote_login_public_access,
             enable_node_public_ip=self.enable_node_public_ip,
         )
 
-        aml_comp = AmlComputeRest(description=self.description, compute_type=self.type, properties=aml_prop)
+        aml_comp = AmlComputeRest(
+            description=self.description,
+            compute_type=self.type,
+            properties=aml_prop,
+            disable_local_auth=disableLocalAuth,
+        )
         return ComputeResource(
             location=self.location,
             properties=aml_comp,

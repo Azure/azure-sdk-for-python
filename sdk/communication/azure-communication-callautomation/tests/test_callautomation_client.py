@@ -123,16 +123,16 @@ class TestCallAutomationClient(unittest.TestCase):
         call_automation_client = CallAutomationClient(
             "https://endpoint",
             AzureKeyCredential("fakeCredential=="),
-            transport=Mock(send=mock_send),
-            ops_source=caller,
+            transport=Mock(send=mock_send)
         )
-        call_connection_properties = call_automation_client.create_call(call_invite, self.callback_url)
+        call_connection_properties = call_automation_client.create_call(call_invite,
+                                                                        self.callback_url,
+                                                                        teams_app_source=caller)
         self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
         self.assertEqual(self.server_callI_id, call_connection_properties.server_call_id)
         self.assertEqual(self.callback_url, call_connection_properties.callback_url)
         self.assertEqual(self.microsoft_teams_app_id, call_connection_properties.source.raw_id)
         self.assertEqual(self.another_microsoft_teams_app_id, call_connection_properties.targets[0].raw_id)
-        print(call_connection_properties.targets[0])
 
     def test_create_group_call(self):
         def mock_send(_, **kwargs):

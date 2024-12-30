@@ -3,45 +3,44 @@
 # ---------------------------------------------------------
 
 from collections import Counter
-from typing import List
+from typing import List, Dict
+from typing_extensions import overload, override
 
-from promptflow._utils.async_utils import async_run_allowing_running_loop
-
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._evaluators._common import EvaluatorBase
 
 
-class _AsyncF1ScoreEvaluator:
+class F1ScoreEvaluator(EvaluatorBase):
+    """
+    Calculates the F1 score for a given response and ground truth or a multi-turn conversation.
+
+    F1 Scores range from 0 to 1, with 1 being the best possible score.
+
+    The F1-score computes the ratio of the number of shared words between the model generation and
+    the ground truth. Ratio is computed over the individual words in the generated response against those in the ground
+    truth answer. The number of shared words between the generation and the truth is the basis of the F1 score:
+    precision is the ratio of the number of shared words to the total number of words in the generation, and recall
+    is the ratio of the number of shared words to the total number of words in the ground truth.
+
+    Use the F1 score when you want a single comprehensive metric that combines both recall and precision in your
+    model's responses. It provides a balanced evaluation of your model's performance in terms of capturing accurate
+    information in the response.
+
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+            :start-after: [START f1_score_evaluator]
+            :end-before: [END f1_score_evaluator]
+            :language: python
+            :dedent: 8
+            :caption: Initialize and call an F1ScoreEvaluator.
+    """
+
+    id = "azureml://registries/azureml/models/F1Score-Evaluator/versions/3"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+
     def __init__(self):
-        pass
-
-    async def __call__(self, *, response: str, ground_truth: str, **kwargs):
-        """
-        Evaluate F1 score.
-
-        :keyword response: The response to be evaluated.
-        :paramtype response: str
-        :keyword ground_truth: The ground truth to be evaluated.
-        :paramtype ground_truth: str
-        :return: The F1 score.
-        :rtype: Dict[str, float]
-        """
-        # Validate inputs
-        if not (response and response.strip() and response != "None") or not (
-            ground_truth and ground_truth.strip() and ground_truth != "None"
-        ):
-            msg = "Both 'response' and 'ground_truth' must be non-empty strings."
-            raise EvaluationException(
-                message=msg,
-                internal_message=msg,
-                error_category=ErrorCategory.MISSING_FIELD,
-                error_blame=ErrorBlame.USER_ERROR,
-                error_target=ErrorTarget.F1_EVALUATOR,
-            )
-
-        # Run f1 score computation.
-        f1_result = self._compute_f1_score(response=response, ground_truth=ground_truth)
-
-        return {"f1_score": f1_result}
+        super().__init__()
 
     @classmethod
     def _compute_f1_score(cls, response: str, ground_truth: str) -> float:
@@ -103,41 +102,24 @@ class _AsyncF1ScoreEvaluator:
 
         return f1
 
+    @override
+    async def _do_eval(self, eval_input: Dict) -> Dict[str, float]:
+        """Produce an f1 score evaluation result.
 
-class F1ScoreEvaluator:
-    """
-    Calculates the F1 score for a given response and ground truth or a multi-turn conversation.
+        :param eval_input: The input to the evaluation function.
+        :type eval_input: Dict
+        :return: The evaluation result.
+        :rtype: Dict
+        """
+        ground_truth = eval_input["ground_truth"]
+        response = eval_input["response"]
+        # Run f1 score computation.
+        f1_result = self._compute_f1_score(response=response, ground_truth=ground_truth)
 
-    F1 Scores range from 0 to 1, with 1 being the best possible score.
+        return {"f1_score": f1_result}
 
-    The F1-score computes the ratio of the number of shared words between the model generation and
-    the ground truth. Ratio is computed over the individual words in the generated response against those in the ground
-    truth answer. The number of shared words between the generation and the truth is the basis of the F1 score:
-    precision is the ratio of the number of shared words to the total number of words in the generation, and recall
-    is the ratio of the number of shared words to the total number of words in the ground truth.
-
-    Use the F1 score when you want a single comprehensive metric that combines both recall and precision in your
-    model's responses. It provides a balanced evaluation of your model's performance in terms of capturing accurate
-    information in the response.
-
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-            :start-after: [START f1_score_evaluator]
-            :end-before: [END f1_score_evaluator]
-            :language: python
-            :dedent: 8
-            :caption: Initialize and call an F1ScoreEvaluator.
-    """
-
-    id = "azureml://registries/azureml/models/F1Score-Evaluator/versions/3"
-    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
-
-    def __init__(self):
-        self._async_evaluator = _AsyncF1ScoreEvaluator()
-
-    def __call__(self, *, response: str, ground_truth: str, **kwargs):
+    @overload  # type: ignore
+    def __call__(self, *, response: str, ground_truth: str) -> Dict[str, float]:
         """
         Evaluate F1 score.
 
@@ -149,9 +131,20 @@ class F1ScoreEvaluator:
         :rtype: Dict[str, float]
         """
 
-        return async_run_allowing_running_loop(
-            self._async_evaluator, response=response, ground_truth=ground_truth, **kwargs
-        )
+    @override
+    def __call__(  # pylint: disable=docstring-missing-param
+        self,
+        *args,
+        **kwargs,
+    ):
+        """
+        Evaluate F1 score.
 
-    def _to_async(self):
-        return self._async_evaluator
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
+        :keyword ground_truth: The ground truth to be evaluated.
+        :paramtype ground_truth: str
+        :return: The F1 score.
+        :rtype: Dict[str, float]
+        """
+        return super().__call__(*args, **kwargs)

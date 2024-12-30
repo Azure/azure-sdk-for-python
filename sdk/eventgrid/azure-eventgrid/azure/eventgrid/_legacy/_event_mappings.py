@@ -8,7 +8,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-# pylint: disable=line-too-long
 # pylint: disable=enum-must-be-uppercase
 class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """

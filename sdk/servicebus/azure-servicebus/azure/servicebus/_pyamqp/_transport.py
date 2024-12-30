@@ -1,4 +1,4 @@
-# -------------------------------------------------------------------------  # pylint: disable=file-needs-copyright-header
+# -------------------------------------------------------------------------  # pylint: disable=file-needs-copyright-header,useless-suppression
 # This is a fork of the transport.py which was originally written by Barry Pederson and
 # maintained by the Celery project: https://github.com/celery/py-amqp.
 #
@@ -93,7 +93,7 @@ _UNAVAIL = {errno.EAGAIN, errno.EINTR, errno.ENOENT, errno.EWOULDBLOCK}
 AMQP_PORT = 5672
 AMQPS_PORT = 5671
 AMQP_FRAME = memoryview(b"AMQP")
-EMPTY_BUFFER = bytes()
+EMPTY_BUFFER = b""
 SIGNED_INT_MAX = 0x7FFFFFFF
 
 # Match things like: [fe80::1]:5432, from RFC 2732
@@ -746,7 +746,7 @@ class WebSocketTransport(_AbstractTransport):
             self.close()
             raise
 
-    def _read(self, n, initial=False, buffer=None, _errnos=None):  # pylint: disable=unused-argument
+    def _read(self, n, initial=False, buffer=None, _errnos=None):
         """Read exactly n bytes from the peer.
 
         :param int n: The number of bytes to read.

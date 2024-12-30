@@ -1,4 +1,5 @@
 import asyncio
+import json
 import os
 from typing import Any, Dict, List, Optional
 
@@ -146,7 +147,8 @@ class TestAdvSimulator:
 
     def test_adv_conversation_image_understanding_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
-        from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
+        from azure.ai.evaluation.simulator import AdversarialSimulator
+        from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
 
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
@@ -175,7 +177,7 @@ class TestAdvSimulator:
 
         outputs = asyncio.run(
             simulator(
-                scenario=AdversarialScenario.ADVERSARIAL_IMAGE_UNDERSTANDING,
+                scenario=_UnstableAdversarialScenario.ADVERSARIAL_IMAGE_MULTIMODAL,
                 max_conversation_turns=1,
                 max_simulation_results=1,
                 target=callback,
@@ -214,6 +216,7 @@ class TestAdvSimulator:
     def test_adv_conversation_image_gen_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
+        from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
 
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
@@ -248,7 +251,7 @@ class TestAdvSimulator:
 
         outputs = asyncio.run(
             simulator(
-                scenario=AdversarialScenario.ADVERSARIAL_IMAGE_GEN,
+                scenario=_UnstableAdversarialScenario.ADVERSARIAL_IMAGE_GEN,
                 max_conversation_turns=1,
                 max_simulation_results=1,
                 target=callback,
@@ -624,8 +627,8 @@ class TestAdvSimulator:
             )
         )
         # Make sure that outputs 1 and 2 are identical, but not identical to 3
-        assert outputs1[0]["messages"][0] == outputs2[0]["messages"][0]
-        assert outputs1[0]["messages"][0] != outputs3[0]["messages"][0]
+        assert outputs1[0]["template_parameters"] == outputs2[0]["template_parameters"]
+        assert outputs1[0]["template_parameters"] != outputs3[0]["template_parameters"]
 
     @pytest.mark.skipif(
         not is_live(), reason="Something is instable/inconsistent in the recording. Fails in playback mode."
@@ -701,8 +704,8 @@ class TestAdvSimulator:
             )
         )
         # Make sure that outputs 1 and 2 are identical, but not identical to 3
-        assert outputs1[0]["messages"][0] == outputs2[0]["messages"][0]
-        assert outputs1[0]["messages"][0] != outputs3[0]["messages"][0]
+        assert outputs1[0]["template_parameters"] == outputs2[0]["template_parameters"]
+        assert outputs1[0]["template_parameters"] != outputs3[0]["template_parameters"]
 
     @pytest.mark.skipif(
         not is_live(), reason="Something is instable/inconsistent in the recording. Fails in playback mode."
@@ -788,3 +791,78 @@ class TestAdvSimulator:
         # Check that outputs3 has the same equivalency as outputs1, even without a provided seed.
         outputs3["regular"][0]["messages"][0]["content"] in outputs3["jailbreak"][0]["messages"][0]["content"]
         outputs3["regular"][0]["messages"][0]["content"] != outputs3["jailbreak"][0]["messages"][0]["content"]
+
+    def test_regular_and_jailbreak_outputs_match(self, azure_cred, project_scope):
+        """
+        Test to verify that the regular and jailbreak outputs of the simulator have matching categories
+        and that the queries have the same ending characters.
+        """
+        os.environ.pop("RAI_SVC_URL", None)
+
+        from azure.ai.evaluation.simulator import DirectAttackSimulator, AdversarialScenario
+
+        azure_ai_project = {
+            "subscription_id": project_scope["subscription_id"],
+            "resource_group_name": project_scope["resource_group_name"],
+            "project_name": project_scope["project_name"],
+        }
+
+        async def callback(
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
+        ) -> dict:
+            query = messages["messages"][0]["content"]
+            response = "I do not know"
+
+            formatted_response = {
+                "content": response,
+                "role": "assistant",
+                "context": {"key": {}},
+            }
+
+            messages["messages"].append(formatted_response)
+            return {
+                "messages": messages["messages"],
+                "stream": stream,
+                "session_state": session_state,
+                "context": context,
+            }
+
+        simulator = DirectAttackSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
+
+        # Run the simulator to obtain both regular and jailbreak outputs
+        outputs = asyncio.run(
+            simulator(
+                scenario=AdversarialScenario.ADVERSARIAL_QA,
+                target=callback,
+                max_conversation_turns=1,
+                max_simulation_results=16,
+            )
+        )
+        regular_output = outputs["regular"].to_eval_qr_json_lines()
+        jailbreak_output = outputs["jailbreak"].to_eval_qr_json_lines()
+
+        regular_lines = [json.loads(line) for line in regular_output.strip().splitlines()]
+        jailbreak_lines = [json.loads(line) for line in jailbreak_output.strip().splitlines()]
+
+        assert len(regular_lines) == len(
+            jailbreak_lines
+        ), "Mismatch in number of output lines between regular and jailbreak."
+
+        for idx, (reg_line, jb_line) in enumerate(zip(regular_lines, jailbreak_lines), start=1):
+            # Check if the categories match
+            assert reg_line["category"] == jb_line["category"], (
+                f"Category mismatch at line {idx}: "
+                f"regular='{reg_line['category']}' vs jailbreak='{jb_line['category']}'"
+            )
+
+            # Check if the queries have the same ending characters
+            l1 = len(reg_line["query"])
+            assert reg_line["query"] == jb_line["query"][-l1:], (
+                f"Query ending mismatch at line {idx}: "
+                f"regular='{reg_line['query']}' vs jailbreak='{jb_line['query'][-l1:]}'"
+            )
+
+        print("All regular and jailbreak outputs match as expected.")
