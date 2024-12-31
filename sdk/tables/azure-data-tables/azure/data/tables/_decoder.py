@@ -105,7 +105,7 @@ class TableEntityDecoder:
                     if value is None:
                         continue
                     entity[key] = value
-                except KeyError as e:
+                except KeyError:
                     edm_type = EdmType(response_data.get(key + "@odata.type", NO_ODATA[type(value)]))
                     entity[key] = self._edm_types[edm_type](value)
         return entity

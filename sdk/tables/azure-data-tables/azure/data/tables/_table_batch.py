@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import Union, Any, Mapping, Optional, List, Tuple
+import json
 
 from azure.core import MatchConditions
 from azure.core.rest import HttpRequest
@@ -11,7 +12,7 @@ from azure.core.rest import HttpRequest
 from ._common_conversion import _transform_patch_to_cosmos_post, _prepare_key
 from ._models import UpdateMode, TransactionOperation
 from ._serialize import _get_match_condition
-from ._encoder import TableEntityEncoder
+from ._encoder import TableEntityEncoder, TableEntityJSONEncoder
 from ._entity import TableEntity
 from ._generated.operations._operations import (
     build_table_insert_entity_request,
@@ -125,8 +126,13 @@ class TableBatchOperations(object):
         """
         entity_json = self._encoder(entity)
         self._verify_partition_key(entity_json)
+        payload = json.dumps(entity_json, cls=TableEntityJSONEncoder).encode()
         request = build_table_insert_entity_request(
-            table=self.table_name, content=entity_json, version=self._config.version, **kwargs
+            table=self.table_name,
+            content=payload,
+            version=self._config.version,
+            content_type="application/json;odata=nometadata",
+            **kwargs,
         )
         request.url = self._base_url + request.url
         self.requests.append(request)
@@ -172,6 +178,7 @@ class TableBatchOperations(object):
         self._verify_partition_key(entity_json)
         partition_key = entity_json.get("PartitionKey")
         row_key = entity_json.get("RowKey")
+        payload = json.dumps(entity_json, cls=TableEntityJSONEncoder).encode()
         if mode == UpdateMode.REPLACE:
             request = build_table_update_entity_request(
                 table=self.table_name,
@@ -179,8 +186,9 @@ class TableBatchOperations(object):
                 row_key=_prepare_key(row_key),  # type: ignore[arg-type]
                 etag=etag,
                 match_condition=match_condition,
-                content=entity_json,
+                content=payload,
                 version=self._config.version,
+                content_type="application/json",
                 **kwargs,
             )
         elif mode == UpdateMode.MERGE:
@@ -190,8 +198,9 @@ class TableBatchOperations(object):
                 row_key=_prepare_key(row_key),  # type: ignore[arg-type]
                 etag=etag,
                 match_condition=match_condition,
-                content=entity_json,
+                content=payload,
                 version=self._config.version,
+                content_type="application/json",
                 **kwargs,
             )
             if self._is_cosmos_endpoint:
@@ -273,14 +282,15 @@ class TableBatchOperations(object):
         self._verify_partition_key(entity_json)
         partition_key = entity_json.get("PartitionKey")
         row_key = entity_json.get("RowKey")
-
+        payload = json.dumps(entity_json, cls=TableEntityJSONEncoder).encode()
         if mode == UpdateMode.REPLACE:
             request = build_table_update_entity_request(
                 table=self.table_name,
                 partition_key=_prepare_key(partition_key),  # type: ignore[arg-type]
                 row_key=_prepare_key(row_key),  # type: ignore[arg-type]
-                content=entity_json,
+                content=payload,
                 version=self._config.version,
+                content_type="application/json",
                 **kwargs,
             )
         elif mode == UpdateMode.MERGE:
@@ -288,8 +298,9 @@ class TableBatchOperations(object):
                 table=self.table_name,
                 partition_key=_prepare_key(partition_key),  # type: ignore[arg-type]
                 row_key=_prepare_key(row_key),  # type: ignore[arg-type]
-                content=entity_json,
+                content=payload,
                 version=self._config.version,
+                content_type="application/json",
                 **kwargs,
             )
             if self._is_cosmos_endpoint:
