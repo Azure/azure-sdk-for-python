@@ -123,8 +123,8 @@ class TableBatchOperations(object):
                 :dedent: 8
                 :caption: Creating and adding an entity to a Table
         """
-        self._verify_partition_key(entity)
         entity_json = self._encoder(entity)
+        self._verify_partition_key(entity_json)
         request = build_table_insert_entity_request(
             table=self.table_name, content=entity_json, version=self._config.version, **kwargs
         )
@@ -162,7 +162,6 @@ class TableBatchOperations(object):
                 :dedent: 8
                 :caption: Creating and adding an entity to a Table
         """
-        self._verify_partition_key(entity_json)
         if match_condition and not etag and isinstance(entity, TableEntity):
             if hasattr(entity, "metadata"):
                 etag = entity.metadata.get("etag")
@@ -170,6 +169,7 @@ class TableBatchOperations(object):
             etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
         entity_json = self._encoder(entity)
+        self._verify_partition_key(entity_json)
         partition_key = entity_json.get("PartitionKey")
         row_key = entity_json.get("RowKey")
         if mode == UpdateMode.REPLACE:
@@ -230,10 +230,10 @@ class TableBatchOperations(object):
                 :dedent: 8
                 :caption: Creating and adding an entity to a Table
         """
-        self._verify_partition_key(entity_json)
         if match_condition and not etag and isinstance(entity, TableEntity):
             etag = entity.metadata.get("etag")
         entity_json = self._encoder(entity)
+        self._verify_partition_key(entity_json)
         partition_key = entity_json.get("PartitionKey")
         row_key = entity_json.get("RowKey")
         request = build_table_delete_entity_request(
@@ -269,8 +269,8 @@ class TableBatchOperations(object):
                 :dedent: 8
                 :caption: Creating and adding an entity to a Table
         """
-        self._verify_partition_key(entity_json)
         entity_json = self._encoder(entity)
+        self._verify_partition_key(entity_json)
         partition_key = entity_json.get("PartitionKey")
         row_key = entity_json.get("RowKey")
 

@@ -98,17 +98,16 @@ class TableEntityDecoder:
             elif key.endswith("@odata.type"):
                 continue
             else:
+                if key == "Timestamp":
+                    entity._metadata["timestamp"] = deserialize_iso(value)
                 try:
-                    if key == "Timestamp":
-                        entity._metadata["timestamp"] = deserialize_iso(entity["Timestamp"])
                     value = self._property_types[key](value)
-                    if value is not None:
-                        entity[key] = value
-                    continue
-                except KeyError:
-                    pass
-                edm_type = EdmType(response_data.get(key + "@odata.type", NO_ODATA[type(value)]))
-                entity[key] = self._edm_types[edm_type](value)
+                    if value is None:
+                        continue
+                    entity[key] = value
+                except KeyError as e:
+                    edm_type = EdmType(response_data.get(key + "@odata.type", NO_ODATA[type(value)]))
+                    entity[key] = self._edm_types[edm_type](value)
         return entity
 
     def _decode_int64(self, value: str) -> EntityProperty:
