@@ -415,9 +415,8 @@ class TableClient(TablesBaseClient):
         try:
             if not entity:
                 entity = args[0]
-            entity_json = self._encoder(cast(Mapping[str, Any], entity))
-            partition_key = entity_json.get("PartitionKey")
-            row_key = entity_json.get("RowKey")
+            partition_key = self._encode_key("PartitionKey", entity.get("PartitionKey"))
+            row_key = self._encode_key("RowKey", entity.get("RowKey"))
         except (TypeError, IndexError, AttributeError):
             partition_key = kwargs.pop("partition_key", None)
             if partition_key is None:

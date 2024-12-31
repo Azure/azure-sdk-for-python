@@ -32,16 +32,12 @@ class ListEntitiesTest(_TableTest):
             await self.async_table_client.submit_transaction(batch)
 
     def run_sync(self):
-        for _ in self.table_client.list_entities(
-            entity_count=self.args.count,
-            entity_metadata=self.args.full_edm
-        ):
+        for _ in self.table_client.list_entities(entity_count=self.args.count, entity_metadata=self.args.full_edm):
             pass
 
     async def run_async(self):
         async for _ in self.async_table_client.list_entities(
-            entity_count=self.args.count,
-            entity_metadata=self.args.full_edm
+            entity_count=self.args.count, entity_metadata=self.args.full_edm
         ):
             pass
 
