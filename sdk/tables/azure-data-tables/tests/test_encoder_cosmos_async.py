@@ -2428,7 +2428,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             table_name,
             credential=tables_primary_cosmos_account_key,
             transport=EncoderVerificationTransport(),
-            custom_encode={'RowKey': EdmType.DATETIME},
+            custom_encode={"RowKey": EdmType.DATETIME},
         ) as client:
             await client.delete_entity({"PartitionKey": "foo", "RowKey": self.get_datetime()})
         return recorded_variables

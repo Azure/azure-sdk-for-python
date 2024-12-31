@@ -2217,7 +2217,10 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
             assert received_entity1.metadata
 
         with TableClient(
-            url, table_name, credential=tables_primary_storage_account_key, custom_decode={'Timestamp': EdmType.DATETIME}
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            custom_decode={"Timestamp": EdmType.DATETIME},
         ) as client:
             received_entity2 = client.get_entity("pk", "rk")
             assert received_entity2.metadata == received_entity1.metadata
