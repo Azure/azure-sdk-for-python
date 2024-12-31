@@ -83,12 +83,9 @@ def _get_run_from_run_history(flow_run_id, azure_ml_client: LiteMLClient, projec
 
 
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
-@pytest.mark.localtest
 class TestEvaluate:
-
-    # TODO use math evals and change to unit test
-    @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
-    def test_evaluate_with_relative_data_path(self, model_config):
+    # Technically unit-test-able, but kept here due to file manipulation
+    def test_evaluate_with_relative_data_path(self):
         original_working_dir = os.getcwd()
 
         try:
@@ -96,30 +93,16 @@ class TestEvaluate:
             os.chdir(working_dir)
 
             data_file = "data/evaluate_test_data.jsonl"
-            input_data = pd.read_json(data_file, lines=True)
 
-            groundedness_eval = GroundednessEvaluator(model_config)
-            fluency_eval = FluencyEvaluator(model_config)
-
-            # Run the evaluation
+            f1_score_eval = F1ScoreEvaluator()
+            # run the evaluation with targets
             result = evaluate(
                 data=data_file,
-                evaluators={"grounded": groundedness_eval, "fluency": fluency_eval},
+                evaluators={"f1": f1_score_eval},
             )
-
             row_result_df = pd.DataFrame(result["rows"])
-            metrics = result["metrics"]
-
-            # Validate the results
-            assert result is not None
-            assert result["rows"] is not None
-            assert row_result_df.shape[0] == len(input_data)
-
-            assert "outputs.grounded.groundedness" in row_result_df.columns.to_list()
-            assert "outputs.fluency.fluency" in row_result_df.columns.to_list()
-
-            assert "grounded.groundedness" in metrics.keys()
-            assert "fluency.fluency" in metrics.keys()
+            assert "outputs.f1.f1_score" in row_result_df.columns
+            assert not any(math.isnan(f1) for f1 in row_result_df["outputs.f1.f1_score"])
         finally:
             os.chdir(original_working_dir)
 
@@ -153,16 +136,14 @@ class TestEvaluate:
         os.environ.pop("AI_EVALS_BATCH_USE_ASYNC")
 
     @pytest.mark.parametrize(
-        "use_pf_client,function,column",
+        "function,column",
         [
-            (True, answer_evaluator, "length"),
-            (False, answer_evaluator, "length"),
-            (True, answer_evaluator_int, "output"),
-            (False, answer_evaluator_int, "output"),
-            (True, answer_evaluator_int_dict, "42"),
-            (False, answer_evaluator_int_dict, "42"),
+            (answer_evaluator, "length"),
+            (answer_evaluator_int, "output"),
+            (answer_evaluator_int_dict, "42"),
         ],
     )
+    @pytest.mark.parametrize("use_pf_client", [True, False])
     def test_evaluate_python_function(self, data_file, use_pf_client, function, column):
         # data
         input_data = pd.read_json(data_file, lines=True)
@@ -252,7 +233,6 @@ class TestEvaluate:
         expected = list(row_result_df[query].str.len())
         assert expected == list(row_result_df["outputs.question_ev.length"])
 
-    # TODO move to unit test
     @pytest.mark.parametrize(
         "evaluate_config",
         [
@@ -399,7 +379,6 @@ class TestEvaluate:
         assert remote_run["runMetadata"]["properties"]["_azureml.evaluation_run"] == "promptflow.BatchRun"
         assert remote_run["runMetadata"]["displayName"] == evaluation_name
 
-    # TODO move to unit test
     @pytest.mark.parametrize(
         "return_json, aggregate_return_json",
         [
