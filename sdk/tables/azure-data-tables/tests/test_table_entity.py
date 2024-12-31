@@ -595,9 +595,10 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
 
             self.table.create_entity(entity=entity)
             resp_entity = self.table.get_entity(partition_key=pk, row_key=rk)
-            assert entity["test1"].value == resp_entity["test1"]
-            assert entity["test2"].value == resp_entity["test2"]
-            assert entity["test3"].value == resp_entity["test3"]
+            # Maintaining broken behaviour just in case.
+            assert str(entity["test1"]) == resp_entity["test1"]
+            assert str(entity["test2"]) == resp_entity["test2"]
+            assert str(entity["test3"]) == resp_entity["test3"]
 
         finally:
             self._tear_down()

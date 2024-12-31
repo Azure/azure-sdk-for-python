@@ -2402,7 +2402,9 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             with pytest.raises(TypeError) as error:
                 client.delete_entity("foo", self.get_datetime())
             assert "PartitionKey or RowKey must be of type string" in str(error.value)
-            client.delete_entity({"PartitionKey": "foo", "RowKey": self.get_datetime()})
+            with pytest.raises(TypeError) as error:
+                client.delete_entity({"PartitionKey": "foo", "RowKey": self.get_datetime()})
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 client.delete_entity("foo", recorded_uuid)
             assert "PartitionKey or RowKey must be of type string" in str(error.value)
@@ -2411,6 +2413,14 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 client.delete_entity("foo", b"binarydata")
             assert "PartitionKey or RowKey must be of type string" in str(error.value)
             client.delete_entity({"PartitionKey": "foo", "RowKey": b"binarydata"})
+        with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_cosmos_account_key,
+            transport=EncoderVerificationTransport(),
+            custom_encode={'RowKey': EdmType.DATETIME},
+        ) as client:
+            client.delete_entity({"PartitionKey": "foo", "RowKey": self.get_datetime()})
         return recorded_variables
 
     @cosmos_decorator
@@ -2426,7 +2436,6 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             with pytest.raises(TypeError) as error:
                 client.delete_entity("foo", EntityProperty("bar", "Edm.String"))
             assert "PartitionKey or RowKey must be of type string" in str(error.value)
-            client.delete_entity({"PartitionKey": "foo", "RowKey": ("bar", EdmType.STRING)})
 
     @cosmos_decorator
     @recorded_by_proxy
@@ -2463,7 +2472,9 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             with pytest.raises(TypeError) as error:
                 client.delete_entity("foo", EnumBasicOptions.ONE)
             assert "PartitionKey or RowKey must be of type string" in str(error.value)
-            client.delete_entity({"PartitionKey": "foo", "RowKey": EnumBasicOptions.ONE})
+            with pytest.raises(TypeError) as error:
+                client.delete_entity({"PartitionKey": "foo", "RowKey": EnumBasicOptions.ONE})
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 client.delete_entity("foo", EnumIntOptions.ONE)
             assert "PartitionKey or RowKey must be of type string" in str(error.value)
