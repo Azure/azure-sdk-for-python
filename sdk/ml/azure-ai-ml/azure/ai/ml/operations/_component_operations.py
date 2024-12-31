@@ -5,8 +5,6 @@
 # pylint: disable=protected-access,too-many-lines
 import time
 import collections
-import json
-import os
 import types
 from functools import partial
 from inspect import Parameter, signature
@@ -37,7 +35,8 @@ from azure.ai.ml._utils._asset_utils import (
     get_ignore_file,
     get_upload_files_from_folder,
     IgnoreFile,
-    delete_two_catalog_files
+    delete_two_catalog_files,
+    create_catalog_files
 )
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import polling_wait
@@ -675,19 +674,14 @@ class ComponentOperations(_ScopeDependentOperations):
                 json_stub["CatalogItems"] = {}
                 
                 for file_path, file_name in sorted(file_list, key=lambda x: str(x[1]).lower()):
-                    file_hash = _get_file_hash(file_path, hashlib.sha256(), 4096).hexdigest().upper()
+                    file_hash = _get_file_hash(file_path, hashlib.sha256()).hexdigest().upper()
                     json_stub["CatalogItems"][file_name] = file_hash
                 
                 json_stub["CatalogItems"] = collections.OrderedDict(
                     sorted(json_stub["CatalogItems"].items())
                 )
+                create_catalog_files(code.path, json_stub)
                 
-                print(type(json_stub), type (json_stub["CatalogItems"]))
-                with open(os.path.join(code.path, "catalog.json"), "w") as jsonFile1:
-                    json.dump(json_stub, jsonFile1)
-                with open(os.path.join(code.path, "catalog.json.sig"), "w") as jsonFile2:
-                    json.dump(json_stub, jsonFile2)
-
     @monitor_with_telemetry_mixin(ops_logger, "Component.Archive", ActivityType.PUBLICAPI)
     def archive(
         self,

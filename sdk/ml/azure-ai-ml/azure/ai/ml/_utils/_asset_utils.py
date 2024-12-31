@@ -7,6 +7,7 @@
 import hashlib
 import logging
 import os
+import json
 import uuid
 import warnings
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -240,9 +241,9 @@ def _parse_name_version(
     return ":".join(name), version
 
 
-def _get_file_hash(filename: Union[str, os.PathLike], _hash: hash_type, chunk_size: int = 1024) -> hash_type:
+def _get_file_hash(filename: Union[str, os.PathLike], _hash: hash_type) -> hash_type:
     with open(str(filename), "rb") as f:
-        for chunk in iter(lambda: f.read(chunk_size), b""):
+        for chunk in iter(lambda: f.read(CHUNK_SIZE), b""):
             _hash.update(chunk)
     return _hash
 
@@ -260,6 +261,13 @@ def delete_two_catalog_files(path):
     if os.path.exists(file_path_json_sig):
         module_logger.warning(f"{file_path_json_sig} already exists. Deleting it")
         os.remove(file_path_json_sig)
+
+def create_catalog_files(path, json_stub):
+    with open(os.path.join(path, "catalog.json"), "w") as jsonFile1:
+        json.dump(json_stub, jsonFile1)
+    with open(os.path.join(path, "catalog.json.sig"), "w") as jsonFile2:
+        json.dump(json_stub, jsonFile2)
+
 
 def _get_dir_hash(directory: Union[str, os.PathLike], _hash: hash_type, ignore_file: IgnoreFile) -> hash_type:
     dir_contents = Path(directory).iterdir()
