@@ -45,6 +45,9 @@ class TestEvaluatePerformance:
         # shows actual time rather than (end time - start time)
         # CI run takes around 1.5 seconds, so allow up to 2.
         max_duration = 2
+        # Running this in CI has a massive startup lag. Account for it here:
+        if in_ci():
+            max_duration += 40
 
         assert diff < max_duration
         row_result_df = pd.DataFrame(result["rows"])
