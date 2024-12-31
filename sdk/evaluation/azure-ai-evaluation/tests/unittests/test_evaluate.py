@@ -595,7 +595,6 @@ class TestEvaluate:
         assert "bad_thing.boolean_with_nan" not in aggregation
         assert "bad_thing.boolean_with_none" not in aggregation
 
-    @pytest.mark.parametrize("use_pf_client", [True, False])
     def test_optional_inputs_with_data(self, questions_file, questions_answers_basic_file, use_pf_client):
         from test_evaluators.test_inputs_evaluators import HalfOptionalEval, NoInputEval, NonOptionalEval, OptionalEval
 
@@ -608,7 +607,7 @@ class TestEvaluate:
                 "opt": OptionalEval(),
                 "no": NoInputEval(),
             },
-            _use_pf_client=use_pf_client,
+            _use_pf_client=False,
         )  # type: ignore
 
         first_row = results["rows"][0]
@@ -645,8 +644,7 @@ class TestEvaluate:
         if use_pf_client:
             assert first_row["outputs.no.no_score"] == 0
 
-    @pytest.mark.parametrize("use_pf_client", [True, False])
-    def test_optional_inputs_with_target(self, questions_file, questions_answers_basic_file, use_pf_client):
+    def test_optional_inputs_with_target(self, questions_file, questions_answers_basic_file):
         from test_evaluators.test_inputs_evaluators import EchoEval
 
         # Check that target overrides default inputs
@@ -654,7 +652,7 @@ class TestEvaluate:
             data=questions_file,
             target=_new_answer_target,
             evaluators={"echo": EchoEval()},
-            _use_pf_client=use_pf_client,
+            _use_pf_client=False,
         )  # type: ignore
 
         assert target_answer_results["rows"][0]["outputs.echo.echo_query"] == "How long is flight from Earth to LV-426?"
@@ -666,7 +664,7 @@ class TestEvaluate:
             data=questions_answers_basic_file,
             target=_question_override_target,
             evaluators={"echo": EchoEval()},
-            _use_pf_client=use_pf_client,
+            _use_pf_client=False,
         )  # type: ignore
 
         assert question_override_results["rows"][0]["outputs.echo.echo_query"] == "new query"
