@@ -130,7 +130,7 @@ class HttpHeaders:
     ContentPath = "x-ms-content-path"
     IsContinuationExpected = "x-ms-documentdb-query-iscontinuationexpected"
     PopulateQueryMetrics = "x-ms-documentdb-populatequerymetrics"
-    PopulateIndexMetrics = "x-ms-cosmos-populateindexmetrics"
+    PopulateIndexMetrics = "x-ms-cosmos-populateindexmetrics-V2"
     ResourceQuota = "x-ms-resource-quota"
     ResourceUsage = "x-ms-resource-usage"
     IntendedCollectionRID = "x-ms-cosmos-intended-collection-rid"

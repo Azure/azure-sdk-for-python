@@ -119,11 +119,11 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert index_header_name in created_collection.client_connection.last_response_headers
         index_metrics = created_collection.client_connection.last_response_headers[index_header_name]
         assert index_metrics != {}
-        expected_index_metrics = {'UtilizedSingleIndexes': [{'FilterExpression': '', 'IndexSpec': '/pk/?',
-                                                             'FilterPreciseSet': True, 'IndexPreciseSet': True,
-                                                             'IndexImpactScore': 'High'}],
-                                  'PotentialSingleIndexes': [], 'UtilizedCompositeIndexes': [],
-                                  'PotentialCompositeIndexes': []}
+        expected_index_metrics = {'PotentialIndexes':
+                                      {'CompositeIndexes': [], 'SingleIndexes': []},
+                                  'UtilizedIndexes':
+                                      {'CompositeIndexes': [], 'SingleIndexes': [{'IndexSpec': '/pk/?'}]}
+                                  }
         assert expected_index_metrics == index_metrics
 
         await self.created_db.delete_container(created_collection.id)
