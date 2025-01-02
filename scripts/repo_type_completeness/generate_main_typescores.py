@@ -240,7 +240,7 @@ def append_results_to_csv(entities: list[dict[str, Any]]) -> None:
         for data in entities:
             row = [
                 data["Package"],
-                data["Date"],
+                str(data["Date"]),
                 data["LatestVersion"],
                 data["Score"],
                 data["PyTyped"],
@@ -281,6 +281,7 @@ def should_run() -> bool:
 
 def update_main_typescores() -> None:
     if not should_run():
+        logging.info(f"Skipping type scoring update - only runs once a month on the Monday after release week.")
         return
 
     packages_to_score = get_packages_to_score()
