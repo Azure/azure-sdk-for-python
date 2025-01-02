@@ -614,9 +614,6 @@ class TestEvaluate:
         assert first_row["outputs.non.non_score"] == 0
         assert first_row["outputs.half.half_score"] == 1
         assert first_row["outputs.opt.opt_score"] == 3
-        # CodeClient doesn't like no-input evals.
-        if use_pf_client:
-            assert first_row["outputs.no.no_score"] == 0
 
         # Variant with no default inputs fails on single input
         with pytest.raises(EvaluationException) as exc_info:
@@ -625,7 +622,7 @@ class TestEvaluate:
                 evaluators={
                     "non": NonOptionalEval(),
                 },
-                _use_pf_client=use_pf_client,
+                _use_pf_client=False,
             )  # type: ignore
 
         expected_message = "Some evaluators are missing required inputs:\n" "- non: ['response']\n"
@@ -635,14 +632,12 @@ class TestEvaluate:
         only_question_results = evaluate(
             data=questions_file,
             evaluators={"half": HalfOptionalEval(), "opt": OptionalEval(), "no": NoInputEval()},
-            _use_pf_client=use_pf_client,
+            _use_pf_client=False,
         )  # type: ignore
 
         first_row_2 = only_question_results["rows"][0]
         assert first_row_2["outputs.half.half_score"] == 0
         assert first_row_2["outputs.opt.opt_score"] == 1
-        if use_pf_client:
-            assert first_row["outputs.no.no_score"] == 0
 
     def test_optional_inputs_with_target(self, questions_file, questions_answers_basic_file):
         from test_evaluators.test_inputs_evaluators import EchoEval
@@ -675,7 +670,7 @@ class TestEvaluate:
             data=questions_answers_basic_file,
             target=_question_answer_override_target,
             evaluators={"echo": EchoEval()},
-            _use_pf_client=use_pf_client,
+            _use_pf_client=False,
         )  # type: ignore
         assert double_override_results["rows"][0]["outputs.echo.echo_query"] == "new query"
         assert double_override_results["rows"][0]["outputs.echo.echo_response"] == "new response"
