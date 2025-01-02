@@ -21,13 +21,13 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_application_gateway_private_endpoint_connections_begin_delete(self, resource_group):
         response = await (
             await self.client.application_gateway_private_endpoint_connections.begin_delete(
                 resource_group_name=resource_group.name,
                 application_gateway_name="str",
                 connection_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -36,7 +36,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_application_gateway_private_endpoint_connections_begin_update(self, resource_group):
         response = await (
             await self.client.application_gateway_private_endpoint_connections.begin_update(
                 resource_group_name=resource_group.name,
@@ -98,6 +98,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                             {
                                 "auxiliaryMode": "str",
                                 "auxiliarySku": "str",
+                                "defaultOutboundConnectivityEnabled": bool,
                                 "disableTcpStateTracking": bool,
                                 "dnsSettings": {
                                     "appliedDnsServers": ["str"],
@@ -276,6 +277,13 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                         }
                                                     ],
                                                     "ipConfigurations": [...],
+                                                    "ipamPoolPrefixAllocations": [
+                                                        {
+                                                            "allocatedAddressPrefixes": ["str"],
+                                                            "id": "str",
+                                                            "numberOfIpAddresses": "str",
+                                                        }
+                                                    ],
                                                     "name": "str",
                                                     "natGateway": {"id": "str"},
                                                     "networkSecurityGroup": {
@@ -643,6 +651,13 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                     "subnet": ...,
                                                 }
                                             ],
+                                            "ipamPoolPrefixAllocations": [
+                                                {
+                                                    "allocatedAddressPrefixes": ["str"],
+                                                    "id": "str",
+                                                    "numberOfIpAddresses": "str",
+                                                }
+                                            ],
                                             "name": "str",
                                             "natGateway": {"id": "str"},
                                             "networkSecurityGroup": {
@@ -958,6 +973,13 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                     }
                                                                 ],
                                                                 "ipConfigurations": [...],
+                                                                "ipamPoolPrefixAllocations": [
+                                                                    {
+                                                                        "allocatedAddressPrefixes": ["str"],
+                                                                        "id": "str",
+                                                                        "numberOfIpAddresses": "str",
+                                                                    }
+                                                                ],
                                                                 "name": "str",
                                                                 "natGateway": {"id": "str"},
                                                                 "networkSecurityGroup": {
@@ -1330,6 +1352,13 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                     "zones": ["str"],
                                                                 },
                                                                 "subnet": ...,
+                                                            }
+                                                        ],
+                                                        "ipamPoolPrefixAllocations": [
+                                                            {
+                                                                "allocatedAddressPrefixes": ["str"],
+                                                                "id": "str",
+                                                                "numberOfIpAddresses": "str",
                                                             }
                                                         ],
                                                         "name": "str",
@@ -1837,6 +1866,13 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                     "subnet": ...,
                                                 }
                                             ],
+                                            "ipamPoolPrefixAllocations": [
+                                                {
+                                                    "allocatedAddressPrefixes": ["str"],
+                                                    "id": "str",
+                                                    "numberOfIpAddresses": "str",
+                                                }
+                                            ],
                                             "name": "str",
                                             "natGateway": {"id": "str"},
                                             "networkSecurityGroup": ...,
@@ -2056,6 +2092,13 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                             "zones": ["str"],
                                                         },
                                                         "subnet": ...,
+                                                    }
+                                                ],
+                                                "ipamPoolPrefixAllocations": [
+                                                    {
+                                                        "allocatedAddressPrefixes": ["str"],
+                                                        "id": "str",
+                                                        "numberOfIpAddresses": "str",
                                                     }
                                                 ],
                                                 "name": "str",
@@ -2374,6 +2417,13 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                             }
                                                         ],
                                                         "ipConfigurations": [...],
+                                                        "ipamPoolPrefixAllocations": [
+                                                            {
+                                                                "allocatedAddressPrefixes": ["str"],
+                                                                "id": "str",
+                                                                "numberOfIpAddresses": "str",
+                                                            }
+                                                        ],
                                                         "name": "str",
                                                         "natGateway": {"id": "str"},
                                                         "networkSecurityGroup": {
@@ -2745,6 +2795,13 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                         "subnet": ...,
                                                     }
                                                 ],
+                                                "ipamPoolPrefixAllocations": [
+                                                    {
+                                                        "allocatedAddressPrefixes": ["str"],
+                                                        "id": "str",
+                                                        "numberOfIpAddresses": "str",
+                                                    }
+                                                ],
                                                 "name": "str",
                                                 "natGateway": {"id": "str"},
                                                 "networkSecurityGroup": {
@@ -3097,6 +3154,13 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                 }
                                                             ],
                                                             "ipConfigurations": [...],
+                                                            "ipamPoolPrefixAllocations": [
+                                                                {
+                                                                    "allocatedAddressPrefixes": ["str"],
+                                                                    "id": "str",
+                                                                    "numberOfIpAddresses": "str",
+                                                                }
+                                                            ],
                                                             "name": "str",
                                                             "natGateway": {"id": "str"},
                                                             "networkSecurityGroup": {
@@ -3469,6 +3533,13 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                 "zones": ["str"],
                                                             },
                                                             "subnet": ...,
+                                                        }
+                                                    ],
+                                                    "ipamPoolPrefixAllocations": [
+                                                        {
+                                                            "allocatedAddressPrefixes": ["str"],
+                                                            "id": "str",
+                                                            "numberOfIpAddresses": "str",
                                                         }
                                                     ],
                                                     "name": "str",
@@ -3876,6 +3947,13 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                                 }
                                                             ],
                                                             "ipConfigurations": [...],
+                                                            "ipamPoolPrefixAllocations": [
+                                                                {
+                                                                    "allocatedAddressPrefixes": ["str"],
+                                                                    "id": "str",
+                                                                    "numberOfIpAddresses": "str",
+                                                                }
+                                                            ],
                                                             "name": "str",
                                                             "natGateway": {"id": "str"},
                                                             "networkSecurityGroup": {
@@ -4249,6 +4327,13 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                                             "subnet": ...,
                                                         }
                                                     ],
+                                                    "ipamPoolPrefixAllocations": [
+                                                        {
+                                                            "allocatedAddressPrefixes": ["str"],
+                                                            "id": "str",
+                                                            "numberOfIpAddresses": "str",
+                                                        }
+                                                    ],
                                                     "name": "str",
                                                     "natGateway": {"id": "str"},
                                                     "networkSecurityGroup": {
@@ -4620,6 +4705,9 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                     "subnet": ...,
                                 }
                             ],
+                            "ipamPoolPrefixAllocations": [
+                                {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                            ],
                             "name": "str",
                             "natGateway": {"id": "str"},
                             "networkSecurityGroup": {
@@ -4713,6 +4801,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                                     {
                                         "auxiliaryMode": "str",
                                         "auxiliarySku": "str",
+                                        "defaultOutboundConnectivityEnabled": bool,
                                         "disableTcpStateTracking": bool,
                                         "dnsSettings": {
                                             "appliedDnsServers": ["str"],
@@ -5566,7 +5655,7 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
                     "provisioningState": "str",
                     "type": "str",
                 },
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -5575,12 +5664,12 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_application_gateway_private_endpoint_connections_get(self, resource_group):
         response = await self.client.application_gateway_private_endpoint_connections.get(
             resource_group_name=resource_group.name,
             application_gateway_name="str",
             connection_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -5588,11 +5677,11 @@ class TestNetworkManagementApplicationGatewayPrivateEndpointConnectionsOperation
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_application_gateway_private_endpoint_connections_list(self, resource_group):
         response = self.client.application_gateway_private_endpoint_connections.list(
             resource_group_name=resource_group.name,
             application_gateway_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

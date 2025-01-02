@@ -6,13 +6,13 @@
 
 import pytest
 import functools
-from devtools_testutils import get_credential
+from devtools_testutils import get_credential, set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import (
     DocumentAnalysisFeature,
     AnalyzeDocumentRequest,
-    AnalyzeResultOperation,
+    AnalyzeResult,
     AnalyzeOutputOption,
 )
 from asynctestcase import AsyncDocumentIntelligenceTest
@@ -37,7 +37,6 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
                     "prebuilt-layout",
                     document,
                     features=DocumentAnalysisFeature.STYLE_FONT,
-                    content_type="application/octet-stream",
                 )
             assert "features must be type [str]." in str(e.value)
 
@@ -57,19 +56,15 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
                 "prebuilt-layout",
                 document,
                 features=[DocumentAnalysisFeature.STYLE_FONT],
-                content_type="application/octet-stream",
                 cls=callback,
             )
             raw_response = await poller.result()
-            raw_analyze_result = AnalyzeResultOperation._deserialize(
-                raw_response.http_response.json(), []
-            ).analyze_result
+            raw_analyze_result = AnalyzeResult._deserialize(raw_response.http_response.json()["analyzeResult"], [])
 
             poller = await client.begin_analyze_document(
                 "prebuilt-layout",
                 document,
                 features=[DocumentAnalysisFeature.STYLE_FONT],
-                content_type="application/octet-stream",
             )
             returned_model = await poller.result()
 
@@ -105,18 +100,14 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
             poller = await client.begin_analyze_document(
                 "prebuilt-layout",
                 document,
-                content_type="application/octet-stream",
                 cls=callback,
             )
             raw_response = await poller.result()
-            raw_analyze_result = AnalyzeResultOperation._deserialize(
-                raw_response.http_response.json(), []
-            ).analyze_result
+            raw_analyze_result = AnalyzeResult._deserialize(raw_response.http_response.json()["analyzeResult"], [])
 
             poller = await client.begin_analyze_document(
                 "prebuilt-layout",
                 document,
-                content_type="application/octet-stream",
             )
             returned_model = await poller.result()
 
@@ -152,18 +143,14 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
             poller = await client.begin_analyze_document(
                 "prebuilt-layout",
                 document,
-                content_type="application/octet-stream",
                 cls=callback,
             )
             raw_response = await poller.result()
-            raw_analyze_result = AnalyzeResultOperation._deserialize(
-                raw_response.http_response.json(), []
-            ).analyze_result
+            raw_analyze_result = AnalyzeResult._deserialize(raw_response.http_response.json()["analyzeResult"], [])
 
             poller = await client.begin_analyze_document(
                 "prebuilt-layout",
                 document,
-                content_type="application/octet-stream",
             )
             returned_model = await poller.result()
 
@@ -195,7 +182,6 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
             poller = await client.begin_analyze_document(
                 "prebuilt-layout",
                 document,
-                content_type="application/octet-stream",
             )
             layout = await poller.result()
         assert len(layout.tables) == 3
@@ -217,7 +203,6 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
             poller = await client.begin_analyze_document(
                 "prebuilt-layout",
                 document,
-                content_type="application/octet-stream",
             )
             continuation_token = poller.continuation_token()
             layout = await (
@@ -236,6 +221,7 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
     @DocumentIntelligenceClientPreparer()
     @recorded_by_proxy_async
     async def test_layout_url_barcodes(self, client):
+        set_bodiless_matcher()
         async with client:
             poller = await client.begin_analyze_document(
                 "prebuilt-layout",
@@ -249,6 +235,7 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
         assert layout.pages[0].barcodes[0].polygon
         assert layout.pages[0].barcodes[0].confidence > 0.8
 
+    @pytest.mark.skip("Failing in playback. Tracking issue: https://github.com/Azure/azure-sdk-for-python/issues/38881")
     @skip_flaky_test
     @DocumentIntelligencePreparer()
     @recorded_by_proxy_async
@@ -282,7 +269,6 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
         poller = await client.begin_analyze_document(
             "prebuilt-read",
             document,
-            content_type="application/octet-stream",
             output=[AnalyzeOutputOption.PDF],
         )
         result = await poller.result()
@@ -302,7 +288,6 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
         poller = await client.begin_analyze_document(
             "prebuilt-layout",
             document,
-            content_type="application/octet-stream",
             output=[AnalyzeOutputOption.FIGURES],
         )
         result = await poller.result()

@@ -11,8 +11,8 @@ Use the Inference client library (in preview) to:
 The Inference client library supports AI models deployed to the following services:
 
 * [GitHub Models](https://github.com/marketplace/models) - Free-tier endpoint for AI models from different providers
-* Serverless API endpoints and Managed Compute endpoints - AI models from different providers deployed from [Azure AI Studio](https://ai.azure.com). See [Overview: Deploy models, flows, and web apps with Azure AI Studio](https://learn.microsoft.com/azure/ai-studio/concepts/deployments-overview).
-* Azure OpenAI Service - OpenAI models deployed from [Azure OpenAI Studio](https://oai.azure.com/). See [What is Azure OpenAI Service?](https://learn.microsoft.com/azure/ai-services/openai/overview). Although we recommend you use the official [OpenAI client library](https://pypi.org/project/openai/) in your production code for this service, you can use the Azure AI Inference client library to easily compare the performance of OpenAI models to other models, using the same client library and Python code.
+* Serverless API endpoints and Managed Compute endpoints - AI models from different providers deployed from [Azure AI Foundry](https://ai.azure.com). See [Overview: Deploy models, flows, and web apps with Azure AI Foundry](https://learn.microsoft.com/azure/ai-studio/concepts/deployments-overview).
+* Azure OpenAI Service - OpenAI models deployed from [Azure AI Foundry](https://oai.azure.com/). See [What is Azure OpenAI Service?](https://learn.microsoft.com/azure/ai-services/openai/overview). Although we recommend you use the official [OpenAI client library](https://pypi.org/project/openai/) in your production code for this service, you can use the Azure AI Inference client library to easily compare the performance of OpenAI models to other models, using the same client library and Python code.
 
 The Inference client library makes services calls using REST API version `2024-05-01-preview`, as documented in [Azure AI Model Inference API](https://aka.ms/azureai/modelinference).
 
@@ -27,18 +27,17 @@ The Inference client library makes services calls using REST API version `2024-0
 ### Prerequisites
 
 * [Python 3.8](https://www.python.org/) or later installed, including [pip](https://pip.pypa.io/en/stable/).
-Studio.
 * For GitHub models
   * The AI model name, such as "gpt-4o" or "mistral-large"
   * A GitHub personal access token. [Create one here](https://github.com/settings/tokens). You do not need to give any permissions to the token. The token is a string that starts with `github_pat_`.
 * For Serverless API endpoints or Managed Compute endpoints
   * An [Azure subscription](https://azure.microsoft.com/free).
-  * An [AI Model from the catalog](https://ai.azure.com/explore/models) deployed through Azure AI Studio.
+  * An [AI Model from the catalog](https://ai.azure.com/explore/models) deployed through Azure AI Foundry.
   * The endpoint URL of your model, in of the form `https://<your-host-name>.<your-azure-region>.models.ai.azure.com`, where `your-host-name` is your unique model deployment host name and `your-azure-region` is the Azure region where the model is deployed (e.g. `eastus2`).
   * Depending on your authentication preference, you either need an API key to authenticate against the service, or Entra ID credentials. The API key is a 32-character string.
 * For Azure OpenAI (AOAI) service
   * An [Azure subscription](https://azure.microsoft.com/free).
-  * An [OpenAI Model from the catalog](https://oai.azure.com/resource/models) deployed through Azure OpenAI Studio.
+  * An [OpenAI Model from the catalog](https://oai.azure.com/resource/models) deployed through Azure AI Foundry.
   * The endpoint URL of your model, in the form `https://<your-resouce-name>.openai.azure.com/openai/deployments/<your-deployment-name>`, where `your-resource-name` is your globally unique AOAI resource name, and `your-deployment-name` is your AI Model deployment name.
   * Depending on your authentication preference, you either need an API key to authenticate against the service, or Entra ID credentials. The API key is a 32-character string.
   * An api-version. Latest preview or GA version listed in the `Data plane - inference` row in [the API Specs table](https://aka.ms/azsdk/azure-ai-inference/azure-openai-api-versions). At the time of writing, latest GA version was "2024-06-01".

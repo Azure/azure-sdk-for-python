@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -12,7 +12,6 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from ... import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -449,7 +448,7 @@ class CloudServiceOsProfile(_serialization.Model):
         self.secrets = secrets
 
 
-class CloudServiceProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class CloudServiceProperties(_serialization.Model):
     """Cloud service properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -475,8 +474,9 @@ class CloudServiceProperties(_serialization.Model):  # pylint: disable=too-many-
     :ivar upgrade_mode: Update mode for the cloud service. Role instances are allocated to update
      domains when the service is deployed. Updates can be initiated manually in each update domain
      or initiated automatically in all update domains.
-     Possible Values are :code:`<br />`:code:`<br />`\\ **Auto**\\ :code:`<br />`:code:`<br />`\\
-     **Manual** :code:`<br />`:code:`<br />`\\ **Simultaneous**\\ :code:`<br />`:code:`<br />`
+     Possible Values are :code:`<br />`\\ :code:`<br />`\\ **Auto**\\ :code:`<br />`\\ :code:`<br
+     />`\\ **Manual** :code:`<br />`\\ :code:`<br />`\\ **Simultaneous**\\ :code:`<br />`\\
+     :code:`<br />`
      If not specified, the default value is Auto. If set to Manual, PUT UpdateDomain must be called
      to apply the update. If set to Auto, the update is automatically applied to each update domain
      in sequence. Known values are: "Auto", "Manual", and "Simultaneous".
@@ -553,8 +553,9 @@ class CloudServiceProperties(_serialization.Model):  # pylint: disable=too-many-
         :keyword upgrade_mode: Update mode for the cloud service. Role instances are allocated to
          update domains when the service is deployed. Updates can be initiated manually in each update
          domain or initiated automatically in all update domains.
-         Possible Values are :code:`<br />`:code:`<br />`\\ **Auto**\\ :code:`<br />`:code:`<br />`\\
-         **Manual** :code:`<br />`:code:`<br />`\\ **Simultaneous**\\ :code:`<br />`:code:`<br />`
+         Possible Values are :code:`<br />`\\ :code:`<br />`\\ **Auto**\\ :code:`<br />`\\ :code:`<br
+         />`\\ **Manual** :code:`<br />`\\ :code:`<br />`\\ **Simultaneous**\\ :code:`<br />`\\
+         :code:`<br />`
          If not specified, the default value is Auto. If set to Manual, PUT UpdateDomain must be called
          to apply the update. If set to Auto, the update is automatically applied to each update domain
          in sequence. Known values are: "Auto", "Manual", and "Simultaneous".
@@ -759,8 +760,8 @@ class CloudServiceRoleSku(_serialization.Model):
      service is currently on, you need to delete and recreate the cloud service or move back to the
      old sku.
     :vartype name: str
-    :ivar tier: Specifies the tier of the cloud service. Possible Values are :code:`<br
-     />`:code:`<br />` **Standard** :code:`<br />`:code:`<br />` **Basic**.
+    :ivar tier: Specifies the tier of the cloud service. Possible Values are :code:`<br />`\\
+     :code:`<br />` **Standard** :code:`<br />`\\ :code:`<br />` **Basic**.
     :vartype tier: str
     :ivar capacity: Specifies the number of role instances in the cloud service.
     :vartype capacity: int
@@ -780,8 +781,8 @@ class CloudServiceRoleSku(_serialization.Model):
          service is currently on, you need to delete and recreate the cloud service or move back to the
          old sku.
         :paramtype name: str
-        :keyword tier: Specifies the tier of the cloud service. Possible Values are :code:`<br
-         />`:code:`<br />` **Standard** :code:`<br />`:code:`<br />` **Basic**.
+        :keyword tier: Specifies the tier of the cloud service. Possible Values are :code:`<br />`\\
+         :code:`<br />` **Standard** :code:`<br />`\\ :code:`<br />` **Basic**.
         :paramtype tier: str
         :keyword capacity: Specifies the number of role instances in the cloud service.
         :paramtype capacity: int
@@ -1386,8 +1387,8 @@ class RoleInstanceView(_serialization.Model):
     :ivar platform_fault_domain: The Fault Domain.
     :vartype platform_fault_domain: int
     :ivar private_id: Specifies a unique identifier generated internally for the cloud service
-     associated with this role instance. :code:`<br />`:code:`<br />` NOTE: If you are using Azure
-     Diagnostics extension, this property can be used as 'DeploymentId' for querying details.
+     associated with this role instance. :code:`<br />`\\ :code:`<br />` NOTE: If you are using
+     Azure Diagnostics extension, this property can be used as 'DeploymentId' for querying details.
     :vartype private_id: str
     :ivar statuses:
     :vartype statuses:

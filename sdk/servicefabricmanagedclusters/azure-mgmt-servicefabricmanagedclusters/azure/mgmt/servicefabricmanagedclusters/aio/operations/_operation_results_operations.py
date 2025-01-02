@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Callable, Dict, Optional, Type, TypeVar
+from typing import Any, Callable, Dict, Optional, TypeVar
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -29,7 +28,7 @@ from ...operations._operation_results_operations import build_get_request
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -54,9 +53,7 @@ class OperationResultsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get(  # pylint: disable=inconsistent-return-statements
-        self, location: str, operation_id: str, **kwargs: Any
-    ) -> None:
+    async def get(self, location: str, operation_id: str, **kwargs: Any) -> None:
         """Get long running operation result.
 
         Get long running operation result.
@@ -70,7 +67,7 @@ class OperationResultsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
