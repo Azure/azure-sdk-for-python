@@ -16,36 +16,25 @@ from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._serialization import Deserializer, Serializer
-from ._configuration import ConversationsClientConfiguration
-from .operations import ConversationalAnalysisAuthoringOperations
+from ._configuration import AuthoringClientConfiguration
+from .operations import AnalyzeConversationAuthoringOperations
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ConversationsClient:
-    """The language service API is a suite of natural language processing (NLP) skills
-    built with best-in-class Microsoft machine learning algorithms. The API can be
-    used to analyze unstructured text for tasks such as sentiment analysis, key
-    phrase extraction, language detection and question answering. Further
-    documentation can be found in :code:`<a
-    href="https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview</a>`.The
-    language service conversations API is a suite of natural language processing (NLP) skills that
-    can be used to analyze structured conversations (textual or spoken). The synchronous API in
-    this suite accepts a request and mediates among multiple language projects, such as LUIS
-    Generally Available, Question Answering, Conversational Language Understanding, and then calls
-    the best candidate service to handle the request. At last, it returns a response with the
-    candidate service's response as a payload.\\n\\n In some cases, this API needs to forward
-    requests and responses between the caller and an upstream service. The asynchronous APIs in
-    this suite enable tasks like Conversation Summarization and Conversational PII detection.
+class AuthoringClient:
+    """The language service API is a suite of natural language processing (NLP) skills built with
+    best-in-class Microsoft machine learning algorithms. The API can be used to analyze
+    unstructured text for tasks such as sentiment analysis, key phrase extraction, language
+    detection and question answering. Further documentation can be found in :code:`<a
+    href="https://learn.microsoft.com/en-us/azure/cognitive-services/language-service/overview">https://learn.microsoft.com/en-us/azure/cognitive-services/language-service/overview</a>`.
 
-    :ivar conversational_analysis_authoring: ConversationalAnalysisAuthoringOperations operations
-    :vartype conversational_analysis_authoring:
-     azure.ai.language.conversations.authoring.aio.operations.ConversationalAnalysisAuthoringOperations
-    :param endpoint: Supported Cognitive Services endpoint (e.g.,
-     https://\\\\ :code:`<resource-name>`.api.cognitiveservices.azure.com). Required.
-    :type endpoint: str
-    :param endpoint: Required.
+    :ivar analyze_conversation_authoring: AnalyzeConversationAuthoringOperations operations
+    :vartype analyze_conversation_authoring:
+     azure.ai.language.conversations.authoring.aio.operations.AnalyzeConversationAuthoringOperations
+    :param endpoint: Supported Cognitive Services endpoint e.g., https://\\\\
+     :code:`<resource-name>`.api.cognitiveservices.azure.com. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
@@ -60,12 +49,10 @@ class ConversationsClient:
     """
 
     def __init__(
-        self, endpoint: str, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
+        self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
         _endpoint = "{Endpoint}/language"
-        self._config = ConversationsClientConfiguration(
-            endpoint=endpoint, endpoint=endpoint, credential=credential, **kwargs
-        )
+        self._config = AuthoringClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -88,7 +75,7 @@ class ConversationsClient:
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.conversational_analysis_authoring = ConversationalAnalysisAuthoringOperations(
+        self.analyze_conversation_authoring = AnalyzeConversationAuthoringOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 
@@ -114,7 +101,6 @@ class ConversationsClient:
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
 

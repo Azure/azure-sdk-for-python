@@ -19,19 +19,17 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class ConversationalAnalysisAuthoringAssignDeploymentResourcesOptions(
-    _model_base.Model
-):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringAssignDeploymentResourcesOptions(_model_base.Model):  # pylint: disable=name-too-long
     """Represents the options for assigning Azure resources to a project.
 
     All required parameters must be populated in order to send to server.
 
     :ivar resources_metadata: Represents the metadata for the resources to be assigned. Required.
     :vartype resources_metadata:
-     list[~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringResourceMetadata]
+     list[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringResourceMetadata]
     """
 
-    resources_metadata: List["_models.ConversationalAnalysisAuthoringResourceMetadata"] = rest_field(
+    resources_metadata: List["_models.AnalyzeConversationAuthoringResourceMetadata"] = rest_field(
         name="resourcesMetadata"
     )
     """Represents the metadata for the resources to be assigned. Required."""
@@ -40,7 +38,7 @@ class ConversationalAnalysisAuthoringAssignDeploymentResourcesOptions(
     def __init__(
         self,
         *,
-        resources_metadata: List["_models.ConversationalAnalysisAuthoringResourceMetadata"],
+        resources_metadata: List["_models.AnalyzeConversationAuthoringResourceMetadata"],
     ) -> None: ...
 
     @overload
@@ -54,8 +52,10 @@ class ConversationalAnalysisAuthoringAssignDeploymentResourcesOptions(
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringAssignedDeploymentResource(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringAssignedDeploymentResource(_model_base.Model):  # pylint: disable=name-too-long
     """Represents the assigned deployment resource.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
 
     :ivar azure_resource_id: The resource ID. Required.
@@ -64,7 +64,7 @@ class ConversationalAnalysisAuthoringAssignedDeploymentResource(_model_base.Mode
     :vartype region: str
     """
 
-    azure_resource_id: str = rest_field(name="azureResourceId")
+    azure_resource_id: str = rest_field(name="azureResourceId", visibility=["read"])
     """The resource ID. Required."""
     region: str = rest_field()
     """The resource region. Required."""
@@ -73,7 +73,6 @@ class ConversationalAnalysisAuthoringAssignedDeploymentResource(_model_base.Mode
     def __init__(
         self,
         *,
-        azure_resource_id: str,
         region: str,
     ) -> None: ...
 
@@ -88,9 +87,7 @@ class ConversationalAnalysisAuthoringAssignedDeploymentResource(_model_base.Mode
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringAssignedProjectDeploymentMetadata(
-    _model_base.Model
-):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringAssignedProjectDeploymentMetadata(_model_base.Model):  # pylint: disable=name-too-long
     """Represents the metadata for an assigned deployment.
 
 
@@ -130,7 +127,7 @@ class ConversationalAnalysisAuthoringAssignedProjectDeploymentMetadata(
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringAssignedProjectDeploymentsMetadata(
+class AnalyzeConversationAuthoringAssignedProjectDeploymentsMetadata(
     _model_base.Model
 ):  # pylint: disable=name-too-long
     """Represents the metadata for assigned deployments for a project.
@@ -140,12 +137,12 @@ class ConversationalAnalysisAuthoringAssignedProjectDeploymentsMetadata(
     :vartype project_name: str
     :ivar deployments_metadata: Represents the resource region. Required.
     :vartype deployments_metadata:
-     list[~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringAssignedProjectDeploymentMetadata]  # pylint: disable=line-too-long
+     list[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringAssignedProjectDeploymentMetadata]  # pylint: disable=line-too-long
     """
 
     project_name: str = rest_field(name="projectName")
     """Represents the project name. Required."""
-    deployments_metadata: List["_models.ConversationalAnalysisAuthoringAssignedProjectDeploymentMetadata"] = rest_field(
+    deployments_metadata: List["_models.AnalyzeConversationAuthoringAssignedProjectDeploymentMetadata"] = rest_field(
         name="deploymentsMetadata"
     )
     """Represents the resource region. Required."""
@@ -155,7 +152,7 @@ class ConversationalAnalysisAuthoringAssignedProjectDeploymentsMetadata(
         self,
         *,
         project_name: str,
-        deployments_metadata: List["_models.ConversationalAnalysisAuthoringAssignedProjectDeploymentMetadata"],
+        deployments_metadata: List["_models.AnalyzeConversationAuthoringAssignedProjectDeploymentMetadata"],
     ) -> None: ...
 
     @overload
@@ -169,7 +166,7 @@ class ConversationalAnalysisAuthoringAssignedProjectDeploymentsMetadata(
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringAssignedResourceDeploymentsMetadata(
+class AnalyzeConversationAuthoringAssignedResourceDeploymentsMetadata(
     _model_base.Model
 ):  # pylint: disable=name-too-long
     """Represents the metadata for deployments assigned to a resource.
@@ -177,12 +174,12 @@ class ConversationalAnalysisAuthoringAssignedResourceDeploymentsMetadata(
 
     :ivar value: The list of retrieved assigned project deployments. Required.
     :vartype value:
-     list[~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringAssignedProjectDeploymentsMetadata]  # pylint: disable=line-too-long
+     list[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringAssignedProjectDeploymentsMetadata]  # pylint: disable=line-too-long
     :ivar next_link: The next page link.
     :vartype next_link: str
     """
 
-    value: List["_models.ConversationalAnalysisAuthoringAssignedProjectDeploymentsMetadata"] = rest_field()
+    value: List["_models.AnalyzeConversationAuthoringAssignedProjectDeploymentsMetadata"] = rest_field()
     """The list of retrieved assigned project deployments. Required."""
     next_link: Optional[str] = rest_field(name="nextLink")
     """The next page link."""
@@ -191,7 +188,7 @@ class ConversationalAnalysisAuthoringAssignedResourceDeploymentsMetadata(
     def __init__(
         self,
         *,
-        value: List["_models.ConversationalAnalysisAuthoringAssignedProjectDeploymentsMetadata"],
+        value: List["_models.AnalyzeConversationAuthoringAssignedProjectDeploymentsMetadata"],
         next_link: Optional[str] = None,
     ) -> None: ...
 
@@ -206,11 +203,11 @@ class ConversationalAnalysisAuthoringAssignedResourceDeploymentsMetadata(
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringConfusionMatrix(_model_base.Model):  # pylint: disable=name-too-long
-    """ConversationalAnalysisAuthoringConfusionMatrix."""
+class AnalyzeConversationAuthoringConfusionMatrix(_model_base.Model):  # pylint: disable=name-too-long
+    """AnalyzeConversationAuthoringConfusionMatrix."""
 
 
-class ConversationalAnalysisAuthoringConfusionMatrixCell(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringConfusionMatrixCell(_model_base.Model):  # pylint: disable=name-too-long
     """Represents a cell in a confusion matrix.
 
 
@@ -244,11 +241,11 @@ class ConversationalAnalysisAuthoringConfusionMatrixCell(_model_base.Model):  # 
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringConfusionMatrixRow(_model_base.Model):  # pylint: disable=name-too-long
-    """ConversationalAnalysisAuthoringConfusionMatrixRow."""
+class AnalyzeConversationAuthoringConfusionMatrixRow(_model_base.Model):  # pylint: disable=name-too-long
+    """AnalyzeConversationAuthoringConfusionMatrixRow."""
 
 
-class ConversationalAnalysisAuthoringConversationExportedEntity(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringConversationExportedEntity(_model_base.Model):  # pylint: disable=name-too-long
     """Represents an entity with its components.
 
     All required parameters must be populated in order to send to server.
@@ -262,13 +259,13 @@ class ConversationalAnalysisAuthoringConversationExportedEntity(_model_base.Mode
      ~azure.ai.language.conversations.authoring.models.CompositionSetting
     :ivar list: The list component of the entity.
     :vartype list:
-     ~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringExportedEntityList
+     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringExportedEntityList
     :ivar prebuilts: The prebuilt entities components.
     :vartype prebuilts:
-     list[~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringExportedPrebuiltEntity]
+     list[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringExportedPrebuiltEntity]
     :ivar regex: The regex component of the entity.
     :vartype regex:
-     ~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringExportedEntityRegex
+     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringExportedEntityRegex
     :ivar required_components: The required components. Allowed values are 'learned', 'list',
      'prebuilts' and 'regex'.
     :vartype required_components: list[str]
@@ -280,11 +277,11 @@ class ConversationalAnalysisAuthoringConversationExportedEntity(_model_base.Mode
     """The behavior to follow when the entity's components overlap with each other. Known values are:
      \"returnLongestOverlap\", \"requireExactOverlap\", \"separateComponents\", and
      \"combineComponents\"."""
-    list: Optional["_models.ConversationalAnalysisAuthoringExportedEntityList"] = rest_field()
+    list: Optional["_models.AnalyzeConversationAuthoringExportedEntityList"] = rest_field()
     """The list component of the entity."""
-    prebuilts: Optional[List["_models.ConversationalAnalysisAuthoringExportedPrebuiltEntity"]] = rest_field()
+    prebuilts: Optional[List["_models.AnalyzeConversationAuthoringExportedPrebuiltEntity"]] = rest_field()
     """The prebuilt entities components."""
-    regex: Optional["_models.ConversationalAnalysisAuthoringExportedEntityRegex"] = rest_field()
+    regex: Optional["_models.AnalyzeConversationAuthoringExportedEntityRegex"] = rest_field()
     """The regex component of the entity."""
     required_components: Optional[List[str]] = rest_field(name="requiredComponents")
     """The required components. Allowed values are 'learned', 'list', 'prebuilts' and 'regex'."""
@@ -295,9 +292,9 @@ class ConversationalAnalysisAuthoringConversationExportedEntity(_model_base.Mode
         *,
         category: str,
         composition_setting: Optional[Union[str, "_models.CompositionSetting"]] = None,
-        list: Optional["_models.ConversationalAnalysisAuthoringExportedEntityList"] = None,
-        prebuilts: Optional[List["_models.ConversationalAnalysisAuthoringExportedPrebuiltEntity"]] = None,
-        regex: Optional["_models.ConversationalAnalysisAuthoringExportedEntityRegex"] = None,
+        list: Optional["_models.AnalyzeConversationAuthoringExportedEntityList"] = None,
+        prebuilts: Optional[List["_models.AnalyzeConversationAuthoringExportedPrebuiltEntity"]] = None,
+        regex: Optional["_models.AnalyzeConversationAuthoringExportedEntityRegex"] = None,
         required_components: Optional[List[str]] = None,
     ) -> None: ...
 
@@ -312,7 +309,7 @@ class ConversationalAnalysisAuthoringConversationExportedEntity(_model_base.Mode
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringConversationExportedIntent(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringConversationExportedIntent(_model_base.Model):  # pylint: disable=name-too-long
     """Represents an exported intent of a conversational project.
 
     All required parameters must be populated in order to send to server.
@@ -342,12 +339,12 @@ class ConversationalAnalysisAuthoringConversationExportedIntent(_model_base.Mode
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringExportedProjectAssets(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringExportedProjectAssets(_model_base.Model):  # pylint: disable=name-too-long
     """Represents the assets of an exported project.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ConversationalAnalysisAuthoringConversationExportedProjectAssets,
-    ConversationalAnalysisAuthoringOrchestrationExportedProjectAssets
+    AnalyzeConversationAuthoringConversationExportedProjectAssets,
+    AnalyzeConversationAuthoringOrchestrationExportedProjectAssets
 
     All required parameters must be populated in order to send to server.
 
@@ -379,8 +376,8 @@ class ConversationalAnalysisAuthoringExportedProjectAssets(_model_base.Model):  
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringConversationExportedProjectAssets(
-    ConversationalAnalysisAuthoringExportedProjectAssets, discriminator="Conversation"
+class AnalyzeConversationAuthoringConversationExportedProjectAssets(
+    AnalyzeConversationAuthoringExportedProjectAssets, discriminator="Conversation"
 ):  # pylint: disable=name-too-long
     """Represents the exported assets of a conversational project.
 
@@ -388,23 +385,23 @@ class ConversationalAnalysisAuthoringConversationExportedProjectAssets(
 
     :ivar intents: The intents defined in the project.
     :vartype intents:
-     list[~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringConversationExportedIntent]
+     list[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringConversationExportedIntent]
     :ivar entities: The entities defined in the project.
     :vartype entities:
-     list[~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringConversationExportedEntity]
+     list[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringConversationExportedEntity]
     :ivar utterances: The utterances defined in the project.
     :vartype utterances:
-     list[~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringConversationExportedUtterance]  # pylint: disable=line-too-long
+     list[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringConversationExportedUtterance]
     :ivar project_kind: The type of project containing the assets. Required. A project to build
      natural language into apps, bots, and IoT devices.
     :vartype project_kind: str or ~azure.ai.language.conversations.authoring.models.CONVERSATION
     """
 
-    intents: Optional[List["_models.ConversationalAnalysisAuthoringConversationExportedIntent"]] = rest_field()
+    intents: Optional[List["_models.AnalyzeConversationAuthoringConversationExportedIntent"]] = rest_field()
     """The intents defined in the project."""
-    entities: Optional[List["_models.ConversationalAnalysisAuthoringConversationExportedEntity"]] = rest_field()
+    entities: Optional[List["_models.AnalyzeConversationAuthoringConversationExportedEntity"]] = rest_field()
     """The entities defined in the project."""
-    utterances: Optional[List["_models.ConversationalAnalysisAuthoringConversationExportedUtterance"]] = rest_field()
+    utterances: Optional[List["_models.AnalyzeConversationAuthoringConversationExportedUtterance"]] = rest_field()
     """The utterances defined in the project."""
     project_kind: Literal[ProjectKind.CONVERSATION] = rest_discriminator(name="projectKind")  # type: ignore
     """The type of project containing the assets. Required. A project to build natural language into
@@ -414,9 +411,9 @@ class ConversationalAnalysisAuthoringConversationExportedProjectAssets(
     def __init__(
         self,
         *,
-        intents: Optional[List["_models.ConversationalAnalysisAuthoringConversationExportedIntent"]] = None,
-        entities: Optional[List["_models.ConversationalAnalysisAuthoringConversationExportedEntity"]] = None,
-        utterances: Optional[List["_models.ConversationalAnalysisAuthoringConversationExportedUtterance"]] = None,
+        intents: Optional[List["_models.AnalyzeConversationAuthoringConversationExportedIntent"]] = None,
+        entities: Optional[List["_models.AnalyzeConversationAuthoringConversationExportedEntity"]] = None,
+        utterances: Optional[List["_models.AnalyzeConversationAuthoringConversationExportedUtterance"]] = None,
     ) -> None: ...
 
     @overload
@@ -430,19 +427,18 @@ class ConversationalAnalysisAuthoringConversationExportedProjectAssets(
         super().__init__(*args, project_kind=ProjectKind.CONVERSATION, **kwargs)
 
 
-class ConversationalAnalysisAuthoringConversationExportedUtterance(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringConversationExportedUtterance(_model_base.Model):  # pylint: disable=name-too-long
     """Represents an exported utterance for a conversational project.
 
     All required parameters must be populated in order to send to server.
 
     :ivar entities: Represents the entity labels of the utterance.
     :vartype entities:
-     list[~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringExportedUtteranceEntityLabel]
+     list[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringExportedUtteranceEntityLabel]
     :ivar text: The utterance text. Required.
     :vartype text: str
     :ivar language: Represents the utterance's language. This is BCP-47 representation of a
-     language. For example, use "en" for English, "en-gb" for English (UK), "es" for
-     Spanish etc.
+     language. For example, use "en" for English, "en-gb" for English (UK), "es" for Spanish etc.
     :vartype language: str
     :ivar intent: The intent of the utterance. Required.
     :vartype intent: str
@@ -450,14 +446,13 @@ class ConversationalAnalysisAuthoringConversationExportedUtterance(_model_base.M
     :vartype dataset: str
     """
 
-    entities: Optional[List["_models.ConversationalAnalysisAuthoringExportedUtteranceEntityLabel"]] = rest_field()
+    entities: Optional[List["_models.AnalyzeConversationAuthoringExportedUtteranceEntityLabel"]] = rest_field()
     """Represents the entity labels of the utterance."""
     text: str = rest_field()
     """The utterance text. Required."""
     language: Optional[str] = rest_field()
-    """Represents the utterance's language. This is BCP-47 representation of a
-     language. For example, use \"en\" for English, \"en-gb\" for English (UK), \"es\" for
-     Spanish etc."""
+    """Represents the utterance's language. This is BCP-47 representation of a language. For example,
+     use \"en\" for English, \"en-gb\" for English (UK), \"es\" for Spanish etc."""
     intent: str = rest_field()
     """The intent of the utterance. Required."""
     dataset: Optional[str] = rest_field()
@@ -469,7 +464,7 @@ class ConversationalAnalysisAuthoringConversationExportedUtterance(_model_base.M
         *,
         text: str,
         intent: str,
-        entities: Optional[List["_models.ConversationalAnalysisAuthoringExportedUtteranceEntityLabel"]] = None,
+        entities: Optional[List["_models.AnalyzeConversationAuthoringExportedUtteranceEntityLabel"]] = None,
         language: Optional[str] = None,
         dataset: Optional[str] = None,
     ) -> None: ...
@@ -485,9 +480,70 @@ class ConversationalAnalysisAuthoringConversationExportedUtterance(_model_base.M
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringCopyProjectOptions(_model_base.Model):  # pylint: disable=name-too-long
-    """Represents the options for copying an existing project to another Azure
-    resource.
+class AnalyzeConversationAuthoringCopyProjectJobState(_model_base.Model):  # pylint: disable=name-too-long
+    """Represents the state of a copy job.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar job_id: The job ID. Required.
+    :vartype job_id: str
+    :ivar created_date_time: The creation date time of the job. Required.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_updated_date_time: The last date time the job was updated. Required.
+    :vartype last_updated_date_time: ~datetime.datetime
+    :ivar expiration_date_time: The expiration date time of the job.
+    :vartype expiration_date_time: ~datetime.datetime
+    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
+     "failed", "cancelled", "cancelling", and "partiallyCompleted".
+    :vartype status: str or ~azure.ai.language.conversations.authoring.models.JobStatus
+    :ivar warnings: The warnings that were encountered while executing the job.
+    :vartype warnings: list[~azure.ai.language.conversations.authoring.models.Warning]
+    :ivar errors: The errors encountered while executing the job.
+    :vartype errors: list[~azure.ai.language.conversations.authoring.models.Error]
+    """
+
+    job_id: str = rest_field(name="jobId", visibility=["read"])
+    """The job ID. Required."""
+    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
+    """The creation date time of the job. Required."""
+    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
+    """The last date time the job was updated. Required."""
+    expiration_date_time: Optional[datetime.datetime] = rest_field(name="expirationDateTime", format="rfc3339")
+    """The expiration date time of the job."""
+    status: Union[str, "_models.JobStatus"] = rest_field()
+    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
+     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
+    warnings: Optional[List["_models.Warning"]] = rest_field()
+    """The warnings that were encountered while executing the job."""
+    errors: Optional[List["_models.Error"]] = rest_field()
+    """The errors encountered while executing the job."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        created_date_time: datetime.datetime,
+        last_updated_date_time: datetime.datetime,
+        status: Union[str, "_models.JobStatus"],
+        expiration_date_time: Optional[datetime.datetime] = None,
+        warnings: Optional[List["_models.Warning"]] = None,
+        errors: Optional[List["_models.Error"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AnalyzeConversationAuthoringCopyProjectOptions(_model_base.Model):  # pylint: disable=name-too-long
+    """Represents the options for copying an existing project to another Azure resource.
 
 
     :ivar project_kind: Represents the project kind. Required. Known values are: "Conversation",
@@ -542,25 +598,25 @@ class ConversationalAnalysisAuthoringCopyProjectOptions(_model_base.Model):  # p
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringCreateDeploymentOptions(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringCreateDeploymentOptions(_model_base.Model):  # pylint: disable=name-too-long
     """Represents the options for creating or updating a project deployment.
 
     All required parameters must be populated in order to send to server.
 
     :ivar trained_model_label: Represents the trained model label. Required.
     :vartype trained_model_label: str
-    :ivar assigned_resource_ids: Represents the resource IDs to be assigned to the deployment.
-     If provided, the deployment will be rolled out to the resources
-     provided here as well as the original resource in which the project is created.
+    :ivar assigned_resource_ids: Represents the resource IDs to be assigned to the deployment. If
+     provided, the deployment will be rolled out to the resources provided here as well as the
+     original resource in which the project is created.
     :vartype assigned_resource_ids: list[str]
     """
 
     trained_model_label: str = rest_field(name="trainedModelLabel")
     """Represents the trained model label. Required."""
     assigned_resource_ids: Optional[List[str]] = rest_field(name="assignedResourceIds")
-    """Represents the resource IDs to be assigned to the deployment.
-     If provided, the deployment will be rolled out to the resources
-     provided here as well as the original resource in which the project is created."""
+    """Represents the resource IDs to be assigned to the deployment. If provided, the deployment will
+     be rolled out to the resources provided here as well as the original resource in which the
+     project is created."""
 
     @overload
     def __init__(
@@ -581,7 +637,7 @@ class ConversationalAnalysisAuthoringCreateDeploymentOptions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringCreateProjectOptions(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringCreateProjectOptions(_model_base.Model):  # pylint: disable=name-too-long
     """Represents the options used to create or update a project.
 
     All required parameters must be populated in order to send to server.
@@ -591,7 +647,7 @@ class ConversationalAnalysisAuthoringCreateProjectOptions(_model_base.Model):  #
     :vartype project_kind: str or ~azure.ai.language.conversations.authoring.models.ProjectKind
     :ivar settings: The project settings.
     :vartype settings:
-     ~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringProjectSettings
+     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringProjectSettings
     :ivar storage_input_container_name: The storage container name in case of conversation
      summarization.
     :vartype storage_input_container_name: str
@@ -609,7 +665,7 @@ class ConversationalAnalysisAuthoringCreateProjectOptions(_model_base.Model):  #
     project_kind: Union[str, "_models.ProjectKind"] = rest_field(name="projectKind")
     """Represents the project kind. Required. Known values are: \"Conversation\", \"Orchestration\",
      and \"CustomConversationSummarization\"."""
-    settings: Optional["_models.ConversationalAnalysisAuthoringProjectSettings"] = rest_field()
+    settings: Optional["_models.AnalyzeConversationAuthoringProjectSettings"] = rest_field()
     """The project settings."""
     storage_input_container_name: Optional[str] = rest_field(name="storageInputContainerName")
     """The storage container name in case of conversation summarization."""
@@ -630,7 +686,7 @@ class ConversationalAnalysisAuthoringCreateProjectOptions(_model_base.Model):  #
         project_kind: Union[str, "_models.ProjectKind"],
         project_name: str,
         language: str,
-        settings: Optional["_models.ConversationalAnalysisAuthoringProjectSettings"] = None,
+        settings: Optional["_models.AnalyzeConversationAuthoringProjectSettings"] = None,
         storage_input_container_name: Optional[str] = None,
         multilingual: Optional[bool] = None,
         description: Optional[str] = None,
@@ -647,23 +703,20 @@ class ConversationalAnalysisAuthoringCreateProjectOptions(_model_base.Model):  #
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringDeleteDeploymentOptions(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringDeleteDeploymentOptions(_model_base.Model):  # pylint: disable=name-too-long
     """Represents the options for deleting a project deployment.
 
-    :ivar assigned_resource_ids: Represents the resource IDs to delete the deployment from.
-     If not provided, the deployment will be rolled out from all the
-     resources it is deployed to.
-     If provided, it will delete the deployment only from the specified
-     assigned resources, and leave it for the rest.
+    :ivar assigned_resource_ids: Represents the resource IDs to delete the deployment from. If not
+     provided, the deployment will be rolled out from all the resources it is deployed to. If
+     provided, it will delete the deployment only from the specified assigned resources, and leave
+     it for the rest.
     :vartype assigned_resource_ids: list[str]
     """
 
     assigned_resource_ids: Optional[List[str]] = rest_field(name="assignedResourceIds")
-    """Represents the resource IDs to delete the deployment from.
-     If not provided, the deployment will be rolled out from all the
-     resources it is deployed to.
-     If provided, it will delete the deployment only from the specified
-     assigned resources, and leave it for the rest."""
+    """Represents the resource IDs to delete the deployment from. If not provided, the deployment will
+     be rolled out from all the resources it is deployed to. If provided, it will delete the
+     deployment only from the specified assigned resources, and leave it for the rest."""
 
     @overload
     def __init__(
@@ -683,7 +736,133 @@ class ConversationalAnalysisAuthoringDeleteDeploymentOptions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringDeploymentResource(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringDeploymentDeleteFromResourcesJobState(
+    _model_base.Model
+):  # pylint: disable=name-too-long
+    """Represents the state of an existing delete deployment from specific resources job.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar job_id: The job ID. Required.
+    :vartype job_id: str
+    :ivar created_date_time: The creation date time of the job. Required.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_updated_date_time: The last date time the job was updated. Required.
+    :vartype last_updated_date_time: ~datetime.datetime
+    :ivar expiration_date_time: The expiration date time of the job.
+    :vartype expiration_date_time: ~datetime.datetime
+    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
+     "failed", "cancelled", "cancelling", and "partiallyCompleted".
+    :vartype status: str or ~azure.ai.language.conversations.authoring.models.JobStatus
+    :ivar warnings: The warnings that were encountered while executing the job.
+    :vartype warnings: list[~azure.ai.language.conversations.authoring.models.Warning]
+    :ivar errors: The errors encountered while executing the job.
+    :vartype errors: list[~azure.ai.language.conversations.authoring.models.Error]
+    """
+
+    job_id: str = rest_field(name="jobId", visibility=["read"])
+    """The job ID. Required."""
+    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
+    """The creation date time of the job. Required."""
+    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
+    """The last date time the job was updated. Required."""
+    expiration_date_time: Optional[datetime.datetime] = rest_field(name="expirationDateTime", format="rfc3339")
+    """The expiration date time of the job."""
+    status: Union[str, "_models.JobStatus"] = rest_field()
+    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
+     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
+    warnings: Optional[List["_models.Warning"]] = rest_field()
+    """The warnings that were encountered while executing the job."""
+    errors: Optional[List["_models.Error"]] = rest_field()
+    """The errors encountered while executing the job."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        created_date_time: datetime.datetime,
+        last_updated_date_time: datetime.datetime,
+        status: Union[str, "_models.JobStatus"],
+        expiration_date_time: Optional[datetime.datetime] = None,
+        warnings: Optional[List["_models.Warning"]] = None,
+        errors: Optional[List["_models.Error"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AnalyzeConversationAuthoringDeploymentJobState(_model_base.Model):  # pylint: disable=name-too-long
+    """Represents the state of a deployment job.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar job_id: The job ID. Required.
+    :vartype job_id: str
+    :ivar created_date_time: The creation date time of the job. Required.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_updated_date_time: The last date time the job was updated. Required.
+    :vartype last_updated_date_time: ~datetime.datetime
+    :ivar expiration_date_time: The expiration date time of the job.
+    :vartype expiration_date_time: ~datetime.datetime
+    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
+     "failed", "cancelled", "cancelling", and "partiallyCompleted".
+    :vartype status: str or ~azure.ai.language.conversations.authoring.models.JobStatus
+    :ivar warnings: The warnings that were encountered while executing the job.
+    :vartype warnings: list[~azure.ai.language.conversations.authoring.models.Warning]
+    :ivar errors: The errors encountered while executing the job.
+    :vartype errors: list[~azure.ai.language.conversations.authoring.models.Error]
+    """
+
+    job_id: str = rest_field(name="jobId", visibility=["read"])
+    """The job ID. Required."""
+    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
+    """The creation date time of the job. Required."""
+    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
+    """The last date time the job was updated. Required."""
+    expiration_date_time: Optional[datetime.datetime] = rest_field(name="expirationDateTime", format="rfc3339")
+    """The expiration date time of the job."""
+    status: Union[str, "_models.JobStatus"] = rest_field()
+    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
+     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
+    warnings: Optional[List["_models.Warning"]] = rest_field()
+    """The warnings that were encountered while executing the job."""
+    errors: Optional[List["_models.Error"]] = rest_field()
+    """The errors encountered while executing the job."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        created_date_time: datetime.datetime,
+        last_updated_date_time: datetime.datetime,
+        status: Union[str, "_models.JobStatus"],
+        expiration_date_time: Optional[datetime.datetime] = None,
+        warnings: Optional[List["_models.Warning"]] = None,
+        errors: Optional[List["_models.Error"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AnalyzeConversationAuthoringDeploymentResource(_model_base.Model):  # pylint: disable=name-too-long
     """Represents an Azure resource assigned to a deployment.
 
 
@@ -717,25 +896,85 @@ class ConversationalAnalysisAuthoringDeploymentResource(_model_base.Model):  # p
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringEntitiesEvaluationSummary(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringDeploymentResourcesJobState(_model_base.Model):  # pylint: disable=name-too-long
+    """Represents the state of a deployment resources job.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar job_id: The job ID. Required.
+    :vartype job_id: str
+    :ivar created_date_time: The creation date time of the job. Required.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_updated_date_time: The last date time the job was updated. Required.
+    :vartype last_updated_date_time: ~datetime.datetime
+    :ivar expiration_date_time: The expiration date time of the job.
+    :vartype expiration_date_time: ~datetime.datetime
+    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
+     "failed", "cancelled", "cancelling", and "partiallyCompleted".
+    :vartype status: str or ~azure.ai.language.conversations.authoring.models.JobStatus
+    :ivar warnings: The warnings that were encountered while executing the job.
+    :vartype warnings: list[~azure.ai.language.conversations.authoring.models.Warning]
+    :ivar errors: The errors encountered while executing the job.
+    :vartype errors: list[~azure.ai.language.conversations.authoring.models.Error]
+    """
+
+    job_id: str = rest_field(name="jobId", visibility=["read"])
+    """The job ID. Required."""
+    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
+    """The creation date time of the job. Required."""
+    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
+    """The last date time the job was updated. Required."""
+    expiration_date_time: Optional[datetime.datetime] = rest_field(name="expirationDateTime", format="rfc3339")
+    """The expiration date time of the job."""
+    status: Union[str, "_models.JobStatus"] = rest_field()
+    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
+     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
+    warnings: Optional[List["_models.Warning"]] = rest_field()
+    """The warnings that were encountered while executing the job."""
+    errors: Optional[List["_models.Error"]] = rest_field()
+    """The errors encountered while executing the job."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        created_date_time: datetime.datetime,
+        last_updated_date_time: datetime.datetime,
+        status: Union[str, "_models.JobStatus"],
+        expiration_date_time: Optional[datetime.datetime] = None,
+        warnings: Optional[List["_models.Warning"]] = None,
+        errors: Optional[List["_models.Error"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AnalyzeConversationAuthoringEntitiesEvaluationSummary(_model_base.Model):  # pylint: disable=name-too-long
     """Represents the evaluation result summary for the project's entities.
 
 
     :ivar confusion_matrix: Represents the confusion matrix between two entities (the two entities
-     can be
-     the same). The matrix is between the entity that was labelled and the entity
-     that was predicted. Required.
+     can be the same). The matrix is between the entity that was labelled and the entity that was
+     predicted. Required.
     :vartype confusion_matrix:
-     ~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringConfusionMatrix
+     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringConfusionMatrix
     :ivar entities: Represents the entities evaluation summary. Required.
     :vartype entities: dict[str,
-     ~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringEntityEvaluationSummary]
+     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringEntityEvaluationSummary]
     :ivar micro_f1: Represents the micro F1. Expected value is a float between 0 and 1 inclusive.
      Required.
     :vartype micro_f1: float
     :ivar micro_precision: Represents the micro precision. Expected value is a float between 0 and
-     1
-     inclusive. Required.
+     1 inclusive. Required.
     :vartype micro_precision: float
     :ivar micro_recall: Represents the micro recall. Expected value is a float between 0 and 1
      inclusive. Required.
@@ -744,43 +983,37 @@ class ConversationalAnalysisAuthoringEntitiesEvaluationSummary(_model_base.Model
      Required.
     :vartype macro_f1: float
     :ivar macro_precision: Represents the macro precision. Expected value is a float between 0 and
-     1
-     inclusive. Required.
+     1 inclusive. Required.
     :vartype macro_precision: float
     :ivar macro_recall: Represents the macro recall. Expected value is a float between 0 and 1
      inclusive. Required.
     :vartype macro_recall: float
     """
 
-    confusion_matrix: "_models.ConversationalAnalysisAuthoringConfusionMatrix" = rest_field(name="confusionMatrix")
-    """Represents the confusion matrix between two entities (the two entities can be
-     the same). The matrix is between the entity that was labelled and the entity
-     that was predicted. Required."""
-    entities: Dict[str, "_models.ConversationalAnalysisAuthoringEntityEvaluationSummary"] = rest_field()
+    confusion_matrix: "_models.AnalyzeConversationAuthoringConfusionMatrix" = rest_field(name="confusionMatrix")
+    """Represents the confusion matrix between two entities (the two entities can be the same). The
+     matrix is between the entity that was labelled and the entity that was predicted. Required."""
+    entities: Dict[str, "_models.AnalyzeConversationAuthoringEntityEvaluationSummary"] = rest_field()
     """Represents the entities evaluation summary. Required."""
     micro_f1: float = rest_field(name="microF1")
     """Represents the micro F1. Expected value is a float between 0 and 1 inclusive. Required."""
     micro_precision: float = rest_field(name="microPrecision")
-    """Represents the micro precision. Expected value is a float between 0 and 1
-     inclusive. Required."""
+    """Represents the micro precision. Expected value is a float between 0 and 1 inclusive. Required."""
     micro_recall: float = rest_field(name="microRecall")
-    """Represents the micro recall. Expected value is a float between 0 and 1
-     inclusive. Required."""
+    """Represents the micro recall. Expected value is a float between 0 and 1 inclusive. Required."""
     macro_f1: float = rest_field(name="macroF1")
     """Represents the macro F1. Expected value is a float between 0 and 1 inclusive. Required."""
     macro_precision: float = rest_field(name="macroPrecision")
-    """Represents the macro precision. Expected value is a float between 0 and 1
-     inclusive. Required."""
+    """Represents the macro precision. Expected value is a float between 0 and 1 inclusive. Required."""
     macro_recall: float = rest_field(name="macroRecall")
-    """Represents the macro recall. Expected value is a float between 0 and 1
-     inclusive. Required."""
+    """Represents the macro recall. Expected value is a float between 0 and 1 inclusive. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        confusion_matrix: "_models.ConversationalAnalysisAuthoringConfusionMatrix",
-        entities: Dict[str, "_models.ConversationalAnalysisAuthoringEntityEvaluationSummary"],
+        confusion_matrix: "_models.AnalyzeConversationAuthoringConfusionMatrix",
+        entities: Dict[str, "_models.AnalyzeConversationAuthoringEntityEvaluationSummary"],
         micro_f1: float,
         micro_precision: float,
         micro_recall: float,
@@ -800,7 +1033,7 @@ class ConversationalAnalysisAuthoringEntitiesEvaluationSummary(_model_base.Model
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringEntityEvaluationSummary(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringEntityEvaluationSummary(_model_base.Model):  # pylint: disable=name-too-long
     """Represents the evaluation result for an entity.
 
 
@@ -859,13 +1092,13 @@ class ConversationalAnalysisAuthoringEntityEvaluationSummary(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringEvaluationJobResult(_model_base.Model):  # pylint: disable=name-too-long
-    """ConversationalAnalysisAuthoringEvaluationJobResult.
+class AnalyzeConversationAuthoringEvaluationJobResult(_model_base.Model):  # pylint: disable=name-too-long
+    """AnalyzeConversationAuthoringEvaluationJobResult.
 
 
     :ivar evaluation_options: Represents the options used running the evaluation. Required.
     :vartype evaluation_options:
-     ~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringEvaluationOptions
+     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringEvaluationOptions
     :ivar model_label: Represents trained model label. Required.
     :vartype model_label: str
     :ivar training_config_version: Represents training config version. Required.
@@ -874,9 +1107,7 @@ class ConversationalAnalysisAuthoringEvaluationJobResult(_model_base.Model):  # 
     :vartype percent_complete: int
     """
 
-    evaluation_options: "_models.ConversationalAnalysisAuthoringEvaluationOptions" = rest_field(
-        name="evaluationOptions"
-    )
+    evaluation_options: "_models.AnalyzeConversationAuthoringEvaluationOptions" = rest_field(name="evaluationOptions")
     """Represents the options used running the evaluation. Required."""
     model_label: str = rest_field(name="modelLabel")
     """Represents trained model label. Required."""
@@ -889,7 +1120,7 @@ class ConversationalAnalysisAuthoringEvaluationJobResult(_model_base.Model):  # 
     def __init__(
         self,
         *,
-        evaluation_options: "_models.ConversationalAnalysisAuthoringEvaluationOptions",
+        evaluation_options: "_models.AnalyzeConversationAuthoringEvaluationOptions",
         model_label: str,
         training_config_version: str,
         percent_complete: int,
@@ -906,31 +1137,97 @@ class ConversationalAnalysisAuthoringEvaluationJobResult(_model_base.Model):  # 
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringEvaluationOptions(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringEvaluationJobState(_model_base.Model):  # pylint: disable=name-too-long
+    """Represents the state of a evaluation job.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar job_id: The job ID. Required.
+    :vartype job_id: str
+    :ivar created_date_time: The creation date time of the job. Required.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_updated_date_time: The last date time the job was updated. Required.
+    :vartype last_updated_date_time: ~datetime.datetime
+    :ivar expiration_date_time: The expiration date time of the job.
+    :vartype expiration_date_time: ~datetime.datetime
+    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
+     "failed", "cancelled", "cancelling", and "partiallyCompleted".
+    :vartype status: str or ~azure.ai.language.conversations.authoring.models.JobStatus
+    :ivar warnings: The warnings that were encountered while executing the job.
+    :vartype warnings: list[~azure.ai.language.conversations.authoring.models.Warning]
+    :ivar errors: The errors encountered while executing the job.
+    :vartype errors: list[~azure.ai.language.conversations.authoring.models.Error]
+    :ivar result: Represents evaluation task detailed result. Required.
+    :vartype result:
+     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringEvaluationJobResult
+    """
+
+    job_id: str = rest_field(name="jobId", visibility=["read"])
+    """The job ID. Required."""
+    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
+    """The creation date time of the job. Required."""
+    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
+    """The last date time the job was updated. Required."""
+    expiration_date_time: Optional[datetime.datetime] = rest_field(name="expirationDateTime", format="rfc3339")
+    """The expiration date time of the job."""
+    status: Union[str, "_models.JobStatus"] = rest_field()
+    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
+     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
+    warnings: Optional[List["_models.Warning"]] = rest_field()
+    """The warnings that were encountered while executing the job."""
+    errors: Optional[List["_models.Error"]] = rest_field()
+    """The errors encountered while executing the job."""
+    result: "_models.AnalyzeConversationAuthoringEvaluationJobResult" = rest_field()
+    """Represents evaluation task detailed result. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        created_date_time: datetime.datetime,
+        last_updated_date_time: datetime.datetime,
+        status: Union[str, "_models.JobStatus"],
+        result: "_models.AnalyzeConversationAuthoringEvaluationJobResult",
+        expiration_date_time: Optional[datetime.datetime] = None,
+        warnings: Optional[List["_models.Warning"]] = None,
+        errors: Optional[List["_models.Error"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AnalyzeConversationAuthoringEvaluationOptions(_model_base.Model):  # pylint: disable=name-too-long
     """Represents the options used running the evaluation.
 
     :ivar kind: Represents the evaluation kind. By default, the evaluation kind is set to
      percentage. Known values are: "percentage" and "manual".
     :vartype kind: str or ~azure.ai.language.conversations.authoring.models.EvaluationKind
     :ivar training_split_percentage: Represents the training dataset split percentage. Only needed
-     in case the
-     evaluation kind is percentage.
+     in case the evaluation kind is percentage.
     :vartype training_split_percentage: int
     :ivar testing_split_percentage: Represents the testing dataset split percentage. Only needed in
-     case the
-     evaluation kind is percentage.
+     case the evaluation kind is percentage.
     :vartype testing_split_percentage: int
     """
 
     kind: Optional[Union[str, "_models.EvaluationKind"]] = rest_field()
-    """Represents the evaluation kind. By default, the evaluation kind is set to
-     percentage. Known values are: \"percentage\" and \"manual\"."""
+    """Represents the evaluation kind. By default, the evaluation kind is set to percentage. Known
+     values are: \"percentage\" and \"manual\"."""
     training_split_percentage: Optional[int] = rest_field(name="trainingSplitPercentage")
-    """Represents the training dataset split percentage. Only needed in case the
-     evaluation kind is percentage."""
+    """Represents the training dataset split percentage. Only needed in case the evaluation kind is
+     percentage."""
     testing_split_percentage: Optional[int] = rest_field(name="testingSplitPercentage")
-    """Represents the testing dataset split percentage. Only needed in case the
-     evaluation kind is percentage."""
+    """Represents the testing dataset split percentage. Only needed in case the evaluation kind is
+     percentage."""
 
     @overload
     def __init__(
@@ -952,30 +1249,30 @@ class ConversationalAnalysisAuthoringEvaluationOptions(_model_base.Model):  # py
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringEvaluationSummary(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringEvaluationSummary(_model_base.Model):  # pylint: disable=name-too-long
     """Represents the evaluation result summary.
 
 
     :ivar entities_evaluation: Contains the data related to entities evaluation. Required.
     :vartype entities_evaluation:
-     ~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringEntitiesEvaluationSummary
+     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringEntitiesEvaluationSummary
     :ivar intents_evaluation: Contains the data related to intents evaluation. Required.
     :vartype intents_evaluation:
-     ~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringIntentsEvaluationSummary
+     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringIntentsEvaluationSummary
     :ivar evaluation_options: The options that were used while running the evaluation.
     :vartype evaluation_options:
-     ~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringEvaluationOptions
+     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringEvaluationOptions
     """
 
-    entities_evaluation: "_models.ConversationalAnalysisAuthoringEntitiesEvaluationSummary" = rest_field(
+    entities_evaluation: "_models.AnalyzeConversationAuthoringEntitiesEvaluationSummary" = rest_field(
         name="entitiesEvaluation"
     )
     """Contains the data related to entities evaluation. Required."""
-    intents_evaluation: "_models.ConversationalAnalysisAuthoringIntentsEvaluationSummary" = rest_field(
+    intents_evaluation: "_models.AnalyzeConversationAuthoringIntentsEvaluationSummary" = rest_field(
         name="intentsEvaluation"
     )
     """Contains the data related to intents evaluation. Required."""
-    evaluation_options: Optional["_models.ConversationalAnalysisAuthoringEvaluationOptions"] = rest_field(
+    evaluation_options: Optional["_models.AnalyzeConversationAuthoringEvaluationOptions"] = rest_field(
         name="evaluationOptions"
     )
     """The options that were used while running the evaluation."""
@@ -984,9 +1281,9 @@ class ConversationalAnalysisAuthoringEvaluationSummary(_model_base.Model):  # py
     def __init__(
         self,
         *,
-        entities_evaluation: "_models.ConversationalAnalysisAuthoringEntitiesEvaluationSummary",
-        intents_evaluation: "_models.ConversationalAnalysisAuthoringIntentsEvaluationSummary",
-        evaluation_options: Optional["_models.ConversationalAnalysisAuthoringEvaluationOptions"] = None,
+        entities_evaluation: "_models.AnalyzeConversationAuthoringEntitiesEvaluationSummary",
+        intents_evaluation: "_models.AnalyzeConversationAuthoringIntentsEvaluationSummary",
+        evaluation_options: Optional["_models.AnalyzeConversationAuthoringEvaluationOptions"] = None,
     ) -> None: ...
 
     @overload
@@ -1000,9 +1297,7 @@ class ConversationalAnalysisAuthoringEvaluationSummary(_model_base.Model):  # py
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringExportedConversationOrchestration(
-    _model_base.Model
-):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringExportedConversationOrchestration(_model_base.Model):  # pylint: disable=name-too-long
     """Defines the orchestration details for a Conversational project target.
 
     All required parameters must be populated in order to send to server.
@@ -1037,13 +1332,13 @@ class ConversationalAnalysisAuthoringExportedConversationOrchestration(
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringExportedOrchestrationOptions(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringExportedOrchestrationOptions(_model_base.Model):  # pylint: disable=name-too-long
     """Represents the options used to define the orchestration behavior of an intent.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ConversationalAnalysisAuthoringExportedConversationOrchestrationOptions,
-    ConversationalAnalysisAuthoringExportedLuisOrchestrationOptions,
-    ConversationalAnalysisAuthoringExportedQuestionAnsweringOrchestrationOptions
+    AnalyzeConversationAuthoringExportedConversationOrchestrationOptions,
+    AnalyzeConversationAuthoringExportedLuisOrchestrationOptions,
+    AnalyzeConversationAuthoringExportedQuestionAnsweringOrchestrationOptions
 
     All required parameters must be populated in order to send to server.
 
@@ -1075,8 +1370,8 @@ class ConversationalAnalysisAuthoringExportedOrchestrationOptions(_model_base.Mo
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringExportedConversationOrchestrationOptions(
-    ConversationalAnalysisAuthoringExportedOrchestrationOptions, discriminator="Conversation"
+class AnalyzeConversationAuthoringExportedConversationOrchestrationOptions(
+    AnalyzeConversationAuthoringExportedOrchestrationOptions, discriminator="Conversation"
 ):  # pylint: disable=name-too-long
     """Represents the orchestration options for a Conversational project target.
 
@@ -1084,13 +1379,13 @@ class ConversationalAnalysisAuthoringExportedConversationOrchestrationOptions(
 
     :ivar conversation_orchestration: The Conversational project target details. Required.
     :vartype conversation_orchestration:
-     ~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringExportedConversationOrchestration
+     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringExportedConversationOrchestration
     :ivar target_project_kind: The kind of the target used in the orchestration flow. Required.
     :vartype target_project_kind: str or
      ~azure.ai.language.conversations.authoring.models.CONVERSATION
     """
 
-    conversation_orchestration: "_models.ConversationalAnalysisAuthoringExportedConversationOrchestration" = rest_field(
+    conversation_orchestration: "_models.AnalyzeConversationAuthoringExportedConversationOrchestration" = rest_field(
         name="conversationOrchestration"
     )
     """The Conversational project target details. Required."""
@@ -1101,7 +1396,7 @@ class ConversationalAnalysisAuthoringExportedConversationOrchestrationOptions(
     def __init__(
         self,
         *,
-        conversation_orchestration: "_models.ConversationalAnalysisAuthoringExportedConversationOrchestration",
+        conversation_orchestration: "_models.AnalyzeConversationAuthoringExportedConversationOrchestration",
     ) -> None: ...
 
     @overload
@@ -1115,22 +1410,22 @@ class ConversationalAnalysisAuthoringExportedConversationOrchestrationOptions(
         super().__init__(*args, target_project_kind=OrchestrationTargetProjectKind.CONVERSATION, **kwargs)
 
 
-class ConversationalAnalysisAuthoringExportedEntityList(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringExportedEntityList(_model_base.Model):  # pylint: disable=name-too-long
     """Represents a list component of an entity.
 
     :ivar sublists: The sub-lists of the list component.
     :vartype sublists:
-     list[~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringExportedEntitySublist]
+     list[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringExportedEntitySublist]
     """
 
-    sublists: Optional[List["_models.ConversationalAnalysisAuthoringExportedEntitySublist"]] = rest_field()
+    sublists: Optional[List["_models.AnalyzeConversationAuthoringExportedEntitySublist"]] = rest_field()
     """The sub-lists of the list component."""
 
     @overload
     def __init__(
         self,
         *,
-        sublists: Optional[List["_models.ConversationalAnalysisAuthoringExportedEntitySublist"]] = None,
+        sublists: Optional[List["_models.AnalyzeConversationAuthoringExportedEntitySublist"]] = None,
     ) -> None: ...
 
     @overload
@@ -1144,21 +1439,19 @@ class ConversationalAnalysisAuthoringExportedEntityList(_model_base.Model):  # p
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringExportedEntityListSynonym(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringExportedEntityListSynonym(_model_base.Model):  # pylint: disable=name-too-long
     """Represents a list of synonyms inside a list component.
 
     :ivar language: Represents the language of the synonyms. This is BCP-47 representation of a
-     language. For example, use "en" for English, "en-gb" for English (UK), "es" for
-     Spanish etc.
+     language. For example, use "en" for English, "en-gb" for English (UK), "es" for Spanish etc.
     :vartype language: str
     :ivar values_property: The list of synonyms.
     :vartype values_property: list[str]
     """
 
     language: Optional[str] = rest_field()
-    """Represents the language of the synonyms. This is BCP-47 representation of a
-     language. For example, use \"en\" for English, \"en-gb\" for English (UK), \"es\" for
-     Spanish etc."""
+    """Represents the language of the synonyms. This is BCP-47 representation of a language. For
+     example, use \"en\" for English, \"en-gb\" for English (UK), \"es\" for Spanish etc."""
     values_property: Optional[List[str]] = rest_field(name="values")
     """The list of synonyms."""
 
@@ -1181,27 +1474,26 @@ class ConversationalAnalysisAuthoringExportedEntityListSynonym(_model_base.Model
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringExportedEntityRegex(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringExportedEntityRegex(_model_base.Model):  # pylint: disable=name-too-long
     """Represents a regex component of an entity.
 
     :ivar expressions: The regex expressions of the regex component. These expressions follow the
-     .NET
-     regex syntax. For reference, check here:
+     .NET regex syntax. For reference, check here:
      https://learn.microsoft.com/dotnet/standard/base-types/regular-expressions.
     :vartype expressions:
-     list[~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringExportedEntityRegexExpression]  # pylint: disable=line-too-long
+     list[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringExportedEntityRegexExpression]
     """
 
-    expressions: Optional[List["_models.ConversationalAnalysisAuthoringExportedEntityRegexExpression"]] = rest_field()
-    """The regex expressions of the regex component. These expressions follow the .NET
-     regex syntax. For reference, check here:
+    expressions: Optional[List["_models.AnalyzeConversationAuthoringExportedEntityRegexExpression"]] = rest_field()
+    """The regex expressions of the regex component. These expressions follow the .NET regex syntax.
+     For reference, check here:
      https://learn.microsoft.com/dotnet/standard/base-types/regular-expressions."""
 
     @overload
     def __init__(
         self,
         *,
-        expressions: Optional[List["_models.ConversationalAnalysisAuthoringExportedEntityRegexExpression"]] = None,
+        expressions: Optional[List["_models.AnalyzeConversationAuthoringExportedEntityRegexExpression"]] = None,
     ) -> None: ...
 
     @overload
@@ -1215,16 +1507,16 @@ class ConversationalAnalysisAuthoringExportedEntityRegex(_model_base.Model):  # 
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringExportedEntityRegexExpression(_model_base.Model):  # pylint: disable=name-too-long
-    """Represents a regex expression inside a regex component. This expression follows
-    the .NET regex syntax. For reference, check here:
+class AnalyzeConversationAuthoringExportedEntityRegexExpression(_model_base.Model):  # pylint: disable=name-too-long
+    """Represents a regex expression inside a regex component. This expression follows the .NET regex
+    syntax. For reference, check here:
     https://learn.microsoft.com/dotnet/standard/base-types/regular-expressions.
 
     :ivar regex_key: The key of the regex expression.
     :vartype regex_key: str
     :ivar language: Represents the language of the regex expression. This is BCP-47 representation
-     of a language. For example, use "en" for English, "en-gb" for English (UK),
-     "es" for Spanish etc.
+     of a language. For example, use "en" for English, "en-gb" for English (UK), "es" for Spanish
+     etc.
     :vartype language: str
     :ivar regex_pattern: The regex pattern.
     :vartype regex_pattern: str
@@ -1233,9 +1525,8 @@ class ConversationalAnalysisAuthoringExportedEntityRegexExpression(_model_base.M
     regex_key: Optional[str] = rest_field(name="regexKey")
     """The key of the regex expression."""
     language: Optional[str] = rest_field()
-    """Represents the language of the regex expression. This is BCP-47 representation
-     of a language. For example, use \"en\" for English, \"en-gb\" for English (UK),
-     \"es\" for Spanish etc."""
+    """Represents the language of the regex expression. This is BCP-47 representation of a language.
+     For example, use \"en\" for English, \"en-gb\" for English (UK), \"es\" for Spanish etc."""
     regex_pattern: Optional[str] = rest_field(name="regexPattern")
     """The regex pattern."""
 
@@ -1259,19 +1550,19 @@ class ConversationalAnalysisAuthoringExportedEntityRegexExpression(_model_base.M
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringExportedEntitySublist(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringExportedEntitySublist(_model_base.Model):  # pylint: disable=name-too-long
     """Represents a sub-list inside a list component.
 
     :ivar list_key: The key of the sub-list.
     :vartype list_key: str
     :ivar synonyms: The phrases of that correspond to the sub-list.
     :vartype synonyms:
-     list[~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringExportedEntityListSynonym]
+     list[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringExportedEntityListSynonym]
     """
 
     list_key: Optional[str] = rest_field(name="listKey")
     """The key of the sub-list."""
-    synonyms: Optional[List["_models.ConversationalAnalysisAuthoringExportedEntityListSynonym"]] = rest_field()
+    synonyms: Optional[List["_models.AnalyzeConversationAuthoringExportedEntityListSynonym"]] = rest_field()
     """The phrases of that correspond to the sub-list."""
 
     @overload
@@ -1279,7 +1570,7 @@ class ConversationalAnalysisAuthoringExportedEntitySublist(_model_base.Model):  
         self,
         *,
         list_key: Optional[str] = None,
-        synonyms: Optional[List["_models.ConversationalAnalysisAuthoringExportedEntityListSynonym"]] = None,
+        synonyms: Optional[List["_models.AnalyzeConversationAuthoringExportedEntityListSynonym"]] = None,
     ) -> None: ...
 
     @overload
@@ -1293,7 +1584,7 @@ class ConversationalAnalysisAuthoringExportedEntitySublist(_model_base.Model):  
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringExportedLuisOrchestration(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringExportedLuisOrchestration(_model_base.Model):  # pylint: disable=name-too-long
     """Defines the orchestration details for a LUIS application target.
 
     All required parameters must be populated in order to send to server.
@@ -1333,8 +1624,8 @@ class ConversationalAnalysisAuthoringExportedLuisOrchestration(_model_base.Model
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringExportedLuisOrchestrationOptions(
-    ConversationalAnalysisAuthoringExportedOrchestrationOptions, discriminator="Luis"
+class AnalyzeConversationAuthoringExportedLuisOrchestrationOptions(
+    AnalyzeConversationAuthoringExportedOrchestrationOptions, discriminator="Luis"
 ):  # pylint: disable=name-too-long
     """Represents the orchestration options for a LUIS application target.
 
@@ -1342,12 +1633,12 @@ class ConversationalAnalysisAuthoringExportedLuisOrchestrationOptions(
 
     :ivar luis_orchestration: The LUIS application target details. Required.
     :vartype luis_orchestration:
-     ~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringExportedLuisOrchestration
+     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringExportedLuisOrchestration
     :ivar target_project_kind: The kind of the target used in the orchestration flow. Required.
     :vartype target_project_kind: str or ~azure.ai.language.conversations.authoring.models.LUIS
     """
 
-    luis_orchestration: "_models.ConversationalAnalysisAuthoringExportedLuisOrchestration" = rest_field(
+    luis_orchestration: "_models.AnalyzeConversationAuthoringExportedLuisOrchestration" = rest_field(
         name="luisOrchestration"
     )
     """The LUIS application target details. Required."""
@@ -1358,7 +1649,7 @@ class ConversationalAnalysisAuthoringExportedLuisOrchestrationOptions(
     def __init__(
         self,
         *,
-        luis_orchestration: "_models.ConversationalAnalysisAuthoringExportedLuisOrchestration",
+        luis_orchestration: "_models.AnalyzeConversationAuthoringExportedLuisOrchestration",
     ) -> None: ...
 
     @overload
@@ -1372,7 +1663,69 @@ class ConversationalAnalysisAuthoringExportedLuisOrchestrationOptions(
         super().__init__(*args, target_project_kind=OrchestrationTargetProjectKind.LUIS, **kwargs)
 
 
-class ConversationalAnalysisAuthoringExportedPrebuiltEntity(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringExportedModelJobState(_model_base.Model):  # pylint: disable=name-too-long
+    """Represents the state of a job to create or updated an exported model.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar job_id: The job ID. Required.
+    :vartype job_id: str
+    :ivar created_date_time: The creation date time of the job. Required.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_updated_date_time: The last date time the job was updated. Required.
+    :vartype last_updated_date_time: ~datetime.datetime
+    :ivar expiration_date_time: The expiration date time of the job.
+    :vartype expiration_date_time: ~datetime.datetime
+    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
+     "failed", "cancelled", "cancelling", and "partiallyCompleted".
+    :vartype status: str or ~azure.ai.language.conversations.authoring.models.JobStatus
+    :ivar warnings: The warnings that were encountered while executing the job.
+    :vartype warnings: list[~azure.ai.language.conversations.authoring.models.Warning]
+    :ivar errors: The errors encountered while executing the job.
+    :vartype errors: list[~azure.ai.language.conversations.authoring.models.Error]
+    """
+
+    job_id: str = rest_field(name="jobId", visibility=["read"])
+    """The job ID. Required."""
+    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
+    """The creation date time of the job. Required."""
+    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
+    """The last date time the job was updated. Required."""
+    expiration_date_time: Optional[datetime.datetime] = rest_field(name="expirationDateTime", format="rfc3339")
+    """The expiration date time of the job."""
+    status: Union[str, "_models.JobStatus"] = rest_field()
+    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
+     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
+    warnings: Optional[List["_models.Warning"]] = rest_field()
+    """The warnings that were encountered while executing the job."""
+    errors: Optional[List["_models.Error"]] = rest_field()
+    """The errors encountered while executing the job."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        created_date_time: datetime.datetime,
+        last_updated_date_time: datetime.datetime,
+        status: Union[str, "_models.JobStatus"],
+        expiration_date_time: Optional[datetime.datetime] = None,
+        warnings: Optional[List["_models.Warning"]] = None,
+        errors: Optional[List["_models.Error"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AnalyzeConversationAuthoringExportedPrebuiltEntity(_model_base.Model):  # pylint: disable=name-too-long
     """Represents an exported prebuilt entity component.
 
     All required parameters must be populated in order to send to server.
@@ -1402,7 +1755,7 @@ class ConversationalAnalysisAuthoringExportedPrebuiltEntity(_model_base.Model): 
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringExportedProject(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringExportedProject(_model_base.Model):  # pylint: disable=name-too-long
     """Represents an exported project.
 
     All required parameters must be populated in order to send to server.
@@ -1415,20 +1768,20 @@ class ConversationalAnalysisAuthoringExportedProject(_model_base.Model):  # pyli
      ~azure.ai.language.conversations.authoring.models.StringIndexType
     :ivar metadata: Represents the project metadata. Required.
     :vartype metadata:
-     ~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringCreateProjectOptions
+     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringCreateProjectOptions
     :ivar assets: Represents the project assets.
     :vartype assets:
-     ~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringExportedProjectAssets
+     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringExportedProjectAssets
     """
 
     project_file_version: str = rest_field(name="projectFileVersion")
     """The version of the exported file. Required."""
     string_index_type: Union[str, "_models.StringIndexType"] = rest_field(name="stringIndexType")
-    """Specifies the method used to interpret string offsets. For additional
-     information see https://aka.ms/text-analytics-offsets. Required. \"Utf16CodeUnit\""""
-    metadata: "_models.ConversationalAnalysisAuthoringCreateProjectOptions" = rest_field()
+    """Specifies the method used to interpret string offsets. For additional information see
+     https://aka.ms/text-analytics-offsets. Required. \"Utf16CodeUnit\""""
+    metadata: "_models.AnalyzeConversationAuthoringCreateProjectOptions" = rest_field()
     """Represents the project metadata. Required."""
-    assets: Optional["_models.ConversationalAnalysisAuthoringExportedProjectAssets"] = rest_field()
+    assets: Optional["_models.AnalyzeConversationAuthoringExportedProjectAssets"] = rest_field()
     """Represents the project assets."""
 
     @overload
@@ -1437,8 +1790,8 @@ class ConversationalAnalysisAuthoringExportedProject(_model_base.Model):  # pyli
         *,
         project_file_version: str,
         string_index_type: Union[str, "_models.StringIndexType"],
-        metadata: "_models.ConversationalAnalysisAuthoringCreateProjectOptions",
-        assets: Optional["_models.ConversationalAnalysisAuthoringExportedProjectAssets"] = None,
+        metadata: "_models.AnalyzeConversationAuthoringCreateProjectOptions",
+        assets: Optional["_models.AnalyzeConversationAuthoringExportedProjectAssets"] = None,
     ) -> None: ...
 
     @overload
@@ -1452,7 +1805,7 @@ class ConversationalAnalysisAuthoringExportedProject(_model_base.Model):  # pyli
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringExportedQuestionAnsweringOrchestration(
+class AnalyzeConversationAuthoringExportedQuestionAnsweringOrchestration(
     _model_base.Model
 ):  # pylint: disable=name-too-long
     """Defines the orchestration details for a Question Answering project target.
@@ -1484,8 +1837,8 @@ class ConversationalAnalysisAuthoringExportedQuestionAnsweringOrchestration(
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringExportedQuestionAnsweringOrchestrationOptions(
-    ConversationalAnalysisAuthoringExportedOrchestrationOptions, discriminator="QuestionAnswering"
+class AnalyzeConversationAuthoringExportedQuestionAnsweringOrchestrationOptions(
+    AnalyzeConversationAuthoringExportedOrchestrationOptions, discriminator="QuestionAnswering"
 ):  # pylint: disable=name-too-long
     """Represents the orchestration options for a Question Answering project target.
 
@@ -1493,15 +1846,15 @@ class ConversationalAnalysisAuthoringExportedQuestionAnsweringOrchestrationOptio
 
     :ivar question_answering_orchestration: The Question Answering project details. Required.
     :vartype question_answering_orchestration:
-     ~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringExportedQuestionAnsweringOrchestration  # pylint: disable=line-too-long
+     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringExportedQuestionAnsweringOrchestration  # pylint: disable=line-too-long
     :ivar target_project_kind: The kind of the target used in the orchestration flow. Required.
     :vartype target_project_kind: str or
      ~azure.ai.language.conversations.authoring.models.QUESTION_ANSWERING
     """
 
-    question_answering_orchestration: (
-        "_models.ConversationalAnalysisAuthoringExportedQuestionAnsweringOrchestration"
-    ) = rest_field(name="questionAnsweringOrchestration")
+    question_answering_orchestration: "_models.AnalyzeConversationAuthoringExportedQuestionAnsweringOrchestration" = (
+        rest_field(name="questionAnsweringOrchestration")
+    )
     """The Question Answering project details. Required."""
     target_project_kind: Literal[OrchestrationTargetProjectKind.QUESTION_ANSWERING] = rest_discriminator(name="targetProjectKind")  # type: ignore
     """The kind of the target used in the orchestration flow. Required."""
@@ -1510,7 +1863,7 @@ class ConversationalAnalysisAuthoringExportedQuestionAnsweringOrchestrationOptio
     def __init__(
         self,
         *,
-        question_answering_orchestration: "_models.ConversationalAnalysisAuthoringExportedQuestionAnsweringOrchestration",
+        question_answering_orchestration: "_models.AnalyzeConversationAuthoringExportedQuestionAnsweringOrchestration",
     ) -> None: ...
 
     @overload
@@ -1524,8 +1877,10 @@ class ConversationalAnalysisAuthoringExportedQuestionAnsweringOrchestrationOptio
         super().__init__(*args, target_project_kind=OrchestrationTargetProjectKind.QUESTION_ANSWERING, **kwargs)
 
 
-class ConversationalAnalysisAuthoringExportedTrainedModel(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringExportedTrainedModel(_model_base.Model):  # pylint: disable=name-too-long
     """Represents an exported trained model.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
 
     :ivar exported_model_name: The exported model name. Required.
@@ -1542,7 +1897,7 @@ class ConversationalAnalysisAuthoringExportedTrainedModel(_model_base.Model):  #
     :vartype model_training_config_version: str
     """
 
-    exported_model_name: str = rest_field(name="exportedModelName")
+    exported_model_name: str = rest_field(name="exportedModelName", visibility=["read"])
     """The exported model name. Required."""
     model_id: str = rest_field(name="modelId")
     """The model ID. Required."""
@@ -1559,7 +1914,6 @@ class ConversationalAnalysisAuthoringExportedTrainedModel(_model_base.Model):  #
     def __init__(
         self,
         *,
-        exported_model_name: str,
         model_id: str,
         last_trained_date_time: datetime.datetime,
         last_exported_model_date_time: datetime.datetime,
@@ -1578,7 +1932,7 @@ class ConversationalAnalysisAuthoringExportedTrainedModel(_model_base.Model):  #
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringExportedUtteranceEntityLabel(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringExportedUtteranceEntityLabel(_model_base.Model):  # pylint: disable=name-too-long
     """Represents an entity label for an utterance.
 
     All required parameters must be populated in order to send to server.
@@ -1618,7 +1972,136 @@ class ConversationalAnalysisAuthoringExportedUtteranceEntityLabel(_model_base.Mo
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringIntentEvaluationSummary(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringExportProjectJobState(_model_base.Model):  # pylint: disable=name-too-long
+    """Represents the state of an export job.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar job_id: The job ID. Required.
+    :vartype job_id: str
+    :ivar created_date_time: The creation date time of the job. Required.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_updated_date_time: The last date time the job was updated. Required.
+    :vartype last_updated_date_time: ~datetime.datetime
+    :ivar expiration_date_time: The expiration date time of the job.
+    :vartype expiration_date_time: ~datetime.datetime
+    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
+     "failed", "cancelled", "cancelling", and "partiallyCompleted".
+    :vartype status: str or ~azure.ai.language.conversations.authoring.models.JobStatus
+    :ivar warnings: The warnings that were encountered while executing the job.
+    :vartype warnings: list[~azure.ai.language.conversations.authoring.models.Warning]
+    :ivar errors: The errors encountered while executing the job.
+    :vartype errors: list[~azure.ai.language.conversations.authoring.models.Error]
+    :ivar result_url: The URL to use in order to download the exported project.
+    :vartype result_url: str
+    """
+
+    job_id: str = rest_field(name="jobId", visibility=["read"])
+    """The job ID. Required."""
+    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
+    """The creation date time of the job. Required."""
+    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
+    """The last date time the job was updated. Required."""
+    expiration_date_time: Optional[datetime.datetime] = rest_field(name="expirationDateTime", format="rfc3339")
+    """The expiration date time of the job."""
+    status: Union[str, "_models.JobStatus"] = rest_field()
+    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
+     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
+    warnings: Optional[List["_models.Warning"]] = rest_field()
+    """The warnings that were encountered while executing the job."""
+    errors: Optional[List["_models.Error"]] = rest_field()
+    """The errors encountered while executing the job."""
+    result_url: Optional[str] = rest_field(name="resultUrl")
+    """The URL to use in order to download the exported project."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        created_date_time: datetime.datetime,
+        last_updated_date_time: datetime.datetime,
+        status: Union[str, "_models.JobStatus"],
+        expiration_date_time: Optional[datetime.datetime] = None,
+        warnings: Optional[List["_models.Warning"]] = None,
+        errors: Optional[List["_models.Error"]] = None,
+        result_url: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AnalyzeConversationAuthoringImportProjectJobState(_model_base.Model):  # pylint: disable=name-too-long
+    """Represents the state of an import job.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar job_id: The job ID. Required.
+    :vartype job_id: str
+    :ivar created_date_time: The creation date time of the job. Required.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_updated_date_time: The last date time the job was updated. Required.
+    :vartype last_updated_date_time: ~datetime.datetime
+    :ivar expiration_date_time: The expiration date time of the job.
+    :vartype expiration_date_time: ~datetime.datetime
+    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
+     "failed", "cancelled", "cancelling", and "partiallyCompleted".
+    :vartype status: str or ~azure.ai.language.conversations.authoring.models.JobStatus
+    :ivar warnings: The warnings that were encountered while executing the job.
+    :vartype warnings: list[~azure.ai.language.conversations.authoring.models.Warning]
+    :ivar errors: The errors encountered while executing the job.
+    :vartype errors: list[~azure.ai.language.conversations.authoring.models.Error]
+    """
+
+    job_id: str = rest_field(name="jobId", visibility=["read"])
+    """The job ID. Required."""
+    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
+    """The creation date time of the job. Required."""
+    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
+    """The last date time the job was updated. Required."""
+    expiration_date_time: Optional[datetime.datetime] = rest_field(name="expirationDateTime", format="rfc3339")
+    """The expiration date time of the job."""
+    status: Union[str, "_models.JobStatus"] = rest_field()
+    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
+     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
+    warnings: Optional[List["_models.Warning"]] = rest_field()
+    """The warnings that were encountered while executing the job."""
+    errors: Optional[List["_models.Error"]] = rest_field()
+    """The errors encountered while executing the job."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        created_date_time: datetime.datetime,
+        last_updated_date_time: datetime.datetime,
+        status: Union[str, "_models.JobStatus"],
+        expiration_date_time: Optional[datetime.datetime] = None,
+        warnings: Optional[List["_models.Warning"]] = None,
+        errors: Optional[List["_models.Error"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AnalyzeConversationAuthoringIntentEvaluationSummary(_model_base.Model):  # pylint: disable=name-too-long
     """The evaluation summary for an intent.
 
 
@@ -1677,25 +2160,23 @@ class ConversationalAnalysisAuthoringIntentEvaluationSummary(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringIntentsEvaluationSummary(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringIntentsEvaluationSummary(_model_base.Model):  # pylint: disable=name-too-long
     """Represents the evaluation summary for the project's intents.
 
 
     :ivar confusion_matrix: Represents the confusion matrix between two intents (the two intents
-     can be the
-     same). The matrix is between the intent that was labelled and the intent that
-     was predicted. Required.
+     can be the same). The matrix is between the intent that was labelled and the intent that was
+     predicted. Required.
     :vartype confusion_matrix:
-     ~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringConfusionMatrix
+     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringConfusionMatrix
     :ivar intents: Represents the intents evaluation summary. Required.
     :vartype intents: dict[str,
-     ~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringIntentEvaluationSummary]
+     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringIntentEvaluationSummary]
     :ivar micro_f1: Represents the micro F1. Expected value is a float between 0 and 1 inclusive.
      Required.
     :vartype micro_f1: float
     :ivar micro_precision: Represents the micro precision. Expected value is a float between 0 and
-     1
-     inclusive. Required.
+     1 inclusive. Required.
     :vartype micro_precision: float
     :ivar micro_recall: Represents the micro recall. Expected value is a float between 0 and 1
      inclusive. Required.
@@ -1704,43 +2185,37 @@ class ConversationalAnalysisAuthoringIntentsEvaluationSummary(_model_base.Model)
      Required.
     :vartype macro_f1: float
     :ivar macro_precision: Represents the macro precision. Expected value is a float between 0 and
-     1
-     inclusive. Required.
+     1 inclusive. Required.
     :vartype macro_precision: float
     :ivar macro_recall: Represents the macro recall. Expected value is a float between 0 and 1
      inclusive. Required.
     :vartype macro_recall: float
     """
 
-    confusion_matrix: "_models.ConversationalAnalysisAuthoringConfusionMatrix" = rest_field(name="confusionMatrix")
-    """Represents the confusion matrix between two intents (the two intents can be the
-     same). The matrix is between the intent that was labelled and the intent that
-     was predicted. Required."""
-    intents: Dict[str, "_models.ConversationalAnalysisAuthoringIntentEvaluationSummary"] = rest_field()
+    confusion_matrix: "_models.AnalyzeConversationAuthoringConfusionMatrix" = rest_field(name="confusionMatrix")
+    """Represents the confusion matrix between two intents (the two intents can be the same). The
+     matrix is between the intent that was labelled and the intent that was predicted. Required."""
+    intents: Dict[str, "_models.AnalyzeConversationAuthoringIntentEvaluationSummary"] = rest_field()
     """Represents the intents evaluation summary. Required."""
     micro_f1: float = rest_field(name="microF1")
     """Represents the micro F1. Expected value is a float between 0 and 1 inclusive. Required."""
     micro_precision: float = rest_field(name="microPrecision")
-    """Represents the micro precision. Expected value is a float between 0 and 1
-     inclusive. Required."""
+    """Represents the micro precision. Expected value is a float between 0 and 1 inclusive. Required."""
     micro_recall: float = rest_field(name="microRecall")
-    """Represents the micro recall. Expected value is a float between 0 and 1
-     inclusive. Required."""
+    """Represents the micro recall. Expected value is a float between 0 and 1 inclusive. Required."""
     macro_f1: float = rest_field(name="macroF1")
     """Represents the macro F1. Expected value is a float between 0 and 1 inclusive. Required."""
     macro_precision: float = rest_field(name="macroPrecision")
-    """Represents the macro precision. Expected value is a float between 0 and 1
-     inclusive. Required."""
+    """Represents the macro precision. Expected value is a float between 0 and 1 inclusive. Required."""
     macro_recall: float = rest_field(name="macroRecall")
-    """Represents the macro recall. Expected value is a float between 0 and 1
-     inclusive. Required."""
+    """Represents the macro recall. Expected value is a float between 0 and 1 inclusive. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        confusion_matrix: "_models.ConversationalAnalysisAuthoringConfusionMatrix",
-        intents: Dict[str, "_models.ConversationalAnalysisAuthoringIntentEvaluationSummary"],
+        confusion_matrix: "_models.AnalyzeConversationAuthoringConfusionMatrix",
+        intents: Dict[str, "_models.AnalyzeConversationAuthoringIntentEvaluationSummary"],
         micro_f1: float,
         micro_precision: float,
         micro_recall: float,
@@ -1760,29 +2235,55 @@ class ConversationalAnalysisAuthoringIntentsEvaluationSummary(_model_base.Model)
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringOrchestrationExportedIntent(_model_base.Model):  # pylint: disable=name-too-long
-    """Represents an exported intent for an orchestration project.
+class AnalyzeConversationAuthoringLoadSnapshotJobState(_model_base.Model):  # pylint: disable=name-too-long
+    """Represents the state of loading a snapshot job.
 
-    All required parameters must be populated in order to send to server.
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar orchestration: Specifies the behavior of this intent in the orchestration flow.
-    :vartype orchestration:
-     ~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringExportedOrchestrationOptions
-    :ivar category: The intent category. Required.
-    :vartype category: str
+
+    :ivar job_id: The job ID. Required.
+    :vartype job_id: str
+    :ivar created_date_time: The creation date time of the job. Required.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_updated_date_time: The last date time the job was updated. Required.
+    :vartype last_updated_date_time: ~datetime.datetime
+    :ivar expiration_date_time: The expiration date time of the job.
+    :vartype expiration_date_time: ~datetime.datetime
+    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
+     "failed", "cancelled", "cancelling", and "partiallyCompleted".
+    :vartype status: str or ~azure.ai.language.conversations.authoring.models.JobStatus
+    :ivar warnings: The warnings that were encountered while executing the job.
+    :vartype warnings: list[~azure.ai.language.conversations.authoring.models.Warning]
+    :ivar errors: The errors encountered while executing the job.
+    :vartype errors: list[~azure.ai.language.conversations.authoring.models.Error]
     """
 
-    orchestration: Optional["_models.ConversationalAnalysisAuthoringExportedOrchestrationOptions"] = rest_field()
-    """Specifies the behavior of this intent in the orchestration flow."""
-    category: str = rest_field()
-    """The intent category. Required."""
+    job_id: str = rest_field(name="jobId", visibility=["read"])
+    """The job ID. Required."""
+    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
+    """The creation date time of the job. Required."""
+    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
+    """The last date time the job was updated. Required."""
+    expiration_date_time: Optional[datetime.datetime] = rest_field(name="expirationDateTime", format="rfc3339")
+    """The expiration date time of the job."""
+    status: Union[str, "_models.JobStatus"] = rest_field()
+    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
+     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
+    warnings: Optional[List["_models.Warning"]] = rest_field()
+    """The warnings that were encountered while executing the job."""
+    errors: Optional[List["_models.Error"]] = rest_field()
+    """The errors encountered while executing the job."""
 
     @overload
     def __init__(
         self,
         *,
-        category: str,
-        orchestration: Optional["_models.ConversationalAnalysisAuthoringExportedOrchestrationOptions"] = None,
+        created_date_time: datetime.datetime,
+        last_updated_date_time: datetime.datetime,
+        status: Union[str, "_models.JobStatus"],
+        expiration_date_time: Optional[datetime.datetime] = None,
+        warnings: Optional[List["_models.Warning"]] = None,
+        errors: Optional[List["_models.Error"]] = None,
     ) -> None: ...
 
     @overload
@@ -1796,8 +2297,44 @@ class ConversationalAnalysisAuthoringOrchestrationExportedIntent(_model_base.Mod
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringOrchestrationExportedProjectAssets(
-    ConversationalAnalysisAuthoringExportedProjectAssets, discriminator="Orchestration"
+class AnalyzeConversationAuthoringOrchestrationExportedIntent(_model_base.Model):  # pylint: disable=name-too-long
+    """Represents an exported intent for an orchestration project.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar orchestration: Specifies the behavior of this intent in the orchestration flow.
+    :vartype orchestration:
+     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringExportedOrchestrationOptions
+    :ivar category: The intent category. Required.
+    :vartype category: str
+    """
+
+    orchestration: Optional["_models.AnalyzeConversationAuthoringExportedOrchestrationOptions"] = rest_field()
+    """Specifies the behavior of this intent in the orchestration flow."""
+    category: str = rest_field()
+    """The intent category. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        category: str,
+        orchestration: Optional["_models.AnalyzeConversationAuthoringExportedOrchestrationOptions"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AnalyzeConversationAuthoringOrchestrationExportedProjectAssets(
+    AnalyzeConversationAuthoringExportedProjectAssets, discriminator="Orchestration"
 ):  # pylint: disable=name-too-long
     """Represents the assets of an orchestration project.
 
@@ -1805,19 +2342,19 @@ class ConversationalAnalysisAuthoringOrchestrationExportedProjectAssets(
 
     :ivar intents: Represents the intents of the project.
     :vartype intents:
-     list[~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringOrchestrationExportedIntent]
+     list[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringOrchestrationExportedIntent]
     :ivar utterances: Represents the utterances of the project.
     :vartype utterances:
-     list[~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringOrchestrationExportedUtterance]  # pylint: disable=line-too-long
+     list[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringOrchestrationExportedUtterance]
     :ivar project_kind: The type of project containing the assets. Required. A project to connect
      and orchestrate Conversation, Custom question answering and LUIS projects together in one
      single project.
     :vartype project_kind: str or ~azure.ai.language.conversations.authoring.models.ORCHESTRATION
     """
 
-    intents: Optional[List["_models.ConversationalAnalysisAuthoringOrchestrationExportedIntent"]] = rest_field()
+    intents: Optional[List["_models.AnalyzeConversationAuthoringOrchestrationExportedIntent"]] = rest_field()
     """Represents the intents of the project."""
-    utterances: Optional[List["_models.ConversationalAnalysisAuthoringOrchestrationExportedUtterance"]] = rest_field()
+    utterances: Optional[List["_models.AnalyzeConversationAuthoringOrchestrationExportedUtterance"]] = rest_field()
     """Represents the utterances of the project."""
     project_kind: Literal[ProjectKind.ORCHESTRATION] = rest_discriminator(name="projectKind")  # type: ignore
     """The type of project containing the assets. Required. A project to connect and orchestrate
@@ -1827,8 +2364,8 @@ class ConversationalAnalysisAuthoringOrchestrationExportedProjectAssets(
     def __init__(
         self,
         *,
-        intents: Optional[List["_models.ConversationalAnalysisAuthoringOrchestrationExportedIntent"]] = None,
-        utterances: Optional[List["_models.ConversationalAnalysisAuthoringOrchestrationExportedUtterance"]] = None,
+        intents: Optional[List["_models.AnalyzeConversationAuthoringOrchestrationExportedIntent"]] = None,
+        utterances: Optional[List["_models.AnalyzeConversationAuthoringOrchestrationExportedUtterance"]] = None,
     ) -> None: ...
 
     @overload
@@ -1842,7 +2379,7 @@ class ConversationalAnalysisAuthoringOrchestrationExportedProjectAssets(
         super().__init__(*args, project_kind=ProjectKind.ORCHESTRATION, **kwargs)
 
 
-class ConversationalAnalysisAuthoringOrchestrationExportedUtterance(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringOrchestrationExportedUtterance(_model_base.Model):  # pylint: disable=name-too-long
     """Represents an utterance of an orchestration project.
 
     All required parameters must be populated in order to send to server.
@@ -1850,8 +2387,7 @@ class ConversationalAnalysisAuthoringOrchestrationExportedUtterance(_model_base.
     :ivar text: The utterance text. Required.
     :vartype text: str
     :ivar language: Represents the utterance's language. This is BCP-47 representation of a
-     language. For example, use "en" for English, "en-gb" for English (UK), "es" for
-     Spanish etc.
+     language. For example, use "en" for English, "en-gb" for English (UK), "es" for Spanish etc.
     :vartype language: str
     :ivar intent: The intent of the utterance. Required.
     :vartype intent: str
@@ -1862,9 +2398,8 @@ class ConversationalAnalysisAuthoringOrchestrationExportedUtterance(_model_base.
     text: str = rest_field()
     """The utterance text. Required."""
     language: Optional[str] = rest_field()
-    """Represents the utterance's language. This is BCP-47 representation of a
-     language. For example, use \"en\" for English, \"en-gb\" for English (UK), \"es\" for
-     Spanish etc."""
+    """Represents the utterance's language. This is BCP-47 representation of a language. For example,
+     use \"en\" for English, \"en-gb\" for English (UK), \"es\" for Spanish etc."""
     intent: str = rest_field()
     """The intent of the utterance. Required."""
     dataset: Optional[str] = rest_field()
@@ -1891,18 +2426,18 @@ class ConversationalAnalysisAuthoringOrchestrationExportedUtterance(_model_base.
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringPrebuiltEntities(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringPrebuiltEntities(_model_base.Model):  # pylint: disable=name-too-long
     """Represents a list of the retrieved supported prebuilt entities.
 
 
     :ivar value: The supported prebuilt entities. Required.
     :vartype value:
-     list[~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringPrebuiltEntity]
+     list[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringPrebuiltEntity]
     :ivar next_link: The next page link.
     :vartype next_link: str
     """
 
-    value: List["_models.ConversationalAnalysisAuthoringPrebuiltEntity"] = rest_field()
+    value: List["_models.AnalyzeConversationAuthoringPrebuiltEntity"] = rest_field()
     """The supported prebuilt entities. Required."""
     next_link: Optional[str] = rest_field(name="nextLink")
     """The next page link."""
@@ -1911,7 +2446,7 @@ class ConversationalAnalysisAuthoringPrebuiltEntities(_model_base.Model):  # pyl
     def __init__(
         self,
         *,
-        value: List["_models.ConversationalAnalysisAuthoringPrebuiltEntity"],
+        value: List["_models.AnalyzeConversationAuthoringPrebuiltEntity"],
         next_link: Optional[str] = None,
     ) -> None: ...
 
@@ -1926,7 +2461,7 @@ class ConversationalAnalysisAuthoringPrebuiltEntities(_model_base.Model):  # pyl
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringPrebuiltEntity(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringPrebuiltEntity(_model_base.Model):  # pylint: disable=name-too-long
     """Represents a supported prebuilt entity.
 
 
@@ -1965,8 +2500,72 @@ class ConversationalAnalysisAuthoringPrebuiltEntity(_model_base.Model):  # pylin
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringProjectDeployment(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringProjectDeletionJobState(_model_base.Model):  # pylint: disable=name-too-long
+    """Represents the state of a project deletion job.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar job_id: The job ID. Required.
+    :vartype job_id: str
+    :ivar created_date_time: The creation date time of the job. Required.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_updated_date_time: The last date time the job was updated. Required.
+    :vartype last_updated_date_time: ~datetime.datetime
+    :ivar expiration_date_time: The expiration date time of the job.
+    :vartype expiration_date_time: ~datetime.datetime
+    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
+     "failed", "cancelled", "cancelling", and "partiallyCompleted".
+    :vartype status: str or ~azure.ai.language.conversations.authoring.models.JobStatus
+    :ivar warnings: The warnings that were encountered while executing the job.
+    :vartype warnings: list[~azure.ai.language.conversations.authoring.models.Warning]
+    :ivar errors: The errors encountered while executing the job.
+    :vartype errors: list[~azure.ai.language.conversations.authoring.models.Error]
+    """
+
+    job_id: str = rest_field(name="jobId", visibility=["read"])
+    """The job ID. Required."""
+    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
+    """The creation date time of the job. Required."""
+    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
+    """The last date time the job was updated. Required."""
+    expiration_date_time: Optional[datetime.datetime] = rest_field(name="expirationDateTime", format="rfc3339")
+    """The expiration date time of the job."""
+    status: Union[str, "_models.JobStatus"] = rest_field()
+    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
+     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
+    warnings: Optional[List["_models.Warning"]] = rest_field()
+    """The warnings that were encountered while executing the job."""
+    errors: Optional[List["_models.Error"]] = rest_field()
+    """The errors encountered while executing the job."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        created_date_time: datetime.datetime,
+        last_updated_date_time: datetime.datetime,
+        status: Union[str, "_models.JobStatus"],
+        expiration_date_time: Optional[datetime.datetime] = None,
+        warnings: Optional[List["_models.Warning"]] = None,
+        errors: Optional[List["_models.Error"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AnalyzeConversationAuthoringProjectDeployment(_model_base.Model):  # pylint: disable=name-too-long
     """Represents a project deployment.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
 
     :ivar deployment_name: Represents deployment name. Required.
@@ -1984,10 +2583,10 @@ class ConversationalAnalysisAuthoringProjectDeployment(_model_base.Model):  # py
     :vartype model_training_config_version: str
     :ivar assigned_resources: Represents the metadata of the assigned Azure resources. Required.
     :vartype assigned_resources:
-     list[~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringDeploymentResource]
+     list[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringDeploymentResource]
     """
 
-    deployment_name: str = rest_field(name="deploymentName")
+    deployment_name: str = rest_field(name="deploymentName", visibility=["read"])
     """Represents deployment name. Required."""
     model_id: str = rest_field(name="modelId")
     """Represents deployment modelId. Required."""
@@ -1999,7 +2598,7 @@ class ConversationalAnalysisAuthoringProjectDeployment(_model_base.Model):  # py
     """Represents deployment expiration date in the runtime. Required."""
     model_training_config_version: str = rest_field(name="modelTrainingConfigVersion")
     """Represents model training config version. Required."""
-    assigned_resources: List["_models.ConversationalAnalysisAuthoringDeploymentResource"] = rest_field(
+    assigned_resources: List["_models.AnalyzeConversationAuthoringDeploymentResource"] = rest_field(
         name="assignedResources"
     )
     """Represents the metadata of the assigned Azure resources. Required."""
@@ -2008,13 +2607,12 @@ class ConversationalAnalysisAuthoringProjectDeployment(_model_base.Model):  # py
     def __init__(
         self,
         *,
-        deployment_name: str,
         model_id: str,
         last_trained_date_time: datetime.datetime,
         last_deployed_date_time: datetime.datetime,
         deployment_expiration_date: datetime.date,
         model_training_config_version: str,
-        assigned_resources: List["_models.ConversationalAnalysisAuthoringDeploymentResource"],
+        assigned_resources: List["_models.AnalyzeConversationAuthoringDeploymentResource"],
     ) -> None: ...
 
     @overload
@@ -2028,7 +2626,7 @@ class ConversationalAnalysisAuthoringProjectDeployment(_model_base.Model):  # py
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringProjectMetadata(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringProjectMetadata(_model_base.Model):  # pylint: disable=name-too-long
     """Represents the metadata of a project.
 
 
@@ -2045,7 +2643,7 @@ class ConversationalAnalysisAuthoringProjectMetadata(_model_base.Model):  # pyli
     :vartype project_kind: str or ~azure.ai.language.conversations.authoring.models.ProjectKind
     :ivar settings: The project settings.
     :vartype settings:
-     ~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringProjectSettings
+     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringProjectSettings
     :ivar storage_input_container_name: The storage container name in case of conversation
      summarization.
     :vartype storage_input_container_name: str
@@ -2071,7 +2669,7 @@ class ConversationalAnalysisAuthoringProjectMetadata(_model_base.Model):  # pyli
     project_kind: Union[str, "_models.ProjectKind"] = rest_field(name="projectKind", visibility=["read", "create"])
     """Represents the project kind. Required. Known values are: \"Conversation\", \"Orchestration\",
      and \"CustomConversationSummarization\"."""
-    settings: Optional["_models.ConversationalAnalysisAuthoringProjectSettings"] = rest_field(
+    settings: Optional["_models.AnalyzeConversationAuthoringProjectSettings"] = rest_field(
         visibility=["read", "create"]
     )
     """The project settings."""
@@ -2100,7 +2698,7 @@ class ConversationalAnalysisAuthoringProjectMetadata(_model_base.Model):  # pyli
         language: str,
         last_trained_date_time: Optional[datetime.datetime] = None,
         last_deployed_date_time: Optional[datetime.datetime] = None,
-        settings: Optional["_models.ConversationalAnalysisAuthoringProjectSettings"] = None,
+        settings: Optional["_models.AnalyzeConversationAuthoringProjectSettings"] = None,
         storage_input_container_name: Optional[str] = None,
         multilingual: Optional[bool] = None,
         description: Optional[str] = None,
@@ -2117,7 +2715,7 @@ class ConversationalAnalysisAuthoringProjectMetadata(_model_base.Model):  # pyli
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringProjectSettings(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringProjectSettings(_model_base.Model):  # pylint: disable=name-too-long
     """Represents the settings used to define the project behavior.
 
 
@@ -2150,8 +2748,10 @@ class ConversationalAnalysisAuthoringProjectSettings(_model_base.Model):  # pyli
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringProjectTrainedModel(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringProjectTrainedModel(_model_base.Model):  # pylint: disable=name-too-long
     """Represents a trained model.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
 
     :ivar label: The trained model label. Required.
@@ -2171,7 +2771,7 @@ class ConversationalAnalysisAuthoringProjectTrainedModel(_model_base.Model):  # 
     :vartype has_snapshot: bool
     """
 
-    label: str = rest_field()
+    label: str = rest_field(visibility=["read"])
     """The trained model label. Required."""
     model_id: str = rest_field(name="modelId")
     """The model ID. Required."""
@@ -2190,7 +2790,6 @@ class ConversationalAnalysisAuthoringProjectTrainedModel(_model_base.Model):  # 
     def __init__(
         self,
         *,
-        label: str,
         model_id: str,
         last_trained_date_time: datetime.datetime,
         last_training_duration_in_seconds: int,
@@ -2210,7 +2809,7 @@ class ConversationalAnalysisAuthoringProjectTrainedModel(_model_base.Model):  # 
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringResourceMetadata(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringResourceMetadata(_model_base.Model):  # pylint: disable=name-too-long
     """Represents metadata for the Azure resource..
 
     All required parameters must be populated in order to send to server.
@@ -2250,7 +2849,7 @@ class ConversationalAnalysisAuthoringResourceMetadata(_model_base.Model):  # pyl
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringSubTrainingJobState(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringSubTrainingJobState(_model_base.Model):  # pylint: disable=name-too-long
     """Represents the detailed state of a training sub-operation.
 
 
@@ -2298,23 +2897,22 @@ class ConversationalAnalysisAuthoringSubTrainingJobState(_model_base.Model):  # 
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringSupportedLanguage(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringSupportedLanguage(_model_base.Model):  # pylint: disable=name-too-long
     """Represents a supported language.
 
 
     :ivar language_name: The language name. Required.
     :vartype language_name: str
     :ivar language_code: The language code. This is BCP-47 representation of a language. For
-     example,
-     "en" for English, "en-gb" for English (UK), "es" for Spanish etc. Required.
+     example, "en" for English, "en-gb" for English (UK), "es" for Spanish etc. Required.
     :vartype language_code: str
     """
 
     language_name: str = rest_field(name="languageName")
     """The language name. Required."""
     language_code: str = rest_field(name="languageCode")
-    """The language code. This is BCP-47 representation of a language. For example,
-     \"en\" for English, \"en-gb\" for English (UK), \"es\" for Spanish etc. Required."""
+    """The language code. This is BCP-47 representation of a language. For example, \"en\" for
+     English, \"en-gb\" for English (UK), \"es\" for Spanish etc. Required."""
 
     @overload
     def __init__(
@@ -2335,18 +2933,18 @@ class ConversationalAnalysisAuthoringSupportedLanguage(_model_base.Model):  # py
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringSupportedLanguages(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringSupportedLanguages(_model_base.Model):  # pylint: disable=name-too-long
     """Represents a list of retrieved languages.
 
 
     :ivar value: The list of the languages. Required.
     :vartype value:
-     list[~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringSupportedLanguage]
+     list[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringSupportedLanguage]
     :ivar next_link: The next page link.
     :vartype next_link: str
     """
 
-    value: List["_models.ConversationalAnalysisAuthoringSupportedLanguage"] = rest_field()
+    value: List["_models.AnalyzeConversationAuthoringSupportedLanguage"] = rest_field()
     """The list of the languages. Required."""
     next_link: Optional[str] = rest_field(name="nextLink")
     """The next page link."""
@@ -2355,7 +2953,7 @@ class ConversationalAnalysisAuthoringSupportedLanguages(_model_base.Model):  # p
     def __init__(
         self,
         *,
-        value: List["_models.ConversationalAnalysisAuthoringSupportedLanguage"],
+        value: List["_models.AnalyzeConversationAuthoringSupportedLanguage"],
         next_link: Optional[str] = None,
     ) -> None: ...
 
@@ -2370,7 +2968,69 @@ class ConversationalAnalysisAuthoringSupportedLanguages(_model_base.Model):  # p
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringSwapDeploymentsOptions(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringSwapDeploymentsJobState(_model_base.Model):  # pylint: disable=name-too-long
+    """Represents the state of a deployment job.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar job_id: The job ID. Required.
+    :vartype job_id: str
+    :ivar created_date_time: The creation date time of the job. Required.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_updated_date_time: The last date time the job was updated. Required.
+    :vartype last_updated_date_time: ~datetime.datetime
+    :ivar expiration_date_time: The expiration date time of the job.
+    :vartype expiration_date_time: ~datetime.datetime
+    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
+     "failed", "cancelled", "cancelling", and "partiallyCompleted".
+    :vartype status: str or ~azure.ai.language.conversations.authoring.models.JobStatus
+    :ivar warnings: The warnings that were encountered while executing the job.
+    :vartype warnings: list[~azure.ai.language.conversations.authoring.models.Warning]
+    :ivar errors: The errors encountered while executing the job.
+    :vartype errors: list[~azure.ai.language.conversations.authoring.models.Error]
+    """
+
+    job_id: str = rest_field(name="jobId", visibility=["read"])
+    """The job ID. Required."""
+    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
+    """The creation date time of the job. Required."""
+    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
+    """The last date time the job was updated. Required."""
+    expiration_date_time: Optional[datetime.datetime] = rest_field(name="expirationDateTime", format="rfc3339")
+    """The expiration date time of the job."""
+    status: Union[str, "_models.JobStatus"] = rest_field()
+    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
+     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
+    warnings: Optional[List["_models.Warning"]] = rest_field()
+    """The warnings that were encountered while executing the job."""
+    errors: Optional[List["_models.Error"]] = rest_field()
+    """The errors encountered while executing the job."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        created_date_time: datetime.datetime,
+        last_updated_date_time: datetime.datetime,
+        status: Union[str, "_models.JobStatus"],
+        expiration_date_time: Optional[datetime.datetime] = None,
+        warnings: Optional[List["_models.Warning"]] = None,
+        errors: Optional[List["_models.Error"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AnalyzeConversationAuthoringSwapDeploymentsOptions(_model_base.Model):  # pylint: disable=name-too-long
     """Represents the options for swapping two deployments together.
 
     All required parameters must be populated in order to send to server.
@@ -2405,7 +3065,7 @@ class ConversationalAnalysisAuthoringSwapDeploymentsOptions(_model_base.Model): 
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringTrainingConfigVersion(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringTrainingConfigVersion(_model_base.Model):  # pylint: disable=name-too-long
     """Represents a training config version.
 
 
@@ -2439,18 +3099,18 @@ class ConversationalAnalysisAuthoringTrainingConfigVersion(_model_base.Model):  
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringTrainingConfigVersions(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringTrainingConfigVersions(_model_base.Model):  # pylint: disable=name-too-long
     """Represents a list of training config versions.
 
 
     :ivar value: The list of the training config versions. Required.
     :vartype value:
-     list[~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringTrainingConfigVersion]
+     list[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringTrainingConfigVersion]
     :ivar next_link: The next page link.
     :vartype next_link: str
     """
 
-    value: List["_models.ConversationalAnalysisAuthoringTrainingConfigVersion"] = rest_field()
+    value: List["_models.AnalyzeConversationAuthoringTrainingConfigVersion"] = rest_field()
     """The list of the training config versions. Required."""
     next_link: Optional[str] = rest_field(name="nextLink")
     """The next page link."""
@@ -2459,7 +3119,7 @@ class ConversationalAnalysisAuthoringTrainingConfigVersions(_model_base.Model): 
     def __init__(
         self,
         *,
-        value: List["_models.ConversationalAnalysisAuthoringTrainingConfigVersion"],
+        value: List["_models.AnalyzeConversationAuthoringTrainingConfigVersion"],
         next_link: Optional[str] = None,
     ) -> None: ...
 
@@ -2474,7 +3134,7 @@ class ConversationalAnalysisAuthoringTrainingConfigVersions(_model_base.Model): 
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringTrainingJobOptions(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringTrainingJobOptions(_model_base.Model):  # pylint: disable=name-too-long
     """Represents the options for starting a new training job.
 
     All required parameters must be populated in order to send to server.
@@ -2482,33 +3142,30 @@ class ConversationalAnalysisAuthoringTrainingJobOptions(_model_base.Model):  # p
     :ivar model_label: Represents the output model label. Required.
     :vartype model_label: str
     :ivar training_config_version: Represents training config version. By default, "latest" value
-     is used which
-     uses the latest released training config version.
+     is used which uses the latest released training config version.
     :vartype training_config_version: str
     :ivar training_mode: Represents the mode of the training operation. Required. Known values are:
      "advanced" and "standard".
     :vartype training_mode: str or ~azure.ai.language.conversations.authoring.models.TrainingMode
     :ivar evaluation_options: Represents the evaluation options. By default, the evaluation kind is
-     percentage, with training split percentage as 80, and testing split percentage
-     as 20.
+     percentage, with training split percentage as 80, and testing split percentage as 20.
     :vartype evaluation_options:
-     ~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringEvaluationOptions
+     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringEvaluationOptions
     """
 
     model_label: str = rest_field(name="modelLabel")
     """Represents the output model label. Required."""
     training_config_version: Optional[str] = rest_field(name="trainingConfigVersion")
-    """Represents training config version. By default, \"latest\" value is used which
-     uses the latest released training config version."""
+    """Represents training config version. By default, \"latest\" value is used which uses the latest
+     released training config version."""
     training_mode: Union[str, "_models.TrainingMode"] = rest_field(name="trainingMode")
     """Represents the mode of the training operation. Required. Known values are: \"advanced\" and
      \"standard\"."""
-    evaluation_options: Optional["_models.ConversationalAnalysisAuthoringEvaluationOptions"] = rest_field(
+    evaluation_options: Optional["_models.AnalyzeConversationAuthoringEvaluationOptions"] = rest_field(
         name="evaluationOptions"
     )
-    """Represents the evaluation options. By default, the evaluation kind is
-     percentage, with training split percentage as 80, and testing split percentage
-     as 20."""
+    """Represents the evaluation options. By default, the evaluation kind is percentage, with training
+     split percentage as 80, and testing split percentage as 20."""
 
     @overload
     def __init__(
@@ -2517,7 +3174,7 @@ class ConversationalAnalysisAuthoringTrainingJobOptions(_model_base.Model):  # p
         model_label: str,
         training_mode: Union[str, "_models.TrainingMode"],
         training_config_version: Optional[str] = None,
-        evaluation_options: Optional["_models.ConversationalAnalysisAuthoringEvaluationOptions"] = None,
+        evaluation_options: Optional["_models.AnalyzeConversationAuthoringEvaluationOptions"] = None,
     ) -> None: ...
 
     @overload
@@ -2531,7 +3188,7 @@ class ConversationalAnalysisAuthoringTrainingJobOptions(_model_base.Model):  # p
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringTrainingJobResult(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringTrainingJobResult(_model_base.Model):  # pylint: disable=name-too-long
     """Represents the output of a training job.
 
 
@@ -2544,10 +3201,10 @@ class ConversationalAnalysisAuthoringTrainingJobResult(_model_base.Model):  # py
     :vartype training_mode: str or ~azure.ai.language.conversations.authoring.models.TrainingMode
     :ivar training_status: Represents the model training status. Required.
     :vartype training_status:
-     ~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringSubTrainingJobState
+     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringSubTrainingJobState
     :ivar evaluation_status: Represents model evaluation status.
     :vartype evaluation_status:
-     ~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringSubTrainingJobState
+     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringSubTrainingJobState
     :ivar estimated_end_date_time: Represents the estimated end date time for training and
      evaluation.
     :vartype estimated_end_date_time: ~datetime.datetime
@@ -2559,9 +3216,9 @@ class ConversationalAnalysisAuthoringTrainingJobResult(_model_base.Model):  # py
     """Represents training config version. Required."""
     training_mode: Optional[Union[str, "_models.TrainingMode"]] = rest_field(name="trainingMode")
     """Represents the mode of the training operation. Known values are: \"advanced\" and \"standard\"."""
-    training_status: "_models.ConversationalAnalysisAuthoringSubTrainingJobState" = rest_field(name="trainingStatus")
+    training_status: "_models.AnalyzeConversationAuthoringSubTrainingJobState" = rest_field(name="trainingStatus")
     """Represents the model training status. Required."""
-    evaluation_status: Optional["_models.ConversationalAnalysisAuthoringSubTrainingJobState"] = rest_field(
+    evaluation_status: Optional["_models.AnalyzeConversationAuthoringSubTrainingJobState"] = rest_field(
         name="evaluationStatus"
     )
     """Represents model evaluation status."""
@@ -2574,9 +3231,9 @@ class ConversationalAnalysisAuthoringTrainingJobResult(_model_base.Model):  # py
         *,
         model_label: str,
         training_config_version: str,
-        training_status: "_models.ConversationalAnalysisAuthoringSubTrainingJobState",
+        training_status: "_models.AnalyzeConversationAuthoringSubTrainingJobState",
         training_mode: Optional[Union[str, "_models.TrainingMode"]] = None,
-        evaluation_status: Optional["_models.ConversationalAnalysisAuthoringSubTrainingJobState"] = None,
+        evaluation_status: Optional["_models.AnalyzeConversationAuthoringSubTrainingJobState"] = None,
         estimated_end_date_time: Optional[datetime.datetime] = None,
     ) -> None: ...
 
@@ -2591,8 +3248,10 @@ class ConversationalAnalysisAuthoringTrainingJobResult(_model_base.Model):  # py
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringTrainingJobState(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringTrainingJobState(_model_base.Model):  # pylint: disable=name-too-long
     """Represents the state of a training job.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
 
     :ivar job_id: The job ID. Required.
@@ -2612,10 +3271,10 @@ class ConversationalAnalysisAuthoringTrainingJobState(_model_base.Model):  # pyl
     :vartype errors: list[~azure.ai.language.conversations.authoring.models.Error]
     :ivar result: Represents training tasks detailed result. Required.
     :vartype result:
-     ~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringTrainingJobResult
+     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringTrainingJobResult
     """
 
-    job_id: str = rest_field(name="jobId")
+    job_id: str = rest_field(name="jobId", visibility=["read"])
     """The job ID. Required."""
     created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
     """The creation date time of the job. Required."""
@@ -2630,18 +3289,17 @@ class ConversationalAnalysisAuthoringTrainingJobState(_model_base.Model):  # pyl
     """The warnings that were encountered while executing the job."""
     errors: Optional[List["_models.Error"]] = rest_field()
     """The errors encountered while executing the job."""
-    result: "_models.ConversationalAnalysisAuthoringTrainingJobResult" = rest_field()
+    result: "_models.AnalyzeConversationAuthoringTrainingJobResult" = rest_field()
     """Represents training tasks detailed result. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        job_id: str,
         created_date_time: datetime.datetime,
         last_updated_date_time: datetime.datetime,
         status: Union[str, "_models.JobStatus"],
-        result: "_models.ConversationalAnalysisAuthoringTrainingJobResult",
+        result: "_models.AnalyzeConversationAuthoringTrainingJobResult",
         expiration_date_time: Optional[datetime.datetime] = None,
         warnings: Optional[List["_models.Warning"]] = None,
         errors: Optional[List["_models.Error"]] = None,
@@ -2658,7 +3316,7 @@ class ConversationalAnalysisAuthoringTrainingJobState(_model_base.Model):  # pyl
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringUnassignDeploymentResourcesOptions(
+class AnalyzeConversationAuthoringUnassignDeploymentResourcesOptions(
     _model_base.Model
 ):  # pylint: disable=name-too-long
     """Represents the options to unassign Azure resources from a project.
@@ -2690,26 +3348,23 @@ class ConversationalAnalysisAuthoringUnassignDeploymentResourcesOptions(
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringUtteranceEntitiesEvaluationResult(
-    _model_base.Model
-):  # pylint: disable=name-too-long
-    """Represents the comparison between the expected and predicted entities for an
-    utterance.
+class AnalyzeConversationAuthoringUtteranceEntitiesEvaluationResult(_model_base.Model):  # pylint: disable=name-too-long
+    """Represents the comparison between the expected and predicted entities for an utterance.
 
 
     :ivar expected_entities: Represents the expected entity labels. Required.
     :vartype expected_entities:
-     list[~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringUtteranceEntityEvaluationResult]  # pylint: disable=line-too-long
+     list[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringUtteranceEntityEvaluationResult]
     :ivar predicted_entities: Represents the predicted entity labels. Required.
     :vartype predicted_entities:
-     list[~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringUtteranceEntityEvaluationResult]  # pylint: disable=line-too-long
+     list[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringUtteranceEntityEvaluationResult]
     """
 
-    expected_entities: List["_models.ConversationalAnalysisAuthoringUtteranceEntityEvaluationResult"] = rest_field(
+    expected_entities: List["_models.AnalyzeConversationAuthoringUtteranceEntityEvaluationResult"] = rest_field(
         name="expectedEntities"
     )
     """Represents the expected entity labels. Required."""
-    predicted_entities: List["_models.ConversationalAnalysisAuthoringUtteranceEntityEvaluationResult"] = rest_field(
+    predicted_entities: List["_models.AnalyzeConversationAuthoringUtteranceEntityEvaluationResult"] = rest_field(
         name="predictedEntities"
     )
     """Represents the predicted entity labels. Required."""
@@ -2718,8 +3373,8 @@ class ConversationalAnalysisAuthoringUtteranceEntitiesEvaluationResult(
     def __init__(
         self,
         *,
-        expected_entities: List["_models.ConversationalAnalysisAuthoringUtteranceEntityEvaluationResult"],
-        predicted_entities: List["_models.ConversationalAnalysisAuthoringUtteranceEntityEvaluationResult"],
+        expected_entities: List["_models.AnalyzeConversationAuthoringUtteranceEntityEvaluationResult"],
+        predicted_entities: List["_models.AnalyzeConversationAuthoringUtteranceEntityEvaluationResult"],
     ) -> None: ...
 
     @overload
@@ -2733,9 +3388,7 @@ class ConversationalAnalysisAuthoringUtteranceEntitiesEvaluationResult(
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringUtteranceEntityEvaluationResult(
-    _model_base.Model
-):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringUtteranceEntityEvaluationResult(_model_base.Model):  # pylint: disable=name-too-long
     """Represents the evaluation output of an entity label or prediction.
 
 
@@ -2774,35 +3427,35 @@ class ConversationalAnalysisAuthoringUtteranceEntityEvaluationResult(
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringUtteranceEvaluationResult(_model_base.Model):  # pylint: disable=name-too-long
+class AnalyzeConversationAuthoringUtteranceEvaluationResult(_model_base.Model):  # pylint: disable=name-too-long
     """Represents the evaluation result for an utterance.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
 
     :ivar text: Represents the utterance text. Required.
     :vartype text: str
     :ivar language: Represents the utterance language. This is BCP-47 representation of a language.
-     For example, use "en" for English, "en-gb" for English (UK), "es" for Spanish
-     etc. Required.
+     For example, use "en" for English, "en-gb" for English (UK), "es" for Spanish etc. Required.
     :vartype language: str
     :ivar entities_result: Represents the entities results for the utterance. Required.
     :vartype entities_result:
-     ~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringUtteranceEntitiesEvaluationResult
+     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringUtteranceEntitiesEvaluationResult
     :ivar intents_result: Represents the intents results for the utterance. Required.
     :vartype intents_result:
-     ~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringUtteranceIntentsEvaluationResult
+     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringUtteranceIntentsEvaluationResult
     """
 
-    text: str = rest_field()
+    text: str = rest_field(visibility=["read"])
     """Represents the utterance text. Required."""
     language: str = rest_field()
-    """Represents the utterance language. This is BCP-47 representation of a language.
-     For example, use \"en\" for English, \"en-gb\" for English (UK), \"es\" for Spanish
-     etc. Required."""
-    entities_result: "_models.ConversationalAnalysisAuthoringUtteranceEntitiesEvaluationResult" = rest_field(
+    """Represents the utterance language. This is BCP-47 representation of a language. For example,
+     use \"en\" for English, \"en-gb\" for English (UK), \"es\" for Spanish etc. Required."""
+    entities_result: "_models.AnalyzeConversationAuthoringUtteranceEntitiesEvaluationResult" = rest_field(
         name="entitiesResult"
     )
     """Represents the entities results for the utterance. Required."""
-    intents_result: "_models.ConversationalAnalysisAuthoringUtteranceIntentsEvaluationResult" = rest_field(
+    intents_result: "_models.AnalyzeConversationAuthoringUtteranceIntentsEvaluationResult" = rest_field(
         name="intentsResult"
     )
     """Represents the intents results for the utterance. Required."""
@@ -2811,10 +3464,9 @@ class ConversationalAnalysisAuthoringUtteranceEvaluationResult(_model_base.Model
     def __init__(
         self,
         *,
-        text: str,
         language: str,
-        entities_result: "_models.ConversationalAnalysisAuthoringUtteranceEntitiesEvaluationResult",
-        intents_result: "_models.ConversationalAnalysisAuthoringUtteranceIntentsEvaluationResult",
+        entities_result: "_models.AnalyzeConversationAuthoringUtteranceEntitiesEvaluationResult",
+        intents_result: "_models.AnalyzeConversationAuthoringUtteranceIntentsEvaluationResult",
     ) -> None: ...
 
     @overload
@@ -2828,11 +3480,8 @@ class ConversationalAnalysisAuthoringUtteranceEvaluationResult(_model_base.Model
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAnalysisAuthoringUtteranceIntentsEvaluationResult(
-    _model_base.Model
-):  # pylint: disable=name-too-long
-    """Represents the comparison between the expected and the predicted intent for an
-    utterance.
+class AnalyzeConversationAuthoringUtteranceIntentsEvaluationResult(_model_base.Model):  # pylint: disable=name-too-long
+    """Represents the comparison between the expected and the predicted intent for an utterance.
 
 
     :ivar expected_intent: Represents the utterance's expected intent. Required.
@@ -2986,916 +3635,9 @@ class ExportedModelOptions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class GetAssignDeploymentResourcesStatusResponse(_model_base.Model):  # pylint: disable=name-too-long
-    """GetAssignDeploymentResourcesStatusResponse.
-
-
-    :ivar created_date_time: The creation date time of the job. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: The last date time the job was updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar expiration_date_time: The expiration date time of the job.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", and "partiallyCompleted".
-    :vartype status: str or ~azure.ai.language.conversations.authoring.models.JobStatus
-    :ivar warnings: The warnings that were encountered while executing the job.
-    :vartype warnings: list[~azure.ai.language.conversations.authoring.models.Warning]
-    :ivar errors: The errors encountered while executing the job.
-    :vartype errors: list[~azure.ai.language.conversations.authoring.models.Error]
-    """
-
-    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
-    """The creation date time of the job. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
-    """The last date time the job was updated. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(name="expirationDateTime", format="rfc3339")
-    """The expiration date time of the job."""
-    status: Union[str, "_models.JobStatus"] = rest_field()
-    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
-     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List["_models.Warning"]] = rest_field()
-    """The warnings that were encountered while executing the job."""
-    errors: Optional[List["_models.Error"]] = rest_field()
-    """The errors encountered while executing the job."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        status: Union[str, "_models.JobStatus"],
-        expiration_date_time: Optional[datetime.datetime] = None,
-        warnings: Optional[List["_models.Warning"]] = None,
-        errors: Optional[List["_models.Error"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class GetCopyProjectStatusResponse(_model_base.Model):
-    """GetCopyProjectStatusResponse.
-
-
-    :ivar created_date_time: The creation date time of the job. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: The last date time the job was updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar expiration_date_time: The expiration date time of the job.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", and "partiallyCompleted".
-    :vartype status: str or ~azure.ai.language.conversations.authoring.models.JobStatus
-    :ivar warnings: The warnings that were encountered while executing the job.
-    :vartype warnings: list[~azure.ai.language.conversations.authoring.models.Warning]
-    :ivar errors: The errors encountered while executing the job.
-    :vartype errors: list[~azure.ai.language.conversations.authoring.models.Error]
-    """
-
-    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
-    """The creation date time of the job. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
-    """The last date time the job was updated. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(name="expirationDateTime", format="rfc3339")
-    """The expiration date time of the job."""
-    status: Union[str, "_models.JobStatus"] = rest_field()
-    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
-     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List["_models.Warning"]] = rest_field()
-    """The warnings that were encountered while executing the job."""
-    errors: Optional[List["_models.Error"]] = rest_field()
-    """The errors encountered while executing the job."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        status: Union[str, "_models.JobStatus"],
-        expiration_date_time: Optional[datetime.datetime] = None,
-        warnings: Optional[List["_models.Warning"]] = None,
-        errors: Optional[List["_models.Error"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class GetDeploymentDeleteFromResourcesStatusResponse(_model_base.Model):  # pylint: disable=name-too-long
-    """GetDeploymentDeleteFromResourcesStatusResponse.
-
-
-    :ivar created_date_time: The creation date time of the job. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: The last date time the job was updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar expiration_date_time: The expiration date time of the job.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", and "partiallyCompleted".
-    :vartype status: str or ~azure.ai.language.conversations.authoring.models.JobStatus
-    :ivar warnings: The warnings that were encountered while executing the job.
-    :vartype warnings: list[~azure.ai.language.conversations.authoring.models.Warning]
-    :ivar errors: The errors encountered while executing the job.
-    :vartype errors: list[~azure.ai.language.conversations.authoring.models.Error]
-    """
-
-    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
-    """The creation date time of the job. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
-    """The last date time the job was updated. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(name="expirationDateTime", format="rfc3339")
-    """The expiration date time of the job."""
-    status: Union[str, "_models.JobStatus"] = rest_field()
-    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
-     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List["_models.Warning"]] = rest_field()
-    """The warnings that were encountered while executing the job."""
-    errors: Optional[List["_models.Error"]] = rest_field()
-    """The errors encountered while executing the job."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        status: Union[str, "_models.JobStatus"],
-        expiration_date_time: Optional[datetime.datetime] = None,
-        warnings: Optional[List["_models.Warning"]] = None,
-        errors: Optional[List["_models.Error"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class GetDeploymentResponse(_model_base.Model):
-    """GetDeploymentResponse.
-
-
-    :ivar model_id: Represents deployment modelId. Required.
-    :vartype model_id: str
-    :ivar last_trained_date_time: Represents deployment last trained time. Required.
-    :vartype last_trained_date_time: ~datetime.datetime
-    :ivar last_deployed_date_time: Represents deployment last deployed time. Required.
-    :vartype last_deployed_date_time: ~datetime.datetime
-    :ivar deployment_expiration_date: Represents deployment expiration date in the runtime.
-     Required.
-    :vartype deployment_expiration_date: ~datetime.date
-    :ivar model_training_config_version: Represents model training config version. Required.
-    :vartype model_training_config_version: str
-    :ivar assigned_resources: Represents the metadata of the assigned Azure resources. Required.
-    :vartype assigned_resources:
-     list[~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringDeploymentResource]
-    """
-
-    model_id: str = rest_field(name="modelId")
-    """Represents deployment modelId. Required."""
-    last_trained_date_time: datetime.datetime = rest_field(name="lastTrainedDateTime", format="rfc3339")
-    """Represents deployment last trained time. Required."""
-    last_deployed_date_time: datetime.datetime = rest_field(name="lastDeployedDateTime", format="rfc3339")
-    """Represents deployment last deployed time. Required."""
-    deployment_expiration_date: datetime.date = rest_field(name="deploymentExpirationDate")
-    """Represents deployment expiration date in the runtime. Required."""
-    model_training_config_version: str = rest_field(name="modelTrainingConfigVersion")
-    """Represents model training config version. Required."""
-    assigned_resources: List["_models.ConversationalAnalysisAuthoringDeploymentResource"] = rest_field(
-        name="assignedResources"
-    )
-    """Represents the metadata of the assigned Azure resources. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        model_id: str,
-        last_trained_date_time: datetime.datetime,
-        last_deployed_date_time: datetime.datetime,
-        deployment_expiration_date: datetime.date,
-        model_training_config_version: str,
-        assigned_resources: List["_models.ConversationalAnalysisAuthoringDeploymentResource"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class GetDeploymentStatusResponse(_model_base.Model):
-    """GetDeploymentStatusResponse.
-
-
-    :ivar created_date_time: The creation date time of the job. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: The last date time the job was updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar expiration_date_time: The expiration date time of the job.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", and "partiallyCompleted".
-    :vartype status: str or ~azure.ai.language.conversations.authoring.models.JobStatus
-    :ivar warnings: The warnings that were encountered while executing the job.
-    :vartype warnings: list[~azure.ai.language.conversations.authoring.models.Warning]
-    :ivar errors: The errors encountered while executing the job.
-    :vartype errors: list[~azure.ai.language.conversations.authoring.models.Error]
-    """
-
-    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
-    """The creation date time of the job. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
-    """The last date time the job was updated. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(name="expirationDateTime", format="rfc3339")
-    """The expiration date time of the job."""
-    status: Union[str, "_models.JobStatus"] = rest_field()
-    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
-     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List["_models.Warning"]] = rest_field()
-    """The warnings that were encountered while executing the job."""
-    errors: Optional[List["_models.Error"]] = rest_field()
-    """The errors encountered while executing the job."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        status: Union[str, "_models.JobStatus"],
-        expiration_date_time: Optional[datetime.datetime] = None,
-        warnings: Optional[List["_models.Warning"]] = None,
-        errors: Optional[List["_models.Error"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class GetEvaluationStatusResponse(_model_base.Model):
-    """GetEvaluationStatusResponse.
-
-
-    :ivar created_date_time: The creation date time of the job. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: The last date time the job was updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar expiration_date_time: The expiration date time of the job.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", and "partiallyCompleted".
-    :vartype status: str or ~azure.ai.language.conversations.authoring.models.JobStatus
-    :ivar warnings: The warnings that were encountered while executing the job.
-    :vartype warnings: list[~azure.ai.language.conversations.authoring.models.Warning]
-    :ivar errors: The errors encountered while executing the job.
-    :vartype errors: list[~azure.ai.language.conversations.authoring.models.Error]
-    :ivar result: Represents evaluation task detailed result. Required.
-    :vartype result:
-     ~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringEvaluationJobResult
-    """
-
-    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
-    """The creation date time of the job. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
-    """The last date time the job was updated. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(name="expirationDateTime", format="rfc3339")
-    """The expiration date time of the job."""
-    status: Union[str, "_models.JobStatus"] = rest_field()
-    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
-     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List["_models.Warning"]] = rest_field()
-    """The warnings that were encountered while executing the job."""
-    errors: Optional[List["_models.Error"]] = rest_field()
-    """The errors encountered while executing the job."""
-    result: "_models.ConversationalAnalysisAuthoringEvaluationJobResult" = rest_field()
-    """Represents evaluation task detailed result. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        status: Union[str, "_models.JobStatus"],
-        result: "_models.ConversationalAnalysisAuthoringEvaluationJobResult",
-        expiration_date_time: Optional[datetime.datetime] = None,
-        warnings: Optional[List["_models.Warning"]] = None,
-        errors: Optional[List["_models.Error"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class GetExportedModelJobStatusResponse(_model_base.Model):
-    """GetExportedModelJobStatusResponse.
-
-
-    :ivar created_date_time: The creation date time of the job. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: The last date time the job was updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar expiration_date_time: The expiration date time of the job.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", and "partiallyCompleted".
-    :vartype status: str or ~azure.ai.language.conversations.authoring.models.JobStatus
-    :ivar warnings: The warnings that were encountered while executing the job.
-    :vartype warnings: list[~azure.ai.language.conversations.authoring.models.Warning]
-    :ivar errors: The errors encountered while executing the job.
-    :vartype errors: list[~azure.ai.language.conversations.authoring.models.Error]
-    """
-
-    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
-    """The creation date time of the job. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
-    """The last date time the job was updated. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(name="expirationDateTime", format="rfc3339")
-    """The expiration date time of the job."""
-    status: Union[str, "_models.JobStatus"] = rest_field()
-    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
-     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List["_models.Warning"]] = rest_field()
-    """The warnings that were encountered while executing the job."""
-    errors: Optional[List["_models.Error"]] = rest_field()
-    """The errors encountered while executing the job."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        status: Union[str, "_models.JobStatus"],
-        expiration_date_time: Optional[datetime.datetime] = None,
-        warnings: Optional[List["_models.Warning"]] = None,
-        errors: Optional[List["_models.Error"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class GetExportedModelResponse(_model_base.Model):
-    """GetExportedModelResponse.
-
-
-    :ivar model_id: The model ID. Required.
-    :vartype model_id: str
-    :ivar last_trained_date_time: The last trained date time of the model. Required.
-    :vartype last_trained_date_time: ~datetime.datetime
-    :ivar last_exported_model_date_time: The last exported date time of the model. Required.
-    :vartype last_exported_model_date_time: ~datetime.datetime
-    :ivar model_expiration_date: The model expiration date. Required.
-    :vartype model_expiration_date: ~datetime.date
-    :ivar model_training_config_version: The model training config version. Required.
-    :vartype model_training_config_version: str
-    """
-
-    model_id: str = rest_field(name="modelId")
-    """The model ID. Required."""
-    last_trained_date_time: datetime.datetime = rest_field(name="lastTrainedDateTime", format="rfc3339")
-    """The last trained date time of the model. Required."""
-    last_exported_model_date_time: datetime.datetime = rest_field(name="lastExportedModelDateTime", format="rfc3339")
-    """The last exported date time of the model. Required."""
-    model_expiration_date: datetime.date = rest_field(name="modelExpirationDate")
-    """The model expiration date. Required."""
-    model_training_config_version: str = rest_field(name="modelTrainingConfigVersion")
-    """The model training config version. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        model_id: str,
-        last_trained_date_time: datetime.datetime,
-        last_exported_model_date_time: datetime.datetime,
-        model_expiration_date: datetime.date,
-        model_training_config_version: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class GetExportStatusResponse(_model_base.Model):
-    """GetExportStatusResponse.
-
-
-    :ivar created_date_time: The creation date time of the job. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: The last date time the job was updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar expiration_date_time: The expiration date time of the job.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", and "partiallyCompleted".
-    :vartype status: str or ~azure.ai.language.conversations.authoring.models.JobStatus
-    :ivar warnings: The warnings that were encountered while executing the job.
-    :vartype warnings: list[~azure.ai.language.conversations.authoring.models.Warning]
-    :ivar errors: The errors encountered while executing the job.
-    :vartype errors: list[~azure.ai.language.conversations.authoring.models.Error]
-    :ivar result_url: The URL to use in order to download the exported project.
-    :vartype result_url: str
-    """
-
-    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
-    """The creation date time of the job. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
-    """The last date time the job was updated. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(name="expirationDateTime", format="rfc3339")
-    """The expiration date time of the job."""
-    status: Union[str, "_models.JobStatus"] = rest_field()
-    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
-     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List["_models.Warning"]] = rest_field()
-    """The warnings that were encountered while executing the job."""
-    errors: Optional[List["_models.Error"]] = rest_field()
-    """The errors encountered while executing the job."""
-    result_url: Optional[str] = rest_field(name="resultUrl")
-    """The URL to use in order to download the exported project."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        status: Union[str, "_models.JobStatus"],
-        expiration_date_time: Optional[datetime.datetime] = None,
-        warnings: Optional[List["_models.Warning"]] = None,
-        errors: Optional[List["_models.Error"]] = None,
-        result_url: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class GetImportStatusResponse(_model_base.Model):
-    """GetImportStatusResponse.
-
-
-    :ivar created_date_time: The creation date time of the job. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: The last date time the job was updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar expiration_date_time: The expiration date time of the job.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", and "partiallyCompleted".
-    :vartype status: str or ~azure.ai.language.conversations.authoring.models.JobStatus
-    :ivar warnings: The warnings that were encountered while executing the job.
-    :vartype warnings: list[~azure.ai.language.conversations.authoring.models.Warning]
-    :ivar errors: The errors encountered while executing the job.
-    :vartype errors: list[~azure.ai.language.conversations.authoring.models.Error]
-    """
-
-    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
-    """The creation date time of the job. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
-    """The last date time the job was updated. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(name="expirationDateTime", format="rfc3339")
-    """The expiration date time of the job."""
-    status: Union[str, "_models.JobStatus"] = rest_field()
-    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
-     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List["_models.Warning"]] = rest_field()
-    """The warnings that were encountered while executing the job."""
-    errors: Optional[List["_models.Error"]] = rest_field()
-    """The errors encountered while executing the job."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        status: Union[str, "_models.JobStatus"],
-        expiration_date_time: Optional[datetime.datetime] = None,
-        warnings: Optional[List["_models.Warning"]] = None,
-        errors: Optional[List["_models.Error"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class GetLoadSnapshotStatusResponse(_model_base.Model):
-    """GetLoadSnapshotStatusResponse.
-
-
-    :ivar created_date_time: The creation date time of the job. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: The last date time the job was updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar expiration_date_time: The expiration date time of the job.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", and "partiallyCompleted".
-    :vartype status: str or ~azure.ai.language.conversations.authoring.models.JobStatus
-    :ivar warnings: The warnings that were encountered while executing the job.
-    :vartype warnings: list[~azure.ai.language.conversations.authoring.models.Warning]
-    :ivar errors: The errors encountered while executing the job.
-    :vartype errors: list[~azure.ai.language.conversations.authoring.models.Error]
-    """
-
-    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
-    """The creation date time of the job. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
-    """The last date time the job was updated. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(name="expirationDateTime", format="rfc3339")
-    """The expiration date time of the job."""
-    status: Union[str, "_models.JobStatus"] = rest_field()
-    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
-     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List["_models.Warning"]] = rest_field()
-    """The warnings that were encountered while executing the job."""
-    errors: Optional[List["_models.Error"]] = rest_field()
-    """The errors encountered while executing the job."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        status: Union[str, "_models.JobStatus"],
-        expiration_date_time: Optional[datetime.datetime] = None,
-        warnings: Optional[List["_models.Warning"]] = None,
-        errors: Optional[List["_models.Error"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class GetProjectDeletionStatusResponse(_model_base.Model):
-    """GetProjectDeletionStatusResponse.
-
-
-    :ivar created_date_time: The creation date time of the job. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: The last date time the job was updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar expiration_date_time: The expiration date time of the job.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", and "partiallyCompleted".
-    :vartype status: str or ~azure.ai.language.conversations.authoring.models.JobStatus
-    :ivar warnings: The warnings that were encountered while executing the job.
-    :vartype warnings: list[~azure.ai.language.conversations.authoring.models.Warning]
-    :ivar errors: The errors encountered while executing the job.
-    :vartype errors: list[~azure.ai.language.conversations.authoring.models.Error]
-    """
-
-    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
-    """The creation date time of the job. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
-    """The last date time the job was updated. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(name="expirationDateTime", format="rfc3339")
-    """The expiration date time of the job."""
-    status: Union[str, "_models.JobStatus"] = rest_field()
-    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
-     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List["_models.Warning"]] = rest_field()
-    """The warnings that were encountered while executing the job."""
-    errors: Optional[List["_models.Error"]] = rest_field()
-    """The errors encountered while executing the job."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        status: Union[str, "_models.JobStatus"],
-        expiration_date_time: Optional[datetime.datetime] = None,
-        warnings: Optional[List["_models.Warning"]] = None,
-        errors: Optional[List["_models.Error"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class GetSwapDeploymentsStatusResponse(_model_base.Model):
-    """GetSwapDeploymentsStatusResponse.
-
-
-    :ivar created_date_time: The creation date time of the job. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: The last date time the job was updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar expiration_date_time: The expiration date time of the job.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", and "partiallyCompleted".
-    :vartype status: str or ~azure.ai.language.conversations.authoring.models.JobStatus
-    :ivar warnings: The warnings that were encountered while executing the job.
-    :vartype warnings: list[~azure.ai.language.conversations.authoring.models.Warning]
-    :ivar errors: The errors encountered while executing the job.
-    :vartype errors: list[~azure.ai.language.conversations.authoring.models.Error]
-    """
-
-    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
-    """The creation date time of the job. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
-    """The last date time the job was updated. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(name="expirationDateTime", format="rfc3339")
-    """The expiration date time of the job."""
-    status: Union[str, "_models.JobStatus"] = rest_field()
-    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
-     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List["_models.Warning"]] = rest_field()
-    """The warnings that were encountered while executing the job."""
-    errors: Optional[List["_models.Error"]] = rest_field()
-    """The errors encountered while executing the job."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        status: Union[str, "_models.JobStatus"],
-        expiration_date_time: Optional[datetime.datetime] = None,
-        warnings: Optional[List["_models.Warning"]] = None,
-        errors: Optional[List["_models.Error"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class GetTrainedModelResponse(_model_base.Model):
-    """GetTrainedModelResponse.
-
-
-    :ivar model_id: The model ID. Required.
-    :vartype model_id: str
-    :ivar last_trained_date_time: The last trained date time of the model. Required.
-    :vartype last_trained_date_time: ~datetime.datetime
-    :ivar last_training_duration_in_seconds: The duration of the model's last training request in
-     seconds. Required.
-    :vartype last_training_duration_in_seconds: int
-    :ivar model_expiration_date: The model expiration date. Required.
-    :vartype model_expiration_date: ~datetime.date
-    :ivar model_training_config_version: The model training config version. Required.
-    :vartype model_training_config_version: str
-    :ivar has_snapshot: The flag to indicate if the trained model has a snapshot ready. Required.
-    :vartype has_snapshot: bool
-    """
-
-    model_id: str = rest_field(name="modelId")
-    """The model ID. Required."""
-    last_trained_date_time: datetime.datetime = rest_field(name="lastTrainedDateTime", format="rfc3339")
-    """The last trained date time of the model. Required."""
-    last_training_duration_in_seconds: int = rest_field(name="lastTrainingDurationInSeconds")
-    """The duration of the model's last training request in seconds. Required."""
-    model_expiration_date: datetime.date = rest_field(name="modelExpirationDate")
-    """The model expiration date. Required."""
-    model_training_config_version: str = rest_field(name="modelTrainingConfigVersion")
-    """The model training config version. Required."""
-    has_snapshot: bool = rest_field(name="hasSnapshot")
-    """The flag to indicate if the trained model has a snapshot ready. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        model_id: str,
-        last_trained_date_time: datetime.datetime,
-        last_training_duration_in_seconds: int,
-        model_expiration_date: datetime.date,
-        model_training_config_version: str,
-        has_snapshot: bool,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class GetTrainingStatusResponse(_model_base.Model):
-    """GetTrainingStatusResponse.
-
-
-    :ivar created_date_time: The creation date time of the job. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: The last date time the job was updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar expiration_date_time: The expiration date time of the job.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", and "partiallyCompleted".
-    :vartype status: str or ~azure.ai.language.conversations.authoring.models.JobStatus
-    :ivar warnings: The warnings that were encountered while executing the job.
-    :vartype warnings: list[~azure.ai.language.conversations.authoring.models.Warning]
-    :ivar errors: The errors encountered while executing the job.
-    :vartype errors: list[~azure.ai.language.conversations.authoring.models.Error]
-    :ivar result: Represents training tasks detailed result. Required.
-    :vartype result:
-     ~azure.ai.language.conversations.authoring.models.ConversationalAnalysisAuthoringTrainingJobResult
-    """
-
-    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
-    """The creation date time of the job. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
-    """The last date time the job was updated. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(name="expirationDateTime", format="rfc3339")
-    """The expiration date time of the job."""
-    status: Union[str, "_models.JobStatus"] = rest_field()
-    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
-     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List["_models.Warning"]] = rest_field()
-    """The warnings that were encountered while executing the job."""
-    errors: Optional[List["_models.Error"]] = rest_field()
-    """The errors encountered while executing the job."""
-    result: "_models.ConversationalAnalysisAuthoringTrainingJobResult" = rest_field()
-    """Represents training tasks detailed result. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        status: Union[str, "_models.JobStatus"],
-        result: "_models.ConversationalAnalysisAuthoringTrainingJobResult",
-        expiration_date_time: Optional[datetime.datetime] = None,
-        warnings: Optional[List["_models.Warning"]] = None,
-        errors: Optional[List["_models.Error"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class GetUnassignDeploymentResourcesStatusResponse(_model_base.Model):  # pylint: disable=name-too-long
-    """GetUnassignDeploymentResourcesStatusResponse.
-
-
-    :ivar created_date_time: The creation date time of the job. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: The last date time the job was updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar expiration_date_time: The expiration date time of the job.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", and "partiallyCompleted".
-    :vartype status: str or ~azure.ai.language.conversations.authoring.models.JobStatus
-    :ivar warnings: The warnings that were encountered while executing the job.
-    :vartype warnings: list[~azure.ai.language.conversations.authoring.models.Warning]
-    :ivar errors: The errors encountered while executing the job.
-    :vartype errors: list[~azure.ai.language.conversations.authoring.models.Error]
-    """
-
-    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
-    """The creation date time of the job. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
-    """The last date time the job was updated. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(name="expirationDateTime", format="rfc3339")
-    """The expiration date time of the job."""
-    status: Union[str, "_models.JobStatus"] = rest_field()
-    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
-     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List["_models.Warning"]] = rest_field()
-    """The warnings that were encountered while executing the job."""
-    errors: Optional[List["_models.Error"]] = rest_field()
-    """The errors encountered while executing the job."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        status: Union[str, "_models.JobStatus"],
-        expiration_date_time: Optional[datetime.datetime] = None,
-        warnings: Optional[List["_models.Warning"]] = None,
-        errors: Optional[List["_models.Error"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class InnerErrorModel(_model_base.Model):
-    """An object containing more specific information about the error. As per
-    Microsoft One API guidelines -
+    """An object containing more specific information about the error. As per Microsoft One API
+    guidelines -
     https://github.com/Microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses.
 
 
@@ -3930,8 +3672,7 @@ class InnerErrorModel(_model_base.Model):
     target: Optional[str] = rest_field()
     """Error target."""
     innererror: Optional["_models.InnerErrorModel"] = rest_field()
-    """An object containing more specific information than the current object about
-     the error."""
+    """An object containing more specific information than the current object about the error."""
 
     @overload
     def __init__(

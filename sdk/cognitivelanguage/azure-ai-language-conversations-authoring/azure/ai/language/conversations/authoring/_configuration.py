@@ -17,16 +17,14 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ConversationsClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for ConversationsClient.
+class AuthoringClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for AuthoringClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: Supported Cognitive Services endpoint (e.g.,
-     https://\\ :code:`<resource-name>`.api.cognitiveservices.azure.com). Required.
-    :type endpoint: str
-    :param endpoint: Required.
+    :param endpoint: Supported Cognitive Services endpoint e.g., https://\\
+     :code:`<resource-name>`.api.cognitiveservices.azure.com. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
@@ -38,19 +36,14 @@ class ConversationsClientConfiguration:  # pylint: disable=too-many-instance-att
     :paramtype api_version: str
     """
 
-    def __init__(
-        self, endpoint: str, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any
-    ) -> None:
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
         api_version: str = kwargs.pop("api_version", "2024-11-15-preview")
 
-        if endpoint is None:
-            raise ValueError("Parameter 'endpoint' must not be None.")
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
 
-        self.endpoint = endpoint
         self.endpoint = endpoint
         self.credential = credential
         self.api_version = api_version

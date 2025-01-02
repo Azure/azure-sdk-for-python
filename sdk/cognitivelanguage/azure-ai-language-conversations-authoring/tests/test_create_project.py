@@ -34,8 +34,13 @@ class TestConversationsAuthoringCase(TestConversationsAuthoring):
         }
 
         # Send request to create the project
-        response = client.create_project(project_name, project_data)
+        response = client.analyze_conversation_authoring.create_project(project_name, project_data)
         
-        # Validate response
-        assert response.status_code == 201
-        print(f"Project created with status: {response.status_code}")
+        # Validate response (assert attributes of AnalyzeConversationAuthoringProjectMetadata)
+        assert response is not None  # Ensure the response is not None
+        assert response.project_name == project_name  # Check that the project name matches
+        assert response.language == project_data["language"]  # Check that the language matches
+        assert response.project_kind == project_data["project_kind"]  # Check that the project kind matches
+
+        # Print confirmation for debugging
+        print(f"Project created successfully: {response.project_name}")

@@ -14,18 +14,16 @@ class CompositionSetting(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of CompositionSetting."""
 
     RETURN_LONGEST_OVERLAP = "returnLongestOverlap"
-    """When two or more components are found in the text and overlap, the component
-    with the longest set of characters is returned."""
+    """When two or more components are found in the text and overlap, the component with the longest
+    set of characters is returned."""
     REQUIRE_EXACT_OVERLAP = "requireExactOverlap"
-    """All components must overlap at the exact same characters in the text for the
-    entity to return. If one of the defined components is not matched or predicted,
-    the entity will not return."""
+    """All components must overlap at the exact same characters in the text for the entity to return.
+    If one of the defined components is not matched or predicted, the entity will not return."""
     SEPARATE_COMPONENTS = "separateComponents"
-    """Every component's match or prediction is returned as a separate instance of the
-    entity."""
+    """Every component's match or prediction is returned as a separate instance of the entity."""
     COMBINE_COMPONENTS = "combineComponents"
-    """When two or more components are found in the text and overlap, the components'
-    spans are merged together into one span combining all of them."""
+    """When two or more components are found in the text and overlap, the components' spans are merged
+    together into one span combining all of them."""
 
 
 class ErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -55,8 +53,7 @@ class EvaluationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of EvaluationKind."""
 
     PERCENTAGE = "percentage"
-    """Split the data into training and test sets according to user-defined
-    percentages."""
+    """Split the data into training and test sets according to user-defined percentages."""
     MANUAL = "manual"
     """Split the data according to the chosen dataset for every example in the data."""
 
@@ -126,16 +123,14 @@ class StringIndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of StringIndexType."""
 
     UTF16_CODE_UNIT = "Utf16CodeUnit"
-    """The offset and length values will correspond to UTF-16 code units. Use this
-    option if your application is written in a language that support Unicode, for
-    example Java, JavaScript."""
+    """The offset and length values will correspond to UTF-16 code units. Use this option if your
+    application is written in a language that support Unicode, for example Java, JavaScript."""
 
 
 class TrainingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of TrainingMode."""
 
     ADVANCED = "advanced"
-    """Trains using fine-tuned neural network transformer models. Can train
-    multilingual projects."""
+    """Trains using fine-tuned neural network transformer models. Can train multilingual projects."""
     STANDARD = "standard"
     """Faster training times for quicker iterations."""
