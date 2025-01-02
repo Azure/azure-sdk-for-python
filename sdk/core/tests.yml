@@ -1,7 +1,20 @@
 trigger: none
 
+parameters:
+  - name: Services
+    type: object
+    default:
+      - azure-core-experimental
+
 extends:
     template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: core
       BuildTargetingString: '*'
+      Packages: ${{ parameters.Services }}
+      TestTimeoutInMinutes: 240
+      MatrixReplace:
+        - TestSamples=.*/true
+      EnvVars:
+        AZURE_SKIP_LIVE_RECORDING: 'true'
+        AZURE_TEST_RUN_LIVE: 'true'
