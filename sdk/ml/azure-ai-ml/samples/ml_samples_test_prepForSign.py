@@ -1,4 +1,8 @@
-from azure.identity import DefaultAzureCredential, AzureCliCredential, InteractiveBrowserCredential
+from azure.identity import (
+    DefaultAzureCredential,
+    AzureCliCredential,
+    InteractiveBrowserCredential,
+)
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml.entities import Data, ManagedOnlineEndpoint, Job, CommandComponent
 from azure.ai.ml.sweep import SweepJob, GridSamplingAlgorithm, Choice, Objective
@@ -21,5 +25,7 @@ ml_client = MLClient(
     workspace_name=workspace_name,
 )
 
-component = load_component("C:\\Projects\\azure-sdk-for-python\\sdk\\ml\\azure-ai-ml\\azure\\ai\\ml\\YAMLsigning\\sum1.yaml")
+component = load_component(
+    "C:\\Projects\\azure-sdk-for-python\\sdk\\ml\\azure-ai-ml\\azure\\ai\\ml\\YAMLsigning\\sum1.yaml"
+)
 ml_client.components.prepare_for_sign(component)
