@@ -8,8 +8,6 @@
 
 ## 1.24.0 (2025-01-07)
 
-### Features Added
-
 ### Bugs Fixed
   - Fixed disableLocalAuthentication handling while creating amlCompute
   - Fixed model download issue
