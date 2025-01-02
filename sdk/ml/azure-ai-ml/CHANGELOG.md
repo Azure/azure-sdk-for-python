@@ -1,7 +1,12 @@
 # Release History
-## 1.24.0 (unreleased)
+
+## 1.25.0 (Unreleased)
 
 ### Features Added
+
+### Bugs Fixed
+
+## 1.24.0 (2025-01-07)
 
 ### Bugs Fixed
   - Fixed disableLocalAuthentication handling while creating amlCompute
