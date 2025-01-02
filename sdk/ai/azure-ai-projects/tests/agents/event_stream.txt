@@ -1,479 +1,479 @@
 event: thread.run.created
-data: {"id":"run_XuQ2aPPhhdvhu3oUhietCm7M","object":"thread.run","created_at":1735584158,"assistant_id":"asst_I9qWQ7KpkLcNKXERdAAIVWuB","thread_id":"thread_ShenS2zJomzXQMRctzLWWdjL","status":"queued","started_at":null,"expires_at":1735584758,"cancelled_at":null,"failed_at":null,"completed_at":null,"required_action":null,"last_error":null,"model":"gpt-4o-mini","instructions":"You are a helpful assistant","tools":[{"type":"function","function":{"name":"process_records","description":"Process a list of records, where each record is a dictionary with string keys and integer values.","parameters":{"type":"object","properties":{"records":{"type":"array","items":{"type":"object"},"description":"A list containing dictionaries that map strings to integers."}},"required":["records"]},"strict":false}},{"type":"function","function":{"name":"merge_dicts","description":"Merges two dictionaries.","parameters":{"type":"object","properties":{"dict1":{"type":"object","description":"First dictionary."},"dict2":{"type":"object","description":"Second dictionary."}},"required":["dict1","dict2"]},"strict":false}},{"type":"function","function":{"name":"calculate_sum","description":"Calculates the sum of two integers.","parameters":{"type":"object","properties":{"a":{"type":"integer","description":"First integer."},"b":{"type":"integer","description":"Second integer."}},"required":["a","b"]},"strict":false}},{"type":"function","function":{"name":"fetch_weather","description":"Fetches the weather information for the specified location.","parameters":{"type":"object","properties":{"location":{"type":"string","description":"The location to fetch weather for."}},"required":["location"]},"strict":false}},{"type":"function","function":{"name":"fetch_current_datetime","description":"Get the current time as a JSON string, optionally formatted.","parameters":{"type":"object","properties":{"format":{"type":["string","null"],"description":"The format in which to return the current time. Defaults to None, which uses a standard format."}},"required":[]},"strict":false}},{"type":"function","function":{"name":"get_user_info","description":"Retrieves user information based on user ID.","parameters":{"type":"object","properties":{"user_id":{"type":"integer","description":"ID of the user."}},"required":["user_id"]},"strict":false}},{"type":"function","function":{"name":"convert_temperature","description":"Converts temperature from Celsius to Fahrenheit.","parameters":{"type":"object","properties":{"celsius":{"type":"number","description":"Temperature in Celsius."}},"required":["celsius"]},"strict":false}},{"type":"function","function":{"name":"longest_word_in_sentences","description":"Finds the longest word in each sentence.","parameters":{"type":"object","properties":{"sentences":{"type":"array","items":{"type":"string"},"description":"A list of sentences."}},"required":["sentences"]},"strict":false}},{"type":"function","function":{"name":"toggle_flag","description":"Toggles a boolean flag.","parameters":{"type":"object","properties":{"flag":{"type":"boolean","description":"The flag to toggle."}},"required":["flag"]},"strict":false}},{"type":"function","function":{"name":"send_email","description":"Sends an email with the specified subject and body to the recipient.","parameters":{"type":"object","properties":{"recipient":{"type":"string","description":"Email address of the recipient."},"subject":{"type":"string","description":"Subject of the email."},"body":{"type":"string","description":"Body content of the email."}},"required":["recipient","subject","body"]},"strict":false}}],"tool_resources":{"code_interpreter":{"file_ids":[]}},"metadata":{},"temperature":1.0,"top_p":1.0,"max_completion_tokens":null,"max_prompt_tokens":null,"truncation_strategy":{"type":"auto","last_messages":null},"incomplete_details":null,"usage":null,"response_format":"auto","tool_choice":"auto","parallel_tool_calls":true}
+data: {"id":"run_001","object":"thread.run","created_at":1735584158,"assistant_id":"asst_001","thread_id":"thread_001","status":"queued","started_at":null,"expires_at":1735584758,"cancelled_at":null,"failed_at":null,"completed_at":null,"required_action":null,"last_error":null,"model":"gpt-4o-mini","instructions":"You are a helpful assistant","tools":[{"type":"function","function":{"name":"process_records","description":"Process a list of records, where each record is a dictionary with string keys and integer values.","parameters":{"type":"object","properties":{"records":{"type":"array","items":{"type":"object"},"description":"A list containing dictionaries that map strings to integers."}},"required":["records"]},"strict":false}},{"type":"function","function":{"name":"merge_dicts","description":"Merges two dictionaries.","parameters":{"type":"object","properties":{"dict1":{"type":"object","description":"First dictionary."},"dict2":{"type":"object","description":"Second dictionary."}},"required":["dict1","dict2"]},"strict":false}},{"type":"function","function":{"name":"calculate_sum","description":"Calculates the sum of two integers.","parameters":{"type":"object","properties":{"a":{"type":"integer","description":"First integer."},"b":{"type":"integer","description":"Second integer."}},"required":["a","b"]},"strict":false}},{"type":"function","function":{"name":"fetch_weather","description":"Fetches the weather information for the specified location.","parameters":{"type":"object","properties":{"location":{"type":"string","description":"The location to fetch weather for."}},"required":["location"]},"strict":false}},{"type":"function","function":{"name":"fetch_current_datetime","description":"Get the current time as a JSON string, optionally formatted.","parameters":{"type":"object","properties":{"format":{"type":["string","null"],"description":"The format in which to return the current time. Defaults to None, which uses a standard format."}},"required":[]},"strict":false}},{"type":"function","function":{"name":"get_user_info","description":"Retrieves user information based on user ID.","parameters":{"type":"object","properties":{"user_id":{"type":"integer","description":"ID of the user."}},"required":["user_id"]},"strict":false}},{"type":"function","function":{"name":"convert_temperature","description":"Converts temperature from Celsius to Fahrenheit.","parameters":{"type":"object","properties":{"celsius":{"type":"number","description":"Temperature in Celsius."}},"required":["celsius"]},"strict":false}},{"type":"function","function":{"name":"longest_word_in_sentences","description":"Finds the longest word in each sentence.","parameters":{"type":"object","properties":{"sentences":{"type":"array","items":{"type":"string"},"description":"A list of sentences."}},"required":["sentences"]},"strict":false}},{"type":"function","function":{"name":"toggle_flag","description":"Toggles a boolean flag.","parameters":{"type":"object","properties":{"flag":{"type":"boolean","description":"The flag to toggle."}},"required":["flag"]},"strict":false}},{"type":"function","function":{"name":"send_email","description":"Sends an email with the specified subject and body to the recipient.","parameters":{"type":"object","properties":{"recipient":{"type":"string","description":"Email address of the recipient."},"subject":{"type":"string","description":"Subject of the email."},"body":{"type":"string","description":"Body content of the email."}},"required":["recipient","subject","body"]},"strict":false}}],"tool_resources":{"code_interpreter":{"file_ids":[]}},"metadata":{},"temperature":1.0,"top_p":1.0,"max_completion_tokens":null,"max_prompt_tokens":null,"truncation_strategy":{"type":"auto","last_messages":null},"incomplete_details":null,"usage":null,"response_format":"auto","tool_choice":"auto","parallel_tool_calls":true}
 
 event: thread.run.queued
-data: {"id":"run_XuQ2aPPhhdvhu3oUhietCm7M","object":"thread.run","created_at":1735584158,"assistant_id":"asst_I9qWQ7KpkLcNKXERdAAIVWuB","thread_id":"thread_ShenS2zJomzXQMRctzLWWdjL","status":"queued","started_at":null,"expires_at":1735584758,"cancelled_at":null,"failed_at":null,"completed_at":null,"required_action":null,"last_error":null,"model":"gpt-4o-mini","instructions":"You are a helpful assistant","tools":[{"type":"function","function":{"name":"process_records","description":"Process a list of records, where each record is a dictionary with string keys and integer values.","parameters":{"type":"object","properties":{"records":{"type":"array","items":{"type":"object"},"description":"A list containing dictionaries that map strings to integers."}},"required":["records"]},"strict":false}},{"type":"function","function":{"name":"merge_dicts","description":"Merges two dictionaries.","parameters":{"type":"object","properties":{"dict1":{"type":"object","description":"First dictionary."},"dict2":{"type":"object","description":"Second dictionary."}},"required":["dict1","dict2"]},"strict":false}},{"type":"function","function":{"name":"calculate_sum","description":"Calculates the sum of two integers.","parameters":{"type":"object","properties":{"a":{"type":"integer","description":"First integer."},"b":{"type":"integer","description":"Second integer."}},"required":["a","b"]},"strict":false}},{"type":"function","function":{"name":"fetch_weather","description":"Fetches the weather information for the specified location.","parameters":{"type":"object","properties":{"location":{"type":"string","description":"The location to fetch weather for."}},"required":["location"]},"strict":false}},{"type":"function","function":{"name":"fetch_current_datetime","description":"Get the current time as a JSON string, optionally formatted.","parameters":{"type":"object","properties":{"format":{"type":["string","null"],"description":"The format in which to return the current time. Defaults to None, which uses a standard format."}},"required":[]},"strict":false}},{"type":"function","function":{"name":"get_user_info","description":"Retrieves user information based on user ID.","parameters":{"type":"object","properties":{"user_id":{"type":"integer","description":"ID of the user."}},"required":["user_id"]},"strict":false}},{"type":"function","function":{"name":"convert_temperature","description":"Converts temperature from Celsius to Fahrenheit.","parameters":{"type":"object","properties":{"celsius":{"type":"number","description":"Temperature in Celsius."}},"required":["celsius"]},"strict":false}},{"type":"function","function":{"name":"longest_word_in_sentences","description":"Finds the longest word in each sentence.","parameters":{"type":"object","properties":{"sentences":{"type":"array","items":{"type":"string"},"description":"A list of sentences."}},"required":["sentences"]},"strict":false}},{"type":"function","function":{"name":"toggle_flag","description":"Toggles a boolean flag.","parameters":{"type":"object","properties":{"flag":{"type":"boolean","description":"The flag to toggle."}},"required":["flag"]},"strict":false}},{"type":"function","function":{"name":"send_email","description":"Sends an email with the specified subject and body to the recipient.","parameters":{"type":"object","properties":{"recipient":{"type":"string","description":"Email address of the recipient."},"subject":{"type":"string","description":"Subject of the email."},"body":{"type":"string","description":"Body content of the email."}},"required":["recipient","subject","body"]},"strict":false}}],"tool_resources":{"code_interpreter":{"file_ids":[]}},"metadata":{},"temperature":1.0,"top_p":1.0,"max_completion_tokens":null,"max_prompt_tokens":null,"truncation_strategy":{"type":"auto","last_messages":null},"incomplete_details":null,"usage":null,"response_format":"auto","tool_choice":"auto","parallel_tool_calls":true}
+data: {"id":"run_001","object":"thread.run","created_at":1735584158,"assistant_id":"asst_001","thread_id":"thread_001","status":"queued","started_at":null,"expires_at":1735584758,"cancelled_at":null,"failed_at":null,"completed_at":null,"required_action":null,"last_error":null,"model":"gpt-4o-mini","instructions":"You are a helpful assistant","tools":[{"type":"function","function":{"name":"process_records","description":"Process a list of records, where each record is a dictionary with string keys and integer values.","parameters":{"type":"object","properties":{"records":{"type":"array","items":{"type":"object"},"description":"A list containing dictionaries that map strings to integers."}},"required":["records"]},"strict":false}},{"type":"function","function":{"name":"merge_dicts","description":"Merges two dictionaries.","parameters":{"type":"object","properties":{"dict1":{"type":"object","description":"First dictionary."},"dict2":{"type":"object","description":"Second dictionary."}},"required":["dict1","dict2"]},"strict":false}},{"type":"function","function":{"name":"calculate_sum","description":"Calculates the sum of two integers.","parameters":{"type":"object","properties":{"a":{"type":"integer","description":"First integer."},"b":{"type":"integer","description":"Second integer."}},"required":["a","b"]},"strict":false}},{"type":"function","function":{"name":"fetch_weather","description":"Fetches the weather information for the specified location.","parameters":{"type":"object","properties":{"location":{"type":"string","description":"The location to fetch weather for."}},"required":["location"]},"strict":false}},{"type":"function","function":{"name":"fetch_current_datetime","description":"Get the current time as a JSON string, optionally formatted.","parameters":{"type":"object","properties":{"format":{"type":["string","null"],"description":"The format in which to return the current time. Defaults to None, which uses a standard format."}},"required":[]},"strict":false}},{"type":"function","function":{"name":"get_user_info","description":"Retrieves user information based on user ID.","parameters":{"type":"object","properties":{"user_id":{"type":"integer","description":"ID of the user."}},"required":["user_id"]},"strict":false}},{"type":"function","function":{"name":"convert_temperature","description":"Converts temperature from Celsius to Fahrenheit.","parameters":{"type":"object","properties":{"celsius":{"type":"number","description":"Temperature in Celsius."}},"required":["celsius"]},"strict":false}},{"type":"function","function":{"name":"longest_word_in_sentences","description":"Finds the longest word in each sentence.","parameters":{"type":"object","properties":{"sentences":{"type":"array","items":{"type":"string"},"description":"A list of sentences."}},"required":["sentences"]},"strict":false}},{"type":"function","function":{"name":"toggle_flag","description":"Toggles a boolean flag.","parameters":{"type":"object","properties":{"flag":{"type":"boolean","description":"The flag to toggle."}},"required":["flag"]},"strict":false}},{"type":"function","function":{"name":"send_email","description":"Sends an email with the specified subject and body to the recipient.","parameters":{"type":"object","properties":{"recipient":{"type":"string","description":"Email address of the recipient."},"subject":{"type":"string","description":"Subject of the email."},"body":{"type":"string","description":"Body content of the email."}},"required":["recipient","subject","body"]},"strict":false}}],"tool_resources":{"code_interpreter":{"file_ids":[]}},"metadata":{},"temperature":1.0,"top_p":1.0,"max_completion_tokens":null,"max_prompt_tokens":null,"truncation_strategy":{"type":"auto","last_messages":null},"incomplete_details":null,"usage":null,"response_format":"auto","tool_choice":"auto","parallel_tool_calls":true}
 
 event: thread.run.in_progress
-data: {"id":"run_XuQ2aPPhhdvhu3oUhietCm7M","object":"thread.run","created_at":1735584158,"assistant_id":"asst_I9qWQ7KpkLcNKXERdAAIVWuB","thread_id":"thread_ShenS2zJomzXQMRctzLWWdjL","status":"in_progress","started_at":1735584158,"expires_at":1735584758,"cancelled_at":null,"failed_at":null,"completed_at":null,"required_action":null,"last_error":null,"model":"gpt-4o-mini","instructions":"You are a helpful assistant","tools":[{"type":"function","function":{"name":"process_records","description":"Process a list of records, where each record is a dictionary with string keys and integer values.","parameters":{"type":"object","properties":{"records":{"type":"array","items":{"type":"object"},"description":"A list containing dictionaries that map strings to integers."}},"required":["records"]},"strict":false}},{"type":"function","function":{"name":"merge_dicts","description":"Merges two dictionaries.","parameters":{"type":"object","properties":{"dict1":{"type":"object","description":"First dictionary."},"dict2":{"type":"object","description":"Second dictionary."}},"required":["dict1","dict2"]},"strict":false}},{"type":"function","function":{"name":"calculate_sum","description":"Calculates the sum of two integers.","parameters":{"type":"object","properties":{"a":{"type":"integer","description":"First integer."},"b":{"type":"integer","description":"Second integer."}},"required":["a","b"]},"strict":false}},{"type":"function","function":{"name":"fetch_weather","description":"Fetches the weather information for the specified location.","parameters":{"type":"object","properties":{"location":{"type":"string","description":"The location to fetch weather for."}},"required":["location"]},"strict":false}},{"type":"function","function":{"name":"fetch_current_datetime","description":"Get the current time as a JSON string, optionally formatted.","parameters":{"type":"object","properties":{"format":{"type":["string","null"],"description":"The format in which to return the current time. Defaults to None, which uses a standard format."}},"required":[]},"strict":false}},{"type":"function","function":{"name":"get_user_info","description":"Retrieves user information based on user ID.","parameters":{"type":"object","properties":{"user_id":{"type":"integer","description":"ID of the user."}},"required":["user_id"]},"strict":false}},{"type":"function","function":{"name":"convert_temperature","description":"Converts temperature from Celsius to Fahrenheit.","parameters":{"type":"object","properties":{"celsius":{"type":"number","description":"Temperature in Celsius."}},"required":["celsius"]},"strict":false}},{"type":"function","function":{"name":"longest_word_in_sentences","description":"Finds the longest word in each sentence.","parameters":{"type":"object","properties":{"sentences":{"type":"array","items":{"type":"string"},"description":"A list of sentences."}},"required":["sentences"]},"strict":false}},{"type":"function","function":{"name":"toggle_flag","description":"Toggles a boolean flag.","parameters":{"type":"object","properties":{"flag":{"type":"boolean","description":"The flag to toggle."}},"required":["flag"]},"strict":false}},{"type":"function","function":{"name":"send_email","description":"Sends an email with the specified subject and body to the recipient.","parameters":{"type":"object","properties":{"recipient":{"type":"string","description":"Email address of the recipient."},"subject":{"type":"string","description":"Subject of the email."},"body":{"type":"string","description":"Body content of the email."}},"required":["recipient","subject","body"]},"strict":false}}],"tool_resources":{"code_interpreter":{"file_ids":[]}},"metadata":{},"temperature":1.0,"top_p":1.0,"max_completion_tokens":null,"max_prompt_tokens":null,"truncation_strategy":{"type":"auto","last_messages":null},"incomplete_details":null,"usage":null,"response_format":"auto","tool_choice":"auto","parallel_tool_calls":true}
+data: {"id":"run_001","object":"thread.run","created_at":1735584158,"assistant_id":"asst_001","thread_id":"thread_001","status":"in_progress","started_at":1735584158,"expires_at":1735584758,"cancelled_at":null,"failed_at":null,"completed_at":null,"required_action":null,"last_error":null,"model":"gpt-4o-mini","instructions":"You are a helpful assistant","tools":[{"type":"function","function":{"name":"process_records","description":"Process a list of records, where each record is a dictionary with string keys and integer values.","parameters":{"type":"object","properties":{"records":{"type":"array","items":{"type":"object"},"description":"A list containing dictionaries that map strings to integers."}},"required":["records"]},"strict":false}},{"type":"function","function":{"name":"merge_dicts","description":"Merges two dictionaries.","parameters":{"type":"object","properties":{"dict1":{"type":"object","description":"First dictionary."},"dict2":{"type":"object","description":"Second dictionary."}},"required":["dict1","dict2"]},"strict":false}},{"type":"function","function":{"name":"calculate_sum","description":"Calculates the sum of two integers.","parameters":{"type":"object","properties":{"a":{"type":"integer","description":"First integer."},"b":{"type":"integer","description":"Second integer."}},"required":["a","b"]},"strict":false}},{"type":"function","function":{"name":"fetch_weather","description":"Fetches the weather information for the specified location.","parameters":{"type":"object","properties":{"location":{"type":"string","description":"The location to fetch weather for."}},"required":["location"]},"strict":false}},{"type":"function","function":{"name":"fetch_current_datetime","description":"Get the current time as a JSON string, optionally formatted.","parameters":{"type":"object","properties":{"format":{"type":["string","null"],"description":"The format in which to return the current time. Defaults to None, which uses a standard format."}},"required":[]},"strict":false}},{"type":"function","function":{"name":"get_user_info","description":"Retrieves user information based on user ID.","parameters":{"type":"object","properties":{"user_id":{"type":"integer","description":"ID of the user."}},"required":["user_id"]},"strict":false}},{"type":"function","function":{"name":"convert_temperature","description":"Converts temperature from Celsius to Fahrenheit.","parameters":{"type":"object","properties":{"celsius":{"type":"number","description":"Temperature in Celsius."}},"required":["celsius"]},"strict":false}},{"type":"function","function":{"name":"longest_word_in_sentences","description":"Finds the longest word in each sentence.","parameters":{"type":"object","properties":{"sentences":{"type":"array","items":{"type":"string"},"description":"A list of sentences."}},"required":["sentences"]},"strict":false}},{"type":"function","function":{"name":"toggle_flag","description":"Toggles a boolean flag.","parameters":{"type":"object","properties":{"flag":{"type":"boolean","description":"The flag to toggle."}},"required":["flag"]},"strict":false}},{"type":"function","function":{"name":"send_email","description":"Sends an email with the specified subject and body to the recipient.","parameters":{"type":"object","properties":{"recipient":{"type":"string","description":"Email address of the recipient."},"subject":{"type":"string","description":"Subject of the email."},"body":{"type":"string","description":"Body content of the email."}},"required":["recipient","subject","body"]},"strict":false}}],"tool_resources":{"code_interpreter":{"file_ids":[]}},"metadata":{},"temperature":1.0,"top_p":1.0,"max_completion_tokens":null,"max_prompt_tokens":null,"truncation_strategy":{"type":"auto","last_messages":null},"incomplete_details":null,"usage":null,"response_format":"auto","tool_choice":"auto","parallel_tool_calls":true}
 
 event: thread.run.step.created
-data: {"id":"step_eCzU08o2IUUQj24yLnVVsheq","object":"thread.run.step","created_at":1735584159,"run_id":"run_XuQ2aPPhhdvhu3oUhietCm7M","assistant_id":"asst_I9qWQ7KpkLcNKXERdAAIVWuB","thread_id":"thread_ShenS2zJomzXQMRctzLWWdjL","type":"message_creation","status":"in_progress","cancelled_at":null,"completed_at":null,"expires_at":1735584758,"failed_at":null,"last_error":null,"step_details":{"type":"message_creation","message_creation":{"message_id":"msg_dbmQhHssTnyjDiMu7T2sFRQj"}},"usage":null}       
+data: {"id":"step_001","object":"thread.run.step","created_at":1735584159,"run_id":"run_001","assistant_id":"asst_001","thread_id":"thread_001","type":"message_creation","status":"in_progress","cancelled_at":null,"completed_at":null,"expires_at":1735584758,"failed_at":null,"last_error":null,"step_details":{"type":"message_creation","message_creation":{"message_id":"msg_001"}},"usage":null}       
 
 event: thread.run.step.in_progress
-data: {"id":"step_eCzU08o2IUUQj24yLnVVsheq","object":"thread.run.step","created_at":1735584159,"run_id":"run_XuQ2aPPhhdvhu3oUhietCm7M","assistant_id":"asst_I9qWQ7KpkLcNKXERdAAIVWuB","thread_id":"thread_ShenS2zJomzXQMRctzLWWdjL","type":"message_creation","status":"in_progress","cancelled_at":null,"completed_at":null,"expires_at":1735584758,"failed_at":null,"last_error":null,"step_details":{"type":"message_creation","message_creation":{"message_id":"msg_dbmQhHssTnyjDiMu7T2sFRQj"}},"usage":null}       
+data: {"id":"step_001","object":"thread.run.step","created_at":1735584159,"run_id":"run_001","assistant_id":"asst_001","thread_id":"thread_001","type":"message_creation","status":"in_progress","cancelled_at":null,"completed_at":null,"expires_at":1735584758,"failed_at":null,"last_error":null,"step_details":{"type":"message_creation","message_creation":{"message_id":"msg_001"}},"usage":null}       
 
 event: thread.message.created
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message","created_at":1735584159,"assistant_id":"asst_I9qWQ7KpkLcNKXERdAAIVWuB","thread_id":"thread_ShenS2zJomzXQMRctzLWWdjL","run_id":"run_XuQ2aPPhhdvhu3oUhietCm7M","status":"in_progress","incomplete_details":null,"incomplete_at":null,"completed_at":null,"role":"assistant","content":[],"attachments":[],"metadata":{}}
+data: {"id":"msg_001","object":"thread.message","created_at":1735584159,"assistant_id":"asst_001","thread_id":"thread_001","run_id":"run_001","status":"in_progress","incomplete_details":null,"incomplete_at":null,"completed_at":null,"role":"assistant","content":[],"attachments":[],"metadata":{}}
 
 event: thread.message.in_progress
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message","created_at":1735584159,"assistant_id":"asst_I9qWQ7KpkLcNKXERdAAIVWuB","thread_id":"thread_ShenS2zJomzXQMRctzLWWdjL","run_id":"run_XuQ2aPPhhdvhu3oUhietCm7M","status":"in_progress","incomplete_details":null,"incomplete_at":null,"completed_at":null,"role":"assistant","content":[],"attachments":[],"metadata":{}}
+data: {"id":"msg_001","object":"thread.message","created_at":1735584159,"assistant_id":"asst_001","thread_id":"thread_001","run_id":"run_001","status":"in_progress","incomplete_details":null,"incomplete_at":null,"completed_at":null,"role":"assistant","content":[],"attachments":[],"metadata":{}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"To","annotations":[]}}]}}      
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"To","annotations":[]}}]}}      
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" print"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" print"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" the"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" the"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" string"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" string"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" with"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" with"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" \"\\"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" \"\\"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\""}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\""}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" ("}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" ("}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"newline"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"newline"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" character"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" character"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":")"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":")"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" "}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" "}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"100"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"100"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" times"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" times"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" in"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" in"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" pairs"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" pairs"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" per"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" per"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" buffer"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" buffer"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":","}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":","}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" we"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" we"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" can"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" can"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" create"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" create"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" a"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" a"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" function"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" function"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" that"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" that"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" will"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" will"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" format"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" format"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" the"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" the"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" output"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" output"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" accordingly"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" accordingly"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"."}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"."}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" Given"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" Given"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" that"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" that"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" there"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" there"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" will"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" will"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" be"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" be"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" "}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" "}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"50"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"50"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" pairs"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" pairs"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":","}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":","}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" each"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" each"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" pair"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" pair"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" will"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" will"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" consist"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" consist"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" of"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" of"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" two"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" two"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" newline"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" newline"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" characters"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" characters"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":".\n\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":".\n\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"Here"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"Here"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"’s"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"’s"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" how"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" how"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" it"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" it"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" would"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" would"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" look"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" look"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":":\n\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":":\n\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"``"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"``"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"`\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"`\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"...\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"...\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"``"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"``"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"`\n\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"`\n\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"A"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"A"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" total"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" total"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" of"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" of"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" "}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" "}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"50"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"50"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" sets"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" sets"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" of"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" of"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" pairs"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" pairs"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":".\n\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":".\n\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"Here"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"Here"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"’s"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"’s"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" what"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" what"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" the"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" the"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" formatted"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" formatted"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" output"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" output"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" would"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" would"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" look"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" look"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" like"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" like"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" up"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" up"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" to"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" to"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" "}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" "}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"10"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"10"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" pairs"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" pairs"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":":\n\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":":\n\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"``"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"``"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"`\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"`\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"``"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"``"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"`\n\n"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"`\n\n"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"If"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"If"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" you"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" you"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" want"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" want"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" me"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" me"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" to"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" to"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" execute"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" execute"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" this"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" this"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" program"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" program"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"matically"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"matically"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" or"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" or"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" in"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" in"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" a"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" a"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" specific"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" specific"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" format"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" format"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":","}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":","}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" please"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" please"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" let"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" let"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" me"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" me"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" know"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" know"}}]}}
 
 event: thread.message.delta
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"!"}}]}}
+data: {"id":"msg_001","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"!"}}]}}
 
 event: thread.message.completed
-data: {"id":"msg_dbmQhHssTnyjDiMu7T2sFRQj","object":"thread.message","created_at":1735584159,"assistant_id":"asst_I9qWQ7KpkLcNKXERdAAIVWuB","thread_id":"thread_ShenS2zJomzXQMRctzLWWdjL","run_id":"run_XuQ2aPPhhdvhu3oUhietCm7M","status":"completed","incomplete_details":null,"incomplete_at":null,"completed_at":1735584161,"role":"assistant","content":[{"type":"text","text":{"value":"To print the string with \"\\n\" (newline character) 100 times in pairs per buffer, we can create a function that will format the output accordingly. Given that there will be 50 pairs, each pair will consist of two newline characters.\n\nHere’s how it would look:\n\n```\n\\n\\n\n\\n\\n\n\\n\\n\n...\n```\n\nA total of 50 sets of pairs.\n\nHere’s what the formatted output would look like up to 10 pairs:\n\n```\n\\n\\n\n\\n\\n\n\\n\\n\n\\n\\n\n\\n\\n\n\\n\\n\n\\n\\n\n\\n\\n\n\\n\\n\n\\n\\n\n```\n\nIf you want me to execute this programmatically or in a specific format, please let me know!","annotations":[]}}],"attachments":[],"metadata":{}}
+data: {"id":"msg_001","object":"thread.message","created_at":1735584159,"assistant_id":"asst_001","thread_id":"thread_001","run_id":"run_001","status":"completed","incomplete_details":null,"incomplete_at":null,"completed_at":1735584161,"role":"assistant","content":[{"type":"text","text":{"value":"To print the string with \"\\n\" (newline character) 100 times in pairs per buffer, we can create a function that will format the output accordingly. Given that there will be 50 pairs, each pair will consist of two newline characters.\n\nHere’s how it would look:\n\n```\n\\n\\n\n\\n\\n\n\\n\\n\n...\n```\n\nA total of 50 sets of pairs.\n\nHere’s what the formatted output would look like up to 10 pairs:\n\n```\n\\n\\n\n\\n\\n\n\\n\\n\n\\n\\n\n\\n\\n\n\\n\\n\n\\n\\n\n\\n\\n\n\\n\\n\n\\n\\n\n```\n\nIf you want me to execute this programmatically or in a specific format, please let me know!","annotations":[]}}],"attachments":[],"metadata":{}}
 
 event: thread.run.step.completed
-data: {"id":"step_eCzU08o2IUUQj24yLnVVsheq","object":"thread.run.step","created_at":1735584159,"run_id":"run_XuQ2aPPhhdvhu3oUhietCm7M","assistant_id":"asst_I9qWQ7KpkLcNKXERdAAIVWuB","thread_id":"thread_ShenS2zJomzXQMRctzLWWdjL","type":"message_creation","status":"completed","cancelled_at":null,"completed_at":1735584161,"expires_at":1735584758,"failed_at":null,"last_error":null,"step_details":{"type":"message_creation","message_creation":{"message_id":"msg_dbmQhHssTnyjDiMu7T2sFRQj"}},"usage":{"prompt_tokens":640,"completion_tokens":151,"total_tokens":791}}
+data: {"id":"step_001","object":"thread.run.step","created_at":1735584159,"run_id":"run_001","assistant_id":"asst_001","thread_id":"thread_001","type":"message_creation","status":"completed","cancelled_at":null,"completed_at":1735584161,"expires_at":1735584758,"failed_at":null,"last_error":null,"step_details":{"type":"message_creation","message_creation":{"message_id":"msg_001"}},"usage":{"prompt_tokens":640,"completion_tokens":151,"total_tokens":791}}
 
 event: thread.run.completed
-data: {"id":"run_XuQ2aPPhhdvhu3oUhietCm7M","object":"thread.run","created_at":1735584158,"assistant_id":"asst_I9qWQ7KpkLcNKXERdAAIVWuB","thread_id":"thread_ShenS2zJomzXQMRctzLWWdjL","status":"completed","started_at":1735584158,"expires_at":null,"cancelled_at":null,"failed_at":null,"completed_at":1735584161,"required_action":null,"last_error":null,"model":"gpt-4o-mini","instructions":"You are a helpful assistant","tools":[{"type":"function","function":{"name":"process_records","description":"Process a list of records, where each record is a dictionary with string keys and integer values.","parameters":{"type":"object","properties":{"records":{"type":"array","items":{"type":"object"},"description":"A list containing dictionaries that map strings to integers."}},"required":["records"]},"strict":false}},{"type":"function","function":{"name":"merge_dicts","description":"Merges two dictionaries.","parameters":{"type":"object","properties":{"dict1":{"type":"object","description":"First dictionary."},"dict2":{"type":"object","description":"Second dictionary."}},"required":["dict1","dict2"]},"strict":false}},{"type":"function","function":{"name":"calculate_sum","description":"Calculates the sum of two integers.","parameters":{"type":"object","properties":{"a":{"type":"integer","description":"First integer."},"b":{"type":"integer","description":"Second integer."}},"required":["a","b"]},"strict":false}},{"type":"function","function":{"name":"fetch_weather","description":"Fetches the weather information for the specified location.","parameters":{"type":"object","properties":{"location":{"type":"string","description":"The location to fetch weather for."}},"required":["location"]},"strict":false}},{"type":"function","function":{"name":"fetch_current_datetime","description":"Get the current time as a JSON string, optionally formatted.","parameters":{"type":"object","properties":{"format":{"type":["string","null"],"description":"The format in which to return the current time. Defaults to None, which uses a standard format."}},"required":[]},"strict":false}},{"type":"function","function":{"name":"get_user_info","description":"Retrieves user information based on user ID.","parameters":{"type":"object","properties":{"user_id":{"type":"integer","description":"ID of the user."}},"required":["user_id"]},"strict":false}},{"type":"function","function":{"name":"convert_temperature","description":"Converts temperature from Celsius to Fahrenheit.","parameters":{"type":"object","properties":{"celsius":{"type":"number","description":"Temperature in Celsius."}},"required":["celsius"]},"strict":false}},{"type":"function","function":{"name":"longest_word_in_sentences","description":"Finds the longest word in each sentence.","parameters":{"type":"object","properties":{"sentences":{"type":"array","items":{"type":"string"},"description":"A list of sentences."}},"required":["sentences"]},"strict":false}},{"type":"function","function":{"name":"toggle_flag","description":"Toggles a boolean flag.","parameters":{"type":"object","properties":{"flag":{"type":"boolean","description":"The flag to toggle."}},"required":["flag"]},"strict":false}},{"type":"function","function":{"name":"send_email","description":"Sends an email with the specified subject and body to the recipient.","parameters":{"type":"object","properties":{"recipient":{"type":"string","description":"Email address of the recipient."},"subject":{"type":"string","description":"Subject of the email."},"body":{"type":"string","description":"Body content of the email."}},"required":["recipient","subject","body"]},"strict":false}}],"tool_resources":{"code_interpreter":{"file_ids":[]}},"metadata":{},"temperature":1.0,"top_p":1.0,"max_completion_tokens":null,"max_prompt_tokens":null,"truncation_strategy":{"type":"auto","last_messages":null},"incomplete_details":null,"usage":{"prompt_tokens":640,"completion_tokens":151,"total_tokens":791},"response_format":"auto","tool_choice":"auto","parallel_tool_calls":true}
+data: {"id":"run_001","object":"thread.run","created_at":1735584158,"assistant_id":"asst_001","thread_id":"thread_001","status":"completed","started_at":1735584158,"expires_at":null,"cancelled_at":null,"failed_at":null,"completed_at":1735584161,"required_action":null,"last_error":null,"model":"gpt-4o-mini","instructions":"You are a helpful assistant","tools":[{"type":"function","function":{"name":"process_records","description":"Process a list of records, where each record is a dictionary with string keys and integer values.","parameters":{"type":"object","properties":{"records":{"type":"array","items":{"type":"object"},"description":"A list containing dictionaries that map strings to integers."}},"required":["records"]},"strict":false}},{"type":"function","function":{"name":"merge_dicts","description":"Merges two dictionaries.","parameters":{"type":"object","properties":{"dict1":{"type":"object","description":"First dictionary."},"dict2":{"type":"object","description":"Second dictionary."}},"required":["dict1","dict2"]},"strict":false}},{"type":"function","function":{"name":"calculate_sum","description":"Calculates the sum of two integers.","parameters":{"type":"object","properties":{"a":{"type":"integer","description":"First integer."},"b":{"type":"integer","description":"Second integer."}},"required":["a","b"]},"strict":false}},{"type":"function","function":{"name":"fetch_weather","description":"Fetches the weather information for the specified location.","parameters":{"type":"object","properties":{"location":{"type":"string","description":"The location to fetch weather for."}},"required":["location"]},"strict":false}},{"type":"function","function":{"name":"fetch_current_datetime","description":"Get the current time as a JSON string, optionally formatted.","parameters":{"type":"object","properties":{"format":{"type":["string","null"],"description":"The format in which to return the current time. Defaults to None, which uses a standard format."}},"required":[]},"strict":false}},{"type":"function","function":{"name":"get_user_info","description":"Retrieves user information based on user ID.","parameters":{"type":"object","properties":{"user_id":{"type":"integer","description":"ID of the user."}},"required":["user_id"]},"strict":false}},{"type":"function","function":{"name":"convert_temperature","description":"Converts temperature from Celsius to Fahrenheit.","parameters":{"type":"object","properties":{"celsius":{"type":"number","description":"Temperature in Celsius."}},"required":["celsius"]},"strict":false}},{"type":"function","function":{"name":"longest_word_in_sentences","description":"Finds the longest word in each sentence.","parameters":{"type":"object","properties":{"sentences":{"type":"array","items":{"type":"string"},"description":"A list of sentences."}},"required":["sentences"]},"strict":false}},{"type":"function","function":{"name":"toggle_flag","description":"Toggles a boolean flag.","parameters":{"type":"object","properties":{"flag":{"type":"boolean","description":"The flag to toggle."}},"required":["flag"]},"strict":false}},{"type":"function","function":{"name":"send_email","description":"Sends an email with the specified subject and body to the recipient.","parameters":{"type":"object","properties":{"recipient":{"type":"string","description":"Email address of the recipient."},"subject":{"type":"string","description":"Subject of the email."},"body":{"type":"string","description":"Body content of the email."}},"required":["recipient","subject","body"]},"strict":false}}],"tool_resources":{"code_interpreter":{"file_ids":[]}},"metadata":{},"temperature":1.0,"top_p":1.0,"max_completion_tokens":null,"max_prompt_tokens":null,"truncation_strategy":{"type":"auto","last_messages":null},"incomplete_details":null,"usage":{"prompt_tokens":640,"completion_tokens":151,"total_tokens":791},"response_format":"auto","tool_choice":"auto","parallel_tool_calls":true}
 
 event: done
 data: [DONE]

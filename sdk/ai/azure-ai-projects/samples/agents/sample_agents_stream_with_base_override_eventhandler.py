@@ -37,9 +37,9 @@ import os
 # Because we want the iteration to be a string, we define str as the generic type for BaseAsyncAgentEventHandler
 # and override the _process_event method to return a string.
 # The get_stream_chunks method is defined to return the chunks as strings because the iteration is a string.
-class MyEventHandler(BaseAgentEventHandler[str]):
+class MyEventHandler(BaseAgentEventHandler[Optional[str]]):
 
-    def _process_event(self, event_data_str: str) -> str:  # type: ignore[return]
+    def _process_event(self, event_data_str: str) -> Optional[str]:  # type: ignore[return]
         event_lines = event_data_str.strip().split("\n")
         event_type: Optional[str] = None
         event_data = ""
@@ -57,11 +57,12 @@ class MyEventHandler(BaseAgentEventHandler[str]):
             event_obj: MessageDeltaChunk = MessageDeltaChunk(**json.loads(event_data))
 
             return event_obj.text
-        return ""
+        return None
 
     def get_stream_chunks(self) -> Generator[str, None, None]:
         for chunk in self:
-            yield chunk
+            if chunk:
+                yield chunk
 
 
 project_client = AIProjectClient.from_connection_string(
