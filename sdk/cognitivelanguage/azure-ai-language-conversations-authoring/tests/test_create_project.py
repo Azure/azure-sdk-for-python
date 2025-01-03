@@ -12,6 +12,7 @@ ConversationsAuthoringPreparer = functools.partial(
 )
 
 class TestConversationsAuthoring(AzureRecordedTestCase):
+    # Create the client instance for reuse in tests
     def create_client(self, endpoint, key):
         credential = AzureKeyCredential(key)
         client = AuthoringClient(endpoint, credential)
@@ -21,6 +22,7 @@ class TestConversationsAuthoringCase(TestConversationsAuthoring):
     @ConversationsAuthoringPreparer()
     @recorded_by_proxy
     def test_create_project(self, conversationsauthoring_endpoint, conversationsauthoring_key):
+        # Create the client
         client = self.create_client(conversationsauthoring_endpoint, conversationsauthoring_key)
 
         # Define project data
@@ -34,7 +36,10 @@ class TestConversationsAuthoringCase(TestConversationsAuthoring):
         }
 
         # Send request to create the project
-        response = client.analyze_conversation_authoring.create_project(project_name, project_data)
+        response = client.analyze_conversation_authoring.create_project(
+            project_name=project_name,
+            body=project_data
+        )
         
         # Validate response (assert attributes of AnalyzeConversationAuthoringProjectMetadata)
         assert response is not None  # Ensure the response is not None
