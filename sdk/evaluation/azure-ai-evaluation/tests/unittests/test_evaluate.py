@@ -161,7 +161,7 @@ class TestEvaluate:
             )
 
         assert "Unable to load data from " in exc_info.value.args[0]
-        assert "Please ensure the input is valid JSONL format." in exc_info.value.args[0]
+        assert "Supported formats are JSONL and CSV. Detailed error:" in exc_info.value.args[0]
 
     def test_evaluate_missing_required_inputs(self, missing_columns_jsonl_file):
         with pytest.raises(EvaluationException) as exc_info:
@@ -686,20 +686,11 @@ class TestEvaluate:
         assert double_override_results["rows"][0]["outputs.echo.echo_query"] == "new query"
         assert double_override_results["rows"][0]["outputs.echo.echo_response"] == "new response"
 
-    def test_missing_inputs(self, questions_file):
-        """Test we are raising exception if required input is missing in data."""
-        with pytest.raises(EvaluationException) as cm:
-            evaluate(
-                data=questions_file,
-                target=_target_fn,
-                evaluators={"f1": F1ScoreEvaluator()},
-            )
-        assert "Some evaluators are missing required inputs:\n- f1: ['ground_truth']\n\n" in cm.value.args[0]
-
     def test_unsupported_file_inputs(self, mock_model_config, unsupported_file_type):
         with pytest.raises(EvaluationException) as cm:
             evaluate(
                 data=unsupported_file_type,
                 evaluators={"groundedness": GroundednessEvaluator(model_config=mock_model_config)},
             )
-        assert "Unsupported file format: " in cm.value.args[0]
+        assert "Unable to load data from " in cm.value.args[0]
+        assert "Supported formats are JSONL and CSV. Detailed error:" in cm.value.args[0]
