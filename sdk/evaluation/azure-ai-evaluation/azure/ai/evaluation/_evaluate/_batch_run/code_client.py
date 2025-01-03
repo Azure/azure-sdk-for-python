@@ -13,7 +13,7 @@ import pandas as pd
 from promptflow.contracts.types import AttrDict
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
-from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _has_aggregator, get_int_env_var, DataLoaderFactory
+from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _has_aggregator, get_int_env_var, load_jsonl
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
 from ..._constants import PF_BATCH_TIMEOUT_SEC, PF_BATCH_TIMEOUT_SEC_DEFAULT
@@ -141,8 +141,7 @@ class CodeClient:  # pylint: disable=client-accepts-api-version-keyword
         input_df = data
         if not isinstance(input_df, pd.DataFrame):
             try:
-                data_loader = DataLoaderFactory.get_loader(data)
-                input_df = data_loader.load()
+                json_data = load_jsonl(data)
             except Exception as exc:
                 raise EvaluationException(
                     message=f"Unable to load data from '{data}'. Supported formats are JSONL and CSV. Detailed error: {exc}.",
@@ -150,6 +149,8 @@ class CodeClient:  # pylint: disable=client-accepts-api-version-keyword
                     category=ErrorCategory.INVALID_VALUE,
                     blame=ErrorBlame.USER_ERROR,
                 ) from exc
+
+            input_df = pd.DataFrame(json_data)
 
         eval_future = self._thread_pool.submit(
             self._calculate_metric,
