@@ -347,14 +347,8 @@ class CSVDataFileLoader:
 class DataLoaderFactory:
     @staticmethod
     def get_loader(filename: Union[os.PathLike, str]) -> Union[JSONLDataFileLoader, CSVDataFileLoader]:
-        if str(filename).endswith(".jsonl"):
-            return JSONLDataFileLoader(filename)
-        elif str(filename).endswith(".csv"):
+        if str(filename).endswith(".csv"):
             return CSVDataFileLoader(filename)
-        else:
-            raise EvaluationException(
-                message=f"Unsupported file format: {filename}. Supported formats are .jsonl and .csv",
-                internal_message=f"Unsupported file format: {filename}. Supported formats are .jsonl and .csv",
-                target=ErrorTarget.EVALUATE,
-                category=ErrorCategory.INVALID_VALUE,
-            )
+        
+        # fallback to JSONL to maintain backward compatibility
+        return JSONLDataFileLoader(filename)
