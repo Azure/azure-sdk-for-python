@@ -421,7 +421,9 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
                 local_paths.append(local_file_path)
 
         # We will write the artifacts to the workspaceblobstore
-        datastore = self._management_client.workspace_get_default_datastore(self._workspace_name, True)
+        datastore = self._management_client.workspace_get_default_datastore(
+            self._workspace_name, include_credentials=True
+        )
         account_url = f"{datastore.account_name}.blob.{datastore.endpoint}"
 
         svc_client = BlobServiceClient(account_url=account_url, credential=datastore.credential)

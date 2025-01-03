@@ -44,7 +44,7 @@ with project_client:
     file_search = FileSearchTool(vector_store_ids=[vector_store.id])
 
     agent = project_client.agents.create_agent(
-        model="gpt-4-1106-preview",
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-assistant",
         instructions="Hello, you are helpful assistant and can search information from uploaded files",
         tools=file_search.definitions,

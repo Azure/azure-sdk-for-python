@@ -36,10 +36,19 @@ module_logger = logging.getLogger(__name__)
 
 class Gen2StorageClient:
     def __init__(self, credential: str, file_system: str, account_url: str):
-        service_client = DataLakeServiceClient(account_url=account_url, credential=credential)
         self.account_name = account_url.split(".")[0].split("//")[1]
         self.file_system = file_system
-        self.file_system_client = service_client.get_file_system_client(file_system=file_system)
+
+        try:
+            service_client = DataLakeServiceClient(account_url=account_url, credential=credential)
+            self.file_system_client = service_client.get_file_system_client(file_system=file_system)
+        except ValueError as e:
+            api_version = e.args[0].split("\n")[-1]
+            service_client = DataLakeServiceClient(
+                account_url=account_url, credential=credential, api_version=api_version
+            )
+            self.file_system_client = service_client.get_file_system_client(file_system=file_system)
+
         try:
             self.file_system_client.create_file_system()
         except ResourceExistsError:
