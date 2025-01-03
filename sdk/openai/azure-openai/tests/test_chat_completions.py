@@ -1115,7 +1115,7 @@ class TestChatCompletions(AzureRecordedTestCase):
     @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
     def test_chat_completion_vision(self, client, api_type, api_version, **kwargs):
         completion = client.chat.completions.create(
-            model="gpt-4-vision-preview",
+            model="gpt-4o-mini",
             messages=[
                 {
                     "role": "user",
@@ -1123,7 +1123,7 @@ class TestChatCompletions(AzureRecordedTestCase):
                         {"type": "text", "text": "What's in this image?"},
                         {
                             "type": "image_url",
-                            "image_url": "https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/images/handwritten-note.jpg",
+                            "image_url": {"url": "https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/images/handwritten-note.jpg"}
                         },
                     ],
                 }

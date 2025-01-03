@@ -241,7 +241,7 @@ class AmlCompute(Compute):
         else:
             subnet_resource = None
 
-        # Scale settings is required when creating an AzureML compute cluster
+        # Scale settings is required when creating an AzureML compute cluster.
         scale_settings = ScaleSettings(
             max_node_count=self.max_instances,
             min_node_count=self.min_instances,
