@@ -48,6 +48,7 @@ class StressTestResults(object):
     def __repr__(self):
         return str(vars(self))
 
+
 class StressTestRunnerState(object):
     """Per-runner state, e.g. if you spawn 3 senders each will have this as their state object,
     which will be coalesced at completion into StressTestResults"""
@@ -74,7 +75,8 @@ class StressTestRunnerState(object):
 
 class StressTestRunner:
     """Framework for running a service bus stress test.
-    Duration can be overriden via the --stress_test_duration flag from the command line"""
+    Duration can be overriden via the --stress_test_duration flag from the command line
+    """
 
     def __init__(
         self,
@@ -216,9 +218,9 @@ class StressTestRunner:
                         if self.send_batch_size:
                             self._state.total_sent += self.send_batch_size
                         else:
-                            self._state.total_sent += 1 # send single message
+                            self._state.total_sent += 1  # send single message
                         self.on_send(self._state, message, sender)
-          
+
                     except Exception as e:
                         _logger.exception("Exception during send: {}".format(e))
                         self.azure_monitor_metric.record_error(e)
@@ -259,7 +261,9 @@ class StressTestRunner:
                             try:
                                 if self.should_complete_messages:
                                     receiver.complete_message(message)
-                            except MessageAlreadySettled:  # It may have been settled in the plugin callback.
+                            except (
+                                MessageAlreadySettled
+                            ):  # It may have been settled in the plugin callback.
                                 pass
 
                             self._state.total_received += 1
@@ -337,7 +341,7 @@ class StressTestRunner:
                             self.receivers, concurrent.futures.as_completed(receivers)
                         )
                     }
-            
+
                     result.total_received = sum(
                         [r.total_received for r in result.state_by_receiver.values()]
                     )
@@ -384,7 +388,7 @@ class StressTestRunnerAsync(StressTestRunner):
             fail_on_exception=fail_on_exception,
             azure_monitor_metric=azure_monitor_metric,
             process_monitor=process_monitor,
-            logging_level=logging_level
+            logging_level=logging_level,
         )
 
     async def _send_async(self, sender, end_time):
@@ -426,7 +430,9 @@ class StressTestRunnerAsync(StressTestRunner):
         try:
             if self.should_complete_messages:
                 await receiver.complete_message(message)
-        except MessageAlreadySettled:  # It may have been settled in the plugin callback.
+        except (
+            MessageAlreadySettled
+        ):  # It may have been settled in the plugin callback.
             pass
         self._state.total_received += 1
         # TODO: Get EnqueuedTimeUtc out of broker properties and calculate latency. Should properties/app properties be mostly None?
@@ -508,7 +514,7 @@ class StressTestRunnerAsync(StressTestRunner):
                     s: f.result() for s, f in zip(self.senders, send_tasks)
                 }
                 result.total_sent = sum(
-                [r.total_sent for r in result.state_by_sender.values()]
+                    [r.total_sent for r in result.state_by_sender.values()]
                 )
             if self.receivers:
                 result.state_by_receiver = {

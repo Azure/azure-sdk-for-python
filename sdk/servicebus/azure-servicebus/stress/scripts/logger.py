@@ -11,18 +11,35 @@ from logging.handlers import RotatingFileHandler
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 
 
-def get_base_logger(log_filename, logger_name, level=logging.ERROR, print_console=False, log_format=None,
-                    log_file_max_bytes=20 * 1024 * 1024, log_file_backup_count=3):
+def get_base_logger(
+    log_filename,
+    logger_name,
+    level=logging.ERROR,
+    print_console=False,
+    log_format=None,
+    log_file_max_bytes=20 * 1024 * 1024,
+    log_file_backup_count=3,
+):
     logger = logging.getLogger(logger_name)
     logger.setLevel(level)
-    formatter = log_format or logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+    formatter = log_format or logging.Formatter(
+        "%(asctime)s %(name)-12s %(levelname)-8s %(message)s"
+    )
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
     return logger
 
-def get_logger(log_filename, logger_name, level=logging.ERROR, print_console=False, log_format=None,
-               log_file_max_bytes=20 * 1024 * 1024, log_file_backup_count=3):
+
+def get_logger(
+    log_filename,
+    logger_name,
+    level=logging.ERROR,
+    print_console=False,
+    log_format=None,
+    log_file_max_bytes=20 * 1024 * 1024,
+    log_file_backup_count=3,
+):
     stress_logger = logging.getLogger(logger_name)
     stress_logger.setLevel(level)
     servicebus_logger = logging.getLogger("azure.servicebus")
@@ -30,7 +47,9 @@ def get_logger(log_filename, logger_name, level=logging.ERROR, print_console=Fal
     pyamqp_logger = logging.getLogger("azure.servicebus._pyamqp")
     pyamqp_logger.setLevel(level)
 
-    formatter = log_format or logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+    formatter = log_format or logging.Formatter(
+        "%(asctime)s %(name)-12s %(levelname)-8s %(message)s"
+    )
 
     console_handler = logging.FileHandler(log_filename)
     console_handler.setFormatter(formatter)
