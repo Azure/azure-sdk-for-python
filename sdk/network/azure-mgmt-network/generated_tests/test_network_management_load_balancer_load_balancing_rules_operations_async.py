@@ -21,11 +21,11 @@ class TestNetworkManagementLoadBalancerLoadBalancingRulesOperationsAsync(AzureMg
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_load_balancer_load_balancing_rules_list(self, resource_group):
         response = self.client.load_balancer_load_balancing_rules.list(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,13 +33,28 @@ class TestNetworkManagementLoadBalancerLoadBalancingRulesOperationsAsync(AzureMg
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_load_balancer_load_balancing_rules_get(self, resource_group):
         response = await self.client.load_balancer_load_balancing_rules.get(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
             load_balancing_rule_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_load_balancer_load_balancing_rules_begin_health(self, resource_group):
+        response = await (
+            await self.client.load_balancer_load_balancing_rules.begin_health(
+                group_name="str",
+                load_balancer_name="str",
+                load_balancing_rule_name="str",
+                api_version="2024-05-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

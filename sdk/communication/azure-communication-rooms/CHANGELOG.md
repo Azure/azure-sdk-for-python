@@ -1,5 +1,15 @@
 # Release History
 
+## 1.1.2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.1.1 (2024-12-10)
 - Update azure-code dependency
 

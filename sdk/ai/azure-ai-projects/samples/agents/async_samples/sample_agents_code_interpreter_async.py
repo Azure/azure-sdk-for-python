@@ -45,7 +45,7 @@ async def main() -> None:
             code_interpreter = CodeInterpreterTool(file_ids=[file.id])
 
             agent = await project_client.agents.create_agent(
-                model="gpt-4-1106-preview",
+                model=os.environ["MODEL_DEPLOYMENT_NAME"],
                 name="my-assistant",
                 instructions="You are helpful assistant",
                 tools=code_interpreter.definitions,

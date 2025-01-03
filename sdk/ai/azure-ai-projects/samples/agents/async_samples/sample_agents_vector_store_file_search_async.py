@@ -46,7 +46,7 @@ async def main():
 
             # Notices that FileSearchTool as tool and tool_resources must be added or the assistant unable to search the file
             agent = await project_client.agents.create_agent(
-                model="gpt-4-1106-preview",
+                model=os.environ["MODEL_DEPLOYMENT_NAME"],
                 name="my-assistant",
                 instructions="You are helpful assistant",
                 tools=file_search_tool.definitions,

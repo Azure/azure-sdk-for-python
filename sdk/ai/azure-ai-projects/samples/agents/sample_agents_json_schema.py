@@ -20,7 +20,7 @@ USAGE:
 
 import os
 
-from enum import StrEnum
+from enum import Enum
 from pydantic import BaseModel, TypeAdapter
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
@@ -41,7 +41,7 @@ project_client = AIProjectClient.from_connection_string(
 
 
 # Create the pydantic model to represent the planet names and there masses.
-class Planets(StrEnum):
+class Planets(str, Enum):
     Earth = "Earth"
     Mars = "Mars"
     Jupyter = "Jupyter"
@@ -58,7 +58,7 @@ with project_client:
     agent = project_client.agents.create_agent(
         # Note only gpt-4o-mini-2024-07-18 and
         # gpt-4o-2024-08-06 and later support structured output.
-        model="gpt-4o-mini",
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-assistant",
         instructions="Extract the information about planets.",
         headers={"x-ms-enable-preview": "true"},
