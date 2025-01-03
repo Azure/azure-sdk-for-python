@@ -20,7 +20,7 @@ class TestNetworkManagementHubVirtualNetworkConnectionsOperations(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_hub_virtual_network_connections_begin_create_or_update(self, resource_group):
         response = self.client.hub_virtual_network_connections.begin_create_or_update(
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
@@ -46,7 +46,7 @@ class TestNetworkManagementHubVirtualNetworkConnectionsOperations(AzureMgmtRecor
                     },
                 },
             },
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -54,12 +54,12 @@ class TestNetworkManagementHubVirtualNetworkConnectionsOperations(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_hub_virtual_network_connections_begin_delete(self, resource_group):
         response = self.client.hub_virtual_network_connections.begin_delete(
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             connection_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -67,12 +67,12 @@ class TestNetworkManagementHubVirtualNetworkConnectionsOperations(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_hub_virtual_network_connections_get(self, resource_group):
         response = self.client.hub_virtual_network_connections.get(
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             connection_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -80,11 +80,11 @@ class TestNetworkManagementHubVirtualNetworkConnectionsOperations(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_hub_virtual_network_connections_list(self, resource_group):
         response = self.client.hub_virtual_network_connections.list(
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
