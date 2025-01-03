@@ -65,7 +65,8 @@ class MyEventHandler(BaseAgentEventHandler[str]):
 
     def get_stream_chunks(self) -> Generator[str, None, None]:
         for chunk in self:
-            yield chunk
+            if chunk:
+                yield chunk
 
 
 project_client = AIProjectClient.from_connection_string(
