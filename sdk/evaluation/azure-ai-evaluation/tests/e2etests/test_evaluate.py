@@ -978,7 +978,7 @@ class TestEvaluate:
 
         # run the evaluation on csv data
         csv_result = evaluate(
-            data=data_file,
+            data=csv_file,
             evaluators={"grounded": groundedness_eval, "f1_score": f1_score_eval},
         )
 

@@ -142,16 +142,16 @@ class CodeClient:  # pylint: disable=client-accepts-api-version-keyword
         if not isinstance(input_df, pd.DataFrame):
             try:
                 json_data = load_jsonl(data)
-            except Exception as exc:
+            except json.JSONDecodeError as exc:
                 raise EvaluationException(
-                    message=f"Unable to load data from '{data}'. Supported formats are JSONL and CSV. Detailed error: {exc}.",
+                    message=f"Failed to parse data as JSON: {data}. Provide valid json lines data.",
+                    internal_message="Failed to parse data as JSON",
                     target=ErrorTarget.CODE_CLIENT,
                     category=ErrorCategory.INVALID_VALUE,
                     blame=ErrorBlame.USER_ERROR,
                 ) from exc
 
             input_df = pd.DataFrame(json_data)
-
         eval_future = self._thread_pool.submit(
             self._calculate_metric,
             evaluator=flow,

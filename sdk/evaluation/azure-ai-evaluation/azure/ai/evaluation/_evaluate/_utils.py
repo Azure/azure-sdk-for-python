@@ -336,7 +336,7 @@ class JSONLDataFileLoader:
 
     def load(self) -> pd.DataFrame:
         return pd.read_json(self.filename, lines=True)
-    
+
 class CSVDataFileLoader:
     def __init__(self, filename: Union[os.PathLike, str]):
         self.filename = filename
@@ -349,6 +349,6 @@ class DataLoaderFactory:
     def get_loader(filename: Union[os.PathLike, str]) -> Union[JSONLDataFileLoader, CSVDataFileLoader]:
         if str(filename).endswith(".csv"):
             return CSVDataFileLoader(filename)
-        
+
         # fallback to JSONL to maintain backward compatibility
         return JSONLDataFileLoader(filename)
