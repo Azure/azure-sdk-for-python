@@ -2073,39 +2073,10 @@ class AgentsOperations(AgentsOperationsGenerated):
         run_id: str,
         body: Union[JSON, IO[bytes]],
         *,
-        event_handler: None = None,
+        event_handler: _models.BaseAsyncAgentEventHandler,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> _models.AsyncAgentRunStream[_models.AsyncAgentEventHandler]:
-        """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
-        outputs will have a status of 'requires_action' with a required_action.type of
-        'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
-
-        :param thread_id: Required.
-        :type thread_id: str
-        :param run_id: Required.
-        :type run_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AsyncAgentRunStream
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def submit_tool_outputs_to_stream(
-        self,
-        thread_id: str,
-        run_id: str,
-        body: Union[JSON, IO[bytes]],
-        *,
-        event_handler: _models.BaseAsyncAgentEventHandlerT,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> _models.AsyncAgentRunStream[_models.BaseAsyncAgentEventHandlerT]:
+    ) -> None:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
@@ -2122,8 +2093,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AsyncAgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2135,9 +2104,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         *,
         tool_outputs: List[_models.ToolOutput],
         content_type: str = "application/json",
-        event_handler: None = None,
+        event_handler: _models.BaseAsyncAgentEventHandler,
         **kwargs: Any,
-    ) -> _models.AsyncAgentRunStream[_models.AsyncAgentEventHandler]:
+    ) -> None:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
@@ -2154,40 +2123,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword event_handler: The event handler to use for processing events during the run. Default
             value is None.
         :paramtype event_handler: ~azure.ai.projects.models.AsyncAgentEventHandler
-        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AsyncAgentRunStream
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def submit_tool_outputs_to_stream(
-        self,
-        thread_id: str,
-        run_id: str,
-        *,
-        tool_outputs: List[_models.ToolOutput],
-        content_type: str = "application/json",
-        event_handler: _models.BaseAsyncAgentEventHandlerT,
-        **kwargs: Any,
-    ) -> _models.AsyncAgentRunStream[_models.BaseAsyncAgentEventHandlerT]:
-        """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
-        outputs will have a status of 'requires_action' with a required_action.type of
-        'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
-
-        :param thread_id: Required.
-        :type thread_id: str
-        :param run_id: Required.
-        :type run_id: str
-        :keyword tool_outputs: Required.
-        :paramtype tool_outputs: list[~azure.ai.projects.models.ToolOutput]
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword event_handler: The event handler to use for processing events during the run. Default
-            value is None.
-        :paramtype event_handler: ~azure.ai.projects.models.AsyncAgentEventHandler
-        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AsyncAgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2199,9 +2134,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         tool_outputs: List[_models.ToolOutput] = _Unset,
-        event_handler: Optional[_models.BaseAsyncAgentEventHandlerT] = None,
+        event_handler: _models.BaseAsyncAgentEventHandler,
         **kwargs: Any,
-    ) -> _models.AsyncAgentRunStream[_models.BaseAsyncAgentEventHandlerT]:
+    ) -> None:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
@@ -2215,8 +2150,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword tool_outputs: Required.
         :paramtype tool_outputs: list[~azure.ai.projects.models.ToolOutput]
         :keyword event_handler: The event handler to use for processing events during the run.
-        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AsyncAgentRunStream
+        :paramtype event_handler: ~azure.ai.projects.models.AsyncAgentEventHandler
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2239,10 +2173,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         # Cast the response to Iterator[bytes] for type correctness
         response_iterator: AsyncIterator[bytes] = cast(AsyncIterator[bytes], await response)
 
-        if not event_handler:
-            event_handler = cast(_models.BaseAsyncAgentEventHandlerT, _models.AsyncAgentEventHandler())
-
-        return _models.AsyncAgentRunStream(response_iterator, self._handle_submit_tool_outputs, event_handler)
+        event_handler.initialize(response_iterator, self._handle_submit_tool_outputs)
 
     async def _handle_submit_tool_outputs(
         self, run: _models.ThreadRun, event_handler: _models.BaseAsyncAgentEventHandler
@@ -2265,10 +2196,9 @@ class AgentsOperations(AgentsOperationsGenerated):
 
                 logger.info("Tool outputs: %s", tool_outputs)
                 if tool_outputs:
-                    async with await self.submit_tool_outputs_to_stream(
+                    await self.submit_tool_outputs_to_stream(
                         thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs, event_handler=event_handler
-                    ) as stream:
-                        await stream.until_done()
+                    )
 
     @overload
     async def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:

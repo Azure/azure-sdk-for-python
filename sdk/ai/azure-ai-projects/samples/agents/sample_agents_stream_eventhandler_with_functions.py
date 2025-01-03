@@ -46,19 +46,18 @@ class MyEventHandler(AgentEventHandler):
     def __init__(self, functions: FunctionTool) -> None:
         super().__init__()
         self.functions = functions
-        super().__init__()
 
-    def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
-        print(f"Text delta received: {delta.text}")
+    def on_message_delta(self, delta: "MessageDeltaChunk") -> str:
+        return f"Text delta received: {delta.text}"
 
-    def on_thread_message(self, message: "ThreadMessage") -> None:
-        print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
+    def on_thread_message(self, message: "ThreadMessage") -> str:
+        return f"ThreadMessage created. ID: {message.id}, Status: {message.status}"
 
-    def on_thread_run(self, run: "ThreadRun") -> None:
-        print(f"ThreadRun status: {run.status}")
+    def on_thread_run(self, run: "ThreadRun") -> str:
+        result = f"ThreadRun status: {run.status}\n"
 
         if run.status == "failed":
-            print(f"Run failed. Error: {run.last_error}")
+            result += f"Run failed. Error: {run.last_error}\n"
 
         if run.status == "requires_action" and isinstance(run.required_action, SubmitToolOutputsAction):
             tool_calls = run.required_action.submit_tool_outputs.tool_calls
@@ -67,7 +66,7 @@ class MyEventHandler(AgentEventHandler):
             for tool_call in tool_calls:
                 if isinstance(tool_call, RequiredFunctionToolCall):
                     try:
-                        output = functions.execute(tool_call)
+                        output = self.functions.execute(tool_call)
                         tool_outputs.append(
                             ToolOutput(
                                 tool_call_id=tool_call.id,
@@ -75,26 +74,28 @@ class MyEventHandler(AgentEventHandler):
                             )
                         )
                     except Exception as e:
-                        print(f"Error executing tool_call {tool_call.id}: {e}")
+                        result += f"Error executing tool_call {tool_call.id}: {e}\n"
 
-            print(f"Tool outputs: {tool_outputs}")
+            result += f"Tool outputs: {tool_outputs}\n"
             if tool_outputs:
-                with project_client.agents.submit_tool_outputs_to_stream(
+                # Once we receive 'requires_action' status, the next event will be DONE.
+                # Here we associate our existing event handler to the next stream.
+                project_client.agents.submit_tool_outputs_to_stream(
                     thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs, event_handler=self
-                ) as stream:
-                    stream.until_done()
+                )
+        return result
 
-    def on_run_step(self, step: "RunStep") -> None:
-        print(f"RunStep type: {step.type}, Status: {step.status}")
+    def on_run_step(self, step: "RunStep") -> str:
+        return f"RunStep type: {step.type}, Status: {step.status}"
 
-    def on_error(self, data: str) -> None:
-        print(f"An error occurred. Data: {data}")
+    def on_error(self, data: str) -> str:
+        return f"An error occurred. Data: {data}"
 
-    def on_done(self) -> None:
-        print("Stream completed.")
+    def on_done(self) -> str:
+        return "Stream completed."
 
-    def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
-        print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
+    def on_unhandled_event(self, event_type: str, event_data: Any) -> str:
+        return f"Unhandled Event Type: {event_type}, Data: {event_data}"
 
 
 with project_client:
@@ -124,7 +125,11 @@ with project_client:
     with project_client.agents.create_stream(
         thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler(functions)
     ) as stream:
-        stream.until_done()
+        for event_type, event_data, func_return in stream:
+            print(f"Received data.")
+            print(f"Streaming receive Event Type: {event_type}")
+            print(f"Event Data: {str(event_data)[:100]}...")
+            print(f"Event Function return: {func_return}\n")
 
     project_client.agents.delete_agent(agent.id)
     print("Deleted agent")
