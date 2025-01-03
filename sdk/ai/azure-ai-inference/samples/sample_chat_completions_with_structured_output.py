@@ -10,20 +10,30 @@ DESCRIPTION:
     `response_format` for a chat completions call asking how to bake a choclate
     cake.
 
-    This sample assumes the AI model is hosted on a Serverless API or
-    Managed Compute endpoint. For GitHub Models or Azure OpenAI endpoints,
-    the client constructor needs to be modified. See package documentation:
+    Structured output is only supported by some Chat Completions models. This
+    sample was run on a GPT-4o model hosted on Azure OpenAI, with api-version
+    "2024-08-01-preview".
+
+    If you are targeting a different endpoint (e.g. GitHub Models endpoint,
+    Serverless API endpoint, Managed Compute endpoint) the client constructor may
+    needs to be modified. See package documentation:
     https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/README.md#key-concepts
 
 USAGE:
     python sample_chat_completions_with_structured_output.py
 
     Set these two environment variables before running the sample:
-    1) AZURE_AI_CHAT_ENDPOINT - Your endpoint URL, in the form 
-        https://<your-deployment-name>.<your-azure-region>.models.ai.azure.com
-        where `your-deployment-name` is your unique AI Model deployment name, and
-        `your-azure-region` is the Azure region where your model is deployed.
-    2) AZURE_AI_CHAT_KEY - Your model key (a 32-character string). Keep it secret.
+    1) AZURE_OPENAI_CHAT_ENDPOINT - Your AOAI endpoint URL, with partial path, in the form
+        https://<your-unique-resouce-name>.openai.azure.com/openai/deployments/<your-deployment-name>
+        where `your-unique-resource-name` is your globally unique AOAI resource name,
+        and `your-deployment-name` is your AI Model deployment name.
+        For example: https://your-unique-host.openai.azure.com/openai/deployments/gpt-4o
+    2) AZURE_OPENAI_CHAT_KEY - Your model key (a 32-character string). Keep it secret. This
+        is only required for key authentication.
+
+    Update `api_version` (the AOAI REST API version) as needed, based on the model docs.
+    See also the "Data plane - inference" row in the table here for latest AOAI api-version:
+    https://aka.ms/azsdk/azure-ai-inference/azure-openai-api-versions
 """
 
 
@@ -42,10 +52,10 @@ def sample_chat_completions_with_structured_output():
     from azure.core.credentials import AzureKeyCredential
 
     try:
-        endpoint = os.environ["AZURE_AI_CHAT_ENDPOINT"]
-        key = os.environ["AZURE_AI_CHAT_KEY"]
+        endpoint = os.environ["AZURE_OPENAI_CHAT_ENDPOINT"]
+        key = os.environ["AZURE_OPENAI_CHAT_KEY"]
     except KeyError:
-        print("Missing environment variable 'AZURE_AI_CHAT_ENDPOINT' or 'AZURE_AI_CHAT_KEY'")
+        print("Missing environment variable 'AZURE_OPENAI_CHAT_ENDPOINT' or 'AZURE_OPENAI_CHAT_KEY'")
         print("Set them before running this sample.")
         exit()
 
