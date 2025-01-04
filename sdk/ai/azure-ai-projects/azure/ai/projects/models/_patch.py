@@ -526,6 +526,7 @@ class MessageAttachment(MessageAttachmentGenerated):
 
 
 ToolDefinitionT = TypeVar("ToolDefinitionT", bound=ToolDefinition)
+ToolT = TypeVar("ToolT", bound="Tool")
 
 
 class Tool(ABC, Generic[ToolDefinitionT]):
@@ -565,6 +566,19 @@ class BaseFunctionTool(Tool[FunctionToolDefinition]):
         :param functions: A set of function objects.
         """
         self._functions = self._create_function_dict(functions)
+        self._definitions = self._build_function_definitions(self._functions)
+
+    def extend_functions(self, extra_functions: Set[Callable[..., Any]]) -> None:
+        """
+        Merge extra functions into this FunctionTool’s existing function set.
+        If a function with the same name already exists, it is overwritten.
+        """
+        # Convert the existing dictionary of { name: function } back into a set
+        existing_functions = set(self._functions.values())
+        # Merge old + new
+        combined = existing_functions.union(extra_functions)
+        # Rebuild state
+        self._functions = self._create_function_dict(combined)
         self._definitions = self._build_function_definitions(self._functions)
 
     def _create_function_dict(self, functions: Set[Callable[..., Any]]) -> Dict[str, Callable[..., Any]]:
@@ -1111,7 +1125,7 @@ class BaseToolSet:
             "tools": self.definitions,
         }
 
-    def get_tool(self, tool_type: Type[Tool]) -> Tool:
+    def get_tool(self, tool_type: Type[ToolT]) -> ToolT:
         """
         Get a tool of the specified type from the tool set.
 
@@ -1121,9 +1135,9 @@ class BaseToolSet:
         :raises ValueError: If a tool of the specified type is not found.
         """
         for tool in self._tools:
-            if isinstance(tool, tool_type):
-                return tool
-        raise ValueError(f"Tool of type {tool_type.__name__} not found.")
+           if isinstance(tool, tool_type):
+               return cast(ToolT, tool)
+        raise ValueError(f"Tool of type {tool_type.__name__} not found in the ToolSet.")
 
 
 class ToolSet(BaseToolSet):

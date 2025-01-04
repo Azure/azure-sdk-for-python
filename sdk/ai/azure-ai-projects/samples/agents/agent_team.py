@@ -1,4 +1,4 @@
-from typing import Optional, Set
+from typing import Optional, Set, List
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import FunctionTool, ToolSet, MessageRole, Agent
@@ -11,12 +11,21 @@ class AgentTeamMember:
     :param model: The model (e.g. GPT-4) used by this agent.
     :param name: The agent's name.
     :param instructions: The agent's initial instructions or "personality".
+    :param toolset: An optional ToolSet with specialized tools for this agent.
     """
-    def __init__(self, model: str, name: str, instructions: str) -> None:
+    def __init__(
+        self, 
+        model: str, 
+        name: str, 
+        instructions: str, 
+        toolset: Optional[ToolSet] = None
+    ) -> None:
+
         self.model = model
         self.name = name
         self.instructions = instructions
         self.agent_instance: Optional[Agent] = None
+        self.toolset: Optional[ToolSet] = toolset
 
 
 class AgentTask:
@@ -45,8 +54,8 @@ class AgentTeam:
         """
         Initialize a new AgentTeam and sets it as the singleton instance.
         """
-        self.members = []
-        self.tasks = []
+        self.members : List[AgentTeamMember] = []
+        self.tasks : List[AgentTask] = []
         self.team_leader: Optional[AgentTeamMember] = None
         self.thread_id: str = ""
         AgentTeam.instance = self
@@ -61,15 +70,45 @@ class AgentTeam:
             raise ValueError("No AgentTeam instance has been created.")
         return cls.instance
 
-    def add_agent(self, model: str, name: str, instructions: str) -> None:
+    def add_agent(
+        self, 
+        model: str, 
+        name: str, 
+        instructions: str, 
+        toolset: Optional[ToolSet] = None
+    ) -> None:
         """
         Add a new agent (team member) to this AgentTeam.
 
         :param model: The model name (e.g. GPT-4) for the agent.
         :param name: The name of the agent being added.
         :param instructions: The initial instructions/personality for the agent.
+        :param toolset: An optional ToolSet to configure specific tools (functions, etc.) 
+                        for this agent. If None, we create a default with agent_team_functions.
         """
-        member = AgentTeamMember(model=model, name=name, instructions=instructions)
+        if toolset is None:
+            # Create a fresh ToolSet with only the default functions
+            toolset = ToolSet()
+            default_function_tool = FunctionTool(agent_team_default_functions)
+            toolset.add(default_function_tool)
+        else:
+            # If the user gave us a ToolSet, ensure it includes agent_team_functions
+            try:
+                # Try to get the existing FunctionTool
+                function_tool = toolset.get_tool(FunctionTool)
+                # Merge the default agent_team_functions into function_tool
+                function_tool.extend_functions(agent_team_default_functions)
+            except ValueError:
+                # No FunctionTool found, so add our default
+                default_function_tool = FunctionTool(agent_team_default_functions)
+                toolset.add(default_function_tool)
+
+        member = AgentTeamMember(
+            model=model,
+            name=name,
+            instructions=instructions,
+            toolset=toolset
+        )
         self.members.append(member)
 
     def add_task(self, task: AgentTask) -> None:
@@ -86,8 +125,10 @@ class AgentTeam:
         """
         assert AgentTeam.project_client is not None, "project_client must not be None"
 
-        # Example of constructing function tool references:
-        functions = FunctionTool(functions=agent_team_functions)
+        # Provide some default toolset for the TeamLeader if needed
+        leader_toolset = ToolSet()
+        default_function_tool = FunctionTool(agent_team_default_functions)
+        leader_toolset.add(default_function_tool)
 
         instructions = (
             "You are an agent who is responsible for receiving requests from the user "
@@ -108,12 +149,13 @@ class AgentTeam:
             model="gpt-4-1106-preview",
             name="TeamLeader",
             instructions=instructions,
+            toolset=leader_toolset
         )
         leader.agent_instance = AgentTeam.project_client.agents.create_agent(
-            model="gpt-4-1106-preview",
-            name="TeamLeader",
-            instructions=instructions,
-            tools=functions.definitions,
+            model=leader.model,
+            name=leader.name,
+            instructions=leader.instructions,
+            toolset=leader.toolset,
         )
 
         self.team_leader = leader
@@ -121,18 +163,18 @@ class AgentTeam:
     def create_team(self) -> None:
         """
         Create the team leader agent and initialize all member agents with
-        extended instructions/toolsets.
+        their (optionally customized) toolsets.
         """
         assert AgentTeam.project_client is not None, "project_client must not be None"
 
         self._create_team_leader()
 
-        # Build a toolset including the 'agent_team_functions'
-        toolset = ToolSet()
-        toolset.add(functions)
-
         for member in self.members:
-            # Give each member extended instructions about delegating tasks to others
+            if member is self.team_leader:
+                # Skip because we've already created the team leader above
+                continue
+
+            # Construct extended instructions about delegating tasks to others
             # and about how to use the create_task function.
             other_agents_info = ""
             for other_member in self.members:
@@ -157,7 +199,7 @@ class AgentTeam:
                 model=member.model,
                 name=member.name,
                 instructions=extended_instructions,
-                toolset=toolset,
+                toolset=member.toolset,
             )
 
     def dismantle_team(self) -> None:
@@ -271,8 +313,6 @@ def create_task(recipient: str, request: str, requestor: str) -> str:
 
 
 # Any additional functions that might be used by the agents:
-agent_team_functions: Set = {
+agent_team_default_functions: Set = {
     create_task,
 }
-
-functions = FunctionTool(functions=agent_team_functions)
