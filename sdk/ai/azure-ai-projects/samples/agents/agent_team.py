@@ -1,16 +1,18 @@
-# ------------------------------------
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-# ------------------------------------
+from typing import Optional, Set
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import FunctionTool, ToolSet, MessageRole, Agent
 
-from typing import Optional
-
 
 class AgentTeamMember:
-    def __init__(self, model, name, instructions):
+    """
+    Represents an individual agent on a team.
+
+    :param model: The model (e.g. GPT-4) used by this agent.
+    :param name: The agent's name.
+    :param instructions: The agent's initial instructions or "personality".
+    """
+    def __init__(self, model: str, name: str, instructions: str) -> None:
         self.model = model
         self.name = name
         self.instructions = instructions
@@ -18,155 +20,258 @@ class AgentTeamMember:
 
 
 class AgentTask:
-    def __init__(self, recipient: str, task_description: str, requestor: str):
+    """
+    Encapsulates a task for an agent to perform.
+
+    :param recipient: The name of the agent who should receive the task.
+    :param task_description: The description of the work to be done or question to be answered.
+    :param requestor: The name of the agent or user requesting the task.
+    """
+    def __init__(self, recipient: str, task_description: str, requestor: str) -> None:
         self.recipient = recipient
         self.task_description = task_description
         self.requestor = requestor
 
 
 class AgentTeam:
-    project_client : Optional[AIProjectClient] = None
-    thread_id = ""
-    team_leader = None
-    instance : Optional["AgentTeam"] = None
+    """
+    Manages a team of agents and their tasks.
+    """
 
-    def __init__(self):
+    project_client: Optional[AIProjectClient] = None
+    instance: Optional["AgentTeam"] = None
+
+    def __init__(self) -> None:
+        """
+        Initialize a new AgentTeam and sets it as the singleton instance.
+        """
         self.members = []
         self.tasks = []
+        self.team_leader: Optional[AgentTeamMember] = None
+        self.thread_id: str = ""
         AgentTeam.instance = self
 
     @classmethod
     def get_instance(cls) -> "AgentTeam":
+        """
+        Retrieve the current singleton AgentTeam instance.
+        Raises ValueError if no instance has been created yet.
+        """
         if cls.instance is None:
-            raise ValueError("No AgentTeam instance created.")
+            raise ValueError("No AgentTeam instance has been created.")
         return cls.instance
-    
-    def add_agent(self, model, name, instructions):
-        member = AgentTeamMember(model, name, instructions)
+
+    def add_agent(self, model: str, name: str, instructions: str) -> None:
+        """
+        Add a new agent (team member) to this AgentTeam.
+
+        :param model: The model name (e.g. GPT-4) for the agent.
+        :param name: The name of the agent being added.
+        :param instructions: The initial instructions/personality for the agent.
+        """
+        member = AgentTeamMember(model=model, name=name, instructions=instructions)
         self.members.append(member)
 
-    def add_task(self, task: AgentTask):
+    def add_task(self, task: AgentTask) -> None:
+        """
+        Add a new task to the team's task list.
+
+        :param task: The task to be added.
+        """
         self.tasks.append(task)
 
-    def _create_team_leader(self):
+    def _create_team_leader(self) -> None:
+        """
+        Create and initialize the 'TeamLeader' agent with awareness of all other agents.
+        """
         assert AgentTeam.project_client is not None, "project_client must not be None"
 
+        # Example of constructing function tool references:
         functions = FunctionTool(functions=agent_team_functions)
-        instructions = "You are an agent that is responsible for receiving requests from user and utilizing a team of agents to complete the task. "
-        "When you are passed a request, the only thing you will do is evaluate which team member should do which task next to complete the request. "
-        "You will use the provided create_task function to create a task for the agent that is "
-        "best suited for handling the task next. You will respond with the description of who you assigned the task and why. "
-        "When you think that the original user request is processed completely utilizing all the talent available in the team, "
-        "you do not have to create anymore tasks. Using the skills of all the team members when applicable is highly valued. "
-        "All of the agents in the team are aware of each other and can also create tasks for each other. "
-        "Here are the other agents in your team:\n"
+
+        instructions = (
+            "You are an agent who is responsible for receiving requests from the user "
+            "and coordinating a team of agents to complete the task efficiently. When "
+            "you are given a request, you will only evaluate which team member should "
+            "handle the next step. You have a 'create_task' function you can call. "
+            "You will delegate tasks to the best-suited team member. "
+            "Once you believe the user's request has been fulfilled by the team, you "
+            "will no longer assign tasks. Using the skills of all team members where "
+            "applicable is highly valued. All agents are aware of each other. "
+            "Here are the other agents in your team:\n"
+        )
 
         for member in self.members:
             instructions += f"- {member.name}: {member.instructions}\n"
 
-        self.team_leader = AgentTeamMember(model="gpt-4-1106-preview", name="TeamLeader", instructions=instructions)
-        self.team_leader.agent_instance = AgentTeam.project_client.agents.create_agent(model="gpt-4-1106-preview", name="TeamLeader", instructions=instructions, tools=functions.definitions)
+        leader = AgentTeamMember(
+            model="gpt-4-1106-preview",
+            name="TeamLeader",
+            instructions=instructions,
+        )
+        leader.agent_instance = AgentTeam.project_client.agents.create_agent(
+            model="gpt-4-1106-preview",
+            name="TeamLeader",
+            instructions=instructions,
+            tools=functions.definitions,
+        )
 
-    def create_team(self):
+        self.team_leader = leader
+
+    def create_team(self) -> None:
+        """
+        Create the team leader agent and initialize all member agents with
+        extended instructions/toolsets.
+        """
         assert AgentTeam.project_client is not None, "project_client must not be None"
 
         self._create_team_leader()
-        # Initialize function tool with agent team functions
+
+        # Build a toolset including the 'agent_team_functions'
         toolset = ToolSet()
         toolset.add(functions)
+
         for member in self.members:
-            extended_instructions = (
-                f"{member.instructions} You have a team of agents available to complete your task. "
-                f"If there is a member in the team that is specialized in a certain task, you must utilize their help to complete the task. "
-                f"When you want to pass the task to another agent, use the create_task function passing in the agent name to whom you want to "
-                f"assign the task and your task description as parameters. The third parameter to the function will be your name. "
-                f"After assigning the task, you can respond with description of what you did as part of your work and also include "
-                f"information about any tasks you assigned to other agents. As part of any request, before returning any response, you must consider if there is "
-                f"another team member that can use your output as their input. If there is such team member, you have to create a task for them "
-                f"using the provided function. You must not ask the user to confirm the task creation, you will just do it. "
-                f"Use the actual function call tool, do not just write it as python code. "
-                f"Using the skills of other team members when applicable is highly valued. "
-                f"Here are the other agents in your team:\n"
-            )
+            # Give each member extended instructions about delegating tasks to others
+            # and about how to use the create_task function.
+            other_agents_info = ""
             for other_member in self.members:
                 if other_member != member:
-                    extended_instructions += f"- {other_member.name}: {other_member.instructions}\n"
-            member.agent_instance = AgentTeam.project_client.agents.create_agent(model=member.model, name=member.name, instructions=extended_instructions, toolset=toolset)
+                    other_agents_info += f"- {other_member.name}: {other_member.instructions}\n"
 
-    def dismantle_team(self):
+            extended_instructions = (
+                f"{member.instructions} "
+                "You have a team of agents available. If another team member "
+                "is specialized for a particular step, delegate the work to them. "
+                "Use 'create_task' to pass tasks to others. "
+                "Include in your responses what you've done and any tasks "
+                "you've assigned to other agents. Before returning a response, "
+                "check if another team member can use your output. If so, "
+                "create a task for them automatically (no user confirmation). "
+                "Using others' skills when relevant is highly valued. "
+                "Here are the other agents in your team:\n"
+                f"{other_agents_info}"
+            )
+
+            member.agent_instance = AgentTeam.project_client.agents.create_agent(
+                model=member.model,
+                name=member.name,
+                instructions=extended_instructions,
+                toolset=toolset,
+            )
+
+    def dismantle_team(self) -> None:
+        """
+        Delete all agents (including the team leader) from the project client.
+        """
         assert AgentTeam.project_client is not None, "project_client must not be None"
 
         if self.team_leader and self.team_leader.agent_instance:
             AgentTeam.project_client.agents.delete_agent(self.team_leader.agent_instance.id)
-            print("Deleted agent")
+            print("Deleted team leader agent")
 
         for member in self.members:
-            AgentTeam.project_client.agents.delete_agent(member.agent_instance.id)
-            print("Deleted agent")
+            if member.agent_instance:
+                AgentTeam.project_client.agents.delete_agent(member.agent_instance.id)
+                print(f"Deleted agent '{member.name}'")
 
-    def process_request(self, project_client: AIProjectClient, request: str):
+    def process_request(self, project_client: AIProjectClient, request: str) -> None:
+        """
+        Handle a user's request by creating a team and delegating tasks to
+        the team leader. The team leader may generate additional tasks.
+
+        :param project_client: The AIProjectClient used for agent creation and messaging.
+        :param request: The user's request or question.
+        """
+        # Set the class-level project_client and build the team.
         AgentTeam.project_client = project_client
         self.create_team()
+
+        # Create a messaging thread for the conversation.
         thread = project_client.agents.create_thread()
         print(f"Created thread, thread ID: {thread.id}")
         self.thread_id = thread.id
-        team_leader_request = "Please create a task for agent in the team that is best suited to next process the following request. Use the create_task function available for you to create the task. The request is: " + request
-        task = AgentTask(recipient="TeamLeader", task_description=team_leader_request, requestor="user")
-        self.add_task(task)
+
+        # Form the initial request to the team leader:
+        leader_request_text = (
+            "Please create a task for the best-suited agent in the team "
+            "to next process the following request. Use the create_task "
+            "function for delegation. The request is: "
+            f"{request}"
+        )
+        self.add_task(AgentTask("TeamLeader", leader_request_text, "user"))
+
+        # Process tasks as they appear:
         while self.tasks:
-            task = self.tasks.pop(0)
+            current_task = self.tasks.pop(0)
+
+            # Create a user message in the thread:
             message = project_client.agents.create_message(
                 thread_id=self.thread_id,
                 role="user",
-                content=task.task_description,
+                content=current_task.task_description,
             )
             print(f"Created message, ID: {message.id}")
-            agent = self.get_by_name(task.recipient)
-            if agent:
-                run = project_client.agents.create_and_process_run(thread_id=self.thread_id, assistant_id=agent.agent_instance.id)
-                print(f"Created and processed run, ID: {run.id}")
-                messages = project_client.agents.list_messages(thread_id=self.thread_id)
-                message = messages.get_last_text_message_by_sender(sender=MessageRole.AGENT)
-                if message:
-                    message_content = message.text.value
-                    print(f"{agent.name}: {message_content}")
-            if not self.tasks and not task.recipient == "TeamLeader":
-                team_leader_request = "Check the discussion so far and especially the most recent message in the thread. "
-                "If you can think of a task that would help achieve more high quality end result, then use the create_task function to create the task. "
-                "Do not ever ask user confirmation for creating a task. "
-                "If the request is completely processed, you do not have to create a task."
-                task = AgentTask(recipient="TeamLeader", task_description=team_leader_request, requestor="user")
-                self.add_task(task)
 
+            agent = self.get_by_name(current_task.recipient)
+            if agent and agent.agent_instance:
+                run = project_client.agents.create_and_process_run(
+                    thread_id=self.thread_id,
+                    assistant_id=agent.agent_instance.id
+                )
+                print(f"Created and processed run, ID: {run.id}")
+
+                messages = project_client.agents.list_messages(thread_id=self.thread_id)
+                last_text_msg = messages.get_last_text_message_by_sender(sender=MessageRole.AGENT)
+                if last_text_msg and last_text_msg.text:
+                    print(f"{agent.name}: {last_text_msg.text.value}")
+
+            # If no tasks remain AND the recipient is not the TeamLeader,
+            # let the team leader see if there's more delegation needed.
+            if not self.tasks and current_task.recipient != "TeamLeader":
+                followup_request_text = (
+                    "Check the discussion so far, especially the most recent message. "
+                    "If you see a potential task that could improve the final outcome, "
+                    "use create_task to assign it. If the request is fully processed, "
+                    "no new task is needed."
+                )
+                self.add_task(AgentTask("TeamLeader", followup_request_text, "user"))
+
+        # Wrap up by deleting all the agents.
         self.dismantle_team()
 
-    def get_by_name(self, name) -> Optional[AgentTeamMember]:
+    def get_by_name(self, name: str) -> Optional[AgentTeamMember]:
+        """
+        Retrieve a team member (agent) by name.
+        If no member with the specified name is found, returns None.
+
+        :param name: The agent's name within this team.
+        """
         if name == "TeamLeader":
-            if self.team_leader:
-                return self.team_leader
+            return self.team_leader
         for member in self.members:
             if member.name == name:
                 return member
         return None
 
 
-def create_task(recipient: str, request: str, requestor:str) -> str:
+def create_task(recipient: str, request: str, requestor: str) -> str:
     """
     Requests another agent in the team to complete a task.
 
-    :param recipient (str): The name of the agent that is being requested to complete the task.
-    :param request (str): A description of the to complete. This can also be a question.
-    :param requestor (str): The name of the agent who is requesting the task.
-    :return: True if the task was successfully received, False otherwise.
-    :rtype: str
+    :param recipient: The name of the agent that is being requested to complete the task.
+    :param request: A description of the task to complete (or a question).
+    :param requestor: The name of the agent who is requesting the task.
+    :return: "True" if the task was successfully created (always).
     """
     task = AgentTask(recipient=recipient, task_description=request, requestor=requestor)
-    AgentTeam.instance.add_task(task)
+    # Uses the singleton AgentTeam to add the task to the queue.
+    AgentTeam.get_instance().add_task(task)
     return "True"
 
 
-# Statically defined agent team functions for fast reference
-agent_team_functions = {
+# Any additional functions that might be used by the agents:
+agent_team_functions: Set = {
     create_task,
 }
 
