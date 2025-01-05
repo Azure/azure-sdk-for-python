@@ -23,13 +23,13 @@ event: thread.run.step.delta
 data: {"id":"step_01","object":"thread.run.step.delta","delta":{"step_details":{"type":"tool_calls","tool_calls":[{"index":1,"id":"call_02","type":"function","function":{"name":"fetch_weather","arguments":"","output":null}}]}}}
 
 event: thread.run.step.delta
-data: {"id":"step_01","object":"thread.run.step.delta","delta":{"step_details":{"type":"tool_calls","tool_calls":[{"index":1,"type":"function","function":{"arguments":"{\"lo"}}]}}}
+data: {"id":"step_01","object":"thread.run.step.delta","delta":{"step_details":{"type":"tool_calls","tool_calls":[{"index":1,"type":"function","function":{"arguments":"{\"location"}}]}}}
 
 event: thread.run.step.delta
-data: {"id":"step_01","object":"thread.run.step.delta","delta":{"step_details":{"type":"tool_calls","tool_calls":[{"index":1,"type":"function","function":{"arguments":"catio"}}]}}}
+data: {"id":"step_01","object":"thread.run.step.delta","delta":{"step_details":{"type":"tool_calls","tool_calls":[{"index":1,"type":"function","function":{"arguments":""}}]}}}
 
 event: thread.run.step.delta
-data: {"id":"step_01","object":"thread.run.step.delta","delta":{"step_details":{"type":"tool_calls","tool_calls":[{"index":1,"type":"function","function":{"arguments":"n\": \"N"}}]}}}
+data: {"id":"step_01","object":"thread.run.step.delta","delta":{"step_details":{"type":"tool_calls","tool_calls":[{"index":1,"type":"function","function":{"arguments":"\": \"N"}}]}}}
 
 event: thread.run.step.delta
 data: {"id":"step_01","object":"thread.run.step.delta","delta":{"step_details":{"type":"tool_calls","tool_calls":[{"index":1,"type":"function","function":{"arguments":"ew Y"}}]}}}

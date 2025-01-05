@@ -1373,7 +1373,6 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
                 func_rt = await self.on_error(event_data_obj)
             elif event_type == AgentStreamEvent.DONE:
                 func_rt = await self.on_done()
-                self.done = True  # Mark the stream as done
             else:
                 func_rt = await self.on_unhandled_event(
                     event_type, event_data_obj
@@ -1488,7 +1487,6 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
                 func_rt = self.on_error(event_data_obj)  # pylint: disable=assignment-from-none
             elif event_type == AgentStreamEvent.DONE:
                 func_rt = self.on_done()  # pylint: disable=assignment-from-none
-                self.done = True  # Mark the stream as done
             else:
                 func_rt = self.on_unhandled_event(event_type, event_data_obj)  # pylint: disable=assignment-from-none
         except Exception as e:  # pylint: disable=broad-exception-caught
