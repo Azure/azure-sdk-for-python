@@ -33,6 +33,7 @@ def main():
     response = client.virtual_machine_scale_sets.force_recovery_service_fabric_platform_update_domain_walk(
         resource_group_name="rgcompute",
         vm_scale_set_name="aaaaaaaaaaaa",
+        platform_update_domain=9,
     )
     print(response)
 

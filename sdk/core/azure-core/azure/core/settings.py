@@ -302,7 +302,7 @@ class PrioritizedSetting(Generic[ValidInputType, ValueType]):
         :type value: str or int or float or None
         :returns: the value of the setting
         :rtype: str or int or float
-        :raises: RuntimeError if no value can be determined
+        :raises RuntimeError: if no value can be determined
         """
 
         # 4. immediate values

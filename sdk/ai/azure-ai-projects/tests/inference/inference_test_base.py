@@ -14,9 +14,12 @@ servicePreparerInferenceTests = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_projects_inference_tests",
     azure_ai_projects_inference_tests_project_connection_string="region.api.azureml.ms;00000000-0000-0000-0000-000000000000;rg-name;project-name",
+    azure_ai_projects_inference_tests_entraid_auth_aoai_connection_name="entraid-auth-aoai-connection-name",
+    azure_ai_projects_inference_tests_entraid_auth_aiservices_connection_name="entraid-auth-aiservices-connection-name",
     azure_ai_projects_inference_tests_aoai_api_version="aoai-api-version",
     azure_ai_projects_inference_tests_aoai_model_deployment_name="aoai-model-deployment-name",
-    azure_ai_projects_inference_tests_aiservices_model_deployment_name="aoai-model-deployment-name",
+    azure_ai_projects_inference_tests_chat_completions_model_deployment_name="chat-completions-model-deployment-name",
+    azure_ai_projects_inference_tests_embeddings_model_deployment_name="embeddings-model-deployment-name",
 )
 
 # Set to True to enable SDK logging
@@ -34,6 +37,13 @@ if LOGGING_ENABLED:
 
 
 class InferenceTestBase(AzureRecordedTestCase):
+
+    NON_EXISTING_CONNECTION_NAME = "non-existing-connection-name"
+    EXPECTED_EXCEPTION_MESSAGE_FOR_NON_EXISTING_CONNECTION_NAME = (
+        f"Connection {NON_EXISTING_CONNECTION_NAME} can't be found in this workspace"
+    )
+
+    EXPECTED_EXCEPTION_MESSAGE_FOR_EMPTY_CONNECTION_NAME = f"Connection name cannot be empty"
 
     def get_sync_client(self, **kwargs) -> AIProjectClient:
         conn_str = kwargs.pop("azure_ai_projects_inference_tests_project_connection_string")

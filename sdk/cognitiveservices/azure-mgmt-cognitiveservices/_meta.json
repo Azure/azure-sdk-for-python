@@ -1,11 +1,11 @@
 {
-  "commit": "4b7481587132ce0bde5f0a6d6ab590129f7b7179",
+  "commit": "0383d4a163beb3e58e7b4cb3c06172d32ddd8c85",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.9.2",
+  "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.6.0",
-    "@autorest/modelerfour@4.24.3"
+    "@autorest/python@6.19.0",
+    "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/cognitiveservices/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.6.0 --use=@autorest/modelerfour@4.24.3 --version=3.9.2 --version-tolerant=False",
+  "autorest_command": "autorest specification/cognitiveservices/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.19.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
   "readme": "specification/cognitiveservices/resource-manager/readme.md"
 }
