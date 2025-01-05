@@ -4,6 +4,38 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import FunctionTool, ToolSet, MessageRole, Agent
 
 
+TEAM_LEADER_INSTRUCTIONS = """\
+You are an agent named 'TeamLeader'. Your primary role is to coordinate the work among all agents and ensure the user's requests are fulfilled by utilizing each team member's specialized skills. 
+Actively look for opportunities to leverage the unique strengths of all agents. When you determine that another agent’s expertise or perspective can add value, use the create_task function to delegate, always passing 'TeamLeader' as the 'requestor'. 
+Continue delegating tasks only as long as they are necessary to achieve the best possible outcome, and once you believe the user's request has been fully addressed, do not create any additional tasks. 
+It is essential that you harness the collective abilities of the team—this is highly valued and reflects your effectiveness as a coordinator.
+Below are your team members:
+"""
+
+TEAM_MEMBER_CAN_DELEGATE_INSTRUCTIONS = """\
+You are an agent named '{name}'. 
+{original_instructions}
+
+• You can delegate tasks when appropriate. To delegate, call the create_task function, using your own name as the 'requestor'. 
+• Provide a brief account of any tasks you assign and the outcome. 
+• Ask for help from other team members if you see they have the relevant expertise. 
+• Once you believe your assignment is complete, respond with your final answer or actions taken. 
+• Below are the other agents in your team:
+{other_agents_info}
+"""
+
+TEAM_MEMBER_NO_DELEGATE_INSTRUCTIONS = """\
+You are an agent named '{name}'. 
+{original_instructions}
+
+• You do not delegate tasks. Instead, focus solely on fulfilling the tasks assigned to you. 
+• If you have suggestions for tasks better suited to another agent, simply mention it in your response, but do not call create_task yourself. 
+• Once you believe your assignment is complete, respond with your final answer or actions taken. 
+• Below are the other agents in your team:
+{other_agents_info}
+"""
+
+
 class AgentTeamMember:
     """
     Represents an individual agent on a team.
@@ -12,7 +44,7 @@ class AgentTeamMember:
     :param name: The agent's name.
     :param instructions: The agent's initial instructions or "personality".
     :param toolset: An optional ToolSet with specialized tools for this agent.
-    :param can_delegate: Whether this agent has delegation capability (e.g. 'create_task').
+    :param can_delegate: Whether this agent has delegation capability (e.g., 'create_task').
                          Defaults to True.
     """
     def __init__(
@@ -132,20 +164,11 @@ class AgentTeam:
         default_function_tool = FunctionTool(agent_team_default_functions)
         leader_toolset.add(default_function_tool)
 
-        instructions = (
-            "You are an agent who is responsible for receiving requests from the user "
-            "and coordinating a team of agents to complete the task efficiently. When "
-            "you are given a request, you will only evaluate which team member should "
-            "handle the next step. You have a 'create_task' function you can call. "
-            "You will delegate tasks to the best-suited team member. "
-            "Once you believe the user's request has been fulfilled by the team, you "
-            "will no longer assign tasks. Using the skills of all team members where "
-            "applicable is highly valued. All agents are aware of each other. "
-            "Here are the other agents in your team:\n"
-        )
-
+        instructions = TEAM_LEADER_INSTRUCTIONS + "\n"
+        # List all agents (will be empty at this moment if you haven’t added any, or you can append after they’re added)
         for member in self.members:
-            instructions += f"- {member.name}: {member.instructions}\n"
+            if member.name != "TeamLeader":
+                instructions += f"- {member.name}: {member.instructions}\n"
 
         leader = AgentTeamMember(
             model="gpt-4-1106-preview",
@@ -176,29 +199,23 @@ class AgentTeam:
             if member is self.team_leader:
                 continue
 
-            if member.can_delegate:
-                other_agents_info = ""
-                for other_member in self.members:
-                    if other_member != member:
-                        other_agents_info += f"- {other_member.name}: {other_member.instructions}\n"
+            # Build a list of other agents (besides the current one).
+            other_agents_info = ""
+            for other_member in self.members:
+                if other_member != member:
+                    other_agents_info += f"- {other_member.name}: {other_member.instructions}\n"
 
-                extended_instructions = (
-                    f"{member.instructions} "
-                    "You have a team of agents available. If another team member "
-                    "is specialized for a particular step, delegate the work to them. "
-                    "Use 'create_task' to pass tasks to others. "
-                    "Include in your responses what you've done and any tasks "
-                    "you've assigned to other agents. Before returning a response, "
-                    "check if another team member can use your output. If so, "
-                    "create a task for them automatically (no user confirmation). "
-                    "Using others' skills when relevant is highly valued. "
-                    "Here are the other agents in your team:\n"
-                    f"{other_agents_info}"
+            if member.can_delegate:
+                extended_instructions = TEAM_MEMBER_CAN_DELEGATE_INSTRUCTIONS.format(
+                    name=member.name,
+                    original_instructions=member.instructions,
+                    other_agents_info=other_agents_info
                 )
             else:
-                extended_instructions = (
-                    f"{member.instructions} "
-                    "Focus on completing the requests assigned to you directly."
+                extended_instructions = TEAM_MEMBER_NO_DELEGATE_INSTRUCTIONS.format(
+                    name=member.name,
+                    original_instructions=member.instructions,
+                    other_agents_info=""
                 )
 
             member.agent_instance = AgentTeam.project_client.agents.create_agent(
@@ -279,13 +296,13 @@ class AgentTeam:
                     )
 
             # If no tasks remain AND the recipient is not the TeamLeader,
-            # let the team leader see if more delegation is needed.
+            # let the TeamLeader see if more delegation is needed.
             if not self.tasks and current_task.recipient != "TeamLeader":
                 followup_request_text = (
                     "Check the discussion so far, especially the most recent message. "
                     "If you see a potential task that could improve the final outcome, "
                     "use create_task to assign it. If the request is fully processed, "
-                    "no new task is needed."
+                    "no new task is needed and finally summarize the outcome."
                 )
                 self.add_task(AgentTask("TeamLeader", followup_request_text, "user"))
 

@@ -7,14 +7,14 @@
 FILE: sample_agents_agent_team.py
 
 DESCRIPTION:
-    This sample demonstrates how to multiple agents using AgentTeam.
+    This sample demonstrates how to use multiple agents to develop software.
 
 USAGE:
-    python sample_agents_agent_team.py
+    python sample_agents_software_team.py
 
     Before running the sample:
 
-    pip install azure.ai.projects azure-identity
+    pip install azure-ai-projects azure-identity
 
     Set this environment variables with your own values:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
@@ -37,9 +37,9 @@ project_client = AIProjectClient.from_connection_string(
 with project_client:
     agent_team = AgentTeam()
     agent_team.add_agent(
-        model="gpt-4-1106-preview", name="Coder", instructions="You are software engineer who writes great code. Your name is Coder."
+        model="gpt-4-1106-preview", name="Coder", instructions="You are software engineer who writes great code."
     )
     agent_team.add_agent(
-        model="gpt-4-1106-preview", name="Reviewer", instructions="You are software engineer who reviews code. Your name is Reviewer."
+        model="gpt-4-1106-preview", name="Reviewer", instructions="You are software engineer who reviews code."
     )
     agent_team.process_request(project_client=project_client, request="Write me a python number guessing game.")
