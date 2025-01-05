@@ -64,7 +64,7 @@ async def main():
             )
 
             agent = await project_client.agents.create_agent(
-                model="gpt-4",
+                model=os.environ["MODEL_DEPLOYMENT_NAME"],
                 name="azure-function-agent-foo",
                 instructions=f"You are a helpful support agent. Use the provided function any time the prompt contains the string 'What would foo say?'. When you invoke the function, ALWAYS specify the output queue uri parameter as '{storage_service_endpoint}/azure-function-tool-output'. Always responds with \"Foo says\" and then the response from the tool.",
                 tools=azure_function_tool.definitions,
