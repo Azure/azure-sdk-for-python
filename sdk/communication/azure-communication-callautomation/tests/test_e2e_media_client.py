@@ -744,3 +744,79 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         
         self.terminate_call(unique_id)
         return
+    
+    @recorded_by_proxy
+    def test_interrupt_audio_and_announce_in_a_call(self):
+
+        # try to establish the call
+        caller = self.identity_client.create_user()
+        target = self.identity_client.create_user()
+        unique_id, call_connection, _ = self.establish_callconnection_voip(caller, target)
+
+        # check returned events
+        connected_event = self.check_for_event(
+            "CallConnected", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        participant_updated_event = self.check_for_event(
+            "ParticipantsUpdated", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+
+        if connected_event is None:
+            raise ValueError("Caller CallConnected event is None")
+        if participant_updated_event is None:
+            raise ValueError("Caller ParticipantsUpdated event is None")
+        play_source = FileSource(url=self.file_source_url)
+
+        # Hold participant
+        call_connection.hold(target_participant=target,  play_source=play_source, operation_context="hold_add_target_participant")
+        time.sleep(2)
+        # check returned events
+        hold_audio_started_event = self.check_for_event(
+            "HoldAudioStarted", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        if hold_audio_started_event is None:
+            raise ValueError("Caller HoldAudioStarted event is None")
+        
+        get_participant_result = call_connection.get_participant(target)
+        if get_participant_result is None:
+            raise ValueError("Invalid get_participant_result")
+
+        if get_participant_result.is_on_hold is False:
+            raise ValueError("Failed to hold participant")
+        play_multiple_file_source = [
+            FileSource(url=self.file_source_url)
+        ]
+        call_connection.interrupt_audio_and_announce(target_participant=target, play_sources=play_multiple_file_source)
+        
+        # check returned events
+        hold_audio_paused_event = self.check_for_event(
+            "HoldAudioPaused", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        if hold_audio_paused_event is None:
+            raise ValueError("Caller HoldAudioPaused event is None")
+        
+        hold_audio_resumed_event = self.check_for_event(
+            "HoldAudioResumed", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        if hold_audio_resumed_event is None:
+            raise ValueError("Caller HoldAudioResumed event is None")
+        
+        # Unhold participant
+        call_connection.unhold(target, operation_context="unhold_add_target_participant")
+        time.sleep(2)
+        hold_audio_completed_event = self.check_for_event(
+            "HoldAudioCompleted", call_connection._call_connection_id, timedelta(seconds=15)
+        )
+        if hold_audio_completed_event is None:
+            raise ValueError("Caller HoldAudioCompleted event is None")
+        
+        get_participant_result = call_connection.get_participant(target)
+
+        if get_participant_result is None:
+            raise ValueError("Invalid get_participant_result")
+
+        if get_participant_result.is_on_hold is True:
+            raise ValueError("Failed to unhold participant")
+
+        self.terminate_call(unique_id)
+        return
