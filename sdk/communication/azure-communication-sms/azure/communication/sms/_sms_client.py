@@ -33,10 +33,10 @@ class SmsClient(object):  # pylint: disable=client-accepts-api-version-keyword
     """
 
     def __init__(
-        self,
-        endpoint,  # type: str
-        credential,  # type: Union[TokenCredential, AzureKeyCredential]
-        **kwargs  # type: Any
+            self,
+            endpoint,  # type: str
+            credential,  # type: Union[TokenCredential, AzureKeyCredential]
+            **kwargs  # type: Any
     ):
         # type: (...) -> None
         try:
@@ -56,9 +56,9 @@ class SmsClient(object):  # pylint: disable=client-accepts-api-version-keyword
 
     @classmethod
     def from_connection_string(
-        cls,
-        conn_str,  # type: str
-        **kwargs  # type: Any
+            cls,
+            conn_str,  # type: str
+            **kwargs  # type: Any
     ):  # type: (...) -> SmsClient
         """Create SmsClient from a Connection String.
 
@@ -78,19 +78,19 @@ class SmsClient(object):  # pylint: disable=client-accepts-api-version-keyword
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
-        return cls(endpoint, access_key, **kwargs)
+        return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
 
     @distributed_trace
     def send(
-        self,
-        from_,  # type: str
-        to,  # type: Union[str, List[str]]
-        message,  # type: str
-        *,
-        enable_delivery_report: bool = False,
-        tag: Optional[str] = None,
-        **kwargs: Any
-    ):  # type: (...) -> [SmsSendResult]
+            self,
+            from_,  # type: str
+            to,  # type: Union[str, List[str]]
+            message,  # type: str
+            *,
+            enable_delivery_report: bool = False,
+            tag: Optional[str] = None,
+            **kwargs: Any
+    ) -> List[SmsSendResult]:
         """Sends SMSs to phone numbers.
 
         :param str from_: The sender of the SMS.
@@ -123,17 +123,17 @@ class SmsClient(object):  # pylint: disable=client-accepts-api-version-keyword
             **kwargs
         )
 
-        return self._sms_service_client.sms.send(
+        response = self._sms_service_client.sms.send(
             request,
-            cls=lambda pr, r, e: [
-                SmsSendResult(
-                    to=item.to,
-                    message_id=item.message_id,
-                    http_status_code=item.http_status_code,
-                    successful=item.successful,
-                    error_message=item.error_message,
-                )
-                for item in r.value
-            ],
             **kwargs
         )
+
+        return [
+            SmsSendResult(
+                to=item.to,
+                message_id=item.message_id,
+                http_status_code=item.http_status_code,
+                successful=item.successful,
+                error_message=item.error_message
+            ) for item in response.value
+        ]
