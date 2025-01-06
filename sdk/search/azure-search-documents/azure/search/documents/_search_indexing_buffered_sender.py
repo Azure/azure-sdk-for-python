@@ -111,7 +111,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     @distributed_trace
     def close(self, **kwargs) -> None:  # pylint: disable=unused-argument
         """Close the session.
-        
+
         :return: None
         :rtype: None
         """
