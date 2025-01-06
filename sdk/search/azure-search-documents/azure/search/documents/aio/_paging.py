@@ -18,6 +18,7 @@ from .._api_versions import DEFAULT_VERSION
 
 class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
     """A pageable list of search results."""
+
     def __init__(self, *args, **kwargs) -> None:
         super(AsyncSearchItemPaged, self).__init__(*args, **kwargs)
         self._first_page_iterator_instance: Optional[AsyncSearchPageIterator] = None
@@ -86,6 +87,7 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         """
         return cast(DebugInfo, await self._first_iterator_instance().get_debug_info())
 
+
 # The pylint error silenced below seems spurious, as the inner wrapper does, in
 # fact, become a method of the class when it is applied.
 def _ensure_response(f):
@@ -101,6 +103,7 @@ def _ensure_response(f):
 
 class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
     """An iterator of search results."""
+
     def __init__(self, client, initial_query, kwargs, continuation_token=None) -> None:
         super(AsyncSearchPageIterator, self).__init__(
             get_next=self._get_next_cb,
