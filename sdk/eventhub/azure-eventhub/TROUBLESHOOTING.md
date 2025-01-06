@@ -16,17 +16,19 @@ This troubleshooting guide covers failure investigation techniques, common error
       - ["Authentication=Managed Identity" Alternative](#adding-authenticationmanaged-identity)
 - [Enable and configure logging](#enable-and-configure-logging)
   - [Enable AMQP transport logging](#enable-amqp-transport-logging)
+  - [Logging required for filing Github issues](#logging-required-for-filing-github-issues)
 - [Troubleshoot EventHubProducerClient (Sync/Async) issues](#troubleshoot-eventhubproducerclient-syncasync-issues)
   - [Cannot set multiple partition keys for events in EventDataBatch](#cannot-set-multiple-partition-keys-for-events-in-eventdatabatch)
   - [Setting partition key on EventData is not set in Kafka consumer](#setting-partition-key-on-eventdata-is-not-set-in-kafka-consumer)
   - [Buffered producer not sending events](#buffered-producer-not-sending-events)
 - [Troubleshoot EventHubConsumerClient issues](#troubleshoot-eventhubconsumerclient-issues)
-  - [412 precondition failures when using an event processor](#412-precondition-failures-when-using-an-event-processor)
-  - [Partition ownership changes frequently](#partition-ownership-changes-frequently)
+  - [Logs reflect intermittent HTTP 412 and HTTP 409 responses from Azure Storage](#logs-reflect-intermittent-http-412-and-http-409-responses-from-storage)
+  - [Partitions close and initialize intermittently or during scaling](#partitions-close-and-initialize-intermittently-or-during-scaling)
+  - [Partitions close and initialize frequently](#partitions-close-and-initialize-frequently)
   - ["...current receiver '<RECEIVER_NAME>' with epoch '0' is getting disconnected"](#current-receiver-receiver_name-with-epoch-0-is-getting-disconnected)
   - [Blocking Calls in Async](#blocking-calls-in-async)
   - [High CPU usage](#high-cpu-usage)
-  - [Processor client stops receiving](#processor-client-stops-receiving)
+  - [A partition is not being processed](#a-partition-is-not-being-processed)
   - [Duplicate events are being processed](#duplicate-events-are-being-processed)
   - [Soft Delete or Blob versioning is enabled for a Blob Storage checkpoint store](#soft-delete-or-blob-versioning-is-enabled-for-a-blob-storage-checkpoint-store)
   - [Migrate from legacy to new client library](#migrate-from-legacy-to-new-client-library)
@@ -154,6 +156,10 @@ consumer = EventHubConsumerClient(..., logging_enable=True)
 
 If enabling client logging is not enough to diagnose your issues. You can enable AMQP frame level trace by setting `logging_enable=True` when creating the client.
 
+### Logging required for filing Github issues
+
+When filing issues on Github please make sure that `DEBUG` level logs are enabled along with transport logging. This gives the the most amount of information and puts them in a position to best help you further. Ideally the timeperiod spans at least +/- 10 minutes from then issue occured as it can show patterns leading upto/after the issue that help in diagnosis and troubleshooting. Take a look at [Get Additional Help](#get-additional-help) for more information
+
 ## Troubleshoot EventHubProducerClient (Sync/Async) issues
 
 ### Cannot set multiple partition keys for events in EventDataBatch
@@ -172,13 +178,25 @@ The sync buffered producer client uses the ThreadpoolExecutor to manage the part
 
 ## Troubleshoot EventHubConsumerClient issues
 
-### 412 precondition failures when using an event processor
+### Logs reflect intermittent HTTP 412 and HTTP 409 responses from storage
 
-Logs reflect intermittent HTTP 412 and HTTP 409 responses from storage when the client tries to take or renew ownership of a partition, but the local version of the ownership record is outdated.  This occurs when another processor instance steals partition ownership.  See [Partition ownership changes a lot](#partition-ownership-changes-a-lot) for more information.
+This is normal and doesnt an indicate an issue with the consumer or the checkpoint store.
 
-### Partition ownership changes frequently
+An HTTP 412 precondition response occurs when the event processor requests ownership of a partition, but that partition was recently claimed by another processor. An HTTP 409 occurs when the processor issues a "create if not exists" call when creating data and the item already exists.
 
-When the number of EventHubConsumerClient instances changes (i.e. added or removed), the running instances try to load-balance partitions between themselves.  For a few minutes after the number of processors changes, partitions are expected to change owners.   Once balanced, partition ownership should be stable and change infrequently.  If partition ownership is changing frequently when the number of processors is constant, this likely indicates a problem.  It is recommended that a GitHub issue with logs and a repro be filed in this case.
+Though these are expected scenarios, because the HTTP response code falls into the 400-499 range, Application Insights and other logging platforms are likely to surface them as errors.
+
+### Partitions close and initialize intermittently or during scaling
+
+This is usually normal and most often does not indicate an issue with the processor.
+
+Eventhub consumers configured to use the same Event Hub, consumer group, and checkpoint store will coordinate with one another to share the responsibility of processing partitions. When the number of event consumers changes, usually when scaling up/down, ownership of partitions is re-balanced and some may change owners.
+
+During this time, it is normal and expected to see partitions initializing and closing across event consumers. After one or two minutes, ownership should stabilize and the frequency that partitions close and initialize should decrease. While ownership is stable, some error recovery scenarios may trigger partitions closing and initializing occasionally.
+
+### Partitions close and initialize frequently
+
+If the number of consumers configured to us the same Event Hub, consumer group, and checkpoint store are being scaled or if host nodes are being rebooted, partitions closing and initializing frequently for a short time is normal an expected. If the behavior persists longer than five minutes, it likely indicates a problem.
 
 ### "...current receiver '<RECEIVER_NAME>' with epoch '0' is getting disconnected"
 
@@ -205,9 +223,11 @@ High CPU usage is usually because an instance owns too many partitions.  We reco
 
 When processing for one or more partitions is delayed, it is most often because an event processor owns too many partitions. Consider adding additional consumers to handle partitions, we generally recommend 1 - 3 partitions per consumer depending on throughput.
 
-### Processor client stops receiving
+### A partition is not being processed
 
-The processor client often is continually running in a host application for days on end.  Sometimes, they notice that EventHubConsumerClient is not processing one or more partitions.  Usually, this is not enough information to determine why the exception occurred.  The EventHubConsumerClient stopping is the symptom of an underlying cause that occurred while trying to recover from a transient error.  Please see [Filing Github issues](#filing-github-issues) for the information we require.
+An event consumer runs continually in a host application for a prolonged period. Sometimes, it may appear that some partitions are uncrowned or are not being processed. Most often, this presents as [Partions close and initialize frequently](#partitions-close-and-initialize-frequently) or there are other errors/warning being raised related to the problem.
+
+If partitions are not observed closing and initializing frequently and no warning is being raised to the error callback, then a stalled or unowned partition may be part of a larger problem and a GitHub issue should be opened. Please see: [Filing GitHub issues](#filing-github-issues)
 
 ### Duplicate events are being processed
 
@@ -217,7 +237,7 @@ An important call-out is that Event Hubs has an at-least-once delivery guarantee
 
 Event processors configured to use the same Event Hub, consumer group, and checkpoint store will coordinate with one another to share the responsibility of processing partitions. When a processor isn’t able to reach its fair share of the work by claiming unowned partitions, it will attempt to steal ownership from other event processors. During this time, the new owner will begin reading from the last recorded checkpoint. At the same time, the old owner may be dispatching the events that it last read to the handler for processing; it will not understand that ownership has changed until it attempts to read the next set of events from the Event Hubs service.
 
-As a result, there will be an amount of duplicate events being processed when event processors are started or stopped which will subside when partition ownership has stabilized. If frequent partition initialization persists longer than five minutes, it likely indicates a problem.
+As a result, there will be an amount of duplicate events being processed when event processors are started or stopped which will subside when partition ownership has stabilized. if the partition frequently takes 5 minutes to initialize, it likely indicates a problem.
 
 ### "Soft Delete" or "Blob versioning" is enabled for a Blob Storage checkpoint store
 
