@@ -352,8 +352,8 @@ class CloudServiceInstanceView(_serialization.Model):
      service.
     :vartype sdk_version: str
     :ivar private_ids: Specifies a list of unique identifiers generated internally for the cloud
-     service. :code:`<br />`:code:`<br />` NOTE: If you are using Azure Diagnostics extension, this
-     property can be used as 'DeploymentId' for querying details.
+     service. :code:`<br />`\\ :code:`<br />` NOTE: If you are using Azure Diagnostics extension,
+     this property can be used as 'DeploymentId' for querying details.
     :vartype private_ids: list[str]
     :ivar statuses:
     :vartype statuses: list[~azure.mgmt.compute.v2022_09_04.models.ResourceInstanceViewStatus]
@@ -427,8 +427,8 @@ class CloudServiceNetworkProfile(_serialization.Model):
     :vartype load_balancer_configurations:
      list[~azure.mgmt.compute.v2022_09_04.models.LoadBalancerConfiguration]
     :ivar slot_type: Slot type for the cloud service.
-     Possible values are :code:`<br />`:code:`<br />`\\ **Production**\\ :code:`<br />`:code:`<br
-     />`\\ **Staging**\\ :code:`<br />`:code:`<br />`
+     Possible values are :code:`<br />`\\ :code:`<br />`\\ **Production**\\ :code:`<br />`\\
+     :code:`<br />`\\ **Staging**\\ :code:`<br />`\\ :code:`<br />`
      If not specified, the default value is Production. Known values are: "Production" and
      "Staging".
     :vartype slot_type: str or ~azure.mgmt.compute.v2022_09_04.models.CloudServiceSlotType
@@ -460,8 +460,8 @@ class CloudServiceNetworkProfile(_serialization.Model):
         :paramtype load_balancer_configurations:
          list[~azure.mgmt.compute.v2022_09_04.models.LoadBalancerConfiguration]
         :keyword slot_type: Slot type for the cloud service.
-         Possible values are :code:`<br />`:code:`<br />`\\ **Production**\\ :code:`<br />`:code:`<br
-         />`\\ **Staging**\\ :code:`<br />`:code:`<br />`
+         Possible values are :code:`<br />`\\ :code:`<br />`\\ **Production**\\ :code:`<br />`\\
+         :code:`<br />`\\ **Staging**\\ :code:`<br />`\\ :code:`<br />`
          If not specified, the default value is Production. Known values are: "Production" and
          "Staging".
         :paramtype slot_type: str or ~azure.mgmt.compute.v2022_09_04.models.CloudServiceSlotType
@@ -531,8 +531,9 @@ class CloudServiceProperties(_serialization.Model):
     :ivar upgrade_mode: Update mode for the cloud service. Role instances are allocated to update
      domains when the service is deployed. Updates can be initiated manually in each update domain
      or initiated automatically in all update domains.
-     Possible Values are :code:`<br />`:code:`<br />`\\ **Auto**\\ :code:`<br />`:code:`<br />`\\
-     **Manual** :code:`<br />`:code:`<br />`\\ **Simultaneous**\\ :code:`<br />`:code:`<br />`
+     Possible Values are :code:`<br />`\\ :code:`<br />`\\ **Auto**\\ :code:`<br />`\\ :code:`<br
+     />`\\ **Manual** :code:`<br />`\\ :code:`<br />`\\ **Simultaneous**\\ :code:`<br />`\\
+     :code:`<br />`
      If not specified, the default value is Auto. If set to Manual, PUT UpdateDomain must be called
      to apply the update. If set to Auto, the update is automatically applied to each update domain
      in sequence. Known values are: "Auto", "Manual", and "Simultaneous".
@@ -613,8 +614,9 @@ class CloudServiceProperties(_serialization.Model):
         :keyword upgrade_mode: Update mode for the cloud service. Role instances are allocated to
          update domains when the service is deployed. Updates can be initiated manually in each update
          domain or initiated automatically in all update domains.
-         Possible Values are :code:`<br />`:code:`<br />`\\ **Auto**\\ :code:`<br />`:code:`<br />`\\
-         **Manual** :code:`<br />`:code:`<br />`\\ **Simultaneous**\\ :code:`<br />`:code:`<br />`
+         Possible Values are :code:`<br />`\\ :code:`<br />`\\ **Auto**\\ :code:`<br />`\\ :code:`<br
+         />`\\ **Manual** :code:`<br />`\\ :code:`<br />`\\ **Simultaneous**\\ :code:`<br />`\\
+         :code:`<br />`
          If not specified, the default value is Auto. If set to Manual, PUT UpdateDomain must be called
          to apply the update. If set to Auto, the update is automatically applied to each update domain
          in sequence. Known values are: "Auto", "Manual", and "Simultaneous".
@@ -818,8 +820,8 @@ class CloudServiceRoleSku(_serialization.Model):
      service is currently on, you need to delete and recreate the cloud service or move back to the
      old sku.
     :vartype name: str
-    :ivar tier: Specifies the tier of the cloud service. Possible Values are :code:`<br
-     />`:code:`<br />` **Standard** :code:`<br />`:code:`<br />` **Basic**.
+    :ivar tier: Specifies the tier of the cloud service. Possible Values are :code:`<br />`\\
+     :code:`<br />` **Standard** :code:`<br />`\\ :code:`<br />` **Basic**.
     :vartype tier: str
     :ivar capacity: Specifies the number of role instances in the cloud service.
     :vartype capacity: int
@@ -839,8 +841,8 @@ class CloudServiceRoleSku(_serialization.Model):
          service is currently on, you need to delete and recreate the cloud service or move back to the
          old sku.
         :paramtype name: str
-        :keyword tier: Specifies the tier of the cloud service. Possible Values are :code:`<br
-         />`:code:`<br />` **Standard** :code:`<br />`:code:`<br />` **Basic**.
+        :keyword tier: Specifies the tier of the cloud service. Possible Values are :code:`<br />`\\
+         :code:`<br />` **Standard** :code:`<br />`\\ :code:`<br />` **Basic**.
         :paramtype tier: str
         :keyword capacity: Specifies the number of role instances in the cloud service.
         :paramtype capacity: int
@@ -1876,8 +1878,8 @@ class RoleInstanceView(_serialization.Model):
     :ivar platform_fault_domain: The Fault Domain.
     :vartype platform_fault_domain: int
     :ivar private_id: Specifies a unique identifier generated internally for the cloud service
-     associated with this role instance. :code:`<br />`:code:`<br />` NOTE: If you are using Azure
-     Diagnostics extension, this property can be used as 'DeploymentId' for querying details.
+     associated with this role instance. :code:`<br />`\\ :code:`<br />` NOTE: If you are using
+     Azure Diagnostics extension, this property can be used as 'DeploymentId' for querying details.
     :vartype private_id: str
     :ivar statuses:
     :vartype statuses: list[~azure.mgmt.compute.v2022_09_04.models.ResourceInstanceViewStatus]

@@ -39,7 +39,7 @@ async def main():
 
             # Notice that CodeInterpreter must be enabled in the agent creation, otherwise the agent will not be able to see the file attachment
             agent = await project_client.agents.create_agent(
-                model="gpt-4-1106-preview",
+                model=os.environ["MODEL_DEPLOYMENT_NAME"],
                 name="my-assistant",
                 instructions="You are helpful assistant",
                 tools=code_interpreter.definitions,

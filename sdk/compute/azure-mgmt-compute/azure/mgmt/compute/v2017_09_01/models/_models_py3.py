@@ -23,9 +23,9 @@ class ResourceSku(_serialization.Model):
     :vartype resource_type: str
     :ivar name: The name of SKU.
     :vartype name: str
-    :ivar tier: Specifies the tier of virtual machines in a scale set.:code:`<br />`:code:`<br />`
-     Possible Values::code:`<br />`:code:`<br />` **Standard**\\ :code:`<br />`:code:`<br />`
-     **Basic**.
+    :ivar tier: Specifies the tier of virtual machines in a scale set.\\ :code:`<br />`\\
+     :code:`<br />` Possible Values:\\ :code:`<br />`\\ :code:`<br />` **Standard**\\ :code:`<br
+     />`\\ :code:`<br />` **Basic**.
     :vartype tier: str
     :ivar size: The Size of the SKU.
     :vartype size: str

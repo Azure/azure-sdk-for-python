@@ -46,7 +46,10 @@ openapi = OpenApiTool(
 # Create agent with OpenApi tool and process assistant run
 with project_client:
     agent = project_client.agents.create_agent(
-        model="gpt-4o-mini", name="my-assistant", instructions="You are a helpful assistant", tools=openapi.definitions
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
+        name="my-assistant",
+        instructions="You are a helpful assistant",
+        tools=openapi.definitions,
     )
 
     # [END create_agent_with_openapi]
