@@ -35,7 +35,6 @@ from typing import List
 TOP_LEVEL_PATHS = ["azure", "corehttp"]
 
 def path_excluded(path, additional_excludes):
-    breakpoint()
     return (
         any([excl in path for excl in additional_excludes])
         or "tests" in os.path.normpath(path).split(os.sep)
