@@ -32,8 +32,10 @@ logging.getLogger().setLevel(logging.INFO)
 
 from typing import List
 
+TOP_LEVEL_PATHS = ["azure", "corehttp"]
 
 def path_excluded(path, additional_excludes):
+    breakpoint()
     return (
         any([excl in path for excl in additional_excludes])
         or "tests" in os.path.normpath(path).split(os.sep)
@@ -45,8 +47,13 @@ def path_excluded(path, additional_excludes):
 def is_metapackage(package_path):
     dir_path = package_path if path.isdir(package_path) else path.split(package_path)[0]
 
-    azure_path = path.join(dir_path, "azure")
-    return not path.exists(azure_path)
+    for folder in TOP_LEVEL_PATHS:
+        possible_path = path.join(dir_path, folder)
+
+        if path.exists(possible_path):
+            return False
+
+    return True
 
 
 def get_setup_py_paths(glob_string, base_path, additional_excludes):
