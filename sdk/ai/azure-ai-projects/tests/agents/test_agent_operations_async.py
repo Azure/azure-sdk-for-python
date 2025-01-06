@@ -540,12 +540,12 @@ class TestIntegrationAgentsOperations:
 
     @pytest.mark.asyncio
     @patch(
-        "azure.ai.projects.operations._operations.AgentsOperations.create_run",
+        "azure.ai.projects.aio.operations._operations.AgentsOperations.create_run",
         return_value=convert_to_byte_iterator(main_stream_response),
     )
-    @patch("azure.ai.projects.operations._operations.AgentsOperations.__init__")
+    @patch("azure.ai.projects.aio.operations._operations.AgentsOperations.__init__")
     @patch(
-        "azure.ai.projects.operations._operations.AgentsOperations.submit_tool_outputs_to_run",
+        "azure.ai.projects.aio.operations._operations.AgentsOperations.submit_tool_outputs_to_run",
     )
     async def test_create_stream_with_tool_calls(self, mock_submit_tool_outputs_to_run: Mock, *args):
         mock_submit_tool_outputs_to_run.side_effect = self.submit_tool_outputs_to_run
