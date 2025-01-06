@@ -149,7 +149,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
          None.
         :type file_mode: str
         :param nfs_file_type: Optional, NFS only. Type of the file or directory. Known values are:
-         "Regular", "Directory", and "Symlink". Default value is None.
+         "Regular", "Directory", and "SymLink". Default value is None.
         :type nfs_file_type: str or ~azure.storage.fileshare.models.NfsFileType
         :param file_http_headers: Parameter group. Default value is None.
         :type file_http_headers: ~azure.storage.fileshare.models.FileHTTPHeaders

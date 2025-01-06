@@ -725,6 +725,20 @@ class ShareFileClient(StorageAccountHostsMixin):
             NFS only. The owning group of the file.
         :keyword str file_mode:
             NFS only. The file mode of the file.
+        :keyword mode_copy_mode:
+            NFS only. Applicable only when the copy source is a File. Determines the copy behavior
+            of the mode bits of the file. Possible values are:
+
+            source - The mode on the destination file is copied from the source file.
+            override - The mode on the destination file is determined via the file_mode keyword.
+        :paramtype mode_copy_mode: Literal['source', 'override']
+        :keyword owner_copy_mode:
+            NFS only. Applicable only when the copy source is a File. Determines the copy behavior
+            of the owner and group of the file. Possible values are:
+
+            source - The owner and group on the destination file is copied from the source file.
+            override - The owner and group on the destination file is determined via the owner and group keywords.
+        :paramtype owner_copy_mode: Literal['source', 'override']
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
@@ -749,8 +763,8 @@ class ShareFileClient(StorageAccountHostsMixin):
         owner = kwargs.pop('owner', None)
         group = kwargs.pop('group', None)
         file_mode = kwargs.pop('file_mode', None)
-        file_mode_copy_mode = 'override' if file_mode else None
-        file_owner_copy_mode = 'override' if owner or group else None
+        file_mode_copy_mode = kwargs.pop('mode_copy_mode', None)
+        file_owner_copy_mode = kwargs.pop('owner_copy_mode', None)
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         kwargs.update(get_smb_properties(kwargs))
