@@ -53,6 +53,7 @@ from azure.storage.blob._generated.models import RehydratePriority
 from devtools_testutils import FakeTokenCredential, recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
+from test_helpers import MockStorageTransport
 
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
@@ -3530,5 +3531,26 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Assert
         result = blob.download_blob().readall()
         assert result == data[:length]
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_mock_transport_no_content_validation(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        transport = MockStorageTransport()
+        blob_service_client = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            transport=transport,
+            retry_total=0
+        )
+
+        blob_client = BlobClient(
+            blob_service_client.url, container_name='test_cont', blob_name='test_blob', credential=storage_account_key,
+            transport=transport, retry_total=0)
+
+        content = blob_client.download_blob()
+        assert content is not None
 
     # ------------------------------------------------------------------------------

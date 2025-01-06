@@ -6,8 +6,8 @@
 from io import IOBase, UnsupportedOperation
 from typing import Any, Dict, Optional
 
-from azure.core.pipeline.transport import AsyncHttpTransport, AioHttpTransportResponse
-from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.pipeline.transport import AsyncHttpTransport
+from azure.core.rest import HttpRequest
 from azure.core.rest._aiohttp import RestAioHttpTransportResponse
 from aiohttp import ClientResponse
 
@@ -71,7 +71,7 @@ class MockAioHttpClientResponse(ClientResponse):
     def __init__(
         self, url: str,
         body_bytes: bytes,
-        headers: Optional[Dict[str, Any]] = None,
+        headers: Dict[str, Any],
         status: int = 200,
         reason: str = "OK"
     ) -> None:
