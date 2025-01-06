@@ -16,7 +16,7 @@ from typing import List, Optional, Union
 
 from marshmallow import RAISE, fields
 from marshmallow.exceptions import ValidationError
-from marshmallow.fields import _T, Field, Nested
+from marshmallow.fields import Field, Nested
 from marshmallow.utils import FieldInstanceResolutionError, from_iso_datetime, resolve_field_instance
 
 from ..._utils._arm_id_utils import AMLVersionedArmId, is_ARM_id_for_resource, parse_name_label, parse_name_version
@@ -44,6 +44,7 @@ from ...exceptions import MlException, ValidationException
 from ..core.schema import PathAwareSchema
 
 module_logger = logging.getLogger(__name__)
+T = typing.TypeVar("T")
 
 
 class StringTransformedEnum(Field):
@@ -830,7 +831,7 @@ class NumberVersionField(VersionField):
 class DumpableIntegerField(fields.Integer):
     """A int field that cannot serialize other type of values to int if self.strict."""
 
-    def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[typing.Union[str, _T]]:
+    def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[typing.Union[str, T]]:
         if self.strict and not isinstance(value, int):
             # this implementation can serialize bool to bool
             raise self.make_error("invalid", input=value)
@@ -856,14 +857,14 @@ class DumpableFloatField(fields.Float):
             raise self.make_error("invalid", input=value)
         return super()._validated(value)
 
-    def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[typing.Union[str, _T]]:
+    def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[typing.Union[str, T]]:
         return super()._serialize(self._validated(value), attr, obj, **kwargs)
 
 
 class DumpableStringField(fields.String):
     """A string field that cannot serialize other type of values to string if self.strict."""
 
-    def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[typing.Union[str, _T]]:
+    def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[typing.Union[str, T]]:
         if not isinstance(value, str):
             raise ValidationError("Given value is not a string")
         return super()._serialize(value, attr, obj, **kwargs)
