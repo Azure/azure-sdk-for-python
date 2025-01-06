@@ -38,6 +38,7 @@ def _get_file(name):
 def unsupported_file_type():
     return _get_file("unsupported_file_type.txt")
 
+
 @pytest.fixture
 def invalid_jsonl_file():
     return _get_file("invalid_evaluate_test_data.jsonl")

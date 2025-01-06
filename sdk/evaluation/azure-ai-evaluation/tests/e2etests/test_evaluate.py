@@ -991,7 +991,9 @@ class TestEvaluate:
         assert jsonl_result["rows"][0]["inputs.query"] == csv_result["rows"][0]["inputs.query"]
         assert jsonl_result["rows"][0]["inputs.ground_truth"] == csv_result["rows"][0]["inputs.ground_truth"]
         assert jsonl_result["rows"][0]["inputs.response"] == csv_result["rows"][0]["inputs.response"]
-        assert jsonl_row_result_df.shape[0] == len(jsonl_input_data) == csv_row_result_df.shape[0] == len(csv_input_data)
+        assert (
+            jsonl_row_result_df.shape[0] == len(jsonl_input_data) == csv_row_result_df.shape[0] == len(csv_input_data)
+        )
 
         assert "outputs.grounded.groundedness" in jsonl_row_result_df.columns.to_list()
         assert "outputs.grounded.groundedness" in csv_row_result_df.columns.to_list()
@@ -1009,9 +1011,20 @@ class TestEvaluate:
         assert csv_metrics.get("grounded.groundedness") == list_mean_nan_safe(
             csv_row_result_df["outputs.grounded.groundedness"]
         )
-        assert jsonl_metrics.get("f1_score.f1_score") == list_mean_nan_safe(jsonl_row_result_df["outputs.f1_score.f1_score"])
-        assert csv_metrics.get("f1_score.f1_score") == list_mean_nan_safe(csv_row_result_df["outputs.f1_score.f1_score"])
+        assert jsonl_metrics.get("f1_score.f1_score") == list_mean_nan_safe(
+            jsonl_row_result_df["outputs.f1_score.f1_score"]
+        )
+        assert csv_metrics.get("f1_score.f1_score") == list_mean_nan_safe(
+            csv_row_result_df["outputs.f1_score.f1_score"]
+        )
 
-        assert jsonl_row_result_df["outputs.grounded.groundedness"][2] == csv_row_result_df["outputs.grounded.groundedness"][2]
-        assert jsonl_row_result_df["outputs.f1_score.f1_score"][2] == csv_row_result_df["outputs.f1_score.f1_score"][2] == 1
+        assert (
+            jsonl_row_result_df["outputs.grounded.groundedness"][2]
+            == csv_row_result_df["outputs.grounded.groundedness"][2]
+        )
+        assert (
+            jsonl_row_result_df["outputs.f1_score.f1_score"][2]
+            == csv_row_result_df["outputs.f1_score.f1_score"][2]
+            == 1
+        )
         assert jsonl_result["studio_url"] == csv_result["studio_url"] == None

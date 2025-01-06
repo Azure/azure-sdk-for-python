@@ -337,12 +337,14 @@ class JSONLDataFileLoader:
     def load(self) -> pd.DataFrame:
         return pd.read_json(self.filename, lines=True)
 
+
 class CSVDataFileLoader:
     def __init__(self, filename: Union[os.PathLike, str]):
         self.filename = filename
 
     def load(self) -> pd.DataFrame:
         return pd.read_csv(self.filename)
+
 
 class DataLoaderFactory:
     @staticmethod
