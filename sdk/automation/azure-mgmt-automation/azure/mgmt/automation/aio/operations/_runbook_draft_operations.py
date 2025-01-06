@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast
+from typing import Any, AsyncIterator, Callable, Dict, IO, Optional, Type, TypeVar, Union, cast
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -15,31 +15,30 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
-from ..._vendor import _convert_request
 from ...operations._runbook_draft_operations import (
     build_get_content_request,
     build_get_request,
     build_replace_content_request,
     build_undo_edit_request,
 )
-from .._vendor import AutomationClientMixinABC
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
 else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -69,18 +68,20 @@ class RunbookDraftOperations:
     ) -> AsyncIterator[bytes]:
         """Retrieve the content of runbook draft identified by runbook name.
 
+        .. seealso::
+           - http://aka.ms/azureautomationsdk/runbookdraftoperations
+
         :param resource_group_name: Name of an Azure Resource group. Required.
         :type resource_group_name: str
         :param automation_account_name: The name of the automation account. Required.
         :type automation_account_name: str
         :param runbook_name: The runbook name. Required.
         :type runbook_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Async iterator of the response bytes or the result of cls(response)
+        :return: AsyncIterator[bytes] or the result of cls(response)
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -91,52 +92,52 @@ class RunbookDraftOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-08"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-08"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-08"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        request = build_get_content_request(
+        _request = build_get_content_request(
             resource_group_name=resource_group_name,
             automation_account_name=automation_account_name,
             runbook_name=runbook_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_content.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=True, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = response.stream_download(self._client._pipeline)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    get_content.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}/draft/content"
-    }
-
     async def _replace_content_initial(
         self,
         resource_group_name: str,
         automation_account_name: str,
         runbook_name: str,
-        runbook_content: IO,
+        runbook_content: IO[bytes],
         **kwargs: Any
-    ) -> Optional[AsyncIterator[bytes]]:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -147,13 +148,13 @@ class RunbookDraftOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-08"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-08"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-08"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[AsyncIterator[bytes]]] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _content = runbook_content
 
-        request = build_replace_content_request(
+        _request = build_replace_content_request(
             resource_group_name=resource_group_name,
             automation_account_name=automation_account_name,
             runbook_name=runbook_name,
@@ -161,40 +162,38 @@ class RunbookDraftOperations:
             api_version=api_version,
             content_type=content_type,
             content=_content,
-            template_url=self._replace_content_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=True, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
         response_headers = {}
-        if response.status_code == 200:
-            deserialized = response.stream_download(self._client._pipeline)
-
         if response.status_code == 202:
             response_headers["location"] = self._deserialize("str", response.headers.get("location"))
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _replace_content_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}/draft/content"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_replace_content(
@@ -202,10 +201,13 @@ class RunbookDraftOperations:
         resource_group_name: str,
         automation_account_name: str,
         runbook_name: str,
-        runbook_content: IO,
+        runbook_content: IO[bytes],
         **kwargs: Any
     ) -> AsyncLROPoller[AsyncIterator[bytes]]:
         """Replaces the runbook draft content.
+
+        .. seealso::
+           - http://aka.ms/azureautomationsdk/runbookdraftoperations
 
         :param resource_group_name: Name of an Azure Resource group. Required.
         :type resource_group_name: str
@@ -214,24 +216,16 @@ class RunbookDraftOperations:
         :param runbook_name: The runbook name. Required.
         :type runbook_name: str
         :param runbook_content: The runbook draft content. Required.
-        :type runbook_content: IO
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either Async iterator of the response bytes
-         or the result of cls(response)
+        :type runbook_content: IO[bytes]
+        :return: An instance of AsyncLROPoller that returns either AsyncIterator[bytes] or the result
+         of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[AsyncIterator[bytes]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-08"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-08"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-08"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -250,12 +244,13 @@ class RunbookDraftOperations:
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = response.stream_download(self._client._pipeline)
+            deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -268,17 +263,15 @@ class RunbookDraftOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[AsyncIterator[bytes]].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_replace_content.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}/draft/content"
-    }
+        return AsyncLROPoller[AsyncIterator[bytes]](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace_async
     async def get(
@@ -286,18 +279,20 @@ class RunbookDraftOperations:
     ) -> _models.RunbookDraft:
         """Retrieve the runbook draft identified by runbook name.
 
+        .. seealso::
+           - http://aka.ms/azureautomationsdk/runbookdraftoperations
+
         :param resource_group_name: Name of an Azure Resource group. Required.
         :type resource_group_name: str
         :param automation_account_name: The name of the automation account. Required.
         :type automation_account_name: str
         :param runbook_name: The runbook name. Required.
         :type runbook_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RunbookDraft or the result of cls(response)
         :rtype: ~azure.mgmt.automation.models.RunbookDraft
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -308,24 +303,23 @@ class RunbookDraftOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-08"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-08"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-08"))
         cls: ClsType[_models.RunbookDraft] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             automation_account_name=automation_account_name,
             runbook_name=runbook_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -335,16 +329,12 @@ class RunbookDraftOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("RunbookDraft", pipeline_response)
+        deserialized = self._deserialize("RunbookDraft", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}/draft"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def undo_edit(
@@ -352,18 +342,20 @@ class RunbookDraftOperations:
     ) -> _models.RunbookDraftUndoEditResult:
         """Undo draft edit to last known published state identified by runbook name.
 
+        .. seealso::
+           - http://aka.ms/azureautomationsdk/runbookdraftoperations
+
         :param resource_group_name: Name of an Azure Resource group. Required.
         :type resource_group_name: str
         :param automation_account_name: The name of the automation account. Required.
         :type automation_account_name: str
         :param runbook_name: The runbook name. Required.
         :type runbook_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RunbookDraftUndoEditResult or the result of cls(response)
         :rtype: ~azure.mgmt.automation.models.RunbookDraftUndoEditResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -374,24 +366,23 @@ class RunbookDraftOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-08"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-08"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-08"))
         cls: ClsType[_models.RunbookDraftUndoEditResult] = kwargs.pop("cls", None)
 
-        request = build_undo_edit_request(
+        _request = build_undo_edit_request(
             resource_group_name=resource_group_name,
             automation_account_name=automation_account_name,
             runbook_name=runbook_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.undo_edit.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -401,13 +392,9 @@ class RunbookDraftOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("RunbookDraftUndoEditResult", pipeline_response)
+        deserialized = self._deserialize("RunbookDraftUndoEditResult", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    undo_edit.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}/draft/undoEdit"
-    }
+        return deserialized  # type: ignore

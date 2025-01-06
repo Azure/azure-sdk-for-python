@@ -23,6 +23,7 @@ from azure.communication.phonenumbers.siprouting import SipRoutingClient
 connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
 client = SipRoutingClient.from_connection_string(connection_string)
 
+
 def get_sip_trunk_sample():
     trunk_fqdn = os.getenv("COMMUNICATION_SAMPLES_TRUNK_FQDN")
     try:
@@ -31,6 +32,7 @@ def get_sip_trunk_sample():
         print(sip_trunk.sip_signaling_port)
     except KeyError:
         print("Trunk not found")
+
 
 if __name__ == "__main__":
     get_sip_trunk_sample()

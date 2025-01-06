@@ -85,7 +85,7 @@ class ModelBatchDeployment(Deployment):
         self.compute = compute
         self.resources = resources
         if settings is not None:
-            self.model_deployment_settings = ModelBatchDeploymentSettings(
+            self.settings = ModelBatchDeploymentSettings(
                 mini_batch_size=settings.mini_batch_size,
                 instance_count=settings.instance_count,
                 max_concurrency_per_instance=settings.max_concurrency_per_instance,
@@ -113,7 +113,7 @@ class ModelBatchDeployment(Deployment):
             if self.code_configuration
             else None
         )
-        deployment_settings = self.model_deployment_settings
+        deployment_settings = self.settings
         model = IdAssetReference(asset_id=self.model) if self.model else None
         batch_deployment = RestBatchDeployment(
             description=self.description,
@@ -188,9 +188,9 @@ class ModelBatchDeployment(Deployment):
 
     def _validate_output_action(self) -> None:
         if (
-            self.model_deployment_settings.output_action
-            and self.model_deployment_settings.output_action == BatchDeploymentOutputAction.SUMMARY_ONLY
-            and self.model_deployment_settings.output_file_name
+            self.settings.output_action
+            and self.settings.output_action == BatchDeploymentOutputAction.SUMMARY_ONLY
+            and self.settings.output_file_name
         ):
             msg = "When output_action is set to {}, the output_file_name need not to be specified."
             msg = msg.format(BatchDeploymentOutputAction.SUMMARY_ONLY)

@@ -28,14 +28,12 @@ class BufferedProducer:
         producer: EventHubProducer,
         partition_id: str,
         on_success: Callable[["SendEventTypes", Optional[str]], Awaitable[None]],
-        on_error: Callable[
-            ["SendEventTypes", Optional[str], Exception], Awaitable[None]
-        ],
+        on_error: Callable[["SendEventTypes", Optional[str], Exception], Awaitable[None]],
         max_message_size_on_link: int,
         *,
         amqp_transport: AmqpTransportAsync,
         max_buffer_length: int,
-        max_wait_time: float = 1
+        max_wait_time: float = 1,
     ):
         self._buffered_queue: queue.Queue = queue.Queue()
         self._max_buffer_len = max_buffer_length
@@ -59,9 +57,7 @@ class BufferedProducer:
             self._running = True
             if self._max_wait_time:
                 self._last_send_time = time.time()
-                self._check_max_wait_time_future = asyncio.ensure_future(
-                    self.check_max_wait_time_worker()
-                )
+                self._check_max_wait_time_future = asyncio.ensure_future(self.check_max_wait_time_worker())
 
     async def stop(self, flush=True, timeout_time=None, raise_error=False):
         self._running = False
@@ -71,8 +67,7 @@ class BufferedProducer:
         else:
             if self._cur_buffered_len:
                 _LOGGER.warning(
-                    "Shutting down Partition %r."
-                    " There are still %r events in the buffer which will be lost",
+                    "Shutting down Partition %r. There are still %r events in the buffer which will be lost",
                     self.partition_id,
                     self._cur_buffered_len,
                 )
@@ -80,9 +75,7 @@ class BufferedProducer:
             try:
                 await self._check_max_wait_time_future
             except Exception as exc:  # pylint: disable=broad-except
-                _LOGGER.warning(
-                    "Partition %r stopped with error %r", self.partition_id, exc
-                )
+                _LOGGER.warning("Partition %r stopped with error %r", self.partition_id, exc)
         await self._producer.close()
 
     async def put_events(self, events, timeout_time=None):
@@ -102,9 +95,7 @@ class BufferedProducer:
             # flush the buffer
             await self.flush(timeout_time=timeout_time)
         if timeout_time and time.time() > timeout_time:
-            raise OperationTimeoutError(
-                "Failed to enqueue events into buffer due to timeout."
-            )
+            raise OperationTimeoutError("Failed to enqueue events into buffer due to timeout.")
         async with self._lock:
             try:
                 # add single event into current batch
@@ -186,14 +177,10 @@ class BufferedProducer:
                     self._cur_buffered_len -= len(batch)
             # If flush could not get the semaphore, we log and raise error if wanted
             else:
-                _LOGGER.info(
-                    "Partition %r fails to flush due to timeout.", self.partition_id
-                )
+                _LOGGER.info("Partition %r fails to flush due to timeout.", self.partition_id)
                 if raise_error:
                     raise OperationTimeoutError(
-                        "Failed to flush {!r} within {}".format(
-                            self.partition_id, timeout_time
-                        )
+                        "Failed to flush {!r} within {}".format(self.partition_id, timeout_time)
                     )
                 break
         # after finishing flushing, reset cur batch and put it into the buffer
@@ -204,9 +191,7 @@ class BufferedProducer:
         while self._running:
             if self._cur_buffered_len > 0:
                 now_time = time.time()
-                _LOGGER.info(
-                    "Partition %r worker is checking max_wait_time.", self.partition_id
-                )
+                _LOGGER.info("Partition %r worker is checking max_wait_time.", self.partition_id)
                 # flush the partition if its beyond the waiting time or the buffer is at max capacity
                 if (now_time - self._last_send_time > self._max_wait_time) or (
                     self._cur_buffered_len >= self._max_buffer_len

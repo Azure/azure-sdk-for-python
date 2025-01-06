@@ -72,7 +72,7 @@ def retry_hook(settings, **kwargs):
 # respect the Retry-After header, whether this header is present, and
 # whether the returned status code is on the list of status codes to
 # be retried upon on the presence of the aforementioned header)
-def is_retry(response, mode):   # pylint: disable=too-many-return-statements
+def is_retry(response, mode):
     status = response.http_response.status_code
     if 300 <= status < 500:
         # An exception occurred, but in most cases it was expected. Examples could
@@ -91,6 +91,7 @@ def is_retry(response, mode):   # pylint: disable=too-many-return-statements
             return False
         return True
     return False
+
 
 def is_checksum_retry(response):
     # retry if invalid content md5
@@ -272,7 +273,7 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
 
 class StorageRequestHook(SansIOHTTPPolicy):
 
-    def __init__(self, **kwargs):  # pylint: disable=unused-argument
+    def __init__(self, **kwargs):
         self._request_callback = kwargs.get('raw_request_hook')
         super(StorageRequestHook, self).__init__()
 
@@ -284,7 +285,7 @@ class StorageRequestHook(SansIOHTTPPolicy):
 
 class StorageResponseHook(HTTPPolicy):
 
-    def __init__(self, **kwargs):  # pylint: disable=unused-argument
+    def __init__(self, **kwargs):
         self._response_callback = kwargs.get('raw_response_hook')
         super(StorageResponseHook, self).__init__()
 
@@ -415,7 +416,7 @@ class StorageRetryPolicy(HTTPPolicy):
         """
         A function which sets the next host location on the request, if applicable.
 
-        :param Dict[str, Any]] settings: The configurable values pertaining to the next host location.
+        :param Dict[str, Any] settings: The configurable values pertaining to the next host location.
         :param PipelineRequest request: A pipeline request object.
         """
         if settings['hosts'] and all(settings['hosts'].values()):
@@ -475,7 +476,7 @@ class StorageRetryPolicy(HTTPPolicy):
     ) -> bool:
         """Increment the retry counters.
 
-        :param dict[str, Any] settings: The configurable values pertaining to the increment operation.
+        :param Dict[str, Any] settings: The configurable values pertaining to the increment operation.
         :param PipelineRequest request: A pipeline request object.
         :param Optional[PipelineResponse] response: A pipeline response object.
         :param Optional[AzureError] error: An error encountered during the request, or

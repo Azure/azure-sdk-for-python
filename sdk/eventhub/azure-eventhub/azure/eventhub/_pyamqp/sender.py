@@ -26,18 +26,14 @@ class PendingDelivery(object):
         self.transfer_state = None
         self.timeout = kwargs.get("timeout")
         self.settled = kwargs.get("settled", False)
-        self._network_trace_params = kwargs.get('network_trace_params')
+        self._network_trace_params = kwargs.get("network_trace_params")
 
     def on_settled(self, reason, state):
         if self.on_delivery_settled and not self.settled:
             try:
                 self.on_delivery_settled(reason, state)
             except Exception as e:  # pylint:disable=broad-except
-                _LOGGER.warning(
-                    "Message 'on_send_complete' callback failed: %r",
-                    e,
-                    extra=self._network_trace_params
-                )
+                _LOGGER.warning("Message 'on_send_complete' callback failed: %r", e, extra=self._network_trace_params)
         self.settled = True
 
 
@@ -79,7 +75,7 @@ class SenderLink(Link):
             if rcv_link_credit is None or rcv_delivery_count is None:
                 _LOGGER.info(
                     "Unable to get link-credit or delivery-count from incoming ATTACH. Detaching link.",
-                    extra=self.network_trace_params
+                    extra=self.network_trace_params,
                 )
                 self._remove_pending_deliveries()
                 self._set_state(LinkState.DETACHED)  # TODO: Send detach now?
@@ -105,8 +101,7 @@ class SenderLink(Link):
             "payload": output,
         }
         self._session._outgoing_transfer(  # pylint:disable=protected-access
-            delivery,
-            self.network_trace_params if self.network_trace else None
+            delivery, self.network_trace_params if self.network_trace else None
         )
         sent_and_settled = False
         if delivery.transfer_state == SessionTransferState.OKAY:
@@ -163,10 +158,7 @@ class SenderLink(Link):
     def send_transfer(self, message, *, send_async=False, **kwargs):
         self._check_if_closed()
         if self.state != LinkState.ATTACHED:
-            raise AMQPLinkError(
-                condition=ErrorCondition.ClientError,
-                description="Link is not attached."
-            )
+            raise AMQPLinkError(condition=ErrorCondition.ClientError, description="Link is not attached.")
         settled = self.send_settle_mode == SenderSettleMode.Settled
         if self.send_settle_mode == SenderSettleMode.Mixed:
             settled = kwargs.pop("settled", True)
@@ -175,7 +167,7 @@ class SenderLink(Link):
             timeout=kwargs.get("timeout"),
             message=message,
             settled=settled,
-            network_trace_params = self.network_trace_params
+            network_trace_params=self.network_trace_params,
         )
         if self.current_link_credit == 0 or send_async:
             self._pending_deliveries.append(delivery)

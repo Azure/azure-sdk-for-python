@@ -27,13 +27,12 @@ from azure.mgmt.resource import PolicyClient
 def main():
     client = PolicyClient(
         credential=DefaultAzureCredential(),
-        policy_definition_name="POLICY_DEFINITION_NAME",
-        policy_definition_version="POLICY_DEFINITION_VERSION",
-        policy_set_definition_name="1f3afdf9-d0c9-4c3d-847f-89da613e70a8",
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.policy_set_definition_versions.list_built_in()
+    response = client.policy_set_definition_versions.list_built_in(
+        policy_set_definition_name="1f3afdf9-d0c9-4c3d-847f-89da613e70a8",
+    )
     for item in response:
         print(item)
 

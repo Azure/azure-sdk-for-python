@@ -24,7 +24,7 @@ class TestAzureRedHatOpenShiftMachinePoolsOperations(AzureMgmtRecordedTestCase):
         response = self.client.machine_pools.list(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2023-09-04",
+            api_version="2023-11-22",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestAzureRedHatOpenShiftMachinePoolsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             child_resource_name="str",
-            api_version="2023-09-04",
+            api_version="2023-11-22",
         )
 
         # please add some check logic here by yourself
@@ -64,7 +64,7 @@ class TestAzureRedHatOpenShiftMachinePoolsOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2023-09-04",
+            api_version="2023-11-22",
         )
 
         # please add some check logic here by yourself
@@ -77,7 +77,7 @@ class TestAzureRedHatOpenShiftMachinePoolsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             child_resource_name="str",
-            api_version="2023-09-04",
+            api_version="2023-11-22",
         )
 
         # please add some check logic here by yourself
@@ -101,7 +101,7 @@ class TestAzureRedHatOpenShiftMachinePoolsOperations(AzureMgmtRecordedTestCase):
                     "lastModifiedByType": "str",
                 },
             },
-            api_version="2023-09-04",
+            api_version="2023-11-22",
         )
 
         # please add some check logic here by yourself

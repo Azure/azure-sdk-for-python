@@ -259,7 +259,10 @@ class ComponentCodeMixin:
             yield Code(path=origin_code_value)
         elif code_type in [CodeType.LOCAL, CodeType.NONE]:
             code: Any
-            with self._try_build_local_code() as code:
+            # false-positive by pylint, hence disable it
+            # (https://github.com/pylint-dev/pylint/blob/main/doc/data/messages
+            # /c/contextmanager-generator-missing-cleanup/details.rst)
+            with self._try_build_local_code() as code:  # pylint:disable=contextmanager-generator-missing-cleanup
                 yield code
         else:
             # arm id, None and unknown need no extra resolution

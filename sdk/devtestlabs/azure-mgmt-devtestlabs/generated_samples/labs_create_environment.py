@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.devtestlabs import DevTestLabsClient
 
 """
@@ -29,7 +30,7 @@ def main():
         subscription_id="{subscriptionId}",
     )
 
-    response = client.labs.begin_create_environment(
+    client.labs.begin_create_environment(
         resource_group_name="resourceGroupName",
         name="{labName}",
         lab_virtual_machine_creation_parameter={
@@ -55,7 +56,6 @@ def main():
             "tags": {"tagName1": "tagValue1"},
         },
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/devtestlabs/resource-manager/Microsoft.DevTestLab/stable/2018-09-15/examples/Labs_CreateEnvironment.json

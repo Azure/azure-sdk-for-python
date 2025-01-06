@@ -1,0 +1,1 @@
+This folder contains an example of the necessary complexity of a C-extensions package. When this type of package uses a `pyproject.toml`, a `setup.py` still must exist with the `Extension` argument. This `pyproject.toml ` and `setup.py` will not work with an actual build (none of the files/folders are present).

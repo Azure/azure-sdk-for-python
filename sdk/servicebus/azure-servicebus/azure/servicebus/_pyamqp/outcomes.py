@@ -1,8 +1,8 @@
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 # The Messaging layer defines a concrete set of delivery states which can be used (via the disposition frame)
 # to indicate the state of the message at the receiver.
@@ -33,11 +33,12 @@ from .constants import FIELD
 from .performatives import _CAN_ADD_DOCSTRING
 
 
-Received = namedtuple('Received', ['section_number', 'section_offset'])
-Received._code = 0x00000023 # type: ignore # pylint:disable=protected-access
-Received._definition = ( # type: ignore # pylint:disable=protected-access
+Received = namedtuple("Received", ["section_number", "section_offset"])
+Received._code = 0x00000023  # type: ignore # pylint:disable=protected-access
+Received._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("section_number", AMQPTypes.uint, True, None, False),
-    FIELD("section_offset", AMQPTypes.ulong, True, None, False))
+    FIELD("section_offset", AMQPTypes.ulong, True, None, False),
+)
 if _CAN_ADD_DOCSTRING:
     Received.__doc__ = """
     At the target the received state indicates the furthest point in the payload of the message
@@ -65,9 +66,9 @@ if _CAN_ADD_DOCSTRING:
     """
 
 
-Accepted = namedtuple('Accepted', [])
-Accepted._code = 0x00000024 # type: ignore # pylint:disable=protected-access
-Accepted._definition = () # type: ignore # pylint:disable=protected-access
+Accepted = namedtuple("Accepted", [])
+Accepted._code = 0x00000024  # type: ignore # pylint:disable=protected-access
+Accepted._definition = ()  # type: ignore # pylint:disable=protected-access
 if _CAN_ADD_DOCSTRING:
     Accepted.__doc__ = """
     The accepted outcome.
@@ -83,10 +84,10 @@ if _CAN_ADD_DOCSTRING:
     """
 
 
-Rejected = namedtuple('Rejected', ['error'])
-Rejected.__new__.__defaults__ = (None,) * len(Rejected._fields) # type: ignore
-Rejected._code = 0x00000025 # type: ignore # pylint:disable=protected-access
-Rejected._definition = (FIELD("error", ObjDefinition.error, False, None, False),) # type: ignore # pylint:disable=protected-access
+Rejected = namedtuple("Rejected", ["error"])
+Rejected.__new__.__defaults__ = (None,) * len(Rejected._fields)  # type: ignore
+Rejected._code = 0x00000025  # type: ignore # pylint:disable=protected-access
+Rejected._definition = (FIELD("error", ObjDefinition.error, False, None, False),)  # type: ignore # pylint:disable=protected-access
 if _CAN_ADD_DOCSTRING:
     Rejected.__doc__ = """
     The rejected outcome.
@@ -103,9 +104,9 @@ if _CAN_ADD_DOCSTRING:
     """
 
 
-Released = namedtuple('Released', [])
-Released._code = 0x00000026 # type: ignore # pylint:disable=protected-access
-Released._definition = () # type: ignore # pylint:disable=protected-access
+Released = namedtuple("Released", [])
+Released._code = 0x00000026  # type: ignore # pylint:disable=protected-access
+Released._definition = ()  # type: ignore # pylint:disable=protected-access
 if _CAN_ADD_DOCSTRING:
     Released.__doc__ = """
     The released outcome.
@@ -124,13 +125,14 @@ if _CAN_ADD_DOCSTRING:
     """
 
 
-Modified = namedtuple('Modified', ['delivery_failed', 'undeliverable_here', 'message_annotations'])
-Modified.__new__.__defaults__ = (None,) * len(Modified._fields) # type: ignore
-Modified._code = 0x00000027 # type: ignore # pylint:disable=protected-access
-Modified._definition = ( # type: ignore # pylint:disable=protected-access
-    FIELD('delivery_failed', AMQPTypes.boolean, False, None, False),
-    FIELD('undeliverable_here', AMQPTypes.boolean, False, None, False),
-    FIELD('message_annotations', FieldDefinition.fields, False, None, False))
+Modified = namedtuple("Modified", ["delivery_failed", "undeliverable_here", "message_annotations"])
+Modified.__new__.__defaults__ = (None,) * len(Modified._fields)  # type: ignore
+Modified._code = 0x00000027  # type: ignore # pylint:disable=protected-access
+Modified._definition = (  # type: ignore # pylint:disable=protected-access
+    FIELD("delivery_failed", AMQPTypes.boolean, False, None, False),
+    FIELD("undeliverable_here", AMQPTypes.boolean, False, None, False),
+    FIELD("message_annotations", FieldDefinition.fields, False, None, False),
+)
 if _CAN_ADD_DOCSTRING:
     Modified.__doc__ = """
     The modified outcome.

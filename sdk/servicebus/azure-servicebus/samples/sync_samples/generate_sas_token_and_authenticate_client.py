@@ -18,14 +18,16 @@ from azure.core.credentials import AccessToken
 
 from azure.servicebus import ServiceBusClient
 
+
 def generate_sas_token(uri, sas_name, sas_value, token_ttl):
     """Performs the signing and encoding needed to generate a sas token from a sas key."""
-    sas = sas_value.encode('utf-8')
+    sas = sas_value.encode("utf-8")
     expiry = str(int(time.time() + token_ttl))
-    string_to_sign = (uri + '\n' + expiry).encode('utf-8')
+    string_to_sign = (uri + "\n" + expiry).encode("utf-8")
     signed_hmac_sha256 = hmac.HMAC(sas, string_to_sign, hashlib.sha256)
     signature = url_parse_quote(base64.b64encode(signed_hmac_sha256.digest()))
-    return 'SharedAccessSignature sr={}&sig={}&se={}&skn={}'.format(uri, signature, expiry, sas_name)
+    return "SharedAccessSignature sr={}&sig={}&se={}&skn={}".format(uri, signature, expiry, sas_name)
+
 
 class CustomizedSASCredential(object):
     def __init__(self, token, expiry):
@@ -43,17 +45,18 @@ class CustomizedSASCredential(object):
         """
         return AccessToken(self.token, self.expiry)
 
-FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
+
+FULLY_QUALIFIED_NAMESPACE = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
 QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
-SAS_POLICY = os.environ['SERVICEBUS_SAS_POLICY']
-SAS_KEY = os.environ['SERVICEBUS_SAS_KEY']
+SAS_POLICY = os.environ["SERVICEBUS_SAS_POLICY"]
+SAS_KEY = os.environ["SERVICEBUS_SAS_KEY"]
 
 auth_uri = "sb://{}/{}".format(FULLY_QUALIFIED_NAMESPACE, QUEUE_NAME)
 token_ttl = 3000  # seconds
 
 sas_token = generate_sas_token(auth_uri, SAS_POLICY, SAS_KEY, token_ttl)
 
-credential=CustomizedSASCredential(sas_token, time.time() + token_ttl)
+credential = CustomizedSASCredential(sas_token, time.time() + token_ttl)
 
 with ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential) as client:
-    pass # client now connected, your logic goes here.
+    pass  # client now connected, your logic goes here.

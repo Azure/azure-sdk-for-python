@@ -30,13 +30,14 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    client.network_security_perimeter_configurations.begin_reconcile_for_private_link_scope(
+    response = client.network_security_perimeter_configurations.begin_reconcile_for_private_link_scope(
         resource_group_name="my-resource-group",
         scope_name="my-privatelinkscope",
         perimeter_name="aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee.myAssociation",
     ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/preview/2024-05-20-preview/examples/networkSecurityPerimeterConfiguration/NetworkSecurityPerimeterConfigurationReconcile.json
+# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/preview/2024-07-31-preview/examples/networkSecurityPerimeterConfiguration/NetworkSecurityPerimeterConfigurationReconcile.json
 if __name__ == "__main__":
     main()

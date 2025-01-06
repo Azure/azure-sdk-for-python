@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 import functools
 import sys
@@ -32,7 +32,6 @@ from .._parser import _datetime_to_str, _get_file_permission, _parse_snapshot
 from .._serialize import get_api_version, get_dest_access_conditions, get_rename_smb_properties
 from .._shared.base_client import parse_query, StorageAccountHostsMixin
 from .._shared.base_client_async import parse_connection_str, AsyncStorageAccountHostsMixin, AsyncTransportWrapper
-from .._shared.parser import _str
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers
 from .._shared.response_handlers import process_storage_error, return_response_headers
@@ -40,9 +39,9 @@ from ._file_client_async import ShareFileClient
 from ._models import DirectoryPropertiesPaged, Handle, HandlesPaged
 
 if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+    from typing import Literal
 else:
-    from typing_extensions import Literal  # pylint: disable=ungrouped-imports
+    from typing_extensions import Literal
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -142,7 +141,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
                                         allow_trailing_dot=self.allow_trailing_dot,
                                         allow_source_trailing_dot=self.allow_source_trailing_dot,
                                         file_request_intent=self.file_request_intent)
-        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment] # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
 
     @classmethod
     def from_directory_url(
@@ -816,7 +815,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         file_change_time = kwargs.pop('file_change_time', None)
         try:
             return cast(Dict[str, Any], await self._client.directory.set_properties(
-                file_attributes=_str(file_attributes),
+                file_attributes=str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
                 file_change_time=_datetime_to_str(file_change_time),

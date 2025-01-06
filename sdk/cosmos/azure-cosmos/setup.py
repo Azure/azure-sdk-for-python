@@ -55,7 +55,7 @@ setup(
     url="https://github.com/Azure/azure-sdk-for-python",
     keywords="azure, azure sdk",
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Natural Language :: English",
         "Operating System :: OS Independent",
@@ -67,13 +67,14 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
     python_requires=">=3.8",
     install_requires=[
-        "azure-core>=1.25.1",
+        "azure-core>=1.30.0",
         "typing-extensions>=4.6.0",
     ],
 )

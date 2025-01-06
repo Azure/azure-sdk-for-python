@@ -1,8 +1,8 @@
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 # TODO: fix mypy errors for _code/_definition/__defaults__ (issue #26500)
 from collections import namedtuple
@@ -17,19 +17,20 @@ _CAN_ADD_DOCSTRING = sys.version_info.major >= 3
 
 
 OpenFrame = namedtuple(
-    'OpenFrame',
+    "OpenFrame",
     [
-        'container_id',
-        'hostname',
-        'max_frame_size',
-        'channel_max',
-        'idle_timeout',
-        'outgoing_locales',
-        'incoming_locales',
-        'offered_capabilities',
-        'desired_capabilities',
-        'properties'
-    ])
+        "container_id",
+        "hostname",
+        "max_frame_size",
+        "channel_max",
+        "idle_timeout",
+        "outgoing_locales",
+        "incoming_locales",
+        "offered_capabilities",
+        "desired_capabilities",
+        "properties",
+    ],
+)
 OpenFrame._code = 0x00000010  # type: ignore # pylint:disable=protected-access
 OpenFrame._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("container_id", AMQPTypes.string, True, None, False),
@@ -41,7 +42,8 @@ OpenFrame._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("incoming_locales", AMQPTypes.symbol, False, None, True),
     FIELD("offered_capabilities", AMQPTypes.symbol, False, None, True),
     FIELD("desired_capabilities", AMQPTypes.symbol, False, None, True),
-    FIELD("properties", FieldDefinition.fields, False, None, False))
+    FIELD("properties", FieldDefinition.fields, False, None, False),
+)
 if _CAN_ADD_DOCSTRING:
     OpenFrame.__doc__ = """
     OPEN performative. Negotiate Connection parameters.
@@ -106,17 +108,18 @@ if _CAN_ADD_DOCSTRING:
 
 
 BeginFrame = namedtuple(
-    'BeginFrame',
+    "BeginFrame",
     [
-        'remote_channel',
-        'next_outgoing_id',
-        'incoming_window',
-        'outgoing_window',
-        'handle_max',
-        'offered_capabilities',
-        'desired_capabilities',
-        'properties'
-    ])
+        "remote_channel",
+        "next_outgoing_id",
+        "incoming_window",
+        "outgoing_window",
+        "handle_max",
+        "offered_capabilities",
+        "desired_capabilities",
+        "properties",
+    ],
+)
 BeginFrame._code = 0x00000011  # type: ignore # pylint:disable=protected-access
 BeginFrame._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("remote_channel", AMQPTypes.ushort, False, None, False),
@@ -126,7 +129,8 @@ BeginFrame._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("handle_max", AMQPTypes.uint, False, 4294967295, False),
     FIELD("offered_capabilities", AMQPTypes.symbol, False, None, True),
     FIELD("desired_capabilities", AMQPTypes.symbol, False, None, True),
-    FIELD("properties", FieldDefinition.fields, False, None, False))
+    FIELD("properties", FieldDefinition.fields, False, None, False),
+)
 if _CAN_ADD_DOCSTRING:
     BeginFrame.__doc__ = """
     BEGIN performative. Begin a Session on a channel.
@@ -166,23 +170,24 @@ if _CAN_ADD_DOCSTRING:
 
 
 AttachFrame = namedtuple(
-    'AttachFrame',
+    "AttachFrame",
     [
-        'name',
-        'handle',
-        'role',
-        'send_settle_mode',
-        'rcv_settle_mode',
-        'source',
-        'target',
-        'unsettled',
-        'incomplete_unsettled',
-        'initial_delivery_count',
-        'max_message_size',
-        'offered_capabilities',
-        'desired_capabilities',
-        'properties'
-    ])
+        "name",
+        "handle",
+        "role",
+        "send_settle_mode",
+        "rcv_settle_mode",
+        "source",
+        "target",
+        "unsettled",
+        "incomplete_unsettled",
+        "initial_delivery_count",
+        "max_message_size",
+        "offered_capabilities",
+        "desired_capabilities",
+        "properties",
+    ],
+)
 AttachFrame._code = 0x00000012  # type: ignore # pylint:disable=protected-access
 AttachFrame._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("name", AMQPTypes.string, True, None, False),
@@ -198,7 +203,8 @@ AttachFrame._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("max_message_size", AMQPTypes.ulong, False, None, False),
     FIELD("offered_capabilities", AMQPTypes.symbol, False, None, True),
     FIELD("desired_capabilities", AMQPTypes.symbol, False, None, True),
-    FIELD("properties", FieldDefinition.fields, False, None, False))
+    FIELD("properties", FieldDefinition.fields, False, None, False),
+)
 if _CAN_ADD_DOCSTRING:
     AttachFrame.__doc__ = """
     ATTACH performative. Attach a Link to a Session.
@@ -265,21 +271,22 @@ if _CAN_ADD_DOCSTRING:
 
 
 FlowFrame = namedtuple(
-    'FlowFrame',
+    "FlowFrame",
     [
-        'next_incoming_id',
-        'incoming_window',
-        'next_outgoing_id',
-        'outgoing_window',
-        'handle',
-        'delivery_count',
-        'link_credit',
-        'available',
-        'drain',
-        'echo',
-        'properties'
-    ])
-FlowFrame.__new__.__defaults__ = (None, None, None, None, None, None, None) # type: ignore
+        "next_incoming_id",
+        "incoming_window",
+        "next_outgoing_id",
+        "outgoing_window",
+        "handle",
+        "delivery_count",
+        "link_credit",
+        "available",
+        "drain",
+        "echo",
+        "properties",
+    ],
+)
+FlowFrame.__new__.__defaults__ = (None, None, None, None, None, None, None)  # type: ignore
 FlowFrame._code = 0x00000013  # type: ignore # pylint:disable=protected-access
 FlowFrame._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("next_incoming_id", AMQPTypes.uint, False, None, False),
@@ -292,7 +299,8 @@ FlowFrame._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("available", AMQPTypes.uint, False, None, False),
     FIELD("drain", AMQPTypes.boolean, False, False, False),
     FIELD("echo", AMQPTypes.boolean, False, False, False),
-    FIELD("properties", FieldDefinition.fields, False, None, False))
+    FIELD("properties", FieldDefinition.fields, False, None, False),
+)
 if _CAN_ADD_DOCSTRING:
     FlowFrame.__doc__ = """
     FLOW performative. Update link state.
@@ -335,6 +343,7 @@ if _CAN_ADD_DOCSTRING:
         here: http://www.amqp.org/specification/1.0/link-state-properties.
     """
 
+
 class TransferFrame(NamedTuple):
     handle: Optional[int] = None
     delivery_id: Optional[int] = None
@@ -349,6 +358,7 @@ class TransferFrame(NamedTuple):
     batchable: Optional[bool] = None
     payload: Optional[Buffer] = None
 
+
 TransferFrame._code = 0x00000014  # type: ignore # pylint:disable=protected-access
 TransferFrame._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("handle", AMQPTypes.uint, True, None, False),
@@ -362,7 +372,7 @@ TransferFrame._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("resume", AMQPTypes.boolean, False, False, False),
     FIELD("aborted", AMQPTypes.boolean, False, False, False),
     FIELD("batchable", AMQPTypes.boolean, False, False, False),
-    None
+    None,
 )
 
 if _CAN_ADD_DOCSTRING:
@@ -436,16 +446,7 @@ if _CAN_ADD_DOCSTRING:
     """
 
 
-DispositionFrame = namedtuple(
-    'DispositionFrame',
-    [
-        'role',
-        'first',
-        'last',
-        'settled',
-        'state',
-        'batchable'
-    ])
+DispositionFrame = namedtuple("DispositionFrame", ["role", "first", "last", "settled", "state", "batchable"])
 DispositionFrame._code = 0x00000015  # type: ignore # pylint:disable=protected-access
 DispositionFrame._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("role", AMQPTypes.boolean, True, None, False),
@@ -453,7 +454,8 @@ DispositionFrame._definition = (  # type: ignore # pylint:disable=protected-acce
     FIELD("last", AMQPTypes.uint, False, None, False),
     FIELD("settled", AMQPTypes.boolean, False, False, False),
     FIELD("state", ObjDefinition.delivery_state, False, None, False),
-    FIELD("batchable", AMQPTypes.boolean, False, False, False))
+    FIELD("batchable", AMQPTypes.boolean, False, False, False),
+)
 if _CAN_ADD_DOCSTRING:
     DispositionFrame.__doc__ = """
     DISPOSITION performative. Inform remote peer of delivery state changes.
@@ -486,12 +488,13 @@ if _CAN_ADD_DOCSTRING:
         implementation uses when communicating delivery states, and thereby save bandwidth.
     """
 
-DetachFrame = namedtuple('DetachFrame', ['handle', 'closed', 'error'])
+DetachFrame = namedtuple("DetachFrame", ["handle", "closed", "error"])
 DetachFrame._code = 0x00000016  # type: ignore # pylint:disable=protected-access
 DetachFrame._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("handle", AMQPTypes.uint, True, None, False),
     FIELD("closed", AMQPTypes.boolean, False, False, False),
-    FIELD("error", ObjDefinition.error, False, None, False))
+    FIELD("error", ObjDefinition.error, False, None, False),
+)
 if _CAN_ADD_DOCSTRING:
     DetachFrame.__doc__ = """
     DETACH performative. Detach the Link Endpoint from the Session.
@@ -507,7 +510,7 @@ if _CAN_ADD_DOCSTRING:
     """
 
 
-EndFrame = namedtuple('EndFrame', ['error'])
+EndFrame = namedtuple("EndFrame", ["error"])
 EndFrame._code = 0x00000017  # type: ignore # pylint:disable=protected-access
 EndFrame._definition = (FIELD("error", ObjDefinition.error, False, None, False),)  # type: ignore # pylint:disable=protected-access
 if _CAN_ADD_DOCSTRING:
@@ -522,7 +525,7 @@ if _CAN_ADD_DOCSTRING:
     """
 
 
-CloseFrame = namedtuple('CloseFrame', ['error'])
+CloseFrame = namedtuple("CloseFrame", ["error"])
 CloseFrame._code = 0x00000018  # type: ignore # pylint:disable=protected-access
 CloseFrame._definition = (FIELD("error", ObjDefinition.error, False, None, False),)  # type: ignore # pylint:disable=protected-access
 if _CAN_ADD_DOCSTRING:
@@ -539,9 +542,9 @@ if _CAN_ADD_DOCSTRING:
     """
 
 
-SASLMechanism = namedtuple('SASLMechanism', ['sasl_server_mechanisms'])
+SASLMechanism = namedtuple("SASLMechanism", ["sasl_server_mechanisms"])
 SASLMechanism._code = 0x00000040  # type: ignore # pylint:disable=protected-access
-SASLMechanism._definition = (FIELD('sasl_server_mechanisms', AMQPTypes.symbol, True, None, True),)  # type: ignore # pylint:disable=protected-access
+SASLMechanism._definition = (FIELD("sasl_server_mechanisms", AMQPTypes.symbol, True, None, True),)  # type: ignore # pylint:disable=protected-access
 if _CAN_ADD_DOCSTRING:
     SASLMechanism.__doc__ = """
     Advertise available sasl mechanisms.
@@ -556,12 +559,13 @@ if _CAN_ADD_DOCSTRING:
     """
 
 
-SASLInit = namedtuple('SASLInit', ['mechanism', 'initial_response', 'hostname'])
+SASLInit = namedtuple("SASLInit", ["mechanism", "initial_response", "hostname"])
 SASLInit._code = 0x00000041  # type: ignore # pylint:disable=protected-access
 SASLInit._definition = (  # type: ignore # pylint:disable=protected-access
-    FIELD('mechanism', AMQPTypes.symbol, True, None, False),
-    FIELD('initial_response', AMQPTypes.binary, False, None, False),
-    FIELD('hostname', AMQPTypes.string, False, None, False))
+    FIELD("mechanism", AMQPTypes.symbol, True, None, False),
+    FIELD("initial_response", AMQPTypes.binary, False, None, False),
+    FIELD("hostname", AMQPTypes.string, False, None, False),
+)
 if _CAN_ADD_DOCSTRING:
     SASLInit.__doc__ = """
     Initiate sasl exchange.
@@ -587,9 +591,9 @@ if _CAN_ADD_DOCSTRING:
     """
 
 
-SASLChallenge = namedtuple('SASLChallenge', ['challenge'])
+SASLChallenge = namedtuple("SASLChallenge", ["challenge"])
 SASLChallenge._code = 0x00000042  # type: ignore # pylint:disable=protected-access
-SASLChallenge._definition = (FIELD('challenge', AMQPTypes.binary, True, None, False),)  # type: ignore # pylint:disable=protected-access
+SASLChallenge._definition = (FIELD("challenge", AMQPTypes.binary, True, None, False),)  # type: ignore # pylint:disable=protected-access
 if _CAN_ADD_DOCSTRING:
     SASLChallenge.__doc__ = """
     Security mechanism challenge.
@@ -601,9 +605,9 @@ if _CAN_ADD_DOCSTRING:
     """
 
 
-SASLResponse = namedtuple('SASLResponse', ['response'])
+SASLResponse = namedtuple("SASLResponse", ["response"])
 SASLResponse._code = 0x00000043  # type: ignore # pylint:disable=protected-access
-SASLResponse._definition = (FIELD('response', AMQPTypes.binary, True, None, False),)  # type: ignore # pylint:disable=protected-access
+SASLResponse._definition = (FIELD("response", AMQPTypes.binary, True, None, False),)  # type: ignore # pylint:disable=protected-access
 if _CAN_ADD_DOCSTRING:
     SASLResponse.__doc__ = """
     Security mechanism response.
@@ -614,11 +618,12 @@ if _CAN_ADD_DOCSTRING:
     """
 
 
-SASLOutcome = namedtuple('SASLOutcome', ['code', 'additional_data'])
+SASLOutcome = namedtuple("SASLOutcome", ["code", "additional_data"])
 SASLOutcome._code = 0x00000044  # type: ignore # pylint:disable=protected-access
 SASLOutcome._definition = (  # type: ignore # pylint:disable=protected-access
-    FIELD('code', AMQPTypes.ubyte, True, None, False),
-    FIELD('additional_data', AMQPTypes.binary, False, None, False))
+    FIELD("code", AMQPTypes.ubyte, True, None, False),
+    FIELD("additional_data", AMQPTypes.binary, False, None, False),
+)
 if _CAN_ADD_DOCSTRING:
     SASLOutcome.__doc__ = """
     Indicates the outcome of the sasl dialog.

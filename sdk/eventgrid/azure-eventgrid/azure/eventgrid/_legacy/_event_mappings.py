@@ -8,7 +8,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-# pylint: disable=line-too-long
 # pylint: disable=enum-must-be-uppercase
 class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
@@ -423,6 +422,10 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ResourceDeleteFailureName = "Microsoft.Resources.ResourceDeleteFailure"
 
     ResourceDeleteSuccessName = "Microsoft.Resources.ResourceDeleteSuccess"
+
+    ResourceNotificationsContainerServiceEventResourcesScheduledEventName = (
+        "Microsoft.ResourceNotifications.ContainerServiceEventResources.ScheduledEventEmitted"
+    )
 
     ResourceNotificationsHealthResourcesAnnotatedEventName = (
         "Microsoft.ResourceNotifications.HealthResources.ResourceAnnotated"

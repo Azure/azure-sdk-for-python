@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 import functools
 from typing import (
@@ -37,7 +37,11 @@ if TYPE_CHECKING:
     from .._models import Metrics, QueueAnalyticsLogging
 
 
-class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):  # type: ignore [misc]  # pylint: disable=line-too-long
+class QueueServiceClient(  # type: ignore [misc]
+    AsyncStorageAccountHostsMixin,
+    StorageAccountHostsMixin,
+    StorageEncryptionMixin
+):
     """A client to interact with the Queue Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
@@ -100,7 +104,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(QueueServiceClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)
         self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
-        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment] # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
         self._loop = loop
         self._configure_encryption(kwargs)
 
@@ -419,8 +423,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
                 :caption: Get the queue client.
         """
         if isinstance(queue, QueueProperties):
-            if queue.name is not None:
-                queue_name = queue.name
+            queue_name = queue.name
         else:
             queue_name = queue
 

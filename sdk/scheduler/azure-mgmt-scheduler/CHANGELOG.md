@@ -1,5 +1,11 @@
 # Release History
 
+## 7.0.0 (2024-10-31)
+
+### Other Changes
+
+- This package has been deprecated and will no longer be maintained after 01-31-2022. This package will only receive security fixes until 01-31-2022. To receive updates on new features and non-security bug fixes, upgrade to the replacement service, [Azure Logic Apps](https://learn.microsoft.com/azure/logic-apps/logic-apps-overview). Refer to the migration guide (https://learn.microsoft.com/azure/scheduler/migrate-from-scheduler-to-logic-apps) for guidance on upgrading.
+
 ## 7.0.0b1 (2020-10-22)
 
 This is beta preview version.

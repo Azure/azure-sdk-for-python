@@ -27,7 +27,6 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ...operations._operations import build_list_request
-from .._vendor import HybridComputeManagementClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping

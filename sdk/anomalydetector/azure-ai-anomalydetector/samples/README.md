@@ -45,15 +45,9 @@ pip install azure-ai-anomalydetector
 2. Set the environment variables specified in the sample file you wish to run.
 3. Follow the usage described in the file, e.g. `python sample_detect_entire_series_anomaly.py`
 
-## Next steps
-
-Check out the [API reference documentation][python-fr-ref-docs] to learn more about
-what you can do with the Azure Anomaly Detector client library.
-
 [pip]: https://pypi.org/project/pip/
 [azure_subscription]: https://azure.microsoft.com/free/cognitive-services
 [azure_anomaly_detector_account]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesAnomalyDetector
-[python-fr-ref-docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-cognitiveservices-anomalydetector/0.3.0/index.html
 
 [sample_detect_entire_series_anomaly]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/anomalydetector/azure-ai-anomalydetector/samples/sample_detect_entire_series_anomaly.py
 [sample_detect_last_point_anomaly]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/anomalydetector/azure-ai-anomalydetector/samples/sample_detect_last_point_anomaly.py

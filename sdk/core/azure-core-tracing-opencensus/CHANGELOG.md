@@ -1,14 +1,10 @@
 # Release History
 
-## 1.0.0b10 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 1.0.0b10 (2024-11-05)
 
 ### Other Changes
+
+- This package has been deprecated and will no longer be maintained after 11-05-2024. Use the [azure-core-tracing-opentelemetry](https://pypi.org/project/azure-core-tracing-opentelemetry/) package for tracing support in Azure SDK libraries.
 
 ## 1.0.0b9 (2023-05-09)
 

@@ -24,17 +24,18 @@ USAGE:
 
 import os
 
+
 def authentication_maps_service_client_with_subscription_key_credential():
     # [START create_maps_route_service_client_with_key]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.route import MapsRouteClient
 
-    subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+    subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
     maps_route_client = MapsRouteClient(credential=AzureKeyCredential(subscription_key))
     # [END create_maps_route_service_client_with_key]
 
-    result = maps_route_client.get_route_range(coordinates=(52.50931,13.42936), time_budget_in_sec=6000)
+    result = maps_route_client.get_route_range(coordinates=(52.50931, 13.42936), time_budget_in_sec=6000)
 
     print(result)
 
@@ -53,11 +54,11 @@ def authentication_maps_service_client_with_aad_credential():
     maps_route_client = MapsRouteClient(client_id=maps_client_id, credential=credential)
     # [END create_maps_route_service_client_with_aad]
 
-    result = maps_route_client.get_route_range(coordinates=(52.50931,13.42936), time_budget_in_sec=6000)
+    result = maps_route_client.get_route_range(coordinates=(52.50931, 13.42936), time_budget_in_sec=6000)
 
     print(result)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     authentication_maps_service_client_with_subscription_key_credential()
     authentication_maps_service_client_with_aad_credential()

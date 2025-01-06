@@ -6,17 +6,7 @@ from __future__ import annotations
 from contextlib import contextmanager
 from enum import Enum
 import logging
-from typing import (
-    TYPE_CHECKING,
-    Type,
-    Optional,
-    Dict,
-    List,
-    Union,
-    Any,
-    Iterable,
-    Iterator
-)
+from typing import TYPE_CHECKING, Type, Optional, Dict, List, Union, Any, Iterable, Iterator
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.settings import settings
@@ -26,8 +16,8 @@ from .amqp import AmqpAnnotatedMessage
 from ._constants import PROP_TIMESTAMP
 
 if TYPE_CHECKING:
-    # pylint: disable=ungrouped-imports
     from ._transport._base import AmqpTransport
+
     try:
         from uamqp import Message as uamqp_Message
     except ImportError:
@@ -96,7 +86,7 @@ def send_context_manager(client: Optional[ClientBase], links: Optional[List[Link
 @contextmanager
 def receive_context_manager(
     client: Optional[ClientBase], links: Optional[List[Link]] = None, start_time: Optional[int] = None
-)  -> Iterator[None]:
+) -> Iterator[None]:
     """Tracing for message receiving.
 
     :param ~azure.eventhub._client_base.ClientBase or None client: The client that is receiving the message.
@@ -108,9 +98,7 @@ def receive_context_manager(
     span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
     if span_impl_type is not None:
         links = links or []
-        with span_impl_type(
-            name="EventHubs.receive", kind=SpanKind.CLIENT, links=links, start_time=start_time
-        ) as span:
+        with span_impl_type(name="EventHubs.receive", kind=SpanKind.CLIENT, links=links, start_time=start_time) as span:
             add_span_attributes(span, TraceOperationTypes.RECEIVE, client, message_count=len(links))
             yield
     else:
@@ -149,7 +137,7 @@ def process_context_manager(
 def trace_message(
     message: Union[uamqp_Message, Message],
     amqp_transport: AmqpTransport,
-    additional_attributes: Optional[Dict[str, Any]] = None
+    additional_attributes: Optional[Dict[str, Any]] = None,
 ) -> Union[uamqp_Message, Message]:
     """Add tracing information to the message and return the updated message.
 
@@ -169,26 +157,20 @@ def trace_message(
 
                 if "traceparent" in headers:
                     message = amqp_transport.update_message_app_properties(
-                        message,
-                        TRACE_DIAGNOSTIC_ID_PROPERTY,
-                        headers["traceparent"]
+                        message, TRACE_DIAGNOSTIC_ID_PROPERTY, headers["traceparent"]
                     )
                     message = amqp_transport.update_message_app_properties(
-                        message,
-                        TRACE_PARENT_PROPERTY,
-                        headers["traceparent"]
+                        message, TRACE_PARENT_PROPERTY, headers["traceparent"]
                     )
                 if "tracestate" in headers:
                     message = amqp_transport.update_message_app_properties(
-                        message,
-                        TRACE_STATE_PROPERTY,
-                        headers["tracestate"]
+                        message, TRACE_STATE_PROPERTY, headers["tracestate"]
                     )
 
+                message_span.add_attribute(TraceAttributes.TRACE_NAMESPACE_ATTRIBUTE, TraceAttributes.TRACE_NAMESPACE)
                 message_span.add_attribute(
-                    TraceAttributes.TRACE_NAMESPACE_ATTRIBUTE, TraceAttributes.TRACE_NAMESPACE)
-                message_span.add_attribute(
-                    TraceAttributes.TRACE_MESSAGING_SYSTEM_ATTRIBUTE, TraceAttributes.TRACE_MESSAGING_SYSTEM)
+                    TraceAttributes.TRACE_MESSAGING_SYSTEM_ATTRIBUTE, TraceAttributes.TRACE_MESSAGING_SYSTEM
+                )
 
                 if additional_attributes:
                     for key, value in additional_attributes.items():
@@ -211,15 +193,15 @@ def get_span_links_from_received_events(events: Union[EventData, Iterable[EventD
     :rtype: list[~azure.core.tracing.Link]
     :return: A list of span links.
     """
-    # pylint:disable=isinstance-second-argument-not-valid-type
     trace_events = events if isinstance(events, Iterable) else (events,)
     links = []
     try:
         for event in trace_events:
             headers = {}
             if event.properties:
-                traceparent = (event.properties.get(TRACE_PARENT_PROPERTY, b"") or
-                               event.properties.get(TRACE_DIAGNOSTIC_ID_PROPERTY, b""))
+                traceparent = event.properties.get(TRACE_PARENT_PROPERTY, b"") or event.properties.get(
+                    TRACE_DIAGNOSTIC_ID_PROPERTY, b""
+                )
                 if hasattr(traceparent, "decode"):
                     traceparent = traceparent.decode(TRACE_PROPERTY_ENCODING)
                 if traceparent:
@@ -232,7 +214,7 @@ def get_span_links_from_received_events(events: Union[EventData, Iterable[EventD
                     headers["tracestate"] = tracestate
 
             enqueued_time = event.system_properties.get(PROP_TIMESTAMP)
-            attributes = {'enqueuedTime': enqueued_time} if enqueued_time else None
+            attributes = {"enqueuedTime": enqueued_time} if enqueued_time else None
             links.append(Link(headers, attributes=attributes))
     except AttributeError:
         pass
@@ -274,8 +256,9 @@ def get_span_link_from_message(message: Union[AmqpAnnotatedMessage, Message]) ->
     headers = {}
     try:
         if message.application_properties:
-            traceparent = (message.application_properties.get(TRACE_PARENT_PROPERTY, b"") or
-                           message.application_properties.get(TRACE_DIAGNOSTIC_ID_PROPERTY, b""))
+            traceparent = message.application_properties.get(
+                TRACE_PARENT_PROPERTY, b""
+            ) or message.application_properties.get(TRACE_DIAGNOSTIC_ID_PROPERTY, b"")
             if hasattr(traceparent, "decode"):
                 traceparent = traceparent.decode(TRACE_PROPERTY_ENCODING)
             if traceparent:
@@ -292,10 +275,7 @@ def get_span_link_from_message(message: Union[AmqpAnnotatedMessage, Message]) ->
 
 
 def add_span_attributes(
-        span: AbstractSpan,
-        operation_type: TraceOperationTypes,
-        client: Optional[ClientBase],
-        message_count: int = 0
+    span: AbstractSpan, operation_type: TraceOperationTypes, client: Optional[ClientBase], message_count: int = 0
 ) -> None:
     """Add attributes to span based on the operation type.
 
@@ -304,7 +284,7 @@ def add_span_attributes(
     :param ~azure.eventhub._client_base.ClientBase or None client: The client that is performing the operation.
     :param int message_count: The number of messages being processed.
     """
-
+    # pylint: disable=protected-access
     span.add_attribute(TraceAttributes.TRACE_NAMESPACE_ATTRIBUTE, TraceAttributes.TRACE_NAMESPACE)
     span.add_attribute(TraceAttributes.TRACE_MESSAGING_SYSTEM_ATTRIBUTE, TraceAttributes.TRACE_MESSAGING_SYSTEM)
     span.add_attribute(TraceAttributes.TRACE_MESSAGING_OPERATION_ATTRIBUTE, operation_type)
@@ -315,10 +295,10 @@ def add_span_attributes(
     if operation_type in (TraceOperationTypes.PUBLISH, TraceOperationTypes.PROCESS):
         # Maintain legacy attributes for backwards compatibility.
         if client:
-            span.add_attribute(TraceAttributes.LEGACY_TRACE_MESSAGE_BUS_DESTINATION_ATTRIBUTE, client._address.path)  # pylint: disable=protected-access
-            span.add_attribute(TraceAttributes.LEGACY_TRACE_PEER_ADDRESS_ATTRIBUTE, client._address.hostname)  # pylint: disable=protected-access
+            span.add_attribute(TraceAttributes.LEGACY_TRACE_MESSAGE_BUS_DESTINATION_ATTRIBUTE, client._address.path)
+            span.add_attribute(TraceAttributes.LEGACY_TRACE_PEER_ADDRESS_ATTRIBUTE, client._address.hostname)
 
     elif operation_type == TraceOperationTypes.RECEIVE:
         if client:
-            span.add_attribute(TraceAttributes.TRACE_NET_PEER_NAME_ATTRIBUTE, client._address.hostname)  # pylint: disable=protected-access
-            span.add_attribute(TraceAttributes.TRACE_MESSAGING_DESTINATION_ATTRIBUTE, client._address.path)  # pylint: disable=protected-access
+            span.add_attribute(TraceAttributes.TRACE_NET_PEER_NAME_ATTRIBUTE, client._address.hostname)
+            span.add_attribute(TraceAttributes.TRACE_MESSAGING_DESTINATION_ATTRIBUTE, client._address.path)

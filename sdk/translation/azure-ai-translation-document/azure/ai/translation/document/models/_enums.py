@@ -30,9 +30,9 @@ class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Succeeded"""
     FAILED = "Failed"
     """Failed"""
-    CANCELLED = "Cancelled"
+    CANCELED = "Cancelled"
     """Cancelled"""
-    CANCELLING = "Cancelling"
+    CANCELING = "Cancelling"
     """Cancelling"""
     VALIDATION_FAILED = "ValidationFailed"
     """ValidationFailed"""
@@ -45,13 +45,6 @@ class StorageInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Folder storage input type"""
     FILE = "File"
     """File storage input type"""
-
-
-class StorageSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Storage Source."""
-
-    AZURE_BLOB = "AzureBlob"
-    """Azure blob storage source"""
 
 
 class TranslationErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -71,3 +64,10 @@ class TranslationErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Unauthorized"""
     REQUEST_RATE_TOO_HIGH = "RequestRateTooHigh"
     """RequestRateTooHigh"""
+
+
+class TranslationStorageSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Storage Source."""
+
+    AZURE_BLOB = "AzureBlob"
+    """Azure blob storage source"""

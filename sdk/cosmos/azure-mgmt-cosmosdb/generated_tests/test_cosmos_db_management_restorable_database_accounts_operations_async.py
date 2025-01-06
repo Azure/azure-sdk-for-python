@@ -21,10 +21,10 @@ class TestCosmosDBManagementRestorableDatabaseAccountsOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_location(self, resource_group):
+    async def test_restorable_database_accounts_list_by_location(self, resource_group):
         response = self.client.restorable_database_accounts.list_by_location(
             location="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -32,9 +32,9 @@ class TestCosmosDBManagementRestorableDatabaseAccountsOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_restorable_database_accounts_list(self, resource_group):
         response = self.client.restorable_database_accounts.list(
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -42,11 +42,11 @@ class TestCosmosDBManagementRestorableDatabaseAccountsOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_by_location(self, resource_group):
+    async def test_restorable_database_accounts_get_by_location(self, resource_group):
         response = await self.client.restorable_database_accounts.get_by_location(
             location="str",
             instance_id="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
 
         # please add some check logic here by yourself

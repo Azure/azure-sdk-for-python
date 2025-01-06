@@ -6,6 +6,7 @@
 import os
 from devtools_testutils import is_live
 
+
 def email_decorator(func, **kwargs):
     def wrapper(self, *args, **kwargs):
         if is_live():
@@ -16,7 +17,7 @@ def email_decorator(func, **kwargs):
             self.communication_connection_string = "endpoint=https://someEndpoint/;accesskey=someAccessKeyw=="
             self.sender_address = "someSender@contoso.com"
             self.recipient_address = "someRecipient@domain.com"
-    
+
         func(self, *args, **kwargs)
 
     return wrapper

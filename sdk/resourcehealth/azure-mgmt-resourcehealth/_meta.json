@@ -1,15 +1,11 @@
 {
-  "commit": "9ec0fcc278aa2128c4fbb2b8a1aa93432d72cce0",
+  "commit": "ff1e3a1d1aa5f6a959bf4a214e6f69c4d1057647",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.9.7",
+  "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.7.1",
-    "@autorest/modelerfour@4.26.2"
+    "@autorest/python@6.19.0",
+    "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/resourcehealth/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.7.1 --use=@autorest/modelerfour@4.26.2 --version=3.9.7 --version-tolerant=False",
+  "autorest_command": "autorest specification/resourcehealth/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --tag=package-preview-2023-10 --use=@autorest/python@6.19.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
   "readme": "specification/resourcehealth/resource-manager/readme.md",
-  "package-preview-2023-10": "2023-10-09 01:38:27 -0700 d9f13b4f513be56ca9bb14e97f8a699ac9a5a1cc Microsoft.ResourceHealth/preview/2023-10-01-preview/ResourceHealth.json",
-  "package-2022-10": "2023-03-30 22:08:54 -0700 635b756c218c138de49cf3f4a3204e75630fc300 Microsoft.ResourceHealth/stable/2022-10-01/ResourceHealth.json",
-  "package-2018-07-01": "2023-03-29 21:56:50 -0700 f0e86b9b4ab51cddbc451c9ead25781b552342f0 Microsoft.ResourceHealth/stable/2018-07-01/ResourceHealth.json",
-  "package-2015-01": "2023-03-29 21:56:50 -0700 f0e86b9b4ab51cddbc451c9ead25781b552342f0 Microsoft.ResourceHealth/stable/2015-01-01/resourcehealth.json"
 }

@@ -12,9 +12,9 @@ class TestBreakSentenceAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_autodetect(self, **kwargs):
-        endpoint = kwargs.get("translation_text_endpoint")
-        apikey = kwargs.get("translation_text_apikey")
-        region = kwargs.get("translation_text_region")
+        endpoint = kwargs.get("text_translation_endpoint")
+        apikey = kwargs.get("text_translation_apikey")
+        region = kwargs.get("text_translation_region")
         client = self.create_async_client(endpoint, apikey, region)
         input_text_elements = ["Hello world"]
 
@@ -28,9 +28,9 @@ class TestBreakSentenceAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_with_language(self, **kwargs):
-        endpoint = kwargs.get("translation_text_endpoint")
-        apikey = kwargs.get("translation_text_apikey")
-        region = kwargs.get("translation_text_region")
+        endpoint = kwargs.get("text_translation_endpoint")
+        apikey = kwargs.get("text_translation_apikey")
+        region = kwargs.get("text_translation_region")
         client = self.create_async_client(endpoint, apikey, region)
 
         input_text_elements = [
@@ -47,9 +47,9 @@ class TestBreakSentenceAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_with_language_script(self, **kwargs):
-        endpoint = kwargs.get("translation_text_endpoint")
-        apikey = kwargs.get("translation_text_apikey")
-        region = kwargs.get("translation_text_region")
+        endpoint = kwargs.get("text_translation_endpoint")
+        apikey = kwargs.get("text_translation_apikey")
+        region = kwargs.get("text_translation_region")
         client = self.create_async_client(endpoint, apikey, region)
 
         input_text_elements = ["zhè shì gè cè shì。"]
@@ -64,9 +64,9 @@ class TestBreakSentenceAsync(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy_async
     async def test_with_multiple_languages(self, **kwargs):
-        endpoint = kwargs.get("translation_text_endpoint")
-        apikey = kwargs.get("translation_text_apikey")
-        region = kwargs.get("translation_text_region")
+        endpoint = kwargs.get("text_translation_endpoint")
+        apikey = kwargs.get("text_translation_apikey")
+        region = kwargs.get("text_translation_region")
         client = self.create_async_client(endpoint, apikey, region)
 
         input_text_elements = [

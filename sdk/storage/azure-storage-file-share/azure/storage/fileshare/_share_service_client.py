@@ -32,9 +32,9 @@ from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, par
 from ._shared.response_handlers import process_storage_error
 
 if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+    from typing import Literal
 else:
-    from typing_extensions import Literal  # pylint: disable=ungrouped-imports
+    from typing_extensions import Literal
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
@@ -125,7 +125,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
                                         allow_trailing_dot=self.allow_trailing_dot,
                                         allow_source_trailing_dot=self.allow_source_trailing_dot,
                                         file_request_intent=self.file_request_intent)
-        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment] # pylint: disable=protected-access, line-too-long
+        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
 
     def _format_url(self, hostname: str) -> str:
         """Format the endpoint URL according to the current location mode hostname.
@@ -343,6 +343,8 @@ class ShareServiceClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`__.
+        :keyword int provisioned_iops: The provisioned IOPS of the share, stored on the share object.
+        :keyword int provisioned_bandwidth_mibps: The provisioned throughput of the share, stored on the share object.
         :return: A ShareClient for the newly created Share.
         :rtype: ~azure.storage.fileshare.ShareClient
 
@@ -358,9 +360,18 @@ class ShareServiceClient(StorageAccountHostsMixin):
         metadata = kwargs.pop('metadata', None)
         quota = kwargs.pop('quota', None)
         timeout = kwargs.pop('timeout', None)
+        provisioned_iops = kwargs.pop('provisioned_iops', None)
+        provisioned_bandwidth_mibps = kwargs.pop('provisioned_bandwidth_mibps', None)
         share = self.get_share_client(share_name)
         kwargs.setdefault('merge_span', True)
-        share.create_share(metadata=metadata, quota=quota, timeout=timeout, **kwargs)
+        share.create_share(
+            metadata=metadata,
+            quota=quota,
+            timeout=timeout,
+            provisioned_iops=provisioned_iops,
+            provisioned_bandwidth_mibps=provisioned_bandwidth_mibps,
+            **kwargs
+        )
         return share
 
     @distributed_trace

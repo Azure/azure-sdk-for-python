@@ -8,6 +8,7 @@ from azure.monitor.opentelemetry.exporter.export.trace._sampling import (
     azure_monitor_opentelemetry_sampler_factory,
 )
 
+
 # pylint: disable=protected-access
 class TestApplicationInsightsSampler(unittest.TestCase):
 
@@ -22,14 +23,10 @@ class TestApplicationInsightsSampler(unittest.TestCase):
         self.assertEqual(sampler._sample_rate, 75)
 
     def test_invalid_ratio(self):
-        self.assertRaises(
-            ValueError, lambda: ApplicationInsightsSampler(1.01)
-        )
-        self.assertRaises(
-            ValueError, lambda: ApplicationInsightsSampler(-0.01)
-        )
+        self.assertRaises(ValueError, lambda: ApplicationInsightsSampler(1.01))
+        self.assertRaises(ValueError, lambda: ApplicationInsightsSampler(-0.01))
 
-    @mock.patch.object(ApplicationInsightsSampler, '_get_DJB2_sample_score')
+    @mock.patch.object(ApplicationInsightsSampler, "_get_DJB2_sample_score")
     def test_should_sample(self, score_mock):
         sampler = ApplicationInsightsSampler(0.75)
         score_mock.return_value = 0.7
@@ -37,7 +34,7 @@ class TestApplicationInsightsSampler(unittest.TestCase):
         self.assertEqual(result.attributes["_MS.sampleRate"], 75)
         self.assertTrue(result.decision.is_sampled())
 
-    @mock.patch.object(ApplicationInsightsSampler, '_get_DJB2_sample_score')
+    @mock.patch.object(ApplicationInsightsSampler, "_get_DJB2_sample_score")
     def test_should_sample_not_sampled(self, score_mock):
         sampler = ApplicationInsightsSampler(0.5)
         score_mock.return_value = 0.7

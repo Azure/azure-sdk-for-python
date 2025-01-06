@@ -16,7 +16,7 @@ from azure.eventhub import EventHubProducerClient, EventData
 from azure.identity import DefaultAzureCredential
 
 FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
 
 
 start_time = time.time()
@@ -32,7 +32,7 @@ bytes_per_message = 256
 with producer:
     event_data_batch = producer.create_batch()
     for i in range(to_send_message_cnt):
-        event_data = EventData('D' * bytes_per_message)
+        event_data = EventData("D" * bytes_per_message)
         try:
             event_data_batch.add(event_data)
         except ValueError:

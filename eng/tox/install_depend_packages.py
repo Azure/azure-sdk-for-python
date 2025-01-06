@@ -60,6 +60,7 @@ MINIMUM_VERSION_SPECIFIC_OVERRIDES = {
     "azure-identity": {"msal": "1.23.0"},
     "azure-core-tracing-opentelemetry": {"azure-core": "1.28.0"},
     "azure-storage-file-datalake": {"azure-storage-blob": "12.22.0"},
+    "azure-cosmos": {"azure-core": "1.30.0"}
 }
 
 MAXIMUM_VERSION_SPECIFIC_OVERRIDES = {}
@@ -67,7 +68,15 @@ MAXIMUM_VERSION_SPECIFIC_OVERRIDES = {}
 # PLATFORM SPECIFIC OVERRIDES provide additional generic (EG not tied to the package whos dependencies are being processed)
 # filtering on a _per platform_ basis. Primarily used to limit certain packages due to platform compatbility
 PLATFORM_SPECIFIC_MINIMUM_OVERRIDES = {
-    ">=3.12.0": {"azure-core": "1.23.1", "aiohttp": "3.8.6", "six": "1.16.0", "requests": "2.30.0"}
+    ">=3.12.0": {
+        "azure-core": "1.23.1",
+        "aiohttp": "3.8.6",
+        "six": "1.16.0",
+        "requests": "2.30.0"
+    },
+    ">=3.13.0": {
+        "typing-extensions": "4.12.0",
+    }
 }
 
 PLATFORM_SPECIFIC_MAXIMUM_OVERRIDES = {}

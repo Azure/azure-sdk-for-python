@@ -31,7 +31,7 @@ New releases of this SDK won't support Python 2.x starting January 1st, 2022. Pl
 
 * Azure subscription - [Create a free account][azure_sub]
 * Azure [Cosmos DB account][cosmos_account] - SQL API
-* [Python 3.6+][python]
+* [Python 3.8+][python]
 
 If you need a Cosmos DB SQL API account, you can create one with this [Azure CLI][azure_cli] command:
 
@@ -427,13 +427,13 @@ client = CosmosClient(URL, credential=KEY)
 # Database
 DATABASE_NAME = 'testDatabase'
 database = client.get_database_client(DATABASE_NAME)
-db_offer = database.read_offer()
+db_offer = database.get_throughput()
 print('Found Offer \'{0}\' for Database \'{1}\' and its throughput is \'{2}\''.format(db_offer.properties['id'], database.id, db_offer.properties['content']['offerThroughput']))
 
 # Container with dedicated throughput only. Will return error "offer not found" for containers without dedicated throughput
 CONTAINER_NAME = 'testContainer'
 container = database.get_container_client(CONTAINER_NAME)
-container_offer = container.read_offer()
+container_offer = container.get_throughput()
 print('Found Offer \'{0}\' for Container \'{1}\' and its throughput is \'{2}\''.format(container_offer.properties['id'], container.id, container_offer.properties['content']['offerThroughput']))
 ```
 
@@ -466,6 +466,28 @@ print(json.dumps(container_props['defaultTtl']))
 ```
 
 For more information on TTL, see [Time to Live for Azure Cosmos DB data][cosmos_ttl].
+
+### Using item point operation response headers
+
+Response headers include metadata information from the executed operations like `etag`, which allows for optimistic concurrency scenarios, or `x-ms-request-charge` which lets you know how many RUs were consumed by the request.
+This applies to all item point operations in both the sync and async clients - and can be used by referencing the `get_response_headers()` method of any response as such:
+```python
+from azure.cosmos import CosmosClient
+import os
+
+URL = os.environ['ACCOUNT_URI']
+KEY = os.environ['ACCOUNT_KEY']
+DATABASE_NAME = 'testDatabase'
+CONTAINER_NAME = 'products'
+client = CosmosClient(URL, credential=KEY)
+database = client.get_database_client(DATABASE_NAME)
+container = database.get_container_client(CONTAINER_NAME)
+
+operation_response = container.create_item({"id": "test_item", "productName": "test_item"})
+operation_headers = operation_response.get_response_headers()
+etag_value = operation_headers['etag']
+request_charge = operation_headers['x-ms-request-charge']
+```
 
 ### Using the asynchronous client
 
@@ -662,7 +684,7 @@ vector_embedding_policy = {
 ```
 
 Separately, vector indexes have been added to the already existing indexing_policy and only require two fields per index:
-the path to the relevant field to be used, and the type of index from the possible options (flat or quantizedFlat).
+the path to the relevant field to be used, and the type of index from the possible options - flat, quantizedFlat, or diskANN.
 A sample indexing policy with vector indexes would look like this:
 ```python
 indexing_policy = {
@@ -681,10 +703,28 @@ indexing_policy = {
         ],
         "vectorIndexes": [
             {"path": "/vector1", "type": "flat"},
-            {"path": "/vector2", "type": "quantizedFlat"}
+            {"path": "/vector2", "type": "quantizedFlat"},
+            {"path": "/vector3", "type": "diskANN"}
         ]
     }
 ```
+
+For vector index types of diskANN and quantizedFlat, there are additional options available as well. These are:
+
+quantizationByteSize - the number of bytes used in product quantization of the vectors. A larger value may result in better recall for vector searches at the expense of latency. This applies to index types diskANN and quantizedFlat. The allowed range is between 1 and the minimum between 512 and the vector dimensions. The default value is 64.
+
+indexingSearchListSize - which represents the size of the candidate list of approximate neighbors stored while building the diskANN index as part of the optimization processes. This applies only to index type diskANN. The allowed range is between 25 and 500.
+```python
+indexing_policy = {
+        "automatic": True,
+        "indexingMode": "consistent",
+        "vectorIndexes": [
+            {"path": "/vector1", "type": "quantizedFlat", "quantizationByteSize": 8},
+            {"path": "/vector2", "type": "diskANN", "indexingSearchListSize": 50}
+        ]
+    }
+```
+
 You would then pass in the relevant policies to your container creation method to ensure these configurations are used by it.
 The operation will fail if you pass new vector indexes to your indexing policy but forget to pass in an embedding policy.
 ```python
@@ -728,6 +768,90 @@ not being able to recognize the new NonStreamingOrderBy capability that makes ve
 If this happens, you can set the `AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY` environment variable to `"True"` to opt out of this
 functionality and continue operating as usual.*
 
+### Public Preview - Full Text Policy and Full Text Indexes
+We have added new capabilities to utilize full text policies and full text indexing for users to leverage full text search
+utilizing our Cosmos SDK. These two container-level configurations have to be turned on at the account-level
+before you can use them.
+
+A full text policy allows the user to define the default language to be used for all full text paths, or to set
+a language for each path individually in case the user would like to use full text search on data containing different
+languages in different fields.
+
+A sample full text policy would look like this:
+```python
+full_text_policy = {
+    "defaultLanguage": "en-US",
+    "fullTextPaths": [
+        {
+            "path": "/text1",
+            "language": "en-US"
+        },
+        {
+            "path": "/text2",
+            "language": "en-US"
+        }
+    ]
+}
+```
+Currently, the only supported language is `en-US` - using the relevant ISO-639 language code to ISO-3166 country code.
+Any non-supported language or code will return an exception when trying to use it - which will also include the list of supported languages.
+This list will include more options in the future; for more information on supported languages, please see [here][cosmos_fts].
+
+Full text search indexes have been added to the already existing indexing_policy and only require the path to the
+relevant field to be used.
+A sample indexing policy with full text search indexes would look like this:
+```python
+indexing_policy = {
+        "automatic": True,
+        "indexingMode": "consistent",
+        "compositeIndexes": [
+            [
+                {"path": "/numberField", "order": "ascending"},
+                {"path": "/stringField", "order": "descending"}
+            ]
+        ],
+        "fullTextIndexes": [
+            {"path": "/abstract"}
+        ]
+    }
+```
+Modifying the index in a container is an asynchronous operation that can take a long time to finish. See [here][cosmos_index_policy_change] for more information.
+For more information on using full text policies and full text indexes, see [here][cosmos_fts].
+
+### Public Preview - Full Text Search and Hybrid Search
+
+With the addition of the full text indexing and full text policies, the SDK can now perform full text search and hybrid search queries.
+These queries can utilize the new query functions `FullTextContains()`, `FullTextContainsAll`, and `FullTextContainsAny` to efficiently
+search for the given terms within your item fields.
+
+Beyond these, you can also utilize the new `Order By RANK` and `Order By RANK RRF` along with `FullTextScore` to execute the [BM25][BM25] scoring algorithm
+or [Reciprocal Rank Fusion][RRF] (RRF) on your query, finding the items with the highest relevance to the terms you are looking for.
+All of these mentioned queries would look something like this:
+
+- `SELECT TOP 10 c.id, c.text FROM c WHERE FullTextContains(c.text, 'quantum')`
+
+
+- `SELECT TOP 10 c.id, c.text FROM c WHERE FullTextContainsAll(c.text, 'quantum', 'theory')`
+
+
+- `SELECT TOP 10 c.id, c.text FROM c WHERE FullTextContainsAny(c.text, 'quantum', 'theory')`
+
+
+- `SELECT TOP 10 c.id, c.text FROM c ORDER BY RANK FullTextScore(c.text, ['quantum', 'theory'])`
+
+
+- `SELECT TOP 10 c.id, c.text FROM c ORDER BY RANK RRF(FullTextScore(c.text, ['quantum', 'theory']), FullTextScore(c.text, ['model']))`
+
+
+- `SELECT TOP 10 c.id, c.text FROM c ORDER BY RANK RRF(FullTextScore(c.text, ['quantum', 'theory']), FullTextScore(c.text, ['model']), VectorDistance(c.embedding, {item_embedding}))"`
+
+These queries must always use a TOP or LIMIT clause within the query since hybrid search queries have to look through a lot of data otherwise and may become too expensive or long-running.
+Since these queries are relatively expensive, the SDK sets a default limit of 1000 max items per query - if you'd like to raise that further, you
+can use the `AZURE_COSMOS_HYBRID_SEARCH_MAX_ITEMS` environment variable to do so. However, be advised that queries with too many vector results
+may have additional latencies associated with searching in the service.
+
+You can find our sync samples [here][cosmos_index_sample] and our async samples [here][cosmos_index_sample_async] as well for additional guidance.
+
 ## Troubleshooting
 
 ### General
@@ -753,7 +877,7 @@ This library uses the standard
 [logging](https://docs.python.org/3.5/library/logging.html) library for logging diagnostics.
 Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
 level.
-
+**Note: You must use 'azure.cosmos' for the logger**
 Detailed DEBUG level logging, including request/response bodies and unredacted
 headers, can be enabled on a client with the `logging_enable` argument:
 ```python
@@ -762,7 +886,7 @@ import logging
 from azure.cosmos import CosmosClient
 
 # Create a logger for the 'azure' SDK
-logger = logging.getLogger('azure')
+logger = logging.getLogger('azure.cosmos')
 logger.setLevel(logging.DEBUG)
 
 # Configure a console output
@@ -786,7 +910,7 @@ import logging
 from azure.cosmos import CosmosClient
 
 #Create a logger for the 'azure' SDK
-logger = logging.getLogger('azure')
+logger = logging.getLogger('azure.cosmos')
 logger.setLevel(logging.DEBUG)
 
 # Configure a file output
@@ -804,6 +928,52 @@ However, if you desire to use the CosmosHttpLoggingPolicy to obtain additional i
 client = CosmosClient(URL, credential=KEY, enable_diagnostics_logging=True)
 database = client.create_database(DATABASE_NAME, logger=logger)
 ```
+**NOTICE: The Following is a Preview Feature that is subject to significant change.**
+To further customize what gets logged, you can use a  **PREVIEW** diagnostics handler to filter out the logs you don't want to see.
+There are several ways to use the diagnostics handler, those include the following:
+- Using the "CosmosDiagnosticsHandler" class, which has default behaviour that can be modified.
+    **NOTE: The diagnostics handler will only be used if the `enable_diagnostics_logging` argument is passed in at the client constructor.
+      The CosmosDiagnosticsHandler is also a special type of dictionary that is callable and that has preset keys. The values it expects are functions related to it's relevant diagnostic data. (e.g. ```diagnostics_handler["duration"]``` expects a function that takes in an int and returns a boolean as it relates to the duration of an operation to complete).**
+    ```python
+    from azure.cosmos import CosmosClient, CosmosDiagnosticsHandler
+    import logging
+    # Initialize the logger
+    logger = logging.getLogger('azure.cosmos')
+    logger.setLevel(logging.INFO)
+    file_handler = logging.FileHandler('diagnostics1.output')
+    logger.addHandler(file_handler)
+    diagnostics_handler = cosmos_diagnostics_handler.CosmosDiagnosticsHandler()
+    diagnostics_handler["duration"] = lambda x: x > 2000
+    client = CosmosClient(URL, credential=KEY,logger=logger, diagnostics_handler=diagnostics_handler, enable_diagnostics_logging=True)
+    
+    ```
+- Using a dictionary with the relevant functions to filter out the logs you don't want to see.
+    ```python
+    # Initialize the logger
+    logger = logging.getLogger('azure.cosmos')
+    logger.setLevel(logging.INFO)
+    file_handler = logging.FileHandler('diagnostics2.output')
+    logger.addHandler(file_handler)
+    diagnostics_handler = {
+        "duration": lambda x: x > 2000
+    }
+    client = CosmosClient(URL, credential=KEY,logger=logger, diagnostics_handler=diagnostics_handler, enable_diagnostics_logging=True)
+    ```
+- Using a function that will replace the should_log function in the CosmosHttpLoggingPolicy which expects certain paramameters and returns a boolean. **Note: the parameters of the custom should_log must match the parameters of the original should_log function as shown in the sample.**
+  ```python
+  # Custom should_log method
+  def should_log(self, **kwargs):
+      return kwargs.get('duration') and kwargs['duration'] > 2000
+  
+  # Initialize the logger
+  logger = logging.getLogger('azure.cosmos')
+  logger.setLevel(logging.INFO)
+  file_handler = logging.FileHandler('diagnostics3.output')
+  logger.addHandler(file_handler)
+  
+  # Initialize the Cosmos client with custom diagnostics handler
+  client = CosmosClient(endpoint, key,logger=logger, diagnostics_handler=should_log, enable_diagnostics_logging=True)
+    ```
 
 ### Telemetry
 Azure Core provides the ability for our Python SDKs to use OpenTelemetry with them. The only packages that need to be installed
@@ -864,6 +1034,10 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [cosmos_concurrency_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/concurrency_sample.py
 [cosmos_index_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/index_management.py
 [cosmos_index_sample_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/index_management_async.py
+[RRF]: https://learn.microsoft.com/azure/search/hybrid-search-ranking
+[BM25]: https://learn.microsoft.com/azure/search/index-similarity-and-scoring
+[cosmos_fts]: https://aka.ms/cosmosfulltextsearch
+[cosmos_index_policy_change]: https://learn.microsoft.com/azure/cosmos-db/index-policy#modifying-the-indexing-policy
 
 ## Contributing
 

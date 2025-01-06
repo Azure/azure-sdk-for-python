@@ -18,7 +18,7 @@ class _StatsBeatExporter(AzureMonitorMetricExporter):
         point: DataPointT,
         name: str,
         resource: Optional[Resource] = None,
-        scope: Optional[InstrumentationScope] = None
+        scope: Optional[InstrumentationScope] = None,
     ) -> Optional[TelemetryItem]:
         # map statsbeat name from OpenTelemetry name
         name = _STATSBEAT_METRIC_NAME_MAPPINGS[name]

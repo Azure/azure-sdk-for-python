@@ -33,6 +33,4 @@ class TestAzureMonitorExporters(unittest.TestCase):
                 exporter(connection_string=cs_string)
             except Exception as ex:  # pylint: disable=broad-except
                 print(ex)
-                self.fail(
-                    f"Unexpected exception raised when instantiating {exporter.__name__}"
-                )
+                self.fail(f"Unexpected exception raised when instantiating {exporter.__name__}")

@@ -56,7 +56,7 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
-    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -113,7 +113,7 @@ def build_get_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
-    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -154,7 +154,7 @@ def build_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
-    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -201,7 +201,7 @@ def build_set_properties_request(
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -258,7 +258,7 @@ def build_set_metadata_request(
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
-    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -307,7 +307,7 @@ def build_list_files_and_directories_segment_request(  # pylint: disable=name-to
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
-    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -363,7 +363,7 @@ def build_list_handles_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["listhandles"] = kwargs.pop("comp", _params.pop("comp", "listhandles"))
-    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -414,7 +414,7 @@ def build_force_close_handles_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["forceclosehandles"] = kwargs.pop("comp", _params.pop("comp", "forceclosehandles"))
-    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -475,7 +475,7 @@ def build_rename_request(
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["rename"] = kwargs.pop("comp", _params.pop("comp", "rename"))
-    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -569,6 +569,7 @@ class DirectoryOperations:
         file_change_time: Optional[str] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Creates a new directory under the specified share or parent directory.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -613,7 +614,7 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -693,6 +694,7 @@ class DirectoryOperations:
     def get_properties(  # pylint: disable=inconsistent-return-statements
         self, sharesnapshot: Optional[str] = None, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Returns all system properties for the specified directory, and can also be used to check the
         existence of a directory. The data returned does not include the files in the directory or any
         subdirectories.
@@ -709,7 +711,7 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -783,6 +785,7 @@ class DirectoryOperations:
     def delete(  # pylint: disable=inconsistent-return-statements
         self, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Removes the specified empty directory. Note that the directory must be empty before it can be
         deleted.
 
@@ -795,7 +798,7 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -854,6 +857,7 @@ class DirectoryOperations:
         file_change_time: Optional[str] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Sets properties on the directory.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -895,7 +899,7 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -976,6 +980,7 @@ class DirectoryOperations:
     def set_metadata(  # pylint: disable=inconsistent-return-statements
         self, timeout: Optional[int] = None, metadata: Optional[Dict[str, str]] = None, **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Updates user defined metadata for the specified directory.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -990,7 +995,7 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1055,6 +1060,7 @@ class DirectoryOperations:
         include_extended_info: Optional[bool] = None,
         **kwargs: Any
     ) -> _models.ListFilesAndDirectoriesSegmentResponse:
+        # pylint: disable=line-too-long
         """Returns a list of files or directories under the specified share or directory. It lists the
         contents only for a single level of the directory hierarchy.
 
@@ -1087,7 +1093,7 @@ class DirectoryOperations:
         :rtype: ~azure.storage.fileshare.models.ListFilesAndDirectoriesSegmentResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1156,6 +1162,7 @@ class DirectoryOperations:
         recursive: Optional[bool] = None,
         **kwargs: Any
     ) -> _models.ListHandlesResponse:
+        # pylint: disable=line-too-long
         """Lists handles for directory.
 
         :param marker: A string value that identifies the portion of the list to be returned with the
@@ -1182,7 +1189,7 @@ class DirectoryOperations:
         :rtype: ~azure.storage.fileshare.models.ListHandlesResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1247,6 +1254,7 @@ class DirectoryOperations:
         recursive: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Closes all handles open for given directory.
 
         :param handle_id: Specifies handle ID opened on the file or directory to be closed. Asterisk
@@ -1272,7 +1280,7 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1345,6 +1353,7 @@ class DirectoryOperations:
         copy_file_smb_info: Optional[_models.CopyFileSmbInfo] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Renames a directory.
 
         :param rename_source: Required. Specifies the URI-style path of the source file, up to 2 KB in
@@ -1399,7 +1408,7 @@ class DirectoryOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

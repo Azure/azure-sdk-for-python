@@ -15,7 +15,7 @@ from ._client import (
 from ._operations._patch import AnalyzeDocumentLROPoller
 
 
-class DocumentIntelligenceClient(DIClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
+class DocumentIntelligenceClient(DIClientGenerated):
     """DocumentIntelligenceClient.
 
     :param endpoint: The Document Intelligence service endpoint. Required.
@@ -25,7 +25,7 @@ class DocumentIntelligenceClient(DIClientGenerated):  # pylint: disable=client-a
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2024-07-31-preview". Note that overriding this default value may result in unsupported
+     "2024-11-30". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -48,9 +48,7 @@ class DocumentIntelligenceClient(DIClientGenerated):  # pylint: disable=client-a
         )
 
 
-class DocumentIntelligenceAdministrationClient(
-    DIAClientGenerated
-):  # pylint: disable=client-accepts-api-version-keyword
+class DocumentIntelligenceAdministrationClient(DIAClientGenerated):
     """DocumentIntelligenceAdministrationClient.
 
     :param endpoint: The Document Intelligence service endpoint. Required.
@@ -60,7 +58,7 @@ class DocumentIntelligenceAdministrationClient(
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2024-07-31-preview". Note that overriding this default value may result in unsupported
+     "2024-11-30". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no

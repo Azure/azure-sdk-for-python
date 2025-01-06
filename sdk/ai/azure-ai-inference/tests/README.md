@@ -4,13 +4,13 @@ The instructions below are for running tests locally, on a Windows machine, agai
 
 ## Prerequisites
 
-The live tests were written against the AI models mentioned below. You will need to deploy these two in [Azure AI Studio](https://ai.azure.com/) and have the endpoint and key for each one of them.
+The live tests were written against the AI models mentioned below. You will need to deploy these two in [Azure AI Foundry](https://ai.azure.com/) and have the endpoint and key for each one of them.
 
 - `Mistral-Large` for chat completion tests, including tool tests
 - `Cohere-embed-v3-english` for embedding tests
 <!-- - `TBD` for image generation tests -->
 
-In addition, you will need to deploy a gpt-4o model in the Azure OpenAI Studio, and have the endpoint and key for it:
+In addition, you will need to deploy a gpt-4o model in the Azure AI Foundry, and have the endpoint and key for it:
 
 - `gpt-4o` on Azure OpenAI (AOAI), for chat completions tests with image input
 

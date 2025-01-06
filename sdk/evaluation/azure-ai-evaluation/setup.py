@@ -42,7 +42,7 @@ setup(
     url="https://github.com/Azure/azure-sdk-for-python",
     keywords="azure, azure sdk",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3 :: Only",
@@ -72,13 +72,8 @@ setup(
         "azure-identity>=1.16.0",
         "azure-core>=1.30.2",
         "nltk>=3.9.1",
-        "rouge-score>=0.1.2",
+        "azure-storage-blob>=12.10.0",
     ],
-    extras_require={
-        "pf-azure": [
-            "promptflow-azure<2.0.0,>=1.15.0",
-        ],
-    },
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
         "Source": "https://github.com/Azure/azure-sdk-for-python",
@@ -86,5 +81,6 @@ setup(
     package_data={
         "pytyped": ["py.typed"],
         "azure.ai.evaluation.simulator._prompty": ["*.prompty"],
+        "azure.ai.evaluation.simulator._data_sources": ["*.json"],
     },
 )

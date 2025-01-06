@@ -12,13 +12,12 @@ parameters:
 extends:
     template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      Location: 'canadacentral'
+      Location: 'westus2'
       # All 5 service stages run in parallel, and with no parallel limits the tests may get throttled.
       MaxParallel: 2
       ServiceDirectory: storage
       InjectedPackages: $(InjectedPackages)
       Packages: ${{ parameters.Services }}
-      UseFederatedAuth: true
       MatrixReplace:
         # Use dedicated storage pool in canadacentral with higher memory capacity
         - Pool=.*LINUXPOOL.*/azsdk-pool-mms-ubuntu-2004-storage
@@ -32,4 +31,4 @@ extends:
       EnvVars:
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
-        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
+        AZURE_SUBSCRIPTION_ID: $(STORAGE_SUBSCRIPTION_ID)

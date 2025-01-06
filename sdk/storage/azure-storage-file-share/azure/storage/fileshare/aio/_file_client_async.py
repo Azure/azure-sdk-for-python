@@ -3,8 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-many-lines, invalid-overridden-method, too-many-public-methods
-# pylint: disable=docstring-keyword-should-match-keyword-only
+# pylint: disable=too-many-lines, too-many-public-methods, docstring-keyword-should-match-keyword-only
 
 import functools
 import sys
@@ -44,7 +43,6 @@ from .._serialize import (
 )
 from .._shared.base_client import StorageAccountHostsMixin, parse_query
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str
-from .._shared.parser import _str
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers, get_length
 from .._shared.response_handlers import process_storage_error, return_response_headers
@@ -54,9 +52,9 @@ from ._lease_async import ShareLeaseClient
 from ._models import FileProperties, Handle, HandlesPaged
 
 if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+    from typing import Literal
 else:
-    from typing_extensions import Literal  # pylint: disable=ungrouped-imports
+    from typing_extensions import Literal
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -182,7 +180,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         loop = kwargs.pop('loop', None)
         if loop and sys.version_info >= (3, 8):
             warnings.warn("The 'loop' parameter was deprecated from asyncio's high-level"
-            "APIs in Python 3.8 and is no longer supported.", DeprecationWarning)
+                          "APIs in Python 3.8 and is no longer supported.", DeprecationWarning)
         if hasattr(credential, 'get_token') and not token_intent:
             raise ValueError("'token_intent' keyword is required when 'credential' is an AsyncTokenCredential.")
         parsed_url = _parse_url(account_url, share_name, file_path)
@@ -207,7 +205,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                                         allow_trailing_dot=self.allow_trailing_dot,
                                         allow_source_trailing_dot=self.allow_source_trailing_dot,
                                         file_request_intent=self.file_request_intent)
-        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment] # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
 
     @classmethod
     def from_file_url(
@@ -454,7 +452,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             return cast(Dict[str, Any], await self._client.file.create(
                 file_content_length=size,
                 metadata=metadata,
-                file_attributes=_str(file_attributes),
+                file_attributes=str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
                 file_change_time=_datetime_to_str(file_change_time),
@@ -533,7 +531,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             already validate. Note that this MD5 hash is not stored with the
             file.
         :keyword int max_concurrency:
-            Maximum number of parallel connections to use.
+            Maximum number of parallel connections to use when transferring the file in chunks.
+            This option does not affect the underlying connection pool, and may
+            require a separate configuration of the connection pool.
         :keyword str encoding:
             Defaults to UTF-8.
         :keyword lease:
@@ -644,6 +644,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
 
                 This parameter was introduced in API version '2019-07-07'.
 
+        :keyword file_permission_format:
+            Specifies the format in which the permission is returned. If not specified, SDDL will be the default.
+        :paramtype file_permission_format: Literal['sddl', 'binary']
         :keyword file_attributes:
             This value can be set to "source" to copy file attributes from the source file to the target file,
             or to clear all attributes, it can be set to "None". Otherwise it can be set to a list of attributes
@@ -802,7 +805,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
         :keyword int max_concurrency:
-            Maximum number of parallel connections to use.
+            Maximum number of parallel connections to use when transferring the file in chunks.
+            This option does not affect the underlying connection pool, and may
+            require a separate configuration of the connection pool.
         :keyword bool validate_content:
             If true, calculates an MD5 hash for each chunk of the file. The storage
             service checks the hash of the content that has arrived with the hash
@@ -842,6 +847,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                 :dedent: 16
                 :caption: Download a file.
         """
+        if length is not None and offset is None:
+            raise ValueError("Offset value must not be None if length is set.")
+
         range_end = None
         if length is not None:
             if offset is None:
@@ -1145,7 +1153,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             return cast(Dict[str, Any], await self._client.file.set_http_headers(
                 file_content_length=file_content_length,
                 file_http_headers=file_http_headers,
-                file_attributes=_str(file_attributes),
+                file_attributes=str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
                 file_change_time=_datetime_to_str(file_change_time),

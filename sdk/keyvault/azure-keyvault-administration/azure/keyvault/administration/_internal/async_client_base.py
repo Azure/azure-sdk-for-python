@@ -2,7 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Awaitable
+import sys
+from typing import Any
 
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import HttpLoggingPolicy
@@ -14,6 +15,11 @@ from .client_base import ApiVersion, DEFAULT_VERSION, _format_api_version, _SERI
 from .._sdk_moniker import SDK_MONIKER
 from .._generated.aio import KeyVaultClient as _KeyVaultClient
 from .._generated import models as _models
+
+if sys.version_info < (3, 9):
+    from typing import Awaitable
+else:
+    from collections.abc import Awaitable
 
 
 class AsyncKeyVaultClientBase(object):

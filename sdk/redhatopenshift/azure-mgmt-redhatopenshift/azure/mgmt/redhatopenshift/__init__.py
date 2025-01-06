@@ -7,14 +7,20 @@
 # --------------------------------------------------------------------------
 
 from ._azure_red_hat_open_shift_client import AzureRedHatOpenShiftClient
-__all__ = ['AzureRedHatOpenShiftClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
-
 from ._version import VERSION
 
 __version__ = VERSION
+
+try:
+    from ._patch import __all__ as _patch_all
+    from ._patch import *  # pylint: disable=unused-wildcard-import
+except ImportError:
+    _patch_all = []
+from ._patch import patch_sdk as _patch_sdk
+
+__all__ = [
+    "AzureRedHatOpenShiftClient",
+]
+__all__.extend([p for p in _patch_all if p not in __all__])
+
+_patch_sdk()

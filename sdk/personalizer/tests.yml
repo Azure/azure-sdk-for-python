@@ -1,7 +1,7 @@
 trigger: none
 
 extends:
-    template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       BuildTargetingString: azure-ai-personalizer
       ServiceDirectory: personalizer
@@ -9,10 +9,6 @@ extends:
       MatrixReplace:
         - TestSamples=.*/true
       EnvVars:
-        AZURE_CLIENT_ID: $(PERSONALIZER_CLIENT_ID)
-        AZURE_TENANT_ID: $(PERSONALIZER_TENANT_ID)
-        AZURE_SUBSCRIPTION_ID: $(PERSONALIZER_SUBSCRIPTION_ID)
-        AZURE_CLIENT_SECRET: $(PERSONALIZER_CLIENT_SECRET)
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'

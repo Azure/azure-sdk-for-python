@@ -10,6 +10,7 @@ from ._operations import Operations
 from ._operations_status_operations import OperationsStatusOperations
 from ._redis_enterprise_operations import RedisEnterpriseOperations
 from ._databases_operations import DatabasesOperations
+from ._access_policy_assignment_operations import AccessPolicyAssignmentOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 
@@ -22,6 +23,7 @@ __all__ = [
     "OperationsStatusOperations",
     "RedisEnterpriseOperations",
     "DatabasesOperations",
+    "AccessPolicyAssignmentOperations",
     "PrivateEndpointConnectionsOperations",
     "PrivateLinkResourcesOperations",
 ]

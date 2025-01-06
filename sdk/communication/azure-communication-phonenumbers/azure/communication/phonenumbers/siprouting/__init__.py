@@ -8,8 +8,4 @@
 from ._sip_routing_client import SipRoutingClient
 from ._models import SipTrunk, SipTrunkRoute
 
-__all__ = [
-    'SipRoutingClient',
-    'SipTrunk',
-    'SipTrunkRoute'
-]
+__all__ = ["SipRoutingClient", "SipTrunk", "SipTrunkRoute"]

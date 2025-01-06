@@ -10,35 +10,22 @@ import posixpath
 import time
 import types
 import uuid
-from typing import Any, Dict, Optional, Set, Type
+from typing import Any, Dict, List, Optional, Set, Type
 from urllib.parse import urlparse
 
 from promptflow._sdk.entities import Run
+from typing_extensions import Self
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import get_http_client
 from azure.ai.evaluation._version import VERSION
 from azure.core.pipeline.policies import RetryPolicy
 from azure.core.rest import HttpResponse
+from azure.core.exceptions import HttpResponseError
+from azure.storage.blob import BlobServiceClient
+from azure.ai.evaluation._azure._clients import LiteMLClient
 
 LOGGER = logging.getLogger(__name__)
-
-
-# Handle optional import. The azure libraries are only present if
-# promptflow-azure is installed.
-try:
-    from azure.ai.ml.entities._credentials import AccountKeyConfiguration  # pylint: disable=ungrouped-imports
-    from azure.ai.ml.entities._datastore.datastore import Datastore
-    from azure.storage.blob import BlobServiceClient
-except (ModuleNotFoundError, ImportError):
-    # If the above mentioned modules cannot be imported, we are running
-    # in local mode and MLClient in the constructor will be None, so
-    # we will not arrive to Azure-dependent code.
-
-    # We are logging the import failure only if debug logging level is set because:
-    # - If the project configuration was not provided this import is not needed.
-    # - If the project configuration was provided, the error will be raised by PFClient.
-    LOGGER.debug("promptflow.azure is not installed.")
 
 
 @dataclasses.dataclass
@@ -89,18 +76,18 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
     :type group_name: str
     :param workspace_name: The name of workspace/project used to track run.
     :type workspace_name: str
-    :param ml_client: The ml client used for authentication into Azure.
-    :type ml_client: azure.ai.ml.MLClient
+    :param management_client: The trace destination string to parse the AI ML workspace blob store from.
+    :type management_client:
+        ~azure.ai.evaluation._promptflow.azure._lite_azure_management_client.LiteMLClient
     :param promptflow_run: The promptflow run used by the
+    :type promptflow_run: Optional[promptflow._sdk.entities.Run]
     """
 
     _MAX_RETRIES = 5
     _BACKOFF_FACTOR = 2
     _TIMEOUT = 5
-    _SCOPE = "https://management.azure.com/.default"
 
     EVALUATION_ARTIFACT = "instance_results.jsonl"
-    EVALUATION_ARTIFACT_DUMMY_RUN = "eval_results.jsonl"
 
     def __init__(
         self,
@@ -109,20 +96,20 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         subscription_id: str,
         group_name: str,
         workspace_name: str,
-        ml_client: "MLClient",
+        management_client: LiteMLClient,
         promptflow_run: Optional[Run] = None,
     ) -> None:
         self._tracking_uri: str = tracking_uri
         self._subscription_id: str = subscription_id
         self._resource_group_name: str = group_name
         self._workspace_name: str = workspace_name
-        self._ml_client: Any = ml_client
+        self._management_client: LiteMLClient = management_client
         self._is_promptflow_run: bool = promptflow_run is not None
         self._run_name = run_name
         self._promptflow_run = promptflow_run
         self._status = RunStatus.NOT_STARTED
-        self._url_base = None
-        self.info = None
+        self._url_base: Optional[str] = None
+        self._info: Optional[RunInfo] = None
 
     @property
     def status(self) -> RunStatus:
@@ -133,6 +120,20 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         :rtype: promptflow._sdk._constants.RunStatus
         """
         return self._status
+
+    @property
+    def info(self) -> RunInfo:
+        if self._info is None:
+            msg = "Run info is missing"
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.EVAL_RUN,
+                category=ErrorCategory.UNKNOWN,
+                blame=ErrorBlame.UNKNOWN,
+            )
+
+        return self._info
 
     def _get_scope(self) -> str:
         """
@@ -161,13 +162,13 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
             )
             self._url_base = None
             self._status = RunStatus.BROKEN
-            self.info = RunInfo.generate(self._run_name)
+            self._info = RunInfo.generate(self._run_name)
         else:
             self._url_base = urlparse(self._tracking_uri).netloc
             if self._promptflow_run is not None:
-                self.info = RunInfo(
+                self._info = RunInfo(
                     self._promptflow_run.name,
-                    self._promptflow_run._experiment_name,  # pylint: disable=protected-access
+                    self._promptflow_run._experiment_name or "",  # pylint: disable=protected-access
                     self._promptflow_run.name,
                 )
             else:
@@ -182,7 +183,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
                     body["run_name"] = self._run_name
                 response = self.request_with_retry(url=url, method="POST", json_dict=body)
                 if response.status_code != 200:
-                    self.info = RunInfo.generate(self._run_name)
+                    self._info = RunInfo.generate(self._run_name)
                     LOGGER.warning(
                         "The run failed to start: %s: %s."
                         "The results will be saved locally, but will not be logged to Azure.",
@@ -192,7 +193,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
                     self._status = RunStatus.BROKEN
                 else:
                     parsed_response = response.json()
-                    self.info = RunInfo(
+                    self._info = RunInfo(
                         run_id=parsed_response["run"]["info"]["run_id"],
                         experiment_id=parsed_response["run"]["info"]["experiment_id"],
                         run_name=parsed_response["run"]["info"]["run_name"],
@@ -235,7 +236,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
             LOGGER.warning("Unable to terminate the run.")
         self._status = RunStatus.TERMINATED
 
-    def __enter__(self):
+    def __enter__(self) -> Self:
         """The Context Manager enter call.
 
         :return: The instance of the class.
@@ -249,7 +250,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         exc_type: Optional[Type[BaseException]],
         exc_value: Optional[BaseException],
         exc_tb: Optional[types.TracebackType],
-    ) -> Optional[bool]:
+    ) -> None:
         """The context manager exit call.
 
         :param exc_type: The exception type
@@ -293,12 +294,8 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         """
         return f"https://{self._url_base}" "/mlflow/v2.0" f"{self._get_scope()}" f"/api/2.0/mlflow/runs/log-metric"
 
-    def _get_token(self):
-        # We have to use lazy import because promptflow.azure
-        # is an optional dependency.
-        from promptflow.azure._utils._token_cache import ArmTokenCache  # pylint: disable=import-error,no-name-in-module
-
-        return ArmTokenCache().get_token(self._ml_client._credential)  # pylint: disable=protected-access
+    def _get_token(self) -> str:
+        return self._management_client.get_token()
 
     def request_with_retry(
         self, url: str, method: str, json_dict: Dict[str, Any], headers: Optional[Dict[str, str]] = None
@@ -396,7 +393,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         """
         if not self._check_state_and_log("log artifact", {RunStatus.BROKEN, RunStatus.NOT_STARTED}, False):
             return
-        # Check if artifact dirrectory is empty or does not exist.
+        # Check if artifact directory is empty or does not exist.
         if not os.path.isdir(artifact_folder):
             LOGGER.warning("The path to the artifact is either not a directory or does not exist.")
             return
@@ -408,7 +405,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
             return
         # First we will list the files and the appropriate remote paths for them.
         root_upload_path = posixpath.join("promptflow", "PromptFlowArtifacts", self.info.run_name)
-        remote_paths = {"paths": []}
+        remote_paths: Dict[str, List[Dict[str, str]]] = {"paths": []}
         local_paths = []
         # Go over the artifact folder and upload all artifacts.
         for root, _, filenames in os.walk(artifact_folder):
@@ -424,18 +421,38 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
                 local_paths.append(local_file_path)
 
         # We will write the artifacts to the workspaceblobstore
-        datastore = self._ml_client.datastores.get_default(include_secrets=True)
+        datastore = self._management_client.workspace_get_default_datastore(
+            self._workspace_name, include_credentials=True
+        )
         account_url = f"{datastore.account_name}.blob.{datastore.endpoint}"
-        svc_client = BlobServiceClient(account_url=account_url, credential=self._get_datastore_credential(datastore))
-        for local, remote in zip(local_paths, remote_paths["paths"]):
-            blob_client = svc_client.get_blob_client(container=datastore.container_name, blob=remote["path"])
-            with open(local, "rb") as fp:
-                blob_client.upload_blob(fp, overwrite=True)
+
+        svc_client = BlobServiceClient(account_url=account_url, credential=datastore.credential)
+        try:
+            for local, remote in zip(local_paths, remote_paths["paths"]):
+                blob_client = svc_client.get_blob_client(container=datastore.container_name, blob=remote["path"])
+                with open(local, "rb") as fp:
+                    blob_client.upload_blob(fp, overwrite=True)
+        except HttpResponseError as ex:
+            if ex.status_code == 403:
+                msg = (
+                    "Failed to upload evaluation run to the cloud due to insufficient permission to access the storage."
+                    " Please ensure that the necessary access rights are granted."
+                )
+                raise EvaluationException(
+                    message=msg,
+                    target=ErrorTarget.EVAL_RUN,
+                    category=ErrorCategory.FAILED_REMOTE_TRACKING,
+                    blame=ErrorBlame.USER_ERROR,
+                    tsg_link="https://aka.ms/azsdk/python/evaluation/remotetracking/troubleshoot",
+                ) from ex
+
+            raise ex
 
         # To show artifact in UI we will need to register it. If it is a promptflow run,
         # we are rewriting already registered artifact and need to skip this step.
         if self._is_promptflow_run:
             return
+
         url = (
             f"https://{self._url_base}/artifact/v2.0/subscriptions/{self._subscription_id}"
             f"/resourceGroups/{self._resource_group_name}/providers/"
@@ -458,15 +475,28 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         if response.status_code != 200:
             self._log_warning("register artifact", response)
 
-    def _get_datastore_credential(self, datastore: "Datastore"):
-        # Reference the logic in azure.ai.ml._artifact._artifact_utilities
-        # https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ml/azure-ai-ml/azure/ai/ml/_artifacts/_artifact_utilities.py#L103
-        credential = datastore.credentials
-        if isinstance(credential, AccountKeyConfiguration):
-            return credential.account_key
-        if hasattr(credential, "sas_token"):
-            return credential.sas_token
-        return self._ml_client.datastores._credential  # pylint: disable=protected-access
+        # register artifacts for images if exists in image folder
+        try:
+            for remote_path in remote_paths["paths"]:
+                remote_file_path = remote_path["path"]
+                if "images" in os.path.normpath(remote_file_path).split(os.sep):
+                    response = self.request_with_retry(
+                        url=url,
+                        method="POST",
+                        json_dict={
+                            "origin": "ExperimentRun",
+                            "container": f"dcid.{self.info.run_id}",
+                            "path": posixpath.join("images", os.path.basename(remote_file_path)),
+                            "dataPath": {
+                                "dataStoreName": datastore.name,
+                                "relativePath": remote_file_path,
+                            },
+                        },
+                    )
+                    if response.status_code != 200:
+                        self._log_warning("register image artifact", response)
+        except Exception as ex:  # pylint: disable=broad-exception-caught
+            LOGGER.debug("Exception occurred while registering image artifact. ex: %s", ex)
 
     def log_metric(self, key: str, value: float) -> None:
         """

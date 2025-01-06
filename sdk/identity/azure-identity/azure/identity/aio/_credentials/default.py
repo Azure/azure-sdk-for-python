@@ -145,7 +145,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
                     WorkloadIdentityCredential(
                         client_id=cast(str, client_id),
                         tenant_id=workload_identity_tenant_id,
-                        file=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
+                        token_file_path=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
                         **kwargs
                     )
                 )

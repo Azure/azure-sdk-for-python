@@ -20,7 +20,7 @@ from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
 from azure.identity import DefaultAzureCredential
 
 FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
 
 storage_account_name = os.environ["AZURE_STORAGE_ACCOUNT"]
 protocol = os.environ.get("PROTOCOL", "https")
@@ -45,11 +45,9 @@ def on_event(partition_context, event):
         partition_last_checkpoint_time[p_id] = now_time
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     checkpoint_store = BlobCheckpointStore(
-        blob_account_url=BLOB_ACCOUNT_URL,
-        container_name=BLOB_CONTAINER_NAME,
-        credential=DefaultAzureCredential()
+        blob_account_url=BLOB_ACCOUNT_URL, container_name=BLOB_CONTAINER_NAME, credential=DefaultAzureCredential()
     )
     consumer_client = EventHubConsumerClient(
         fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
@@ -73,4 +71,4 @@ if __name__ == '__main__':
             # With specified partition_id, load-balance will be disabled, for example:
             # client.receive(on_event=on_event, partition_id='0')
     except KeyboardInterrupt:
-        print('Stopped receiving.')
+        print("Stopped receiving.")

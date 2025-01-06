@@ -52,7 +52,7 @@ class ShareLeaseClient(object):  # pylint: disable=client-accepts-api-version-ke
         self.last_modified = None
         self.etag = None
         if hasattr(client, 'file_name'):
-            self._client = client._client.file  # type: ignore # pylint: disable=protected-access
+            self._client = client._client.file  # type: ignore
             self._snapshot = None
         elif hasattr(client, 'share_name'):
             self._client = client._client.share

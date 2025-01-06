@@ -13,7 +13,7 @@ from setuptools import setup, find_packages
 
 
 PACKAGE_NAME = "azure-ai-inference"
-PACKAGE_PPRINT_NAME = "Azure Ai Inference"
+PACKAGE_PPRINT_NAME = "Azure AI Inference"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")
@@ -35,7 +35,7 @@ setup(
     license="MIT License",
     author="Microsoft Corporation",
     author_email="azpysdkhelp@microsoft.com",
-    url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk",
+    url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference",
     keywords="azure, azure sdk",
     classifiers=[
         "Development Status :: 4 - Beta",
@@ -62,10 +62,10 @@ setup(
     package_data={
         "azure.ai.inference": ["py.typed"],
     },
-    install_requires=[
-        "isodate>=0.6.1",
-        "azure-core>=1.30.0",
-        "typing-extensions>=4.6.0",
-    ],
+    install_requires=["isodate>=0.6.1", "azure-core>=1.30.0", "typing-extensions>=4.6.0"],
     python_requires=">=3.8",
+    extras_require={
+        "opentelemetry": ["azure-core-tracing-opentelemetry"],
+        "prompts": ["pyyaml"],
+    },
 )

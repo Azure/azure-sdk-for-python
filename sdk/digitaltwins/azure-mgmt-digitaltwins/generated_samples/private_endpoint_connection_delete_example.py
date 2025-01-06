@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.digitaltwins import AzureDigitalTwinsManagementClient
 
 """
@@ -29,12 +30,11 @@ def main():
         subscription_id="50016170-c839-41ba-a724-51e9df440b9e",
     )
 
-    response = client.private_endpoint_connections.begin_delete(
+    client.private_endpoint_connections.begin_delete(
         resource_group_name="resRg",
         resource_name="myDigitalTwinsService",
         private_endpoint_connection_name="myPrivateConnection",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/digitaltwins/resource-manager/Microsoft.DigitalTwins/stable/2023-01-31/examples/PrivateEndpointConnectionDelete_example.json

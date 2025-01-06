@@ -7,10 +7,9 @@ extends:
       TestTimeoutInMinutes: 200
       MatrixFilters:
         - PythonVersion=3.11.*
-      MatrixReplace:
-        - TestSamples=.*/true
-      UseFederatedAuth: true
-      SupportedClouds: 'Public'
+      CloudConfig:
+        Public:
+          ServiceConnection: azure-sdk-tests-openai
       EnvVars:
         AZ_OPENAI_ENDPOINT: $(AOAI-ENDPOINT)
         AZURE_OPENAI_KEY: $(AOAI-API-KEY)
@@ -18,6 +17,7 @@ extends:
         AZURE_OPENAI_COMPLETIONS_DEPLOYMENT: $(AOAI-COMPLETIONS-MODEL-DEPLOYMENT)
         AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT: $(AOAI-ENDPOINT-NORTHCENTRALUS)
         AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT: $(AOAI-ENDPOINT-SWEDENCENTRAL)
+        AZURE_OPENAI_SWEDENCENTRAL_KEY: $(AOAI-API-KEY-SWEDENCENTRAL)
         OPENAI_KEY: $(python-nonazure-openai-key)
         AZURE_OPENAI_SEARCH_ENDPOINT: $(COGNITIVE-SEARCH-API-ENDPOINT)
         AZURE_OPENAI_SEARCH_INDEX: $(COGNITIVE-SEARCH-API-INDEX)

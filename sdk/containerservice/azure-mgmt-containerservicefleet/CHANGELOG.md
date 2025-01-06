@@ -1,5 +1,18 @@
 # Release History
 
+## 3.0.0 (2024-10-31)
+
+### Breaking Changes
+
+- This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ingore this change.
+
+## 2.1.0 (2024-10-21)
+
+### Features Added
+
+  - Added operation group AutoUpgradeProfilesOperations
+  - Model NodeImageSelection has a new parameter custom_node_image_versions
+
 ## 2.0.0 (2024-05-20)
 
 ### Breaking Changes

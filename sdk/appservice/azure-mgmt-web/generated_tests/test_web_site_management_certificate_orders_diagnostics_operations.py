@@ -20,11 +20,11 @@ class TestWebSiteManagementCertificateOrdersDiagnosticsOperations(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_app_service_certificate_order_detector_response(self, resource_group):
+    def test_certificate_orders_diagnostics_list_app_service_certificate_order_detector_response(self, resource_group):
         response = self.client.certificate_orders_diagnostics.list_app_service_certificate_order_detector_response(
             resource_group_name=resource_group.name,
             certificate_order_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestWebSiteManagementCertificateOrdersDiagnosticsOperations(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_app_service_certificate_order_detector_response(self, resource_group):
+    def test_certificate_orders_diagnostics_get_app_service_certificate_order_detector_response(self, resource_group):
         response = self.client.certificate_orders_diagnostics.get_app_service_certificate_order_detector_response(
             resource_group_name=resource_group.name,
             certificate_order_name="str",
             detector_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself

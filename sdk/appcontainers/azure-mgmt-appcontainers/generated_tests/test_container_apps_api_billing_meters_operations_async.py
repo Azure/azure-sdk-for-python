@@ -24,7 +24,7 @@ class TestContainerAppsAPIBillingMetersOperationsAsync(AzureMgmtRecordedTestCase
     async def test_get(self, resource_group):
         response = await self.client.billing_meters.get(
             location="str",
-            api_version="2024-03-01",
+            api_version="2024-08-02-preview",
         )
 
         # please add some check logic here by yourself

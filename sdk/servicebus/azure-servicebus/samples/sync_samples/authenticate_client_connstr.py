@@ -22,8 +22,8 @@ export SERVICEBUS_CONN_STR=$(az servicebus namespace authorization-rule keys lis
 from azure.servicebus import ServiceBusClient
 
 import os
-connstr = os.environ['SERVICEBUS_CONNECTION_STR']
+
+connstr = os.environ["SERVICEBUS_CONNECTION_STR"]
 
 with ServiceBusClient.from_connection_string(connstr) as client:
-    pass # Client is now initialized and can be used.
-
+    pass  # Client is now initialized and can be used.

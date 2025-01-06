@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.resource import PolicyClient
@@ -29,9 +27,6 @@ from azure.mgmt.resource import PolicyClient
 def main():
     client = PolicyClient(
         credential=DefaultAzureCredential(),
-        policy_definition_name="POLICY_DEFINITION_NAME",
-        policy_definition_version="POLICY_DEFINITION_VERSION",
-        policy_set_definition_name="CostManagement",
         subscription_id="ae640e6b-ba3e-4256-9d62-2993eecfa6f2",
     )
 
@@ -56,12 +51,14 @@ def main():
                 ],
                 "policyDefinitions": [
                     {
+                        "definitionVersion": "1.*.*",
                         "groupNames": ["CostSaving"],
                         "parameters": {"listOfAllowedSKUs": {"value": ["Standard_GRS", "Standard_LRS"]}},
                         "policyDefinitionId": "/subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2/providers/Microsoft.Authorization/policyDefinitions/7433c107-6db4-4ad1-b57a-a76dce0154a1",
                         "policyDefinitionReferenceId": "Limit_Skus",
                     },
                     {
+                        "definitionVersion": "1.*.*",
                         "groupNames": ["Organizational"],
                         "parameters": {"prefix": {"value": "DeptA"}, "suffix": {"value": "-LC"}},
                         "policyDefinitionId": "/subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2/providers/Microsoft.Authorization/policyDefinitions/ResourceNaming",

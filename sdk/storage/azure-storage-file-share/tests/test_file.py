@@ -3779,6 +3779,7 @@ class TestStorageFile(StorageRecordedTestCase):
                                         "ABAgAAAAAABSAAAAAgAgAAAAAkAKkAEgABBQAAAAAABRUAAABZUbgXZnJdJWRjOwuMmS4AAQUA"
                                         "AAAAAAUVAAAAoGXPfnhLm1/nfIdwr/1IAQEFAAAAAAAFFQAAAKBlz354S5tf53yHcAECAAA=")
 
+        # Create file
         source_file.create_file(
             1024,
             file_permission=user_given_permission_binary,
@@ -3789,6 +3790,7 @@ class TestStorageFile(StorageRecordedTestCase):
         assert props is not None
         assert props.permission_key is not None
 
+        # Rename file
         new_file = source_file.rename_file(
             'file2',
             file_permission=user_given_permission_binary,
@@ -3804,6 +3806,7 @@ class TestStorageFile(StorageRecordedTestCase):
         )
         assert server_returned_permission == user_given_permission_binary
 
+        # Set HTTP headers
         content_settings = ContentSettings(
             content_language='spanish',
             content_disposition='inline'
@@ -3825,6 +3828,23 @@ class TestStorageFile(StorageRecordedTestCase):
         )
         assert server_returned_permission == user_given_permission_sddl
 
+        # Copy file
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path='filecopy',
+            credential=storage_account_key
+        )
+        copy = file_client.start_copy_from_url(
+            new_file.url,
+            file_permission=user_given_permission_binary,
+            file_permission_format="binary"
+        )
+        assert copy is not None
+        assert copy['copy_status'] == 'success'
+        assert copy['copy_id'] is not None
+
         new_file.delete_file()
+        file_client.delete_file()
 
 # ------------------------------------------------------------------------------

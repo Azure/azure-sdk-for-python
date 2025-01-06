@@ -42,15 +42,14 @@ from ._serialize import (
     get_source_access_conditions
 )
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
-from ._shared.parser import _str
 from ._shared.request_handlers import add_metadata_headers, get_length
 from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._shared.uploads import IterStreamer, FileChunkUploader, upload_data_chunks
 
 if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+    from typing import Literal
 else:
-    from typing_extensions import Literal  # pylint: disable=ungrouped-imports
+    from typing_extensions import Literal
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
@@ -201,7 +200,7 @@ class ShareFileClient(StorageAccountHostsMixin):
                                         allow_trailing_dot=self.allow_trailing_dot,
                                         allow_source_trailing_dot=self.allow_source_trailing_dot,
                                         file_request_intent=self.file_request_intent)
-        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment] # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
 
     @classmethod
     def from_file_url(
@@ -457,7 +456,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             return cast(Dict[str, Any], self._client.file.create(
                 file_content_length=size,
                 metadata=metadata,
-                file_attributes=_str(file_attributes),
+                file_attributes=str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
                 file_change_time=_datetime_to_str(file_change_time),
@@ -535,7 +534,9 @@ class ShareFileClient(StorageAccountHostsMixin):
             already validate. Note that this MD5 hash is not stored with the
             file.
         :keyword int max_concurrency:
-            Maximum number of parallel connections to use.
+            Maximum number of parallel connections to use when transferring the file in chunks.
+            This option does not affect the underlying connection pool, and may
+            require a separate configuration of the connection pool.
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -644,6 +645,9 @@ class ShareFileClient(StorageAccountHostsMixin):
 
                 This parameter was introduced in API version '2019-07-07'.
 
+        :keyword file_permission_format:
+            Specifies the format in which the permission is returned. If not specified, SDDL will be the default.
+        :paramtype file_permission_format: Literal['sddl', 'binary']
         :keyword file_attributes:
             This value can be set to "source" to copy file attributes from the source file to the target file,
             or to clear all attributes, it can be set to "None". Otherwise it can be set to a list of attributes
@@ -802,7 +806,9 @@ class ShareFileClient(StorageAccountHostsMixin):
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
         :keyword int max_concurrency:
-            Maximum number of parallel connections to use.
+            Maximum number of parallel connections to use when transferring the file in chunks.
+            This option does not affect the underlying connection pool, and may
+            require a separate configuration of the connection pool.
         :keyword bool validate_content:
             If true, calculates an MD5 hash for each chunk of the file. The storage
             service checks the hash of the content that has arrived with the hash
@@ -1141,7 +1147,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             return cast(Dict[str, Any], self._client.file.set_http_headers(
                 file_content_length=file_content_length,
                 file_http_headers=file_http_headers,
-                file_attributes=_str(file_attributes),
+                file_attributes=str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
                 file_change_time=_datetime_to_str(file_change_time),
