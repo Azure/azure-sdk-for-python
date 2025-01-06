@@ -2274,7 +2274,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         run_id: str,
         body: Union[JSON, IO[bytes]],
         *,
-        event_handler: _models.BaseAgentEventHandlerT,
+        event_handler: _models.BaseAgentEventHandler,
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> None:
@@ -2288,8 +2288,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type run_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword event_handler: The event handler to use for processing events during the run. Default
-            value is None.
+        :keyword event_handler: The event handler to use for processing events during the run.
         :paramtype event_handler: ~azure.ai.projects.models.AgentEventHandler
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2341,17 +2340,17 @@ class AgentsOperations(AgentsOperationsGenerated):
             outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
-            :param thread_id: Required.
-            :type thread_id: str
-            :param run_id: Required.
-            :type run_id: str
-            :param body: Is either a JSON type or a IO[bytes] type. Required.
-            :type body: JSON or IO[bytes]
-            :keyword tool_outputs: Required.
-            :paramtype tool_outputs: list[~azure.ai.projects.models.ToolOutput]
-            :keyword event_handler: The event handler to use for processing events during the run.
-            :paramtype event_handler: ~azure.ai.projects.models.AgentEventHandler
-            :raises ~azure.core.exceptions.HttpResponseError:
+        :param thread_id: Required.
+        :type thread_id: str
+        :param run_id: Required.
+        :type run_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword tool_outputs: Required.
+        :paramtype tool_outputs: list[~azure.ai.projects.models.ToolOutput]
+        :keyword event_handler: The event handler to use for processing events during the run.
+        :paramtype event_handler: ~azure.ai.projects.models.AgentEventHandler
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         if isinstance(body, dict):

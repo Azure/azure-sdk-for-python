@@ -2120,8 +2120,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword event_handler: The event handler to use for processing events during the run. Default
-            value is None.
+        :keyword event_handler: The event handler to use for processing events during the run.
         :paramtype event_handler: ~azure.ai.projects.models.AsyncAgentEventHandler
         :raises ~azure.core.exceptions.HttpResponseError:
         """
