@@ -124,14 +124,21 @@ def sample_chat_completions_with_structured_output():
     )
 
     response = client.complete(
-        response_format=ChatCompletionsResponseFormatJsonSchema(
-            json_schema=ChatCompletionsResponseFormatJsonSchemaDefinition(
-                name="JSON-schema-for-a-recpie",
+        response_format=ChatCompletionsResponseFormat.text(),
+        response_format=ChatCompletionsResponseFormat.json_object(),
+        response_format=ChatCompletionsResponseFormat.json_schema(
+                name="Recipe_JSON_Schema",
                 schema=recipe_schema,
                 description="Descripes a recipe in details, listing the ingredients, the steps and the time needed to prepare it",
-                strict=False,
-            )
-        ),
+                strict=False),
+        # response_format=ChatCompletionsResponseFormatJsonSchema(
+        #     json_schema=ChatCompletionsResponseFormatJsonSchemaDefinition(
+        #         name="Recipe_JSON_Schema",
+        #         schema=recipe_schema,
+        #         description="Descripes a recipe in details, listing the ingredients, the steps and the time needed to prepare it",
+        #         strict=False,
+        #     )
+        # ),
         messages=[
             SystemMessage(content="You are a helpful assistant. Your responses are in JSON format"),
             UserMessage(content="Please give me directions and ingredients to bake a chocolate cake."),
