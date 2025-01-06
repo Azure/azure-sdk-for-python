@@ -13,9 +13,9 @@ ConversationsAuthoringPreparer = functools.partial(
 
 class TestConversationsAuthoring(AzureRecordedTestCase):
     # Create the client instance for reuse in tests
-    def create_client(self, endpoint, key):
-        credential = AzureKeyCredential(key)
-        client = AuthoringClient(endpoint, credential)
+    def create_client(self, AZURE_AUTHORING_ENDPOINT, AZURE_AUTHORING_KEY):
+        credential = AzureKeyCredential(AZURE_AUTHORING_KEY)
+        client = AuthoringClient(AZURE_AUTHORING_ENDPOINT, credential)
         return client
 
 class TestConversationsAuthoringCase(TestConversationsAuthoring):
