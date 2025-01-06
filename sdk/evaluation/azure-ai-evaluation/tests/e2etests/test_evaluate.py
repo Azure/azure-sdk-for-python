@@ -83,6 +83,7 @@ def _get_run_from_run_history(flow_run_id, azure_ml_client: LiteMLClient, projec
 
 
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
+@pytest.mark.localtest
 class TestEvaluate:
     # Technically unit-test-able, but kept here due to file manipulation
     def test_evaluate_with_relative_data_path(self):
