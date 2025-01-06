@@ -98,6 +98,7 @@ def _get_run_from_run_history(flow_run_id, azure_ml_client: LiteMLClient, projec
         "Authorization": token,
         "Content-Type": "application/json",
     }
+
     workspace = azure_ml_client.workspace_get_info(project_scope["project_name"])
     endpoint = (workspace.discovery_url or "").split("discovery")[0]
     pattern = (
