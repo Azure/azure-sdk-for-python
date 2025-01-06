@@ -11,6 +11,7 @@ import asyncio
 import base64
 import datetime
 import inspect
+import itertools
 import json
 import logging
 import math
@@ -87,7 +88,6 @@ from ._models import MessageAttachment as MessageAttachmentGenerated
 
 from .. import _types
 
-import itertools
 
 logger = logging.getLogger(__name__)
 

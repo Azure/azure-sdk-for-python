@@ -7,7 +7,7 @@ from typing import Any, Iterator, List, MutableMapping, Optional, Dict
 import json
 import os
 import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -514,9 +514,8 @@ class TestAgentsOperations:
 
 class TestIntegrationAgentsOperations:
 
-    @staticmethod
     def submit_tool_outputs_to_run(
-        thread_id: str, run_id: str, *, tool_outputs: List[ToolOutput], stream_parameter: bool, stream: bool
+        self, thread_id: str, run_id: str, *, tool_outputs: List[ToolOutput], stream_parameter: bool, stream: bool
     ) -> Iterator[bytes]:
         assert thread_id == "thread_01"
         assert run_id == "run_01"
@@ -534,15 +533,15 @@ class TestIntegrationAgentsOperations:
 
     @pytest.mark.asyncio
     @patch(
-        "azure.ai.projects.operations._operations.AgentsOperations.submit_tool_outputs_to_run",
-        side_effect=submit_tool_outputs_to_run,
-    )
-    @patch(
         "azure.ai.projects.operations._operations.AgentsOperations.create_run",
         return_value=convert_to_byte_iterator(main_stream_response),
     )
-    @patch("azure.ai.projects.operations._operations.AgentsOperations.__init__", return_value=None)
-    async def test_create_stream_with_tool_calls(self, *args):
+    @patch("azure.ai.projects.operations._operations.AgentsOperations.__init__")
+    @patch(
+        "azure.ai.projects.operations._operations.AgentsOperations.submit_tool_outputs_to_run",
+    )
+    async def test_create_stream_with_tool_calls(self, mock_submit_tool_outputs_to_run: Mock, *args):
+        mock_submit_tool_outputs_to_run.side_effect = self.submit_tool_outputs_to_run
         functions = FunctionTool(user_functions)
         toolset = ToolSet()
         toolset.add(functions)

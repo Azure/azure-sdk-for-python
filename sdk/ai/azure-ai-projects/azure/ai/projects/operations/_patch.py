@@ -2277,7 +2277,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         event_handler: _models.BaseAgentEventHandlerT,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> _models.AgentRunStream[_models.BaseAgentEventHandlerT]:
+    ) -> None:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
@@ -2294,8 +2294,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2341,7 +2339,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     ) -> None:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
-        'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
+    'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
         :param thread_id: Required.
         :type thread_id: str
