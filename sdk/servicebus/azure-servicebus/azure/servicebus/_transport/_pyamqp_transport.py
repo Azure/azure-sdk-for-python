@@ -412,7 +412,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         # TODO: What's the retry overlap between servicebus and pyamqp?
         return _ServiceBusErrorPolicy(
             is_session=is_session,
-            retry_total=config.retry_total,
+            retry_total=0, # hardcoding to 0 to avoid double retries, 8 seconds of wait time when retrying compared to uamqp
             retry_backoff_factor=config.retry_backoff_factor,
             retry_backoff_max=config.retry_backoff_max,
             retry_mode=config.retry_mode,
