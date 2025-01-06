@@ -16,11 +16,11 @@ This troubleshooting guide covers failure investigation techniques, common error
       - ["Authentication=Managed Identity" Alternative](#adding-authenticationmanaged-identity)
 - [Enable and configure logging](#enable-and-configure-logging)
   - [Enable AMQP transport logging](#enable-amqp-transport-logging)
-- [Troubleshoot EventProducerAsyncClient/EventProducerClient issues](#troubleshoot-eventproducerasyncclienteventproducerclient-issues)
+- [Troubleshoot EventHubProducerClient (Sync/Async) issues](#troubleshoot-eventhubproducerclient-syncasync-issues)
   - [Cannot set multiple partition keys for events in EventDataBatch](#cannot-set-multiple-partition-keys-for-events-in-eventdatabatch)
   - [Setting partition key on EventData is not set in Kafka consumer](#setting-partition-key-on-eventdata-is-not-set-in-kafka-consumer)
-  - [Buffer producer not sending events](#buffered-producer-not-sending-events)
-- [Troubleshoot EventHubConsumerClient issues](#troubleshoot-eventprocessorclient-issues)
+  - [Buffered producer not sending events](#buffered-producer-not-sending-events)
+- [Troubleshoot EventHubConsumerClient issues](#troubleshoot-eventhubconsumerclient-issues)
   - [412 precondition failures when using an event processor](#412-precondition-failures-when-using-an-event-processor)
   - [Partition ownership changes frequently](#partition-ownership-changes-frequently)
   - ["...current receiver '<RECEIVER_NAME>' with epoch '0' is getting disconnected"](#current-receiver-receiver_name-with-epoch-0-is-getting-disconnected)
@@ -98,7 +98,7 @@ This error can occur when an intercepting proxy is used.  We recommend testing i
 
 Applications should manage how they open and close the eventhub client.  It is essential to be aware that your application is responsible for calling `close()` when it is finished using a client or to use the `with` statement for clients so that they are automatically closed after the flow execution leaves that block. This make sures that the socket connection to the server is closed correctly. If the client is not closed this can leave AMQP connections open, underlying socket connections open and prevent other clean up activities from running.
 
-### Cannot add connection string
+### Cannot add components to the connection string
 
 The current generation of the Event Hubs client library supports connection strings only in the form published by the Azure portal. These are intended to provide basic location and shared key information only; configuring behavior of the clients is done through its options.
 
