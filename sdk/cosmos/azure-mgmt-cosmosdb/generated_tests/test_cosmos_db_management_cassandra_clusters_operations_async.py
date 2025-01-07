@@ -21,9 +21,9 @@ class TestCosmosDBManagementCassandraClustersOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_subscription(self, resource_group):
+    async def test_cassandra_clusters_list_by_subscription(self, resource_group):
         response = self.client.cassandra_clusters.list_by_subscription(
-            api_version="2024-11-15",
+            api_version="2024-12-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -31,10 +31,10 @@ class TestCosmosDBManagementCassandraClustersOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_cassandra_clusters_list_by_resource_group(self, resource_group):
         response = self.client.cassandra_clusters.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-11-15",
+            api_version="2024-12-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -42,11 +42,11 @@ class TestCosmosDBManagementCassandraClustersOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_cassandra_clusters_get(self, resource_group):
         response = await self.client.cassandra_clusters.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-11-15",
+            api_version="2024-12-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -54,12 +54,12 @@ class TestCosmosDBManagementCassandraClustersOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_cassandra_clusters_begin_delete(self, resource_group):
         response = await (
             await self.client.cassandra_clusters.begin_delete(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
-                api_version="2024-11-15",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -68,7 +68,7 @@ class TestCosmosDBManagementCassandraClustersOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_update(self, resource_group):
+    async def test_cassandra_clusters_begin_create_update(self, resource_group):
         response = await (
             await self.client.cassandra_clusters.begin_create_update(
                 resource_group_name=resource_group.name,
@@ -80,13 +80,18 @@ class TestCosmosDBManagementCassandraClustersOperationsAsync(AzureMgmtRecordedTe
                     "name": "str",
                     "properties": {
                         "authenticationMethod": "str",
+                        "autoReplicate": "str",
                         "azureConnectionMethod": "str",
+                        "backupSchedules": [{"cronExpression": "str", "retentionInHours": 0, "scheduleName": "str"}],
                         "cassandraAuditLoggingEnabled": bool,
                         "cassandraVersion": "str",
                         "clientCertificates": [{"pem": "str"}],
                         "clusterNameOverride": "str",
+                        "clusterType": "str",
                         "deallocated": bool,
                         "delegatedManagementSubnetId": "str",
+                        "extensions": ["str"],
+                        "externalDataCenters": ["str"],
                         "externalGossipCertificates": [{"pem": "str"}],
                         "externalSeedNodes": [{"ipAddress": "str"}],
                         "gossipCertificates": [{"pem": "str"}],
@@ -103,12 +108,13 @@ class TestCosmosDBManagementCassandraClustersOperationsAsync(AzureMgmtRecordedTe
                         "provisioningState": "str",
                         "repairEnabled": bool,
                         "restoreFromBackupId": "str",
+                        "scheduledEventStrategy": "str",
                         "seedNodes": [{"ipAddress": "str"}],
                     },
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-11-15",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -117,7 +123,7 @@ class TestCosmosDBManagementCassandraClustersOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_cassandra_clusters_begin_update(self, resource_group):
         response = await (
             await self.client.cassandra_clusters.begin_update(
                 resource_group_name=resource_group.name,
@@ -129,13 +135,18 @@ class TestCosmosDBManagementCassandraClustersOperationsAsync(AzureMgmtRecordedTe
                     "name": "str",
                     "properties": {
                         "authenticationMethod": "str",
+                        "autoReplicate": "str",
                         "azureConnectionMethod": "str",
+                        "backupSchedules": [{"cronExpression": "str", "retentionInHours": 0, "scheduleName": "str"}],
                         "cassandraAuditLoggingEnabled": bool,
                         "cassandraVersion": "str",
                         "clientCertificates": [{"pem": "str"}],
                         "clusterNameOverride": "str",
+                        "clusterType": "str",
                         "deallocated": bool,
                         "delegatedManagementSubnetId": "str",
+                        "extensions": ["str"],
+                        "externalDataCenters": ["str"],
                         "externalGossipCertificates": [{"pem": "str"}],
                         "externalSeedNodes": [{"ipAddress": "str"}],
                         "gossipCertificates": [{"pem": "str"}],
@@ -152,12 +163,13 @@ class TestCosmosDBManagementCassandraClustersOperationsAsync(AzureMgmtRecordedTe
                         "provisioningState": "str",
                         "repairEnabled": bool,
                         "restoreFromBackupId": "str",
+                        "scheduledEventStrategy": "str",
                         "seedNodes": [{"ipAddress": "str"}],
                     },
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-11-15",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -166,7 +178,7 @@ class TestCosmosDBManagementCassandraClustersOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_invoke_command(self, resource_group):
+    async def test_cassandra_clusters_begin_invoke_command(self, resource_group):
         response = await (
             await self.client.cassandra_clusters.begin_invoke_command(
                 resource_group_name=resource_group.name,
@@ -178,7 +190,7 @@ class TestCosmosDBManagementCassandraClustersOperationsAsync(AzureMgmtRecordedTe
                     "cassandra-stop-start": bool,
                     "readwrite": bool,
                 },
-                api_version="2024-11-15",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -187,12 +199,83 @@ class TestCosmosDBManagementCassandraClustersOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_deallocate(self, resource_group):
+    async def test_cassandra_clusters_begin_invoke_command_async(self, resource_group):
+        response = await (
+            await self.client.cassandra_clusters.begin_invoke_command_async(
+                resource_group_name=resource_group.name,
+                cluster_name="str",
+                body={
+                    "command": "str",
+                    "host": "str",
+                    "arguments": {},
+                    "cassandra-stop-start": bool,
+                    "readWrite": bool,
+                },
+                api_version="2024-12-01-preview",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_cassandra_clusters_list_command(self, resource_group):
+        response = self.client.cassandra_clusters.list_command(
+            resource_group_name=resource_group.name,
+            cluster_name="str",
+            api_version="2024-12-01-preview",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_cassandra_clusters_get_command_async(self, resource_group):
+        response = await self.client.cassandra_clusters.get_command_async(
+            resource_group_name=resource_group.name,
+            cluster_name="str",
+            command_id="str",
+            api_version="2024-12-01-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_cassandra_clusters_list_backups(self, resource_group):
+        response = self.client.cassandra_clusters.list_backups(
+            resource_group_name=resource_group.name,
+            cluster_name="str",
+            api_version="2024-12-01-preview",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_cassandra_clusters_get_backup(self, resource_group):
+        response = await self.client.cassandra_clusters.get_backup(
+            resource_group_name=resource_group.name,
+            cluster_name="str",
+            backup_id="str",
+            api_version="2024-12-01-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_cassandra_clusters_begin_deallocate(self, resource_group):
         response = await (
             await self.client.cassandra_clusters.begin_deallocate(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
-                api_version="2024-11-15",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -201,12 +284,12 @@ class TestCosmosDBManagementCassandraClustersOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_start(self, resource_group):
+    async def test_cassandra_clusters_begin_start(self, resource_group):
         response = await (
             await self.client.cassandra_clusters.begin_start(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
-                api_version="2024-11-15",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -215,11 +298,11 @@ class TestCosmosDBManagementCassandraClustersOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_status(self, resource_group):
+    async def test_cassandra_clusters_status(self, resource_group):
         response = await self.client.cassandra_clusters.status(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-11-15",
+            api_version="2024-12-01-preview",
         )
 
         # please add some check logic here by yourself

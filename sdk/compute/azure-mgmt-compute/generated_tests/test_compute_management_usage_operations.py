@@ -20,7 +20,7 @@ class TestComputeManagementUsageOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_usage_list(self, resource_group):
         response = self.client.usage.list(
             location="str",
             api_version="2024-07-01",
