@@ -14,12 +14,18 @@ import queue
 import re
 import sys
 
-from typing import Any, List, AsyncIterator, Iterator, Optional, Union
+from typing import Any, Dict, List, AsyncIterator, Iterator, Optional, Union
 from azure.core.rest import HttpResponse, AsyncHttpResponse
 from ._models import ImageUrl as ImageUrlGenerated
 from ._models import ChatCompletions as ChatCompletionsGenerated
 from ._models import EmbeddingsResult as EmbeddingsResultGenerated
 from ._models import ImageEmbeddingInput as EmbeddingInputGenerated
+from ._models import (
+    ChatCompletionsResponseFormatTextInternal,
+    ChatCompletionsResponseFormatJsonObjectInternal,
+    ChatCompletionsResponseFormatJsonSchemaInternal,
+    ChatCompletionsResponseFormatJsonSchemaDefinitionInternal,
+)
 from .. import models as _models
 
 if sys.version_info >= (3, 11):
@@ -28,6 +34,99 @@ else:
     from typing_extensions import Self
 
 logger = logging.getLogger(__name__)
+
+
+class ChatCompletionsResponseFormat:
+
+    def __init__(
+        self,
+        *,
+        type: str = "text",
+        name: Optional[str] = None,
+        json_schema: Optional[Dict[str, Any]] = None,
+        description: Optional[str] = None,
+        strict: Optional[bool] = None,
+    ) -> None:
+        """
+        Represents the output format of a chat completions response message. Construct this object using
+        one of the three factory methods `text_format`, `json_without_schema_format` or `json_format`.
+
+        :keyword type:
+        :paramtype name: str
+        :keyword name:
+        :paramtype name: str or None
+        :keyword json_schema:
+        :paramtype json_schema: dict[str, any] or None
+        :keyword description:
+        :paramtype description: str or None
+        :keyword strict:
+        :paramtype strict: bool or None
+        """
+
+        # Note: the "type=type" should no longer be needed after a Python emitter update that Isabella Cai is making soon.
+        if type == "text":
+            self._response_format_internal = ChatCompletionsResponseFormatTextInternal(type=type)
+        elif type == "json_object":
+            self._response_format_internal = ChatCompletionsResponseFormatJsonObjectInternal(type=type)
+        elif type == "json_schema":
+            self._response_format_internal = ChatCompletionsResponseFormatJsonSchemaInternal(
+                type=type,
+                json_schema=ChatCompletionsResponseFormatJsonSchemaDefinitionInternal(
+                    name=name, schema=json_schema, description=description, strict=strict
+                ),
+            )
+        else:
+            raise TypeError(f"type={type} is not supported")
+
+    @classmethod
+    def text_format(cls) -> Self:
+        """
+        Returns a new `ChatCompletionsResponseFormat` object that represents text output format.
+        This corresponds to a REST API chat completions
+        request payload with element `"response_format": {"type": "text"}`.
+        This is typically the default output format of the AI model.
+        """
+        return cls()
+
+    @classmethod
+    def json_without_schema_format(cls) -> Self:
+        """
+        Returns a new `ChatCompletionsResponseFormat` object that represents JSON output format without specifying a
+        particular JSON schema. The AI model will determine the schema. This corresponds to a REST API chat completions
+        request payload with element `"response_format": {"type": "json_object"}`.
+        Note that to enable this format, some AI models may also require you to instruct the model to
+        produce JSON via an explicit system or user message.
+        We recommend using JSON with a provided scheme format instead, if the AI model supports it. See
+        (class method `json_format`).
+        """
+        return cls(type="json_object")
+
+    @classmethod
+    def json_format(
+        cls, *, name: str, json_schema: Dict[str, Any], description: Optional[str] = None, strict: Optional[bool] = None
+    ) -> Self:
+        """
+        Returns a new `ChatCompletionsResponseFormat` object that represents JSON output format adhering to a caller
+        provided JSON schema. This corresponds to a REST API chat completions
+        request payload with element
+        `"response_format": {"type": "json_schema", "json_schema": {"name": "...", "schema": {...}}}`.
+
+        :keyword name: The name of the response format. Must be a-z, A-Z, 0-9, or contain underscores and
+        dashes, with a maximum length of 64. Required.
+        :paramtype name: str
+        :keyword json_schema: The definition of the JSON schema. See https://json-schema.org/overview/what-is-jsonschema. Required.
+        Note that AI models usually support only a subset of the keywords defined in JSON schema.
+        :paramtype json_schema: dict[str, any]
+        :keyword description: A description of the response format, used by the AI model to determine how
+        to generate responses in this format.
+        :paramtype description: str
+        :keyword strict: If `True`, the service will error out if the provided JSON schema contains keywords
+        not supported by the AI model. An example of such keyword may be `maxLength` for JSON type `string`.
+        If `False`, and the provided JSON schema contains keywords not supported
+        by the AI model, the AI model will not error out. Instead it will ignore the unsupported keywords.
+        :paramtype strict: bool
+        """
+        return cls(type="json_schema", name=name, json_schema=json_schema, description=description, strict=strict)
 
 
 class ChatCompletions(ChatCompletionsGenerated):
@@ -300,6 +399,7 @@ __all__: List[str] = [
     "EmbeddingsResult",
     "StreamingChatCompletions",
     "AsyncStreamingChatCompletions",
+    "ChatCompletionsResponseFormat",
 ]  # Add all objects you want publicly available to users at this package level
 
 

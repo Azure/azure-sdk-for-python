@@ -71,7 +71,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
+        response_format: Optional[_models._models.ChatCompletionsResponseFormatInternal] = None,
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
@@ -104,7 +104,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
+        response_format: Optional[_models._models.ChatCompletionsResponseFormatInternal] = None,
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
@@ -184,7 +184,8 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
          seemingly "stuck" request. Also note that the message content may be partially cut off if
          ``finish_reason="length"``\\ , which indicates the generation exceeded ``max_tokens`` or the
          conversation exceeded the max context length. Default value is None.
-        :paramtype response_format: ~azure.ai.inference.models.ChatCompletionsResponseFormat
+        :paramtype response_format:
+         ~azure.ai.inference.models._models.ChatCompletionsResponseFormatInternal
         :keyword stop: A collection of textual sequences that will end completions generation. Default
          value is None.
         :paramtype stop: list[str]

@@ -3,7 +3,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# pylint: disable=too-many-lines)
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -17,6 +16,8 @@ Why do we patch auto-generated code?
 6. Add support for friendly print of result objects (__str__ method) (all clients)
 7. Add support for load() method in ImageUrl class (see /models/_patch.py)
 8. Add support for sending two auth headers for api-key auth (all clients)
+9. Simplify how "structured output" is handled. Hand-write class ChatCompletionsResponseFormat with factory
+   methods instead of using auto-generated ChatCompletionsResponseFormatXxxInternal classes.
 
 """
 import json
@@ -630,7 +631,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
                 "max_tokens": max_tokens if max_tokens is not None else self._max_tokens,
                 "model": model if model is not None else self._model,
                 "presence_penalty": presence_penalty if presence_penalty is not None else self._presence_penalty,
-                "response_format": response_format if response_format is not None else self._response_format,
+                "response_format": response_format._response_format_internal,  # if response_format is not None else self._response_format,
                 "seed": seed if seed is not None else self._seed,
                 "stop": stop if stop is not None else self._stop,
                 "temperature": temperature if temperature is not None else self._temperature,

@@ -269,7 +269,7 @@ class ChatCompletionsNamedToolChoiceFunction(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ChatCompletionsResponseFormat(_model_base.Model):
+class ChatCompletionsResponseFormatInternal(_model_base.Model):
     """Represents the format that the model must output. Use this to enable JSON mode instead of the
     default text mode.
     Note that to enable JSON mode, some AI models may also require you to instruct the model to
@@ -277,8 +277,8 @@ class ChatCompletionsResponseFormat(_model_base.Model):
     via a system or user message.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ChatCompletionsResponseFormatJsonObject, ChatCompletionsResponseFormatJsonSchema,
-    ChatCompletionsResponseFormatText
+    ChatCompletionsResponseFormatJsonObjectInternal,
+    ChatCompletionsResponseFormatJsonSchemaInternal, ChatCompletionsResponseFormatTextInternal
 
     :ivar type: The response format type to use for chat completions. Required. Default value is
      None.
@@ -289,25 +289,10 @@ class ChatCompletionsResponseFormat(_model_base.Model):
     type: str = rest_discriminator(name="type")
     """The response format type to use for chat completions. Required. Default value is None."""
 
-    @overload
-    def __init__(
-        self,
-        *,
-        type: str,
-    ) -> None: ...
 
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ChatCompletionsResponseFormatJsonObject(ChatCompletionsResponseFormat, discriminator="json_object"):
+class ChatCompletionsResponseFormatJsonObjectInternal(
+    ChatCompletionsResponseFormatInternal, discriminator="json_object"
+):  # pylint: disable=name-too-long
     """A response format for Chat Completions that restricts responses to emitting valid JSON objects.
     Note that to enable JSON mode, some AI models may also require you to instruct the model to
     produce JSON
@@ -322,23 +307,10 @@ class ChatCompletionsResponseFormatJsonObject(ChatCompletionsResponseFormat, dis
     """Response format type: always 'json_object' for this object. Required. Default value is
      \"json_object\"."""
 
-    @overload
-    def __init__(
-        self,
-    ) -> None: ...
 
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="json_object", **kwargs)
-
-
-class ChatCompletionsResponseFormatJsonSchema(ChatCompletionsResponseFormat, discriminator="json_schema"):
+class ChatCompletionsResponseFormatJsonSchemaInternal(
+    ChatCompletionsResponseFormatInternal, discriminator="json_schema"
+):  # pylint: disable=name-too-long
     """A response format for Chat Completions that restricts responses to emitting valid JSON objects,
     with a
     JSON schema specified by the caller.
@@ -349,34 +321,17 @@ class ChatCompletionsResponseFormatJsonSchema(ChatCompletionsResponseFormat, dis
     :ivar json_schema: The definition of the required JSON schema in the response, and associated
      metadata. Required.
     :vartype json_schema:
-     ~azure.ai.inference.models.ChatCompletionsResponseFormatJsonSchemaDefinition
+     ~azure.ai.inference.models._models.ChatCompletionsResponseFormatJsonSchemaDefinitionInternal
     """
 
     type: Literal["json_schema"] = rest_discriminator(name="type")  # type: ignore
     """The type of response format being defined: ``json_schema``. Required. Default value is
      \"json_schema\"."""
-    json_schema: "_models.ChatCompletionsResponseFormatJsonSchemaDefinition" = rest_field()
+    json_schema: "_models._models.ChatCompletionsResponseFormatJsonSchemaDefinitionInternal" = rest_field()
     """The definition of the required JSON schema in the response, and associated metadata. Required."""
 
-    @overload
-    def __init__(
-        self,
-        *,
-        json_schema: "_models.ChatCompletionsResponseFormatJsonSchemaDefinition",
-    ) -> None: ...
 
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="json_schema", **kwargs)
-
-
-class ChatCompletionsResponseFormatJsonSchemaDefinition(_model_base.Model):  # pylint: disable=name-too-long
+class ChatCompletionsResponseFormatJsonSchemaDefinitionInternal(_model_base.Model):  # pylint: disable=name-too-long
     """The definition of the required JSON schema in the response, and associated metadata.
 
     :ivar name: The name of the response format. Must be a-z, A-Z, 0-9, or contain underscores and
@@ -408,28 +363,10 @@ class ChatCompletionsResponseFormatJsonSchemaDefinition(_model_base.Model):  # p
      Only a subset of
      JSON Schema is supported when ``strict`` is ``true``."""
 
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        schema: Dict[str, Any],
-        description: Optional[str] = None,
-        strict: Optional[bool] = None,
-    ) -> None: ...
 
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ChatCompletionsResponseFormatText(ChatCompletionsResponseFormat, discriminator="text"):
+class ChatCompletionsResponseFormatTextInternal(
+    ChatCompletionsResponseFormatInternal, discriminator="text"
+):  # pylint: disable=name-too-long
     """A response format for Chat Completions that emits text responses. This is the default response
     format.
 
@@ -440,21 +377,6 @@ class ChatCompletionsResponseFormatText(ChatCompletionsResponseFormat, discrimin
 
     type: Literal["text"] = rest_discriminator(name="type")  # type: ignore
     """Response format type: always 'text' for this object. Required. Default value is \"text\"."""
-
-    @overload
-    def __init__(
-        self,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="text", **kwargs)
 
 
 class ChatCompletionsToolCall(_model_base.Model):

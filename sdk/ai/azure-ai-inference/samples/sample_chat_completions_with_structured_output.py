@@ -31,10 +31,19 @@ USAGE:
     2) AZURE_OPENAI_CHAT_KEY - Your model key (a 32-character string). Keep it secret. This
         is only required for key authentication.
 
-    Update `api_version` (the AOAI REST API version) as needed, based on the model docs.
+    Update `api_version` (the AOAI REST API version) as needed, based on the model documents.
     See also the "Data plane - inference" row in the table here for latest AOAI api-version:
     https://aka.ms/azsdk/azure-ai-inference/azure-openai-api-versions
 """
+
+# Start remove me -- logging
+import sys
+import logging
+
+logger = logging.getLogger("azure")
+logger.setLevel(logging.DEBUG)
+logger.addHandler(logging.StreamHandler(stream=sys.stdout))
+# End remove me
 
 
 def sample_chat_completions_with_structured_output():
@@ -46,8 +55,7 @@ def sample_chat_completions_with_structured_output():
     from azure.ai.inference.models import (
         SystemMessage,
         UserMessage,
-        ChatCompletionsResponseFormatJsonSchema,
-        ChatCompletionsResponseFormatJsonSchemaDefinition,
+        ChatCompletionsResponseFormat,
     )
     from azure.core.credentials import AzureKeyCredential
 
@@ -59,7 +67,8 @@ def sample_chat_completions_with_structured_output():
         print("Set them before running this sample.")
         exit()
 
-    recipe_schema: Dict[str, Any] = {
+    # Defines a JSON schema for a cooking recipe. You would like the AI model to respond in this format.
+    json_schema: Dict[str, Any] = {
         "type": "object",
         "properties": {
             "title": {"type": "string", "description": "The name of the recipe"},
@@ -121,26 +130,20 @@ def sample_chat_completions_with_structured_output():
         endpoint=endpoint,
         credential=AzureKeyCredential(key),
         api_version="2024-08-01-preview",  # Azure OpenAI api-version. See https://aka.ms/azsdk/azure-ai-inference/azure-openai-api-versions
+        logging_enable=True,
     )
 
     response = client.complete(
-        response_format=ChatCompletionsResponseFormat.text(),
-        response_format=ChatCompletionsResponseFormat.json_object(),
-        response_format=ChatCompletionsResponseFormat.json_schema(
-                name="Recipe_JSON_Schema",
-                schema=recipe_schema,
-                description="Descripes a recipe in details, listing the ingredients, the steps and the time needed to prepare it",
-                strict=False),
-        # response_format=ChatCompletionsResponseFormatJsonSchema(
-        #     json_schema=ChatCompletionsResponseFormatJsonSchemaDefinition(
-        #         name="Recipe_JSON_Schema",
-        #         schema=recipe_schema,
-        #         description="Descripes a recipe in details, listing the ingredients, the steps and the time needed to prepare it",
-        #         strict=False,
-        #     )
-        # ),
+        # response_format=ChatCompletionsResponseFormat.text_format(),
+        # response_format=ChatCompletionsResponseFormat.json_without_schema_format(),
+        response_format=ChatCompletionsResponseFormat.json_format(
+            name="Recipe_JSON_Schema",
+            json_schema=json_schema,
+            # description="Descripes a recipe in details, listing the ingredients, the steps and the time needed to prepare it",
+            strict=False,
+        ),
         messages=[
-            SystemMessage(content="You are a helpful assistant. Your responses are in JSON format"),
+            SystemMessage(content="You are a helpful assistant."),
             UserMessage(content="Please give me directions and ingredients to bake a chocolate cake."),
         ],
     )
