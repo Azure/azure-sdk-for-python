@@ -213,7 +213,7 @@ setup(
     assert str(type(result.ext_modules[0])) == "<class 'setuptools.extension.Extension'>"
 
 
-def test_metapackage_deteection():
+def test_metapackage_detection():
     parsed_project = ParsedSetup.from_path(metapackage_scenario)
     assert parsed_project.is_metapackage == True
     assert parsed_project.name == "azure-keyvault"
