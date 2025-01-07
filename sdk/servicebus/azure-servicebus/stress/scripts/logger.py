@@ -3,10 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-import os
 import sys
 import logging
-from logging.handlers import TimedRotatingFileHandler
+from logging.handlers import RotatingFileHandler
 
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 
@@ -25,13 +24,12 @@ def get_base_logger(log_filename, logger_name, level=logging.ERROR, print_consol
             logger.addHandler(console_handler)
     else:
         if rotating_logs:
-            # rotated hourly if small file, o/w rotated bi-hourly
-            if level == logging.DEBUG or level == logging.INFO:
-                time = 30
-            else:
-                time = 60
             if not logger.handlers:
-                file_handler = TimedRotatingFileHandler(log_filename, when='M', interval=time, utc=True)
+                # 5 MB max file size, 350 files max
+                mb = 50
+                bytes_in_mb = 1_048_576
+                bytes = mb * bytes_in_mb
+                file_handler = RotatingFileHandler(log_filename, maxBytes=bytes, backupCount=300)
                 file_handler.setFormatter(formatter)
                 logger.addHandler(file_handler)
         else:
@@ -53,17 +51,14 @@ def get_logger(log_filename, logger_name, level=logging.ERROR, print_console=Fal
     formatter = log_format or logging.Formatter(
         "%(asctime)s - [%(thread)d.%(threadName)s] - %(name)-12s %(levelname)-8s %(funcName)s(%(lineno)d) %(message)s"
     )
-    # TODO: fix memory leak from rotating logs
     if rotating_logs:
-        # rotated hourly if small file, o/w rotated bi-hourly
-        if level == logging.DEBUG or level == logging.INFO:
-            time = 30
-        else:
-            time = 60
-        
         # If any do not have handlers, create a new file handler and add.
         if not servicebus_logger.handlers or not pyamqp_logger.handlers or not stress_logger.handlers:
-            file_handler = TimedRotatingFileHandler(log_filename, when='M', interval=time, utc=True)
+            # 5 MB max file size, 350 files max
+            mb = 50
+            bytes_in_mb = 1_048_576
+            bytes = mb * bytes_in_mb
+            file_handler = RotatingFileHandler(log_filename, maxBytes=bytes, backupCount=300)
             file_handler.setFormatter(formatter)
             if not servicebus_logger.handlers:
                 servicebus_logger.addHandler(file_handler)
