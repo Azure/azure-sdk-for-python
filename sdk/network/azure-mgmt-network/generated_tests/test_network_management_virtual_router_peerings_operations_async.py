@@ -21,13 +21,13 @@ class TestNetworkManagementVirtualRouterPeeringsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_virtual_router_peerings_begin_delete(self, resource_group):
         response = await (
             await self.client.virtual_router_peerings.begin_delete(
                 resource_group_name=resource_group.name,
                 virtual_router_name="str",
                 peering_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -36,12 +36,12 @@ class TestNetworkManagementVirtualRouterPeeringsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_virtual_router_peerings_get(self, resource_group):
         response = await self.client.virtual_router_peerings.get(
             resource_group_name=resource_group.name,
             virtual_router_name="str",
             peering_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -49,7 +49,7 @@ class TestNetworkManagementVirtualRouterPeeringsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_virtual_router_peerings_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.virtual_router_peerings.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -64,7 +64,7 @@ class TestNetworkManagementVirtualRouterPeeringsOperationsAsync(AzureMgmtRecorde
                     "provisioningState": "str",
                     "type": "str",
                 },
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -73,11 +73,11 @@ class TestNetworkManagementVirtualRouterPeeringsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_virtual_router_peerings_list(self, resource_group):
         response = self.client.virtual_router_peerings.list(
             resource_group_name=resource_group.name,
             virtual_router_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -20,7 +20,7 @@ def create_token_credential():
         from .fake_token_credential import FakeTokenCredential
 
         return FakeTokenCredential()
-    
+
     return get_credential()
 
 
@@ -32,7 +32,7 @@ def async_create_token_credential():
         from .async_fake_token_credential import AsyncFakeTokenCredential
 
         return AsyncFakeTokenCredential()
-    
+
     return get_credential(is_async=True)
 
 

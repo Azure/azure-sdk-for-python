@@ -63,6 +63,7 @@ from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-err
 )
 from azure.monitor.opentelemetry.exporter._utils import (  # pylint: disable=import-error,no-name-in-module
     _is_attach_enabled,
+    _is_on_functions,
 )
 from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
     _DISTRO_DETECTS_ATTACH,
@@ -252,7 +253,7 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
 
 
 def _send_attach_warning():
-    if _is_attach_enabled():
+    if _is_attach_enabled() and not _is_on_functions():
         AzureDiagnosticLogging.warning(
             "Distro detected that automatic attach may have occurred. Check your data to ensure "
             "that telemetry is not being duplicated. This may impact your cost.",

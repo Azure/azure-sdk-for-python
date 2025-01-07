@@ -10,6 +10,8 @@
     ([#38543](https://github.com/Azure/azure-sdk-for-python/pull/38543))
 - Configure live metrics first in pipeline to detect statsbeat usage
     ([#37694](https://github.com/Azure/azure-sdk-for-python/pull/37694))
+- Ignore backoff warning from distro if in functions environment
+    ([#38787](https://github.com/Azure/azure-sdk-for-python/pull/38787))
 
 ### Breaking Changes
 
