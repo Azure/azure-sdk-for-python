@@ -27,7 +27,8 @@ from ci_tools.environment_exclusions import (
     IGNORE_PACKAGES,
     FILTER_EXCLUSIONS,
 )
-
+IGNORE_FILTER.append("mgmt")
+FILTER_EXCLUSIONS.append("azure-mgmt-core")
 IGNORE_PACKAGES.append("azure-openai")
 
 # Github
