@@ -123,6 +123,7 @@ setup(
     assert result.classifiers[0] == "Development Status :: 5 - Production/Stable"
     assert result.classifiers[5] == "Programming Language :: Python :: 3.8"
     assert result.keywords[0] == "azure sdk"
+    assert result.is_metapackage == False
     assert len(result.keywords) == 2
 
 
