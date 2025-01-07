@@ -23,10 +23,12 @@ from ci_tools.variables import in_ci
 from ci_tools.parsing import ParsedSetup
 from ci_tools.environment_exclusions import (
     is_check_enabled,
+    IGNORE_FILTER,
     IGNORE_PACKAGES,
+    FILTER_EXCLUSIONS,
 )
-IGNORE_FILTER = ["nspkg", "mgmt", "cognitiveservices"]
-FILTER_EXCLUSIONS = ["azure-mgmt-core"]
+IGNORE_FILTER.append("mgmt")
+FILTER_EXCLUSIONS.append("azure-mgmt-core")
 IGNORE_PACKAGES.append("azure-openai")
 
 # Github
