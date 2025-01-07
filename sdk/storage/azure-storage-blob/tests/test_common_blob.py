@@ -3532,7 +3532,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         result = blob.download_blob().readall()
         assert result == data[:length]
 
-    @pytest.mark.live_test_only
     @BlobPreparer()
     def test_mock_transport_no_content_validation(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")

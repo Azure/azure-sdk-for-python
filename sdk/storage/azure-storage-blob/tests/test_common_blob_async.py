@@ -3456,23 +3456,20 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         result = await (await blob.download_blob()).readall()
         assert result == data[:length]
 
-    @pytest.mark.live_test_only
     @BlobPreparer()
     async def test_mock_transport_no_content_validation(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         transport = MockStorageTransport()
-        blob_service_client = BlobServiceClient(
+        blob_client = BlobClient(
             self.account_url(storage_account_name, "blob"),
+            container_name='test_cont',
+            blob_name='test_blob',
             credential=storage_account_key,
             transport=transport,
             retry_total=0
         )
-
-        blob_client = BlobClient(
-            blob_service_client.url, container_name='test_cont', blob_name='test_blob', credential=storage_account_key,
-            transport=transport, retry_total=0)
 
         content = await blob_client.download_blob()
         assert content is not None
@@ -3486,28 +3483,25 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         assert resp is not None
 
         blob_data = await (await blob_client.download_blob()).read()
-        assert data == blob_data
+        assert blob_data == b"Hello Async World!"  # data is fixed by mock transport
 
         resp = await blob_client.delete_blob()
         assert resp is None
 
-    @pytest.mark.live_test_only
     @BlobPreparer()
     async def test_mock_transport_with_content_validation(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         transport = MockStorageTransport()
-        blob_service_client = BlobServiceClient(
+        blob_client = BlobClient(
             self.account_url(storage_account_name, "blob"),
+            container_name='test_cont',
+            blob_name='test_blob',
             credential=storage_account_key,
             transport=transport,
             retry_total=0
         )
-
-        blob_client = BlobClient(
-            blob_service_client.url, container_name='test_cont', blob_name='test_blob', credential=storage_account_key,
-            transport=transport, retry_total=0)
 
         data = b"Hello Async World!"
         stream = AsyncStream(data)
@@ -3515,5 +3509,5 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         assert resp is not None
 
         blob_data = await (await blob_client.download_blob(validate_content=True)).read()
-        assert data == blob_data
+        assert blob_data == b"Hello Async World!"  # data is fixed by mock transport
 # ------------------------------------------------------------------------------

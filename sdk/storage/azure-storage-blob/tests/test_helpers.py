@@ -74,8 +74,8 @@ class MockStorageTransport(HttpTransport):
                     b"Hello Async World!",
                     {
                         "Content-Type": "application/octet-stream",
-                        "Content-Range": "bytes 0-27/28",
-                        "Content-Length": "28",
+                        "Content-Range": "bytes 0-17/18",
+                        "Content-Length": "18",
                     },
                 )
             )

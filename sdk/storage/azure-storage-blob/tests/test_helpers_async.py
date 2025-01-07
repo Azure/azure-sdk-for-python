@@ -89,16 +89,21 @@ class MockStorageTransport(AsyncHttpTransport):
     async def send(self, request: HttpRequest, **kwargs: Any) -> RestAioHttpTransportResponse:
         if request.method == 'GET':
             # download_blob
+            headers = {
+                "Content-Type": "application/octet-stream",
+                "Content-Range": "bytes 0-17/18",
+                "Content-Length": "18",
+            }
+
+            if "x-ms-range-get-content-md5" in request.headers:
+                headers["Content-MD5"] = "I3pVbaOCUTom+G9F9uKFoA=="
+
             rest_response = RestAioHttpTransportResponse(
                 request=request,
                 internal_response=MockAioHttpClientResponse(
                     request.url,
                     b"Hello Async World!",
-                    {
-                        "Content-Type": "application/octet-stream",
-                        "Content-Range": "bytes 0-27/28",
-                        "Content-Length": "28",
-                    },
+                    headers,
                 ),
                 decompress=False
             )
@@ -112,22 +117,25 @@ class MockStorageTransport(AsyncHttpTransport):
                     {
                         "Content-Type": "application/octet-stream",
                         "Content-Length": "1024",
-                        "Content-MD5": "yaNM/IXZgmmMasifdgcavQ=="
                     },
                 ),
                 decompress=False
             )
         elif request.method == 'PUT':
             # upload_blob
+            headers = {
+                "Content-Length": "0",
+            }
+
+            if "content-md5" in request.headers:
+                headers["Content-MD5"] = "I3pVbaOCUTom\u002BG9F9uKFoA=="
+
             rest_response = RestAioHttpTransportResponse(
                 request=request,
                 internal_response=MockAioHttpClientResponse(
                     request.url,
                     b"",
-                    {
-                        "Content-Length": "0",
-                        "Content-MD5": "I3pVbaOCUTom\u002BG9F9uKFoA==",
-                    },
+                    headers,
                     201,
                     "Created"
                 ),
