@@ -22,10 +22,10 @@ additional_pr_triggers: Dict[str, List[str]] = {
         # related to windows only + emulator
         # os.path.join("/sdk", "cosmos", "azure-cosmos"),
         os.path.join("/sdk", "ml", "azure-ai-ml"),
-        os.path.join("/sdk", "ai", "azure-ai-documentintelligence"),
+        os.path.join("/sdk", "documentintelligence", "azure-ai-documentintelligence"),
         os.path.join("/sdk", "ai", "azure-ai-inference"),
-        os.path.join("/sdk", "ai", "azure-ai-textanalytics"),
-        os.path.join("/sdk", "ai", "azure-ai-doctranslation"),
+        os.path.join("/sdk", "textanalytics", "azure-ai-textanalytics"),
+        os.path.join("/sdk", "translation", "azure-ai-translation-document"),
         os.path.join("/sdk", "compute", "azure-mgmt-compute"),
         os.path.join("/sdk", "communication", "azure-communication-chat"),
         os.path.join("/sdk", "communication", "azure-communication-identity"),
