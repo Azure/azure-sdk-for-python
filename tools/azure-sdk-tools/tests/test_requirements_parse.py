@@ -62,7 +62,9 @@ def test_replace_dev_reqs_relative(tmp_directory_create):
     expected_output_folder = os.path.join(repo_root, "sdk", "core", "azure-core", ".tmp_whl_dir")
 
     # Get the current relative versions of the packages to properly construct the expected results
-    coretestserver_version = ParsedSetup.from_path(os.path.join(repo_root, "sdk", "core", "azure-core", "tests", "testserver_tests", "coretestserver")).version
+    coretestserver_version = ParsedSetup.from_path(
+        os.path.join(repo_root, "sdk", "core", "azure-core", "tests", "testserver_tests", "coretestserver")
+    ).version
     identity_version = ParsedSetup.from_path(os.path.join(repo_root, "sdk", "identity", "azure-identity")).version
     mgmt_core_version = ParsedSetup.from_path(os.path.join(repo_root, "sdk", "core", "azure-mgmt-core")).version
     sdk_tools_version = ParsedSetup.from_path(os.path.join(repo_root, "tools", "azure-sdk-tools")).version
@@ -80,7 +82,6 @@ def test_replace_dev_reqs_relative(tmp_directory_create):
         os.path.join(expected_output_folder, f"azure_core-{core_version}-py3-none-any.whl"),
         os.path.join(expected_output_folder, f"azure_core-{core_version}-py3-none-any.whl"),
     ]
-
     requirements_before = get_requirements_from_file(requirements_file)
     replace_dev_reqs(requirements_file, core_location, None)
     requirements_after = get_requirements_from_file(requirements_file)
