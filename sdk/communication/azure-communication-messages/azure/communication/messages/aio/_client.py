@@ -34,7 +34,7 @@ class NotificationMessagesClient(NotificationMessagesClientOperationsMixin):
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential or
      ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2024-11-15-preview". Note that overriding this default value may result in unsupported
+     "2025-01-15-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
@@ -117,7 +117,7 @@ class MessageTemplateClient(MessageTemplateClientOperationsMixin):
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential or
      ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2024-11-15-preview". Note that overriding this default value may result in unsupported
+     "2025-01-15-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """

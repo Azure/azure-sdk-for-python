@@ -39,10 +39,11 @@ class DownloadMediaSample(object):
 
         # calling send() with whatsapp message details
         media_stream = messaging_client.download_media(input_media_id)
-        length : int = 0
+        length: int = 0
         for byte in media_stream:
             length = length + 1
         print("WhatsApp Media stream downloaded.It's length is {}".format(length))
+
 
 if __name__ == "__main__":
     sample = DownloadMediaSample()

@@ -31,7 +31,7 @@ class NotificationMessagesClientConfiguration:  # pylint: disable=too-many-insta
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential or
      ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2024-11-15-preview". Note that overriding this default value may result in unsupported
+     "2025-01-15-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
@@ -39,7 +39,7 @@ class NotificationMessagesClientConfiguration:  # pylint: disable=too-many-insta
     def __init__(
         self, endpoint: str, credential: Union["AsyncTokenCredential", AzureKeyCredential], **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-11-15-preview")
+        api_version: str = kwargs.pop("api_version", "2025-01-15-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
@@ -89,7 +89,7 @@ class MessageTemplateClientConfiguration:  # pylint: disable=too-many-instance-a
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential or
      ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2024-11-15-preview". Note that overriding this default value may result in unsupported
+     "2025-01-15-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
@@ -97,7 +97,7 @@ class MessageTemplateClientConfiguration:  # pylint: disable=too-many-instance-a
     def __init__(
         self, endpoint: str, credential: Union["AsyncTokenCredential", AzureKeyCredential], **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-11-15-preview")
+        api_version: str = kwargs.pop("api_version", "2025-01-15-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

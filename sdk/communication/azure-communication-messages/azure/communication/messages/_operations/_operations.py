@@ -51,7 +51,7 @@ def build_notification_messages_send_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -80,7 +80,7 @@ def build_notification_messages_download_media_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-15-preview"))
     accept = _headers.pop("Accept", "application/octet-stream")
 
     # Construct URL
@@ -106,7 +106,7 @@ def build_message_template_list_templates_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
