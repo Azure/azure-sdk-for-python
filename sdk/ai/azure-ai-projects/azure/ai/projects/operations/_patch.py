@@ -2289,7 +2289,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword event_handler: The event handler to use for processing events during the run.
-        :paramtype event_handler: ~azure.ai.projects.models.AgentEventHandler
+        :paramtype event_handler: ~azure.ai.projects.models.BaseAgentEventHandler
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2321,7 +2321,7 @@ class AgentsOperations(AgentsOperationsGenerated):
          Default value is "application/json".
         :paramtype content_type: str
         :keyword event_handler: The event handler to use for processing events during the run.
-        :paramtype event_handler: ~azure.ai.projects.models.AgentEventHandler
+        :paramtype event_handler: ~azure.ai.projects.models.BaseAgentEventHandler
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2337,7 +2337,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         **kwargs: Any,
     ) -> None:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
-            outputs will have a status of 'requires_action' with a required_action.type of
+        outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
         :param thread_id: Required.
@@ -2349,7 +2349,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword tool_outputs: Required.
         :paramtype tool_outputs: list[~azure.ai.projects.models.ToolOutput]
         :keyword event_handler: The event handler to use for processing events during the run.
-        :paramtype event_handler: ~azure.ai.projects.models.AgentEventHandler
+        :paramtype event_handler: ~azure.ai.projects.models.BaseAgentEventHandler
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
