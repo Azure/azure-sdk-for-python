@@ -2,6 +2,7 @@ import os, shutil
 
 from typing import List
 from ci_tools.scenario.generation import replace_dev_reqs
+from ci_tools.parsing import ParsedSetup
 
 integration_folder = os.path.join(os.path.dirname(__file__), "integration")
 sample_dev_reqs_folder = os.path.join(integration_folder, "scenarios", "dev_requirement_samples")
@@ -60,17 +61,24 @@ def test_replace_dev_reqs_relative(tmp_directory_create):
     requirements_file = create_temporary_scenario(tmp_directory_create, target_file)
     expected_output_folder = os.path.join(repo_root, "sdk", "core", "azure-core", ".tmp_whl_dir")
 
+    # Get the current relative versions of the packages to properly construct the expected results
+    coretestserver_version = ParsedSetup.from_path(os.path.join(repo_root, "sdk", "core", "azure-core", "tests", "testserver_tests", "coretestserver")).version
+    identity_version = ParsedSetup.from_path(os.path.join(repo_root, "sdk", "identity", "azure-identity")).version
+    mgmt_core_version = ParsedSetup.from_path(os.path.join(repo_root, "sdk", "core", "azure-mgmt-core")).version
+    sdk_tools_version = ParsedSetup.from_path(os.path.join(repo_root, "tools", "azure-sdk-tools")).version
+    core_version = ParsedSetup.from_path(os.path.join(repo_root, "sdk", "core", "azure-core")).version
+
     expected_results = [
-        os.path.join(expected_output_folder, "coretestserver-1.0.0b1-py3-none-any.whl"),
-        os.path.join(expected_output_folder, "coretestserver-1.0.0b1-py3-none-any.whl"),
-        os.path.join(expected_output_folder, "azure_identity-1.19.1-py3-none-any.whl"),
-        os.path.join(expected_output_folder, "azure_identity-1.19.1-py3-none-any.whl"),
-        os.path.join(expected_output_folder, "azure_mgmt_core-1.5.0-py3-none-any.whl"),
-        os.path.join(expected_output_folder, "azure_mgmt_core-1.5.0-py3-none-any.whl"),
-        os.path.join(expected_output_folder, "azure_sdk_tools-0.0.0-py3-none-any.whl[build]"),
-        os.path.join(expected_output_folder, "azure_sdk_tools-0.0.0-py3-none-any.whl[build]"),
-        os.path.join(expected_output_folder, "azure_core-1.32.1-py3-none-any.whl"),
-        os.path.join(expected_output_folder, "azure_core-1.32.1-py3-none-any.whl"),
+        os.path.join(expected_output_folder, f"coretestserver-{coretestserver_version}-py3-none-any.whl"),
+        os.path.join(expected_output_folder, f"coretestserver-{coretestserver_version}-py3-none-any.whl"),
+        os.path.join(expected_output_folder, f"azure_identity-{identity_version}-py3-none-any.whl"),
+        os.path.join(expected_output_folder, f"azure_identity-{identity_version}-py3-none-any.whl"),
+        os.path.join(expected_output_folder, f"azure_mgmt_core-{mgmt_core_version}-py3-none-any.whl"),
+        os.path.join(expected_output_folder, f"azure_mgmt_core-{mgmt_core_version}-py3-none-any.whl"),
+        os.path.join(expected_output_folder, f"azure_sdk_tools-{sdk_tools_version}-py3-none-any.whl[build]"),
+        os.path.join(expected_output_folder, f"azure_sdk_tools-{sdk_tools_version}-py3-none-any.whl[build]"),
+        os.path.join(expected_output_folder, f"azure_core-{core_version}-py3-none-any.whl"),
+        os.path.join(expected_output_folder, f"azure_core-{core_version}-py3-none-any.whl"),
     ]
 
     requirements_before = get_requirements_from_file(requirements_file)
