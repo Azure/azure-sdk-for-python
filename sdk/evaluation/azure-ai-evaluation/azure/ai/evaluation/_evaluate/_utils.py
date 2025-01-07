@@ -349,7 +349,8 @@ class CSVDataFileLoader:
 class DataLoaderFactory:
     @staticmethod
     def get_loader(filename: Union[os.PathLike, str]) -> Union[JSONLDataFileLoader, CSVDataFileLoader]:
-        if str(filename).endswith(".csv"):
+        filename_str = str(filename).lower()
+        if filename_str.endswith(".csv"):
             return CSVDataFileLoader(filename)
 
         # fallback to JSONL to maintain backward compatibility
