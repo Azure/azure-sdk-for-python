@@ -41,7 +41,7 @@ from typing import (
 from azure.core.credentials import AccessToken, TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
-from ._enums import AgentStreamEvent, ConnectionType
+from ._enums import AgentStreamEvent, ConnectionType, MessageRole
 from ._models import (
     AzureAISearchResource,
     AzureAISearchToolDefinition,
@@ -1645,31 +1645,31 @@ class OpenAIPageableListOfThreadMessage(OpenAIPageableListOfThreadMessageGenerat
         annotations = [annotation for msg in self.data for annotation in msg.file_path_annotations]
         return annotations
 
-    def get_last_message_by_sender(self, sender: str) -> Optional[ThreadMessage]:
-        """Returns the last message from the specified sender.
+    def get_last_message_by_role(self, role: MessageRole) -> Optional[ThreadMessage]:
+        """Returns the last message from a sender in the specified role.
 
-        :param sender: The role of the sender.
-        :type sender: str
+        :param role: The role of the sender.
+        :type role: MessageRole
 
-        :return: The last message from the specified sender.
+        :return: The last message from a sender in the specified role.
         :rtype: ~azure.ai.projects.models.ThreadMessage
         """
-        for msg in self.data:
-            if msg.role == sender:
+        for msg in self._messages:
+            if msg.role == role:
                 return msg
         return None
 
-    def get_last_text_message_by_sender(self, sender: str) -> Optional[MessageTextContent]:
-        """Returns the last text message from the specified sender.
+    def get_last_text_message_by_role(self, role: MessageRole) -> Optional[MessageTextContent]:
+        """Returns the last text message from a sender in the specified role.
 
-        :param sender: The role of the sender.
-        :type sender: str
+        :param role: The role of the sender.
+        :type role: MessageRole
 
-        :return: The last text message from the specified sender.
+        :return: The last text message from a sender in the specified role.
         :rtype: ~azure.ai.projects.models.MessageTextContent
         """
-        for msg in self.data:
-            if msg.role == sender:
+        for msg in self._messages:
+            if msg.role == role:
                 for content in msg.content:
                     if isinstance(content, MessageTextContent):
                         return content
