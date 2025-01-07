@@ -14,6 +14,7 @@ from azure.ai.evaluation import (
     ContentSafetyEvaluator,
     F1ScoreEvaluator,
     GroundednessEvaluator,
+    SimilarityEvaluator,
     ProtectedMaterialEvaluator,
     evaluate,
 )
@@ -40,6 +41,11 @@ def unsupported_file_type():
 
 
 @pytest.fixture
+def missing_header_csv_file():
+    return _get_file("no_header_evaluate_test_data.csv")
+
+
+@pytest.fixture
 def invalid_jsonl_file():
     return _get_file("invalid_evaluate_test_data.jsonl")
 
@@ -53,6 +59,9 @@ def missing_columns_jsonl_file():
 def evaluate_test_data_jsonl_file():
     return _get_file("evaluate_test_data.jsonl")
 
+@pytest.fixture
+def evaluate_test_data_csv_file():
+    return _get_file("evaluate_test_data.csv")
 
 @pytest.fixture
 def pf_client() -> PFClient:
@@ -695,3 +704,22 @@ class TestEvaluate:
             )
         assert "Unable to load data from " in cm.value.args[0]
         assert "Supported formats are JSONL and CSV. Detailed error:" in cm.value.args[0]
+
+    def test_malformed_file_inputs(self, model_config, missing_header_csv_file, missing_columns_jsonl_file):
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluate(
+                data=missing_columns_jsonl_file,
+                evaluators={"similarity": SimilarityEvaluator(model_config=model_config)},
+                fail_on_evaluator_errors=True
+            )
+        
+        assert "Either 'conversation' or individual inputs must be provided." in str(exc_info.value)
+
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluate(
+                data=missing_header_csv_file,
+                evaluators={"similarity": SimilarityEvaluator(model_config=model_config)},
+                fail_on_evaluator_errors=True
+            )
+        
+        assert "Either 'conversation' or individual inputs must be provided." in str(exc_info.value)
