@@ -141,7 +141,7 @@ class AmqpTransport(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_send_client(config, **kwargs):
+    def create_send_client(config, **kwargs): # pylint:disable=docstring-keyword-should-match-keyword-only
         """
         Creates and returns the uamqp SendClient.
         :param ~azure.servicebus._common._configuration.Configuration config:
@@ -193,7 +193,7 @@ class AmqpTransport(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_receive_client(receiver, **kwargs):
+    def create_receive_client(receiver, **kwargs): # pylint:disable=docstring-keyword-should-match-keyword-only
         """
         Creates and returns the receive client.
         :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver.
@@ -296,7 +296,7 @@ class AmqpTransport(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def parse_received_message(message, message_type, **kwargs):
+    def parse_received_message(message, message_type, **kwargs): # pylint:disable=docstring-keyword-should-match-keyword-only
         """
         Parses peek/deferred op messages into ServiceBusReceivedMessage.
         :param Message message: Message to parse.
@@ -316,7 +316,7 @@ class AmqpTransport(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_token_auth(auth_uri, get_token, token_type, config, **kwargs):
+    def create_token_auth(auth_uri, get_token, token_type, config, **kwargs): # pylint:disable=docstring-keyword-should-match-keyword-only
         """
         Creates the JWTTokenAuth.
         :param str auth_uri: The auth uri to pass to JWTTokenAuth.

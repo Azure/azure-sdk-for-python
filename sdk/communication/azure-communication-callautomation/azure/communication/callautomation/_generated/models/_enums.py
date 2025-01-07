@@ -10,6 +10,15 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the audio format used for encoding, including sample rate and channel type."""
+
+    PCM16_K_MONO = "Pcm16KMono"
+    """Pcm16KMono"""
+    PCM24_K_MONO = "Pcm24KMono"
+    """Pcm24KMono"""
+
+
 class CallConnectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The state of the call connection."""
 
@@ -25,8 +34,10 @@ class CallConnectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class CallLocatorKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The call locator kind."""
 
+    UNKNOWN = "unknown"
     GROUP_CALL_LOCATOR = "groupCallLocator"
     SERVER_CALL_LOCATOR = "serverCallLocator"
+    ROOM_CALL_LOCATOR = "roomCallLocator"
 
 
 class CallRejectReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -125,6 +136,14 @@ class MediaStreamingStatusDetails(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INITIAL_WEB_SOCKET_CONNECTION_FAILED = "initialWebSocketConnectionFailed"
 
 
+class MediaStreamingSubscriptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Media streaming subscription state."""
+
+    DISABLED = "disabled"
+    INACTIVE = "inactive"
+    ACTIVE = "active"
+
+
 class MediaStreamingTransportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of transport to be used for media streaming, eg. Websocket."""
 
@@ -183,9 +202,12 @@ class RecordingFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class RecordingKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RecordingKind."""
 
-    AZURE_COMMUNICATION_SERVICES = "azureCommunicationServices"
-    TEAMS = "teams"
-    TEAMS_COMPLIANCE = "teamsCompliance"
+    AZURE_COMMUNICATION_SERVICES = "AzureCommunicationServices"
+    """Recording initiated by Azure Communication Services"""
+    TEAMS = "Teams"
+    """Recording initiated by Teams user"""
+    TEAMS_COMPLIANCE = "TeamsCompliance"
+    """Recording initiated by Teams compliance policy"""
 
 
 class RecordingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -198,8 +220,17 @@ class RecordingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class RecordingStorageKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the kind of external storage."""
 
-    AZURE_COMMUNICATION_SERVICES = "azureCommunicationServices"
-    AZURE_BLOB_STORAGE = "azureBlobStorage"
+    AZURE_COMMUNICATION_SERVICES = "AzureCommunicationServices"
+    """Storage managed by Azure Communication Services"""
+    AZURE_BLOB_STORAGE = "AzureBlobStorage"
+    """Storage managed by provided Azure blob"""
+
+
+class TranscriptionResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """TranscriptionResultType."""
+
+    FINAL = "final"
+    INTERMEDIATE = "intermediate"
 
 
 class TranscriptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -231,6 +262,14 @@ class TranscriptionStatusDetails(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FORBIDDEN = "forbidden"
     SERVICE_TIMEOUT = "serviceTimeout"
     TRANSCRIPTION_LOCALE_UPDATED = "transcriptionLocaleUpdated"
+
+
+class TranscriptionSubscriptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Transcription subscription state."""
+
+    DISABLED = "disabled"
+    INACTIVE = "inactive"
+    ACTIVE = "active"
 
 
 class TranscriptionTransportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

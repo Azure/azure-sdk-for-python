@@ -116,7 +116,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
     :param str scopes: Lets you specify the type of access needed.
     :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) on all requested
         tokens. Defaults to False.
-    :raises: :class:`~azure.core.exceptions.ServiceRequestError`
+    :raises ~azure.core.exceptions.ServiceRequestError: If the request fails.
     """
 
     def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
@@ -245,7 +245,8 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
     :type credential: ~azure.core.credentials.AzureKeyCredential
     :param str name: The name of the key header used for the credential.
     :keyword str prefix: The name of the prefix for the header value if any.
-    :raises: ValueError or TypeError
+    :raises ValueError: if name is None or empty.
+    :raises TypeError: if name is not a string or if credential is not an instance of AzureKeyCredential.
     """
 
     def __init__(  # pylint: disable=unused-argument
@@ -276,7 +277,7 @@ class AzureSasCredentialPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
 
     :param credential: The credential used to authenticate requests.
     :type credential: ~azure.core.credentials.AzureSasCredential
-    :raises: ValueError or TypeError
+    :raises ValueError: if credential is None.
     """
 
     def __init__(

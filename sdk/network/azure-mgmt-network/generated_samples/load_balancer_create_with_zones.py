@@ -107,6 +107,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-03-01/examples/LoadBalancerCreateWithZones.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-05-01/examples/LoadBalancerCreateWithZones.json
 if __name__ == "__main__":
     main()

@@ -73,6 +73,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
     async def close(self) -> None:
         """Close the session.
+
         :return: None
         :rtype: None
         """
@@ -296,7 +297,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             keys or ids in this payload will be queued to be re-ingested. The default is false.
         :paramtype overwrite: bool
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError: If there is an error in the REST request.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         kwargs["keys_or_ids"] = keys_or_ids
@@ -334,6 +335,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         self, data_source_connection: SearchIndexerDataSourceConnection, **kwargs: Any
     ) -> SearchIndexerDataSourceConnection:
         """Creates a new data source connection.
+
         :param data_source_connection: The definition of the data source connection to create.
         :type data_source_connection: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         :return: The created SearchIndexerDataSourceConnection
@@ -364,6 +366,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         **kwargs: Any
     ) -> SearchIndexerDataSourceConnection:
         """Creates a new data source connection or updates a data source connection if it already exists.
+
         :param data_source_connection: The definition of the data source connection to create or update.
         :type data_source_connection: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         :keyword match_condition: The match condition to use upon the etag
@@ -505,7 +508,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :paramtype select: list[str]
         :return: List of SearchIndexerSkillsets
         :rtype: list[~azure.search.documents.indexes.models.SearchIndexerSkillset]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError: If there is an error in the REST request.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         if select:
@@ -520,7 +523,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         :return: List of SearchIndexerSkillset names
         :rtype: list[str]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError: If there is an error in the REST request.
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
@@ -536,7 +539,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :type name: str
         :return: The retrieved SearchIndexerSkillset
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
-        :raises: ~azure.core.exceptions.ResourceNotFoundError
+        :raises ~azure.core.exceptions.ResourceNotFoundError: If the skillset doesn't exist.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.skillsets.get(name, **kwargs)
@@ -637,7 +640,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :type skill_names: List[str]
         :return: None, or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError: If there is an error in the REST request.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         try:

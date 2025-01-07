@@ -1,11 +1,7 @@
 import os
 import pytest
 from devtools_testutils import recorded_by_proxy
-from _shared.utils import (
-    create_token_credential,
-    get_header_policy,
-    get_http_logging_policy
-)
+from _shared.utils import create_token_credential, get_header_policy, get_http_logging_policy
 from azure.communication.phonenumbers import PhoneNumbersClient
 from azure.communication.phonenumbers import (
     PhoneNumberAssignmentType,
@@ -20,12 +16,12 @@ from phone_numbers_testcase import PhoneNumbersTestCase
 SKIP_PURCHASE_PHONE_NUMBER_TESTS = True
 PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON = "Phone numbers shouldn't be purchased in live tests"
 
-SKIP_INT_PHONE_NUMBER_TESTS = os.getenv(
-    "COMMUNICATION_SKIP_INT_PHONENUMBERS_TEST", "false") == "true"
-INT_PHONE_NUMBER_TEST_SKIP_REASON = "Phone numbers setting SMS capability does not support in INT. Skip these tests in INT."
+SKIP_INT_PHONE_NUMBER_TESTS = os.getenv("COMMUNICATION_SKIP_INT_PHONENUMBERS_TEST", "false") == "true"
+INT_PHONE_NUMBER_TEST_SKIP_REASON = (
+    "Phone numbers setting SMS capability does not support in INT. Skip these tests in INT."
+)
 
-SKIP_UPDATE_CAPABILITIES_TESTS = os.getenv(
-    "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST", "false") == "true"
+SKIP_UPDATE_CAPABILITIES_TESTS = os.getenv("COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST", "false") == "true"
 SKIP_UPDATE_CAPABILITIES_TESTS_REASON = "Phone number capabilities are skipped."
 
 
@@ -38,7 +34,7 @@ def _get_test_phone_number():
 
 
 def is_client_error_status_code(
-        status_code  # type: int
+    status_code,  # type: int
 ):
     return status_code >= 400 and status_code < 500
 
@@ -51,23 +47,17 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
             self.country_code = "US"
         else:
             self.phone_number = _get_test_phone_number()
-            self.country_code = os.getenv(
-                "AZURE_COMMUNICATION_SERVICE_COUNTRY_CODE", "US")
+            self.country_code = os.getenv("AZURE_COMMUNICATION_SERVICE_COUNTRY_CODE", "US")
 
         self.phone_number_client = PhoneNumbersClient.from_connection_string(
-            self.connection_str,
-            http_logging_policy=get_http_logging_policy(),
-            headers_policy=get_header_policy()
+            self.connection_str, http_logging_policy=get_http_logging_policy(), headers_policy=get_header_policy()
         )
 
     def _get_managed_identity_phone_number_client(self):
         endpoint, *_ = parse_connection_str(self.connection_str)
         credential = create_token_credential()
         return PhoneNumbersClient(
-            endpoint,
-            credential,
-            http_logging_policy=get_http_logging_policy(),
-            headers_policy=get_header_policy()
+            endpoint, credential, http_logging_policy=get_http_logging_policy(), headers_policy=get_header_policy()
         )
 
     @recorded_by_proxy
@@ -85,14 +75,12 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
     @recorded_by_proxy
     def test_get_purchased_phone_number_from_managed_identity(self, **kwargs):
         phone_number_client = self._get_managed_identity_phone_number_client()
-        phone_number = phone_number_client.get_purchased_phone_number(
-            self.phone_number)
+        phone_number = phone_number_client.get_purchased_phone_number(self.phone_number)
         assert phone_number.phone_number == self.phone_number
 
     @recorded_by_proxy
     def test_get_purchased_phone_number(self, **kwargs):
-        phone_number = self.phone_number_client.get_purchased_phone_number(
-            self.phone_number)
+        phone_number = self.phone_number_client.get_purchased_phone_number(self.phone_number)
         assert phone_number.phone_number == self.phone_number
 
     @pytest.mark.skipif(SKIP_INT_PHONE_NUMBER_TESTS, reason=INT_PHONE_NUMBER_TEST_SKIP_REASON)
@@ -100,15 +88,14 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
     def test_search_available_phone_numbers_from_managed_identity(self, **kwargs):
         phone_number_client = self._get_managed_identity_phone_number_client()
         capabilities = PhoneNumberCapabilities(
-            calling=PhoneNumberCapabilityType.INBOUND,
-            sms=PhoneNumberCapabilityType.INBOUND_OUTBOUND
+            calling=PhoneNumberCapabilityType.INBOUND, sms=PhoneNumberCapabilityType.INBOUND_OUTBOUND
         )
         poller = phone_number_client.begin_search_available_phone_numbers(
             self.country_code,
             PhoneNumberType.TOLL_FREE,
             PhoneNumberAssignmentType.APPLICATION,
             capabilities,
-            polling=True
+            polling=True,
         )
         assert poller.result()
 
@@ -116,15 +103,14 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
     @recorded_by_proxy
     def test_search_available_phone_numbers(self, **kwargs):
         capabilities = PhoneNumberCapabilities(
-            calling=PhoneNumberCapabilityType.INBOUND,
-            sms=PhoneNumberCapabilityType.INBOUND_OUTBOUND
+            calling=PhoneNumberCapabilityType.INBOUND, sms=PhoneNumberCapabilityType.INBOUND_OUTBOUND
         )
         poller = self.phone_number_client.begin_search_available_phone_numbers(
             self.country_code,
             PhoneNumberType.TOLL_FREE,
             PhoneNumberAssignmentType.APPLICATION,
             capabilities,
-            polling=True
+            polling=True,
         )
         assert poller.result()
 
@@ -133,15 +119,19 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
     @recorded_by_proxy
     def test_update_phone_number_capabilities_from_managed_identity(self, **kwargs):
         phone_number_client = self._get_managed_identity_phone_number_client()
-        current_phone_number = phone_number_client.get_purchased_phone_number(
-            self.phone_number)
-        calling_capabilities = PhoneNumberCapabilityType.INBOUND if current_phone_number.capabilities.calling == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
-        sms_capabilities = PhoneNumberCapabilityType.INBOUND_OUTBOUND if current_phone_number.capabilities.sms == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
+        current_phone_number = phone_number_client.get_purchased_phone_number(self.phone_number)
+        calling_capabilities = (
+            PhoneNumberCapabilityType.INBOUND
+            if current_phone_number.capabilities.calling == PhoneNumberCapabilityType.OUTBOUND
+            else PhoneNumberCapabilityType.OUTBOUND
+        )
+        sms_capabilities = (
+            PhoneNumberCapabilityType.INBOUND_OUTBOUND
+            if current_phone_number.capabilities.sms == PhoneNumberCapabilityType.OUTBOUND
+            else PhoneNumberCapabilityType.OUTBOUND
+        )
         poller = phone_number_client.begin_update_phone_number_capabilities(
-            self.phone_number,
-            sms_capabilities,
-            calling_capabilities,
-            polling=True
+            self.phone_number, sms_capabilities, calling_capabilities, polling=True
         )
         assert poller.result()
         assert poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
@@ -150,15 +140,19 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
     @pytest.mark.skipif(SKIP_UPDATE_CAPABILITIES_TESTS, reason=SKIP_UPDATE_CAPABILITIES_TESTS_REASON)
     @recorded_by_proxy
     def test_update_phone_number_capabilities(self, **kwargs):
-        current_phone_number = self.phone_number_client.get_purchased_phone_number(
-            self.phone_number)
-        calling_capabilities = PhoneNumberCapabilityType.INBOUND if current_phone_number.capabilities.calling == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
-        sms_capabilities = PhoneNumberCapabilityType.INBOUND_OUTBOUND if current_phone_number.capabilities.sms == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
+        current_phone_number = self.phone_number_client.get_purchased_phone_number(self.phone_number)
+        calling_capabilities = (
+            PhoneNumberCapabilityType.INBOUND
+            if current_phone_number.capabilities.calling == PhoneNumberCapabilityType.OUTBOUND
+            else PhoneNumberCapabilityType.OUTBOUND
+        )
+        sms_capabilities = (
+            PhoneNumberCapabilityType.INBOUND_OUTBOUND
+            if current_phone_number.capabilities.sms == PhoneNumberCapabilityType.OUTBOUND
+            else PhoneNumberCapabilityType.OUTBOUND
+        )
         poller = self.phone_number_client.begin_update_phone_number_capabilities(
-            self.phone_number,
-            sms_capabilities,
-            calling_capabilities,
-            polling=True
+            self.phone_number, sms_capabilities, calling_capabilities, polling=True
         )
         assert poller.result()
         assert poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
@@ -168,24 +162,21 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
     def test_purchase_phone_number_from_managed_identity(self, **kwargs):
         phone_number_client = self._get_managed_identity_phone_number_client()
         capabilities = PhoneNumberCapabilities(
-            calling=PhoneNumberCapabilityType.INBOUND,
-            sms=PhoneNumberCapabilityType.INBOUND_OUTBOUND
+            calling=PhoneNumberCapabilityType.INBOUND, sms=PhoneNumberCapabilityType.INBOUND_OUTBOUND
         )
         search_poller = phone_number_client.begin_search_available_phone_numbers(
             self.country_code,
             PhoneNumberType.TOLL_FREE,
             PhoneNumberAssignmentType.APPLICATION,
             capabilities,
-            polling=True
+            polling=True,
         )
         phone_number_to_buy = search_poller.result()
-        purchase_poller = phone_number_client.begin_purchase_phone_numbers(
-            phone_number_to_buy.search_id, polling=True)
+        purchase_poller = phone_number_client.begin_purchase_phone_numbers(phone_number_to_buy.search_id, polling=True)
         purchase_poller.result()
         assert purchase_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
 
-        release_poller = phone_number_client.begin_release_phone_number(
-            phone_number_to_buy.phone_numbers[0])
+        release_poller = phone_number_client.begin_release_phone_number(phone_number_to_buy.phone_numbers[0])
         release_poller.result()
         assert release_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
 
@@ -193,24 +184,23 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
     @recorded_by_proxy
     def test_purchase_phone_numbers(self, **kwargs):
         capabilities = PhoneNumberCapabilities(
-            calling=PhoneNumberCapabilityType.INBOUND,
-            sms=PhoneNumberCapabilityType.INBOUND_OUTBOUND
+            calling=PhoneNumberCapabilityType.INBOUND, sms=PhoneNumberCapabilityType.INBOUND_OUTBOUND
         )
         search_poller = self.phone_number_client.begin_search_available_phone_numbers(
             self.country_code,
             PhoneNumberType.TOLL_FREE,
             PhoneNumberAssignmentType.APPLICATION,
             capabilities,
-            polling=True
+            polling=True,
         )
         phone_number_to_buy = search_poller.result()
         purchase_poller = self.phone_number_client.begin_purchase_phone_numbers(
-            phone_number_to_buy.search_id, polling=True)
+            phone_number_to_buy.search_id, polling=True
+        )
         purchase_poller.result()
         assert purchase_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
 
-        release_poller = self.phone_number_client.begin_release_phone_number(
-            phone_number_to_buy.phone_numbers[0])
+        release_poller = self.phone_number_client.begin_release_phone_number(phone_number_to_buy.phone_numbers[0])
         release_poller.result()
         assert release_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
 
@@ -224,24 +214,20 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         with pytest.raises(Exception) as ex:
             self.phone_number_client.get_purchased_phone_number(phone_number)
 
-        assert is_client_error_status_code(
-            ex.value.status_code) is True, 'Status code {ex.value.status_code} does not indicate a client error'  # type: ignore
+        assert (
+            is_client_error_status_code(ex.value.status_code) is True
+        ), "Status code {ex.value.status_code} does not indicate a client error"  # type: ignore
         assert ex.value.message is not None  # type: ignore
 
     @recorded_by_proxy
     def test_search_available_phone_numbers_with_invalid_country_code(self, **kwargs):
         capabilities = PhoneNumberCapabilities(
-            calling=PhoneNumberCapabilityType.INBOUND,
-            sms=PhoneNumberCapabilityType.INBOUND_OUTBOUND
+            calling=PhoneNumberCapabilityType.INBOUND, sms=PhoneNumberCapabilityType.INBOUND_OUTBOUND
         )
 
         with pytest.raises(Exception) as ex:
             self.phone_number_client.begin_search_available_phone_numbers(
-                "XX",
-                PhoneNumberType.TOLL_FREE,
-                PhoneNumberAssignmentType.APPLICATION,
-                capabilities,
-                polling=True
+                "XX", PhoneNumberType.TOLL_FREE, PhoneNumberAssignmentType.APPLICATION, capabilities, polling=True
             )
 
     @recorded_by_proxy
@@ -256,10 +242,11 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
                 phone_number,
                 PhoneNumberCapabilityType.INBOUND_OUTBOUND,
                 PhoneNumberCapabilityType.INBOUND,
-                polling=True
+                polling=True,
             )
-        assert is_client_error_status_code(
-            ex.value.status_code) is True, 'Status code {ex.value.status_code} does not indicate a client error'  # type: ignore
+        assert (
+            is_client_error_status_code(ex.value.status_code) is True
+        ), "Status code {ex.value.status_code} does not indicate a client error"  # type: ignore
         assert ex.value.message is not None  # type: ignore
 
     @recorded_by_proxy
@@ -274,10 +261,11 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
                 phone_number,
                 PhoneNumberCapabilityType.INBOUND_OUTBOUND,
                 PhoneNumberCapabilityType.INBOUND,
-                polling=True
+                polling=True,
             )
-        assert is_client_error_status_code(
-            ex.value.status_code) is True, 'Status code {ex.value.status_code} does not indicate a client error'  # type: ignore
+        assert (
+            is_client_error_status_code(ex.value.status_code) is True
+        ), "Status code {ex.value.status_code} does not indicate a client error"  # type: ignore
         assert ex.value.message is not None  # type: ignore
 
     @recorded_by_proxy
@@ -292,27 +280,29 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
                 phone_number,
                 PhoneNumberCapabilityType.INBOUND_OUTBOUND,
                 PhoneNumberCapabilityType.INBOUND,
-                polling=True
+                polling=True,
             )
 
     @recorded_by_proxy
     def test_list_toll_free_area_codes_from_managed_identity(self):
         phone_number_client = self._get_managed_identity_phone_number_client()
         area_codes = phone_number_client.list_available_area_codes(
-            "US", PhoneNumberType.TOLL_FREE, assignment_type=PhoneNumberAssignmentType.APPLICATION)
-        
-        expected_area_codes = { "888", "877", "866", "855", "844", "800", "833", "88" }
+            "US", PhoneNumberType.TOLL_FREE, assignment_type=PhoneNumberAssignmentType.APPLICATION
+        )
+
+        expected_area_codes = {"888", "877", "866", "855", "844", "800", "833", "88"}
         for area_code in area_codes:
             assert area_code.area_code in expected_area_codes
-        
+
         assert area_codes is not None
 
     @recorded_by_proxy
     def test_list_toll_free_area_codes(self):
         area_codes = self.phone_number_client.list_available_area_codes(
-            "US", PhoneNumberType.TOLL_FREE, assignment_type=PhoneNumberAssignmentType.APPLICATION)
-        
-        expected_area_codes = { "888", "877", "866", "855", "844", "800", "833", "88" }
+            "US", PhoneNumberType.TOLL_FREE, assignment_type=PhoneNumberAssignmentType.APPLICATION
+        )
+
+        expected_area_codes = {"888", "877", "866", "855", "844", "800", "833", "88"}
         for area_code in area_codes:
             assert area_code.area_code in expected_area_codes
 
@@ -321,18 +311,26 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
     @recorded_by_proxy
     def test_list_geographic_area_codes_from_managed_identity(self):
         phone_number_client = self._get_managed_identity_phone_number_client()
-        first_locality = phone_number_client.list_available_localities(
-            "US").next()
+        first_locality = phone_number_client.list_available_localities("US").next()
         area_codes = self.phone_number_client.list_available_area_codes(
-            "US", PhoneNumberType.GEOGRAPHIC, assignment_type=PhoneNumberAssignmentType.PERSON, locality=first_locality.localized_name, administrative_division=first_locality.administrative_division.abbreviated_name)
+            "US",
+            PhoneNumberType.GEOGRAPHIC,
+            assignment_type=PhoneNumberAssignmentType.PERSON,
+            locality=first_locality.localized_name,
+            administrative_division=first_locality.administrative_division.abbreviated_name,
+        )
         assert area_codes.next()
 
     @recorded_by_proxy
     def test_list_geographic_area_codes(self):
-        first_locality = self.phone_number_client.list_available_localities(
-            "US").next()
+        first_locality = self.phone_number_client.list_available_localities("US").next()
         area_codes = self.phone_number_client.list_available_area_codes(
-            "US", PhoneNumberType.GEOGRAPHIC, assignment_type=PhoneNumberAssignmentType.PERSON, locality=first_locality.localized_name, administrative_division=first_locality.administrative_division.abbreviated_name)
+            "US",
+            PhoneNumberType.GEOGRAPHIC,
+            assignment_type=PhoneNumberAssignmentType.PERSON,
+            locality=first_locality.localized_name,
+            administrative_division=first_locality.administrative_division.abbreviated_name,
+        )
         assert area_codes.next()
 
     @recorded_by_proxy
@@ -362,15 +360,16 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         phone_number_client = self._get_managed_identity_phone_number_client()
         first_locality = phone_number_client.list_available_localities("US")
         localities = phone_number_client.list_available_localities(
-            "US", administrative_division=first_locality.next().administrative_division.abbreviated_name)
+            "US", administrative_division=first_locality.next().administrative_division.abbreviated_name
+        )
         assert localities.next()
 
     @recorded_by_proxy
     def test_list_localities_with_ad(self):
-        first_locality = self.phone_number_client.list_available_localities(
-            "US")
+        first_locality = self.phone_number_client.list_available_localities("US")
         localities = self.phone_number_client.list_available_localities(
-            "US", administrative_division=first_locality.next().administrative_division.abbreviated_name)
+            "US", administrative_division=first_locality.next().administrative_division.abbreviated_name
+        )
         assert localities.next()
 
     @recorded_by_proxy
@@ -387,15 +386,16 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
     @recorded_by_proxy
     def test_search_operator_information_with_too_many_phone_numbers(self):
         if self.is_playback():
-            phone_numbers = [ "sanitized", "sanitized" ]
+            phone_numbers = ["sanitized", "sanitized"]
         else:
-            phone_numbers = [ self.phone_number, self.phone_number ]
+            phone_numbers = [self.phone_number, self.phone_number]
 
         with pytest.raises(Exception) as ex:
             self.phone_number_client.search_operator_information(phone_numbers)
 
-        assert is_client_error_status_code(
-            ex.value.status_code) is True, 'Status code {ex.value.status_code} does not indicate a client error'  # type: ignore
+        assert (
+            is_client_error_status_code(ex.value.status_code) is True
+        ), "Status code {ex.value.status_code} does not indicate a client error"  # type: ignore
         assert ex.value.message is not None  # type: ignore
 
     @recorded_by_proxy
@@ -405,7 +405,7 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         else:
             phone_number = self.phone_number
 
-        results = self.phone_number_client.search_operator_information([ phone_number ])
+        results = self.phone_number_client.search_operator_information([phone_number])
         assert len(results.values) == 1
         assert results.values[0].phone_number == self.phone_number
 

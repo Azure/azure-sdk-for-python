@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.9.1 (Unreleased)
+### 4.9.1b2 (Unreleased)
 
 #### Features Added
 
@@ -10,6 +10,12 @@
 
 #### Other Changes
 * Added better custom transport handling. See [PR 38640](https://github.com/Azure/azure-sdk-for-python/pull/38640).
+
+### 4.9.1b1 (2024-12-13)
+
+#### Features Added
+* Added change feed mode support in `query_items_change_feed`. See [PR 38105](https://github.com/Azure/azure-sdk-for-python/pull/38105)
+* Added a **Preview Feature** for adding Diagnostics Handler to filter what diagnostics get logged. This feature is subject to change significantly. See [PR 38105](https://github.com/Azure/azure-sdk-for-python/pull/38581)
 
 ### 4.9.0 (2024-11-18)
 

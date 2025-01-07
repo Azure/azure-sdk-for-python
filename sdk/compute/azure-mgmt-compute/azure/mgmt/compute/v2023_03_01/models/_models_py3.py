@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -16,10 +16,9 @@ from ... import _serialization
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
@@ -476,7 +475,7 @@ class Resource(_serialization.Model):
         self.tags = tags
 
 
-class AvailabilitySet(Resource):  # pylint: disable=too-many-instance-attributes
+class AvailabilitySet(Resource):
     """Specifies information about the availability set that the virtual machine should be assigned
     to. Virtual machines specified in the same availability set are allocated to different nodes to
     maximize availability. For more information about availability sets, see `Availability sets
@@ -783,17 +782,17 @@ class BillingProfile(_serialization.Model):
     2019-03-01.
 
     :ivar max_price: Specifies the maximum price you are willing to pay for a Azure Spot VM/VMSS.
-     This price is in US Dollars. :code:`<br>`:code:`<br>` This price will be compared with the
+     This price is in US Dollars. :code:`<br>`\\ :code:`<br>` This price will be compared with the
      current Azure Spot price for the VM size. Also, the prices are compared at the time of
      create/update of Azure Spot VM/VMSS and the operation will only succeed if  the maxPrice is
-     greater than the current Azure Spot price. :code:`<br>`:code:`<br>` The maxPrice will also be
-     used for evicting a Azure Spot VM/VMSS if the current Azure Spot price goes beyond the maxPrice
-     after creation of VM/VMSS. :code:`<br>`:code:`<br>` Possible values are:
-     :code:`<br>`:code:`<br>` - Any decimal value greater than zero. Example: 0.01538
-     :code:`<br>`:code:`<br>` -1 – indicates default price to be up-to on-demand.
-     :code:`<br>`:code:`<br>` You can set the maxPrice to -1 to indicate that the Azure Spot VM/VMSS
-     should not be evicted for price reasons. Also, the default max price is -1 if it is not
-     provided by you. :code:`<br>`:code:`<br>`Minimum api-version: 2019-03-01.
+     greater than the current Azure Spot price. :code:`<br>`\\ :code:`<br>` The maxPrice will also
+     be used for evicting a Azure Spot VM/VMSS if the current Azure Spot price goes beyond the
+     maxPrice after creation of VM/VMSS. :code:`<br>`\\ :code:`<br>` Possible values are:
+     :code:`<br>`\\ :code:`<br>` - Any decimal value greater than zero. Example: 0.01538
+     :code:`<br>`\\ :code:`<br>` -1 – indicates default price to be up-to on-demand. :code:`<br>`\\
+     :code:`<br>` You can set the maxPrice to -1 to indicate that the Azure Spot VM/VMSS should not
+     be evicted for price reasons. Also, the default max price is -1 if it is not provided by you.
+     :code:`<br>`\\ :code:`<br>`Minimum api-version: 2019-03-01.
     :vartype max_price: float
     """
 
@@ -804,17 +803,17 @@ class BillingProfile(_serialization.Model):
     def __init__(self, *, max_price: Optional[float] = None, **kwargs: Any) -> None:
         """
         :keyword max_price: Specifies the maximum price you are willing to pay for a Azure Spot
-         VM/VMSS. This price is in US Dollars. :code:`<br>`:code:`<br>` This price will be compared with
-         the current Azure Spot price for the VM size. Also, the prices are compared at the time of
+         VM/VMSS. This price is in US Dollars. :code:`<br>`\\ :code:`<br>` This price will be compared
+         with the current Azure Spot price for the VM size. Also, the prices are compared at the time of
          create/update of Azure Spot VM/VMSS and the operation will only succeed if  the maxPrice is
-         greater than the current Azure Spot price. :code:`<br>`:code:`<br>` The maxPrice will also be
-         used for evicting a Azure Spot VM/VMSS if the current Azure Spot price goes beyond the maxPrice
-         after creation of VM/VMSS. :code:`<br>`:code:`<br>` Possible values are:
-         :code:`<br>`:code:`<br>` - Any decimal value greater than zero. Example: 0.01538
-         :code:`<br>`:code:`<br>` -1 – indicates default price to be up-to on-demand.
-         :code:`<br>`:code:`<br>` You can set the maxPrice to -1 to indicate that the Azure Spot VM/VMSS
-         should not be evicted for price reasons. Also, the default max price is -1 if it is not
-         provided by you. :code:`<br>`:code:`<br>`Minimum api-version: 2019-03-01.
+         greater than the current Azure Spot price. :code:`<br>`\\ :code:`<br>` The maxPrice will also
+         be used for evicting a Azure Spot VM/VMSS if the current Azure Spot price goes beyond the
+         maxPrice after creation of VM/VMSS. :code:`<br>`\\ :code:`<br>` Possible values are:
+         :code:`<br>`\\ :code:`<br>` - Any decimal value greater than zero. Example: 0.01538
+         :code:`<br>`\\ :code:`<br>` -1 – indicates default price to be up-to on-demand. :code:`<br>`\\
+         :code:`<br>` You can set the maxPrice to -1 to indicate that the Azure Spot VM/VMSS should not
+         be evicted for price reasons. Also, the default max price is -1 if it is not provided by you.
+         :code:`<br>`\\ :code:`<br>`Minimum api-version: 2019-03-01.
         :paramtype max_price: float
         """
         super().__init__(**kwargs)
@@ -889,7 +888,7 @@ class BootDiagnosticsInstanceView(_serialization.Model):
         self.status = None
 
 
-class CapacityReservation(Resource):  # pylint: disable=too-many-instance-attributes
+class CapacityReservation(Resource):
     """Specifies information about the capacity reservation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1527,7 +1526,7 @@ class ComputeOperationValue(_serialization.Model):
         self.provider = None
 
 
-class DataDisk(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class DataDisk(_serialization.Model):
     """Describes a data disk.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1728,7 +1727,7 @@ class DataDiskImage(_serialization.Model):
         self.lun = None
 
 
-class DedicatedHost(Resource):  # pylint: disable=too-many-instance-attributes
+class DedicatedHost(Resource):
     """Specifies information about the Dedicated host.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1906,7 +1905,7 @@ class DedicatedHostAvailableCapacity(_serialization.Model):
         self.allocatable_v_ms = allocatable_v_ms
 
 
-class DedicatedHostGroup(Resource):  # pylint: disable=too-many-instance-attributes
+class DedicatedHostGroup(Resource):
     """Specifies information about the dedicated host group that the dedicated hosts should be
     assigned to. Currently, a dedicated host can only be added to a dedicated host group at
     creation time. An existing dedicated host cannot be added to another dedicated host group.
@@ -2340,7 +2339,7 @@ class DedicatedHostSizeListResult(_serialization.Model):
         self.value = value
 
 
-class DedicatedHostUpdate(UpdateResource):  # pylint: disable=too-many-instance-attributes
+class DedicatedHostUpdate(UpdateResource):
     """Specifies information about the dedicated host. Only tags, autoReplaceOnFailure and licenseType
     may be updated.
 
@@ -2614,8 +2613,8 @@ class DiskInstanceView(_serialization.Model):
 
     :ivar name: The disk name.
     :vartype name: str
-    :ivar encryption_settings: Specifies the encryption settings for the OS Disk.
-     :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
+    :ivar encryption_settings: Specifies the encryption settings for the OS Disk. :code:`<br>`\\
+     :code:`<br>` Minimum api-version: 2015-06-15.
     :vartype encryption_settings:
      list[~azure.mgmt.compute.v2023_03_01.models.DiskEncryptionSettings]
     :ivar statuses: The resource status information.
@@ -2639,8 +2638,8 @@ class DiskInstanceView(_serialization.Model):
         """
         :keyword name: The disk name.
         :paramtype name: str
-        :keyword encryption_settings: Specifies the encryption settings for the OS Disk.
-         :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
+        :keyword encryption_settings: Specifies the encryption settings for the OS Disk. :code:`<br>`\\
+         :code:`<br>` Minimum api-version: 2015-06-15.
         :paramtype encryption_settings:
          list[~azure.mgmt.compute.v2023_03_01.models.DiskEncryptionSettings]
         :keyword statuses: The resource status information.
@@ -3535,13 +3534,13 @@ class ImageStorageProfile(_serialization.Model):
     """Describes a storage profile.
 
     :ivar os_disk: Specifies information about the operating system disk used by the virtual
-     machine. :code:`<br>`:code:`<br>` For more information about disks, see `About disks and VHDs
-     for Azure virtual machines
+     machine. :code:`<br>`\\ :code:`<br>` For more information about disks, see `About disks and
+     VHDs for Azure virtual machines
      <https://docs.microsoft.com/azure/virtual-machines/managed-disks-overview>`_.
     :vartype os_disk: ~azure.mgmt.compute.v2023_03_01.models.ImageOSDisk
     :ivar data_disks: Specifies the parameters that are used to add a data disk to a virtual
-     machine. :code:`<br>`:code:`<br>` For more information about disks, see `About disks and VHDs
-     for Azure virtual machines
+     machine. :code:`<br>`\\ :code:`<br>` For more information about disks, see `About disks and
+     VHDs for Azure virtual machines
      <https://docs.microsoft.com/azure/virtual-machines/managed-disks-overview>`_.
     :vartype data_disks: list[~azure.mgmt.compute.v2023_03_01.models.ImageDataDisk]
     :ivar zone_resilient: Specifies whether an image is zone resilient or not. Default is false.
@@ -3565,13 +3564,13 @@ class ImageStorageProfile(_serialization.Model):
     ) -> None:
         """
         :keyword os_disk: Specifies information about the operating system disk used by the virtual
-         machine. :code:`<br>`:code:`<br>` For more information about disks, see `About disks and VHDs
-         for Azure virtual machines
+         machine. :code:`<br>`\\ :code:`<br>` For more information about disks, see `About disks and
+         VHDs for Azure virtual machines
          <https://docs.microsoft.com/azure/virtual-machines/managed-disks-overview>`_.
         :paramtype os_disk: ~azure.mgmt.compute.v2023_03_01.models.ImageOSDisk
         :keyword data_disks: Specifies the parameters that are used to add a data disk to a virtual
-         machine. :code:`<br>`:code:`<br>` For more information about disks, see `About disks and VHDs
-         for Azure virtual machines
+         machine. :code:`<br>`\\ :code:`<br>` For more information about disks, see `About disks and
+         VHDs for Azure virtual machines
          <https://docs.microsoft.com/azure/virtual-machines/managed-disks-overview>`_.
         :paramtype data_disks: list[~azure.mgmt.compute.v2023_03_01.models.ImageDataDisk]
         :keyword zone_resilient: Specifies whether an image is zone resilient or not. Default is false.
@@ -3796,7 +3795,7 @@ class KeyVaultSecretReference(_serialization.Model):
         self.source_vault = source_vault
 
 
-class LastPatchInstallationSummary(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class LastPatchInstallationSummary(_serialization.Model):
     """Describes the properties of the last installed patch summary.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4005,19 +4004,19 @@ class LinuxPatchSettings(_serialization.Model):
     """Specifies settings related to VM Guest Patching on Linux.
 
     :ivar patch_mode: Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual
-     machines associated to virtual machine scale set with OrchestrationMode as Flexible.:code:`<br
-     />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />` **ImageDefault** - The
-     virtual machine's default patching configuration is used. :code:`<br />`:code:`<br />`
-     **AutomaticByPlatform** - The virtual machine will be automatically updated by the platform.
-     The property provisionVMAgent must be true. Known values are: "ImageDefault" and
-     "AutomaticByPlatform".
+     machines associated to virtual machine scale set with OrchestrationMode as Flexible.\\
+     :code:`<br />`\\ :code:`<br />` Possible values are:\\ :code:`<br />`\\ :code:`<br />`
+     **ImageDefault** - The virtual machine's default patching configuration is used. :code:`<br
+     />`\\ :code:`<br />` **AutomaticByPlatform** - The virtual machine will be automatically
+     updated by the platform. The property provisionVMAgent must be true. Known values are:
+     "ImageDefault" and "AutomaticByPlatform".
     :vartype patch_mode: str or ~azure.mgmt.compute.v2023_03_01.models.LinuxVMGuestPatchMode
     :ivar assessment_mode: Specifies the mode of VM Guest Patch Assessment for the IaaS virtual
-     machine.:code:`<br />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />`
-     **ImageDefault** - You control the timing of patch assessments on a virtual machine. :code:`<br
-     />`:code:`<br />` **AutomaticByPlatform** - The platform will trigger periodic patch
-     assessments. The property provisionVMAgent must be true. Known values are: "ImageDefault" and
-     "AutomaticByPlatform".
+     machine.\\ :code:`<br />`\\ :code:`<br />` Possible values are:\\ :code:`<br />`\\ :code:`<br
+     />` **ImageDefault** - You control the timing of patch assessments on a virtual machine.
+     :code:`<br />`\\ :code:`<br />` **AutomaticByPlatform** - The platform will trigger periodic
+     patch assessments. The property provisionVMAgent must be true. Known values are: "ImageDefault"
+     and "AutomaticByPlatform".
     :vartype assessment_mode: str or
      ~azure.mgmt.compute.v2023_03_01.models.LinuxPatchAssessmentMode
     :ivar automatic_by_platform_settings: Specifies additional settings for patch mode
@@ -4045,19 +4044,19 @@ class LinuxPatchSettings(_serialization.Model):
     ) -> None:
         """
         :keyword patch_mode: Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual
-         machines associated to virtual machine scale set with OrchestrationMode as Flexible.:code:`<br
-         />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />` **ImageDefault** - The
-         virtual machine's default patching configuration is used. :code:`<br />`:code:`<br />`
-         **AutomaticByPlatform** - The virtual machine will be automatically updated by the platform.
-         The property provisionVMAgent must be true. Known values are: "ImageDefault" and
-         "AutomaticByPlatform".
+         machines associated to virtual machine scale set with OrchestrationMode as Flexible.\\
+         :code:`<br />`\\ :code:`<br />` Possible values are:\\ :code:`<br />`\\ :code:`<br />`
+         **ImageDefault** - The virtual machine's default patching configuration is used. :code:`<br
+         />`\\ :code:`<br />` **AutomaticByPlatform** - The virtual machine will be automatically
+         updated by the platform. The property provisionVMAgent must be true. Known values are:
+         "ImageDefault" and "AutomaticByPlatform".
         :paramtype patch_mode: str or ~azure.mgmt.compute.v2023_03_01.models.LinuxVMGuestPatchMode
         :keyword assessment_mode: Specifies the mode of VM Guest Patch Assessment for the IaaS virtual
-         machine.:code:`<br />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />`
-         **ImageDefault** - You control the timing of patch assessments on a virtual machine. :code:`<br
-         />`:code:`<br />` **AutomaticByPlatform** - The platform will trigger periodic patch
-         assessments. The property provisionVMAgent must be true. Known values are: "ImageDefault" and
-         "AutomaticByPlatform".
+         machine.\\ :code:`<br />`\\ :code:`<br />` Possible values are:\\ :code:`<br />`\\ :code:`<br
+         />` **ImageDefault** - You control the timing of patch assessments on a virtual machine.
+         :code:`<br />`\\ :code:`<br />` **AutomaticByPlatform** - The platform will trigger periodic
+         patch assessments. The property provisionVMAgent must be true. Known values are: "ImageDefault"
+         and "AutomaticByPlatform".
         :paramtype assessment_mode: str or
          ~azure.mgmt.compute.v2023_03_01.models.LinuxPatchAssessmentMode
         :keyword automatic_by_platform_settings: Specifies additional settings for patch mode
@@ -4575,7 +4574,7 @@ class OrchestrationServiceSummary(_serialization.Model):
         self.service_state = None
 
 
-class OSDisk(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class OSDisk(_serialization.Model):
     """Specifies information about the operating system disk used by the virtual machine. For more
     information about disks, see `About disks and VHDs for Azure virtual machines
     <https://docs.microsoft.com/azure/virtual-machines/managed-disks-overview>`_.
@@ -4799,28 +4798,28 @@ class OSProfile(_serialization.Model):
      services implementation guidelines
      <https://docs.microsoft.com/azure/azure-resource-manager/management/resource-name-rules>`_.
     :vartype computer_name: str
-    :ivar admin_username: Specifies the name of the administrator account. :code:`<br>`:code:`<br>`
-     This property cannot be updated after the VM is created. :code:`<br>`:code:`<br>`
-     **Windows-only restriction:** Cannot end in "." :code:`<br>`:code:`<br>` **Disallowed values:**
-     "administrator", "admin", "user", "user1", "test", "user2", "test1", "user3", "admin1", "1",
-     "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console", "david", "guest",
-     "john", "owner", "root", "server", "sql", "support", "support_388945a0", "sys", "test2",
-     "test3", "user4", "user5". :code:`<br>`:code:`<br>` **Minimum-length (Linux):** 1  character
-     :code:`<br>`:code:`<br>` **Max-length (Linux):** 64 characters :code:`<br>`:code:`<br>`
-     **Max-length (Windows):** 20 characters.
+    :ivar admin_username: Specifies the name of the administrator account. :code:`<br>`\\
+     :code:`<br>` This property cannot be updated after the VM is created. :code:`<br>`\\
+     :code:`<br>` **Windows-only restriction:** Cannot end in "." :code:`<br>`\\ :code:`<br>`
+     **Disallowed values:** "administrator", "admin", "user", "user1", "test", "user2", "test1",
+     "user3", "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console",
+     "david", "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0",
+     "sys", "test2", "test3", "user4", "user5". :code:`<br>`\\ :code:`<br>` **Minimum-length
+     (Linux):** 1  character :code:`<br>`\\ :code:`<br>` **Max-length (Linux):** 64 characters
+     :code:`<br>`\\ :code:`<br>` **Max-length (Windows):** 20 characters.
     :vartype admin_username: str
-    :ivar admin_password: Specifies the password of the administrator account.
-     :code:`<br>`:code:`<br>` **Minimum-length (Windows):** 8 characters :code:`<br>`:code:`<br>`
-     **Minimum-length (Linux):** 6 characters :code:`<br>`:code:`<br>` **Max-length (Windows):** 123
-     characters :code:`<br>`:code:`<br>` **Max-length (Linux):** 72 characters
-     :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be
-     fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a
-     digit :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`:code:`<br>`
+    :ivar admin_password: Specifies the password of the administrator account. :code:`<br>`\\
+     :code:`<br>` **Minimum-length (Windows):** 8 characters :code:`<br>`\\ :code:`<br>`
+     **Minimum-length (Linux):** 6 characters :code:`<br>`\\ :code:`<br>` **Max-length (Windows):**
+     123 characters :code:`<br>`\\ :code:`<br>` **Max-length (Linux):** 72 characters :code:`<br>`\\
+     :code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be fulfilled
+     :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a digit
+     :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`\\ :code:`<br>`
      **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd", "P@ssword123", "Pa$$word",
-     "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
-     resetting the password, see `How to reset the Remote Desktop service or its login password in a
-     Windows VM <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/reset-rdp>`_
-     :code:`<br>`:code:`<br>` For resetting root password, see `Manage users, SSH, and check or
+     "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`\\ :code:`<br>`
+     For resetting the password, see `How to reset the Remote Desktop service or its login password
+     in a Windows VM <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/reset-rdp>`_
+     :code:`<br>`\\ :code:`<br>` For resetting root password, see `Manage users, SSH, and check or
      repair disks on Azure Linux VMs using the VMAccess Extension
      <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/troubleshoot-ssh-connection>`_.
     :vartype admin_password: str
@@ -4889,29 +4888,28 @@ class OSProfile(_serialization.Model):
          services implementation guidelines
          <https://docs.microsoft.com/azure/azure-resource-manager/management/resource-name-rules>`_.
         :paramtype computer_name: str
-        :keyword admin_username: Specifies the name of the administrator account.
-         :code:`<br>`:code:`<br>` This property cannot be updated after the VM is created.
-         :code:`<br>`:code:`<br>` **Windows-only restriction:** Cannot end in "."
-         :code:`<br>`:code:`<br>` **Disallowed values:** "administrator", "admin", "user", "user1",
-         "test", "user2", "test1", "user3", "admin1", "1", "123", "a", "actuser", "adm", "admin2",
-         "aspnet", "backup", "console", "david", "guest", "john", "owner", "root", "server", "sql",
-         "support", "support_388945a0", "sys", "test2", "test3", "user4", "user5".
-         :code:`<br>`:code:`<br>` **Minimum-length (Linux):** 1  character :code:`<br>`:code:`<br>`
-         **Max-length (Linux):** 64 characters :code:`<br>`:code:`<br>` **Max-length (Windows):** 20
-         characters.
+        :keyword admin_username: Specifies the name of the administrator account. :code:`<br>`\\
+         :code:`<br>` This property cannot be updated after the VM is created. :code:`<br>`\\
+         :code:`<br>` **Windows-only restriction:** Cannot end in "." :code:`<br>`\\ :code:`<br>`
+         **Disallowed values:** "administrator", "admin", "user", "user1", "test", "user2", "test1",
+         "user3", "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console",
+         "david", "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0",
+         "sys", "test2", "test3", "user4", "user5". :code:`<br>`\\ :code:`<br>` **Minimum-length
+         (Linux):** 1  character :code:`<br>`\\ :code:`<br>` **Max-length (Linux):** 64 characters
+         :code:`<br>`\\ :code:`<br>` **Max-length (Windows):** 20 characters.
         :paramtype admin_username: str
-        :keyword admin_password: Specifies the password of the administrator account.
-         :code:`<br>`:code:`<br>` **Minimum-length (Windows):** 8 characters :code:`<br>`:code:`<br>`
-         **Minimum-length (Linux):** 6 characters :code:`<br>`:code:`<br>` **Max-length (Windows):** 123
-         characters :code:`<br>`:code:`<br>` **Max-length (Linux):** 72 characters
-         :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be
-         fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a
-         digit :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`:code:`<br>`
+        :keyword admin_password: Specifies the password of the administrator account. :code:`<br>`\\
+         :code:`<br>` **Minimum-length (Windows):** 8 characters :code:`<br>`\\ :code:`<br>`
+         **Minimum-length (Linux):** 6 characters :code:`<br>`\\ :code:`<br>` **Max-length (Windows):**
+         123 characters :code:`<br>`\\ :code:`<br>` **Max-length (Linux):** 72 characters :code:`<br>`\\
+         :code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be fulfilled
+         :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a digit
+         :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`\\ :code:`<br>`
          **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd", "P@ssword123", "Pa$$word",
-         "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
-         resetting the password, see `How to reset the Remote Desktop service or its login password in a
-         Windows VM <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/reset-rdp>`_
-         :code:`<br>`:code:`<br>` For resetting root password, see `Manage users, SSH, and check or
+         "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`\\ :code:`<br>`
+         For resetting the password, see `How to reset the Remote Desktop service or its login password
+         in a Windows VM <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/reset-rdp>`_
+         :code:`<br>`\\ :code:`<br>` For resetting root password, see `Manage users, SSH, and check or
          repair disks on Azure Linux VMs using the VMAccess Extension
          <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/troubleshoot-ssh-connection>`_.
         :paramtype admin_password: str
@@ -4961,18 +4959,18 @@ class OSProfile(_serialization.Model):
 class OSProfileProvisioningData(_serialization.Model):
     """Additional parameters for Reimaging Non-Ephemeral Virtual Machine.
 
-    :ivar admin_password: Specifies the password of the administrator account.
-     :code:`<br>`:code:`<br>` **Minimum-length (Windows):** 8 characters :code:`<br>`:code:`<br>`
-     **Minimum-length (Linux):** 6 characters :code:`<br>`:code:`<br>` **Max-length (Windows):** 123
-     characters :code:`<br>`:code:`<br>` **Max-length (Linux):** 72 characters
-     :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be
-     fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a
-     digit :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`:code:`<br>`
+    :ivar admin_password: Specifies the password of the administrator account. :code:`<br>`\\
+     :code:`<br>` **Minimum-length (Windows):** 8 characters :code:`<br>`\\ :code:`<br>`
+     **Minimum-length (Linux):** 6 characters :code:`<br>`\\ :code:`<br>` **Max-length (Windows):**
+     123 characters :code:`<br>`\\ :code:`<br>` **Max-length (Linux):** 72 characters :code:`<br>`\\
+     :code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be fulfilled
+     :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a digit
+     :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`\\ :code:`<br>`
      **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd", "P@ssword123", "Pa$$word",
-     "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
-     resetting the password, see `How to reset the Remote Desktop service or its login password in a
-     Windows VM <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/reset-rdp>`_
-     :code:`<br>`:code:`<br>` For resetting root password, see `Manage users, SSH, and check or
+     "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`\\ :code:`<br>`
+     For resetting the password, see `How to reset the Remote Desktop service or its login password
+     in a Windows VM <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/reset-rdp>`_
+     :code:`<br>`\\ :code:`<br>` For resetting root password, see `Manage users, SSH, and check or
      repair disks on Azure Linux VMs using the VMAccess Extension
      <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/troubleshoot-ssh-connection>`_.
     :vartype admin_password: str
@@ -4996,18 +4994,18 @@ class OSProfileProvisioningData(_serialization.Model):
         self, *, admin_password: Optional[str] = None, custom_data: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword admin_password: Specifies the password of the administrator account.
-         :code:`<br>`:code:`<br>` **Minimum-length (Windows):** 8 characters :code:`<br>`:code:`<br>`
-         **Minimum-length (Linux):** 6 characters :code:`<br>`:code:`<br>` **Max-length (Windows):** 123
-         characters :code:`<br>`:code:`<br>` **Max-length (Linux):** 72 characters
-         :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be
-         fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a
-         digit :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`:code:`<br>`
+        :keyword admin_password: Specifies the password of the administrator account. :code:`<br>`\\
+         :code:`<br>` **Minimum-length (Windows):** 8 characters :code:`<br>`\\ :code:`<br>`
+         **Minimum-length (Linux):** 6 characters :code:`<br>`\\ :code:`<br>` **Max-length (Windows):**
+         123 characters :code:`<br>`\\ :code:`<br>` **Max-length (Linux):** 72 characters :code:`<br>`\\
+         :code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be fulfilled
+         :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a digit
+         :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`\\ :code:`<br>`
          **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd", "P@ssword123", "Pa$$word",
-         "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
-         resetting the password, see `How to reset the Remote Desktop service or its login password in a
-         Windows VM <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/reset-rdp>`_
-         :code:`<br>`:code:`<br>` For resetting root password, see `Manage users, SSH, and check or
+         "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`\\ :code:`<br>`
+         For resetting the password, see `How to reset the Remote Desktop service or its login password
+         in a Windows VM <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/reset-rdp>`_
+         :code:`<br>`\\ :code:`<br>` For resetting root password, see `Manage users, SSH, and check or
          repair disks on Azure Linux VMs using the VMAccess Extension
          <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/troubleshoot-ssh-connection>`_.
         :paramtype admin_password: str
@@ -5081,27 +5079,27 @@ class PatchSettings(_serialization.Model):
     """Specifies settings related to VM Guest Patching on Windows.
 
     :ivar patch_mode: Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual
-     machines associated to virtual machine scale set with OrchestrationMode as Flexible.:code:`<br
-     />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control
-     the application of patches to a virtual machine. You do this by applying patches manually
-     inside the VM. In this mode, automatic updates are disabled; the property
-     WindowsConfiguration.enableAutomaticUpdates must be false:code:`<br />`:code:`<br />`
-     **AutomaticByOS** - The virtual machine will automatically be updated by the OS. The property
-     WindowsConfiguration.enableAutomaticUpdates must be true. :code:`<br />`:code:`<br />`
-     **AutomaticByPlatform** - the virtual machine will automatically updated by the platform. The
-     properties provisionVMAgent and WindowsConfiguration.enableAutomaticUpdates must be true. Known
-     values are: "Manual", "AutomaticByOS", and "AutomaticByPlatform".
+     machines associated to virtual machine scale set with OrchestrationMode as Flexible.\\
+     :code:`<br />`\\ :code:`<br />` Possible values are:\\ :code:`<br />`\\ :code:`<br />`
+     **Manual** - You  control the application of patches to a virtual machine. You do this by
+     applying patches manually inside the VM. In this mode, automatic updates are disabled; the
+     property WindowsConfiguration.enableAutomaticUpdates must be false\\ :code:`<br />`\\
+     :code:`<br />` **AutomaticByOS** - The virtual machine will automatically be updated by the OS.
+     The property WindowsConfiguration.enableAutomaticUpdates must be true. :code:`<br />`\\
+     :code:`<br />` **AutomaticByPlatform** - the virtual machine will automatically updated by the
+     platform. The properties provisionVMAgent and WindowsConfiguration.enableAutomaticUpdates must
+     be true. Known values are: "Manual", "AutomaticByOS", and "AutomaticByPlatform".
     :vartype patch_mode: str or ~azure.mgmt.compute.v2023_03_01.models.WindowsVMGuestPatchMode
     :ivar enable_hotpatching: Enables customers to patch their Azure VMs without requiring a
      reboot. For enableHotpatching, the 'provisionVMAgent' must be set to true and 'patchMode' must
      be set to 'AutomaticByPlatform'.
     :vartype enable_hotpatching: bool
     :ivar assessment_mode: Specifies the mode of VM Guest patch assessment for the IaaS virtual
-     machine.:code:`<br />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />`
-     **ImageDefault** - You control the timing of patch assessments on a virtual machine.:code:`<br
-     />`:code:`<br />` **AutomaticByPlatform** - The platform will trigger periodic patch
-     assessments. The property provisionVMAgent must be true. Known values are: "ImageDefault" and
-     "AutomaticByPlatform".
+     machine.\\ :code:`<br />`\\ :code:`<br />` Possible values are:\\ :code:`<br />`\\ :code:`<br
+     />` **ImageDefault** - You control the timing of patch assessments on a virtual machine.\\
+     :code:`<br />`\\ :code:`<br />` **AutomaticByPlatform** - The platform will trigger periodic
+     patch assessments. The property provisionVMAgent must be true. Known values are: "ImageDefault"
+     and "AutomaticByPlatform".
     :vartype assessment_mode: str or
      ~azure.mgmt.compute.v2023_03_01.models.WindowsPatchAssessmentMode
     :ivar automatic_by_platform_settings: Specifies additional settings for patch mode
@@ -5131,27 +5129,27 @@ class PatchSettings(_serialization.Model):
     ) -> None:
         """
         :keyword patch_mode: Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual
-         machines associated to virtual machine scale set with OrchestrationMode as Flexible.:code:`<br
-         />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control
-         the application of patches to a virtual machine. You do this by applying patches manually
-         inside the VM. In this mode, automatic updates are disabled; the property
-         WindowsConfiguration.enableAutomaticUpdates must be false:code:`<br />`:code:`<br />`
-         **AutomaticByOS** - The virtual machine will automatically be updated by the OS. The property
-         WindowsConfiguration.enableAutomaticUpdates must be true. :code:`<br />`:code:`<br />`
-         **AutomaticByPlatform** - the virtual machine will automatically updated by the platform. The
-         properties provisionVMAgent and WindowsConfiguration.enableAutomaticUpdates must be true. Known
-         values are: "Manual", "AutomaticByOS", and "AutomaticByPlatform".
+         machines associated to virtual machine scale set with OrchestrationMode as Flexible.\\
+         :code:`<br />`\\ :code:`<br />` Possible values are:\\ :code:`<br />`\\ :code:`<br />`
+         **Manual** - You  control the application of patches to a virtual machine. You do this by
+         applying patches manually inside the VM. In this mode, automatic updates are disabled; the
+         property WindowsConfiguration.enableAutomaticUpdates must be false\\ :code:`<br />`\\
+         :code:`<br />` **AutomaticByOS** - The virtual machine will automatically be updated by the OS.
+         The property WindowsConfiguration.enableAutomaticUpdates must be true. :code:`<br />`\\
+         :code:`<br />` **AutomaticByPlatform** - the virtual machine will automatically updated by the
+         platform. The properties provisionVMAgent and WindowsConfiguration.enableAutomaticUpdates must
+         be true. Known values are: "Manual", "AutomaticByOS", and "AutomaticByPlatform".
         :paramtype patch_mode: str or ~azure.mgmt.compute.v2023_03_01.models.WindowsVMGuestPatchMode
         :keyword enable_hotpatching: Enables customers to patch their Azure VMs without requiring a
          reboot. For enableHotpatching, the 'provisionVMAgent' must be set to true and 'patchMode' must
          be set to 'AutomaticByPlatform'.
         :paramtype enable_hotpatching: bool
         :keyword assessment_mode: Specifies the mode of VM Guest patch assessment for the IaaS virtual
-         machine.:code:`<br />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />`
-         **ImageDefault** - You control the timing of patch assessments on a virtual machine.:code:`<br
-         />`:code:`<br />` **AutomaticByPlatform** - The platform will trigger periodic patch
-         assessments. The property provisionVMAgent must be true. Known values are: "ImageDefault" and
-         "AutomaticByPlatform".
+         machine.\\ :code:`<br />`\\ :code:`<br />` Possible values are:\\ :code:`<br />`\\ :code:`<br
+         />` **ImageDefault** - You control the timing of patch assessments on a virtual machine.\\
+         :code:`<br />`\\ :code:`<br />` **AutomaticByPlatform** - The platform will trigger periodic
+         patch assessments. The property provisionVMAgent must be true. Known values are: "ImageDefault"
+         and "AutomaticByPlatform".
         :paramtype assessment_mode: str or
          ~azure.mgmt.compute.v2023_03_01.models.WindowsPatchAssessmentMode
         :keyword automatic_by_platform_settings: Specifies additional settings for patch mode
@@ -5262,7 +5260,7 @@ class PriorityMixPolicy(_serialization.Model):
         self.regular_priority_percentage_above_base = regular_priority_percentage_above_base
 
 
-class ProximityPlacementGroup(Resource):  # pylint: disable=too-many-instance-attributes
+class ProximityPlacementGroup(Resource):
     """Specifies information about the proximity placement group.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7013,19 +7011,19 @@ class ScaleInPolicy(_serialization.Model):
     """Describes a scale-in policy for a virtual machine scale set.
 
     :ivar rules: The rules to be followed when scaling-in a virtual machine scale set.
-     :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Default** When a
+     :code:`<br>`\\ :code:`<br>` Possible values are: :code:`<br>`\\ :code:`<br>` **Default** When a
      virtual machine scale set is scaled in, the scale set will first be balanced across zones if it
      is a zonal scale set. Then, it will be balanced across Fault Domains as far as possible. Within
      each Fault Domain, the virtual machines chosen for removal will be the newest ones that are not
-     protected from scale-in. :code:`<br>`:code:`<br>` **OldestVM** When a virtual machine scale set
-     is being scaled-in, the oldest virtual machines that are not protected from scale-in will be
-     chosen for removal. For zonal virtual machine scale sets, the scale set will first be balanced
-     across zones. Within each zone, the oldest virtual machines that are not protected will be
-     chosen for removal. :code:`<br>`:code:`<br>` **NewestVM** When a virtual machine scale set is
-     being scaled-in, the newest virtual machines that are not protected from scale-in will be
-     chosen for removal. For zonal virtual machine scale sets, the scale set will first be balanced
-     across zones. Within each zone, the newest virtual machines that are not protected will be
-     chosen for removal. :code:`<br>`:code:`<br>`.
+     protected from scale-in. :code:`<br>`\\ :code:`<br>` **OldestVM** When a virtual machine scale
+     set is being scaled-in, the oldest virtual machines that are not protected from scale-in will
+     be chosen for removal. For zonal virtual machine scale sets, the scale set will first be
+     balanced across zones. Within each zone, the oldest virtual machines that are not protected
+     will be chosen for removal. :code:`<br>`\\ :code:`<br>` **NewestVM** When a virtual machine
+     scale set is being scaled-in, the newest virtual machines that are not protected from scale-in
+     will be chosen for removal. For zonal virtual machine scale sets, the scale set will first be
+     balanced across zones. Within each zone, the newest virtual machines that are not protected
+     will be chosen for removal. :code:`<br>`\\ :code:`<br>`.
     :vartype rules: list[str or
      ~azure.mgmt.compute.v2023_03_01.models.VirtualMachineScaleSetScaleInRules]
     :ivar force_deletion: This property allows you to specify if virtual machines chosen for
@@ -7048,19 +7046,19 @@ class ScaleInPolicy(_serialization.Model):
     ) -> None:
         """
         :keyword rules: The rules to be followed when scaling-in a virtual machine scale set.
-         :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Default** When a
+         :code:`<br>`\\ :code:`<br>` Possible values are: :code:`<br>`\\ :code:`<br>` **Default** When a
          virtual machine scale set is scaled in, the scale set will first be balanced across zones if it
          is a zonal scale set. Then, it will be balanced across Fault Domains as far as possible. Within
          each Fault Domain, the virtual machines chosen for removal will be the newest ones that are not
-         protected from scale-in. :code:`<br>`:code:`<br>` **OldestVM** When a virtual machine scale set
-         is being scaled-in, the oldest virtual machines that are not protected from scale-in will be
-         chosen for removal. For zonal virtual machine scale sets, the scale set will first be balanced
-         across zones. Within each zone, the oldest virtual machines that are not protected will be
-         chosen for removal. :code:`<br>`:code:`<br>` **NewestVM** When a virtual machine scale set is
-         being scaled-in, the newest virtual machines that are not protected from scale-in will be
-         chosen for removal. For zonal virtual machine scale sets, the scale set will first be balanced
-         across zones. Within each zone, the newest virtual machines that are not protected will be
-         chosen for removal. :code:`<br>`:code:`<br>`.
+         protected from scale-in. :code:`<br>`\\ :code:`<br>` **OldestVM** When a virtual machine scale
+         set is being scaled-in, the oldest virtual machines that are not protected from scale-in will
+         be chosen for removal. For zonal virtual machine scale sets, the scale set will first be
+         balanced across zones. Within each zone, the oldest virtual machines that are not protected
+         will be chosen for removal. :code:`<br>`\\ :code:`<br>` **NewestVM** When a virtual machine
+         scale set is being scaled-in, the newest virtual machines that are not protected from scale-in
+         will be chosen for removal. For zonal virtual machine scale sets, the scale set will first be
+         balanced across zones. Within each zone, the newest virtual machines that are not protected
+         will be chosen for removal. :code:`<br>`\\ :code:`<br>`.
         :paramtype rules: list[str or
          ~azure.mgmt.compute.v2023_03_01.models.VirtualMachineScaleSetScaleInRules]
         :keyword force_deletion: This property allows you to specify if virtual machines chosen for
@@ -7237,9 +7235,9 @@ class Sku(_serialization.Model):
 
     :ivar name: The sku name.
     :vartype name: str
-    :ivar tier: Specifies the tier of virtual machines in a scale set.:code:`<br />`:code:`<br />`
-     Possible Values::code:`<br />`:code:`<br />` **Standard**\\ :code:`<br />`:code:`<br />`
-     **Basic**.
+    :ivar tier: Specifies the tier of virtual machines in a scale set.\\ :code:`<br />`\\
+     :code:`<br />` Possible Values:\\ :code:`<br />`\\ :code:`<br />` **Standard**\\ :code:`<br
+     />`\\ :code:`<br />` **Basic**.
     :vartype tier: str
     :ivar capacity: Specifies the number of virtual machines in the scale set.
     :vartype capacity: int
@@ -7257,9 +7255,9 @@ class Sku(_serialization.Model):
         """
         :keyword name: The sku name.
         :paramtype name: str
-        :keyword tier: Specifies the tier of virtual machines in a scale set.:code:`<br />`:code:`<br
-         />` Possible Values::code:`<br />`:code:`<br />` **Standard**\\ :code:`<br />`:code:`<br />`
-         **Basic**.
+        :keyword tier: Specifies the tier of virtual machines in a scale set.\\ :code:`<br />`\\
+         :code:`<br />` Possible Values:\\ :code:`<br />`\\ :code:`<br />` **Standard**\\ :code:`<br
+         />`\\ :code:`<br />` **Basic**.
         :paramtype tier: str
         :keyword capacity: Specifies the number of virtual machines in the scale set.
         :paramtype capacity: int
@@ -7888,12 +7886,12 @@ class UpgradeOperationHistoryStatus(_serialization.Model):
 class UpgradePolicy(_serialization.Model):
     """Describes an upgrade policy - automatic, manual, or rolling.
 
-    :ivar mode: Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br
-     />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control
-     the application of updates to virtual machines in the scale set. You do this by using the
-     manualUpgrade action.:code:`<br />`:code:`<br />` **Automatic** - All virtual machines in the
-     scale set are  automatically updated at the same time. Known values are: "Automatic", "Manual",
-     and "Rolling".
+    :ivar mode: Specifies the mode of an upgrade to virtual machines in the scale set.\\ :code:`<br
+     />`\\ :code:`<br />` Possible values are:\\ :code:`<br />`\\ :code:`<br />` **Manual** - You
+     control the application of updates to virtual machines in the scale set. You do this by using
+     the manualUpgrade action.\\ :code:`<br />`\\ :code:`<br />` **Automatic** - All virtual
+     machines in the scale set are  automatically updated at the same time. Known values are:
+     "Automatic", "Manual", and "Rolling".
     :vartype mode: str or ~azure.mgmt.compute.v2023_03_01.models.UpgradeMode
     :ivar rolling_upgrade_policy: The configuration parameters used while performing a rolling
      upgrade.
@@ -7919,12 +7917,12 @@ class UpgradePolicy(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword mode: Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br
-         />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control
-         the application of updates to virtual machines in the scale set. You do this by using the
-         manualUpgrade action.:code:`<br />`:code:`<br />` **Automatic** - All virtual machines in the
-         scale set are  automatically updated at the same time. Known values are: "Automatic", "Manual",
-         and "Rolling".
+        :keyword mode: Specifies the mode of an upgrade to virtual machines in the scale set.\\
+         :code:`<br />`\\ :code:`<br />` Possible values are:\\ :code:`<br />`\\ :code:`<br />`
+         **Manual** - You  control the application of updates to virtual machines in the scale set. You
+         do this by using the manualUpgrade action.\\ :code:`<br />`\\ :code:`<br />` **Automatic** -
+         All virtual machines in the scale set are  automatically updated at the same time. Known values
+         are: "Automatic", "Manual", and "Rolling".
         :paramtype mode: str or ~azure.mgmt.compute.v2023_03_01.models.UpgradeMode
         :keyword rolling_upgrade_policy: The configuration parameters used while performing a rolling
          upgrade.
@@ -8051,12 +8049,13 @@ class VaultCertificate(_serialization.Model):
      a secret. For adding a secret to the Key Vault, see `Add a key or secret to the key vault
      <https://docs.microsoft.com/azure/key-vault/key-vault-get-started/#add>`_. In this case, your
      certificate needs to be It is the Base64 encoding of the following JSON Object which is encoded
-     in UTF-8: :code:`<br>`:code:`<br>` {:code:`<br>`
-     "data":":code:`<Base64-encoded-certificate>`",:code:`<br>`  "dataType":"pfx",:code:`<br>`
-     "password":":code:`<pfx-file-password>`":code:`<br>`} :code:`<br>` To install certificates on a
-     virtual machine it is recommended to use the `Azure Key Vault virtual machine extension for
-     Linux <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_ or the
-     `Azure Key Vault virtual machine extension for Windows
+     in UTF-8: :code:`<br>`\\ :code:`<br>` {\\ :code:`<br>`  "data":"\\
+     :code:`<Base64-encoded-certificate>`",\\ :code:`<br>`  "dataType":"pfx",\\ :code:`<br>`
+     "password":"\\ :code:`<pfx-file-password>`"\\ :code:`<br>`} :code:`<br>` To install
+     certificates on a virtual machine it is recommended to use the `Azure Key Vault virtual machine
+     extension for Linux
+     <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_ or the `Azure
+     Key Vault virtual machine extension for Windows
      <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_.
     :vartype certificate_url: str
     :ivar certificate_store: For Windows VMs, specifies the certificate store on the Virtual
@@ -8081,12 +8080,13 @@ class VaultCertificate(_serialization.Model):
          as a secret. For adding a secret to the Key Vault, see `Add a key or secret to the key vault
          <https://docs.microsoft.com/azure/key-vault/key-vault-get-started/#add>`_. In this case, your
          certificate needs to be It is the Base64 encoding of the following JSON Object which is encoded
-         in UTF-8: :code:`<br>`:code:`<br>` {:code:`<br>`
-         "data":":code:`<Base64-encoded-certificate>`",:code:`<br>`  "dataType":"pfx",:code:`<br>`
-         "password":":code:`<pfx-file-password>`":code:`<br>`} :code:`<br>` To install certificates on a
-         virtual machine it is recommended to use the `Azure Key Vault virtual machine extension for
-         Linux <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_ or the
-         `Azure Key Vault virtual machine extension for Windows
+         in UTF-8: :code:`<br>`\\ :code:`<br>` {\\ :code:`<br>`  "data":"\\
+         :code:`<Base64-encoded-certificate>`",\\ :code:`<br>`  "dataType":"pfx",\\ :code:`<br>`
+         "password":"\\ :code:`<pfx-file-password>`"\\ :code:`<br>`} :code:`<br>` To install
+         certificates on a virtual machine it is recommended to use the `Azure Key Vault virtual machine
+         extension for Linux
+         <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_ or the `Azure
+         Key Vault virtual machine extension for Windows
          <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_.
         :paramtype certificate_url: str
         :keyword certificate_store: For Windows VMs, specifies the certificate store on the Virtual
@@ -8158,7 +8158,7 @@ class VirtualHardDisk(_serialization.Model):
         self.uri = uri
 
 
-class VirtualMachine(Resource):  # pylint: disable=too-many-instance-attributes
+class VirtualMachine(Resource):
     """Describes a Virtual Machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8254,15 +8254,16 @@ class VirtualMachine(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar instance_view: The virtual machine instance view.
     :vartype instance_view: ~azure.mgmt.compute.v2023_03_01.models.VirtualMachineInstanceView
     :ivar license_type: Specifies that the image or disk that is being used was licensed
-     on-premises. :code:`<br>`:code:`<br>` Possible values for Windows Server operating system are:
-     :code:`<br>`:code:`<br>` Windows_Client :code:`<br>`:code:`<br>` Windows_Server
-     :code:`<br>`:code:`<br>` Possible values for Linux Server operating system are:
-     :code:`<br>`:code:`<br>` RHEL_BYOS (for RHEL) :code:`<br>`:code:`<br>` SLES_BYOS (for SUSE)
-     :code:`<br>`:code:`<br>` For more information, see `Azure Hybrid Use Benefit for Windows Server
+     on-premises. :code:`<br>`\\ :code:`<br>` Possible values for Windows Server operating system
+     are: :code:`<br>`\\ :code:`<br>` Windows_Client :code:`<br>`\\ :code:`<br>` Windows_Server
+     :code:`<br>`\\ :code:`<br>` Possible values for Linux Server operating system are:
+     :code:`<br>`\\ :code:`<br>` RHEL_BYOS (for RHEL) :code:`<br>`\\ :code:`<br>` SLES_BYOS (for
+     SUSE) :code:`<br>`\\ :code:`<br>` For more information, see `Azure Hybrid Use Benefit for
+     Windows Server
      <https://docs.microsoft.com/azure/virtual-machines/windows/hybrid-use-benefit-licensing>`_
-     :code:`<br>`:code:`<br>` `Azure Hybrid Use Benefit for Linux Server
+     :code:`<br>`\\ :code:`<br>` `Azure Hybrid Use Benefit for Linux Server
      <https://docs.microsoft.com/azure/virtual-machines/linux/azure-hybrid-benefit-linux>`_
-     :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
+     :code:`<br>`\\ :code:`<br>` Minimum api-version: 2015-06-15.
     :vartype license_type: str
     :ivar vm_id: Specifies the VM unique ID which is a 128-bits identifier that is encoded and
      stored in all Azure IaaS VMs SMBIOS and can be read using platform BIOS commands.
@@ -8460,15 +8461,16 @@ class VirtualMachine(Resource):  # pylint: disable=too-many-instance-attributes
          api-version: 2020-06-01.
         :paramtype host_group: ~azure.mgmt.compute.v2023_03_01.models.SubResource
         :keyword license_type: Specifies that the image or disk that is being used was licensed
-         on-premises. :code:`<br>`:code:`<br>` Possible values for Windows Server operating system are:
-         :code:`<br>`:code:`<br>` Windows_Client :code:`<br>`:code:`<br>` Windows_Server
-         :code:`<br>`:code:`<br>` Possible values for Linux Server operating system are:
-         :code:`<br>`:code:`<br>` RHEL_BYOS (for RHEL) :code:`<br>`:code:`<br>` SLES_BYOS (for SUSE)
-         :code:`<br>`:code:`<br>` For more information, see `Azure Hybrid Use Benefit for Windows Server
+         on-premises. :code:`<br>`\\ :code:`<br>` Possible values for Windows Server operating system
+         are: :code:`<br>`\\ :code:`<br>` Windows_Client :code:`<br>`\\ :code:`<br>` Windows_Server
+         :code:`<br>`\\ :code:`<br>` Possible values for Linux Server operating system are:
+         :code:`<br>`\\ :code:`<br>` RHEL_BYOS (for RHEL) :code:`<br>`\\ :code:`<br>` SLES_BYOS (for
+         SUSE) :code:`<br>`\\ :code:`<br>` For more information, see `Azure Hybrid Use Benefit for
+         Windows Server
          <https://docs.microsoft.com/azure/virtual-machines/windows/hybrid-use-benefit-licensing>`_
-         :code:`<br>`:code:`<br>` `Azure Hybrid Use Benefit for Linux Server
+         :code:`<br>`\\ :code:`<br>` `Azure Hybrid Use Benefit for Linux Server
          <https://docs.microsoft.com/azure/virtual-machines/linux/azure-hybrid-benefit-linux>`_
-         :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
+         :code:`<br>`\\ :code:`<br>` Minimum api-version: 2015-06-15.
         :paramtype license_type: str
         :keyword extensions_time_budget: Specifies the time alloted for all extensions to start. The
          time duration should be between 15 minutes and 120 minutes (inclusive) and should be specified
@@ -8727,7 +8729,7 @@ class VirtualMachineCaptureResult(SubResource):
         self.resources = None
 
 
-class VirtualMachineExtension(ResourceWithOptionalLocation):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineExtension(ResourceWithOptionalLocation):
     """Describes a Virtual Machine Extension.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9093,7 +9095,7 @@ class VirtualMachineExtensionsListResult(_serialization.Model):
         self.value = value
 
 
-class VirtualMachineExtensionUpdate(UpdateResource):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineExtensionUpdate(UpdateResource):
     """Describes a Virtual Machine Extension.
 
     :ivar tags: Resource tags.
@@ -9355,7 +9357,7 @@ class VirtualMachineImageResource(SubResource):
         self.extended_location = extended_location
 
 
-class VirtualMachineImage(VirtualMachineImageResource):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineImage(VirtualMachineImageResource):
     """Describes a Virtual Machine Image.
 
     All required parameters must be populated in order to send to server.
@@ -9580,7 +9582,7 @@ class VirtualMachineInstallPatchesParameters(_serialization.Model):
         self.linux_parameters = linux_parameters
 
 
-class VirtualMachineInstallPatchesResult(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineInstallPatchesResult(_serialization.Model):
     """The result summary of an installation operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9670,7 +9672,7 @@ class VirtualMachineInstallPatchesResult(_serialization.Model):  # pylint: disab
         self.error = None
 
 
-class VirtualMachineInstanceView(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineInstanceView(_serialization.Model):
     """The instance view of a virtual machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9876,9 +9878,7 @@ class VirtualMachineListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class VirtualMachineNetworkInterfaceConfiguration(
-    _serialization.Model
-):  # pylint: disable=too-many-instance-attributes,name-too-long
+class VirtualMachineNetworkInterfaceConfiguration(_serialization.Model):  # pylint: disable=name-too-long
     """Describes a virtual machine network interface configurations.
 
     All required parameters must be populated in order to send to server.
@@ -10365,7 +10365,7 @@ class VirtualMachineReimageParameters(_serialization.Model):
         self.os_profile = os_profile
 
 
-class VirtualMachineRunCommand(Resource):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineRunCommand(Resource):
     """Describes a Virtual Machine run command.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10740,7 +10740,7 @@ class VirtualMachineRunCommandsListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class VirtualMachineRunCommandUpdate(UpdateResource):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineRunCommandUpdate(UpdateResource):
     """Describes a Virtual Machine run command.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10924,7 +10924,7 @@ class VirtualMachineRunCommandUpdate(UpdateResource):  # pylint: disable=too-man
         self.treat_failure_as_deployment_failure = treat_failure_as_deployment_failure
 
 
-class VirtualMachineScaleSet(Resource):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineScaleSet(Resource):
     """Describes a Virtual Machine Scale Set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -11230,12 +11230,12 @@ class VirtualMachineScaleSetDataDisk(_serialization.Model):
      would be assigned based on diskSizeGB.
     :vartype disk_m_bps_read_write: int
     :ivar delete_option: Specifies whether data disk should be deleted or detached upon VMSS Flex
-     deletion (This feature is available for VMSS with Flexible OrchestrationMode
-     only).:code:`<br>`:code:`<br>` Possible values: :code:`<br>`:code:`<br>` **Delete** If this
-     value is used, the data disk is deleted when the VMSS Flex VM is
-     deleted.:code:`<br>`:code:`<br>` **Detach** If this value is used, the data disk is retained
-     after VMSS Flex VM is deleted.:code:`<br>`:code:`<br>` The default value is set to **Delete**.
-     Known values are: "Delete" and "Detach".
+     deletion (This feature is available for VMSS with Flexible OrchestrationMode only).\\
+     :code:`<br>`\\ :code:`<br>` Possible values: :code:`<br>`\\ :code:`<br>` **Delete** If this
+     value is used, the data disk is deleted when the VMSS Flex VM is deleted.\\ :code:`<br>`\\
+     :code:`<br>` **Detach** If this value is used, the data disk is retained after VMSS Flex VM is
+     deleted.\\ :code:`<br>`\\ :code:`<br>` The default value is set to **Delete**. Known values
+     are: "Delete" and "Detach".
     :vartype delete_option: str or ~azure.mgmt.compute.v2023_03_01.models.DiskDeleteOptionTypes
     """
 
@@ -11305,12 +11305,12 @@ class VirtualMachineScaleSetDataDisk(_serialization.Model):
          would be assigned based on diskSizeGB.
         :paramtype disk_m_bps_read_write: int
         :keyword delete_option: Specifies whether data disk should be deleted or detached upon VMSS
-         Flex deletion (This feature is available for VMSS with Flexible OrchestrationMode
-         only).:code:`<br>`:code:`<br>` Possible values: :code:`<br>`:code:`<br>` **Delete** If this
-         value is used, the data disk is deleted when the VMSS Flex VM is
-         deleted.:code:`<br>`:code:`<br>` **Detach** If this value is used, the data disk is retained
-         after VMSS Flex VM is deleted.:code:`<br>`:code:`<br>` The default value is set to **Delete**.
-         Known values are: "Delete" and "Detach".
+         Flex deletion (This feature is available for VMSS with Flexible OrchestrationMode only).\\
+         :code:`<br>`\\ :code:`<br>` Possible values: :code:`<br>`\\ :code:`<br>` **Delete** If this
+         value is used, the data disk is deleted when the VMSS Flex VM is deleted.\\ :code:`<br>`\\
+         :code:`<br>` **Detach** If this value is used, the data disk is retained after VMSS Flex VM is
+         deleted.\\ :code:`<br>`\\ :code:`<br>` The default value is set to **Delete**. Known values
+         are: "Delete" and "Detach".
         :paramtype delete_option: str or ~azure.mgmt.compute.v2023_03_01.models.DiskDeleteOptionTypes
         """
         super().__init__(**kwargs)
@@ -11326,7 +11326,7 @@ class VirtualMachineScaleSetDataDisk(_serialization.Model):
         self.delete_option = delete_option
 
 
-class VirtualMachineScaleSetExtension(SubResourceReadOnly):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineScaleSetExtension(SubResourceReadOnly):
     """Describes a Virtual Machine Scale Set Extension.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -11546,7 +11546,7 @@ class VirtualMachineScaleSetExtensionProfile(_serialization.Model):
         self.extensions_time_budget = extensions_time_budget
 
 
-class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
     """Describes a Virtual Machine Scale Set Extension.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -12379,7 +12379,7 @@ class VirtualMachineScaleSetNetworkProfile(_serialization.Model):
         self.network_api_version = network_api_version
 
 
-class VirtualMachineScaleSetOSDisk(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineScaleSetOSDisk(_serialization.Model):
     """Describes a virtual machine scale set operating system disk.
 
     All required parameters must be populated in order to send to server.
@@ -12420,12 +12420,12 @@ class VirtualMachineScaleSetOSDisk(_serialization.Model):  # pylint: disable=too
      ~azure.mgmt.compute.v2023_03_01.models.VirtualMachineScaleSetManagedDiskParameters
     :ivar delete_option: Specifies whether OS Disk should be deleted or detached upon VMSS Flex
      deletion (This feature is available for VMSS with Flexible OrchestrationMode only).
-     :code:`<br>`:code:`<br>` Possible values: :code:`<br>`:code:`<br>` **Delete** If this value is
-     used, the OS disk is deleted when VMSS Flex VM is deleted.:code:`<br>`:code:`<br>` **Detach**
-     If this value is used, the OS disk is retained after VMSS Flex VM is deleted.
-     :code:`<br>`:code:`<br>` The default value is set to **Delete**. For an Ephemeral OS Disk, the
-     default value is set to **Delete**. User cannot change the delete option for Ephemeral OS Disk.
-     Known values are: "Delete" and "Detach".
+     :code:`<br>`\\ :code:`<br>` Possible values: :code:`<br>`\\ :code:`<br>` **Delete** If this
+     value is used, the OS disk is deleted when VMSS Flex VM is deleted.\\ :code:`<br>`\\
+     :code:`<br>` **Detach** If this value is used, the OS disk is retained after VMSS Flex VM is
+     deleted. :code:`<br>`\\ :code:`<br>` The default value is set to **Delete**. For an Ephemeral
+     OS Disk, the default value is set to **Delete**. User cannot change the delete option for
+     Ephemeral OS Disk. Known values are: "Delete" and "Detach".
     :vartype delete_option: str or ~azure.mgmt.compute.v2023_03_01.models.DiskDeleteOptionTypes
     """
 
@@ -12500,12 +12500,12 @@ class VirtualMachineScaleSetOSDisk(_serialization.Model):  # pylint: disable=too
          ~azure.mgmt.compute.v2023_03_01.models.VirtualMachineScaleSetManagedDiskParameters
         :keyword delete_option: Specifies whether OS Disk should be deleted or detached upon VMSS Flex
          deletion (This feature is available for VMSS with Flexible OrchestrationMode only).
-         :code:`<br>`:code:`<br>` Possible values: :code:`<br>`:code:`<br>` **Delete** If this value is
-         used, the OS disk is deleted when VMSS Flex VM is deleted.:code:`<br>`:code:`<br>` **Detach**
-         If this value is used, the OS disk is retained after VMSS Flex VM is deleted.
-         :code:`<br>`:code:`<br>` The default value is set to **Delete**. For an Ephemeral OS Disk, the
-         default value is set to **Delete**. User cannot change the delete option for Ephemeral OS Disk.
-         Known values are: "Delete" and "Detach".
+         :code:`<br>`\\ :code:`<br>` Possible values: :code:`<br>`\\ :code:`<br>` **Delete** If this
+         value is used, the OS disk is deleted when VMSS Flex VM is deleted.\\ :code:`<br>`\\
+         :code:`<br>` **Detach** If this value is used, the OS disk is retained after VMSS Flex VM is
+         deleted. :code:`<br>`\\ :code:`<br>` The default value is set to **Delete**. For an Ephemeral
+         OS Disk, the default value is set to **Delete**. User cannot change the delete option for
+         Ephemeral OS Disk. Known values are: "Delete" and "Detach".
         :paramtype delete_option: str or ~azure.mgmt.compute.v2023_03_01.models.DiskDeleteOptionTypes
         """
         super().__init__(**kwargs)
@@ -12528,27 +12528,27 @@ class VirtualMachineScaleSetOSProfile(_serialization.Model):
     :ivar computer_name_prefix: Specifies the computer name prefix for all of the virtual machines
      in the scale set. Computer name prefixes must be 1 to 15 characters long.
     :vartype computer_name_prefix: str
-    :ivar admin_username: Specifies the name of the administrator account. :code:`<br>`:code:`<br>`
-     **Windows-only restriction:** Cannot end in "." :code:`<br>`:code:`<br>` **Disallowed values:**
-     "administrator", "admin", "user", "user1", "test", "user2", "test1", "user3", "admin1", "1",
-     "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console", "david", "guest",
-     "john", "owner", "root", "server", "sql", "support", "support_388945a0", "sys", "test2",
-     "test3", "user4", "user5". :code:`<br>`:code:`<br>` **Minimum-length (Linux):** 1  character
-     :code:`<br>`:code:`<br>` **Max-length (Linux):** 64 characters :code:`<br>`:code:`<br>`
-     **Max-length (Windows):** 20 characters.
+    :ivar admin_username: Specifies the name of the administrator account. :code:`<br>`\\
+     :code:`<br>` **Windows-only restriction:** Cannot end in "." :code:`<br>`\\ :code:`<br>`
+     **Disallowed values:** "administrator", "admin", "user", "user1", "test", "user2", "test1",
+     "user3", "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console",
+     "david", "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0",
+     "sys", "test2", "test3", "user4", "user5". :code:`<br>`\\ :code:`<br>` **Minimum-length
+     (Linux):** 1  character :code:`<br>`\\ :code:`<br>` **Max-length (Linux):** 64 characters
+     :code:`<br>`\\ :code:`<br>` **Max-length (Windows):** 20 characters.
     :vartype admin_username: str
-    :ivar admin_password: Specifies the password of the administrator account.
-     :code:`<br>`:code:`<br>` **Minimum-length (Windows):** 8 characters :code:`<br>`:code:`<br>`
-     **Minimum-length (Linux):** 6 characters :code:`<br>`:code:`<br>` **Max-length (Windows):** 123
-     characters :code:`<br>`:code:`<br>` **Max-length (Linux):** 72 characters
-     :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be
-     fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a
-     digit :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`:code:`<br>`
+    :ivar admin_password: Specifies the password of the administrator account. :code:`<br>`\\
+     :code:`<br>` **Minimum-length (Windows):** 8 characters :code:`<br>`\\ :code:`<br>`
+     **Minimum-length (Linux):** 6 characters :code:`<br>`\\ :code:`<br>` **Max-length (Windows):**
+     123 characters :code:`<br>`\\ :code:`<br>` **Max-length (Linux):** 72 characters :code:`<br>`\\
+     :code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be fulfilled
+     :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a digit
+     :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`\\ :code:`<br>`
      **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd", "P@ssword123", "Pa$$word",
-     "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
-     resetting the password, see `How to reset the Remote Desktop service or its login password in a
-     Windows VM <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/reset-rdp>`_
-     :code:`<br>`:code:`<br>` For resetting root password, see `Manage users, SSH, and check or
+     "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`\\ :code:`<br>`
+     For resetting the password, see `How to reset the Remote Desktop service or its login password
+     in a Windows VM <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/reset-rdp>`_
+     :code:`<br>`\\ :code:`<br>` For resetting root password, see `Manage users, SSH, and check or
      repair disks on Azure Linux VMs using the VMAccess Extension
      <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/troubleshoot-ssh-connection>`_.
     :vartype admin_password: str
@@ -12611,28 +12611,27 @@ class VirtualMachineScaleSetOSProfile(_serialization.Model):
         :keyword computer_name_prefix: Specifies the computer name prefix for all of the virtual
          machines in the scale set. Computer name prefixes must be 1 to 15 characters long.
         :paramtype computer_name_prefix: str
-        :keyword admin_username: Specifies the name of the administrator account.
-         :code:`<br>`:code:`<br>` **Windows-only restriction:** Cannot end in "."
-         :code:`<br>`:code:`<br>` **Disallowed values:** "administrator", "admin", "user", "user1",
-         "test", "user2", "test1", "user3", "admin1", "1", "123", "a", "actuser", "adm", "admin2",
-         "aspnet", "backup", "console", "david", "guest", "john", "owner", "root", "server", "sql",
-         "support", "support_388945a0", "sys", "test2", "test3", "user4", "user5".
-         :code:`<br>`:code:`<br>` **Minimum-length (Linux):** 1  character :code:`<br>`:code:`<br>`
-         **Max-length (Linux):** 64 characters :code:`<br>`:code:`<br>` **Max-length (Windows):** 20
-         characters.
+        :keyword admin_username: Specifies the name of the administrator account. :code:`<br>`\\
+         :code:`<br>` **Windows-only restriction:** Cannot end in "." :code:`<br>`\\ :code:`<br>`
+         **Disallowed values:** "administrator", "admin", "user", "user1", "test", "user2", "test1",
+         "user3", "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console",
+         "david", "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0",
+         "sys", "test2", "test3", "user4", "user5". :code:`<br>`\\ :code:`<br>` **Minimum-length
+         (Linux):** 1  character :code:`<br>`\\ :code:`<br>` **Max-length (Linux):** 64 characters
+         :code:`<br>`\\ :code:`<br>` **Max-length (Windows):** 20 characters.
         :paramtype admin_username: str
-        :keyword admin_password: Specifies the password of the administrator account.
-         :code:`<br>`:code:`<br>` **Minimum-length (Windows):** 8 characters :code:`<br>`:code:`<br>`
-         **Minimum-length (Linux):** 6 characters :code:`<br>`:code:`<br>` **Max-length (Windows):** 123
-         characters :code:`<br>`:code:`<br>` **Max-length (Linux):** 72 characters
-         :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be
-         fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a
-         digit :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`:code:`<br>`
+        :keyword admin_password: Specifies the password of the administrator account. :code:`<br>`\\
+         :code:`<br>` **Minimum-length (Windows):** 8 characters :code:`<br>`\\ :code:`<br>`
+         **Minimum-length (Linux):** 6 characters :code:`<br>`\\ :code:`<br>` **Max-length (Windows):**
+         123 characters :code:`<br>`\\ :code:`<br>` **Max-length (Linux):** 72 characters :code:`<br>`\\
+         :code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be fulfilled
+         :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a digit
+         :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`\\ :code:`<br>`
          **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd", "P@ssword123", "Pa$$word",
-         "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
-         resetting the password, see `How to reset the Remote Desktop service or its login password in a
-         Windows VM <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/reset-rdp>`_
-         :code:`<br>`:code:`<br>` For resetting root password, see `Manage users, SSH, and check or
+         "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`\\ :code:`<br>`
+         For resetting the password, see `How to reset the Remote Desktop service or its login password
+         in a Windows VM <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/reset-rdp>`_
+         :code:`<br>`\\ :code:`<br>` For resetting root password, see `Manage users, SSH, and check or
          repair disks on Azure Linux VMs using the VMAccess Extension
          <https://docs.microsoft.com/troubleshoot/azure/virtual-machines/troubleshoot-ssh-connection>`_.
         :paramtype admin_password: str
@@ -13007,7 +13006,7 @@ class VirtualMachineScaleSetStorageProfile(_serialization.Model):
         self.disk_controller_type = disk_controller_type
 
 
-class VirtualMachineScaleSetUpdate(UpdateResource):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineScaleSetUpdate(UpdateResource):
     """Describes a Virtual Machine Scale Set.
 
     :ivar tags: Resource tags.
@@ -13046,7 +13045,7 @@ class VirtualMachineScaleSetUpdate(UpdateResource):  # pylint: disable=too-many-
      Virtual Machine Scale Set.
     :vartype scale_in_policy: ~azure.mgmt.compute.v2023_03_01.models.ScaleInPolicy
     :ivar proximity_placement_group: Specifies information about the proximity placement group that
-     the virtual machine scale set should be assigned to. :code:`<br>`:code:`<br>`Minimum
+     the virtual machine scale set should be assigned to. :code:`<br>`\\ :code:`<br>`Minimum
      api-version: 2018-04-01.
     :vartype proximity_placement_group: ~azure.mgmt.compute.v2023_03_01.models.SubResource
     :ivar priority_mix_policy: Specifies the desired targets for mixing Spot and Regular priority
@@ -13140,7 +13139,7 @@ class VirtualMachineScaleSetUpdate(UpdateResource):  # pylint: disable=too-many-
          the Virtual Machine Scale Set.
         :paramtype scale_in_policy: ~azure.mgmt.compute.v2023_03_01.models.ScaleInPolicy
         :keyword proximity_placement_group: Specifies information about the proximity placement group
-         that the virtual machine scale set should be assigned to. :code:`<br>`:code:`<br>`Minimum
+         that the virtual machine scale set should be assigned to. :code:`<br>`\\ :code:`<br>`Minimum
          api-version: 2018-04-01.
         :paramtype proximity_placement_group: ~azure.mgmt.compute.v2023_03_01.models.SubResource
         :keyword priority_mix_policy: Specifies the desired targets for mixing Spot and Regular
@@ -13447,7 +13446,7 @@ class VirtualMachineScaleSetUpdateOSDisk(_serialization.Model):
      disabled on the disk.
     :vartype write_accelerator_enabled: bool
     :ivar disk_size_gb: Specifies the size of an empty data disk in gigabytes. This element can be
-     used to overwrite the size of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
+     used to overwrite the size of the disk in a virtual machine image. :code:`<br>`\\ :code:`<br>`
      diskSizeGB is the number of bytes x 1024^3 for the disk and the value cannot be larger than
      1023.
     :vartype disk_size_gb: int
@@ -13462,12 +13461,12 @@ class VirtualMachineScaleSetUpdateOSDisk(_serialization.Model):
      ~azure.mgmt.compute.v2023_03_01.models.VirtualMachineScaleSetManagedDiskParameters
     :ivar delete_option: Specifies whether OS Disk should be deleted or detached upon VMSS Flex
      deletion (This feature is available for VMSS with Flexible OrchestrationMode only).
-     :code:`<br>`:code:`<br>` Possible values: :code:`<br>`:code:`<br>` **Delete** If this value is
-     used, the OS disk is deleted when VMSS Flex VM is deleted.:code:`<br>`:code:`<br>` **Detach**
-     If this value is used, the OS disk is retained after VMSS Flex VM is deleted.
-     :code:`<br>`:code:`<br>` The default value is set to **Delete**. For an Ephemeral OS Disk, the
-     default value is set to **Delete**. User cannot change the delete option for Ephemeral OS Disk.
-     Known values are: "Delete" and "Detach".
+     :code:`<br>`\\ :code:`<br>` Possible values: :code:`<br>`\\ :code:`<br>` **Delete** If this
+     value is used, the OS disk is deleted when VMSS Flex VM is deleted.\\ :code:`<br>`\\
+     :code:`<br>` **Detach** If this value is used, the OS disk is retained after VMSS Flex VM is
+     deleted. :code:`<br>`\\ :code:`<br>` The default value is set to **Delete**. For an Ephemeral
+     OS Disk, the default value is set to **Delete**. User cannot change the delete option for
+     Ephemeral OS Disk. Known values are: "Delete" and "Detach".
     :vartype delete_option: str or ~azure.mgmt.compute.v2023_03_01.models.DiskDeleteOptionTypes
     """
 
@@ -13500,9 +13499,9 @@ class VirtualMachineScaleSetUpdateOSDisk(_serialization.Model):
          disabled on the disk.
         :paramtype write_accelerator_enabled: bool
         :keyword disk_size_gb: Specifies the size of an empty data disk in gigabytes. This element can
-         be used to overwrite the size of the disk in a virtual machine image. :code:`<br>`:code:`<br>`
-         diskSizeGB is the number of bytes x 1024^3 for the disk and the value cannot be larger than
-         1023.
+         be used to overwrite the size of the disk in a virtual machine image. :code:`<br>`\\
+         :code:`<br>` diskSizeGB is the number of bytes x 1024^3 for the disk and the value cannot be
+         larger than 1023.
         :paramtype disk_size_gb: int
         :keyword image: The Source User Image VirtualHardDisk. This VirtualHardDisk will be copied
          before using it to attach to the Virtual Machine. If SourceImage is provided, the destination
@@ -13515,12 +13514,12 @@ class VirtualMachineScaleSetUpdateOSDisk(_serialization.Model):
          ~azure.mgmt.compute.v2023_03_01.models.VirtualMachineScaleSetManagedDiskParameters
         :keyword delete_option: Specifies whether OS Disk should be deleted or detached upon VMSS Flex
          deletion (This feature is available for VMSS with Flexible OrchestrationMode only).
-         :code:`<br>`:code:`<br>` Possible values: :code:`<br>`:code:`<br>` **Delete** If this value is
-         used, the OS disk is deleted when VMSS Flex VM is deleted.:code:`<br>`:code:`<br>` **Detach**
-         If this value is used, the OS disk is retained after VMSS Flex VM is deleted.
-         :code:`<br>`:code:`<br>` The default value is set to **Delete**. For an Ephemeral OS Disk, the
-         default value is set to **Delete**. User cannot change the delete option for Ephemeral OS Disk.
-         Known values are: "Delete" and "Detach".
+         :code:`<br>`\\ :code:`<br>` Possible values: :code:`<br>`\\ :code:`<br>` **Delete** If this
+         value is used, the OS disk is deleted when VMSS Flex VM is deleted.\\ :code:`<br>`\\
+         :code:`<br>` **Detach** If this value is used, the OS disk is retained after VMSS Flex VM is
+         deleted. :code:`<br>`\\ :code:`<br>` The default value is set to **Delete**. For an Ephemeral
+         OS Disk, the default value is set to **Delete**. User cannot change the delete option for
+         Ephemeral OS Disk. Known values are: "Delete" and "Detach".
         :paramtype delete_option: str or ~azure.mgmt.compute.v2023_03_01.models.DiskDeleteOptionTypes
         """
         super().__init__(**kwargs)
@@ -13687,7 +13686,7 @@ class VirtualMachineScaleSetUpdateStorageProfile(_serialization.Model):  # pylin
         self.disk_controller_type = disk_controller_type
 
 
-class VirtualMachineScaleSetUpdateVMProfile(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineScaleSetUpdateVMProfile(_serialization.Model):
     """Describes a virtual machine scale set virtual machine profile.
 
     :ivar os_profile: The virtual machine scale set OS profile.
@@ -13715,7 +13714,7 @@ class VirtualMachineScaleSetUpdateVMProfile(_serialization.Model):  # pylint: di
     :vartype scheduled_events_profile:
      ~azure.mgmt.compute.v2023_03_01.models.ScheduledEventsProfile
     :ivar user_data: UserData for the VM, which must be base-64 encoded. Customer should not pass
-     any secrets in here. :code:`<br>`:code:`<br>`Minimum api-version: 2021-03-01.
+     any secrets in here. :code:`<br>`\\ :code:`<br>`Minimum api-version: 2021-03-01.
     :vartype user_data: str
     :ivar hardware_profile: Specifies the hardware profile related details of a scale set. Minimum
      api-version: 2021-11-01.
@@ -13779,7 +13778,7 @@ class VirtualMachineScaleSetUpdateVMProfile(_serialization.Model):  # pylint: di
         :paramtype scheduled_events_profile:
          ~azure.mgmt.compute.v2023_03_01.models.ScheduledEventsProfile
         :keyword user_data: UserData for the VM, which must be base-64 encoded. Customer should not
-         pass any secrets in here. :code:`<br>`:code:`<br>`Minimum api-version: 2021-03-01.
+         pass any secrets in here. :code:`<br>`\\ :code:`<br>`Minimum api-version: 2021-03-01.
         :paramtype user_data: str
         :keyword hardware_profile: Specifies the hardware profile related details of a scale set.
          Minimum api-version: 2021-11-01.
@@ -13800,7 +13799,7 @@ class VirtualMachineScaleSetUpdateVMProfile(_serialization.Model):  # pylint: di
         self.hardware_profile = hardware_profile
 
 
-class VirtualMachineScaleSetVM(Resource):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineScaleSetVM(Resource):
     """Describes a virtual machine scale set virtual machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -13876,15 +13875,16 @@ class VirtualMachineScaleSetVM(Resource):  # pylint: disable=too-many-instance-a
     :ivar provisioning_state: The provisioning state, which only appears in the response.
     :vartype provisioning_state: str
     :ivar license_type: Specifies that the image or disk that is being used was licensed
-     on-premises. :code:`<br>`:code:`<br>` Possible values for Windows Server operating system are:
-     :code:`<br>`:code:`<br>` Windows_Client :code:`<br>`:code:`<br>` Windows_Server
-     :code:`<br>`:code:`<br>` Possible values for Linux Server operating system are:
-     :code:`<br>`:code:`<br>` RHEL_BYOS (for RHEL) :code:`<br>`:code:`<br>` SLES_BYOS (for SUSE)
-     :code:`<br>`:code:`<br>` For more information, see `Azure Hybrid Use Benefit for Windows Server
+     on-premises. :code:`<br>`\\ :code:`<br>` Possible values for Windows Server operating system
+     are: :code:`<br>`\\ :code:`<br>` Windows_Client :code:`<br>`\\ :code:`<br>` Windows_Server
+     :code:`<br>`\\ :code:`<br>` Possible values for Linux Server operating system are:
+     :code:`<br>`\\ :code:`<br>` RHEL_BYOS (for RHEL) :code:`<br>`\\ :code:`<br>` SLES_BYOS (for
+     SUSE) :code:`<br>`\\ :code:`<br>` For more information, see `Azure Hybrid Use Benefit for
+     Windows Server
      <https://docs.microsoft.com/azure/virtual-machines/windows/hybrid-use-benefit-licensing>`_
-     :code:`<br>`:code:`<br>` `Azure Hybrid Use Benefit for Linux Server
+     :code:`<br>`\\ :code:`<br>` `Azure Hybrid Use Benefit for Linux Server
      <https://docs.microsoft.com/azure/virtual-machines/linux/azure-hybrid-benefit-linux>`_
-     :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
+     :code:`<br>`\\ :code:`<br>` Minimum api-version: 2015-06-15.
     :vartype license_type: str
     :ivar model_definition_applied: Specifies whether the model applied to the virtual machine is
      the model of the virtual machine scale set or the customized model for the virtual machine.
@@ -13893,7 +13893,7 @@ class VirtualMachineScaleSetVM(Resource):  # pylint: disable=too-many-instance-a
     :vartype protection_policy:
      ~azure.mgmt.compute.v2023_03_01.models.VirtualMachineScaleSetVMProtectionPolicy
     :ivar user_data: UserData for the VM, which must be base-64 encoded. Customer should not pass
-     any secrets in here. :code:`<br>`:code:`<br>`Minimum api-version: 2021-03-01.
+     any secrets in here. :code:`<br>`\\ :code:`<br>`Minimum api-version: 2021-03-01.
     :vartype user_data: str
     """
 
@@ -14015,21 +14015,22 @@ class VirtualMachineScaleSetVM(Resource):  # pylint: disable=too-many-instance-a
          an availability set.
         :paramtype availability_set: ~azure.mgmt.compute.v2023_03_01.models.SubResource
         :keyword license_type: Specifies that the image or disk that is being used was licensed
-         on-premises. :code:`<br>`:code:`<br>` Possible values for Windows Server operating system are:
-         :code:`<br>`:code:`<br>` Windows_Client :code:`<br>`:code:`<br>` Windows_Server
-         :code:`<br>`:code:`<br>` Possible values for Linux Server operating system are:
-         :code:`<br>`:code:`<br>` RHEL_BYOS (for RHEL) :code:`<br>`:code:`<br>` SLES_BYOS (for SUSE)
-         :code:`<br>`:code:`<br>` For more information, see `Azure Hybrid Use Benefit for Windows Server
+         on-premises. :code:`<br>`\\ :code:`<br>` Possible values for Windows Server operating system
+         are: :code:`<br>`\\ :code:`<br>` Windows_Client :code:`<br>`\\ :code:`<br>` Windows_Server
+         :code:`<br>`\\ :code:`<br>` Possible values for Linux Server operating system are:
+         :code:`<br>`\\ :code:`<br>` RHEL_BYOS (for RHEL) :code:`<br>`\\ :code:`<br>` SLES_BYOS (for
+         SUSE) :code:`<br>`\\ :code:`<br>` For more information, see `Azure Hybrid Use Benefit for
+         Windows Server
          <https://docs.microsoft.com/azure/virtual-machines/windows/hybrid-use-benefit-licensing>`_
-         :code:`<br>`:code:`<br>` `Azure Hybrid Use Benefit for Linux Server
+         :code:`<br>`\\ :code:`<br>` `Azure Hybrid Use Benefit for Linux Server
          <https://docs.microsoft.com/azure/virtual-machines/linux/azure-hybrid-benefit-linux>`_
-         :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
+         :code:`<br>`\\ :code:`<br>` Minimum api-version: 2015-06-15.
         :paramtype license_type: str
         :keyword protection_policy: Specifies the protection policy of the virtual machine.
         :paramtype protection_policy:
          ~azure.mgmt.compute.v2023_03_01.models.VirtualMachineScaleSetVMProtectionPolicy
         :keyword user_data: UserData for the VM, which must be base-64 encoded. Customer should not
-         pass any secrets in here. :code:`<br>`:code:`<br>`Minimum api-version: 2021-03-01.
+         pass any secrets in here. :code:`<br>`\\ :code:`<br>`Minimum api-version: 2021-03-01.
         :paramtype user_data: str
         """
         super().__init__(location=location, tags=tags, **kwargs)
@@ -14058,7 +14059,7 @@ class VirtualMachineScaleSetVM(Resource):  # pylint: disable=too-many-instance-a
         self.user_data = user_data
 
 
-class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
     """Describes a VMSS VM Extension.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -14270,7 +14271,7 @@ class VirtualMachineScaleSetVMExtensionsSummary(_serialization.Model):  # pylint
         self.statuses_summary = None
 
 
-class VirtualMachineScaleSetVMExtensionUpdate(SubResourceReadOnly):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineScaleSetVMExtensionUpdate(SubResourceReadOnly):
     """Describes a VMSS VM Extension.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -14450,7 +14451,7 @@ class VirtualMachineScaleSetVMInstanceRequiredIDs(_serialization.Model):  # pyli
         self.instance_ids = instance_ids
 
 
-class VirtualMachineScaleSetVMInstanceView(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineScaleSetVMInstanceView(_serialization.Model):
     """The instance view of a virtual machine scale set VM.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -14486,11 +14487,11 @@ class VirtualMachineScaleSetVMInstanceView(_serialization.Model):  # pylint: dis
     :ivar placement_group_id: The placement group in which the VM is running. If the VM is
      deallocated it will not have a placementGroupId.
     :vartype placement_group_id: str
-    :ivar computer_name: Specifies the host OS name of the virtual machine.
-     :code:`<br>`:code:`<br>` This name cannot be updated after the VM is created.
-     :code:`<br>`:code:`<br>` **Max-length (Windows):** 15 characters :code:`<br>`:code:`<br>`
-     **Max-length (Linux):** 64 characters. :code:`<br>`:code:`<br>` For naming conventions and
-     restrictions see `Azure infrastructure services implementation guidelines
+    :ivar computer_name: Specifies the host OS name of the virtual machine. :code:`<br>`\\
+     :code:`<br>` This name cannot be updated after the VM is created. :code:`<br>`\\ :code:`<br>`
+     **Max-length (Windows):** 15 characters :code:`<br>`\\ :code:`<br>` **Max-length (Linux):** 64
+     characters. :code:`<br>`\\ :code:`<br>` For naming conventions and restrictions see `Azure
+     infrastructure services implementation guidelines
      <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-infrastructure-subscription-accounts-guidelines?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#1-naming-conventions>`_.  # pylint: disable=line-too-long
     :vartype computer_name: str
     :ivar os_name: The Operating System running on the hybrid machine.
@@ -14571,11 +14572,11 @@ class VirtualMachineScaleSetVMInstanceView(_serialization.Model):  # pylint: dis
         :keyword placement_group_id: The placement group in which the VM is running. If the VM is
          deallocated it will not have a placementGroupId.
         :paramtype placement_group_id: str
-        :keyword computer_name: Specifies the host OS name of the virtual machine.
-         :code:`<br>`:code:`<br>` This name cannot be updated after the VM is created.
-         :code:`<br>`:code:`<br>` **Max-length (Windows):** 15 characters :code:`<br>`:code:`<br>`
-         **Max-length (Linux):** 64 characters. :code:`<br>`:code:`<br>` For naming conventions and
-         restrictions see `Azure infrastructure services implementation guidelines
+        :keyword computer_name: Specifies the host OS name of the virtual machine. :code:`<br>`\\
+         :code:`<br>` This name cannot be updated after the VM is created. :code:`<br>`\\ :code:`<br>`
+         **Max-length (Windows):** 15 characters :code:`<br>`\\ :code:`<br>` **Max-length (Linux):** 64
+         characters. :code:`<br>`\\ :code:`<br>` For naming conventions and restrictions see `Azure
+         infrastructure services implementation guidelines
          <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-infrastructure-subscription-accounts-guidelines?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#1-naming-conventions>`_.  # pylint: disable=line-too-long
         :paramtype computer_name: str
         :keyword os_name: The Operating System running on the hybrid machine.
@@ -14671,7 +14672,7 @@ class VirtualMachineScaleSetVMNetworkProfileConfiguration(_serialization.Model):
         self.network_interface_configurations = network_interface_configurations
 
 
-class VirtualMachineScaleSetVMProfile(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineScaleSetVMProfile(_serialization.Model):
     """Describes a virtual machine scale set virtual machine profile.
 
     :ivar os_profile: Specifies the operating system settings for the virtual machines in the scale
@@ -14695,15 +14696,16 @@ class VirtualMachineScaleSetVMProfile(_serialization.Model):  # pylint: disable=
     :vartype extension_profile:
      ~azure.mgmt.compute.v2023_03_01.models.VirtualMachineScaleSetExtensionProfile
     :ivar license_type: Specifies that the image or disk that is being used was licensed
-     on-premises. :code:`<br>`:code:`<br>` Possible values for Windows Server operating system are:
-     :code:`<br>`:code:`<br>` Windows_Client :code:`<br>`:code:`<br>` Windows_Server
-     :code:`<br>`:code:`<br>` Possible values for Linux Server operating system are:
-     :code:`<br>`:code:`<br>` RHEL_BYOS (for RHEL) :code:`<br>`:code:`<br>` SLES_BYOS (for SUSE)
-     :code:`<br>`:code:`<br>` For more information, see `Azure Hybrid Use Benefit for Windows Server
+     on-premises. :code:`<br>`\\ :code:`<br>` Possible values for Windows Server operating system
+     are: :code:`<br>`\\ :code:`<br>` Windows_Client :code:`<br>`\\ :code:`<br>` Windows_Server
+     :code:`<br>`\\ :code:`<br>` Possible values for Linux Server operating system are:
+     :code:`<br>`\\ :code:`<br>` RHEL_BYOS (for RHEL) :code:`<br>`\\ :code:`<br>` SLES_BYOS (for
+     SUSE) :code:`<br>`\\ :code:`<br>` For more information, see `Azure Hybrid Use Benefit for
+     Windows Server
      <https://docs.microsoft.com/azure/virtual-machines/windows/hybrid-use-benefit-licensing>`_
-     :code:`<br>`:code:`<br>` `Azure Hybrid Use Benefit for Linux Server
+     :code:`<br>`\\ :code:`<br>` `Azure Hybrid Use Benefit for Linux Server
      <https://docs.microsoft.com/azure/virtual-machines/linux/azure-hybrid-benefit-linux>`_
-     :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
+     :code:`<br>`\\ :code:`<br>` Minimum api-version: 2015-06-15.
     :vartype license_type: str
     :ivar priority: Specifies the priority for the virtual machines in the scale set. Minimum
      api-version: 2017-10-30-preview. Known values are: "Regular", "Low", and "Spot".
@@ -14810,15 +14812,16 @@ class VirtualMachineScaleSetVMProfile(_serialization.Model):  # pylint: disable=
         :paramtype extension_profile:
          ~azure.mgmt.compute.v2023_03_01.models.VirtualMachineScaleSetExtensionProfile
         :keyword license_type: Specifies that the image or disk that is being used was licensed
-         on-premises. :code:`<br>`:code:`<br>` Possible values for Windows Server operating system are:
-         :code:`<br>`:code:`<br>` Windows_Client :code:`<br>`:code:`<br>` Windows_Server
-         :code:`<br>`:code:`<br>` Possible values for Linux Server operating system are:
-         :code:`<br>`:code:`<br>` RHEL_BYOS (for RHEL) :code:`<br>`:code:`<br>` SLES_BYOS (for SUSE)
-         :code:`<br>`:code:`<br>` For more information, see `Azure Hybrid Use Benefit for Windows Server
+         on-premises. :code:`<br>`\\ :code:`<br>` Possible values for Windows Server operating system
+         are: :code:`<br>`\\ :code:`<br>` Windows_Client :code:`<br>`\\ :code:`<br>` Windows_Server
+         :code:`<br>`\\ :code:`<br>` Possible values for Linux Server operating system are:
+         :code:`<br>`\\ :code:`<br>` RHEL_BYOS (for RHEL) :code:`<br>`\\ :code:`<br>` SLES_BYOS (for
+         SUSE) :code:`<br>`\\ :code:`<br>` For more information, see `Azure Hybrid Use Benefit for
+         Windows Server
          <https://docs.microsoft.com/azure/virtual-machines/windows/hybrid-use-benefit-licensing>`_
-         :code:`<br>`:code:`<br>` `Azure Hybrid Use Benefit for Linux Server
+         :code:`<br>`\\ :code:`<br>` `Azure Hybrid Use Benefit for Linux Server
          <https://docs.microsoft.com/azure/virtual-machines/linux/azure-hybrid-benefit-linux>`_
-         :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
+         :code:`<br>`\\ :code:`<br>` Minimum api-version: 2015-06-15.
         :paramtype license_type: str
         :keyword priority: Specifies the priority for the virtual machines in the scale set. Minimum
          api-version: 2017-10-30-preview. Known values are: "Regular", "Low", and "Spot".
@@ -15110,7 +15113,7 @@ class VirtualMachineStatusCodeCount(_serialization.Model):
         self.count = None
 
 
-class VirtualMachineUpdate(UpdateResource):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineUpdate(UpdateResource):
     """Describes a Virtual Machine Update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -15192,15 +15195,16 @@ class VirtualMachineUpdate(UpdateResource):  # pylint: disable=too-many-instance
     :ivar instance_view: The virtual machine instance view.
     :vartype instance_view: ~azure.mgmt.compute.v2023_03_01.models.VirtualMachineInstanceView
     :ivar license_type: Specifies that the image or disk that is being used was licensed
-     on-premises. :code:`<br>`:code:`<br>` Possible values for Windows Server operating system are:
-     :code:`<br>`:code:`<br>` Windows_Client :code:`<br>`:code:`<br>` Windows_Server
-     :code:`<br>`:code:`<br>` Possible values for Linux Server operating system are:
-     :code:`<br>`:code:`<br>` RHEL_BYOS (for RHEL) :code:`<br>`:code:`<br>` SLES_BYOS (for SUSE)
-     :code:`<br>`:code:`<br>` For more information, see `Azure Hybrid Use Benefit for Windows Server
+     on-premises. :code:`<br>`\\ :code:`<br>` Possible values for Windows Server operating system
+     are: :code:`<br>`\\ :code:`<br>` Windows_Client :code:`<br>`\\ :code:`<br>` Windows_Server
+     :code:`<br>`\\ :code:`<br>` Possible values for Linux Server operating system are:
+     :code:`<br>`\\ :code:`<br>` RHEL_BYOS (for RHEL) :code:`<br>`\\ :code:`<br>` SLES_BYOS (for
+     SUSE) :code:`<br>`\\ :code:`<br>` For more information, see `Azure Hybrid Use Benefit for
+     Windows Server
      <https://docs.microsoft.com/azure/virtual-machines/windows/hybrid-use-benefit-licensing>`_
-     :code:`<br>`:code:`<br>` `Azure Hybrid Use Benefit for Linux Server
+     :code:`<br>`\\ :code:`<br>` `Azure Hybrid Use Benefit for Linux Server
      <https://docs.microsoft.com/azure/virtual-machines/linux/azure-hybrid-benefit-linux>`_
-     :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
+     :code:`<br>`\\ :code:`<br>` Minimum api-version: 2015-06-15.
     :vartype license_type: str
     :ivar vm_id: Specifies the VM unique ID which is a 128-bits identifier that is encoded and
      stored in all Azure IaaS VMs SMBIOS and can be read using platform BIOS commands.
@@ -15381,15 +15385,16 @@ class VirtualMachineUpdate(UpdateResource):  # pylint: disable=too-many-instance
          api-version: 2020-06-01.
         :paramtype host_group: ~azure.mgmt.compute.v2023_03_01.models.SubResource
         :keyword license_type: Specifies that the image or disk that is being used was licensed
-         on-premises. :code:`<br>`:code:`<br>` Possible values for Windows Server operating system are:
-         :code:`<br>`:code:`<br>` Windows_Client :code:`<br>`:code:`<br>` Windows_Server
-         :code:`<br>`:code:`<br>` Possible values for Linux Server operating system are:
-         :code:`<br>`:code:`<br>` RHEL_BYOS (for RHEL) :code:`<br>`:code:`<br>` SLES_BYOS (for SUSE)
-         :code:`<br>`:code:`<br>` For more information, see `Azure Hybrid Use Benefit for Windows Server
+         on-premises. :code:`<br>`\\ :code:`<br>` Possible values for Windows Server operating system
+         are: :code:`<br>`\\ :code:`<br>` Windows_Client :code:`<br>`\\ :code:`<br>` Windows_Server
+         :code:`<br>`\\ :code:`<br>` Possible values for Linux Server operating system are:
+         :code:`<br>`\\ :code:`<br>` RHEL_BYOS (for RHEL) :code:`<br>`\\ :code:`<br>` SLES_BYOS (for
+         SUSE) :code:`<br>`\\ :code:`<br>` For more information, see `Azure Hybrid Use Benefit for
+         Windows Server
          <https://docs.microsoft.com/azure/virtual-machines/windows/hybrid-use-benefit-licensing>`_
-         :code:`<br>`:code:`<br>` `Azure Hybrid Use Benefit for Linux Server
+         :code:`<br>`\\ :code:`<br>` `Azure Hybrid Use Benefit for Linux Server
          <https://docs.microsoft.com/azure/virtual-machines/linux/azure-hybrid-benefit-linux>`_
-         :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
+         :code:`<br>`\\ :code:`<br>` Minimum api-version: 2015-06-15.
         :paramtype license_type: str
         :keyword extensions_time_budget: Specifies the time alloted for all extensions to start. The
          time duration should be between 15 minutes and 120 minutes (inclusive) and should be specified
@@ -15903,12 +15908,13 @@ class WinRMListener(_serialization.Model):
      a secret. For adding a secret to the Key Vault, see `Add a key or secret to the key vault
      <https://docs.microsoft.com/azure/key-vault/key-vault-get-started/#add>`_. In this case, your
      certificate needs to be the Base64 encoding of the following JSON Object which is encoded in
-     UTF-8: :code:`<br>`:code:`<br>` {:code:`<br>`
-     "data":":code:`<Base64-encoded-certificate>`",:code:`<br>`  "dataType":"pfx",:code:`<br>`
-     "password":":code:`<pfx-file-password>`":code:`<br>`} :code:`<br>` To install certificates on a
-     virtual machine it is recommended to use the `Azure Key Vault virtual machine extension for
-     Linux <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_ or the
-     `Azure Key Vault virtual machine extension for Windows
+     UTF-8: :code:`<br>`\\ :code:`<br>` {\\ :code:`<br>`  "data":"\\
+     :code:`<Base64-encoded-certificate>`",\\ :code:`<br>`  "dataType":"pfx",\\ :code:`<br>`
+     "password":"\\ :code:`<pfx-file-password>`"\\ :code:`<br>`} :code:`<br>` To install
+     certificates on a virtual machine it is recommended to use the `Azure Key Vault virtual machine
+     extension for Linux
+     <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_ or the `Azure
+     Key Vault virtual machine extension for Windows
      <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_.
     :vartype certificate_url: str
     """
@@ -15933,12 +15939,13 @@ class WinRMListener(_serialization.Model):
          as a secret. For adding a secret to the Key Vault, see `Add a key or secret to the key vault
          <https://docs.microsoft.com/azure/key-vault/key-vault-get-started/#add>`_. In this case, your
          certificate needs to be the Base64 encoding of the following JSON Object which is encoded in
-         UTF-8: :code:`<br>`:code:`<br>` {:code:`<br>`
-         "data":":code:`<Base64-encoded-certificate>`",:code:`<br>`  "dataType":"pfx",:code:`<br>`
-         "password":":code:`<pfx-file-password>`":code:`<br>`} :code:`<br>` To install certificates on a
-         virtual machine it is recommended to use the `Azure Key Vault virtual machine extension for
-         Linux <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_ or the
-         `Azure Key Vault virtual machine extension for Windows
+         UTF-8: :code:`<br>`\\ :code:`<br>` {\\ :code:`<br>`  "data":"\\
+         :code:`<Base64-encoded-certificate>`",\\ :code:`<br>`  "dataType":"pfx",\\ :code:`<br>`
+         "password":"\\ :code:`<pfx-file-password>`"\\ :code:`<br>`} :code:`<br>` To install
+         certificates on a virtual machine it is recommended to use the `Azure Key Vault virtual machine
+         extension for Linux
+         <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_ or the `Azure
+         Key Vault virtual machine extension for Windows
          <https://docs.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_.
         :paramtype certificate_url: str
         """

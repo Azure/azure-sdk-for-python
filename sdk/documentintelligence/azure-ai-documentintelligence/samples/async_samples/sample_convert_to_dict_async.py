@@ -46,9 +46,7 @@ async def convert_to_and_from_dict_async():
     document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     async with document_intelligence_client:
         with open(path_to_sample_documents, "rb") as f:
-            poller = await document_intelligence_client.begin_analyze_document(
-                "prebuilt-layout", analyze_request=f, content_type="application/octet-stream"
-            )
+            poller = await document_intelligence_client.begin_analyze_document("prebuilt-layout", body=f)
         result: AnalyzeResult = await poller.result()
 
     # convert the received model to a dictionary
