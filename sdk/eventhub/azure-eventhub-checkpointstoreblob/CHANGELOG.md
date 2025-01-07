@@ -2,7 +2,7 @@
 
 ## 1.2.0 (Unreleased)
 
-This version and all future versions will require Python 3.7+. Python 2.7 and 3.6 are no longer supported.
+This version and all future versions will require Python 3.8+. Python 2.7, 3.6, and 3.7 are no longer supported.
 
 ### Bugs Fixed
 
