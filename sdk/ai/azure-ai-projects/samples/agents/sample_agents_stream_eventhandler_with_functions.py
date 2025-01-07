@@ -44,6 +44,7 @@ project_client = AIProjectClient.from_connection_string(
 class MyEventHandler(AgentEventHandler):
 
     def __init__(self, functions: FunctionTool) -> None:
+        super().__init__()
         self.functions = functions
         super().__init__()
 
@@ -102,7 +103,7 @@ with project_client:
     functions = FunctionTool(user_functions)
 
     agent = project_client.agents.create_agent(
-        model="gpt-4-1106-preview",
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-assistant",
         instructions="You are a helpful assistant",
         tools=functions.definitions,

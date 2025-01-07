@@ -20,7 +20,7 @@ class TestNetworkManagementFirewallPolicyDraftsOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_firewall_policy_drafts_create_or_update(self, resource_group):
         response = self.client.firewall_policy_drafts.create_or_update(
             resource_group_name=resource_group.name,
             firewall_policy_name="str",
@@ -73,7 +73,7 @@ class TestNetworkManagementFirewallPolicyDraftsOperations(AzureMgmtRecordedTestC
                 "threatIntelWhitelist": {"fqdns": ["str"], "ipAddresses": ["str"]},
                 "type": "str",
             },
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -81,11 +81,11 @@ class TestNetworkManagementFirewallPolicyDraftsOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_firewall_policy_drafts_delete(self, resource_group):
         response = self.client.firewall_policy_drafts.delete(
             resource_group_name=resource_group.name,
             firewall_policy_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -93,11 +93,11 @@ class TestNetworkManagementFirewallPolicyDraftsOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_firewall_policy_drafts_get(self, resource_group):
         response = self.client.firewall_policy_drafts.get(
             resource_group_name=resource_group.name,
             firewall_policy_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself

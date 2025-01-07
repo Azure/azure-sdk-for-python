@@ -52,7 +52,7 @@ async def main() -> None:
             project_client.telemetry.enable(destination=sys.stdout)
 
             agent = await project_client.agents.create_agent(
-                model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
+                model=os.environ["MODEL_DEPLOYMENT_NAME"], name="my-assistant", instructions="You are helpful assistant"
             )
             print(f"Created agent, agent ID: {agent.id}")
 

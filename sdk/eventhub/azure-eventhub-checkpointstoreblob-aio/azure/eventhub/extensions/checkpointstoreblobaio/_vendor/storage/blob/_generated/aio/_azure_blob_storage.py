@@ -6,31 +6,34 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+from copy import deepcopy
+from typing import Any, Awaitable
+from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
-from msrest import Deserializer, Serializer
+from azure.core.pipeline import policies
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 
+from .. import models as _models
+from .._serialization import Deserializer, Serializer
 from ._configuration import AzureBlobStorageConfiguration
-from .operations import ServiceOperations
-from .operations import ContainerOperations
-from .operations import DirectoryOperations
-from .operations import BlobOperations
-from .operations import PageBlobOperations
-from .operations import AppendBlobOperations
-from .operations import BlockBlobOperations
-from .. import models
+from .operations import (
+    AppendBlobOperations,
+    BlobOperations,
+    BlockBlobOperations,
+    ContainerOperations,
+    PageBlobOperations,
+    ServiceOperations,
+)
 
 
-class AzureBlobStorage(object):
+class AzureBlobStorage:  # pylint: disable=client-accepts-api-version-keyword
     """AzureBlobStorage.
 
     :ivar service: ServiceOperations operations
     :vartype service: azure.storage.blob.aio.operations.ServiceOperations
     :ivar container: ContainerOperations operations
     :vartype container: azure.storage.blob.aio.operations.ContainerOperations
-    :ivar directory: DirectoryOperations operations
-    :vartype directory: azure.storage.blob.aio.operations.DirectoryOperations
     :ivar blob: BlobOperations operations
     :vartype blob: azure.storage.blob.aio.operations.BlobOperations
     :ivar page_blob: PageBlobOperations operations
@@ -39,45 +42,80 @@ class AzureBlobStorage(object):
     :vartype append_blob: azure.storage.blob.aio.operations.AppendBlobOperations
     :ivar block_blob: BlockBlobOperations operations
     :vartype block_blob: azure.storage.blob.aio.operations.BlockBlobOperations
-    :param url: The URL of the service account, container, or blob that is the targe of the desired operation.
+    :param url: The URL of the service account, container, or blob that is the target of the
+     desired operation. Required.
     :type url: str
+    :param base_url: Service URL. Required. Default value is "".
+    :type base_url: str
+    :keyword version: Specifies the version of the operation to use for this request. Default value
+     is "2025-01-05". Note that overriding this default value may result in unsupported behavior.
+    :paramtype version: str
     """
 
-    def __init__(
-        self,
-        url: str,
-        **kwargs: Any
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
+        self, url: str, base_url: str = "", **kwargs: Any
     ) -> None:
-        base_url = '{url}'
-        self._config = AzureBlobStorageConfiguration(url, **kwargs)
-        self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._config = AzureBlobStorageConfiguration(url=url, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=base_url, policies=_policies, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
+        self._serialize.client_side_validation = False
+        self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.container = ContainerOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.blob = BlobOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.page_blob = PageBlobOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.append_blob = AppendBlobOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.block_blob = BlockBlobOperations(self._client, self._config, self._serialize, self._deserialize)
 
-        self.service = ServiceOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.container = ContainerOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.directory = DirectoryOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.blob = BlobOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.page_blob = PageBlobOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.append_blob = AppendBlobOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.block_blob = BlockBlobOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+    def _send_request(
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
+        """Runs the network request through the client's chained policies.
+
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = await client._send_request(request)
+        <AsyncHttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.AsyncHttpResponse
+        """
+
+        request_copy = deepcopy(request)
+        request_copy.url = self._client.format_url(request_copy.url)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "AzureBlobStorage":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)
