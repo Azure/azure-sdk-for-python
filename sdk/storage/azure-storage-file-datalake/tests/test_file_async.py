@@ -607,6 +607,29 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         downloaded_data = await (await file_client.download_file()).readall()
         assert data == downloaded_data
 
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_upload_data_progress(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+        called = []
+        async def callback(received, total):
+            called.append((received, total))
+
+        file_client = directory_client.get_file_client('filename')
+        data = self.get_random_bytes(8*1024)
+        await file_client.upload_data(data, overwrite=True, progress_hook=callback, chunk_size=1024)
+        assert len(called) == 8
+
     @DataLakePreparer()
     @recorded_by_proxy_async
     async def test_upload_data_to_existing_file(self, **kwargs):
