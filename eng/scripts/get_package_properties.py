@@ -10,8 +10,8 @@ additional_pr_triggers: Dict[str, List[str]] = {
     "azure-core":[
         os.path.join("/sdk", "servicebus", "azure-servicebus"),
         os.path.join("/sdk", "eventhub", "azure-eventhub"),
-        os.path.join("/sdk", "tables", "azure-data-table"),
-        os.path.join("/sdk", "appconfig", "azure-appconfig"),
+        os.path.join("/sdk", "tables", "azure-data-tables"),
+        os.path.join("/sdk", "appconfiguration", "azure-appconfiguration"),
         os.path.join("/sdk", "keyvault", "azure-keyvault-keys"),
         os.path.join("/sdk", "identity", "azure-identity"),
         os.path.join("/sdk", "core", "azure-mgmt-core"),
@@ -34,7 +34,7 @@ additional_pr_triggers: Dict[str, List[str]] = {
     "azure-mgmt-core": [
         os.path.join("/sdk", "compute", "azure-mgmt-compute"),
         os.path.join("/sdk", "network", "azure-mgmt-network"),
-        os.path.join("/sdk", "resource", "azure-mgmt-resource"),
+        os.path.join("/sdk", "resources", "azure-mgmt-resource"),
         os.path.join("/sdk", "keyvault", "azure-mgmt-keyvault")
     ]
 }
