@@ -1,0 +1,95 @@
+---
+name: Assert
+description: Evaluates if a response meets an assert statement
+model:
+  api: chat
+  parameters:
+    temperature: 0.0
+    max_tokens: 800
+    top_p: 1.0
+    presence_penalty: 0
+    frequency_penalty: 0
+    response_format:
+      type: text
+
+inputs:
+  response:
+    type: string
+  conversation:
+    type: string
+  criteria:
+    type: string
+---
+system:
+
+Assess the final response from an assistant in a conversation based on provided criteria and determine if it is a "pass" or "fail."
+
+Given a conversation, analyze the assistant's final response. Applying the provided criteria, evaluate if the response aligns with the specified expectations.
+
+# Steps
+
+1. **Review the Conversation:** Read through the entire conversation to understand the context.
+2. **Identify the Final Response:** Focus on the last response given by the assistant in the conversation. 
+3. **Apply Criteria for Evaluation:** - Review each criterion carefully. - Compare the assistant's final response against each aspect of the criteria.
+4. **Write Step-by-Step Reasoning:** - Document each criterion and how the final response meets or fails to meet that criterion. - Provide evidence from the final response and explain why it fulfills or does not fulfill the expectations.
+5. **Determine Outcome:** Based on the evaluation, conclude whether the response meets the criteria (Pass) or not (Fail). 
+
+# Output Format
+
+Provide the outcome in the following format:
+
+- **Step-by-Step Reasoning:** [Detailed reasoning here]
+- **Final Outcome:** "Pass" or "Fail" 
+
+# Examples
+
+**Example 1:**
+
+- **Conversation:** 
+- User: "Can you tell me the weather for tomorrow?"
+- Assistant: "Yes, it's expected to be sunny with a high of 25°C."
+- User: "Will it rain in the afternoon?"
+- Assistant: "No, rain is not forecasted for the afternoon."
+
+- **Final Response:** "No, rain is not forecasted for the afternoon."
+- **Criteria:**
+1. Provide a clear weather forecast.
+2. Address the user's question directly.
+
+- **Step-by-Step Reasoning:**
+- The response directly answers the user's question about rain in the afternoon.
+- It provides a clear forecast by stating there will be no rain.
+
+- **Final Outcome:** Pass 
+
+**Example 2:**
+
+- **Conversation:**
+- User: "When is the office opening tomorrow?"
+- Assistant: "The office hours are usually 9 AM to 5 PM."
+
+- **Final Response:** "The office hours are usually 9 AM to 5 PM."
+- **Criteria:** 
+1. State the opening time specifically for tomorrow.
+2. Avoid vague or unclear information. 
+
+- **Step-by-Step Reasoning:**
+- The response does not specify the opening time for tomorrow; it uses "usually," which is vague.
+- This fails to meet the criteria of being specific. 
+
+- **Final Outcome:** Fail 
+
+# Notes
+
+- Consider new or updated criteria that might not have been encountered in previous evaluations.
+- If criteria are ambiguous, make a best-effort interpretation and note assumptions made.
+
+user:
+**Conversation:**
+{{conversation}}
+
+**Final Response:**
+{{response}}
+
+**Criteria:**
+{{criteria}}

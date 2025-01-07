@@ -33,6 +33,7 @@ from ._evaluators._retrieval import RetrievalEvaluator
 from ._evaluators._rouge import RougeScoreEvaluator, RougeType
 from ._evaluators._similarity import SimilarityEvaluator
 from ._evaluators._xpia import IndirectAttackEvaluator
+from ._evaluators._assert import AssertEvaluator, LLMAssert
 from ._model_configurations import (
     AzureAIProject,
     AzureOpenAIModelConfiguration,
@@ -79,4 +80,6 @@ __all__ = [
     "SexualMultimodalEvaluator",
     "ViolenceMultimodalEvaluator",
     "ProtectedMaterialMultimodalEvaluator",
+    "LLMAssert",
+    "AssertEvaluator",
 ]
