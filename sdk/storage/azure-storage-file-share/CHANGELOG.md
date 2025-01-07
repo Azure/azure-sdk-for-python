@@ -14,7 +14,7 @@ request headers `x-ms-file-permission-key`, `x-ms-file-attributes`, `x-ms-file-c
 service version 2021-06-08. The default behavior of these APIs remain the same.
 
 ### Bugs Fixed
-- Fixed an issue where `StorageStreamDownloader.read()` on blob behaves differently 
+- Fixed an issue where `StorageStreamDownloader.read()` on blob behaves differently for negative values
 when using `chars` instead of `size`.
 
 ## 12.20.0 (2024-11-13)
