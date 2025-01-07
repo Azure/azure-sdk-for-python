@@ -163,7 +163,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
         # Pass a vector indexing policy with wrong indexingSearchListSize value
         indexing_policy = {
             "vectorIndexes": [
-                {"path": "/vector2", "type": "diskANN", "indexingSearchListSize": 5}]
+                {"path": "/vector1", "type": "diskANN", "indexingSearchListSize": 5}]
         }
         try:
             await self.test_db.create_container(

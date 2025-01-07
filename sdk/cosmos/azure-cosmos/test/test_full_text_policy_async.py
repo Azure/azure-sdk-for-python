@@ -136,7 +136,7 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
             full_text_policy=full_text_policy,
             indexing_policy=indexing_policy
         )
-        properties = replaced_container.read()
+        properties = await replaced_container.read()
         assert properties["fullTextPolicy"] == full_text_policy
         assert properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
         assert created_container_properties['fullTextPolicy'] != properties['fullTextPolicy']
