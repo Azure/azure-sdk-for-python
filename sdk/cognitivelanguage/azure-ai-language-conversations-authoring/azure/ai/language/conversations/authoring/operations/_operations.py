@@ -1772,10 +1772,14 @@ class AnalyzeConversationAuthoringOperations:  # pylint: disable=too-many-public
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._config.endpoint.rstrip("/"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        print("Config Endpoint:", self._config.endpoint)
+        print("Serialized Endpoint:", self._serialize.url("self._config.endpoint", self._config.endpoint, "str"))
+        print("new Serialized Endpoint:", self._config.endpoint.rstrip("/"))
+        print("Final Request URL:", _request.url)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs

@@ -32,7 +32,9 @@ load_dotenv()
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
+    
     conversationsauthoring_endpoint = os.environ.get("AZURE_AUTHORING_ENDPOINT", "AZURE_AUTHORING_ENDPOINT")
     conversationsauthoring_key = os.environ.get("AZURE_AUTHORING_KEY", "AZURE_AUTHORING_KEY")
+    
     add_general_string_sanitizer(target=conversationsauthoring_endpoint, value="AZURE_AUTHORING_ENDPOINT")
     add_general_string_sanitizer(target=conversationsauthoring_key, value="AZURE_AUTHORING_KEY")

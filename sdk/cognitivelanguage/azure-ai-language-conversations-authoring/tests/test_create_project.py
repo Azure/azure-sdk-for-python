@@ -45,7 +45,7 @@ class TestConversationsAuthoringCase(TestConversationsAuthoring):
         assert response is not None  # Ensure the response is not None
         assert response.project_name == project_name  # Check that the project name matches
         assert response.language == project_data["language"]  # Check that the language matches
-        assert response.project_kind == project_data["project_kind"]  # Check that the project kind matches
+        assert response.project_kind == project_data["projectKind"]  # Check that the project kind matches
 
         # Print confirmation for debugging
         print(f"Project created successfully: {response.project_name}")

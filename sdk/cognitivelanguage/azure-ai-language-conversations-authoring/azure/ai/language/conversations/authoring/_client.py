@@ -101,6 +101,8 @@ class AuthoringClient:
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        print("testclient4:", request_copy.url)
+        print("testclient5")
         return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     def close(self) -> None:
