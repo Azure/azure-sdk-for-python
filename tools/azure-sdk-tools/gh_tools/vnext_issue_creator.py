@@ -112,12 +112,15 @@ def get_labels(package_name: str, service: str) -> list[str]:
             try:
                 library = parts[1]
                 if package_name == library:
-                    return labels.append(label)
+                    labels.append(label)
+                    return labels
             except IndexError:
                 if service_directory == service:
                     service_label = label
 
-    return labels.append(service_label) if service_label else labels
+    if service_label:
+        labels.append(service_label)
+    return labels
 
 
 def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
