@@ -71,7 +71,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def _get_internal_response_format(
-    response_format:Optional[Union[Literal["text", "json_object"], _models.JsonSchemaFormat]]
+    response_format: Optional[Union[Literal["text", "json_object"], _models.JsonSchemaFormat]]
 ) -> Optional[_models._models.ChatCompletionsResponseFormat]:
     """
     Internal helper method to convert between the public response format type that's supported in the 'complete` method,
@@ -81,17 +81,27 @@ def _get_internal_response_format(
     :type response_format: Optional[Union[Literal["text", "json_object"], _models.JsonSchemaFormat]]
     """
     if response_format is not None:
+
+        # To make mypy tool happy, start by declaring the type as the base class
+        internal_response_format: _models._models.ChatCompletionsResponseFormat
+
         # Note: the `type=".."`` should no longer be needed in the constructors below after a Python emitter fix
         # that Isabella Cai is making soon (https://github.com/microsoft/typespec/pull/5517). At the moment,
         # auto-emitted classes that are marked as in Internal in TypeSpec are missing a constructor that sets
         # the discriminant field (`type`). This is why we need to explicitly set it here.
         if isinstance(response_format, str) and response_format == "text":
-            internal_response_format = _models._models.ChatCompletionsResponseFormatText(type="text")  # pylint: disable=protected-access
+            internal_response_format = _models._models.ChatCompletionsResponseFormatText(
+                type="text"
+            )  # pylint: disable=protected-access
         elif isinstance(response_format, str) and response_format == "json_object":
-            internal_response_format = _models._models.ChatCompletionsResponseFormatJsonObject(type="json_object")  # pylint: disable=protected-access
+            internal_response_format = _models._models.ChatCompletionsResponseFormatJsonObject(
+                type="json_object"
+            )  # pylint: disable=protected-access
         elif isinstance(response_format, _models.JsonSchemaFormat):
-            internal_response_format = _models._models.ChatCompletionsResponseFormatJsonSchema(  # pylint: disable=protected-access
-                type="json_schema", json_schema=response_format
+            internal_response_format = (
+                _models._models.ChatCompletionsResponseFormatJsonSchema(  # pylint: disable=protected-access
+                    type="json_schema", json_schema=response_format
+                )
             )
         else:
             raise ValueError(f"Unsupported `response_format` {response_format}")
