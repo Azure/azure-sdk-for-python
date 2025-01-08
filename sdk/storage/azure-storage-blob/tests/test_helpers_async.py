@@ -86,6 +86,7 @@ class MockAioHttpClientResponse(ClientResponse):
 
 
 class MockStorageTransport(AsyncHttpTransport):
+    """This transport returns legacy aio http response objects from Azure Storage."""
     async def send(self, request: HttpRequest, **kwargs: Any) -> RestAioHttpTransportResponse:
         if request.method == 'GET':
             # download_blob
@@ -123,19 +124,14 @@ class MockStorageTransport(AsyncHttpTransport):
             )
         elif request.method == 'PUT':
             # upload_blob
-            headers = {
-                "Content-Length": "0",
-            }
-
-            if "content-md5" in request.headers:
-                headers["Content-MD5"] = "I3pVbaOCUTom\u002BG9F9uKFoA=="
-
             rest_response = RestAioHttpTransportResponse(
                 request=request,
                 internal_response=MockAioHttpClientResponse(
                     request.url,
                     b"",
-                    headers,
+                    {
+                        "Content-Length": "0",
+                    },
                     201,
                     "Created"
                 ),
