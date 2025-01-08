@@ -92,7 +92,6 @@ def get_date_for_version_bump(today: datetime.datetime) -> str:
 def get_labels(package_name: str, service: str) -> list[str]:
     repo_root = discover_repo_root()
     codeowners_path = pathlib.Path(repo_root) / ".github" / "CODEOWNERS"
-    print(f"codeowners_path: {codeowners_path}")
     with open(codeowners_path, "r") as codeowners_file:
         codeowners = codeowners_file.readlines()
 
