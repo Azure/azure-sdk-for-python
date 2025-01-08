@@ -5,10 +5,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import pytest
 from azure.mgmt.workloadssapvirtualinstance import WorkloadsSapVirtualInstanceMgmtClient
 from azure.identity import DefaultAzureCredential
 
 
+@pytest.mark.live_test_only
 def test_unittest_model():
     client = WorkloadsSapVirtualInstanceMgmtClient(DefaultAzureCredential(), "12345")
     body = {"configurationType": "DeploymentWithOSConfig"}
