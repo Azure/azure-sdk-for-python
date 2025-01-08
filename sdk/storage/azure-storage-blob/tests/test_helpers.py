@@ -4,11 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 from io import IOBase, UnsupportedOperation
-from typing import Any, Dict, Optional
+from typing import Optional
 
-from azure.core.pipeline.transport import HttpTransport
-from azure.core.rest import HttpRequest
-from azure.core.rest._http_response_impl import HttpResponseImpl, RestHttpClientTransportResponse
 
 class ProgressTracker:
     def __init__(self, total: int, step: int):
@@ -43,54 +40,3 @@ class NonSeekableStream(IOBase):
 
     def tell(self):
         return self.wrapped_stream.tell()
-
-
-class MockHttpClientResponse(HttpResponseImpl):
-    def __init__(
-        self, url: str,
-        body_bytes: bytes,
-        headers: Dict[str, Any],
-        status: int = 200,
-        reason: str = "OK"
-    ) -> None:
-        super(MockHttpClientResponse).__init__()
-        self._url = url
-        self._body = body_bytes
-        self._headers = headers
-        self._cache = {}
-        self._loop = None
-        self.status = status
-        self.reason = reason
-
-
-class MockStorageTransport(HttpTransport):
-    def send(self, request: HttpRequest, **kwargs: Any) -> RestHttpClientTransportResponse:
-        if request.method == 'GET':
-            # download_blob
-            rest_response = RestHttpClientTransportResponse(
-                request=request,
-                internal_response=MockHttpClientResponse(
-                    request.url,
-                    b"Hello Async World!",
-                    {
-                        "Content-Type": "application/octet-stream",
-                        "Content-Range": "bytes 0-17/18",
-                        "Content-Length": "18",
-                    },
-                )
-            )
-        else:
-            raise ValueError("The request is not accepted as part of MockStorageTransport.")
-        return rest_response.read()
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, *args):
-        pass
-
-    def open(self):
-        pass
-
-    def close(self):
-        pass
