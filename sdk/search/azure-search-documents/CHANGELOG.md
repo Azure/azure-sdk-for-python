@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Exposed `@search.document_debug_info` in the search results.
+
 ### Other Changes
 
 ## 11.6.0b8 (2024-11-21)
