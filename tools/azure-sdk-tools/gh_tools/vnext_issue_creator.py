@@ -18,6 +18,8 @@ import pathlib
 from typing_extensions import Literal
 from github import Github, Auth
 
+from ci_tools.variables import discover_repo_root
+
 logging.getLogger().setLevel(logging.INFO)
 
 CHECK_TYPE = Literal["mypy", "pylint", "pyright"]
@@ -88,7 +90,8 @@ def get_date_for_version_bump(today: datetime.datetime) -> str:
 
 
 def get_labels(package_name: str, service: str) -> list[str]:
-    codeowners_path = pathlib.Path(__file__).parent.parent.parent.parent / ".github" / "CODEOWNERS"
+    repo_root = discover_repo_root()
+    codeowners_path = pathlib.Path(repo_root) / ".github" / "CODEOWNERS"
     with open(codeowners_path, "r") as codeowners_file:
         codeowners = codeowners_file.readlines()
 
