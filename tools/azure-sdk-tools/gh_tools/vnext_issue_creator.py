@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 # This script is used to create issues for client libraries failing the vnext of mypy, pyright, and pylint.
+from __future__ import annotations
 
 import sys
 import os
