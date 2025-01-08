@@ -5,12 +5,12 @@
 ### Features Added
 
 * Added a client for Image Embeddings, named `ImageEmbeddingsClient`. See package README.md and new samples.
-* Added support for specifying the JSON schema of the Chat Completion response. See new class `ChatCompletionsResponseFormatJsonSchema`. See sample ...
+* Added support for Chat Completions response message in JSON format that adheres to a given JSON schema. Also known
+as "structured output". See new sample `sample_chat_completions_with_structured_output.py`.
 
 ### Breaking Changes
 
-* class `ChatCompletionsResponseFormatJson` renamed to `ChatCompletionsResponseFormatJsonObject`, to accommodate
-the new class `ChatCompletionsResponseFormatJsonSchema`.
+* If you previously configured your `ChatCompletionClient.complete()` call to output JSON format without a scheme, you have this in your code: `response_format=ChatCompletionsResponseFormatJSON()`. To maintain the same functionality, replace this with `response_format="json-object"`. We however recommend that you now switch to output JSON format with a provided schema if your AI model supports it.
 
 ### Bugs Fixed
 
