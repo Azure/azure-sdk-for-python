@@ -27,8 +27,9 @@ from ci_tools.environment_exclusions import (
     IGNORE_PACKAGES,
     FILTER_EXCLUSIONS,
 )
-
-IGNORE_PACKAGES.append("azure-openai")
+IGNORE_FILTER.append("mgmt")
+FILTER_EXCLUSIONS.append("azure-mgmt-core")
+IGNORE_PACKAGES.extend(["azure-openai", "azure-eventhub-checkpointstoretable"])
 
 # Github
 GIT_TOKEN = os.environ["GH_TOKEN"]
