@@ -85,5 +85,6 @@ setup(
     },
     dependency_links=[
         "git+https://github.com/microsoft/promptflow.git#egg=promptflow-devkit",
-        "git+https://github.com/microsoft/promptflow.git#egg=promptflow-core",
+        "git+https://github.com/microsoft/promptflow.git#egg=promptflow-core"
+    ],
 )
