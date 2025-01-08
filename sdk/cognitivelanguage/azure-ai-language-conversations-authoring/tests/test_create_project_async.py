@@ -8,7 +8,7 @@ from azure.core.credentials import AzureKeyCredential
 
 ConversationsAuthoringPreparer = functools.partial(
     PowerShellPreparer, 'conversationsauthoring',
-    conversationsauthoring_endpoint="fake_resource.cognitiveservices.azure.com/",
+    conversationsauthoring_endpoint="https://fake_resource.cognitiveservices.azure.com",
     conversationsauthoring_key="fake_key"
 )
 
