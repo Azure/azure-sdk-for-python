@@ -237,7 +237,7 @@ def main(generate_input, generate_output):
                     python_tag=python_tag,
                 )
                 config = generate_mgmt()
-                if need_regen_for_multiapi_package:
+                if need_regen_for_multiapi_package(spec_folder, readme_or_tsp):
                     generate_mgmt()
             elif "data-plane" in readme_or_tsp:
                 config = gen_dpg(readme_or_tsp, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
