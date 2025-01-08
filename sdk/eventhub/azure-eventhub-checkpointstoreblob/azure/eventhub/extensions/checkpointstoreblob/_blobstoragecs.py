@@ -93,7 +93,7 @@ class BlobCheckpointStore(CheckpointStore):
         cls,
         conn_str: str,
         container_name: str,
-        credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] = None,
+        credential: Optional[Union["AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,
         **kwargs: Any
     ) -> "BlobCheckpointStore":
         """Create BlobCheckpointStore from a storage connection string.
