@@ -28,11 +28,10 @@ from azure.ai.projects.models import (
     CodeInterpreterToolResource,
     FileSearchToolResource,
     ToolResources,
-    AgentRunStream,
+    AgentEventHandler,
 )
 from azure.ai.projects.models import (
     AgentStreamEvent,
-    MessageDeltaTextContent,
     MessageDeltaChunk,
     ThreadMessage,
     ThreadRun,
@@ -1613,7 +1612,6 @@ class TestAgentClient(AzureRecordedTestCase):
 
     # TODO create_stream doesn't work with body -- fails on for event_type, event_data : TypeError: 'ThreadRun' object is not an iterator
     @agentClientPreparer()
-    @pytest.mark.skip("Streaming functions with body need to be updated.")
     @recorded_by_proxy
     def test_create_stream_with_body(self, **kwargs):
         """Test creating stream with body."""
@@ -1658,7 +1656,6 @@ class TestAgentClient(AzureRecordedTestCase):
             print("Deleted agent")
 
     @agentClientPreparer()
-    @pytest.mark.skip("Streaming functions with body need to be updated.")
     @recorded_by_proxy
     def test_create_stream_with_iobytes(self, **kwargs):
         """Test creating stream with body: IO[bytes]."""
@@ -1701,7 +1698,6 @@ class TestAgentClient(AzureRecordedTestCase):
             print("Deleted agent")
 
     @agentClientPreparer()
-    @pytest.mark.skip("Working on recording sanitation.")
     @recorded_by_proxy
     def test_submit_tool_outputs_to_stream(self, **kwargs):
         """Test submitting tool outputs to stream."""
@@ -1712,7 +1708,6 @@ class TestAgentClient(AzureRecordedTestCase):
             self._do_test_submit_tool_outputs_to_stream(client=client, use_body=False, use_io=False)
 
     @agentClientPreparer()
-    @pytest.mark.skip("Working on recording sanitation.")
     @recorded_by_proxy
     def test_submit_tool_outputs_to_stream_with_body(self, **kwargs):
         """Test submitting tool outputs to stream with body: JSON."""
@@ -1723,7 +1718,6 @@ class TestAgentClient(AzureRecordedTestCase):
             self._do_test_submit_tool_outputs_to_stream(client=client, use_body=True, use_io=False)
 
     @agentClientPreparer()
-    @pytest.mark.skip("Working on recording sanitation.")
     @recorded_by_proxy
     def test_submit_tool_outputs_to_stream_with_iobytes(self, **kwargs):
         """Test submitting tool outputs to stream with body: IO[bytes]."""
@@ -1766,7 +1760,7 @@ class TestAgentClient(AzureRecordedTestCase):
 
         # create stream
         with client.agents.create_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
-            for event_type, event_data in stream:
+            for event_type, event_data, _ in stream:
 
                 # Check if tools are needed
                 if (
@@ -1784,35 +1778,33 @@ class TestAgentClient(AzureRecordedTestCase):
                     # submit tool outputs to stream
                     tool_outputs = toolset.execute_tool_calls(tool_calls)
 
+                    tool_event_handler = AgentEventHandler()
                     if tool_outputs:
                         if use_body:
                             body = {"tool_outputs": tool_outputs, "stream": True}
                             if use_io:
                                 binary_body = json.dumps(body).encode("utf-8")
                                 body = io.BytesIO(binary_body)
-                            with client.agents.submit_tool_outputs_to_stream(
-                                thread_id=thread.id, run_id=event_data.id, body=io.BytesIO(binary_body), stream=True
-                            ) as tool_stream:
-                                assert isinstance(tool_stream, AgentRunStream)
-                                for tool_event_type, tool_event_data in tool_stream:
-                                    assert (
-                                        isinstance(
-                                            tool_event_data, (MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep)
-                                        )
-                                        or tool_event_type == AgentStreamEvent.DONE
-                                    )
+                            client.agents.submit_tool_outputs_to_stream(
+                                thread_id=thread.id,
+                                run_id=event_data.id,
+                                body=body,
+                                event_handler=tool_event_handler,
+                                stream=True,
+                            )
                         else:
-                            with client.agents.submit_tool_outputs_to_stream(
-                                thread_id=thread.id, run_id=event_data.id, tool_outputs=tool_outputs
-                            ) as tool_stream:
-                                assert isinstance(tool_stream, AgentRunStream)
-                                for tool_event_type, tool_event_data in tool_stream:
-                                    assert (
-                                        isinstance(
-                                            tool_event_data, (MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep)
-                                        )
-                                        or tool_event_type == AgentStreamEvent.DONE
-                                    )
+                            client.agents.submit_tool_outputs_to_stream(
+                                thread_id=thread.id,
+                                run_id=event_data.id,
+                                tool_outputs=tool_outputs,
+                                event_handler=tool_event_handler,
+                            )
+                        for tool_event_type, tool_event_data, _ in tool_event_handler:
+                            assert (
+                                isinstance(tool_event_data, (MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep))
+                                or tool_event_type == AgentStreamEvent.DONE
+                            )
+
                         print("Submitted tool outputs to stream")
 
             print("Stream processing completed")
