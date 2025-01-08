@@ -68,7 +68,7 @@ class AsyncHttpXTransportResponse(AsyncHttpResponseImpl):
         """
         return self.internal_response.content
 
-    def stream_download(self, pipeline: Pipeline, **kwargs: Any) -> AsyncIterator[bytes]:
+    def stream_download(self, pipeline: Pipeline, **kwargs: Any) -> AsyncIterator[bytes]: # pylint: disable=docstring-keyword-should-match-keyword-only
         """Generator for streaming response data.
 
         :param pipeline: The pipeline object
@@ -167,7 +167,7 @@ class AsyncHttpXTransport(AsyncHttpTransport):
     async def __aexit__(self, *args) -> None:
         await self.close()
 
-    async def send(self, request: Union[HttpRequest, LegacyHttpRequest], **kwargs) -> AsyncHttpXTransportResponse:
+    async def send(self, request: Union[HttpRequest, LegacyHttpRequest], **kwargs) -> AsyncHttpXTransportResponse: # pylint: disable=docstring-keyword-should-match-keyword-only
         """Send the request using this HTTP sender.
 
         :param request: The request object to be sent.
@@ -189,7 +189,7 @@ class AsyncHttpXTransport(AsyncHttpTransport):
         }
 
         stream_ctx: Optional[ContextManager] = None
-
+        response: httpx.Response
         try:
             if stream_response and self.client:
                 req = self.client.build_request(**parameters)

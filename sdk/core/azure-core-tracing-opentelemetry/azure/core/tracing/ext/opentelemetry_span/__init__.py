@@ -147,7 +147,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         """
         return self._span_instance
 
-    def span(self, name: str = "span", **kwargs: Any) -> "OpenTelemetrySpan":
+    def span(self, name: str = "span", **kwargs: Any) -> "OpenTelemetrySpan": # pylint: disable=docstring-keyword-should-match-keyword-only
         """Create a child span for the current span and return it.
 
         :param name: Name of the child span
