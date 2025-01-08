@@ -851,29 +851,23 @@ class ImageUrl(_model_base.Model):
 
 
 class JsonSchemaFormat(_model_base.Model):
-    """The definition of a JSON schema, used to define the output format of a chat completion message.
-    The AI model
-    will need to adhere to this schema when generating completions.
+    """Defines the response format for chat completions as JSON with a given schema. The AI model
+     will need to adhere to this schema when generating completions.
 
     :ivar name: A name that labels this JSON schema. Must be a-z, A-Z, 0-9, or contain underscores
      and dashes, with a maximum length of 64. Required.
     :vartype name: str
-    :ivar schema: The definition of the JSON schema. See
-     https://json-schema.org/overview/what-is-jsonschema.
-       Note that AI models usually only support a subset of the keywords defined by JSON schema.
-     Consult your AI model documentation
-       to determine what is supported. Required.
+    :ivar schema: The definition of the JSON schema. See https://json-schema.org/overview/what-is-jsonschema.
+     Note that AI models usually only support a subset of the keywords defined by JSON schema.
+     Consult your AI model documentation to determine what is supported. Required.
     :vartype schema: dict[str, any]
     :ivar description: A description of the response format, used by the AI model to determine how
      to generate responses in this format.
     :vartype description: str
     :ivar strict: If set to true, the service will error out if the provided JSON schema contains
-     keywords
-       not supported by the AI model. An example of such keyword may be ``maxLength`` for JSON type
-     ``string``.
-       If false, and the provided JSON schema contains keywords not supported
-       by the AI model, the AI model will not error out. Instead it will ignore the unsupported
-     keywords.
+     keywords not supported by the AI model. An example of such keyword may be ``maxLength`` for JSON type
+     ``string``. If false, and the provided JSON schema contains keywords not supported
+     by the AI model, the AI model will not error out. Instead it will ignore the unsupported keywords.
     :vartype strict: bool
     """
 
@@ -882,18 +876,16 @@ class JsonSchemaFormat(_model_base.Model):
      with a maximum length of 64. Required."""
     schema: Dict[str, Any] = rest_field()
     """The definition of the JSON schema. See https://json-schema.org/overview/what-is-jsonschema.
-       Note that AI models usually only support a subset of the keywords defined by JSON schema.
-     Consult your AI model documentation
-       to determine what is supported. Required."""
+     Note that AI models usually only support a subset of the keywords defined by JSON schema.
+     Consult your AI model documentation to determine what is supported. Required."""
     description: Optional[str] = rest_field()
     """A description of the response format, used by the AI model to determine how to generate
      responses in this format."""
     strict: Optional[bool] = rest_field()
     """If set to true, the service will error out if the provided JSON schema contains keywords
-       not supported by the AI model. An example of such keyword may be ``maxLength`` for JSON type
-     ``string``.
-       If false, and the provided JSON schema contains keywords not supported
-       by the AI model, the AI model will not error out. Instead it will ignore the unsupported
+     not supported by the AI model. An example of such keyword may be ``maxLength`` for JSON type
+     ``string``. If false, and the provided JSON schema contains keywords not supported
+     by the AI model, the AI model will not error out. Instead it will ignore the unsupported
      keywords."""
 
     @overload
