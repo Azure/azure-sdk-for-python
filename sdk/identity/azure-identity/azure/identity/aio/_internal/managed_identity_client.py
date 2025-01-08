@@ -15,7 +15,7 @@ from ..._internal.pipeline import build_async_pipeline
 T = TypeVar("T", bound="AsyncManagedIdentityClient")
 
 
-# pylint:disable=async-client-bad-name,missing-client-constructor-parameter-credential
+# pylint:disable=async-client-bad-name
 class AsyncManagedIdentityClient(AsyncContextManager, ManagedIdentityClientBase):
     async def __aenter__(self: T) -> T:
         await self._pipeline.__aenter__()
