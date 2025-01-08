@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from urllib.parse import urlparse
 
-# pylint: disable=unused-import,ungrouped-imports
+# pylint: disable=unused-import
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, Tuple
 from datetime import datetime
 
@@ -175,7 +175,7 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
         )
 
     @distributed_trace
-    def list_read_receipts(self, **kwargs: Any) -> AsyncItemPaged[ChatMessageReadReceipt]:
+    def list_read_receipts(self, **kwargs: Any) -> AsyncItemPaged[ChatMessageReadReceipt]: # pylint:disable=docstring-keyword-should-match-keyword-only
         """Gets read receipts for a thread.
 
         :keyword int results_per_page: The maximum number of chat message read receipts to be returned per page.
@@ -233,7 +233,7 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
         )
 
     @distributed_trace_async
-    async def send_message(self, content: str, *, metadata: Dict[str, str] = None, **kwargs) -> SendChatMessageResult:
+    async def send_message(self, content: str, *, metadata: Dict[str, str] = None, **kwargs) -> SendChatMessageResult: # pylint:disable=docstring-keyword-should-match-keyword-only
         """Sends a message to a thread.
 
         :param content: Required. Chat message content.
@@ -265,7 +265,7 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
             chat_message_type = ChatMessageType.TEXT
         elif not isinstance(chat_message_type, ChatMessageType):
             try:
-                chat_message_type = ChatMessageType.__getattr__(chat_message_type)  # pylint:disable=protected-access
+                chat_message_type = ChatMessageType.__getattr__(chat_message_type)
             except Exception:
                 raise ValueError(  # pylint:disable=raise-missing-from
                     "chat_message_type: {message_type} is not acceptable".format(message_type=chat_message_type)
@@ -313,7 +313,7 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
         return ChatMessage._from_generated(chat_message)  # pylint:disable=protected-access
 
     @distributed_trace
-    def list_messages(self, **kwargs: Any) -> AsyncItemPaged[ChatMessage]:
+    def list_messages(self, **kwargs: Any) -> AsyncItemPaged[ChatMessage]: # pylint:disable=docstring-keyword-should-match-keyword-only
         """Gets a list of messages from a thread.
 
         :keyword int results_per_page: The maximum number of messages to be returned per page.
@@ -404,7 +404,7 @@ class ChatThreadClient(object):  # pylint: disable=client-accepts-api-version-ke
         )
 
     @distributed_trace
-    def list_participants(self, **kwargs: Any) -> AsyncItemPaged[ChatParticipant]:
+    def list_participants(self, **kwargs: Any) -> AsyncItemPaged[ChatParticipant]: # pylint:disable=docstring-keyword-should-match-keyword-only
         """Gets the participants of a thread.
 
         :keyword int results_per_page: The maximum number of participants to be returned per page.

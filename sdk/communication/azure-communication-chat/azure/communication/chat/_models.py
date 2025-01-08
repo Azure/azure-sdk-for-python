@@ -247,7 +247,6 @@ class ChatThreadProperties:
     :vartype created_by: ~azure.communication.chat.CommunicationIdentifier
     """
 
-    # pylint:disable=protected-access
 
     def __init__(self, **kwargs: Any) -> None:
         self.id = kwargs["id"]

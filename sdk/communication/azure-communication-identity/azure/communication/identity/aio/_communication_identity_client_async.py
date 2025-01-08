@@ -87,7 +87,7 @@ class CommunicationIdentityClient:
         return CommunicationUserIdentifier(identity_access_token.identity.id, raw_id=identity_access_token.identity.id)
 
     @distributed_trace_async
-    async def create_user_and_token(
+    async def create_user_and_token( # pylint:disable=docstring-keyword-should-match-keyword-only
         self, scopes: List[Union[str, "CommunicationTokenScope"]], **kwargs
     ) -> Tuple["CommunicationUserIdentifier", AccessToken]:
         """Create a single Communication user with an identity token.
@@ -135,7 +135,7 @@ class CommunicationIdentityClient:
         await self._identity_service_client.communication_identity.delete(user.properties["id"], **kwargs)
 
     @distributed_trace_async
-    async def get_token(
+    async def get_token( # pylint:disable=docstring-keyword-should-match-keyword-only
         self, user: CommunicationUserIdentifier, scopes: List[Union[str, "CommunicationTokenScope"]], **kwargs
     ) -> AccessToken:
         """Generates a new token for an identity.

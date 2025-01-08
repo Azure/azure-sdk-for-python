@@ -94,7 +94,7 @@ class CommunicationIdentityClient(object):
         return CommunicationUserIdentifier(identity_access_token.identity.id, raw_id=identity_access_token.identity.id)
 
     @distributed_trace
-    def create_user_and_token(
+    def create_user_and_token( # pylint: disable=docstring-keyword-should-match-keyword-only
         self,
         scopes,  # List[Union[str, CommunicationTokenScope]]
         **kwargs  # type: Any
@@ -147,7 +147,7 @@ class CommunicationIdentityClient(object):
         self._identity_service_client.communication_identity.delete(user.properties["id"], **kwargs)
 
     @distributed_trace
-    def get_token(
+    def get_token( # pylint: disable=docstring-keyword-should-match-keyword-only
         self,
         user,  # type: CommunicationUserIdentifier
         scopes,  # List[Union[str, CommunicationTokenScope]]

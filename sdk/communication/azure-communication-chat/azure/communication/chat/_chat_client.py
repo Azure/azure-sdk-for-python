@@ -23,7 +23,6 @@ from ._utils import (  # pylint: disable=unused-import
 from ._version import SDK_MONIKER
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from datetime import datetime
     from azure.core.paging import ItemPaged
 
@@ -110,7 +109,7 @@ class ChatClient(object):  # pylint: disable=client-accepts-api-version-keyword
         return ChatThreadClient(endpoint=self._endpoint, credential=self._credential, thread_id=thread_id, **kwargs)
 
     @distributed_trace
-    def create_chat_thread(
+    def create_chat_thread( # pylint:disable=docstring-keyword-should-match-keyword-only
         self,
         topic,  # type: str
         **kwargs  # type: Any
@@ -175,7 +174,7 @@ class ChatClient(object):  # pylint: disable=client-accepts-api-version-keyword
         return create_chat_thread_result
 
     @distributed_trace
-    def list_chat_threads(self, **kwargs):
+    def list_chat_threads(self, **kwargs): # pylint:disable=docstring-keyword-should-match-keyword-only
         # type: (...) -> ItemPaged[ChatThreadItem]
         """Gets the list of chat threads of a user.
 
@@ -234,9 +233,9 @@ class ChatClient(object):  # pylint: disable=client-accepts-api-version-keyword
 
     def __enter__(self):
         # type: () -> ChatClient
-        self._client.__enter__()  # pylint:disable=no-member
+        self._client.__enter__()
         return self
 
     def __exit__(self, *args):
         # type: (*Any) -> None
-        self._client.__exit__(*args)  # pylint:disable=no-member
+        self._client.__exit__(*args)

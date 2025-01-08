@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from urllib.parse import urlparse
 
-# pylint: disable=unused-import,ungrouped-imports
+# pylint: disable=unused-import
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
 from datetime import datetime
 from uuid import uuid4
@@ -100,7 +100,7 @@ class ChatClient(object):  # pylint: disable=client-accepts-api-version-keyword
         return ChatThreadClient(endpoint=self._endpoint, credential=self._credential, thread_id=thread_id, **kwargs)
 
     @distributed_trace_async
-    async def create_chat_thread(self, topic: str, **kwargs) -> CreateChatThreadResult:
+    async def create_chat_thread(self, topic: str, **kwargs) -> CreateChatThreadResult: # pylint:disable=docstring-keyword-should-match-keyword-only
         """Creates a chat thread.
 
         :param topic: Required. The thread topic.
@@ -160,7 +160,7 @@ class ChatClient(object):  # pylint: disable=client-accepts-api-version-keyword
         return create_chat_thread_result
 
     @distributed_trace
-    def list_chat_threads(self, **kwargs: Any) -> AsyncItemPaged[ChatThreadItem]:
+    def list_chat_threads(self, **kwargs: Any) -> AsyncItemPaged[ChatThreadItem]: # pylint:disable=docstring-keyword-should-match-keyword-only
         """Gets the list of chat threads of a user.
 
         :keyword int results_per_page: The maximum number of chat threads to be returned per page.
