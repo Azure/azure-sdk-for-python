@@ -93,7 +93,7 @@ class BlobCheckpointStore(CheckpointStore):
         cls,
         conn_str: str,
         container_name: str,
-        credential: Optional[Union["AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,
+        credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] = None,
         **kwargs: Any
     ) -> "BlobCheckpointStore":
         """Create BlobCheckpointStore from a storage connection string.
@@ -117,7 +117,7 @@ class BlobCheckpointStore(CheckpointStore):
         :rtype: ~azure.eventhub.extensions.checkpointstoreblob.BlobCheckpointStore
         """
 
-        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob')
+        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob') # type: ignore[arg-type]
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
 

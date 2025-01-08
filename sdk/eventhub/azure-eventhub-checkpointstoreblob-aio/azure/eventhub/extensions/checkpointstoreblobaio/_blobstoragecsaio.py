@@ -96,7 +96,7 @@ class BlobCheckpointStore(CheckpointStore):
         :returns: A blob checkpoint store.
         :rtype: ~azure.eventhub.extensions.checkpointstoreblobaio.BlobCheckpointStore
         """
-        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob')
+        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob') # type: ignore[arg-type, assignment]
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
 
