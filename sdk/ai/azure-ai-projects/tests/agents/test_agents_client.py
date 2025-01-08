@@ -1612,7 +1612,6 @@ class TestAgentClient(AzureRecordedTestCase):
 
     # TODO create_stream doesn't work with body -- fails on for event_type, event_data : TypeError: 'ThreadRun' object is not an iterator
     @agentClientPreparer()
-    @pytest.mark.skip("Streaming functions with body need to be updated.")
     @recorded_by_proxy
     def test_create_stream_with_body(self, **kwargs):
         """Test creating stream with body."""
@@ -1657,7 +1656,6 @@ class TestAgentClient(AzureRecordedTestCase):
             print("Deleted agent")
 
     @agentClientPreparer()
-    @pytest.mark.skip("Streaming functions with body need to be updated.")
     @recorded_by_proxy
     def test_create_stream_with_iobytes(self, **kwargs):
         """Test creating stream with body: IO[bytes]."""
@@ -1700,7 +1698,6 @@ class TestAgentClient(AzureRecordedTestCase):
             print("Deleted agent")
 
     @agentClientPreparer()
-    @pytest.mark.skip("Working on recording sanitation.")
     @recorded_by_proxy
     def test_submit_tool_outputs_to_stream(self, **kwargs):
         """Test submitting tool outputs to stream."""
@@ -1711,7 +1708,6 @@ class TestAgentClient(AzureRecordedTestCase):
             self._do_test_submit_tool_outputs_to_stream(client=client, use_body=False, use_io=False)
 
     @agentClientPreparer()
-    @pytest.mark.skip("Working on recording sanitation.")
     @recorded_by_proxy
     def test_submit_tool_outputs_to_stream_with_body(self, **kwargs):
         """Test submitting tool outputs to stream with body: JSON."""
@@ -1722,7 +1718,6 @@ class TestAgentClient(AzureRecordedTestCase):
             self._do_test_submit_tool_outputs_to_stream(client=client, use_body=True, use_io=False)
 
     @agentClientPreparer()
-    @pytest.mark.skip("Working on recording sanitation.")
     @recorded_by_proxy
     def test_submit_tool_outputs_to_stream_with_iobytes(self, **kwargs):
         """Test submitting tool outputs to stream with body: IO[bytes]."""
