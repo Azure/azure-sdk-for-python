@@ -76,6 +76,9 @@ def _get_internal_response_format(
     """
     Internal helper method to convert between the public response format type that's supported in the 'complete` method,
     and the internal response format type that's used in the generated code.
+
+    :param response_format: Response format. Required.
+    :type response_format: Union[Literal["text", "json_object"], _models.JsonSchemaFormat]
     """
     internal_response_format: _models._models.ChatCompletionsResponseFormat = None
 
@@ -84,12 +87,12 @@ def _get_internal_response_format(
         # that Isabella Cai is making soon (https://github.com/microsoft/typespec/pull/5517). At the moment,
         # auto-emitted classes that are marked as in Internal in TypeSpec are missing a constructor that sets
         # the discriminant field (`type`). This is why we need to explicitly set it here.
-        if type(response_format) is str and response_format == "text":
-            internal_response_format = _models._models.ChatCompletionsResponseFormatText(type="text")
-        elif type(response_format) is str and response_format == "json_object":
-            internal_response_format = _models._models.ChatCompletionsResponseFormatJsonObject(type="json_object")
-        elif type(response_format) is _models.JsonSchemaFormat:
-            internal_response_format = _models._models.ChatCompletionsResponseFormatJsonSchema(
+        if isinstance(response_format, str) and response_format == "text":
+            internal_response_format = _models._models.ChatCompletionsResponseFormatText(type="text")  # pylint: disable=protected-access
+        elif isinstance(response_format, str) and response_format == "json_object":
+            internal_response_format = _models._models.ChatCompletionsResponseFormatJsonObject(type="json_object")  # pylint: disable=protected-access
+        elif isinstance(response_format, _models.JsonSchemaFormat):
+            internal_response_format = _models._models.ChatCompletionsResponseFormatJsonSchema(  # pylint: disable=protected-access
                 type="json_schema", json_schema=response_format
             )
         else:

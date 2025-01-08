@@ -14,7 +14,7 @@ import queue
 import re
 import sys
 
-from typing import Any, Dict, List, AsyncIterator, Iterator, Optional, Union
+from typing import Any, List, AsyncIterator, Iterator, Optional, Union
 from azure.core.rest import HttpResponse, AsyncHttpResponse
 from ._models import ImageUrl as ImageUrlGenerated
 from ._models import ChatCompletions as ChatCompletionsGenerated

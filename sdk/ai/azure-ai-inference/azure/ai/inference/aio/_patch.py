@@ -36,6 +36,7 @@ from .._operations._operations import (
     build_embeddings_embed_request,
     build_image_embeddings_embed_request,
 )
+from .._patch import _get_internal_response_format
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
