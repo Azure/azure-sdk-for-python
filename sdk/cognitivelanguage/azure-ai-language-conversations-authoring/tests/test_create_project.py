@@ -26,7 +26,7 @@ class TestConversationsAuthoringCase(TestConversationsAuthoring):
         client = self.create_client(conversationsauthoring_endpoint, conversationsauthoring_key)
 
         # Define project data
-        project_name = "MyNewProject"
+        project_name = "MyNewProject001"
         project_data = {
             "projectName": project_name,
             "language": "en",

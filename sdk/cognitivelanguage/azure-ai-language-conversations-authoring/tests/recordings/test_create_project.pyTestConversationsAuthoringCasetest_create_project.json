@@ -1,43 +1,42 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/MyNewProject?api-version=2024-11-15-preview",
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/MyNewProject001?api-version=2024-11-15-preview",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "140",
+        "Content-Length": "143",
         "Content-Type": "application/merge-patch+json",
         "Ocp-Apim-Subscription-Key": "Sanitized",
         "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.12.8 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": {
-        "projectName": "MyNewProject",
+        "projectName": "MyNewProject001",
         "language": "en",
         "projectKind": "Conversation",
         "description": "Project description",
         "multilingual": true
       },
-      "StatusCode": 201,
+      "StatusCode": 200,
       "ResponseHeaders": {
         "Access-Control-Expose-Headers": "*",
-        "apim-request-id": "81f92aac-eab4-49a5-8033-61d7f148d65a",
-        "Content-Length": "218",
+        "apim-request-id": "466e759a-e043-4f19-a2ed-3735c4fe72f3",
+        "Content-Length": "221",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 07 Jan 2025 18:57:41 GMT",
-        "Location": "https://example.com",
-        "request-id": "81f92aac-eab4-49a5-8033-61d7f148d65a",
+        "Date": "Wed, 08 Jan 2025 04:15:10 GMT",
+        "request-id": "466e759a-e043-4f19-a2ed-3735c4fe72f3",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "297",
+        "x-envoy-upstream-service-time": "30",
         "x-ms-region": "East US"
       },
       "ResponseBody": {
-        "createdDateTime": "2025-01-07T18:57:41Z",
-        "lastModifiedDateTime": "2025-01-07T18:57:41Z",
+        "createdDateTime": "0001-01-01T00:00:00Z",
+        "lastModifiedDateTime": "0001-01-01T00:00:00Z",
         "projectKind": "Conversation",
-        "projectName": "MyNewProject",
+        "projectName": "MyNewProject001",
         "multilingual": true,
         "description": "Project description",
         "language": "en"
