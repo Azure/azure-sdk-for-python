@@ -46,7 +46,7 @@ def sample_chat_completions_with_structured_output():
     from azure.ai.inference.models import (
         SystemMessage,
         UserMessage,
-        ChatCompletionsResponseFormat,
+        JsonSchemaFormat,
     )
     from azure.core.credentials import AzureKeyCredential
 
@@ -124,12 +124,9 @@ def sample_chat_completions_with_structured_output():
     )
 
     response = client.complete(
-        # Two alternatives to the below:
-        #  response_format=ChatCompletionsResponseFormat.text_format(),
-        #  response_format=ChatCompletionsResponseFormat.json_without_schema_format(),
-        response_format=ChatCompletionsResponseFormat.json_format(
+        response_format=JsonSchemaFormat(
             name="Recipe_JSON_Schema",
-            json_schema=json_schema,
+            schema=json_schema,
             description="Descripes a recipe in details, listing the ingredients, the steps and the time needed to prepare it",
             strict=True,
         ),

@@ -25,6 +25,8 @@ class ChatRequestMessage(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AssistantMessage, SystemMessage, ToolMessage, UserMessage
 
+
+
     :ivar role: The chat role associated with this message. Required. Known values are: "system",
      "user", "assistant", and "tool".
     :vartype role: str or ~azure.ai.inference.models.ChatRole
@@ -103,7 +105,6 @@ class ChatChoice(_model_base.Model):
     Generally, ``n`` choices are generated per provided prompt with a default value of 1.
     Token limits and other settings may limit the number of choices generated.
 
-
     :ivar index: The ordered index associated with this chat completions choice. Required.
     :vartype index: int
     :ivar finish_reason: The reason that this chat completions choice completed its generated.
@@ -146,7 +147,6 @@ class ChatCompletions(_model_base.Model):
     Completions support a wide variety of tasks and generate text that continues from or
     "completes"
     provided prompt data.
-
 
     :ivar id: A unique identifier associated with this chat completions response. Required.
     :vartype id: str
@@ -269,7 +269,7 @@ class ChatCompletionsNamedToolChoiceFunction(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ChatCompletionsResponseFormatInternal(_model_base.Model):
+class ChatCompletionsResponseFormat(_model_base.Model):
     """Represents the format that the model must output. Use this to enable JSON mode instead of the
     default text mode.
     Note that to enable JSON mode, some AI models may also require you to instruct the model to
@@ -277,8 +277,8 @@ class ChatCompletionsResponseFormatInternal(_model_base.Model):
     via a system or user message.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ChatCompletionsResponseFormatJsonObjectInternal,
-    ChatCompletionsResponseFormatJsonSchemaInternal, ChatCompletionsResponseFormatTextInternal
+    ChatCompletionsResponseFormatJsonObject, ChatCompletionsResponseFormatJsonSchema,
+    ChatCompletionsResponseFormatText
 
     :ivar type: The response format type to use for chat completions. Required. Default value is
      None.
@@ -290,9 +290,7 @@ class ChatCompletionsResponseFormatInternal(_model_base.Model):
     """The response format type to use for chat completions. Required. Default value is None."""
 
 
-class ChatCompletionsResponseFormatJsonObjectInternal(
-    ChatCompletionsResponseFormatInternal, discriminator="json_object"
-):  # pylint: disable=name-too-long
+class ChatCompletionsResponseFormatJsonObject(ChatCompletionsResponseFormat, discriminator="json_object"):
     """A response format for Chat Completions that restricts responses to emitting valid JSON objects.
     Note that to enable JSON mode, some AI models may also require you to instruct the model to
     produce JSON
@@ -308,9 +306,7 @@ class ChatCompletionsResponseFormatJsonObjectInternal(
      \"json_object\"."""
 
 
-class ChatCompletionsResponseFormatJsonSchemaInternal(
-    ChatCompletionsResponseFormatInternal, discriminator="json_schema"
-):  # pylint: disable=name-too-long
+class ChatCompletionsResponseFormatJsonSchema(ChatCompletionsResponseFormat, discriminator="json_schema"):
     """A response format for Chat Completions that restricts responses to emitting valid JSON objects,
     with a
     JSON schema specified by the caller.
@@ -320,53 +316,17 @@ class ChatCompletionsResponseFormatJsonSchemaInternal(
     :vartype type: str
     :ivar json_schema: The definition of the required JSON schema in the response, and associated
      metadata. Required.
-    :vartype json_schema:
-     ~azure.ai.inference.models._models.ChatCompletionsResponseFormatJsonSchemaDefinitionInternal
+    :vartype json_schema: ~azure.ai.inference.models.JsonSchemaFormat
     """
 
     type: Literal["json_schema"] = rest_discriminator(name="type")  # type: ignore
     """The type of response format being defined: ``json_schema``. Required. Default value is
      \"json_schema\"."""
-    json_schema: "_models._models.ChatCompletionsResponseFormatJsonSchemaDefinitionInternal" = rest_field()
+    json_schema: "_models.JsonSchemaFormat" = rest_field()
     """The definition of the required JSON schema in the response, and associated metadata. Required."""
 
 
-class ChatCompletionsResponseFormatJsonSchemaDefinitionInternal(_model_base.Model):  # pylint: disable=name-too-long
-    """The definition of the required JSON schema in the response, and associated metadata.
-
-    :ivar name: The name of the response format. Must be a-z, A-Z, 0-9, or contain underscores and
-     dashes, with a maximum length of 64. Required.
-    :vartype name: str
-    :ivar schema: The definition of the JSON schema. Required.
-    :vartype schema: dict[str, any]
-    :ivar description: A description of the response format, used by the AI model to determine how
-     to generate responses in this format.
-    :vartype description: str
-    :ivar strict: Whether to enable strict schema adherence when generating the output.
-     If set to true, the model will always follow the exact schema defined in the ``schema`` field.
-     Only a subset of
-     JSON Schema is supported when ``strict`` is ``true``.
-    :vartype strict: bool
-    """
-
-    name: str = rest_field()
-    """The name of the response format. Must be a-z, A-Z, 0-9, or contain underscores and dashes, with
-     a maximum length of 64. Required."""
-    schema: Dict[str, Any] = rest_field()
-    """The definition of the JSON schema. Required."""
-    description: Optional[str] = rest_field()
-    """A description of the response format, used by the AI model to determine how to generate
-     responses in this format."""
-    strict: Optional[bool] = rest_field()
-    """Whether to enable strict schema adherence when generating the output.
-     If set to true, the model will always follow the exact schema defined in the ``schema`` field.
-     Only a subset of
-     JSON Schema is supported when ``strict`` is ``true``."""
-
-
-class ChatCompletionsResponseFormatTextInternal(
-    ChatCompletionsResponseFormatInternal, discriminator="text"
-):  # pylint: disable=name-too-long
+class ChatCompletionsResponseFormatText(ChatCompletionsResponseFormat, discriminator="text"):
     """A response format for Chat Completions that emits text responses. This is the default response
     format.
 
@@ -383,7 +343,6 @@ class ChatCompletionsToolCall(_model_base.Model):
     """A function tool call requested by the AI model.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: The ID of the tool call. Required.
     :vartype id: str
@@ -462,7 +421,6 @@ class ChatCompletionsToolDefinition(_model_base.Model):
 class ChatResponseMessage(_model_base.Model):
     """A representation of a chat message as received in a response.
 
-
     :ivar role: The chat role associated with the message. Required. Known values are: "system",
      "user", "assistant", and "tool".
     :vartype role: str or ~azure.ai.inference.models.ChatRole
@@ -508,7 +466,6 @@ class CompletionsUsage(_model_base.Model):
     """Representation of the token counts processed for a completions request.
     Counts consider all tokens across prompts, choices, choice alternates, best_of generations, and
     other consumers.
-
 
     :ivar completion_tokens: The number of tokens generated across all completions emissions.
      Required.
@@ -583,7 +540,6 @@ class ContentItem(_model_base.Model):
 class EmbeddingItem(_model_base.Model):
     """Representation of a single embeddings relatedness comparison.
 
-
     :ivar embedding: List of embedding values for the input prompt. These represent a measurement
      of the
      vector-based relatedness of the provided input. Or a base64 encoded string of the embedding
@@ -624,7 +580,6 @@ class EmbeddingsResult(_model_base.Model):
     Embeddings measure the relatedness of text strings and are commonly used for search,
     clustering,
     recommendations, and other similar scenarios.
-
 
     :ivar id: Unique identifier for the embeddings result. Required.
     :vartype id: str
@@ -669,7 +624,6 @@ class EmbeddingsResult(_model_base.Model):
 class EmbeddingsUsage(_model_base.Model):
     """Measurement of the amount of tokens used in this request and response.
 
-
     :ivar prompt_tokens: Number of tokens in the request. Required.
     :vartype prompt_tokens: int
     :ivar total_tokens: Total number of tokens transacted in this request/response. Should equal
@@ -705,7 +659,6 @@ class EmbeddingsUsage(_model_base.Model):
 
 class FunctionCall(_model_base.Model):
     """The name and arguments of a function that should be called, as generated by the model.
-
 
     :ivar name: The name of the function to call. Required.
     :vartype name: str
@@ -897,9 +850,75 @@ class ImageUrl(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class JsonSchemaFormat(_model_base.Model):
+    """The definition of a JSON schema, used to define the output format of a chat completion message.
+    The AI model
+    will need to adhere to this schema when generating completions.
+
+    :ivar name: A name that labels this JSON schema. Must be a-z, A-Z, 0-9, or contain underscores
+     and dashes, with a maximum length of 64. Required.
+    :vartype name: str
+    :ivar schema: The definition of the JSON schema. See
+     https://json-schema.org/overview/what-is-jsonschema.
+       Note that AI models usually only support a subset of the keywords defined by JSON schema.
+     Consult your AI model documentation
+       to determine what is supported. Required.
+    :vartype schema: dict[str, any]
+    :ivar description: A description of the response format, used by the AI model to determine how
+     to generate responses in this format.
+    :vartype description: str
+    :ivar strict: If set to true, the service will error out if the provided JSON schema contains
+     keywords
+       not supported by the AI model. An example of such keyword may be ``maxLength`` for JSON type
+     ``string``.
+       If false, and the provided JSON schema contains keywords not supported
+       by the AI model, the AI model will not error out. Instead it will ignore the unsupported
+     keywords.
+    :vartype strict: bool
+    """
+
+    name: str = rest_field()
+    """A name that labels this JSON schema. Must be a-z, A-Z, 0-9, or contain underscores and dashes,
+     with a maximum length of 64. Required."""
+    schema: Dict[str, Any] = rest_field()
+    """The definition of the JSON schema. See https://json-schema.org/overview/what-is-jsonschema.
+       Note that AI models usually only support a subset of the keywords defined by JSON schema.
+     Consult your AI model documentation
+       to determine what is supported. Required."""
+    description: Optional[str] = rest_field()
+    """A description of the response format, used by the AI model to determine how to generate
+     responses in this format."""
+    strict: Optional[bool] = rest_field()
+    """If set to true, the service will error out if the provided JSON schema contains keywords
+       not supported by the AI model. An example of such keyword may be ``maxLength`` for JSON type
+     ``string``.
+       If false, and the provided JSON schema contains keywords not supported
+       by the AI model, the AI model will not error out. Instead it will ignore the unsupported
+     keywords."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        schema: Dict[str, Any],
+        description: Optional[str] = None,
+        strict: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ModelInfo(_model_base.Model):
     """Represents some basic information about the AI model.
-
 
     :ivar model_name: The name of the AI model. For example: ``Phi21``. Required.
     :vartype model_name: str
@@ -947,7 +966,6 @@ class StreamingChatChoiceUpdate(_model_base.Model):
     Generally, ``n`` choices are generated per provided prompt with a default value of 1.
     Token limits and other settings may limit the number of choices generated.
 
-
     :ivar index: The ordered index associated with this chat completions choice. Required.
     :vartype index: int
     :ivar finish_reason: The reason that this chat completions choice completed its generated.
@@ -992,7 +1010,6 @@ class StreamingChatCompletionsUpdate(_model_base.Model):
     Completions support a wide variety of tasks and generate text that continues from or
     "completes"
     provided prompt data.
-
 
     :ivar id: A unique identifier associated with this chat completions response. Required.
     :vartype id: str
@@ -1095,7 +1112,6 @@ class StreamingChatResponseMessageUpdate(_model_base.Model):
 
 class StreamingChatResponseToolCallUpdate(_model_base.Model):
     """An update to the function tool call information requested by the AI model.
-
 
     :ivar id: The ID of the tool call. Required.
     :vartype id: str

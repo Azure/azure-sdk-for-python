@@ -402,34 +402,34 @@ class Model:
     ) -> JSON:
         """Return a dict that can be serialized using json.dump.
 
-        Advanced usage might optionally use a callback as parameter:
+            Advanced usage might optionally use a callback as parameter:
 
-        .. code::python
+        . code::python
 
-            def my_key_transformer(key, attr_desc, value):
-                return key
+                def my_key_transformer(key, attr_desc, value):
+                    return key
 
-        Key is the attribute name used in Python. Attr_desc
-        is a dict of metadata. Currently contains 'type' with the
-        msrest type and 'key' with the RestAPI encoded key.
-        Value is the current value in this object.
+            Key is the attribute name used in Python. Attr_desc
+            is a dict of metadata. Currently contains 'type' with the
+            msrest type and 'key' with the RestAPI encoded key.
+            Value is the current value in this object.
 
-        The string returned will be used to serialize the key.
-        If the return type is a list, this is considered hierarchical
-        result dict.
+            The string returned will be used to serialize the key.
+            If the return type is a list, this is considered hierarchical
+            result dict.
 
-        See the three examples in this file:
+            See the three examples in this file:
 
-        - attribute_transformer
-        - full_restapi_key_transformer
-        - last_restapi_key_transformer
+            - attribute_transformer
+            - full_restapi_key_transformer
+            - last_restapi_key_transformer
 
-        If you want XML serialization, you can pass the kwargs is_xml=True.
+            If you want XML serialization, you can pass the kwargs is_xml=True.
 
-        :param bool keep_readonly: If you want to serialize the readonly attributes
-        :param function key_transformer: A key transformer function.
-        :returns: A dict JSON compatible object
-        :rtype: dict
+            :param bool keep_readonly: If you want to serialize the readonly attributes
+            :param function key_transformer: A key transformer function.
+            :returns: A dict JSON compatible object
+            :rtype: dict
         """
         serializer = Serializer(self._infer_class_models())
         return serializer._serialize(  # type: ignore # pylint: disable=protected-access
