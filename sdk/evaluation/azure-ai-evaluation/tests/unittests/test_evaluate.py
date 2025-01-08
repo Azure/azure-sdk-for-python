@@ -16,8 +16,12 @@ from azure.ai.evaluation import (
     GroundednessEvaluator,
     ProtectedMaterialEvaluator,
     evaluate,
+    ViolenceEvaluator,
+    SexualEvaluator,
+    SelfHarmEvaluator,
+    HateUnfairnessEvaluator
 )
-from azure.ai.evaluation._constants import DEFAULT_EVALUATION_RESULTS_FILE_NAME
+from azure.ai.evaluation._constants import DEFAULT_EVALUATION_RESULTS_FILE_NAME, _ConversationNumericAggregationType
 from azure.ai.evaluation._evaluate._evaluate import (
     _aggregate_metrics,
     _apply_target_to_data,
@@ -48,6 +52,9 @@ def missing_columns_jsonl_file():
 def evaluate_test_data_jsonl_file():
     return _get_file("evaluate_test_data.jsonl")
 
+@pytest.fixture
+def evaluate_test_data_conversion_jsonl_file():
+    return _get_file("evaluate_test_data_conversation.jsonl")
 
 @pytest.fixture
 def pf_client() -> PFClient:
@@ -681,3 +688,49 @@ class TestEvaluate:
         )  # type: ignore
         assert double_override_results["rows"][0]["outputs.echo.echo_query"] == "new query"
         assert double_override_results["rows"][0]["outputs.echo.echo_response"] == "new response"
+
+    def test_conversation_aggregation_types(self, evaluate_test_data_conversion_jsonl_file):
+        from test_evaluators.test_inputs_evaluators import CountingEval
+
+        counting_eval = CountingEval()
+        evaluators = { "count": counting_eval}
+        # test default behavior - average    
+        results = evaluate(
+            data=evaluate_test_data_conversion_jsonl_file,
+            evaluators=evaluators
+        )
+        assert results['rows'][0]['outputs.count.response'] == 1.5 # average of 1 and 2
+        assert results['rows'][1]['outputs.count.response'] == 3.5 # average of 3 and 4
+
+        # test maxing
+        counting_eval.reset()
+        counting_eval._conversation_aggregation_type = _ConversationNumericAggregationType.MAX
+        results = evaluate(
+            data=evaluate_test_data_conversion_jsonl_file,
+            evaluators=evaluators
+        )
+        assert results['rows'][0]['outputs.count.response'] == 2 # max of 1 and 2
+        assert results['rows'][1]['outputs.count.response'] == 4 # max of 3 and 4
+
+        # test minimizing
+        counting_eval.reset()
+        counting_eval._conversation_aggregation_type = _ConversationNumericAggregationType.MIN
+        results = evaluate(
+            data=evaluate_test_data_conversion_jsonl_file,
+            evaluators=evaluators
+        )
+        assert results['rows'][0]['outputs.count.response'] == 1 # min of 1 and 2
+        assert results['rows'][1]['outputs.count.response'] == 3 # min of 3 and 4
+
+    def test_default_conversation_aggregation_overrides(self):
+        fake_project = {"subscription_id": "123", "resource_group_name": "123", "project_name": "123"}
+        eval1 = ViolenceEvaluator(None, fake_project)
+        eval2 = SexualEvaluator(None, fake_project)
+        eval3 = SelfHarmEvaluator(None, fake_project)
+        eval4 = HateUnfairnessEvaluator(None, fake_project)
+        eval5 = F1ScoreEvaluator() # Test default
+        assert eval1._conversation_aggregation_type == _ConversationNumericAggregationType.MAX
+        assert eval2._conversation_aggregation_type == _ConversationNumericAggregationType.MAX
+        assert eval3._conversation_aggregation_type == _ConversationNumericAggregationType.MAX
+        assert eval4._conversation_aggregation_type == _ConversationNumericAggregationType.MAX
+        assert eval5._conversation_aggregation_type == _ConversationNumericAggregationType.MEAN

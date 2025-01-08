@@ -12,6 +12,7 @@ from typing_extensions import ParamSpec, TypeAlias, get_overloads
 from azure.ai.evaluation._common.math import list_mean
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._common.utils import remove_optional_singletons
+from azure.ai.evaluation._constants import _ConversationNumericAggregationType
 from azure.ai.evaluation._model_configurations import Conversation
 
 P = ParamSpec("P")
@@ -70,6 +71,10 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
     :type not_singleton_inputs: List[str]
     :param eval_last_turn: If True, only the last turn of the conversation will be evaluated. Default is False.
     :type eval_last_turn: bool
+    :param conversation_aggregation_type: The type of aggregation to perform on the per-turn results of a conversation
+        to produce a single result.
+        Default is ~azure.ai.evaluation._constants.ConversationNumericAggregationType.MEAN.
+    :type conversation_aggregation_type: ~azure.ai.evaluation._constants.ConversationNumericAggregationType
     """
 
     # ~~~ METHODS THAT ALMOST ALWAYS NEED TO BE OVERRIDDEN BY CHILDREN~~~
@@ -81,11 +86,13 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         *,
         not_singleton_inputs: List[str] = ["conversation", "kwargs"],
         eval_last_turn: bool = False,
+        conversation_aggregation_type: str = _ConversationNumericAggregationType.MEAN,
     ):
         self._not_singleton_inputs = not_singleton_inputs
         self._eval_last_turn = eval_last_turn
         self._singleton_inputs = self._derive_singleton_inputs()
         self._async_evaluator = AsyncEvaluatorBase(self._real_call)
+        self._conversation_aggregation_type = conversation_aggregation_type
 
     # This needs to be overridden just to change the function header into something more informative,
     # and to be able to add a more specific docstring. The actual function contents should just be
@@ -359,7 +366,13 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         # Find and average all numeric values
         for metric, values in evaluation_per_turn.items():
             if all(isinstance(value, (int, float)) for value in values):
-                aggregated[metric] = list_mean(cast(List[Union[int, float]], values))
+                # Aggregate results in different ways depending on the aggregation type.
+                if self._conversation_aggregation_type == _ConversationNumericAggregationType.MEAN:
+                    aggregated[metric] = list_mean(cast(List[Union[int, float]], values))
+                elif self._conversation_aggregation_type == _ConversationNumericAggregationType.MAX:
+                    aggregated[metric] = max(cast(List[Union[int, float]], values))
+                elif self._conversation_aggregation_type == _ConversationNumericAggregationType.MIN:
+                    aggregated[metric] = min(cast(List[Union[int, float]], values))
         # Slap the per-turn results back in.
         aggregated["evaluation_per_turn"] = evaluation_per_turn
         return aggregated
