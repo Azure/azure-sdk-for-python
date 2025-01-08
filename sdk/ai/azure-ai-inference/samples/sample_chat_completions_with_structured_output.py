@@ -36,16 +36,6 @@ USAGE:
     https://aka.ms/azsdk/azure-ai-inference/azure-openai-api-versions
 """
 
-# Start remove me -- logging
-import sys
-import logging
-
-logger = logging.getLogger("azure")
-logger.setLevel(logging.DEBUG)
-logger.addHandler(logging.StreamHandler(stream=sys.stdout))
-# End remove me
-
-
 def sample_chat_completions_with_structured_output():
     import os
     import json
@@ -130,17 +120,17 @@ def sample_chat_completions_with_structured_output():
         endpoint=endpoint,
         credential=AzureKeyCredential(key),
         api_version="2024-08-01-preview",  # Azure OpenAI api-version. See https://aka.ms/azsdk/azure-ai-inference/azure-openai-api-versions
-        logging_enable=True,
     )
 
     response = client.complete(
-        # response_format=ChatCompletionsResponseFormat.text_format(),
-        # response_format=ChatCompletionsResponseFormat.json_without_schema_format(),
+        # Two alternatives to the below:
+        #  response_format=ChatCompletionsResponseFormat.text_format(),
+        #  response_format=ChatCompletionsResponseFormat.json_without_schema_format(),
         response_format=ChatCompletionsResponseFormat.json_format(
             name="Recipe_JSON_Schema",
             json_schema=json_schema,
-            # description="Descripes a recipe in details, listing the ingredients, the steps and the time needed to prepare it",
-            strict=False,
+            description="Descripes a recipe in details, listing the ingredients, the steps and the time needed to prepare it",
+            strict=True,
         ),
         messages=[
             SystemMessage(content="You are a helpful assistant."),

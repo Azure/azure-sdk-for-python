@@ -177,10 +177,8 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
     :paramtype top_p: float
     :keyword max_tokens: The maximum number of tokens to generate. Default value is None.
     :paramtype max_tokens: int
-    :keyword response_format: The format that the model must output. Use this to enable JSON mode
-        instead of the default text mode.
-        Note that to enable JSON mode, some AI models may also require you to instruct the model to
-        produce JSON via a system or user message. Default value is None.
+    :keyword response_format: The format that the model must output. Use this to enable JSON output
+        or JSON output with provided schema, instead of the default text output. Default value is None.
     :paramtype response_format: ~azure.ai.inference.models.ChatCompletionsResponseFormat
     :keyword stop: A collection of textual sequences that will end completions generation. Default
         value is None.
@@ -244,7 +242,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         self._temperature = temperature
         self._top_p = top_p
         self._max_tokens = max_tokens
-        self._response_format = response_format
+        self._response_format_internal = response_format._response_format_internal if response_format is not None else None
         self._stop = stop
         self._tools = tools
         self._tool_choice = tool_choice
@@ -391,10 +389,8 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         :paramtype top_p: float
         :keyword max_tokens: The maximum number of tokens to generate. Default value is None.
         :paramtype max_tokens: int
-        :keyword response_format: The format that the model must output. Use this to enable JSON mode
-         instead of the default text mode.
-         Note that to enable JSON mode, some AI models may also require you to instruct the model to
-         produce JSON via a system or user message. Default value is None.
+        :keyword response_format: The format that the model must output. Use this to enable JSON output
+         or JSON output with provided schema, instead of the default text output. Default value is None.
         :paramtype response_format: ~azure.ai.inference.models.ChatCompletionsResponseFormat
         :keyword stop: A collection of textual sequences that will end completions generation. Default
          value is None.
@@ -553,10 +549,8 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         :paramtype top_p: float
         :keyword max_tokens: The maximum number of tokens to generate. Default value is None.
         :paramtype max_tokens: int
-        :keyword response_format: The format that the model must output. Use this to enable JSON mode
-         instead of the default text mode.
-         Note that to enable JSON mode, some AI models may also require you to instruct the model to
-         produce JSON via a system or user message. Default value is None.
+        :keyword response_format: The format that the model must output. Use this to enable JSON output
+         or JSON output with provided schema, instead of the default text output. Default value is None.
         :paramtype response_format: ~azure.ai.inference.models.ChatCompletionsResponseFormat
         :keyword stop: A collection of textual sequences that will end completions generation. Default
          value is None.
@@ -611,7 +605,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
                 "max_tokens": max_tokens if max_tokens is not None else self._max_tokens,
                 "model": model if model is not None else self._model,
                 "presence_penalty": presence_penalty if presence_penalty is not None else self._presence_penalty,
-                "response_format": response_format if response_format is not None else self._response_format,
+                "response_format": response_format._response_format_internal if response_format is not None else self._response_format_internal,
                 "seed": seed if seed is not None else self._seed,
                 "stop": stop if stop is not None else self._stop,
                 "temperature": temperature if temperature is not None else self._temperature,
