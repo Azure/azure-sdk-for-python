@@ -48,7 +48,7 @@ _LOGGER = logging.getLogger(__name__)
 
 def is_multiapi_package(python_md_content: List[str]) -> bool:
     for line in python_md_content:
-        if re.findall(r'\s*multiapi\s*:\s*true', line):
+        if re.findall(r"\s*multiapi\s*:\s*true", line):
             return True
     return False
 
@@ -199,15 +199,16 @@ def need_regen_for_multiapi_package(spec_folder: str, input_readme: str) -> bool
 
     after_handle = []
     for idx in range(len(python_md_content)):
-        if re.findall(r'\s*clear-output-folder\s*:\s*true\s*', python_md_content[idx]):
+        if re.findall(r"\s*clear-output-folder\s*:\s*true\s*", python_md_content[idx]):
             continue
-        if re.findall(r'\s*-\s*tag\s*:', python_md_content[idx]):
+        if re.findall(r"\s*-\s*tag\s*:", python_md_content[idx]):
             continue
         after_handle.append(python_md_content[idx])
 
     with open(python_readme, "w") as file_out:
         file_out.writelines(after_handle)
     return True
+
 
 def main(generate_input, generate_output):
     with open(generate_input, "r") as reader:
@@ -225,7 +226,16 @@ def main(generate_input, generate_output):
             if "resource-manager" in readme_or_tsp:
                 relative_path_readme = str(Path(spec_folder, readme_or_tsp))
                 del_outdated_files(relative_path_readme)
-                generate_mgmt = partial(generate, CONFIG_FILE, sdk_folder, [], relative_path_readme, spec_folder, force_generation=True, python_tag=python_tag)
+                generate_mgmt = partial(
+                    generate,
+                    CONFIG_FILE,
+                    sdk_folder,
+                    [],
+                    relative_path_readme,
+                    spec_folder,
+                    force_generation=True,
+                    python_tag=python_tag,
+                )
                 config = generate_mgmt()
                 if need_regen_for_multiapi_package:
                     generate_mgmt()
