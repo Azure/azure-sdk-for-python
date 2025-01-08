@@ -10,6 +10,7 @@ from typing_extensions import overload, override
 
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
 
+
 class NonOptionalEval:
     def __init__(self):
         pass
@@ -51,20 +52,19 @@ class EchoEval:
 
 
 class CountingEval(EvaluatorBase):
-    '''Returns an incrementing number, which can be reset as needed'''
+    """Returns an incrementing number, which can be reset as needed"""
+
     def __init__(self, **kwargs):
         self._count = 0
         super().__init__(**kwargs)
 
-        
     def reset(self):
         self._count = 0
-
 
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, int]:
         self._count += 1
-        return {"response" : self._count}
+        return {"response": self._count}
 
     @overload
     def __call__(

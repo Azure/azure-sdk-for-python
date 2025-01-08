@@ -3,8 +3,6 @@
 # ---------------------------------------------------------
 from typing import Literal
 
-from sympy import Min
-
 
 class EvaluationMetrics:
     """Metrics for model evaluation."""
@@ -58,6 +56,7 @@ class EvaluationRunProperties:
     EVALUATION_RUN = "_azureml.evaluation_run"
     EVALUATION_SDK = "_azureml.evaluation_sdk_name"
 
+
 class _ConversationNumericAggregationType:
     """Defines how multiple conversation turns' worth of numeric results should be evaluated
     to produce a single value to define the overall conversation result."""
@@ -65,6 +64,7 @@ class _ConversationNumericAggregationType:
     MEAN = "mean"
     MAX = "max"
     MIN = "min"
+
 
 DEFAULT_EVALUATION_RESULTS_FILE_NAME = "evaluation_results.json"
 
