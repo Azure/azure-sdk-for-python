@@ -159,7 +159,7 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
     if not vnext_issue:
         labels = get_labels(package_name, service_directory)
         logging.info(f"Issue does not exist for {package_name} with {check_type} version {version}. Creating...")
-        repo.create_issue(title=title, body=template, labels=labels.extend(check_type))
+        repo.create_issue(title=title, body=template, labels=labels.extend([check_type]))
         return
 
     # an issue exists, let's update it so it reflects the latest typing/linting errors
