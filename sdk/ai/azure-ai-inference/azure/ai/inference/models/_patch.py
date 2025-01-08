@@ -63,7 +63,8 @@ class ChatCompletionsResponseFormat:
         :paramtype strict: bool or None
         """
 
-        # Note: the "type=type" should no longer be needed after a Python emitter update that Isabella Cai is making soon.
+        # Note: the "type=type" should no longer be needed after a Python emitter update that 
+        # # Isabella Cai is making soon (https://github.com/microsoft/typespec/pull/5517)
         if type == "text":
             self._response_format_internal = ChatCompletionsResponseFormatTextInternal(type=type)
         elif type == "json_object":
@@ -85,6 +86,9 @@ class ChatCompletionsResponseFormat:
         This corresponds to a REST API chat completions
         request payload with element `"response_format": {"type": "text"}`.
         This is typically the default output format of the AI model.
+
+        :return: A ChatCompletionsResponseFormat object for text output format.
+        :rtype: ~azure.ai.inference.models.ChatCompletionsResponseFormat
         """
         return cls()
 
@@ -98,6 +102,9 @@ class ChatCompletionsResponseFormat:
         produce JSON via an explicit system or user message.
         We recommend using JSON with a provided scheme format instead, if the AI model supports it. See
         (class method `json_format`).
+
+        :return: A ChatCompletionsResponseFormat object for JSON output without schema format.
+        :rtype: ~azure.ai.inference.models.ChatCompletionsResponseFormat
         """
         return cls(type="json_object")
 
@@ -114,7 +121,8 @@ class ChatCompletionsResponseFormat:
         :keyword name: The name of the response format. Must be a-z, A-Z, 0-9, or contain underscores and
         dashes, with a maximum length of 64. Required.
         :paramtype name: str
-        :keyword json_schema: The definition of the JSON schema. See https://json-schema.org/overview/what-is-jsonschema. Required.
+        :keyword json_schema: The definition of the JSON schema.
+        See https://json-schema.org/overview/what-is-jsonschema. Required.
         Note that AI models usually support only a subset of the keywords defined in JSON schema.
         :paramtype json_schema: dict[str, any]
         :keyword description: A description of the response format, used by the AI model to determine how
@@ -125,6 +133,9 @@ class ChatCompletionsResponseFormat:
         If `False`, and the provided JSON schema contains keywords not supported
         by the AI model, the AI model will not error out. Instead it will ignore the unsupported keywords.
         :paramtype strict: bool
+
+        :return: A ChatCompletionsResponseFormat object for JSON output format adhering to given schema.
+        :rtype: ~azure.ai.inference.models.ChatCompletionsResponseFormat
         """
         return cls(type="json_schema", name=name, json_schema=json_schema, description=description, strict=strict)
 

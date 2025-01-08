@@ -36,6 +36,7 @@ USAGE:
     https://aka.ms/azsdk/azure-ai-inference/azure-openai-api-versions
 """
 
+
 def sample_chat_completions_with_structured_output():
     import os
     import json

@@ -261,7 +261,9 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         self._temperature = temperature
         self._top_p = top_p
         self._max_tokens = max_tokens
-        self._response_format_internal = response_format._response_format_internal if response_format is not None else None
+        self._response_format_internal = (
+            response_format._response_format_internal if response_format is not None else None
+        )
         self._stop = stop
         self._tools = tools
         self._tool_choice = tool_choice
@@ -625,7 +627,11 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
                 "max_tokens": max_tokens if max_tokens is not None else self._max_tokens,
                 "model": model if model is not None else self._model,
                 "presence_penalty": presence_penalty if presence_penalty is not None else self._presence_penalty,
-                "response_format": response_format._response_format_internal if response_format is not None else self._response_format_internal,
+                "response_format": (
+                    response_format._response_format_internal # pylint: disable=protected-access
+                    if response_format is not None
+                    else self._response_format_internal
+                ),
                 "seed": seed if seed is not None else self._seed,
                 "stop": stop if stop is not None else self._stop,
                 "temperature": temperature if temperature is not None else self._temperature,
