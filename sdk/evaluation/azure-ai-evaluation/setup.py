@@ -65,8 +65,8 @@ setup(
     ),
     python_requires=">=3.8",
     install_requires=[
-        "promptflow-devkit>=1.15.0",
-        "promptflow-core>=1.15.0",
+        "promptflow-devkit @ git+https://github.com/microsoft/promptflow.git#egg=promptflow-devkit",
+        "promptflow-core @ git+https://github.com/microsoft/promptflow.git#egg=promptflow-core",
         "pyjwt>=2.8.0",
         # pickle support for credentials was added to this release
         "azure-identity>=1.16.0",
@@ -83,8 +83,4 @@ setup(
         "azure.ai.evaluation.simulator._prompty": ["*.prompty"],
         "azure.ai.evaluation.simulator._data_sources": ["*.json"],
     },
-    dependency_links=[
-        "git+https://github.com/microsoft/promptflow.git#egg=promptflow-devkit",
-        "git+https://github.com/microsoft/promptflow.git#egg=promptflow-core"
-    ],
 )
