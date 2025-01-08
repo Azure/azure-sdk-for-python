@@ -73,8 +73,8 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
     :type eval_last_turn: bool
     :param conversation_aggregation_type: The type of aggregation to perform on the per-turn results of a conversation
         to produce a single result.
-        Default is ~azure.ai.evaluation._constants.ConversationNumericAggregationType.MEAN.
-    :type conversation_aggregation_type: ~azure.ai.evaluation._constants.ConversationNumericAggregationType
+        Default is ~azure.ai.evaluation._constants._ConversationNumericAggregationType.MEAN.
+    :type conversation_aggregation_type: ~azure.ai.evaluation._constants._ConversationNumericAggregationType
     """
 
     # ~~~ METHODS THAT ALMOST ALWAYS NEED TO BE OVERRIDDEN BY CHILDREN~~~
