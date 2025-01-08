@@ -1,14 +1,10 @@
 # Release History
 
-## 1.4.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 1.4.1 (2025-01-14)
 
 ### Other Changes
+
+- Internal updates for linting and typing improvements.
 
 ## 1.4.0 (2024-06-11)
 
