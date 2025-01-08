@@ -71,17 +71,15 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def _get_internal_response_format(
-    response_format: Union[Literal["text", "json_object"], _models.JsonSchemaFormat] = None
-) -> _models._models.ChatCompletionsResponseFormat:
+    response_format:Optional[Union[Literal["text", "json_object"], _models.JsonSchemaFormat]]
+) -> Optional[_models._models.ChatCompletionsResponseFormat]:
     """
     Internal helper method to convert between the public response format type that's supported in the 'complete` method,
     and the internal response format type that's used in the generated code.
 
     :param response_format: Response format. Required.
-    :type response_format: Union[Literal["text", "json_object"], _models.JsonSchemaFormat]
+    :type response_format: Optional[Union[Literal["text", "json_object"], _models.JsonSchemaFormat]]
     """
-    internal_response_format: _models._models.ChatCompletionsResponseFormat = None
-
     if response_format is not None:
         # Note: the `type=".."`` should no longer be needed in the constructors below after a Python emitter fix
         # that Isabella Cai is making soon (https://github.com/microsoft/typespec/pull/5517). At the moment,
@@ -98,7 +96,9 @@ def _get_internal_response_format(
         else:
             raise ValueError(f"Unsupported `response_format` {response_format}")
 
-    return internal_response_format
+        return internal_response_format
+
+    return None
 
 
 def load_client(
