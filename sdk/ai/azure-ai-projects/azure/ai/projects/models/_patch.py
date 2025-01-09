@@ -526,7 +526,7 @@ class MessageAttachment(MessageAttachmentGenerated):
 
 
 ToolDefinitionT = TypeVar("ToolDefinitionT", bound=ToolDefinition)
-
+ToolT = TypeVar("ToolT", bound="Tool")
 
 class Tool(ABC, Generic[ToolDefinitionT]):
     """
@@ -1124,7 +1124,7 @@ class BaseToolSet:
             "tools": self.definitions,
         }
 
-    def get_tool(self, tool_type: Type[Tool]) -> Tool:
+    def get_tool(self, tool_type: Type[ToolT]) -> ToolT:
         """
         Get a tool of the specified type from the tool set.
 
@@ -1134,9 +1134,9 @@ class BaseToolSet:
         :raises ValueError: If a tool of the specified type is not found.
         """
         for tool in self._tools:
-            if isinstance(tool, tool_type):
-                return tool
-        raise ValueError(f"Tool of type {tool_type.__name__} not found.")
+           if isinstance(tool, tool_type):
+               return cast(ToolT, tool)
+        raise ValueError(f"Tool of type {tool_type.__name__} not found in the ToolSet.")
 
 
 class ToolSet(BaseToolSet):

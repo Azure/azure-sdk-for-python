@@ -214,12 +214,12 @@ class AgentTeam:
             if member is self._team_leader:
                 continue
 
-            if member.can_delegate:
-                team_description = ""
-                for other_member in self._members:
-                    if other_member != member:
-                        team_description += f"- {other_member.name}: {other_member.instructions}\n"
+            team_description = ""
+            for other_member in self._members:
+                if other_member != member:
+                    team_description += f"- {other_member.name}: {other_member.instructions}\n"
 
+            if member.can_delegate:
                 extended_instructions = self.TEAM_MEMBER_CAN_DELEGATE_INSTRUCTIONS.format(
                     name=member.name,
                     team_name=self._team_name,

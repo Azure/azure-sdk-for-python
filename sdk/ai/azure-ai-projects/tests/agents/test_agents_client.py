@@ -29,6 +29,7 @@ from azure.ai.projects.models import (
     FileSearchToolResource,
     ToolResources,
     AgentRunStream,
+    MessageRole,
 )
 from azure.ai.projects.models import (
     AgentStreamEvent,
@@ -3018,7 +3019,7 @@ class TestAgentClient(AzureRecordedTestCase):
                 messages = client.agents.list_messages(thread_id=thread.id)
                 print(f"Messages: {messages}")
 
-                last_msg = messages.get_last_text_message_by_sender("assistant")
+                last_msg = messages.get_last_text_message_by_role(MessageRole.AGENT)
                 if last_msg:
                     print(f"Last Message: {last_msg.text.value}")
 
