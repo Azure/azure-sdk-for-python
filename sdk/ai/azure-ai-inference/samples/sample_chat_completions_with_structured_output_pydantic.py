@@ -44,6 +44,7 @@ def sample_chat_completions_with_structured_output_pydantic():
     import json
 
     from pydantic import BaseModel, ConfigDict, Field
+    from typing import List
     from azure.ai.inference import ChatCompletionsClient
     from azure.ai.inference.models import (
         SystemMessage,
@@ -82,8 +83,8 @@ def sample_chat_completions_with_structured_output_pydantic():
         cooking_time: int = Field(
             description="Cooking time in minutes",
         )
-        ingredients: list[CookingIngredient]
-        steps: list[CookingStep]
+        ingredients: List[CookingIngredient]
+        steps: List[CookingStep]
         notes: str
 
     # Use Pydantic package to convert the above classes to a JSON schema, which you would like the AI model to adhere to.

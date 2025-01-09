@@ -851,8 +851,8 @@ class ImageUrl(_model_base.Model):
 
 
 class JsonSchemaFormat(_model_base.Model):
-    """Defines the response format for chat completions as JSON with a given schema. The AI model
-     will need to adhere to this schema when generating completions.
+    """Defines the response format for chat completions as JSON with a given schema.
+    The AI model will need to adhere to this schema when generating completions.
 
     :ivar name: A name that labels this JSON schema. Must be a-z, A-Z, 0-9, or contain underscores
      and dashes, with a maximum length of 64. Required.

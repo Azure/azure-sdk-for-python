@@ -6,7 +6,8 @@
 
 * Added a client for Image Embeddings, named `ImageEmbeddingsClient`. See package README.md and new samples.
 * Added support for Chat Completions response message in JSON format that adheres to a given JSON schema. Also known
-as "structured output". See new sample `sample_chat_completions_with_structured_output.py`.
+as "structured output". See new samples `sample_chat_completions_with_structured_output.py` and
+`sample_chat_completions_with_structured_output_pydantic.py`.
 
 ### Breaking Changes
 
