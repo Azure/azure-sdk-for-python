@@ -3,6 +3,7 @@
 ## 1.2.0 (Unreleased)
 
 ### Features Added
+- Test
 
 ### Breaking Changes
 
