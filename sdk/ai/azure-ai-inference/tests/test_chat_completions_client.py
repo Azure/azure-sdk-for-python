@@ -492,7 +492,9 @@ class TestChatCompletionsClient(ModelClientTestBase):
             ],
         )
         self._print_chat_completions_result(response)
-        self._validate_chat_completions_result(response, ["juggling", "balls", "blue", "red", "green", "yellow"], is_aoai=True)
+        self._validate_chat_completions_result(
+            response, ["juggling", "balls", "blue", "red", "green", "yellow"], is_aoai=True
+        )
         client.close()
 
     # We use AOAI endpoint here because at the moment there is no MaaS model that supports
@@ -516,7 +518,9 @@ class TestChatCompletionsClient(ModelClientTestBase):
             ],
         )
         self._print_chat_completions_result(response)
-        self._validate_chat_completions_result(response, ["juggling", "balls", "blue", "red", "green", "yellow"], is_aoai=True)
+        self._validate_chat_completions_result(
+            response, ["juggling", "balls", "blue", "red", "green", "yellow"], is_aoai=True
+        )
         client.close()
 
     # We use AOAI endpoint here because at the moment MaaS does not support Entra ID auth.
@@ -550,7 +554,9 @@ class TestChatCompletionsClient(ModelClientTestBase):
         ]
         response = client.complete(messages=messages, response_format=response_format)
         self._print_chat_completions_result(response)
-        self._validate_chat_completions_result(response, ["distances", "location1", "Seattle", "location2", "Portland"], is_aoai=True, is_json=True)
+        self._validate_chat_completions_result(
+            response, ["distances", "location1", "Seattle", "location2", "Portland"], is_aoai=True, is_json=True
+        )
         client.close()
 
     # **********************************************************************************

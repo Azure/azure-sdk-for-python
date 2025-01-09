@@ -462,7 +462,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
         contains: List[str],
         *,
         is_aoai: Optional[bool] = False,
-        is_json: Optional[bool] = False
+        is_json: Optional[bool] = False,
     ):
         assert any(item in response.choices[0].message.content for item in contains)
         assert response.choices[0].message.role == sdk.models.ChatRole.ASSISTANT
