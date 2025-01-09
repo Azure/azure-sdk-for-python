@@ -8,6 +8,7 @@ authors = [
     {name = "Microsoft Corporation", email = "azurekeyvault@microsoft.com"},
 ]
 description = "Microsoft Azure Key Vault Keys Client Library for Python"
+keywords = ["azure", "azure sdk"]
 requires-python = ">=3.8"
 license = {text = "MIT License"}
 classifiers = [
