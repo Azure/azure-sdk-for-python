@@ -292,8 +292,6 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             # Success criteria for server spans depends on span.success and the actual status code
             data.success = span.status.is_ok and status_code and status_code not in range(400, 500)
         elif SpanAttributes.MESSAGING_SYSTEM in span.attributes:  # Messaging
-            if SpanAttributes.NET_PEER_IP in span.attributes:
-                envelope.tags[ContextTagKeys.AI_LOCATION_IP] = span.attributes[SpanAttributes.NET_PEER_IP]
             if span.attributes.get(SpanAttributes.MESSAGING_DESTINATION):
                 if span.attributes.get(CLIENT_ADDRESS) or span.attributes.get(SpanAttributes.NET_PEER_NAME):
                     data.source = "{}/{}".format(
