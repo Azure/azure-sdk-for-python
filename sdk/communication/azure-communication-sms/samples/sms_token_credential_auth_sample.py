@@ -36,6 +36,11 @@ class SmsTokenCredentialAuthSample(object):
     tenant_id = os.getenv("AZURE_TENANT_ID")
 
     def sms_token_credential_auth(self):
+        if not self.connection_string or not self.phone_number:
+            raise ValueError(
+                '''Environment variables COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING and SMS_PHONE_NUMBER must be 
+                set''')
+
         # To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have
         # AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
         if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
