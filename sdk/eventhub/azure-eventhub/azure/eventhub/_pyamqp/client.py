@@ -1,4 +1,4 @@
-# -------------------------------------------------------------------------  # pylint: disable=client-suffix-needed
+# --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
@@ -88,7 +88,7 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
     :paramtype channel_max: int
     :keyword idle_timeout: Timeout in seconds after which the Connection will close
      if there is no further activity.
-    :paramtype idle_timeout: Optional[float]
+    :paramtype idle_timeout: int
     :keyword auth_timeout: Timeout in seconds for CBS authentication. Otherwise this value will be ignored.
      Default value is 60s.
     :paramtype auth_timeout: int
@@ -510,7 +510,7 @@ class SendClient(AMQPClient):
     :paramtype channel_max: int
     :keyword idle_timeout: Timeout in seconds after which the Connection will close
      if there is no further activity.
-    :paramtype idle_timeout: Optional[float]
+    :paramtype idle_timeout: int
     :keyword auth_timeout: Timeout in seconds for CBS authentication. Otherwise this value will be ignored.
      Default value is 60s.
     :paramtype auth_timeout: int
@@ -590,7 +590,6 @@ class SendClient(AMQPClient):
         :return: Whether the client is ready to start receiving messages.
         :rtype: bool
         """
-        # pylint: disable=protected-access
         if not self._link:
             self._link = self._session.create_sender_link(
                 target_address=self.target,
@@ -736,7 +735,7 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
     :paramtype channel_max: int
     :keyword idle_timeout: Timeout in seconds after which the Connection will close
      if there is no further activity.
-    :paramtype idle_timeout: Optional[float]
+    :paramtype idle_timeout: int
     :keyword auth_timeout: Timeout in seconds for CBS authentication. Otherwise this value will be ignored.
      Default value is 60s.
     :paramtype auth_timeout: int
@@ -826,7 +825,6 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
         :return: True if the client is ready to start receiving messages.
         :rtype: bool
         """
-        # pylint: disable=protected-access
         if not self._link:
             self._link = self._session.create_receiver_link(
                 source_address=self.source,

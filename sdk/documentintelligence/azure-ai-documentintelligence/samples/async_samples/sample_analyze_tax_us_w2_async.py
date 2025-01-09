@@ -52,7 +52,7 @@ async def analyze_tax_us_w2():
     async with document_intelligence_client:
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_intelligence_client.begin_analyze_document(
-                "prebuilt-tax.us.w2", analyze_request=f, locale="en-US", content_type="application/octet-stream"
+                "prebuilt-tax.us.w2", body=f, locale="en-US"
             )
         w2s: AnalyzeResult = await poller.result()
 

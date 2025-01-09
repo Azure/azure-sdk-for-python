@@ -42,7 +42,7 @@ def log_get_token(fn):
                 except Exception as ex:  # pylint: disable=broad-except
                     _LOGGER.debug("Failed to log the account information: %s", ex, exc_info=True)
             return token
-        except Exception as ex:  # pylint: disable=broad-except
+        except Exception as ex:
             _LOGGER.log(
                 logging.DEBUG if within_credential_chain.get() else logging.WARNING,
                 "%s failed: %s",
@@ -70,7 +70,7 @@ def wrap_exceptions(fn):
             return fn(*args, **kwargs)
         except ClientAuthenticationError:
             raise
-        except Exception as ex:  # pylint:disable=broad-except
+        except Exception as ex:
             auth_error = ClientAuthenticationError(message="Authentication failed: {}".format(ex))
             raise auth_error from ex
 

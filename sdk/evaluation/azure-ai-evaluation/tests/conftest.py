@@ -394,6 +394,22 @@ def project_scope(request, dev_connections: Dict[str, Any]) -> dict:
 
 
 @pytest.fixture
+def datastore_project_scopes(connection_file, project_scope, mock_project_scope):
+    conn_name = "azure_ai_entra_id_project_scope"
+    if not is_live():
+        entra_id = mock_project_scope
+    else:
+        entra_id = connection_file.get(conn_name)
+        if not entra_id:
+            raise ValueError(f"Connection '{conn_name}' not found in dev connections.")
+
+    return {
+        "sas": project_scope,
+        "none": entra_id,
+    }
+
+
+@pytest.fixture
 def mock_trace_destination_to_cloud(project_scope: dict):
     """Mock trace destination to cloud."""
 

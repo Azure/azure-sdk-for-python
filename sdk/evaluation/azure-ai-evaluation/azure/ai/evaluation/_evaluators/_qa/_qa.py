@@ -2,10 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from concurrent.futures import as_completed
-from typing import Callable, Dict, List, Union
+from typing import Union
 
-from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
+from typing_extensions import overload, override
+
+from azure.ai.evaluation._evaluators._common import MultiEvaluatorBase
 
 from .._coherence import CoherenceEvaluator
 from .._f1_score import F1ScoreEvaluator
@@ -15,7 +16,7 @@ from .._relevance import RelevanceEvaluator
 from .._similarity import SimilarityEvaluator
 
 
-class QAEvaluator:
+class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
     """
     Initialize a question-answer evaluator configured for a specific Azure OpenAI model.
 
@@ -46,9 +47,7 @@ class QAEvaluator:
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     def __init__(self, model_config, **kwargs):
-        self._parallel = kwargs.pop("_parallel", False)
-
-        self._evaluators: List[Union[Callable[..., Dict[str, Union[str, float]]], Callable[..., Dict[str, float]]]] = [
+        evaluators = [
             GroundednessEvaluator(model_config),
             RelevanceEvaluator(model_config),
             CoherenceEvaluator(model_config),
@@ -56,8 +55,10 @@ class QAEvaluator:
             SimilarityEvaluator(model_config),
             F1ScoreEvaluator(),
         ]
+        super().__init__(evaluators=evaluators, **kwargs)
 
-    def __call__(self, *, query: str, response: str, context: str, ground_truth: str, **kwargs):
+    @overload  # type: ignore
+    def __call__(self, *, query: str, response: str, context: str, ground_truth: str):
         """
         Evaluates question-answering scenario.
 
@@ -72,22 +73,26 @@ class QAEvaluator:
         :return: The scores for QA scenario.
         :rtype: Dict[str, Union[str, float]]
         """
-        results: Dict[str, Union[str, float]] = {}
-        if self._parallel:
-            with ThreadPoolExecutor() as executor:
-                futures = {
-                    executor.submit(
-                        evaluator, query=query, response=response, context=context, ground_truth=ground_truth, **kwargs
-                    ): evaluator
-                    for evaluator in self._evaluators
-                }
 
-                # Collect results as they complete
-                for future in as_completed(futures):
-                    results.update(future.result())
-        else:
-            for evaluator in self._evaluators:
-                result = evaluator(query=query, response=response, context=context, ground_truth=ground_truth, **kwargs)
-                results.update(result)
+    @override
+    def __call__(  # pylint: disable=docstring-missing-param
+        self,
+        *args,
+        **kwargs,
+    ):
+        """
+        Evaluates question-answering scenario.
 
-        return results
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
+        :keyword context: The context to be evaluated.
+        :paramtype context: str
+        :keyword ground_truth: The ground truth to be evaluated.
+        :paramtype ground_truth: str
+        :return: The scores for QA scenario.
+        :rtype: Dict[str, Union[str, float]]
+        """
+
+        return super().__call__(*args, **kwargs)

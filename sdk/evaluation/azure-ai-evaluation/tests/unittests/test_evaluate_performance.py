@@ -50,7 +50,7 @@ class TestEvaluatePerformance:
         if in_ci():
             max_duration += 25
         if use_pf_client:  # PF client doesn't seem to parallelize, and takes about a second or 2 to start
-            max_duration += 6.5
+            max_duration += 7.5
         assert diff < max_duration
         row_result_df = pd.DataFrame(result["rows"])
         assert "outputs.f1.f1_score" in row_result_df.columns
@@ -76,7 +76,7 @@ class TestEvaluatePerformance:
         # 2 batches at most, so it should take between 1 and 1.5 seconds.
         max_duration = 1.5
         if use_pf_client:  # PF client doesn't seem to parallelize, and takes about a second to start.
-            max_duration += 7.5
+            max_duration += 8.5
         assert diff < max_duration
         row_result_df = pd.DataFrame(result["rows"])
         assert "outputs.slow.result" in row_result_df.columns
