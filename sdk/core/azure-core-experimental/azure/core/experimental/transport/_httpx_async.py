@@ -167,7 +167,9 @@ class AsyncHttpXTransport(AsyncHttpTransport):
     async def __aexit__(self, *args) -> None:
         await self.close()
 
-    async def send(self, request: Union[HttpRequest, LegacyHttpRequest], *, stream: bool = False, **kwargs) -> AsyncHttpXTransportResponse:
+    async def send(
+        self, request: Union[HttpRequest, LegacyHttpRequest], *, stream: bool = False, **kwargs
+    ) -> AsyncHttpXTransportResponse:
         """Send the request using this HTTP sender.
 
         :param request: The request object to be sent.

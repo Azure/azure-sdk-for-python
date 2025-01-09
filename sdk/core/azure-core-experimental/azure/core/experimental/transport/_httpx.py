@@ -78,7 +78,7 @@ class HttpXTransportResponse(HttpResponseImpl):
         """
         return self.internal_response.content
 
-    def stream_download(self, pipeline: Pipeline, *, decompress:bool = True, **kwargs) -> Iterator[bytes]:
+    def stream_download(self, pipeline: Pipeline, *, decompress: bool = True, **kwargs) -> Iterator[bytes]:
         """Generator for streaming response data.
 
         :param pipeline: The pipeline object
@@ -176,7 +176,9 @@ class HttpXTransport(HttpTransport):
     def __exit__(self, *args) -> None:
         self.close()
 
-    def send(self, request: Union[HttpRequest, LegacyHttpRequest],*, stream:bool=False, **kwargs) -> HttpXTransportResponse:
+    def send(
+        self, request: Union[HttpRequest, LegacyHttpRequest], *, stream: bool = False, **kwargs
+    ) -> HttpXTransportResponse:
         """Send a request and get back a response.
 
         :param request: The request object to be sent.
