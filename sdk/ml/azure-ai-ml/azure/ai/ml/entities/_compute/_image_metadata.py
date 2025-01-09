@@ -32,7 +32,7 @@ class ImageMetadata:
         self._latest_image_version = latest_image_version
 
     @property
-    def is_latest_os_image_version(self) -> bool:
+    def is_latest_os_image_version(self) -> Optional[bool]:
         """Whether or not a compute instance is running on the latest OS image version.
 
         :return: Boolean indicating if the compute instance is running the latest OS image version.
@@ -41,7 +41,7 @@ class ImageMetadata:
         return self._is_latest_os_image_version
 
     @property
-    def current_image_version(self) -> str:
+    def current_image_version(self) -> Optional[str]:
         """The current OS image version number.
 
         :return: The current OS image version number.
@@ -50,7 +50,7 @@ class ImageMetadata:
         return self._current_image_version
 
     @property
-    def latest_image_version(self) -> str:
+    def latest_image_version(self) -> Optional[str]:
         """The latest OS image version number.
 
         :return: The latest OS image version number.

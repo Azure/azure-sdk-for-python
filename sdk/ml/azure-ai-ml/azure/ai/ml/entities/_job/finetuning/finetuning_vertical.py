@@ -95,7 +95,7 @@ class FineTuningVertical(FineTuningJob):
             )
 
     @property
-    def model_provider(self) -> str:
+    def model_provider(self) -> Optional[str]:
         """The model provider.
         :return: The model provider.
         :rtype: str

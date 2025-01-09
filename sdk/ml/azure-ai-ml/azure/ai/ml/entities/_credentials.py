@@ -317,7 +317,7 @@ class ServicePrincipalConfiguration(BaseTenantCredentials):
         self,
         *,
         client_secret: Optional[str],
-        **kwargs: str,
+        **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
         self.type = camel_to_snake(CredentialsType.SERVICE_PRINCIPAL)
