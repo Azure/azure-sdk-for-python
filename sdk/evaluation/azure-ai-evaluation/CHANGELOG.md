@@ -12,6 +12,7 @@
 - Fixed the non adversarial simulator to run in task-free mode
 
 ### Other Changes
+- Stop dependency on the local promptflow service. No promptflow service will automatically start when running evaluation.
 
 ## 1.1.0 (2024-12-12)
 
