@@ -1,8 +1,8 @@
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# pylint: disable=too-many-lines)
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -16,6 +16,9 @@ Why do we patch auto-generated code?
 6. Add support for friendly print of result objects (__str__ method) (all clients)
 7. Add support for load() method in ImageUrl class (see /models/_patch.py)
 8. Add support for sending two auth headers for api-key auth (all clients)
+9. Simplify how "structured output" is set. Define "response_format" as a flat Union of strings and
+   JsonSchemaFormat object, instead of using auto-generated base/derived classes named
+   ChatCompletionsResponseFormatXxxInternal.
 
 """
 import json
@@ -67,6 +70,49 @@ _SERIALIZER.client_side_validation = False
 _LOGGER = logging.getLogger(__name__)
 
 
+def _get_internal_response_format(
+    response_format: Optional[Union[Literal["text", "json_object"], _models.JsonSchemaFormat]]
+) -> Optional[_models._models.ChatCompletionsResponseFormat]:
+    """
+    Internal helper method to convert between the public response format type that's supported in the `complete` method,
+    and the internal response format type that's used in the generated code.
+
+    :param response_format: Response format. Required.
+    :type response_format: Optional[Union[Literal["text", "json_object"], _models.JsonSchemaFormat]]
+    :return: Internal response format.
+    :rtype: ~azure.ai.inference._models._models.ChatCompletionsResponseFormat
+    """
+    if response_format is not None:
+
+        # To make mypy tool happy, start by declaring the type as the base class
+        internal_response_format: _models._models.ChatCompletionsResponseFormat
+
+        # Note: the `type=".."`` should no longer be needed in the constructors below after a Python emitter fix
+        # that Isabella Cai is making soon (https://github.com/microsoft/typespec/pull/5517). At the moment,
+        # auto-emitted classes that are marked as in Internal in TypeSpec are missing a constructor that sets
+        # the discriminant field (`type`). This is why we need to explicitly set it here.
+        if isinstance(response_format, str) and response_format == "text":
+            internal_response_format = _models._models.ChatCompletionsResponseFormatText(  # pylint: disable=protected-access
+                type="text"
+            )
+        elif isinstance(response_format, str) and response_format == "json_object":
+            internal_response_format = _models._models.ChatCompletionsResponseFormatJsonObject(  # pylint: disable=protected-access
+                type="json_object"
+            )
+        elif isinstance(response_format, _models.JsonSchemaFormat):
+            internal_response_format = (
+                _models._models.ChatCompletionsResponseFormatJsonSchema(  # pylint: disable=protected-access
+                    type="json_schema", json_schema=response_format
+                )
+            )
+        else:
+            raise ValueError(f"Unsupported `response_format` {response_format}")
+
+        return internal_response_format
+
+    return None
+
+
 def load_client(
     endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any
 ) -> Union["ChatCompletionsClient", "EmbeddingsClient", "ImageEmbeddingsClient"]:
@@ -104,19 +150,42 @@ def load_client(
         )
 
     # TODO: Remove "completions", "chat-comletions" and "embedding" once Mistral Large and Cohere fixes their model type
-    if model_info.model_type in (_models.ModelType.CHAT, "completion", "chat-completion", "chat-completions"):
+    if model_info.model_type in (
+        _models.ModelType.CHAT_COMPLETION,
+        "chat_completions",
+        "chat",
+        "completion",
+        "chat-completion",
+        "chat-completions",
+        "chat completion",
+        "chat completions",
+    ):
         chat_completion_client = ChatCompletionsClient(endpoint, credential, **kwargs)
         chat_completion_client._model_info = (  # pylint: disable=protected-access,attribute-defined-outside-init
             model_info
         )
         return chat_completion_client
 
-    if model_info.model_type in (_models.ModelType.EMBEDDINGS, "embedding"):
+    if model_info.model_type in (
+        _models.ModelType.EMBEDDINGS,
+        "embedding",
+        "text_embedding",
+        "text-embeddings",
+        "text embedding",
+        "text embeddings",
+    ):
         embedding_client = EmbeddingsClient(endpoint, credential, **kwargs)
         embedding_client._model_info = model_info  # pylint: disable=protected-access,attribute-defined-outside-init
         return embedding_client
 
-    if model_info.model_type == _models.ModelType.IMAGE_EMBEDDINGS:
+    if model_info.model_type in (
+        _models.ModelType.IMAGE_EMBEDDINGS,
+        "image_embedding",
+        "image-embeddings",
+        "image-embedding",
+        "image embedding",
+        "image embeddings",
+    ):
         image_embedding_client = ImageEmbeddingsClient(endpoint, credential, **kwargs)
         image_embedding_client._model_info = (  # pylint: disable=protected-access,attribute-defined-outside-init
             model_info
@@ -171,11 +240,12 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
     :paramtype top_p: float
     :keyword max_tokens: The maximum number of tokens to generate. Default value is None.
     :paramtype max_tokens: int
-    :keyword response_format: The format that the model must output. Use this to enable JSON mode
-        instead of the default text mode.
-        Note that to enable JSON mode, some AI models may also require you to instruct the model to
-        produce JSON via a system or user message. Default value is None.
-    :paramtype response_format: ~azure.ai.inference.models.ChatCompletionsResponseFormat
+    :keyword response_format: The format that the AI model must output. AI chat completions models typically output
+        unformatted text by default. This is equivalent to setting "text" as the response_format.
+        To output JSON format, without adhering to any schema, set to "json_object".
+        To output JSON format adhering to a provided schema, set this to an object of the class
+        ~azure.ai.inference.models.JsonSchemaFormat. Default value is None.
+    :paramtype response_format: Union[Literal['text', 'json_object'], ~azure.ai.inference.models.JsonSchemaFormat]
     :keyword stop: A collection of textual sequences that will end completions generation. Default
         value is None.
     :paramtype stop: list[str]
@@ -217,7 +287,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
+        response_format: Optional[Union[Literal["text", "json_object"], _models.JsonSchemaFormat]] = None,
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
@@ -238,7 +308,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         self._temperature = temperature
         self._top_p = top_p
         self._max_tokens = max_tokens
-        self._response_format = response_format
+        self._internal_response_format = _get_internal_response_format(response_format)
         self._stop = stop
         self._tools = tools
         self._tool_choice = tool_choice
@@ -272,7 +342,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
+        response_format: Optional[Union[Literal["text", "json_object"], _models.JsonSchemaFormat]] = None,
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
@@ -295,7 +365,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
+        response_format: Optional[Union[Literal["text", "json_object"], _models.JsonSchemaFormat]] = None,
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
@@ -318,7 +388,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
+        response_format: Optional[Union[Literal["text", "json_object"], _models.JsonSchemaFormat]] = None,
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
@@ -385,11 +455,12 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         :paramtype top_p: float
         :keyword max_tokens: The maximum number of tokens to generate. Default value is None.
         :paramtype max_tokens: int
-        :keyword response_format: The format that the model must output. Use this to enable JSON mode
-         instead of the default text mode.
-         Note that to enable JSON mode, some AI models may also require you to instruct the model to
-         produce JSON via a system or user message. Default value is None.
-        :paramtype response_format: ~azure.ai.inference.models.ChatCompletionsResponseFormat
+        :keyword response_format: The format that the AI model must output. AI chat completions models typically output
+         unformatted text by default. This is equivalent to setting "text" as the response_format.
+         To output JSON format, without adhering to any schema, set to "json_object".
+         To output JSON format adhering to a provided schema, set this to an object of the class
+         ~azure.ai.inference.models.JsonSchemaFormat. Default value is None.
+        :paramtype response_format: Union[Literal['text', 'json_object'], ~azure.ai.inference.models.JsonSchemaFormat]
         :keyword stop: A collection of textual sequences that will end completions generation. Default
          value is None.
         :paramtype stop: list[str]
@@ -480,7 +551,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
+        response_format: Optional[Union[Literal["text", "json_object"], _models.JsonSchemaFormat]] = None,
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
@@ -548,11 +619,12 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         :paramtype top_p: float
         :keyword max_tokens: The maximum number of tokens to generate. Default value is None.
         :paramtype max_tokens: int
-        :keyword response_format: The format that the model must output. Use this to enable JSON mode
-         instead of the default text mode.
-         Note that to enable JSON mode, some AI models may also require you to instruct the model to
-         produce JSON via a system or user message. Default value is None.
-        :paramtype response_format: ~azure.ai.inference.models.ChatCompletionsResponseFormat
+        :keyword response_format: The format that the AI model must output. AI chat completions models typically output
+         unformatted text by default. This is equivalent to setting "text" as the response_format.
+         To output JSON format, without adhering to any schema, set to "json_object".
+         To output JSON format adhering to a provided schema, set this to an object of the class
+         ~azure.ai.inference.models.JsonSchemaFormat. Default value is None.
+        :paramtype response_format: Union[Literal['text', 'json_object'], ~azure.ai.inference.models.JsonSchemaFormat]
         :keyword stop: A collection of textual sequences that will end completions generation. Default
          value is None.
         :paramtype stop: list[str]
@@ -596,6 +668,8 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
 
+        internal_response_format = _get_internal_response_format(response_format)
+
         if body is _Unset:
             if messages is _Unset:
                 raise TypeError("missing required argument: messages")
@@ -606,7 +680,9 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
                 "max_tokens": max_tokens if max_tokens is not None else self._max_tokens,
                 "model": model if model is not None else self._model,
                 "presence_penalty": presence_penalty if presence_penalty is not None else self._presence_penalty,
-                "response_format": response_format if response_format is not None else self._response_format,
+                "response_format": (
+                    internal_response_format if internal_response_format is not None else self._internal_response_format
+                ),
                 "seed": seed if seed is not None else self._seed,
                 "stop": stop if stop is not None else self._stop,
                 "temperature": temperature if temperature is not None else self._temperature,
