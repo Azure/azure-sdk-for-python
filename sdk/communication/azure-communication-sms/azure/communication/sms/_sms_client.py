@@ -83,20 +83,20 @@ class SmsClient(object):  # pylint: disable=client-accepts-api-version-keyword
     @distributed_trace
     def send(
             self,
-            from_,  # type: str
-            to,  # type: Union[str, List[str]]
-            message,  # type: str
+            from_: str,
+            to: Union[str, List[str]],
+            message: str,
             *,
             enable_delivery_report: bool = False,
             tag: Optional[str] = None,
-            **kwargs: Any
+            **kwargs: Any,
     ) -> List[SmsSendResult]:
         """Sends SMSs to phone numbers.
 
         :param str from_: The sender of the SMS.
         :param to: The single recipient or the list of recipients of the SMS.
         :type to: Union[str, List[str]]
-        :param str message: The message in the SMS.
+        :param str message: The message in the SMS
         :keyword bool enable_delivery_report: Enable this flag to receive a delivery report for this
          message on the Azure Resource EventGrid.
         :keyword str tag: Use this field to provide metadata that will then be sent back in the corresponding
@@ -104,7 +104,6 @@ class SmsClient(object):  # pylint: disable=client-accepts-api-version-keyword
         :return: A list of SmsSendResult.
         :rtype: [~azure.communication.sms.models.SmsSendResult]
         """
-
         if isinstance(to, str):
             to = [to]
 

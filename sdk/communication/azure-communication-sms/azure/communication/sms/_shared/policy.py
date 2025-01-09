@@ -9,7 +9,7 @@ import urllib
 import base64
 import hmac
 from urllib.parse import ParseResult, urlparse
-from typing import Union, Any
+from typing import Union
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from .utils import get_current_utc_time
@@ -54,7 +54,7 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
 
         return base64.b64encode(digest).decode("utf-8")
 
-    def _sign_request(self, request: Any):
+    def _sign_request(self, request):
         verb = request.http_request.method.upper()
 
         # Get the path and query from url, which looks like https://host/path/query
