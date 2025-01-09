@@ -24,9 +24,6 @@ if "RAI_SVC_URL" in os.environ:
     api_url = api_url.rstrip("/")
     print(f"Found RAI_SVC_URL in environment variable, using {api_url} for the service endpoint.")
 
-# TODO: remove this
-api_url = "https://int.api.azureml-test.ms"
-
 
 class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
     """Client for the Responsible AI Service
