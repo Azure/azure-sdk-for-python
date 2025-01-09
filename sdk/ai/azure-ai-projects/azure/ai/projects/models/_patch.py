@@ -567,6 +567,19 @@ class BaseFunctionTool(Tool[FunctionToolDefinition]):
         self._functions = self._create_function_dict(functions)
         self._definitions = self._build_function_definitions(self._functions)
 
+    def add_functions(self, extra_functions: Set[Callable[..., Any]]) -> None:
+        """
+        Add more functions into this FunctionTool’s existing function set.
+        If a function with the same name already exists, it is overwritten.
+        """
+        # Convert the existing dictionary of { name: function } back into a set
+        existing_functions = set(self._functions.values())
+        # Merge old + new
+        combined = existing_functions.union(extra_functions)
+        # Rebuild state
+        self._functions = self._create_function_dict(combined)
+        self._definitions = self._build_function_definitions(self._functions)
+
     def _create_function_dict(self, functions: Set[Callable[..., Any]]) -> Dict[str, Callable[..., Any]]:
         return {func.__name__: func for func in functions}
 
@@ -1654,7 +1667,7 @@ class OpenAIPageableListOfThreadMessage(OpenAIPageableListOfThreadMessageGenerat
         :return: The last message from a sender in the specified role.
         :rtype: ~azure.ai.projects.models.ThreadMessage
         """
-        for msg in self._messages:
+        for msg in self.data:
             if msg.role == role:
                 return msg
         return None
@@ -1668,7 +1681,7 @@ class OpenAIPageableListOfThreadMessage(OpenAIPageableListOfThreadMessageGenerat
         :return: The last text message from a sender in the specified role.
         :rtype: ~azure.ai.projects.models.MessageTextContent
         """
-        for msg in self._messages:
+        for msg in self.data:
             if msg.role == role:
                 for content in msg.content:
                     if isinstance(content, MessageTextContent):
