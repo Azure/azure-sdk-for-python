@@ -235,7 +235,7 @@ def _get_location_ip(attributes: Attributes) -> Optional[str]:
 @no_type_check
 def _get_user_agent(attributes: Attributes) -> Optional[str]:
     return attributes.get(user_agent_attributes.USER_AGENT_ORIGINAL) or \
-        attributes.get(SpanAttributes.USER_AGENT_ORIGINAL)
+        attributes.get(SpanAttributes.HTTP_USER_AGENT)
 
 
 @no_type_check
