@@ -98,12 +98,14 @@ def _get_internal_response_format(
                 type="json_object"
             )  # pylint: disable=protected-access
         elif isinstance(response_format, _models.JsonSchemaFormat):
+            print(type(response_format))
             internal_response_format = (
                 _models._models.ChatCompletionsResponseFormatJsonSchema(  # pylint: disable=protected-access
                     type="json_schema", json_schema=response_format
                 )
             )
         else:
+            print(type(response_format))
             raise ValueError(f"Unsupported `response_format` {response_format}")
 
         return internal_response_format

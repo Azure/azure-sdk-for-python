@@ -448,7 +448,7 @@ class TestChatCompletionsClientAsync(ModelClientTestBase):
             ],
         )
         self._print_chat_completions_result(response)
-        self._validate_chat_completions_result(response, ["juggling", "balls", "blue", "red", "green", "yellow"], True)
+        self._validate_chat_completions_result(response, ["juggling", "balls", "blue", "red", "green", "yellow"], is_aoai=True)
         await client.close()
 
     # We use AOAI endpoint here because at the moment there is no MaaS model that supports
@@ -472,7 +472,7 @@ class TestChatCompletionsClientAsync(ModelClientTestBase):
             ],
         )
         self._print_chat_completions_result(response)
-        self._validate_chat_completions_result(response, ["juggling", "balls", "blue", "red", "green", "yellow"], True)
+        self._validate_chat_completions_result(response, ["juggling", "balls", "blue", "red", "green", "yellow"], is_aoai=True)
         await client.close()
 
     # We use AOAI endpoint here because at the moment MaaS does not support Entra ID auth.
@@ -488,3 +488,24 @@ class TestChatCompletionsClientAsync(ModelClientTestBase):
         self._print_chat_completions_result(response)
         self._validate_chat_completions_result(response, ["5280", "5,280"], True)
         await client.close()
+
+    @ServicePreparerAOAIChatCompletions()
+    @recorded_by_proxy_async
+    async def test_async_aoai_chat_completions_with_structured_output(self, **kwargs):
+        client = self._create_async_aoai_chat_client(key_auth=True, **kwargs)
+        response_format = sdk.models.JsonSchemaFormat(
+            name="Test_JSON_Schema",
+            schema=ModelClientTestBase.OUTPUT_FORMAT_JSON_SCHEMA,
+            description="Describes a set of distances between locations",
+            strict=True,
+        )
+        print(type(response_format))
+        messages = [
+            sdk.models.SystemMessage(content="You are a helpful assistant answering questions on US geography"),
+            sdk.models.UserMessage(content="What's the distance between Seattle and Portland, as the crow flies?"),
+        ]
+        response = await client.complete(messages=messages, response_format=response_format)
+        self._print_chat_completions_result(response)
+        self._validate_chat_completions_result(response, ["distances", "location1", "Seattle", "location2", "Portland"], is_aoai=True, is_json=True)
+        await client.close()
+
