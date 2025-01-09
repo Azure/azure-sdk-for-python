@@ -4,6 +4,12 @@
 from typing import no_type_check, Optional, Tuple
 from urllib.parse import urlparse
 
+from opentelemetry.semconv.attributes import (
+    client_attributes,
+    server_attributes,
+    url_attributes,
+    user_agent_attributes,
+)
 from opentelemetry.semconv.trace import DbSystemValues, SpanAttributes
 from opentelemetry.util.types import Attributes
 
@@ -217,37 +223,77 @@ def _get_target_for_rpc_dependency(target: Optional[str], attributes: Attributes
     return target
 
 
+# Request
+
+@no_type_check
+def _get_location_ip(attributes: Attributes) -> Optional[str]:
+    return attributes.get(client_attributes.CLIENT_ADDRESS) or \
+        attributes.get(SpanAttributes.HTTP_CLIENT_IP) or \
+        attributes.get(SpanAttributes.NET_PEER_IP) # We assume non-http spans don't have http related attributes
+
+
+@no_type_check
+def _get_user_agent(attributes: Attributes) -> Optional[str]:
+    return attributes.get(user_agent_attributes.USER_AGENT_ORIGINAL) or \
+        attributes.get(SpanAttributes.USER_AGENT_ORIGINAL)
+
+
 @no_type_check
 def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
     url = ""
     if attributes:
+        # Url
+        if url_attributes.URL_FULL in attributes:
+            return attributes[url_attributes.URL_FULL]
         if SpanAttributes.HTTP_URL in attributes:
             return attributes[SpanAttributes.HTTP_URL]
-        scheme = attributes.get(SpanAttributes.HTTP_SCHEME)
-        http_target = attributes.get(SpanAttributes.HTTP_TARGET)
+        # Scheme
+        scheme = attributes.get(url_attributes.URL_SCHEME) or attributes.get(SpanAttributes.HTTP_SCHEME)
+        # Target
+        http_target = ""
+        if url_attributes.URL_PATH in attributes:
+            http_target = attributes.get(url_attributes.URL_PATH, "")
+        if url_attributes.URL_QUERY in attributes:
+            http_target = "{}?{}".format(
+                http_target,
+                attributes.get(url_attributes.URL_QUERY, "")
+            )
+        if not http_target:
+            http_target = attributes.get(SpanAttributes.HTTP_TARGET)
         if scheme and http_target:
-            if SpanAttributes.HTTP_HOST in attributes:
+            # Host
+            http_host = ""
+            if server_attributes.SERVER_ADDRESS in attributes:
+                http_host = attributes.get(server_attributes.SERVER_ADDRESS, "")
+            if server_attributes.SERVER_PORT in attributes:
+                http_host = "{}:{}".format(
+                    http_host,
+                    attributes.get(server_attributes.SERVER_PORT, "")
+                )
+            if not http_host:
+                http_host = attributes.get(SpanAttributes.HTTP_HOST, "")
+            if http_host:
                 url = "{}://{}{}".format(
                     scheme,
-                    attributes[SpanAttributes.HTTP_HOST],
+                    http_host,
                     http_target,
                 )
-            elif SpanAttributes.NET_HOST_PORT in attributes:
-                host_port = attributes[SpanAttributes.NET_HOST_PORT]
-                if SpanAttributes.HTTP_SERVER_NAME in attributes:
-                    server_name = attributes[SpanAttributes.HTTP_SERVER_NAME]
-                    url = "{}://{}:{}{}".format(
-                        scheme,
-                        server_name,
-                        host_port,
-                        http_target,
-                    )
-                elif SpanAttributes.NET_HOST_NAME in attributes:
-                    host_name = attributes[SpanAttributes.NET_HOST_NAME]
-                    url = "{}://{}:{}{}".format(
-                        scheme,
-                        host_name,
-                        host_port,
-                        http_target,
-                    )
+            elif SpanAttributes.HTTP_SERVER_NAME in attributes:
+                server_name = attributes[SpanAttributes.HTTP_SERVER_NAME]
+                host_port = attributes.get(SpanAttributes.NET_HOST_PORT, "")
+                url = "{}://{}:{}{}".format(
+                    scheme,
+                    server_name,
+                    host_port,
+                    http_target,
+                )
+            elif SpanAttributes.NET_HOST_NAME in attributes:
+                host_name = attributes[SpanAttributes.NET_HOST_NAME]
+                host_port = attributes.get(SpanAttributes.NET_HOST_PORT, "")
+                url = "{}://{}:{}{}".format(
+                    scheme,
+                    host_name,
+                    host_port,
+                    http_target,
+                )
     return url
