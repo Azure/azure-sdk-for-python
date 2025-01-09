@@ -7,7 +7,7 @@
 import json
 import logging
 import time
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union, Any
 
 from azure.ai.ml._local_endpoints.local_endpoint_mode import LocalEndpointMode
 from azure.ai.ml._local_endpoints.vscode_debug.vscode_client import VSCodeClient
@@ -108,7 +108,7 @@ class DockerClient(object):
         conda_yaml_contents: str,
         volumes: dict,
         environment: dict,
-        azureml_port: int,
+        azureml_port: Union[Any, int],
         local_endpoint_mode: LocalEndpointMode,
         prebuilt_image_name: Optional[str] = None,
         local_enable_gpu: Optional[bool] = False,

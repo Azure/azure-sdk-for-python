@@ -510,8 +510,8 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         super().__init__(meta=meta, data=data, **kwargs)
         self._port_name = port_name
         self._owner = owner
-        self._name: str = self._data.name if isinstance(self._data, Output) else None
-        self._version: str = self._data.version if isinstance(self._data, Output) else None
+        self._name: Optional[str] = self._data.name if isinstance(self._data, Output) else None
+        self._version: Optional[str] = self._data.version if isinstance(self._data, Output) else None
 
         self._assert_name_and_version()
 

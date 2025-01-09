@@ -28,7 +28,7 @@ class FineTuningVertical(FineTuningJob):
         *,
         task: str,
         model: Input,
-        model_provider: str,
+        model_provider: Optional[str],
         training_data: Input,
         validation_data: Optional[Input] = None,
         **kwargs: Any,
