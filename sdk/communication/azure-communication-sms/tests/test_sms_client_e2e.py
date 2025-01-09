@@ -8,13 +8,12 @@ import logging
 import sys
 
 import pytest
-from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
-from _shared.utils import create_token_credential, get_http_logging_policy
+from devtools_testutils.fake_credentials import FakeTokenCredential
+from devtools_testutils import get_credential, is_live, recorded_by_proxy, set_bodiless_matcher
+from _shared.utils import get_http_logging_policy
 from azure.core.exceptions import HttpResponseError
 from acs_sms_test_case import ACSSMSTestCase
 from azure.communication.sms import SmsClient
-
-logger = logging.getLogger(__name__)
 
 
 class TestClient(ACSSMSTestCase):
@@ -53,7 +52,10 @@ class TestClient(ACSSMSTestCase):
 
     @recorded_by_proxy
     def test_send_sms_from_managed_identity(self):
-        credential = create_token_credential()
+        if not is_live():
+            credential = FakeTokenCredential()
+        else:
+            credential = get_credential()
         sms_client = SmsClient(self.endpoint, credential, http_logging_policy=get_http_logging_policy())
 
         # calling send() with sms values
