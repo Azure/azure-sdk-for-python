@@ -205,6 +205,7 @@ The following section provides several code snippets covering some of the most c
 - [Manage Your Models](#manage-your-models "Manage Your Models")
 - [Add-on Capabilities](#add-on-capabilities "Add-on Capabilities")
 - [Get Raw JSON Result](#get-raw-json-result "Get Raw JSON Result")
+- [Parse analyzed result to JSON format](#parse-analyzed-result-to-json-format "Parse analyzed result to JSON format")
 
 ### Extract Layout
 
