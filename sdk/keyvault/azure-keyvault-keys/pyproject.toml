@@ -36,7 +36,7 @@ dynamic = ["version", "readme"]
 repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys"
 
 [tool.setuptools.dynamic]
-version = {attr = "azure.keyvault.keys.__version__"}
+version = {attr = "azure.keyvault.keys._version.VERSION"}
 readme = {file = ["README.md", "CHANGELOG.md"]}
 
 [tool.setuptools.packages.find]
