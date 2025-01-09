@@ -22,6 +22,10 @@ The Inference client library makes services calls using REST API version `2024-0
 | [Package (Pypi)](https://aka.ms/azsdk/azure-ai-inference/python/package)
 | [SDK source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/azure/ai/inference)
 
+## Reporting issues
+
+To report issues with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues). Mention "azure-ai-inference" in the title or content.
+
 ## Getting started
 
 ### Prerequisites
@@ -562,7 +566,7 @@ For more information, see [Configure logging in the Azure libraries for Python](
 
 ### Reporting issues
 
-To report issues with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues)
+To report issues with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues). Mention "azure-ai-inference" in the title or content.
 
 ## Observability With OpenTelemetry
 
