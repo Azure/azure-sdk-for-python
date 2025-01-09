@@ -486,7 +486,7 @@ class TestChatCompletionsClientAsync(ModelClientTestBase):
         ]
         response = await client.complete(messages=messages)
         self._print_chat_completions_result(response)
-        self._validate_chat_completions_result(response, ["5280", "5,280"], True)
+        self._validate_chat_completions_result(response, ["5280", "5,280"], is_aoai=True)
         await client.close()
 
     @ServicePreparerAOAIChatCompletions()
