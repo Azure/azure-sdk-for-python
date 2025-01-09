@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Implements azure.core.tracing.AbstractSpan to wrap OpenTelemetry spans."""
-from typing import Any, ContextManager, Dict, Optional, Union, Callable, Sequence, cast, List
+from typing import Any, ContextManager, Dict, Optional, Union, Callable, Sequence, cast
 import warnings
 
 from opentelemetry import context, trace
@@ -147,7 +147,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         """
         return self._span_instance
 
-    def span(self, name: str = "span", *, links:List["Link"], **kwargs: Any) -> "OpenTelemetrySpan":
+    def span(self, name: str = "span", **kwargs: Any) -> "OpenTelemetrySpan": #pylint:disable=docstring-keyword-should-match-keyword-only
         """Create a child span for the current span and return it.
 
         :param name: Name of the child span

@@ -4,7 +4,7 @@
 # ------------------------------------
 """Implements azure.core.tracing.AbstractSpan to wrap opencensus spans."""
 import warnings
-from typing import Dict, Optional, Union, Callable, Sequence, Any, Generator, List
+from typing import Dict, Optional, Union, Callable, Sequence, Any, Generator
 
 from opencensus.trace import Span, execution_context
 from opencensus.trace.tracer import Tracer
@@ -106,7 +106,7 @@ class OpenCensusSpan(HttpSpanMixin, object):
         """
         return self._span_instance
 
-    def span(self, name: Optional[str] = "span", *, links: List["Link"], **kwargs: Any) -> "OpenCensusSpan":
+    def span(self, name: Optional[str] = "span", **kwargs: Any) -> "OpenCensusSpan": #pylint:disable=docstring-keyword-should-match-keyword-only
         """Create a child span for the current span and append it to the child spans list in the span instance.
 
         :param name: Name of the child span
@@ -117,7 +117,7 @@ class OpenCensusSpan(HttpSpanMixin, object):
         :return: The OpenCensusSpan that is wrapping the child span instance
         :rtype: OpenCensusSpan
         """
-        return self.__class__(name=name, links=links, **kwargs)
+        return self.__class__(name=name, **kwargs)
 
     _KIND_MAPPING = {
         SpanKind.CLIENT: OpenCensusSpanKind.CLIENT,
