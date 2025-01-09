@@ -20,13 +20,9 @@ class _AgentTeamMember:
     :param can_delegate: Whether this agent has delegation capability (e.g., 'create_task').
                          Defaults to True.
     """
+
     def __init__(
-        self,
-        model: str,
-        name: str,
-        instructions: str,
-        toolset: Optional[ToolSet] = None,
-        can_delegate: bool = True
+        self, model: str, name: str, instructions: str, toolset: Optional[ToolSet] = None, can_delegate: bool = True
     ) -> None:
         self.model = model
         self.name = name
@@ -44,6 +40,7 @@ class _AgentTask:
     :param task_description: The description of the work to be done or question to be answered.
     :param requestor: The name of the agent or user requesting the task.
     """
+
     def __init__(self, recipient: str, task_description: str, requestor: str) -> None:
         self.recipient = recipient
         self.task_description = task_description
@@ -69,7 +66,7 @@ class AgentTeam:
     def __init__(self, team_name: str, project_client: AIProjectClient):
         """
         Initialize a new AgentTeam and set it as the singleton instance.
-        """	
+        """
         # Validate that the team_name is a non-empty string
         if not isinstance(team_name, str) or not team_name:
             raise ValueError("Team name must be a non-empty string.")
@@ -86,15 +83,17 @@ class AgentTeam:
         # Get the directory of the current file
         current_dir = os.path.dirname(os.path.abspath(__file__))
         # Construct the full path to the config file
-        file_path = os.path.join(current_dir, 'agent_team_config.yaml')
-        with open(file_path, 'r') as config_file:
+        file_path = os.path.join(current_dir, "agent_team_config.yaml")
+        with open(file_path, "r") as config_file:
             config = yaml.safe_load(config_file)
-            self.TEAM_LEADER_INSTRUCTIONS = config['TEAM_LEADER_INSTRUCTIONS']
-            self.TEAM_LEADER_INITIAL_REQUEST = config['TEAM_LEADER_INITIAL_REQUEST']
-            self.TEAM_LEADER_TASK_COMPLETENESS_CHECK_INSTRUCTIONS = config['TEAM_LEADER_TASK_COMPLETENESS_CHECK_INSTRUCTIONS']
-            self.TEAM_MEMBER_CAN_DELEGATE_INSTRUCTIONS = config['TEAM_MEMBER_CAN_DELEGATE_INSTRUCTIONS']
-            self.TEAM_MEMBER_NO_DELEGATE_INSTRUCTIONS = config['TEAM_MEMBER_NO_DELEGATE_INSTRUCTIONS']
-            self.TEAM_LEADER_MODEL = config['TEAM_LEADER_MODEL'].strip()
+            self.TEAM_LEADER_INSTRUCTIONS = config["TEAM_LEADER_INSTRUCTIONS"]
+            self.TEAM_LEADER_INITIAL_REQUEST = config["TEAM_LEADER_INITIAL_REQUEST"]
+            self.TEAM_LEADER_TASK_COMPLETENESS_CHECK_INSTRUCTIONS = config[
+                "TEAM_LEADER_TASK_COMPLETENESS_CHECK_INSTRUCTIONS"
+            ]
+            self.TEAM_MEMBER_CAN_DELEGATE_INSTRUCTIONS = config["TEAM_MEMBER_CAN_DELEGATE_INSTRUCTIONS"]
+            self.TEAM_MEMBER_NO_DELEGATE_INSTRUCTIONS = config["TEAM_MEMBER_NO_DELEGATE_INSTRUCTIONS"]
+            self.TEAM_LEADER_MODEL = config["TEAM_LEADER_MODEL"].strip()
 
     @staticmethod
     def get_team(team_name: str) -> "AgentTeam":
@@ -112,12 +111,7 @@ class AgentTeam:
         del AgentTeam._teams[team_name]
 
     def add_agent(
-        self,
-        model: str,
-        name: str,
-        instructions: str,
-        toolset: Optional[ToolSet] = None,
-        can_delegate: bool = True
+        self, model: str, name: str, instructions: str, toolset: Optional[ToolSet] = None, can_delegate: bool = True
     ) -> None:
         """
         Add a new agent (team member) to this AgentTeam.
@@ -152,7 +146,6 @@ class AgentTeam:
         )
         self._members.append(member)
 
-
     def _add_task(self, task: _AgentTask) -> None:
         """
         Add a new task to the team's task list.
@@ -161,13 +154,7 @@ class AgentTeam:
         """
         self._tasks.append(task)
 
-    def create_team_leader(
-        self,
-        model: str,
-        name: str,
-        instructions: str,
-        toolset: Optional[ToolSet] = None
-    ) -> None:
+    def create_team_leader(self, model: str, name: str, instructions: str, toolset: Optional[ToolSet] = None) -> None:
         """
         Add a new agent (team member) to this AgentTeam.
 
@@ -196,7 +183,7 @@ class AgentTeam:
             model=self._team_leader.model,
             name=self._team_leader.name,
             instructions=self._team_leader.instructions,
-            toolset=self._team_leader.toolset
+            toolset=self._team_leader.toolset,
         )
 
     def _create_team_leader(self):
@@ -205,7 +192,7 @@ class AgentTeam:
         """
         toolset = ToolSet()
         toolset.add(default_function_tool)
-        instructions = self.TEAM_LEADER_INSTRUCTIONS.format(agent_name='TeamLeader', team_name=self.team_name) + "\n"
+        instructions = self.TEAM_LEADER_INSTRUCTIONS.format(agent_name="TeamLeader", team_name=self.team_name) + "\n"
         self.create_team_leader(
             model=self.TEAM_LEADER_MODEL,
             name="TeamLeader",
@@ -237,21 +224,18 @@ class AgentTeam:
                     name=member.name,
                     team_name=self._team_name,
                     original_instructions=member.instructions,
-                    team_description=team_description
+                    team_description=team_description,
                 )
             else:
                 extended_instructions = self.TEAM_MEMBER_NO_DELEGATE_INSTRUCTIONS.format(
                     name=member.name,
                     team_name=self._team_name,
                     original_instructions=member.instructions,
-                    team_description=team_description
+                    team_description=team_description,
                 )
             member.agent_instance = self._project_client.agents.create_agent(
-                model=member.model,
-                name=member.name,
-                instructions=extended_instructions,
-                toolset=member.toolset
-        )
+                model=member.model, name=member.name, instructions=extended_instructions, toolset=member.toolset
+            )
 
     def dismantle_team(self) -> None:
         """
@@ -276,7 +260,7 @@ class AgentTeam:
         :param request: The user's request or question.
         """
         assert self._project_client is not None, "project client must not be None"
-        assert self._team_leader is not None, "team leader must not be None"        
+        assert self._team_leader is not None, "team leader must not be None"
         thread = self._project_client.agents.create_thread()
         print(f"Created thread with ID: {thread.id}")
         self._thread_id = thread.id
@@ -288,7 +272,7 @@ class AgentTeam:
                 f"Starting task for agent '{task.recipient}'. "
                 f"Requestor: '{task.requestor}'. "
                 f"Task description: '{task.task_description}'."
-            )            
+            )
             message = self._project_client.agents.create_message(
                 thread_id=self._thread_id,
                 role="user",
@@ -304,16 +288,15 @@ class AgentTeam:
                 messages = self._project_client.agents.list_messages(thread_id=self._thread_id)
                 text_message = messages.get_last_text_message_by_role(role=MessageRole.AGENT)
                 if text_message and text_message.text:
-                    print(
-                        f"Agent '{agent.name}' completed task. "
-                        f"Outcome: {text_message.text.value}"
-                    )
+                    print(f"Agent '{agent.name}' completed task. " f"Outcome: {text_message.text.value}")
 
             # If no tasks remain AND the recipient is not the TeamLeader,
             # let the TeamLeader see if more delegation is needed.
             if not self._tasks and not task.recipient == "TeamLeader":
                 team_leader_request = self.TEAM_LEADER_TASK_COMPLETENESS_CHECK_INSTRUCTIONS
-                task = _AgentTask(recipient=self._team_leader.name, task_description=team_leader_request, requestor="user")
+                task = _AgentTask(
+                    recipient=self._team_leader.name, task_description=team_leader_request, requestor="user"
+                )
                 self._add_task(task)
 
     def _get_member_by_name(self, name) -> Optional[_AgentTeamMember]:

@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_agent_team.py
-
 DESCRIPTION:
     This sample demonstrates how to multiple agents using AgentTeam.
 
@@ -17,17 +15,13 @@ USAGE:
     pip install azure-ai-projects azure-identity
 
     Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
 """
 
 import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from agent_team import AgentTeam
-
-# Create an Azure AI Project Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
