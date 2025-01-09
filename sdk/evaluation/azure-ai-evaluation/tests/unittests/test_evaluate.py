@@ -60,10 +60,6 @@ def evaluate_test_data_jsonl_file():
     return _get_file("evaluate_test_data.jsonl")
 
 @pytest.fixture
-def evaluate_test_data_csv_file():
-    return _get_file("evaluate_test_data.csv")
-
-@pytest.fixture
 def pf_client() -> PFClient:
     """The fixture, returning PRClient"""
     return PFClient()
