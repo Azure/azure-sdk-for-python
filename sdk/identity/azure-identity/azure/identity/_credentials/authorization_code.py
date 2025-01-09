@@ -85,7 +85,7 @@ class AuthorizationCodeCredential(GetTokenMixin):
           attribute gives a reason. Any error response from Microsoft Entra ID is available as the error's
           ``response`` attribute.
         """
-        # pylint:disable=useless-super-delegation
+
         return super(AuthorizationCodeCredential, self).get_token(
             *scopes, claims=claims, tenant_id=tenant_id, client_secret=self._client_secret, **kwargs
         )
