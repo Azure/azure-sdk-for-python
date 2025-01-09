@@ -9,31 +9,32 @@ from typing import (  # pylint: disable=unused-import
     Tuple,
 )
 from azure.core.pipeline.policies import HttpLoggingPolicy, HeadersPolicy
-from devtools_testutils import is_live, get_credential
 
 
 def create_token_credential():
-    # type: () -> FakeTokenCredential or get_credential()
+    # type: () -> FakeTokenCredential or DefaultAzureCredential
     from devtools_testutils import is_live
 
     if not is_live():
         from .fake_token_credential import FakeTokenCredential
 
         return FakeTokenCredential()
+    from azure.identity import DefaultAzureCredential
 
-    return get_credential()
+    return DefaultAzureCredential()
 
 
 def async_create_token_credential():
-    # type: () -> AsyncFakeTokenCredential or get_credential()
+    # type: () -> AsyncFakeTokenCredential or DefaultAzureCredential
     from devtools_testutils import is_live
 
     if not is_live():
         from .async_fake_token_credential import AsyncFakeTokenCredential
 
         return AsyncFakeTokenCredential()
+    from azure.identity.aio import DefaultAzureCredential
 
-    return get_credential(is_async=True)
+    return DefaultAzureCredential()
 
 
 def get_http_logging_policy(**kwargs):
