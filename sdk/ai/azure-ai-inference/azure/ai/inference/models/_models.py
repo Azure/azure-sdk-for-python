@@ -25,8 +25,6 @@ class ChatRequestMessage(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AssistantMessage, SystemMessage, ToolMessage, UserMessage
 
-
-
     :ivar role: The chat role associated with this message. Required. Known values are: "system",
      "user", "assistant", and "tool".
     :vartype role: str or ~azure.ai.inference.models.ChatRole
@@ -105,6 +103,7 @@ class ChatChoice(_model_base.Model):
     Generally, ``n`` choices are generated per provided prompt with a default value of 1.
     Token limits and other settings may limit the number of choices generated.
 
+
     :ivar index: The ordered index associated with this chat completions choice. Required.
     :vartype index: int
     :ivar finish_reason: The reason that this chat completions choice completed its generated.
@@ -148,6 +147,7 @@ class ChatCompletions(_model_base.Model):
     "completes"
     provided prompt data.
 
+
     :ivar id: A unique identifier associated with this chat completions response. Required.
     :vartype id: str
     :ivar created: The first timestamp associated with generation activity for this completions
@@ -156,13 +156,13 @@ class ChatCompletions(_model_base.Model):
     :vartype created: ~datetime.datetime
     :ivar model: The model used for the chat completion. Required.
     :vartype model: str
-    :ivar usage: Usage information for tokens processed and generated as part of this completions
-     operation. Required.
-    :vartype usage: ~azure.ai.inference.models.CompletionsUsage
     :ivar choices: The collection of completions choices associated with this completions response.
      Generally, ``n`` choices are generated per provided prompt with a default value of 1.
      Token limits and other settings may limit the number of choices generated. Required.
     :vartype choices: list[~azure.ai.inference.models.ChatChoice]
+    :ivar usage: Usage information for tokens processed and generated as part of this completions
+     operation. Required.
+    :vartype usage: ~azure.ai.inference.models.CompletionsUsage
     """
 
     id: str = rest_field()
@@ -172,13 +172,13 @@ class ChatCompletions(_model_base.Model):
      represented as seconds since the beginning of the Unix epoch of 00:00 on 1 Jan 1970. Required."""
     model: str = rest_field()
     """The model used for the chat completion. Required."""
-    usage: "_models.CompletionsUsage" = rest_field()
-    """Usage information for tokens processed and generated as part of this completions operation.
-     Required."""
     choices: List["_models.ChatChoice"] = rest_field()
     """The collection of completions choices associated with this completions response.
      Generally, ``n`` choices are generated per provided prompt with a default value of 1.
      Token limits and other settings may limit the number of choices generated. Required."""
+    usage: "_models.CompletionsUsage" = rest_field()
+    """Usage information for tokens processed and generated as part of this completions operation.
+     Required."""
 
     @overload
     def __init__(
@@ -187,8 +187,8 @@ class ChatCompletions(_model_base.Model):
         id: str,  # pylint: disable=redefined-builtin
         created: datetime.datetime,
         model: str,
-        usage: "_models.CompletionsUsage",
         choices: List["_models.ChatChoice"],
+        usage: "_models.CompletionsUsage",
     ) -> None: ...
 
     @overload
@@ -344,6 +344,7 @@ class ChatCompletionsToolCall(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
+
     :ivar id: The ID of the tool call. Required.
     :vartype id: str
     :ivar type: The type of tool call. Currently, only ``function`` is supported. Required. Default
@@ -421,6 +422,7 @@ class ChatCompletionsToolDefinition(_model_base.Model):
 class ChatResponseMessage(_model_base.Model):
     """A representation of a chat message as received in a response.
 
+
     :ivar role: The chat role associated with the message. Required. Known values are: "system",
      "user", "assistant", and "tool".
     :vartype role: str or ~azure.ai.inference.models.ChatRole
@@ -466,6 +468,7 @@ class CompletionsUsage(_model_base.Model):
     """Representation of the token counts processed for a completions request.
     Counts consider all tokens across prompts, choices, choice alternates, best_of generations, and
     other consumers.
+
 
     :ivar completion_tokens: The number of tokens generated across all completions emissions.
      Required.
@@ -540,6 +543,7 @@ class ContentItem(_model_base.Model):
 class EmbeddingItem(_model_base.Model):
     """Representation of a single embeddings relatedness comparison.
 
+
     :ivar embedding: List of embedding values for the input prompt. These represent a measurement
      of the
      vector-based relatedness of the provided input. Or a base64 encoded string of the embedding
@@ -580,6 +584,7 @@ class EmbeddingsResult(_model_base.Model):
     Embeddings measure the relatedness of text strings and are commonly used for search,
     clustering,
     recommendations, and other similar scenarios.
+
 
     :ivar id: Unique identifier for the embeddings result. Required.
     :vartype id: str
@@ -624,6 +629,7 @@ class EmbeddingsResult(_model_base.Model):
 class EmbeddingsUsage(_model_base.Model):
     """Measurement of the amount of tokens used in this request and response.
 
+
     :ivar prompt_tokens: Number of tokens in the request. Required.
     :vartype prompt_tokens: int
     :ivar total_tokens: Total number of tokens transacted in this request/response. Should equal
@@ -659,6 +665,7 @@ class EmbeddingsUsage(_model_base.Model):
 
 class FunctionCall(_model_base.Model):
     """The name and arguments of a function that should be called, as generated by the model.
+
 
     :ivar name: The name of the function to call. Required.
     :vartype name: str
@@ -867,7 +874,8 @@ class JsonSchemaFormat(_model_base.Model):
     :ivar strict: If set to true, the service will error out if the provided JSON schema contains
      keywords not supported by the AI model. An example of such keyword may be ``maxLength`` for JSON type
      ``string``. If false, and the provided JSON schema contains keywords not supported
-     by the AI model, the AI model will not error out. Instead it will ignore the unsupported keywords.
+     by the AI model, the AI model will not error out. Instead it will ignore the unsupported
+     keywords.
     :vartype strict: bool
     """
 
@@ -885,8 +893,7 @@ class JsonSchemaFormat(_model_base.Model):
     """If set to true, the service will error out if the provided JSON schema contains keywords
      not supported by the AI model. An example of such keyword may be ``maxLength`` for JSON type
      ``string``. If false, and the provided JSON schema contains keywords not supported
-     by the AI model, the AI model will not error out. Instead it will ignore the unsupported
-     keywords."""
+     by the AI model, the AI model will not error out. Instead it will ignore the unsupported keywords."""
 
     @overload
     def __init__(
@@ -911,6 +918,7 @@ class JsonSchemaFormat(_model_base.Model):
 
 class ModelInfo(_model_base.Model):
     """Represents some basic information about the AI model.
+
 
     :ivar model_name: The name of the AI model. For example: ``Phi21``. Required.
     :vartype model_name: str
@@ -958,6 +966,7 @@ class StreamingChatChoiceUpdate(_model_base.Model):
     Generally, ``n`` choices are generated per provided prompt with a default value of 1.
     Token limits and other settings may limit the number of choices generated.
 
+
     :ivar index: The ordered index associated with this chat completions choice. Required.
     :vartype index: int
     :ivar finish_reason: The reason that this chat completions choice completed its generated.
@@ -1003,6 +1012,7 @@ class StreamingChatCompletionsUpdate(_model_base.Model):
     "completes"
     provided prompt data.
 
+
     :ivar id: A unique identifier associated with this chat completions response. Required.
     :vartype id: str
     :ivar created: The first timestamp associated with generation activity for this completions
@@ -1011,14 +1021,14 @@ class StreamingChatCompletionsUpdate(_model_base.Model):
     :vartype created: ~datetime.datetime
     :ivar model: The model used for the chat completion. Required.
     :vartype model: str
-    :ivar usage: Usage information for tokens processed and generated as part of this completions
-     operation. Required.
-    :vartype usage: ~azure.ai.inference.models.CompletionsUsage
     :ivar choices: An update to the collection of completion choices associated with this
      completions response.
      Generally, ``n`` choices are generated per provided prompt with a default value of 1.
      Token limits and other settings may limit the number of choices generated. Required.
     :vartype choices: list[~azure.ai.inference.models.StreamingChatChoiceUpdate]
+    :ivar usage: Usage information for tokens processed and generated as part of this completions
+     operation.
+    :vartype usage: ~azure.ai.inference.models.CompletionsUsage
     """
 
     id: str = rest_field()
@@ -1028,13 +1038,12 @@ class StreamingChatCompletionsUpdate(_model_base.Model):
      represented as seconds since the beginning of the Unix epoch of 00:00 on 1 Jan 1970. Required."""
     model: str = rest_field()
     """The model used for the chat completion. Required."""
-    usage: "_models.CompletionsUsage" = rest_field()
-    """Usage information for tokens processed and generated as part of this completions operation.
-     Required."""
     choices: List["_models.StreamingChatChoiceUpdate"] = rest_field()
     """An update to the collection of completion choices associated with this completions response.
      Generally, ``n`` choices are generated per provided prompt with a default value of 1.
      Token limits and other settings may limit the number of choices generated. Required."""
+    usage: Optional["_models.CompletionsUsage"] = rest_field()
+    """Usage information for tokens processed and generated as part of this completions operation."""
 
     @overload
     def __init__(
@@ -1043,8 +1052,8 @@ class StreamingChatCompletionsUpdate(_model_base.Model):
         id: str,  # pylint: disable=redefined-builtin
         created: datetime.datetime,
         model: str,
-        usage: "_models.CompletionsUsage",
         choices: List["_models.StreamingChatChoiceUpdate"],
+        usage: Optional["_models.CompletionsUsage"] = None,
     ) -> None: ...
 
     @overload
@@ -1104,6 +1113,7 @@ class StreamingChatResponseMessageUpdate(_model_base.Model):
 
 class StreamingChatResponseToolCallUpdate(_model_base.Model):
     """An update to the function tool call information requested by the AI model.
+
 
     :ivar id: The ID of the tool call. Required.
     :vartype id: str
