@@ -42,7 +42,6 @@ from ._models import (  # type: ignore
     SystemMessage,
     TextContentItem,
     ToolMessage,
-    UserMessage,
 )
 
 from ._enums import (  # type: ignore
@@ -87,7 +86,6 @@ __all__ = [
     "SystemMessage",
     "TextContentItem",
     "ToolMessage",
-    "UserMessage",
     "ChatCompletionsToolChoicePreset",
     "ChatRole",
     "CompletionsFinishReason",

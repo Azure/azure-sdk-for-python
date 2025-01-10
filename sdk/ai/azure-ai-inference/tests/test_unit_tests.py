@@ -18,6 +18,54 @@ class TestUnitTests(ModelClientTestBase):
     #
     # **********************************************************************************
 
+    # Test custom class UserMessage(), which allow specifying "content" as a positional argument
+    def test_user_message(self, **kwargs):
+
+        # All these objects should be serialized intothe same dictionary
+        user_messages = [
+            sdk.models.UserMessage(content="some content"),
+            sdk.models.UserMessage("some content"),
+            sdk.models.UserMessage({"role": "user", "content": "some content"}),
+        ]
+        for user_message in user_messages:
+            assert user_message.as_dict() == {"role": "user", "content": "some content"}
+
+        # These two should also be serialized into the same dictionary
+        user_messages = [
+            sdk.models.UserMessage(
+                content=[
+                    sdk.models.TextContentItem(text="some text"),
+                    sdk.models.ImageContentItem(
+                        image_url=sdk.models.ImageUrl(
+                            url="https://does.not.exit/image.png",
+                            detail=sdk.models.ImageDetailLevel.HIGH,
+                        ),
+                    ),
+                ],
+            ),
+            sdk.models.UserMessage(
+                [
+                    sdk.models.TextContentItem(text="some text"),
+                    sdk.models.ImageContentItem(
+                        image_url=sdk.models.ImageUrl(
+                            url="https://does.not.exit/image.png",
+                            detail=sdk.models.ImageDetailLevel.HIGH,
+                        ),
+                    ),
+                ],
+            ),
+        ]
+        for user_message in user_messages:
+            assert user_message.as_dict() == {"role": "user", "content": [{"text": "some text", "type": "text"}, {"type": "image_url", "image_url": {"detail": "high", "url": "https://does.not.exit/image.png"}}]}
+
+        # Test invalid input arguments
+        try:
+            _ =sdk.models.UserMessage("some content", content="some content"),
+            assert False
+        except ValueError as e:
+            assert str(e) == "content cannot be provided as positional and keyword arguments"
+
+
     # Test custom code in ChatCompletions class to print its content in a nice multi-line JSON format
     def test_print_method_of_chat_completions_class(self, **kwargs):
         response = sdk.models.ChatCompletions(

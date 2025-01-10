@@ -16,6 +16,7 @@ as "structured output". See new samples `sample_chat_completions_with_structured
 ### Bugs Fixed
 
 * Fix a bug that would cause an error when tracing was enabled and azure-core-tracing-opentelemetry was not installed and asynchronous chat completion was used.
+* Enforce distinct timestamps on prompt and completion tracing events to preserve the order for chat history.
 
 ## 1.0.0b6 (2024-11-11)
 

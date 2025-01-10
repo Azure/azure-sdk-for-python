@@ -1255,7 +1255,7 @@ class ToolMessage(ChatRequestMessage, discriminator="tool"):
         super().__init__(*args, role=ChatRole.TOOL, **kwargs)
 
 
-class UserMessage(ChatRequestMessage, discriminator="user"):
+class UserMessageInternal(ChatRequestMessage, discriminator="user"):
     """A request chat message representing user input to the assistant.
 
     :ivar role: The chat role associated with this message, which is always 'user' for user
