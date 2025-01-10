@@ -7,7 +7,7 @@
 from __future__ import annotations
 from typing import Optional, Any, cast, Mapping, Dict, Union, List
 
-from ._amqp_utils import normalized_data_body, normalized_sequence_body
+from ._amqp_utils import normalized_data_body
 from ._constants import AmqpMessageBodyType
 from .._mixin import DictMixin
 

@@ -8,7 +8,7 @@ from __future__ import annotations
 import warnings
 from typing import Optional, Any, cast, Mapping, Dict, Union, List, Iterable, Tuple, TYPE_CHECKING
 
-from ._amqp_utils import normalized_data_body, normalized_sequence_body
+from ._amqp_utils import normalized_data_body
 from ._constants import AmqpMessageBodyType
 
 if TYPE_CHECKING:
