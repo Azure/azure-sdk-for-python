@@ -21,12 +21,14 @@ def log_get_token_async(fn):
         try:
             token = await fn(*args, **kwargs)
             _LOGGER.log(
-                logging.DEBUG if within_credential_chain.get() else logging.INFO, "%s succeeded", fn.__qualname__
+                logging.DEBUG if within_credential_chain.get() else logging.INFO,
+                "%s succeeded",
+                fn.__qualname__,
             )
             if _LOGGER.isEnabledFor(logging.DEBUG):
                 try:
                     base64_meta_data = token.token.split(".")[1]
-                    padding_needed = - (len(base64_meta_data) % 4)
+                    padding_needed = -(len(base64_meta_data) % 4)
                     if padding_needed:
                         base64_meta_data += "=" * padding_needed
                     json_bytes = base64.urlsafe_b64decode(base64_meta_data)
@@ -42,7 +44,9 @@ def log_get_token_async(fn):
                     )
                     _LOGGER.debug(log_string)
                 except Exception as ex:  # pylint: disable=broad-except
-                    _LOGGER.debug("Failed to log the account information: %s", ex, exc_info=True)
+                    _LOGGER.debug(
+                        "Failed to log the account information: %s", ex, exc_info=True
+                    )
             return token
         except Exception as ex:  # pylint: disable=broad-except
             _LOGGER.log(
@@ -74,7 +78,9 @@ def wrap_exceptions(fn):
         except ClientAuthenticationError:
             raise
         except Exception as ex:  # pylint:disable=broad-except
-            auth_error = ClientAuthenticationError(message="Authentication failed: {}".format(ex))
+            auth_error = ClientAuthenticationError(
+                message="Authentication failed: {}".format(ex)
+            )
             raise auth_error from ex
 
     return wrapper
