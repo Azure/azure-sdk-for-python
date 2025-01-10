@@ -27,7 +27,7 @@ def _annotations(obj: Any) -> Dict[str, Type]:
 
 
 def _get_annotation_type(annotation: Any) -> Type:
-    if hasattr(annotation, '__origin__'):
+    if hasattr(annotation, "__origin__"):
         if annotation.__origin__ in [Required, NotRequired, Union, Literal]:
             return _get_annotation_type(annotation.__args__[0])
         raise TypeError(f"Unsupported type hint: {annotation}")
