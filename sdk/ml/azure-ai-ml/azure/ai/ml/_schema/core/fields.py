@@ -633,7 +633,6 @@ class TypeSensitiveUnionField(UnionField):
             self._union_fields = union_fields
 
     def _try_load_from_yaml(self, value):
-
         target_path = value
         if target_path.startswith(FILE_PREFIX):
             target_path = target_path[len(FILE_PREFIX) :]
