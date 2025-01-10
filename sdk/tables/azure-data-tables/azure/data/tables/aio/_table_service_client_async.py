@@ -231,7 +231,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         :keyword entity_format:
             The typing definition of the entity to be used to apply specific encoding and decoding to
             specific properties within the encoder and decoder. This can be a TypedDict definition, a dataclass
-            type definition, or a dictionary in the format: `{"PropertyName": type | EdmyType}`. More information
+            type definition, or a dictionary in the format: `{"PropertyName": type | EdmType}`. More information
             can be found at `this README <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/README.md>`_  # pylint: disable=line-too-long
         :return: TableClient, or the result of cls(response)
         :rtype: ~azure.data.tables.aio.TableClient
@@ -282,7 +282,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         :keyword entity_format:
             The typing definition of the entity to be used to apply specific encoding and decoding to
             specific properties within the encoder and decoder. This can be a TypedDict definition, a dataclass
-            type definition, or a dictionary in the format: `{"PropertyName": type | EdmyType}`. More information
+            type definition, or a dictionary in the format: `{"PropertyName": type | EdmType}`. More information
             can be found at `this README <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/README.md>`_  # pylint: disable=line-too-long
         :return: TableClient
         :rtype: ~azure.data.tables.aio.TableClient
@@ -416,7 +416,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         :keyword entity_format:
             The typing definition of the entity to be used to apply specific encoding and decoding to
             specific properties within the encoder and decoder. This can be a TypedDict definition, a dataclass
-            type definition, or a dictionary in the format: `{"PropertyName": type | EdmyType}`. More information
+            type definition, or a dictionary in the format: `{"PropertyName": type | EdmType}`. More information
             can be found at `this README <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/README.md>`_  # pylint: disable=line-too-long
         :returns: A :class:`~azure.data.tables.aio.TableClient` object.
         :rtype: ~azure.data.tables.aio.TableClient

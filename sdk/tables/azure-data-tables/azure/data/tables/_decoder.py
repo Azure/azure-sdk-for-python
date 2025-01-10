@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from dataclasses import fields, is_dataclass
-from datetime import timezone
+from datetime import timezone, datetime
 from uuid import UUID
 from base64 import b64decode
 from typing import (
@@ -27,21 +27,19 @@ from ._entity import (
 
 DecodeCallable = Union[Callable[[str], Any], Callable[[int], Any], Callable[[bool], Any], Callable[[float], Any]]
 DecoderMapType = Mapping[Union[Type, EdmType], DecodeCallable]
-NO_ODATA = {
-    int: EdmType.INT32,
-    str: EdmType.STRING,
-    bool: EdmType.BOOLEAN,
-    float: EdmType.DOUBLE,
-}
 
 
-def _no_op(_: Any) -> None:
+def _no_op(value: Any) -> Any:
+    return value
+
+
+def _none_op(_: Any) -> None:
     return None
 
 
 class TableEntityDecoder:
     def __init__(self, *, convert_map: DecoderMapType, entity_format: Any) -> None:
-        self._decode_types: Dict[Union[Type, EdmType], DecodeCallable] = {
+        self._edm_types: Dict[EdmType, DecodeCallable] = {
             EdmType.BINARY: b64decode,
             EdmType.INT32: int,
             EdmType.INT64: self._decode_int64,
@@ -51,8 +49,25 @@ class TableEntityDecoder:
             EdmType.STRING: str,
             EdmType.BOOLEAN: self._decode_boolean,
         }
-        self._decode_types.update(convert_map)
-        self._property_types: Dict[str, DecodeCallable] = {"Timestamp": _no_op}
+        self._decode_types: Dict[Type, Union[EdmType, DecodeCallable]] = {
+            str: EdmType.STRING,
+            int: EdmType.INT32,
+            bool: EdmType.BOOLEAN,
+            datetime: EdmType.DATETIME,
+            float: EdmType.DOUBLE,
+            UUID: EdmType.GUID,
+            bytes: EdmType.BINARY,
+        }
+        for key, value in convert_map.items():
+            if isinstance(key, EdmType):
+                self._edm_types[key] = value
+            else:
+                self._decode_types[key] = value
+        self._property_types: Dict[str, Union[EdmType, DecodeCallable]] = {
+            "PartitionKey": _no_op,
+            "RowKey": _no_op,
+            "Timestamp": _none_op,
+        }
         if entity_format:
             if is_typeddict(entity_format):
                 # Scrape type encoding from typeddict defintion
@@ -77,6 +92,9 @@ class TableEntityDecoder:
                     ) from e
 
     def _add_property_type(self, property_name: str, property_type: Union[Type, EdmType]) -> None:
+        if isinstance(property_type, EdmType):
+            self._property_types[property_name] = property_type
+            return
         try:
             self._property_types[property_name] = self._decode_types[property_type]
         except KeyError as e:
@@ -85,28 +103,6 @@ class TableEntityDecoder:
     def __call__(  # pylint: disable=too-many-branches, too-many-statements
         self, response_data: Mapping[str, Any]
     ) -> TableEntity:
-        """Convert json response to entity.
-        The entity format is:
-        {
-        "Address":"Mountain View",
-        "Age":23,
-        "AmountDue":200.23,
-        "CustomerCode@odata.type":"Edm.Guid",
-        "CustomerCode":"c9da6455-213d-42c9-9a79-3e9149a57833",
-        "CustomerSince@odata.type":"Edm.DateTime",
-        "CustomerSince":"2008-07-10T00:00:00",
-        "IsActive":true,
-        "NumberOfOrders@odata.type":"Edm.Int64",
-        "NumberOfOrders":"255",
-        "PartitionKey":"my_partition_key",
-        "RowKey":"my_row_key"
-        }
-
-        :param response_data: The entity in response.
-        :type response_data: Mapping[str, Any]
-        :return: An entity dict with additional metadata.
-        :rtype: dict[str, Any]
-        """
         entity = TableEntity()
         entity._metadata = {"etag": None, "timestamp": None}
         for key, value in response_data.items():
@@ -126,14 +122,21 @@ class TableEntityDecoder:
                 if key == "Timestamp":
                     entity._metadata["timestamp"] = deserialize_iso(value)
                 try:
-                    value = self._property_types[key](value)
-                    if value is None:
-                        continue
-                    entity[key] = value
+                    value = self._convert(self._property_types[key], value)
                 except KeyError:
-                    edm_type = EdmType(response_data.get(key + "@odata.type", NO_ODATA[type(value)]))
-                    entity[key] = self._decode_types[edm_type](value)
+                    try:
+                        value = self._convert(EdmType(response_data[key + "@odata.type"]), value)
+                    except KeyError:
+                        value = self._convert(self._decode_types[type(value)], value)
+                if value is None:
+                    continue
+                entity[key] = value
         return entity
+
+    def _convert(self, decoder: Union[EdmType, DecodeCallable], value: Any) -> Any:
+        if isinstance(decoder, EdmType):
+            return self._edm_types[decoder](value)
+        return decoder(value)
 
     def _decode_int64(self, value: str) -> EntityProperty:
         return EntityProperty(int(value), EdmType.INT64)

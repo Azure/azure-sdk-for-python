@@ -101,7 +101,7 @@ class TableClient(TablesBaseClient):
         :keyword entity_format:
             The typing definition of the entity to be used to apply specific encoding and decoding to
             specific properties within the encoder and decoder. This can be a TypedDict definition, a dataclass
-            type definition, or a dictionary in the format: `{"PropertyName": type | EdmyType}`. More information
+            type definition, or a dictionary in the format: `{"PropertyName": type | EdmType}`. More information
             can be found at `this README <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/README.md>`_  # pylint: disable=line-too-long
         :returns: None
         """
@@ -142,7 +142,7 @@ class TableClient(TablesBaseClient):
         :keyword entity_format:
             The typing definition of the entity to be used to apply specific encoding and decoding to
             specific properties within the encoder and decoder. This can be a TypedDict definition, a dataclass
-            type definition, or a dictionary in the format: `{"PropertyName": type | EdmyType}`. More information
+            type definition, or a dictionary in the format: `{"PropertyName": type | EdmType}`. More information
             can be found at `this README <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/README.md>`_  # pylint: disable=line-too-long
         :returns: A table client.
         :rtype: ~azure.data.tables.TableClient
@@ -204,7 +204,7 @@ class TableClient(TablesBaseClient):
         :keyword entity_format:
             The typing definition of the entity to be used to apply specific encoding and decoding to
             specific properties within the encoder and decoder. This can be a TypedDict definition, a dataclass
-            type definition, or a dictionary in the format: `{"PropertyName": type | EdmyType}`. More information
+            type definition, or a dictionary in the format: `{"PropertyName": type | EdmType}`. More information
             can be found at `this README <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/README.md>`_  # pylint: disable=line-too-long
         :returns: A table client.
         :rtype: ~azure.data.tables.TableClient
@@ -435,8 +435,8 @@ class TableClient(TablesBaseClient):
         try:
             if not entity:
                 entity = args[0]
-            partition_key = self._encode_key("PartitionKey", entity.get("PartitionKey"))
-            row_key = self._encode_key("RowKey", entity.get("RowKey"))
+            partition_key = self._encode_key("PartitionKey", entity["PartitionKey"])
+            row_key = self._encode_key("RowKey", entity["RowKey"])
         except (TypeError, IndexError, AttributeError):
             partition_key = kwargs.pop("partition_key", None)
             if partition_key is None:

@@ -593,12 +593,15 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
             pk, rk = self._create_pk_rk(None, None)
             entity = TableEntity(PartitionKey=pk, RowKey=rk, test1=Color.YELLOW, test2=Color.BLUE, test3=Color.RED)
 
-            self.table.create_entity(entity=entity)
-            resp_entity = self.table.get_entity(partition_key=pk, row_key=rk)
+            table = self.ts.get_table_client(
+                self.table_name, custom_encode={Color: lambda v: (None, v.value)}, custom_decode={EdmType.STRING: Color}
+            )
+            table.create_entity(entity=entity)
+            resp_entity = table.get_entity(partition_key=pk, row_key=rk)
             # Maintaining broken behaviour just in case.
-            assert str(entity["test1"]) == resp_entity["test1"]
-            assert str(entity["test2"]) == resp_entity["test2"]
-            assert str(entity["test3"]) == resp_entity["test3"]
+            assert entity["test1"] == resp_entity["test1"]
+            assert entity["test2"] == resp_entity["test2"]
+            assert entity["test3"] == resp_entity["test3"]
 
         finally:
             self._tear_down()
