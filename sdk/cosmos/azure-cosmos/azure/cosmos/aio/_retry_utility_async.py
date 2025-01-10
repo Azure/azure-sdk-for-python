@@ -24,11 +24,9 @@
 import json
 import time
 import asyncio
-from typing import Optional
 
 from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError
 from azure.core.pipeline.policies import AsyncRetryPolicy
-from azure.core.pipeline.transport._base import HttpRequest
 
 from .. import exceptions
 from ..http_constants import HttpHeaders, StatusCodes, SubStatusCodes
