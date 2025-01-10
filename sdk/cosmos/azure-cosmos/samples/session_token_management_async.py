@@ -6,6 +6,7 @@
 import json
 import random
 import uuid
+from typing import Dict, Any
 
 from azure.cosmos import PartitionKey
 from azure.cosmos.aio import CosmosClient
@@ -49,7 +50,7 @@ async def storing_session_tokens_pk(container):
     print('1. Storing session tokens in a cache by feed range from the partition key.')
 
 
-    cache = {}
+    cache: Dict[str, Any] = {}
 
     # Everything below is just a simulation of what could be run on different machines and clients
     # to store session tokens in a cache by feed range from the partition key.
@@ -83,7 +84,7 @@ async def storing_session_tokens_container_feed_ranges(container):
     print('2. Storing session tokens in a cache by feed range from the container.')
 
     # The cache is a dictionary here for simplicity but in a real-world scenario, it would be some service.
-    cache = {}
+    cache: Dict[str, Any] = {}
 
     # Everything below is just a simulation of what could be run on different machines and clients
     # to store session tokens in a cache by feed range from the partition key.
@@ -120,7 +121,7 @@ async def storing_session_tokens_container_feed_ranges(container):
 
 
 async def run_sample():
-    async with CosmosClient(HOST, CREDENTIAL) as client:
+    async with CosmosClient(HOST, CREDENTIAL) as client:  # type: ignore
         try:
             db = await client.create_database_if_not_exists(id=DATABASE_ID)
             container = await db.create_container_if_not_exists(id=CONTAINER_ID, partition_key=PartitionKey('/pk'))
