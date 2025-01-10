@@ -205,6 +205,7 @@ The following section provides several code snippets covering some of the most c
 - [Manage Your Models](#manage-your-models "Manage Your Models")
 - [Add-on Capabilities](#add-on-capabilities "Add-on Capabilities")
 - [Get Raw JSON Result](#get-raw-json-result "Get Raw JSON Result")
+- [Parse analyzed result to JSON format](#parse-analyzed-result-to-json-format "Parse analyzed result to JSON format")
 
 ### Extract Layout
 
@@ -957,6 +958,46 @@ print(
     f"The quota limit for custom neural document models is {response_body['customNeuralDocumentModelBuilds']['quota']} and the resource has"
     f"used {response_body['customNeuralDocumentModelBuilds']['used']}. The resource quota will reset on {response_body['customNeuralDocumentModelBuilds']['quotaResetDateTime']}"
 )
+```
+
+<!-- END SNIPPET -->
+
+### Parse analyzed result to JSON format
+
+The result from poller is not JSON parse-able by default, you should call `as_dict()` before parsing to JSON.
+
+<!-- SNIPPET:sample_convert_to_and_from_dict.convert -->
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.documentintelligence import DocumentIntelligenceClient
+from azure.ai.documentintelligence.models import AnalyzeResult
+
+endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
+key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
+
+document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+with open(path_to_sample_documents, "rb") as f:
+    poller = document_intelligence_client.begin_analyze_document("prebuilt-layout", body=f)
+result: AnalyzeResult = poller.result()
+
+# convert the received model to a dictionary
+analyze_result_dict = result.as_dict()
+
+# save the dictionary as JSON content in a JSON file
+with open("data.json", "w") as output_file:
+    json.dump(analyze_result_dict, output_file, indent=4)
+
+# convert the dictionary back to the original model
+model = AnalyzeResult(analyze_result_dict)
+
+# use the model as normal
+print("----Converted from dictionary AnalyzeResult----")
+print(f"Model ID: '{model.model_id}'")
+print(f"Number of pages analyzed {len(model.pages)}")
+print(f"API version used: {model.api_version}")
+
+print("----------------------------------------")
 ```
 
 <!-- END SNIPPET -->
