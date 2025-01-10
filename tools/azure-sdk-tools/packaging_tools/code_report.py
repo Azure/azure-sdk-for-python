@@ -69,7 +69,7 @@ def create_report(module_name: str) -> Dict[str, Any]:
             report["models"]["enums"][model_name] = create_model_report(model_cls, is_new_model)
     # Look for operation groups
     try:
-        operations_classes = [op_name for op_name in dir(module_to_generate.operations) if op_name[0].isupper()]
+        operations_classes = [op_name for op_name in module_to_generate.operations.__all__ if op_name[0].isupper()]
     except AttributeError:
         # This guy has no "operations", this is possible (Cognitive Services). Just skip it then.
         operations_classes = []
