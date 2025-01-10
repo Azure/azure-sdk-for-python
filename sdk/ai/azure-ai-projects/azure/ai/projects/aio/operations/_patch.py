@@ -2176,7 +2176,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     async def _handle_submit_tool_outputs(
         self, run: _models.ThreadRun, event_handler: _models.BaseAsyncAgentEventHandler
-    ) -> None:
+    ) -> Optional[List[_models.ToolOutput]]:
         if isinstance(run.required_action, _models.SubmitToolOutputsAction):
             tool_calls = run.required_action.submit_tool_outputs.tool_calls
             if not tool_calls:
@@ -2198,6 +2198,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                     await self.submit_tool_outputs_to_stream(
                         thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs, event_handler=event_handler
                     )
+                    return tool_outputs
 
     @overload
     async def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:

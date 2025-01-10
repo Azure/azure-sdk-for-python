@@ -25,13 +25,14 @@ from azure.ai.projects.models import (
     RunStep,
     ThreadMessage,
     ThreadRun,
+    ToolOutput,
 )
 from azure.ai.projects.models import AgentEventHandler
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import FunctionTool, ToolSet
 
 import os
-from typing import Any
+from typing import Any, Optional, List
 from user_functions import user_functions
 
 project_client = AIProjectClient.from_connection_string(
@@ -43,28 +44,33 @@ project_client = AIProjectClient.from_connection_string(
 # method and functions gets automatically called by default.
 class MyEventHandler(AgentEventHandler):
 
-    def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
+    def on_message_delta(self, delta: "MessageDeltaChunk", **kwargs: Any) -> None:
         print(f"Text delta received: {delta.text}")
 
-    def on_thread_message(self, message: "ThreadMessage") -> None:
+    def on_thread_message(self, message: "ThreadMessage", **kwargs: Any) -> None:
         print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
 
-    def on_thread_run(self, run: "ThreadRun") -> None:
+    def on_thread_run(
+        self, run: "ThreadRun", *, tool_outputs: Optional[List[ToolOutput]] = None, **kwargs: Any
+    ) -> None:
         print(f"ThreadRun status: {run.status}")
+
+        if tool_outputs:
+            print(f"Tool executed with output: {tool_outputs}")
 
         if run.status == "failed":
             print(f"Run failed. Error: {run.last_error}")
 
-    def on_run_step(self, step: "RunStep") -> None:
+    def on_run_step(self, step: "RunStep", **kwargs: Any) -> None:
         print(f"RunStep type: {step.type}, Status: {step.status}")
 
-    def on_error(self, data: str) -> None:
+    def on_error(self, data: str, **kwargs: Any) -> None:
         print(f"An error occurred. Data: {data}")
 
-    def on_done(self) -> None:
+    def on_done(self, **kwargs: Any) -> None:
         print("Stream completed.")
 
-    def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
+    def on_unhandled_event(self, event_type: str, event_data: Any, **kwargs: Any) -> None:
         print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
 

@@ -36,25 +36,25 @@ import os
 
 class MyEventHandler(AsyncAgentEventHandler[str]):
 
-    async def on_message_delta(self, delta: "MessageDeltaChunk") -> Optional[str]:
+    async def on_message_delta(self, delta: "MessageDeltaChunk", **kwargs) -> Optional[str]:
         return f"Text delta received: {delta.text}"
 
-    async def on_thread_message(self, message: "ThreadMessage") -> Optional[str]:
+    async def on_thread_message(self, message: "ThreadMessage", **kwargs) -> Optional[str]:
         return f"ThreadMessage created. ID: {message.id}, Status: {message.status}"
 
-    async def on_thread_run(self, run: "ThreadRun") -> Optional[str]:
+    async def on_thread_run(self, run: "ThreadRun", **kwargs) -> Optional[str]:
         return f"ThreadRun status: {run.status}"
 
-    async def on_run_step(self, step: "RunStep") -> Optional[str]:
+    async def on_run_step(self, step: "RunStep", **kwargs) -> Optional[str]:
         return f"RunStep type: {step.type}, Status: {step.status}"
 
-    async def on_error(self, data: str) -> Optional[str]:
+    async def on_error(self, data: str, **kwargs) -> Optional[str]:
         return f"An error occurred. Data: {data}"
 
-    async def on_done(self) -> Optional[str]:
+    async def on_done(self, **kwargs) -> Optional[str]:
         return "Stream completed."
 
-    async def on_unhandled_event(self, event_type: str, event_data: Any) -> Optional[str]:
+    async def on_unhandled_event(self, event_type: str, event_data: Any, **kwargs) -> Optional[str]:
         return f"Unhandled Event Type: {event_type}, Data: {event_data}"
 
 

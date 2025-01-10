@@ -1196,6 +1196,7 @@ class TestAgentClient(AzureRecordedTestCase):
                 print("Tool outputs:", tool_outputs)
                 if tool_outputs:
                     if use_body:
+                        tool_outputs = [output.as_dict() for output in tool_outputs]
                         body = {"tool_outputs": tool_outputs}
                         if use_io:
                             binary_body = json.dumps(body).encode("utf-8")
@@ -1638,10 +1639,10 @@ class TestAgentClient(AzureRecordedTestCase):
             print("Created message, message ID", message.id)
 
             # create body for stream
-            body = {"assistant_id": agent.id, "stream": True}
+            body = {"assistant_id": agent.id}
 
             # create stream
-            with client.agents.create_stream(thread_id=thread.id, body=body, stream=True) as stream:
+            with client.agents.create_stream(thread_id=thread.id, body=body) as stream:
 
                 for event_type, event_data, _ in stream:
                     print("event type: event data")
@@ -1682,11 +1683,11 @@ class TestAgentClient(AzureRecordedTestCase):
             print("Created message, message ID", message.id)
 
             # create body for stream
-            body = {"assistant_id": agent.id, "stream": True}
+            body = {"assistant_id": agent.id}
             binary_body = json.dumps(body).encode("utf-8")
 
             # create stream
-            with client.agents.create_stream(thread_id=thread.id, body=io.BytesIO(binary_body), stream=True) as stream:
+            with client.agents.create_stream(thread_id=thread.id, body=io.BytesIO(binary_body)) as stream:
                 for event_type, event_data, _ in stream:
                     assert (
                         isinstance(event_data, (MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep))
@@ -1781,16 +1782,12 @@ class TestAgentClient(AzureRecordedTestCase):
                     tool_event_handler = AgentEventHandler()
                     if tool_outputs:
                         if use_body:
-                            body = {"tool_outputs": tool_outputs, "stream": True}
+                            body = {"tool_outputs": tool_outputs}
                             if use_io:
                                 binary_body = json.dumps(body).encode("utf-8")
                                 body = io.BytesIO(binary_body)
                             client.agents.submit_tool_outputs_to_stream(
-                                thread_id=thread.id,
-                                run_id=event_data.id,
-                                body=body,
-                                event_handler=tool_event_handler,
-                                stream=True,
+                                thread_id=thread.id, run_id=event_data.id, body=body, event_handler=tool_event_handler
                             )
                         else:
                             client.agents.submit_tool_outputs_to_stream(

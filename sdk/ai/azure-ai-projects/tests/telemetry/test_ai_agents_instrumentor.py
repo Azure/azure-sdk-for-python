@@ -1021,29 +1021,29 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
 
 class MyEventHandler(AgentEventHandler):
 
-    def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
+    def on_message_delta(self, delta: "MessageDeltaChunk", **kwargs) -> None:
         for content_part in delta.delta.content:
             if isinstance(content_part, MessageDeltaTextContent):
                 text_value = content_part.text.value if content_part.text else "No text"
                 print(f"Text delta received: {text_value}")
 
-    def on_thread_message(self, message: "ThreadMessage") -> None:
+    def on_thread_message(self, message: "ThreadMessage", **kwargs) -> None:
         print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
 
-    def on_thread_run(self, run: "ThreadRun") -> None:
+    def on_thread_run(self, run: "ThreadRun", **kwargs) -> None:
         print(f"ThreadRun status: {run.status}")
 
         if run.status == "failed":
             print(f"Run failed. Error: {run.last_error}")
 
-    def on_run_step(self, step: "RunStep") -> None:
+    def on_run_step(self, step: "RunStep", **kwargs) -> None:
         print(f"RunStep type: {step.type}, Status: {step.status}")
 
-    def on_error(self, data: str) -> None:
+    def on_error(self, data: str, **kwargs) -> None:
         print(f"An error occurred. Data: {data}")
 
-    def on_done(self) -> None:
+    def on_done(self, **kwargs) -> None:
         print("Stream completed.")
 
-    def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
+    def on_unhandled_event(self, event_type: str, event_data: Any, **kwargs) -> None:
         print(f"Unhandled Event Type: {event_type}, Data: {event_data}")

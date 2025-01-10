@@ -18,7 +18,7 @@ USAGE:
     Set this environment variables with your own values:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
 """
-from typing import Any
+from typing import Any, Optional, List
 
 import os
 from azure.ai.projects import AIProjectClient
@@ -47,13 +47,13 @@ class MyEventHandler(AgentEventHandler):
         super().__init__()
         self.functions = functions
 
-    def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
+    def on_message_delta(self, delta: "MessageDeltaChunk", **kwargs: Any) -> None:
         print(f"Text delta received: {delta.text}")
 
-    def on_thread_message(self, message: "ThreadMessage") -> None:
+    def on_thread_message(self, message: "ThreadMessage", **kwargs: Any) -> None:
         print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
 
-    def on_thread_run(self, run: "ThreadRun") -> None:
+    def on_thread_run(self, run: "ThreadRun", **kwargs: Any) -> None:
         print(f"ThreadRun status: {run.status}")
 
         if run.status == "failed":
@@ -84,16 +84,16 @@ class MyEventHandler(AgentEventHandler):
                     thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs, event_handler=self
                 )
 
-    def on_run_step(self, step: "RunStep") -> None:
+    def on_run_step(self, step: "RunStep", **kwargs: Any) -> None:
         print(f"RunStep type: {step.type}, Status: {step.status}")
 
-    def on_error(self, data: str) -> None:
+    def on_error(self, data: str, **kwargs: Any) -> None:
         print(f"An error occurred. Data: {data}")
 
-    def on_done(self) -> None:
+    def on_done(self, **kwargs: Any) -> None:
         print("Stream completed.")
 
-    def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
+    def on_unhandled_event(self, event_type: str, event_data: Any, **kwargs: Any) -> None:
         print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
 

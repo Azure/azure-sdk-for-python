@@ -480,7 +480,7 @@ with project_client:
 
 You can enhance your Agents by defining callback functions as function tools. These can be provided to `create_agent` via either the `toolset` parameter or the combination of `tools` and `tool_resources`. Here are the distinctions:
 
-- `toolset`: When using the `toolset` parameter, you provide not only the function definitions and descriptions but also their implementations. The SDK will execute these functions within `create_and_run_process` or `streaming` . These functions will be invoked based on their definitions.
+- `toolset`: When using the `toolset` parameter, you provide not only the function definitions and descriptions but also their implementations. When the event handler receives `ThreadRun` with status, `requires_action`, the event handler will execute these functions within `create_and_run_process` or `streaming` . These functions will be invoked based on their definitions.  With streaming,the event handler will receive `Done` as the next event that represents the main stream is completed.   After the tool call result is submitted to the agent by the event handler, the same event handler will run the second stream.   When it is completed, the event handler will receive another event, `DONE`.   
 - `tools` and `tool_resources`: When using the `tools` and `tool_resources` parameters, only the function definitions and descriptions are provided to `create_agent`, without the implementations. The `Run` or `event handler of stream` will raise a `requires_action` status based on the function definitions. Your code must handle this status and call the appropriate functions.
 
 For more details about calling functions by code, refer to [`sample_agents_stream_eventhandler_with_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_stream_eventhandler_with_functions.py) and [`sample_agents_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_functions.py).
@@ -802,29 +802,31 @@ In the code above, because an `event_handler` object is not passed to the `creat
 # With AgentEventHandler[str], the return type for each event functions is optional string.
 class MyEventHandler(AgentEventHandler[str]):
 
-    def on_message_delta(self, delta: "MessageDeltaChunk") -> Optional[str]:
+    def on_message_delta(self, delta: "MessageDeltaChunk", **kwargs) -> Optional[str]:
         return f"Text delta received: {delta.text}"
 
-    def on_thread_message(self, message: "ThreadMessage") -> Optional[str]:
+    def on_thread_message(self, message: "ThreadMessage", **kwargs) -> Optional[str]:
         return f"ThreadMessage created. ID: {message.id}, Status: {message.status}"
 
-    def on_thread_run(self, run: "ThreadRun") -> Optional[str]:
+    def on_thread_run(self, run: "ThreadRun", **kwargs) -> Optional[str]:
         return f"ThreadRun status: {run.status}"
 
-    def on_run_step(self, step: "RunStep") -> Optional[str]:
+    def on_run_step(self, step: "RunStep", **kwargs) -> Optional[str]:
         return f"RunStep type: {step.type}, Status: {step.status}"
 
-    def on_error(self, data: str) -> Optional[str]:
+    def on_error(self, data: str, **kwargs) -> Optional[str]:
         return f"An error occurred. Data: {data}"
 
-    def on_done(self) -> Optional[str]:
+    def on_done(self, **kwargs) -> Optional[str]:
         return "Stream completed."
 
-    def on_unhandled_event(self, event_type: str, event_data: Any) -> Optional[str]:
+    def on_unhandled_event(self, event_type: str, event_data: Any, **kwargs) -> Optional[str]:
         return f"Unhandled Event Type: {event_type}, Data: {event_data}"
 ```
 
 <!-- END SNIPPET -->
+
+At this moment, none of the event functions are called with keyword parameters except on_thread_run receives `tool_outputs` when function tools are called by the SDK.  More keyword argument will be available in the future releases.
 
 
 <!-- SNIPPET:sample_agents_stream_eventhandler.create_stream -->

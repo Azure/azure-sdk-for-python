@@ -19,11 +19,11 @@ USAGE:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
 """
 import asyncio
-from typing import Any
+from typing import Any, Optional, List
 
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import MessageDeltaChunk, RunStep, ThreadMessage, ThreadRun
-from azure.ai.projects.models import AsyncAgentEventHandler, AsyncFunctionTool, AsyncToolSet
+from azure.ai.projects.models import AsyncAgentEventHandler, AsyncFunctionTool, AsyncToolSet, ToolOutput
 from azure.identity.aio import DefaultAzureCredential
 
 import os
@@ -33,28 +33,33 @@ from user_async_functions import user_async_functions
 
 class MyEventHandler(AsyncAgentEventHandler):
 
-    async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
+    async def on_message_delta(self, delta: "MessageDeltaChunk", **kwargs: Any) -> None:
         print(f"Text delta received: {delta.text}")
 
-    async def on_thread_message(self, message: "ThreadMessage") -> None:
+    async def on_thread_message(self, message: "ThreadMessage", **kwargs: Any) -> None:
         print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
 
-    async def on_thread_run(self, run: "ThreadRun") -> None:
+    async def on_thread_run(
+        self, run: "ThreadRun", tool_outputs: Optional[List[ToolOutput]] = None, **kwargs: Any
+    ) -> None:
         print(f"ThreadRun status: {run.status}")
+
+        if tool_outputs:
+            print(f"Tool executed with output: {tool_outputs}")
 
         if run.status == "failed":
             print(f"Run failed. Error: {run.last_error}")
 
-    async def on_run_step(self, step: "RunStep") -> None:
+    async def on_run_step(self, step: "RunStep", **kwargs: Any) -> None:
         print(f"RunStep type: {step.type}, Status: {step.status}")
 
-    async def on_error(self, data: str) -> None:
+    async def on_error(self, data: str, **kwargs: Any) -> None:
         print(f"An error occurred. Data: {data}")
 
-    async def on_done(self) -> None:
+    async def on_done(self, **kwargs: Any) -> None:
         print("Stream completed.")
 
-    async def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
+    async def on_unhandled_event(self, event_type: str, event_data: Any, **kwargs: Any) -> None:
         print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
 

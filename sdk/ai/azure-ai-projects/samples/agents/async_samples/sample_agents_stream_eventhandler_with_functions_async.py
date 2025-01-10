@@ -45,13 +45,13 @@ class MyEventHandler(AsyncAgentEventHandler[str]):
         self.functions = functions
         self.project_client = project_client
 
-    async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
+    async def on_message_delta(self, delta: "MessageDeltaChunk", **kwargs: Any) -> None:
         print(f"Text delta received: {delta.text}")
 
-    async def on_thread_message(self, message: "ThreadMessage") -> None:
+    async def on_thread_message(self, message: "ThreadMessage", **kwargs: Any) -> None:
         print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
 
-    async def on_thread_run(self, run: "ThreadRun") -> None:
+    async def on_thread_run(self, run: "ThreadRun", **kwargs: Any) -> None:
         print(f"ThreadRun status: {run.status}")
 
         if run.status == "failed":
@@ -80,16 +80,16 @@ class MyEventHandler(AsyncAgentEventHandler[str]):
                     thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs, event_handler=self
                 )
 
-    async def on_run_step(self, step: "RunStep") -> None:
+    async def on_run_step(self, step: "RunStep", **kwargs: Any) -> None:
         print(f"RunStep type: {step.type}, Status: {step.status}")
 
-    async def on_error(self, data: str) -> None:
+    async def on_error(self, data: str, **kwargs: Any) -> None:
         print(f"An error occurred. Data: {data}")
 
-    async def on_done(self) -> None:
+    async def on_done(self, **kwargs: Any) -> None:
         print("Stream completed.")
 
-    async def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
+    async def on_unhandled_event(self, event_type: str, event_data: Any, **kwargs: Any) -> None:
         print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
 

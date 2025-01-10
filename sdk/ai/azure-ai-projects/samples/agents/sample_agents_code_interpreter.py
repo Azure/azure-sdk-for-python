@@ -78,7 +78,7 @@ with project_client:
     print(f"Messages: {messages}")
 
     for image_content in messages.image_contents:
-        file_id = image_content.image_file.file_id
+        file_id = image_content.image_file..file_id
         print(f"Image File ID: {file_id}")
         file_name = f"{file_id}_image_file.png"
         project_client.agents.save_file(file_id=file_id, file_name=file_name)

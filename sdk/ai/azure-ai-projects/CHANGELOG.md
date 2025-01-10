@@ -3,10 +3,13 @@
 ## 1.0.0b5 (Unreleased)
 
 ### Features Added
+* `on_thread_run` method in agent event handlers are called with `tool_outputs` as a keyward parameter after function calls
 
 ### Bugs Fixed
+* Fixed events dropped in streaming
 
 ### Breaking Changes
+* All event functions in agent event handlers requires `**kwargs` as an arguments.
 
 ## 1.0.0b4 (2024-12-20)
 
