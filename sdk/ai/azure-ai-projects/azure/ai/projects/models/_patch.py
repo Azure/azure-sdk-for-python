@@ -11,6 +11,7 @@ import asyncio
 import base64
 import datetime
 import inspect
+import itertools
 import json
 import logging
 import math
@@ -86,6 +87,7 @@ from ._models import OpenAIPageableListOfThreadMessage as OpenAIPageableListOfTh
 from ._models import MessageAttachment as MessageAttachmentGenerated
 
 from .. import _types
+
 
 logger = logging.getLogger(__name__)
 
@@ -1239,50 +1241,57 @@ BaseAsyncAgentEventHandlerT = TypeVar("BaseAsyncAgentEventHandlerT", bound="Base
 BaseAgentEventHandlerT = TypeVar("BaseAgentEventHandlerT", bound="BaseAgentEventHandler")
 
 
+async def async_chain(*iterators: AsyncIterator[T]) -> AsyncIterator[T]:
+    for iterator in iterators:
+        async for item in iterator:
+            yield item
+
+
 class BaseAsyncAgentEventHandler(AsyncIterator[T]):
 
     def __init__(self) -> None:
         self.response_iterator: Optional[AsyncIterator[bytes]] = None
-        self.event_handler: Optional["BaseAsyncAgentEventHandler[T]"] = None
         self.submit_tool_outputs: Optional[Callable[[ThreadRun, "BaseAsyncAgentEventHandler[T]"], Awaitable[None]]] = (
             None
         )
-        self.done: bool
-        self.buffer: str
+        self.buffer: Optional[str] = None
 
     def initialize(
         self,
         response_iterator: AsyncIterator[bytes],
         submit_tool_outputs: Callable[[ThreadRun, "BaseAsyncAgentEventHandler[T]"], Awaitable[None]],
-        event_handler: Optional["BaseAsyncAgentEventHandler[T]"] = None,
     ):
-        self.response_iterator = response_iterator
-        self.event_handler = event_handler
+        self.response_iterator = (
+            async_chain(self.response_iterator, response_iterator) if self.response_iterator else response_iterator
+        )
         self.submit_tool_outputs = submit_tool_outputs
-        self.done = False
-        self.buffer = ""
 
     async def __anext__(self) -> T:
+        self.buffer = "" if self.buffer is None else self.buffer
         if self.response_iterator is None:
             raise ValueError("The response handler was not initialized.")
 
-        async for chunk in self.response_iterator:
-            self.buffer += chunk.decode("utf-8")
-            split_buffer = self.buffer.split("\n\n")
-            self.buffer = split_buffer[-1]
-            for ln in split_buffer[:-1]:
-                event = await self._process_event(ln)
-                if event:
-                    return event
+        if not "\n\n" in self.buffer:
+            async for chunk in self.response_iterator:
+                self.buffer += chunk.decode("utf-8")
+                if "\n\n" in self.buffer:
+                    break
 
-        if self.buffer:
-            event = await self._process_event(self.buffer)
-            if event:
-                return event
+        if self.buffer == "":
+            raise StopAsyncIteration()
 
-        raise StopAsyncIteration()
+        event_str = ""
+        if "\n\n" in self.buffer:
+            event_end_index = self.buffer.index("\n\n")
+            event_str = self.buffer[:event_end_index]
+            self.buffer = self.buffer[event_end_index:].lstrip()
+        else:
+            event_str = self.buffer
+            self.buffer = ""
 
-    async def _process_event(self, event_data_str: str) -> Optional[T]:
+        return await self._process_event(event_str)
+
+    async def _process_event(self, event_data_str: str) -> T:
         raise NotImplementedError("This method needs to be implemented.")
 
     async def until_done(self) -> None:
@@ -1301,44 +1310,45 @@ class BaseAgentEventHandler(Iterator[T]):
 
     def __init__(self) -> None:
         self.response_iterator: Optional[Iterator[bytes]] = None
-        self.event_handler: Optional["BaseAgentEventHandler[T]"] = None
-        self.submit_tool_outputs: Optional[Callable[[ThreadRun, "BaseAgentEventHandler[T]"], Awaitable[None]]] = None
-        self.done: bool
-        self.buffer: str
+        self.submit_tool_outputs: Optional[Callable[[ThreadRun, "BaseAgentEventHandler[T]"], None]] = None
+        self.buffer: Optional[str] = None
 
     def initialize(
         self,
         response_iterator: Iterator[bytes],
-        submit_tool_outputs: Callable[[ThreadRun, "BaseAgentEventHandler[T]"], Awaitable[None]],
-        event_handler: Optional["BaseAgentEventHandler[T]"] = None,
+        submit_tool_outputs: Callable[[ThreadRun, "BaseAgentEventHandler[T]"], None],
     ) -> None:
-        self.response_iterator = response_iterator
-        self.event_handler = event_handler
+        self.response_iterator = (
+            itertools.chain(self.response_iterator, response_iterator) if self.response_iterator else response_iterator
+        )
         self.submit_tool_outputs = submit_tool_outputs
-        self.done = False
-        self.buffer = ""
 
     def __next__(self) -> T:
+        self.buffer = "" if self.buffer is None else self.buffer
         if self.response_iterator is None:
             raise ValueError("The response handler was not initialized.")
 
-        for chunk in self.response_iterator:
-            self.buffer += chunk.decode("utf-8")
-            split_buffer = self.buffer.split("\n\n")
-            self.buffer = split_buffer[-1]
-            for ln in split_buffer[:-1]:
-                event = self._process_event(ln)
-                if event:
-                    return event
+        if not "\n\n" in self.buffer:
+            for chunk in self.response_iterator:
+                self.buffer += chunk.decode("utf-8")
+                if "\n\n" in self.buffer:
+                    break
 
-        if self.buffer:
-            event = self._process_event(self.buffer)
-            if event:
-                return event
+        if self.buffer == "":
+            raise StopIteration()
 
-        raise StopIteration()
+        event_str = ""
+        if "\n\n" in self.buffer:
+            event_end_index = self.buffer.index("\n\n")
+            event_str = self.buffer[:event_end_index]
+            self.buffer = self.buffer[event_end_index:].lstrip()
+        else:
+            event_str = self.buffer
+            self.buffer = ""
 
-    def _process_event(self, event_data_str: str) -> Optional[T]:
+        return self._process_event(event_str)
+
+    def _process_event(self, event_data_str: str) -> T:
         raise NotImplementedError("This method needs to be implemented.")
 
     def until_done(self) -> None:
@@ -1382,7 +1392,6 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
                 func_rt = await self.on_error(event_data_obj)
             elif event_type == AgentStreamEvent.DONE:
                 func_rt = await self.on_done()
-                self.done = True  # Mark the stream as done
             else:
                 func_rt = await self.on_unhandled_event(
                     event_type, event_data_obj
@@ -1497,7 +1506,6 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
                 func_rt = self.on_error(event_data_obj)  # pylint: disable=assignment-from-none
             elif event_type == AgentStreamEvent.DONE:
                 func_rt = self.on_done()  # pylint: disable=assignment-from-none
-                self.done = True  # Mark the stream as done
             else:
                 func_rt = self.on_unhandled_event(event_type, event_data_obj)  # pylint: disable=assignment-from-none
         except Exception as e:  # pylint: disable=broad-exception-caught
@@ -1588,7 +1596,6 @@ class AsyncAgentRunStream(Generic[BaseAsyncAgentEventHandlerT]):
         self.event_handler.initialize(
             self.response_iterator,
             cast(Callable[[ThreadRun, BaseAsyncAgentEventHandler], Awaitable[None]], submit_tool_outputs),
-            self.event_handler,
         )
 
     async def __aenter__(self):
@@ -1614,8 +1621,7 @@ class AgentRunStream(Generic[BaseAgentEventHandlerT]):
         self.submit_tool_outputs = submit_tool_outputs
         self.event_handler.initialize(
             self.response_iterator,
-            cast(Callable[[ThreadRun, BaseAgentEventHandler], Awaitable[None]], submit_tool_outputs),
-            self.event_handler,
+            cast(Callable[[ThreadRun, BaseAgentEventHandler], None], submit_tool_outputs),
         )
 
     def __enter__(self):
