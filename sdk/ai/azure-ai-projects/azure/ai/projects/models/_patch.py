@@ -528,6 +528,7 @@ class MessageAttachment(MessageAttachmentGenerated):
 ToolDefinitionT = TypeVar("ToolDefinitionT", bound=ToolDefinition)
 ToolT = TypeVar("ToolT", bound="Tool")
 
+
 class Tool(ABC, Generic[ToolDefinitionT]):
     """
     An abstract class representing a tool that can be used by an agent.
@@ -571,6 +572,11 @@ class BaseFunctionTool(Tool[FunctionToolDefinition]):
         """
         Add more functions into this FunctionTool’s existing function set.
         If a function with the same name already exists, it is overwritten.
+
+        :param extra_functions: A set of additional functions to be added to
+            the existing function set. Functions are defined as callables and
+            may have any number of arguments and return types.
+        :type extra_functions: Set[Callable[..., Any]]
         """
         # Convert the existing dictionary of { name: function } back into a set
         existing_functions = set(self._functions.values())
@@ -1134,8 +1140,8 @@ class BaseToolSet:
         :raises ValueError: If a tool of the specified type is not found.
         """
         for tool in self._tools:
-           if isinstance(tool, tool_type):
-               return cast(ToolT, tool)
+            if isinstance(tool, tool_type):
+                return cast(ToolT, tool)
         raise ValueError(f"Tool of type {tool_type.__name__} not found in the ToolSet.")
 
 

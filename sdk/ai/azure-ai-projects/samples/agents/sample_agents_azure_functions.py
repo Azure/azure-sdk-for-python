@@ -24,11 +24,7 @@ USAGE:
 
 import os
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import (
-    AzureFunctionStorageQueue,
-    AzureFunctionTool,
-    MessageRole
-)
+from azure.ai.projects.models import AzureFunctionStorageQueue, AzureFunctionTool, MessageRole
 from azure.identity import DefaultAzureCredential
 
 project_client = AIProjectClient.from_connection_string(

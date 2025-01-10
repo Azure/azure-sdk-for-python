@@ -24,6 +24,7 @@ import os, sys
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 # Add the parent directory to the system path
 sys.path.append(parent_dir)
+from typing import Set
 from user_functions import *
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import ToolSet, FunctionTool
@@ -35,9 +36,9 @@ project_client = AIProjectClient.from_connection_string(
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
-user_function_set_1 = {fetch_current_datetime, fetch_weather}
+user_function_set_1: Set = {fetch_current_datetime, fetch_weather}
 
-user_function_set_2 = {
+user_function_set_2: Set = {
     send_email_using_recipient_name,
     calculate_sum,
     toggle_flag,
@@ -47,7 +48,7 @@ user_function_set_2 = {
     process_records,
 }
 
-user_function_set_3 = {convert_temperature}
+user_function_set_3: Set = {convert_temperature}
 
 with project_client:
 
