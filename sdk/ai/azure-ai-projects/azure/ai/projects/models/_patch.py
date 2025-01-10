@@ -39,6 +39,7 @@ from typing import (
     overload,
 )
 
+from azure.ai.projects.models import ToolOutput
 from azure.core.credentials import AccessToken, TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
@@ -1165,25 +1166,25 @@ class ToolSet(BaseToolSet):
                 + "To use async functions, use AsyncToolSet and agents operations in azure.ai.projects.aio."
             )
 
-    def execute_tool_calls(self, tool_calls: List[Any]) -> Any:
+    def execute_tool_calls(self, tool_calls: List[Any]) -> List[ToolOutput]:
         """
         Execute a tool of the specified type with the provided tool calls.
 
         :param List[Any] tool_calls: A list of tool calls to execute.
         :return: The output of the tool operations.
-        :rtype: Any
+        :rtype: List[ToolOutput]
         """
-        tool_outputs = []
+        tool_outputs: List[ToolOutput] = []
 
         for tool_call in tool_calls:
             try:
                 if tool_call.type == "function":
                     tool = self.get_tool(FunctionTool)
                     output = tool.execute(tool_call)
-                    tool_output = {
-                        "tool_call_id": tool_call.id,
-                        "output": output,
-                    }
+                    tool_output = ToolOutput(
+                        tool_call_id=tool_call.id,
+                        output=output,
+                    )
                     tool_outputs.append(tool_output)
             except Exception as e:  # pylint: disable=broad-exception-caught
                 logging.error("Failed to execute tool call %s: %s", tool_call, e)
@@ -1209,25 +1210,25 @@ class AsyncToolSet(BaseToolSet):
                 + "Please use AsyncFunctionTool instead and provide sync and/or async function(s)."
             )
 
-    async def execute_tool_calls(self, tool_calls: List[Any]) -> Any:
+    async def execute_tool_calls(self, tool_calls: List[Any]) -> List[ToolOutput]:
         """
         Execute a tool of the specified type with the provided tool calls.
 
         :param List[Any] tool_calls: A list of tool calls to execute.
         :return: The output of the tool operations.
-        :rtype: Any
+        :rtype: List[ToolOutput]
         """
-        tool_outputs = []
+        tool_outputs: List[ToolOutput] = []
 
         for tool_call in tool_calls:
             try:
                 if tool_call.type == "function":
                     tool = self.get_tool(AsyncFunctionTool)
                     output = await tool.execute(tool_call)
-                    tool_output = {
-                        "tool_call_id": tool_call.id,
-                        "output": output,
-                    }
+                    tool_output = ToolOutput(
+                        tool_call_id=tool_call.id,
+                        output=output,
+                    )
                     tool_outputs.append(tool_output)
             except Exception as e:  # pylint: disable=broad-exception-caught
                 logging.error("Failed to execute tool call %s: %s", tool_call, e)
@@ -1251,15 +1252,17 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
 
     def __init__(self) -> None:
         self.response_iterator: Optional[AsyncIterator[bytes]] = None
-        self.submit_tool_outputs: Optional[Callable[[ThreadRun, "BaseAsyncAgentEventHandler[T]"], Awaitable[None]]] = (
-            None
-        )
+        self.submit_tool_outputs: Optional[
+            Callable[[ThreadRun, "BaseAsyncAgentEventHandler[T]"], Awaitable[Optional[List[ToolOutput]]]]
+        ] = None
         self.buffer: Optional[str] = None
 
     def initialize(
         self,
         response_iterator: AsyncIterator[bytes],
-        submit_tool_outputs: Callable[[ThreadRun, "BaseAsyncAgentEventHandler[T]"], Awaitable[None]],
+        submit_tool_outputs: Callable[
+            [ThreadRun, "BaseAsyncAgentEventHandler[T]"], Awaitable[Optional[List[ToolOutput]]]
+        ],
     ):
         self.response_iterator = (
             async_chain(self.response_iterator, response_iterator) if self.response_iterator else response_iterator
@@ -1310,13 +1313,15 @@ class BaseAgentEventHandler(Iterator[T]):
 
     def __init__(self) -> None:
         self.response_iterator: Optional[Iterator[bytes]] = None
-        self.submit_tool_outputs: Optional[Callable[[ThreadRun, "BaseAgentEventHandler[T]"], None]] = None
+        self.submit_tool_outputs: Optional[
+            Callable[[ThreadRun, "BaseAgentEventHandler[T]"], Optional[List[ToolOutput]]]
+        ] = None
         self.buffer: Optional[str] = None
 
     def initialize(
         self,
         response_iterator: Iterator[bytes],
-        submit_tool_outputs: Callable[[ThreadRun, "BaseAgentEventHandler[T]"], None],
+        submit_tool_outputs: Callable[[ThreadRun, "BaseAgentEventHandler[T]"], Optional[List[ToolOutput]]],
     ) -> None:
         self.response_iterator = (
             itertools.chain(self.response_iterator, response_iterator) if self.response_iterator else response_iterator
@@ -1367,41 +1372,44 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
 
     async def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData, Optional[EventFunctionReturnT]]:
         event_type, event_data_obj = _parse_event(event_data_str)
+        kwargs: Dict[str, Any] = {}
         if (
             isinstance(event_data_obj, ThreadRun)
             and event_data_obj.status == "requires_action"
             and isinstance(event_data_obj.required_action, SubmitToolOutputsAction)
         ):
-            await cast(Callable[[ThreadRun, "BaseAsyncAgentEventHandler"], Awaitable[None]], self.submit_tool_outputs)(
-                event_data_obj, self
-            )
+            tool_outputs = await cast(
+                Callable[[ThreadRun, "BaseAsyncAgentEventHandler"], Awaitable[None]], self.submit_tool_outputs
+            )(event_data_obj, self)
+            if tool_outputs is not None:
+                kwargs["tool_outputs"] = tool_outputs
 
         func_rt: Optional[EventFunctionReturnT] = None
         try:
             if isinstance(event_data_obj, MessageDeltaChunk):
-                func_rt = await self.on_message_delta(event_data_obj)
+                func_rt = await self.on_message_delta(event_data_obj, **kwargs)
             elif isinstance(event_data_obj, ThreadMessage):
-                func_rt = await self.on_thread_message(event_data_obj)
+                func_rt = await self.on_thread_message(event_data_obj, **kwargs)
             elif isinstance(event_data_obj, ThreadRun):
-                func_rt = await self.on_thread_run(event_data_obj)
+                func_rt = await self.on_thread_run(event_data_obj, **kwargs)
             elif isinstance(event_data_obj, RunStep):
-                func_rt = await self.on_run_step(event_data_obj)
+                func_rt = await self.on_run_step(event_data_obj, **kwargs)
             elif isinstance(event_data_obj, RunStepDeltaChunk):
-                func_rt = await self.on_run_step_delta(event_data_obj)
+                func_rt = await self.on_run_step_delta(event_data_obj, **kwargs)
             elif event_type == AgentStreamEvent.ERROR:
-                func_rt = await self.on_error(event_data_obj)
+                func_rt = await self.on_error(event_data_obj, **kwargs)  # type: ignore[func-returns-value]
             elif event_type == AgentStreamEvent.DONE:
-                func_rt = await self.on_done()
+                func_rt = await self.on_done(**kwargs)
             else:
                 func_rt = await self.on_unhandled_event(
-                    event_type, event_data_obj
+                    event_type, event_data_obj, **kwargs
                 )  # pylint: disable=assignment-from-none
         except Exception as e:  # pylint: disable=broad-exception-caught
             logging.error("Error in event handler for event '%s': %s", event_type, e)
         return event_type, event_data_obj, func_rt
 
     async def on_message_delta(
-        self, delta: "MessageDeltaChunk"  # pylint: disable=unused-argument
+        self, delta: "MessageDeltaChunk", **kwargs: Any  # pylint: disable=unused-argument
     ) -> Optional[EventFunctionReturnT]:
         """Handle message delta events.
 
@@ -1411,7 +1419,7 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
         return None
 
     async def on_thread_message(
-        self, message: "ThreadMessage"  # pylint: disable=unused-argument
+        self, message: "ThreadMessage", **kwargs: Any  # pylint: disable=unused-argument
     ) -> Optional[EventFunctionReturnT]:
         """Handle thread message events.
 
@@ -1421,16 +1429,23 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
         return None
 
     async def on_thread_run(
-        self, run: "ThreadRun"  # pylint: disable=unused-argument
+        self,
+        run: "ThreadRun",  # pylint: disable=unused-argument
+        *,
+        tool_outputs=Optional[List[ToolOutput]],  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
     ) -> Optional[EventFunctionReturnT]:
         """Handle thread run events.
 
         :param ThreadRun run: The thread run.
+        :keyword List[ToolOutput] tool_outputs: The tool outputs.
         :rtype: Optional[EventFunctionReturnT]
         """
         return None
 
-    async def on_run_step(self, step: "RunStep") -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
+    async def on_run_step(
+        self, step: "RunStep", **kwargs: Any  # pylint: disable=unused-argument
+    ) -> Optional[EventFunctionReturnT]:
         """Handle run step events.
 
         :param RunStep step: The run step.
@@ -1439,7 +1454,7 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
         return None
 
     async def on_run_step_delta(
-        self, delta: "RunStepDeltaChunk"  # pylint: disable=unused-argument
+        self, delta: "RunStepDeltaChunk", **kwargs: Any  # pylint: disable=unused-argument
     ) -> Optional[EventFunctionReturnT]:
         """Handle run step delta events.
 
@@ -1448,7 +1463,9 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
         """
         return None
 
-    async def on_error(self, data: str) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
+    async def on_error(
+        self, data: str, **kwargs: Any  # pylint: disable=unused-argument
+    ) -> Optional[EventFunctionReturnT]:
         """Handle error events.
 
         :param str data: The error event's data.
@@ -1456,16 +1473,14 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
         """
         return None
 
-    async def on_done(
-        self,
-    ) -> Optional[EventFunctionReturnT]:
+    async def on_done(self, **kwargs: Any) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
         """Handle the completion of the stream.
         :rtype: Optional[EventFunctionReturnT]
         """
         return None
 
     async def on_unhandled_event(
-        self, event_type: str, event_data: str  # pylint: disable=unused-argument
+        self, event_type: str, event_data: str, **kwargs: Any  # pylint: disable=unused-argument
     ) -> Optional[EventFunctionReturnT]:
         """Handle any unhandled event types.
 
@@ -1481,39 +1496,44 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
     def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData, Optional[EventFunctionReturnT]]:
 
         event_type, event_data_obj = _parse_event(event_data_str)
+        kwargs: Dict[str, Any] = {}
         if (
             isinstance(event_data_obj, ThreadRun)
             and event_data_obj.status == "requires_action"
             and isinstance(event_data_obj.required_action, SubmitToolOutputsAction)
         ):
-            cast(Callable[[ThreadRun, "BaseAgentEventHandler"], Awaitable[None]], self.submit_tool_outputs)(
-                event_data_obj, self
-            )
+            tool_outputs = cast(
+                Callable[[ThreadRun, "BaseAgentEventHandler"], Optional[List[ToolOutput]]], self.submit_tool_outputs
+            )(event_data_obj, self)
+            if tool_outputs is not None:
+                kwargs["tool_outputs"] = tool_outputs
 
         func_rt: Optional[EventFunctionReturnT] = None
         try:
             if isinstance(event_data_obj, MessageDeltaChunk):
-                func_rt = self.on_message_delta(event_data_obj)  # pylint: disable=assignment-from-none
+                func_rt = self.on_message_delta(event_data_obj, **kwargs)  # pylint: disable=assignment-from-none
             elif isinstance(event_data_obj, ThreadMessage):
-                func_rt = self.on_thread_message(event_data_obj)  # pylint: disable=assignment-from-none
+                func_rt = self.on_thread_message(event_data_obj, **kwargs)  # pylint: disable=assignment-from-none
             elif isinstance(event_data_obj, ThreadRun):
-                func_rt = self.on_thread_run(event_data_obj)  # pylint: disable=assignment-from-none
+                func_rt = self.on_thread_run(event_data_obj, **kwargs)
             elif isinstance(event_data_obj, RunStep):
-                func_rt = self.on_run_step(event_data_obj)  # pylint: disable=assignment-from-none
+                func_rt = self.on_run_step(event_data_obj, **kwargs)  # pylint: disable=assignment-from-none
             elif isinstance(event_data_obj, RunStepDeltaChunk):
-                func_rt = self.on_run_step_delta(event_data_obj)  # pylint: disable=assignment-from-none
+                func_rt = self.on_run_step_delta(event_data_obj, **kwargs)  # pylint: disable=assignment-from-none
             elif event_type == AgentStreamEvent.ERROR:
-                func_rt = self.on_error(event_data_obj)  # pylint: disable=assignment-from-none
+                func_rt = self.on_error(event_data_obj, **kwargs)  # pylint: disable=assignment-from-none
             elif event_type == AgentStreamEvent.DONE:
                 func_rt = self.on_done()  # pylint: disable=assignment-from-none
             else:
-                func_rt = self.on_unhandled_event(event_type, event_data_obj)  # pylint: disable=assignment-from-none
+                func_rt = self.on_unhandled_event(
+                    event_type, event_data_obj, **kwargs
+                )  # pylint: disable=assignment-from-none
         except Exception as e:  # pylint: disable=broad-exception-caught
             logging.error("Error in event handler for event '%s': %s", event_type, e)
         return event_type, event_data_obj, func_rt
 
     def on_message_delta(
-        self, delta: "MessageDeltaChunk"  # pylint: disable=unused-argument
+        self, delta: "MessageDeltaChunk", **kwargs: Any  # pylint: disable=unused-argument
     ) -> Optional[EventFunctionReturnT]:
         """Handle message delta events.
 
@@ -1523,7 +1543,7 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
         return None
 
     def on_thread_message(
-        self, message: "ThreadMessage"  # pylint: disable=unused-argument
+        self, message: "ThreadMessage", **kwargs: Any  # pylint: disable=unused-argument
     ) -> Optional[EventFunctionReturnT]:
         """Handle thread message events.
 
@@ -1532,15 +1552,24 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
         """
         return None
 
-    def on_thread_run(self, run: "ThreadRun") -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
+    def on_thread_run(
+        self,
+        run: "ThreadRun",  # pylint: disable=unused-argument
+        *,
+        tool_outputs: Optional[List[ToolOutput]] = None,
+        **kwargs: Any,  # pylint: disable=unused-argument
+    ) -> Optional[EventFunctionReturnT]:
         """Handle thread run events.
 
         :param ThreadRun run: The thread run.
+        :keyword List[ToolOutput] tool_outputs: The tool outputs.
         :rtype: Optional[EventFunctionReturnT]
         """
         return None
 
-    def on_run_step(self, step: "RunStep") -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
+    def on_run_step(
+        self, step: "RunStep", **kwargs: Any  # pylint: disable=unused-argument
+    ) -> Optional[EventFunctionReturnT]:
         """Handle run step events.
 
         :param RunStep step: The run step.
@@ -1549,7 +1578,7 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
         return None
 
     def on_run_step_delta(
-        self, delta: "RunStepDeltaChunk"  # pylint: disable=unused-argument
+        self, delta: "RunStepDeltaChunk", **kwargs: Any  # pylint: disable=unused-argument
     ) -> Optional[EventFunctionReturnT]:
         """Handle run step delta events.
 
@@ -1558,7 +1587,7 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
         """
         return None
 
-    def on_error(self, data: str) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
+    def on_error(self, data: str, **kwargs: Any) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
         """Handle error events.
 
         :param str data: The error event's data.
@@ -1566,14 +1595,12 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
         """
         return None
 
-    def on_done(
-        self,
-    ) -> Optional[EventFunctionReturnT]:
+    def on_done(self, **kwargs: Any) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
         """Handle the completion of the stream."""
         return None
 
     def on_unhandled_event(
-        self, event_type: str, event_data: str  # pylint: disable=unused-argument
+        self, event_type: str, event_data: str, **kwargs: Any  # pylint: disable=unused-argument
     ) -> Optional[EventFunctionReturnT]:
         """Handle any unhandled event types.
 
@@ -1587,7 +1614,7 @@ class AsyncAgentRunStream(Generic[BaseAsyncAgentEventHandlerT]):
     def __init__(
         self,
         response_iterator: AsyncIterator[bytes],
-        submit_tool_outputs: Callable[[ThreadRun, BaseAsyncAgentEventHandlerT], Awaitable[None]],
+        submit_tool_outputs: Callable[[ThreadRun, BaseAsyncAgentEventHandlerT], Awaitable[Optional[List[ToolOutput]]]],
         event_handler: BaseAsyncAgentEventHandlerT,
     ):
         self.response_iterator = response_iterator
@@ -1595,7 +1622,10 @@ class AsyncAgentRunStream(Generic[BaseAsyncAgentEventHandlerT]):
         self.submit_tool_outputs = submit_tool_outputs
         self.event_handler.initialize(
             self.response_iterator,
-            cast(Callable[[ThreadRun, BaseAsyncAgentEventHandler], Awaitable[None]], submit_tool_outputs),
+            cast(
+                Callable[[ThreadRun, BaseAsyncAgentEventHandler], Awaitable[Optional[List[ToolOutput]]]],
+                submit_tool_outputs,
+            ),
         )
 
     async def __aenter__(self):
@@ -1613,7 +1643,7 @@ class AgentRunStream(Generic[BaseAgentEventHandlerT]):
     def __init__(
         self,
         response_iterator: Iterator[bytes],
-        submit_tool_outputs: Callable[[ThreadRun, BaseAgentEventHandlerT], None],
+        submit_tool_outputs: Callable[[ThreadRun, BaseAgentEventHandlerT], Optional[List[ToolOutput]]],
         event_handler: BaseAgentEventHandlerT,
     ):
         self.response_iterator = response_iterator
@@ -1621,7 +1651,7 @@ class AgentRunStream(Generic[BaseAgentEventHandlerT]):
         self.submit_tool_outputs = submit_tool_outputs
         self.event_handler.initialize(
             self.response_iterator,
-            cast(Callable[[ThreadRun, BaseAgentEventHandler], None], submit_tool_outputs),
+            cast(Callable[[ThreadRun, BaseAgentEventHandler], Optional[List[ToolOutput]]], submit_tool_outputs),
         )
 
     def __enter__(self):

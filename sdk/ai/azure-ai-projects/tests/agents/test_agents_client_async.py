@@ -1554,6 +1554,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                     print("Tool outputs:", tool_outputs)
                     if tool_outputs:
                         body = {"tool_outputs": tool_outputs}
+                        tool_outputs = [output.as_dict() for output in tool_outputs]
                         await client.agents.submit_tool_outputs_to_run(thread_id=thread.id, run_id=run.id, body=body)
 
                 print("Current run status:", run.status)

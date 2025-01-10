@@ -47,10 +47,10 @@ project_client = AIProjectClient.from_connection_string(
 
 
 class MyEventHandler(AgentEventHandler):
-    def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
+    def on_message_delta(self, delta: "MessageDeltaChunk", **kwargs) -> None:
         print(f"Text delta received: {delta.text}")
 
-    def on_thread_message(self, message: "ThreadMessage") -> None:
+    def on_thread_message(self, message: "ThreadMessage", **kwargs) -> None:
         if len(message.content):
             print(
                 f"ThreadMessage created. ID: {message.id}, "
@@ -59,19 +59,19 @@ class MyEventHandler(AgentEventHandler):
         else:
             print(f"ThreadMessage created. ID: {message.id}, " f"Status: {message.status}")
 
-    def on_thread_run(self, run: "ThreadRun") -> None:
+    def on_thread_run(self, run: "ThreadRun", **kwargs) -> None:
         print(f"ThreadRun status: {run.status}")
 
-    def on_run_step(self, step: "RunStep") -> None:
+    def on_run_step(self, step: "RunStep", **kwargs) -> None:
         print(f"RunStep type: {step.type}, Status: {step.status}")
 
-    def on_error(self, data: str) -> None:
+    def on_error(self, data: str, **kwargs) -> None:
         print(f"An error occurred. Data: {data}")
 
-    def on_done(self) -> None:
+    def on_done(self, **kwargs) -> None:
         print("Stream completed.")
 
-    def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
+    def on_unhandled_event(self, event_type: str, event_data: Any, **kwargs) -> None:
         print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
 

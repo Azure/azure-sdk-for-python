@@ -2374,12 +2374,14 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         event_handler.initialize(response_iterator, self._handle_submit_tool_outputs)
 
-    def _handle_submit_tool_outputs(self, run: _models.ThreadRun, event_handler: _models.BaseAgentEventHandler) -> None:
+    def _handle_submit_tool_outputs(
+        self, run: _models.ThreadRun, event_handler: _models.BaseAgentEventHandler
+    ) -> Optional[List[_models.ToolOutput]]:
         if isinstance(run.required_action, _models.SubmitToolOutputsAction):
             tool_calls = run.required_action.submit_tool_outputs.tool_calls
             if not tool_calls:
                 logger.debug("No tool calls to execute.")
-                return
+                return None
 
             # We need tool set only if we are executing local function. In case if
             # the tool is azure_function we just need to wait when it will be finished.
@@ -2389,7 +2391,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                     tool_outputs = toolset.execute_tool_calls(tool_calls)
                 else:
                     logger.warning("Toolset is not available in the client.")
-                    return
+                    return None
 
                 logger.info("Tool outputs: %s", tool_outputs)
                 if tool_outputs:
@@ -2399,6 +2401,8 @@ class AgentsOperations(AgentsOperationsGenerated):
                         tool_outputs=tool_outputs,
                         event_handler=event_handler,
                     )
+                    return tool_outputs
+        return None
 
     @overload
     def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:

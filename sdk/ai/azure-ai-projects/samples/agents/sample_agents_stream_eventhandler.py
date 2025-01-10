@@ -43,25 +43,25 @@ project_client = AIProjectClient.from_connection_string(
 # With AgentEventHandler[str], the return type for each event functions is optional string.
 class MyEventHandler(AgentEventHandler[str]):
 
-    def on_message_delta(self, delta: "MessageDeltaChunk") -> Optional[str]:
+    def on_message_delta(self, delta: "MessageDeltaChunk", **kwargs) -> Optional[str]:
         return f"Text delta received: {delta.text}"
 
-    def on_thread_message(self, message: "ThreadMessage") -> Optional[str]:
+    def on_thread_message(self, message: "ThreadMessage", **kwargs) -> Optional[str]:
         return f"ThreadMessage created. ID: {message.id}, Status: {message.status}"
 
-    def on_thread_run(self, run: "ThreadRun") -> Optional[str]:
+    def on_thread_run(self, run: "ThreadRun", **kwargs) -> Optional[str]:
         return f"ThreadRun status: {run.status}"
 
-    def on_run_step(self, step: "RunStep") -> Optional[str]:
+    def on_run_step(self, step: "RunStep", **kwargs) -> Optional[str]:
         return f"RunStep type: {step.type}, Status: {step.status}"
 
-    def on_error(self, data: str) -> Optional[str]:
+    def on_error(self, data: str, **kwargs) -> Optional[str]:
         return f"An error occurred. Data: {data}"
 
-    def on_done(self) -> Optional[str]:
+    def on_done(self, **kwargs) -> Optional[str]:
         return "Stream completed."
 
-    def on_unhandled_event(self, event_type: str, event_data: Any) -> Optional[str]:
+    def on_unhandled_event(self, event_type: str, event_data: Any, **kwargs) -> Optional[str]:
         return f"Unhandled Event Type: {event_type}, Data: {event_data}"
 
 
