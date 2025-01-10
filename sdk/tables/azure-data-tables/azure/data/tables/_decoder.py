@@ -4,6 +4,9 @@
 # license information.
 # --------------------------------------------------------------------------
 from dataclasses import fields, is_dataclass
+from datetime import timezone
+from uuid import UUID
+from base64 import b64decode
 from typing import (
     Any,
     Mapping,
@@ -11,15 +14,8 @@ from typing import (
     Dict,
     Callable,
     Type,
-    is_typeddict,
-    Required,
-    NotRequired,
-    Optional,
-    Literal
 )
-from datetime import timezone
-from uuid import UUID
-from base64 import b64decode
+from typing_extensions import is_typeddict
 
 from ._common_conversion import _annotations, _get_annotation_type
 from ._entity import (
@@ -60,7 +56,7 @@ class TableEntityDecoder:
         if entity_format:
             if is_typeddict(entity_format):
                 # Scrape type encoding from typeddict defintion
-                for property_name, property_type in _annotations(entity_format):
+                for property_name, property_type in _annotations(entity_format).items():
                     property_type = _get_annotation_type(property_type)
                     self._add_property_type(property_name, property_type)
             elif is_dataclass(entity_format):
@@ -74,20 +70,17 @@ class TableEntityDecoder:
                     for property_name, property_type in entity_format.items():
                         property_type = _get_annotation_type(property_type)
                         self._add_property_type(property_name, property_type)
-                except (AttributeError, TypeError):
+                except (AttributeError, TypeError) as e:
                     raise TypeError(
                         "The 'entity_format' should be a TypedDict, dataclass definition, "
                         "or dict in the format '{\"PropertyName\": type}'"
-                    )
+                    ) from e
 
     def _add_property_type(self, property_name: str, property_type: Union[Type, EdmType]) -> None:
         try:
             self._property_types[property_name] = self._decode_types[property_type]
         except KeyError as e:
-            raise ValueError(
-                f"Unexpected type in entity format: '{property_type}', please provide decoder."
-            ) from e   
-
+            raise ValueError(f"Unexpected type in entity format: '{property_type}', please provide decoder.") from e
 
     def __call__(  # pylint: disable=too-many-branches, too-many-statements
         self, response_data: Mapping[str, Any]

@@ -214,7 +214,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         *,
         custom_encode: Optional[EncoderMapType] = None,
         custom_decode: Optional[DecoderMapType] = None,
-        entity_format = None,
+        entity_format=None,
         **kwargs,
     ) -> TableClient:
         """Creates a new table under the given account.
@@ -262,7 +262,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         *,
         custom_encode: Optional[EncoderMapType] = None,
         custom_decode: Optional[DecoderMapType] = None,
-        entity_format = None,
+        entity_format=None,
         **kwargs,
     ) -> TableClient:
         """Creates a new table if it does not currently exist.
@@ -397,7 +397,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         *,
         custom_encode: Optional[EncoderMapType] = None,
         custom_decode: Optional[DecoderMapType] = None,
-        entity_format = None,
+        entity_format=None,
         **kwargs: Any,
     ) -> TableClient:
         """Get a client to interact with the specified table.

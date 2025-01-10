@@ -4,42 +4,32 @@
 # license information.
 # --------------------------------------------------------------------------
 from dataclasses import fields, is_dataclass
-from typing import (
-    Any,
-    Optional,
-    SupportsBytes,
-    SupportsFloat,
-    SupportsInt,
-    is_typeddict,
-    Tuple,
-    Mapping,
-    Union,
-    Dict,
-    Type,
-    Callable,
-    Required,
-    NotRequired,
-    Literal,
-    Optional,
-    cast,
-    overload,
-)
 from uuid import UUID
 from datetime import datetime
 from enum import Enum
 from math import isnan
 from json import JSONEncoder
 from base64 import b64encode
+from typing import (
+    Any,
+    Optional,
+    SupportsBytes,
+    SupportsFloat,
+    SupportsInt,
+    Tuple,
+    Mapping,
+    Union,
+    Dict,
+    Type,
+    Callable,
+    cast,
+    overload,
+)
+from typing_extensions import is_typeddict
 
 from ._entity import EdmType, EntityProperty
 from ._decoder import TablesEntityDatetime
-from ._common_conversion import (
-    _encode_base64,
-    _to_utc_datetime,
-    _annotations,
-    _get_annotation_type,
-    SupportedDataTypes
-)
+from ._common_conversion import _encode_base64, _to_utc_datetime, _annotations, _get_annotation_type, SupportedDataTypes
 from ._constants import MAX_INT32, MIN_INT32, MAX_INT64, MIN_INT64, _ERROR_VALUE_TOO_LARGE
 
 _ODATA_SUFFIX = "@odata.type"
@@ -95,7 +85,7 @@ class TableEntityEncoder:
         if entity_format:
             if is_typeddict(entity_format):
                 # Scrape type encoding from typeddict defintion
-                for property_name, property_type in _annotations(entity_format):
+                for property_name, property_type in _annotations(entity_format).items():
                     property_type = _get_annotation_type(property_type)
                     self._add_property_type(property_name, property_type)
 
@@ -111,24 +101,20 @@ class TableEntityEncoder:
                     for property_name, property_type in entity_format.items():
                         property_type = _get_annotation_type(property_type)
                         self._add_property_type(property_name, property_type)
-                except (AttributeError, TypeError):
+                except (AttributeError, TypeError) as e:
                     raise TypeError(
                         "The 'entity_format' should be a TypedDict, dataclass definition, "
                         "or dict in the format '{\"PropertyName\": type}'"
-                    )
+                    ) from e
 
     def _add_property_type(self, property_name: str, property_type: Union[Type, EdmType]) -> None:
-        try:
+        if isinstance(property_type, EdmType):
             self._property_types[property_name] = self._edm_types[property_type]
-            return
-        except KeyError:
-            pass
-        try:
-            self._property_types[property_name] = self._obj_types[property_type]
-        except KeyError as e:
-            raise ValueError(
-                f"Unexpected type in entity format: '{property_type}', please provide encoder."
-            )
+        else:
+            try:
+                self._property_types[property_name] = self._obj_types[property_type]
+            except KeyError as e:
+                raise ValueError(f"Unexpected type in entity format: '{property_type}', please provide encoder.") from e
 
     @overload
     def __call__(self, entity: Mapping[str, Any], /) -> Dict[str, SupportedDataTypes]: ...

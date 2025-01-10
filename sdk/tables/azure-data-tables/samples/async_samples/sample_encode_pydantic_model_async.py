@@ -55,7 +55,7 @@ class CreateDeleteEntity(object):
 
     async def create_delete_entity(self):
         table_client = TableClient.from_connection_string(
-            self.connection_string, self.table_name, entity_format={'PartitionKey': UUID}
+            self.connection_string, self.table_name, entity_format={"PartitionKey": UUID}
         )
         async with table_client:
             await table_client.create_table()

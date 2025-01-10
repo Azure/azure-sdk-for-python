@@ -77,7 +77,7 @@ class TableClient(AsyncTablesBaseClient):
         api_version: Optional[str] = None,
         custom_encode: Optional[EncoderMapType] = None,
         custom_decode: Optional[DecoderMapType] = None,
-        entity_format = None,
+        entity_format=None,
         **kwargs: Any,
     ) -> None:
         """Creates TableClient from a Credential.
@@ -125,7 +125,7 @@ class TableClient(AsyncTablesBaseClient):
         api_version: Optional[str] = None,
         custom_encode: Optional[EncoderMapType] = None,
         custom_decode: Optional[DecoderMapType] = None,
-        entity_format = None,
+        entity_format=None,
         **kwargs: Any,
     ) -> "TableClient":
         """Create TableClient from a Connection string.
@@ -180,7 +180,7 @@ class TableClient(AsyncTablesBaseClient):
         credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential]] = None,
         custom_encode: Optional[EncoderMapType] = None,
         custom_decode: Optional[DecoderMapType] = None,
-        entity_format = None,
+        entity_format=None,
         **kwargs: Any,
     ) -> "TableClient":
         """A client to interact with a specific Table.

@@ -72,7 +72,7 @@ class TableClient(TablesBaseClient):
         api_version: Optional[str] = None,
         custom_encode: Optional[EncoderMapType] = None,
         custom_decode: Optional[DecoderMapType] = None,
-        entity_format = None,
+        entity_format=None,
         **kwargs: Any,
     ) -> None:
         """Create TableClient from a Credential.
@@ -121,7 +121,7 @@ class TableClient(TablesBaseClient):
         api_version: Optional[str] = None,
         custom_encode: Optional[EncoderMapType] = None,
         custom_decode: Optional[DecoderMapType] = None,
-        entity_format = None,
+        entity_format=None,
         **kwargs: Any,
     ) -> "TableClient":
         """Creates TableClient from a Connection String.
@@ -177,7 +177,7 @@ class TableClient(TablesBaseClient):
         api_version: Optional[str] = None,
         custom_encode: Optional[EncoderMapType] = None,
         custom_decode: Optional[DecoderMapType] = None,
-        entity_format = None,
+        entity_format=None,
         **kwargs: Any,
     ) -> "TableClient":
         """A client to interact with a specific Table.

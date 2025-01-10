@@ -52,7 +52,7 @@ class CreateDeleteEntity(object):
 
     def create_delete_entity(self):
         table_client = TableClient.from_connection_string(
-            self.connection_string, self.table_name, entity_format={'PartitionKey': UUID}
+            self.connection_string, self.table_name, entity_format={"PartitionKey": UUID}
         )
         with table_client:
             table_client.create_table()

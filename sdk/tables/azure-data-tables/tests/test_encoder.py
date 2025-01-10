@@ -692,7 +692,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             table_name,
             credential=tables_primary_storage_account_key,
             transport=EncoderVerificationTransport(),
-            entity_format={'RowKey': EnumBasicOptions},
+            entity_format={"RowKey": EnumBasicOptions},
             custom_encode={EnumBasicOptions: lambda v: (None, v.value)},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
@@ -715,7 +715,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             table_name,
             credential=tables_primary_storage_account_key,
             transport=EncoderVerificationTransport(),
-            entity_format={'RowKey': EnumStrOptions},
+            entity_format={"RowKey": EnumStrOptions},
             custom_encode={EnumStrOptions: lambda v: (None, v.value)},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.TWO, "Data": EnumStrOptions.TWO}
@@ -738,7 +738,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             table_name,
             credential=tables_primary_storage_account_key,
             transport=EncoderVerificationTransport(),
-            entity_format={'RowKey': EnumIntOptions},
+            entity_format={"RowKey": EnumIntOptions},
             custom_encode={EnumIntOptions: lambda v: (None, v.value)},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumIntOptions.ONE, "Data": EnumIntOptions.TWO}
@@ -1523,7 +1523,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             table_name,
             credential=tables_primary_storage_account_key,
             transport=EncoderVerificationTransport(),
-            entity_format={'RowKey': EnumBasicOptions},
+            entity_format={"RowKey": EnumBasicOptions},
             custom_encode={EnumBasicOptions: lambda v: (None, v.value)},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
@@ -1563,7 +1563,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             table_name,
             credential=tables_primary_storage_account_key,
             transport=EncoderVerificationTransport(),
-            entity_format={'RowKey': EnumStrOptions},
+            entity_format={"RowKey": EnumStrOptions},
             custom_encode={EnumStrOptions: lambda v: (None, v.value)},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.TWO, "Data": EnumStrOptions.TWO}
@@ -1603,7 +1603,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             table_name,
             credential=tables_primary_storage_account_key,
             transport=EncoderVerificationTransport(),
-            entity_format={'RowKey': EnumIntOptions},
+            entity_format={"RowKey": EnumIntOptions},
             custom_encode={EnumIntOptions: lambda v: (None, v.value)},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", "Data": EnumIntOptions.TWO}
@@ -2347,10 +2347,11 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
 
         # Test enums - it is not supported in old encoder
         with TableClient(
-            url, table_name,
+            url,
+            table_name,
             credential=tables_primary_storage_account_key,
             transport=EncoderVerificationTransport(),
-            entity_format={'RowKey': EnumBasicOptions},
+            entity_format={"RowKey": EnumBasicOptions},
             custom_encode={EnumBasicOptions: lambda v: (None, v.value)},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
@@ -2380,10 +2381,11 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
         with TableClient(
-            url, table_name,
+            url,
+            table_name,
             credential=tables_primary_storage_account_key,
             transport=EncoderVerificationTransport(),
-            entity_format={'RowKey': EnumStrOptions},
+            entity_format={"RowKey": EnumStrOptions},
             custom_encode={EnumStrOptions: lambda v: (None, v.value)},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.TWO, "Data": EnumStrOptions.TWO}
@@ -2413,10 +2415,11 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
         with TableClient(
-            url, table_name,
+            url,
+            table_name,
             credential=tables_primary_storage_account_key,
             transport=EncoderVerificationTransport(),
-            entity_format={'RowKey': EnumIntOptions},
+            entity_format={"RowKey": EnumIntOptions},
             custom_encode={EnumIntOptions: lambda v: (None, v.value)},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", "Data": EnumIntOptions.TWO}
