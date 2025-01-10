@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-import yaml
+import yaml # type: ignore
 from typing import Any, Dict, Optional, Set, List
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import FunctionTool, ToolSet, MessageRole, Agent
@@ -167,7 +167,7 @@ class AgentTeam:
         :param toolset: An optional ToolSet to configure specific tools (functions, etc.) for the agent.
         """
         assert self._project_client is not None, "project_client must not be None"
-        assert self._team_leader is None, "team leader has alredy been created"
+        assert self._team_leader is None, "team leader has already been created"
         # List all agents (will be empty at this moment if you haven't added any, or you can append after they're added)
         for member in self._members:
             instructions += f"- {member.name}: {member.instructions}\n"
