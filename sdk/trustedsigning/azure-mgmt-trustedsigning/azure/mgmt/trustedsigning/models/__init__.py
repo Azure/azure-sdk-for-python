@@ -6,41 +6,41 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models import AccountSku
-from ._models import Certificate
-from ._models import CertificateProfile
-from ._models import CertificateProfileProperties
-from ._models import CheckNameAvailability
-from ._models import CheckNameAvailabilityResult
-from ._models import CodeSigningAccount
-from ._models import CodeSigningAccountPatch
-from ._models import CodeSigningAccountPatchProperties
-from ._models import CodeSigningAccountProperties
-from ._models import ErrorAdditionalInfo
-from ._models import ErrorDetail
-from ._models import ErrorResponse
-from ._models import Operation
-from ._models import OperationDisplay
-from ._models import ProxyResource
-from ._models import Resource
-from ._models import Revocation
-from ._models import RevokeCertificate
-from ._models import SystemData
-from ._models import TrackedResource
+from azure.mgmt.trustedsigning.models._models import AccountSku
+from azure.mgmt.trustedsigning.models._models import Certificate
+from azure.mgmt.trustedsigning.models._models import CertificateProfile
+from azure.mgmt.trustedsigning.models._models import CertificateProfileProperties
+from azure.mgmt.trustedsigning.models._models import CheckNameAvailability
+from azure.mgmt.trustedsigning.models._models import CheckNameAvailabilityResult
+from azure.mgmt.trustedsigning.models._models import CodeSigningAccount
+from azure.mgmt.trustedsigning.models._models import CodeSigningAccountPatch
+from azure.mgmt.trustedsigning.models._models import CodeSigningAccountPatchProperties
+from azure.mgmt.trustedsigning.models._models import CodeSigningAccountProperties
+from azure.mgmt.trustedsigning.models._models import ErrorAdditionalInfo
+from azure.mgmt.trustedsigning.models._models import ErrorDetail
+from azure.mgmt.trustedsigning.models._models import ErrorResponse
+from azure.mgmt.trustedsigning.models._models import Operation
+from azure.mgmt.trustedsigning.models._models import OperationDisplay
+from azure.mgmt.trustedsigning.models._models import ProxyResource
+from azure.mgmt.trustedsigning.models._models import Resource
+from azure.mgmt.trustedsigning.models._models import Revocation
+from azure.mgmt.trustedsigning.models._models import RevokeCertificate
+from azure.mgmt.trustedsigning.models._models import SystemData
+from azure.mgmt.trustedsigning.models._models import TrackedResource
 
-from ._enums import ActionType
-from ._enums import CertificateProfileStatus
-from ._enums import CertificateStatus
-from ._enums import CreatedByType
-from ._enums import NameUnavailabilityReason
-from ._enums import Origin
-from ._enums import ProfileType
-from ._enums import ProvisioningState
-from ._enums import RevocationStatus
-from ._enums import SkuName
-from ._patch import __all__ as _patch_all
-from ._patch import *  # pylint: disable=unused-wildcard-import
-from ._patch import patch_sdk as _patch_sdk
+from azure.mgmt.trustedsigning.models._enums import ActionType
+from azure.mgmt.trustedsigning.models._enums import CertificateProfileStatus
+from azure.mgmt.trustedsigning.models._enums import CertificateStatus
+from azure.mgmt.trustedsigning.models._enums import CreatedByType
+from azure.mgmt.trustedsigning.models._enums import NameUnavailabilityReason
+from azure.mgmt.trustedsigning.models._enums import Origin
+from azure.mgmt.trustedsigning.models._enums import ProfileType
+from azure.mgmt.trustedsigning.models._enums import ProvisioningState
+from azure.mgmt.trustedsigning.models._enums import RevocationStatus
+from azure.mgmt.trustedsigning.models._enums import SkuName
+from azure.mgmt.trustedsigning.models._patch import __all__ as _patch_all
+from azure.mgmt.trustedsigning.models._patch import *  # pylint: disable=unused-wildcard-import
+from azure.mgmt.trustedsigning.models._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AccountSku",

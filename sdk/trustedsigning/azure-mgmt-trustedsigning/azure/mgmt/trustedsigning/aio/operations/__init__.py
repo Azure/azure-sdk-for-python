@@ -6,13 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import Operations
-from ._operations import CodeSigningAccountsOperations
-from ._operations import CertificateProfilesOperations
+from azure.mgmt.trustedsigning.aio.operations._operations import Operations
+from azure.mgmt.trustedsigning.aio.operations._operations import CodeSigningAccountsOperations
+from azure.mgmt.trustedsigning.aio.operations._operations import CertificateProfilesOperations
 
-from ._patch import __all__ as _patch_all
-from ._patch import *  # pylint: disable=unused-wildcard-import
-from ._patch import patch_sdk as _patch_sdk
+from azure.mgmt.trustedsigning.aio.operations._patch import __all__ as _patch_all
+from azure.mgmt.trustedsigning.aio.operations._patch import *  # pylint: disable=unused-wildcard-import
+from azure.mgmt.trustedsigning.aio.operations._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "Operations",

@@ -31,9 +31,9 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
-from .._model_base import SdkJSONEncoder, _deserialize
-from .._serialization import Serializer
+from azure.mgmt.trustedsigning import models as _models
+from azure.mgmt.trustedsigning._model_base import SdkJSONEncoder, _deserialize
+from azure.mgmt.trustedsigning._serialization import Serializer
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping

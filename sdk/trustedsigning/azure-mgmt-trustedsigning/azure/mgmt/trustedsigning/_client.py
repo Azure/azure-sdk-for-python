@@ -15,9 +15,9 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 
-from ._configuration import TrustedSigningMgmtClientConfiguration
-from ._serialization import Deserializer, Serializer
-from .operations import CertificateProfilesOperations, CodeSigningAccountsOperations, Operations
+from azure.mgmt.trustedsigning._configuration import TrustedSigningMgmtClientConfiguration
+from azure.mgmt.trustedsigning._serialization import Deserializer, Serializer
+from azure.mgmt.trustedsigning.operations import CertificateProfilesOperations, CodeSigningAccountsOperations, Operations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports

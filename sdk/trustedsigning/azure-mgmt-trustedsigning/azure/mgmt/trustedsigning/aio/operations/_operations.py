@@ -46,9 +46,9 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
-from ..._model_base import SdkJSONEncoder, _deserialize
-from ...operations._operations import (
+from azure.mgmt.trustedsigning import models as _models
+from azure.mgmt.trustedsigning._model_base import SdkJSONEncoder, _deserialize
+from azure.mgmt.trustedsigning.operations._operations import (
     build_certificate_profiles_create_request,
     build_certificate_profiles_delete_request,
     build_certificate_profiles_get_request,

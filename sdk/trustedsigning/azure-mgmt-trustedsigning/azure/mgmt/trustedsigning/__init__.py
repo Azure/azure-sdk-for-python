@@ -6,17 +6,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._client import TrustedSigningMgmtClient
-from ._version import VERSION
+from azure.mgmt.trustedsigning._client import TrustedSigningMgmtClient
+from azure.mgmt.trustedsigning._version import VERSION
 
 __version__ = VERSION
 
 try:
-    from ._patch import __all__ as _patch_all
-    from ._patch import *  # pylint: disable=unused-wildcard-import
+    from azure.mgmt.trustedsigning._patch import __all__ as _patch_all
+    from azure.mgmt.trustedsigning._patch import *  # pylint: disable=unused-wildcard-import
 except ImportError:
     _patch_all = []
-from ._patch import patch_sdk as _patch_sdk
+from azure.mgmt.trustedsigning._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "TrustedSigningMgmtClient",

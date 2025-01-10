@@ -11,7 +11,7 @@ from typing import Any, TYPE_CHECKING
 from azure.core.pipeline import policies
 from azure.mgmt.core.policies import ARMChallengeAuthenticationPolicy, ARMHttpLoggingPolicy
 
-from ._version import VERSION
+from azure.mgmt.trustedsigning._version import VERSION
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports

@@ -10,12 +10,12 @@
 import datetime
 from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .. import _model_base
-from .._model_base import rest_field
+from azure.mgmt.trustedsigning import _model_base
+from azure.mgmt.trustedsigning._model_base import rest_field
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
+    from azure.mgmt.trustedsigning import models as _models
 
 
 class AccountSku(_model_base.Model):
