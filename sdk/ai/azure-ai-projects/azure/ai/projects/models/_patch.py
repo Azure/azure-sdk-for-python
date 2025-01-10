@@ -42,7 +42,7 @@ from typing import (
 from azure.core.credentials import AccessToken, TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
-from ._enums import AgentStreamEvent, ConnectionType
+from ._enums import AgentStreamEvent, ConnectionType, MessageRole
 from ._models import (
     AzureAISearchResource,
     AzureAISearchToolDefinition,
@@ -528,6 +528,7 @@ class MessageAttachment(MessageAttachmentGenerated):
 
 
 ToolDefinitionT = TypeVar("ToolDefinitionT", bound=ToolDefinition)
+ToolT = TypeVar("ToolT", bound="Tool")
 
 
 class Tool(ABC, Generic[ToolDefinitionT]):
@@ -567,6 +568,24 @@ class BaseFunctionTool(Tool[FunctionToolDefinition]):
         :param functions: A set of function objects.
         """
         self._functions = self._create_function_dict(functions)
+        self._definitions = self._build_function_definitions(self._functions)
+
+    def add_functions(self, extra_functions: Set[Callable[..., Any]]) -> None:
+        """
+        Add more functions into this FunctionTool’s existing function set.
+        If a function with the same name already exists, it is overwritten.
+
+        :param extra_functions: A set of additional functions to be added to
+            the existing function set. Functions are defined as callables and
+            may have any number of arguments and return types.
+        :type extra_functions: Set[Callable[..., Any]]
+        """
+        # Convert the existing dictionary of { name: function } back into a set
+        existing_functions = set(self._functions.values())
+        # Merge old + new
+        combined = existing_functions.union(extra_functions)
+        # Rebuild state
+        self._functions = self._create_function_dict(combined)
         self._definitions = self._build_function_definitions(self._functions)
 
     def _create_function_dict(self, functions: Set[Callable[..., Any]]) -> Dict[str, Callable[..., Any]]:
@@ -1113,7 +1132,7 @@ class BaseToolSet:
             "tools": self.definitions,
         }
 
-    def get_tool(self, tool_type: Type[Tool]) -> Tool:
+    def get_tool(self, tool_type: Type[ToolT]) -> ToolT:
         """
         Get a tool of the specified type from the tool set.
 
@@ -1124,8 +1143,8 @@ class BaseToolSet:
         """
         for tool in self._tools:
             if isinstance(tool, tool_type):
-                return tool
-        raise ValueError(f"Tool of type {tool_type.__name__} not found.")
+                return cast(ToolT, tool)
+        raise ValueError(f"Tool of type {tool_type.__name__} not found in the ToolSet.")
 
 
 class ToolSet(BaseToolSet):
@@ -1651,31 +1670,31 @@ class OpenAIPageableListOfThreadMessage(OpenAIPageableListOfThreadMessageGenerat
         annotations = [annotation for msg in self.data for annotation in msg.file_path_annotations]
         return annotations
 
-    def get_last_message_by_sender(self, sender: str) -> Optional[ThreadMessage]:
-        """Returns the last message from the specified sender.
+    def get_last_message_by_role(self, role: MessageRole) -> Optional[ThreadMessage]:
+        """Returns the last message from a sender in the specified role.
 
-        :param sender: The role of the sender.
-        :type sender: str
+        :param role: The role of the sender.
+        :type role: MessageRole
 
-        :return: The last message from the specified sender.
+        :return: The last message from a sender in the specified role.
         :rtype: ~azure.ai.projects.models.ThreadMessage
         """
         for msg in self.data:
-            if msg.role == sender:
+            if msg.role == role:
                 return msg
         return None
 
-    def get_last_text_message_by_sender(self, sender: str) -> Optional[MessageTextContent]:
-        """Returns the last text message from the specified sender.
+    def get_last_text_message_by_role(self, role: MessageRole) -> Optional[MessageTextContent]:
+        """Returns the last text message from a sender in the specified role.
 
-        :param sender: The role of the sender.
-        :type sender: str
+        :param role: The role of the sender.
+        :type role: MessageRole
 
-        :return: The last text message from the specified sender.
+        :return: The last text message from a sender in the specified role.
         :rtype: ~azure.ai.projects.models.MessageTextContent
         """
         for msg in self.data:
-            if msg.role == sender:
+            if msg.role == role:
                 for content in msg.content:
                     if isinstance(content, MessageTextContent):
                         return content

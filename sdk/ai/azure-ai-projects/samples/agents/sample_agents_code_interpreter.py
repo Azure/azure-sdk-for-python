@@ -22,7 +22,7 @@ USAGE:
 import os
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import CodeInterpreterTool
-from azure.ai.projects.models import FilePurpose
+from azure.ai.projects.models import FilePurpose, MessageRole
 from azure.identity import DefaultAzureCredential
 from pathlib import Path
 
@@ -93,7 +93,7 @@ with project_client:
         print(f"End Index: {file_path_annotation.end_index}")
     # [END get_messages_and_save_files]
 
-    last_msg = messages.get_last_text_message_by_sender("assistant")
+    last_msg = messages.get_last_text_message_by_role(MessageRole.AGENT)
     if last_msg:
         print(f"Last Message: {last_msg.text.value}")
 
