@@ -12,6 +12,7 @@ import pandas as pd
 from promptflow._sdk._constants import LINE_NUMBER
 from promptflow.client import PFClient
 from promptflow.entities import Run
+from promptflow._sdk._configuration import Configuration
 
 from azure.ai.evaluation._common.math import list_mean_nan_safe, apply_transform_nan_safe
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
@@ -711,6 +712,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     if target is not None:
         _validate_columns_for_target(input_data_df, target)
 
+    Configuration.get_instance().set_config("trace.destination", "none")
     pf_client = PFClient(user_agent=USER_AGENT)
     target_run: Optional[Run] = None
 

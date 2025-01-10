@@ -91,15 +91,22 @@ if __name__ == "__main__":
     top_level_module = pkg_details.namespace.split(".")[0]
     paths = [
         os.path.join(args.target_package, top_level_module),
-        os.path.join(args.target_package, "samples"),
     ]
-
-    if not args.next and in_ci():
-        if not is_check_enabled(args.target_package, "type_check_samples"):
+    if not args.next and in_ci() and not is_check_enabled(args.target_package, "type_check_samples"):
+        logging.info(
+            f"Package {package_name} opts-out of pyright check on samples."
+        )
+    else:
+        # check if samples dir exists, if not, skip sample code check
+        samples = os.path.exists(os.path.join(args.target_package, "samples"))
+        generated_samples = os.path.exists(os.path.join(args.target_package, "generated_samples"))
+        if not samples and not generated_samples:
             logging.info(
-                f"Package {package_name} opts-out of pyright check on samples."
+                f"Package {package_name} does not have a samples directory."
             )
-            paths = paths[:-1]
+        else:
+            paths.append(os.path.join(args.target_package, "samples" if samples else "generated_samples"))
+
 
     pyright_config_path = get_pyright_config_path(args)
 

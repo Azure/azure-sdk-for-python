@@ -19,7 +19,6 @@ from .._internal.pipeline import build_pipeline
 
 
 class ManagedIdentityClientBase(abc.ABC):
-    # pylint:disable=missing-client-constructor-parameter-credential
     def __init__(
         self,
         request_factory: Callable[[str, dict], HttpRequest],
