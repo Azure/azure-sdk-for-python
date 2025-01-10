@@ -522,7 +522,7 @@ class TableItem(object):
 class TablePayloadFormat(object):
     """
     Specifies the accepted content type of the response payload. More information
-    can be found here: https://msdn.microsoft.com/en-us/library/azure/dn535600.aspx
+    can be found here: https://msdn.microsoft.com/library/azure/dn535600.aspx
     """
 
     JSON_NO_METADATA = "application/json;odata=nometadata"
