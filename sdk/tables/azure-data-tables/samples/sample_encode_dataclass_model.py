@@ -109,68 +109,11 @@ class InsertUpdateDeleteEntity(object):
             result = table_client.create_entity(entity=asdict(entity))
             print(f"Created entity: {result}")
 
-            result = table_client.get_entity(entity.PartitionKey, str(entity.RowKey))
-            print(f"Get entity result: {result}")
+            result = table_client.get_entity(entity.PartitionKey, entity.RowKey)
+            model = Car(**result)
+            print(f"Get entity result: {model}")
 
-            table_client.delete_entity(entity=asdict(entity))
-            print("Successfully deleted!")
-
-            table_client.delete_table()
-            print("Cleaned up")
-
-    def upsert_update_entities(self):
-        table_client = TableClient.from_connection_string(
-            self.connection_string,
-            table_name=f"{self.table_name}UpsertUpdate",
-            custom_encode=encoder_map,
-            custom_decode=decoder_map,
-            entity_format=Car
-        )
-
-        with table_client:
-            table_client.create_table()
-
-            entity1 = Car(
-                PartitionKey="PK",
-                RowKey=uuid4(),
-                price=7999.99,
-                last_updated=datetime.today(),
-                product_id=uuid4(),
-                inventory_count=42,
-                barcode=b"135aefg8oj0ld58",  # cspell:disable-line
-            )
-            entity2 = Car(
-                PartitionKey=entity1.PartitionKey,
-                RowKey=entity1.RowKey,
-                color=Color.RED,
-                make="Honda",
-                model="Civic",
-                production_date=datetime(year=2014, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc),
-                is_second_hand=True,
-            )
-
-            table_client.upsert_entity(mode=UpdateMode.REPLACE, entity=asdict(entity1))
-            inserted_entity = table_client.get_entity(entity1.PartitionKey, str(entity1.RowKey))
-            print(f"Inserted entity: {inserted_entity}")
-
-            table_client.upsert_entity(mode=UpdateMode.MERGE, entity=asdict(entity2))
-            merged_entity = table_client.get_entity(entity2.PartitionKey, str(entity2.RowKey))
-            print(f"Merged entity: {merged_entity}")
-
-            entity3 = Car(
-                PartitionKey=entity1.PartitionKey,
-                RowKey=entity2.RowKey,
-                color=Color.WHITE,
-            )
-            table_client.update_entity(mode=UpdateMode.REPLACE, entity=asdict(entity3))
-            replaced_entity = table_client.get_entity(entity3.PartitionKey, str(entity3.RowKey))
-            print(f"Replaced entity: {replaced_entity}")
-
-            table_client.update_entity(mode=UpdateMode.REPLACE, entity=asdict(entity2))
-            merged_entity = table_client.get_entity(entity2.PartitionKey, str(entity2.RowKey))
-            print(f"Merged entity: {merged_entity}")
-
-            table_client.delete_entity(partition_key=entity1.PartitionKey, row_key=str(entity1.RowKey))
+            table_client.delete_entity(entity.PartitionKey, entity.RowKey)
             print("Successfully deleted!")
 
             table_client.delete_table()

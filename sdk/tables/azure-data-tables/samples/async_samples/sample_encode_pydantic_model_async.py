@@ -69,7 +69,7 @@ class CreateDeleteEntity(object):
             result = await table_client.create_entity(entity=entity)
             print(f"Created entity: {result}")
 
-            result = await table_client.get_entity(entity["PartitionKey"], entity["RowKey"])
+            result = await table_client.get_entity(restaurant.id, restaurant.name)
             model = Restaurant(**result)
             print(f"Get entity result: {model}")
 
