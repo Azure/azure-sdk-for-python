@@ -25,7 +25,11 @@ class ImageMetadata:
     """
 
     def __init__(
-        self, *, is_latest_os_image_version: Optional[bool], current_image_version: Optional[str], latest_image_version: Optional[str]
+        self,
+        *,
+        is_latest_os_image_version: Optional[bool],
+        current_image_version: Optional[str],
+        latest_image_version: Optional[str]
     ) -> None:
         self._is_latest_os_image_version = is_latest_os_image_version
         self._current_image_version = current_image_version
