@@ -1782,6 +1782,7 @@ class TestAgentClient(AzureRecordedTestCase):
                     tool_event_handler = AgentEventHandler()
                     if tool_outputs:
                         if use_body:
+                            tool_outputs = [output.as_dict() for output in tool_outputs]
                             body = {"tool_outputs": tool_outputs}
                             if use_io:
                                 binary_body = json.dumps(body).encode("utf-8")

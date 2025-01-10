@@ -1353,7 +1353,7 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
 
     async def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData, Optional[EventFunctionReturnT]]:
         event_type, event_data_obj = _parse_event(event_data_str)
-        kwargs: Dict[str, Any] = dict()
+        kwargs: Dict[str, Any] = {}
         if (
             isinstance(event_data_obj, ThreadRun)
             and event_data_obj.status == "requires_action"
@@ -1378,7 +1378,7 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
             elif isinstance(event_data_obj, RunStepDeltaChunk):
                 func_rt = await self.on_run_step_delta(event_data_obj, **kwargs)
             elif event_type == AgentStreamEvent.ERROR:
-                func_rt = await self.on_error(event_data_obj, **kwargs)
+                func_rt = await self.on_error(event_data_obj, **kwargs)  # type: ignore[func-returns-value]
             elif event_type == AgentStreamEvent.DONE:
                 func_rt = await self.on_done(**kwargs)
             else:
@@ -1477,7 +1477,7 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
     def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData, Optional[EventFunctionReturnT]]:
 
         event_type, event_data_obj = _parse_event(event_data_str)
-        kwargs: Dict[str, Any] = dict()
+        kwargs: Dict[str, Any] = {}
         if (
             isinstance(event_data_obj, ThreadRun)
             and event_data_obj.status == "requires_action"

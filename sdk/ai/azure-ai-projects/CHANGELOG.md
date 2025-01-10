@@ -6,7 +6,7 @@
 * `on_thread_run` method in agent event handlers are called with `tool_outputs` as a keyward parameter after function calls
 
 ### Bugs Fixed
-* Fixed events dropped in streaming
+* Fixed events dropped in streaming (see [GitHub issue 39028](https://github.com/Azure/azure-sdk-for-python/issues/39028))
 
 ### Breaking Changes
 * All event functions in agent event handlers requires `**kwargs` as an arguments.
