@@ -26,7 +26,7 @@ def _annotations(obj: Any) -> Dict[str, Type]:
         return obj.__annotations__
 
 
-def _get_annotation_type(annotation: Any) -> Type:
+def _get_annotation_type(annotation: Any) -> Union[Type, EdmType]:
     if hasattr(annotation, "__origin__"):
         if annotation.__origin__ in [Required, NotRequired, Union, Literal]:
             return _get_annotation_type(annotation.__args__[0])

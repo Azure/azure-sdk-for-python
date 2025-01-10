@@ -692,7 +692,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             table_name,
             credential=tables_primary_storage_account_key,
             transport=EncoderVerificationTransport(),
-            entity_format={"RowKey": EnumBasicOptions},
+            entity_format={"RowKey": EnumBasicOptions, "Data": EnumBasicOptions},
             custom_encode={EnumBasicOptions: lambda v: (None, v.value)},
             custom_decode={EnumBasicOptions: EnumBasicOptions},
         ) as client:
@@ -707,7 +707,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
                 verify_headers={"Content-Type": "application/json;odata=nometadata"},
-                verify_response=(lambda: client.get_entity("PK", EnumBasicOptions.ONE), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", EnumBasicOptions.ONE), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
@@ -716,7 +716,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             table_name,
             credential=tables_primary_storage_account_key,
             transport=EncoderVerificationTransport(),
-            entity_format={"RowKey": EnumStrOptions},
+            entity_format={"RowKey": EnumStrOptions, "Data": EnumStrOptions},
             custom_encode={EnumStrOptions: lambda v: (None, str(v))},
             custom_decode={EnumStrOptions: EnumStrOptions},
         ) as client:
@@ -731,7 +731,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
                 verify_headers={"Content-Type": "application/json;odata=nometadata"},
-                verify_response=(lambda: client.get_entity("PK", "Two"), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", "Two"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
@@ -740,7 +740,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             table_name,
             credential=tables_primary_storage_account_key,
             transport=EncoderVerificationTransport(),
-            entity_format={"RowKey": EnumIntOptions},
+            entity_format={"RowKey": EnumIntOptions, "Data": EnumIntOptions},
             custom_encode={EnumIntOptions: lambda v: (None, v.value)},
             custom_decode={EnumIntOptions: EnumIntOptions},
         ) as client:
@@ -756,7 +756,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
-                    verify_response=(lambda: client.get_entity("PK", "1"), expected_entity),
+                    verify_response=(lambda: client.get_entity("PK", "1"), test_entity),
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
             assert (
@@ -1526,7 +1526,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             table_name,
             credential=tables_primary_storage_account_key,
             transport=EncoderVerificationTransport(),
-            entity_format={"RowKey": EnumBasicOptions},
+            entity_format={"RowKey": EnumBasicOptions, "Data": EnumBasicOptions},
             custom_encode={EnumBasicOptions: lambda v: (None, v.value)},
             custom_decode={EnumBasicOptions: EnumBasicOptions},
         ) as client:
@@ -1546,7 +1546,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     "Content-Type": "application/json",
                     "Accept": "application/json",
                 },
-                verify_response=(lambda: client.get_entity("PK", EnumBasicOptions.ONE), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", EnumBasicOptions.ONE), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
             resp = client.upsert_entity(
@@ -1558,7 +1558,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     "Content-Type": "application/json",
                     "Accept": "application/json",
                 },
-                verify_response=(lambda: client.get_entity("PK", EnumBasicOptions.ONE), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", EnumBasicOptions.ONE), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
@@ -1567,7 +1567,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             table_name,
             credential=tables_primary_storage_account_key,
             transport=EncoderVerificationTransport(),
-            entity_format={"RowKey": EnumStrOptions},
+            entity_format={"RowKey": EnumStrOptions, "Data": EnumStrOptions},
             custom_encode={EnumStrOptions: lambda v: (None, str(v))},
             custom_decode={EnumStrOptions: EnumStrOptions},
         ) as client:
@@ -1587,7 +1587,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     "Content-Type": "application/json",
                     "Accept": "application/json",
                 },
-                verify_response=(lambda: client.get_entity("PK", "Two"), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", "Two"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
             resp = client.upsert_entity(
@@ -1599,7 +1599,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     "Content-Type": "application/json",
                     "Accept": "application/json",
                 },
-                verify_response=(lambda: client.get_entity("PK", "Two"), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", "Two"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
@@ -1608,7 +1608,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             table_name,
             credential=tables_primary_storage_account_key,
             transport=EncoderVerificationTransport(),
-            entity_format={"RowKey": EnumIntOptions},
+            entity_format={"Data": EnumIntOptions},
             custom_encode={EnumIntOptions: lambda v: (None, v.value)},
             custom_decode={EnumIntOptions: EnumIntOptions},
         ) as client:
@@ -1628,7 +1628,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     "Content-Type": "application/json",
                     "Accept": "application/json",
                 },
-                verify_response=(lambda: client.get_entity("PK", "RK"), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", "RK"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
             resp = client.upsert_entity(
@@ -1640,7 +1640,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     "Content-Type": "application/json",
                     "Accept": "application/json",
                 },
-                verify_response=(lambda: client.get_entity("PK", "RK"), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", "RK"), test_entity),
             )
             client.delete_table()
 
@@ -2357,7 +2357,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             table_name,
             credential=tables_primary_storage_account_key,
             transport=EncoderVerificationTransport(),
-            entity_format={"RowKey": EnumBasicOptions},
+            entity_format={"RowKey": EnumBasicOptions, "Data": EnumBasicOptions},
             custom_encode={EnumBasicOptions: lambda v: (None, v.value)},
             custom_decode={EnumBasicOptions: EnumBasicOptions},
         ) as client:
@@ -2375,7 +2375,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='One')",
                 verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-                verify_response=(lambda: client.get_entity("PK", EnumBasicOptions.ONE), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", EnumBasicOptions.ONE), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
             resp = client.update_entity(
@@ -2384,7 +2384,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='One')",
                 verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-                verify_response=(lambda: client.get_entity("PK", EnumBasicOptions.ONE), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", EnumBasicOptions.ONE), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
         with TableClient(
@@ -2392,7 +2392,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             table_name,
             credential=tables_primary_storage_account_key,
             transport=EncoderVerificationTransport(),
-            entity_format={"RowKey": EnumStrOptions},
+            entity_format={"RowKey": EnumStrOptions, "Data": EnumStrOptions},
             custom_encode={EnumStrOptions: lambda v: (None, str(v))},
             custom_decode={EnumStrOptions: EnumStrOptions},
         ) as client:
@@ -2410,7 +2410,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='Two')",
                 verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-                verify_response=(lambda: client.get_entity("PK", "Two"), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", "Two"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
             resp = client.update_entity(
@@ -2419,7 +2419,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='Two')",
                 verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-                verify_response=(lambda: client.get_entity("PK", "Two"), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", "Two"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
         with TableClient(
@@ -2427,7 +2427,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             table_name,
             credential=tables_primary_storage_account_key,
             transport=EncoderVerificationTransport(),
-            entity_format={"RowKey": EnumIntOptions},
+            entity_format={"Data": EnumIntOptions},
             custom_encode={EnumIntOptions: lambda v: (None, v.value)},
             custom_decode={EnumIntOptions: EnumIntOptions},
         ) as client:
@@ -2445,7 +2445,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK')",
                 verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-                verify_response=(lambda: client.get_entity("PK", "RK"), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", "RK"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
             resp = client.update_entity(
@@ -2454,7 +2454,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK')",
                 verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-                verify_response=(lambda: client.get_entity("PK", "RK"), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", "RK"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
             client.delete_table()

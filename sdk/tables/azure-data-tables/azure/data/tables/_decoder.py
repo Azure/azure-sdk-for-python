@@ -69,6 +69,8 @@ class TableEntityDecoder:
             "Timestamp": _none_op,
         }
         if entity_format:
+            property_name: str
+            property_type: Union[Type, EdmType]
             if is_typeddict(entity_format):
                 # Scrape type encoding from typeddict defintion
                 for property_name, property_type in _annotations(entity_format).items():
