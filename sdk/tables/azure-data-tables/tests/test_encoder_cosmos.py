@@ -602,7 +602,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             credential=tables_primary_cosmos_account_key,
             transport=EncoderVerificationTransport(),
             entity_format={"RowKey": EnumBasicOptions, "Data": EnumBasicOptions},
-            custom_encode={EnumBasicOptions: lambda v: (None, v.value)},
+            custom_encode={EnumBasicOptions: lambda v: (None, v if isinstance(v, str) else v.value)},
             custom_decode={EnumBasicOptions: EnumBasicOptions},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
@@ -626,7 +626,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             credential=tables_primary_cosmos_account_key,
             transport=EncoderVerificationTransport(),
             entity_format={"RowKey": EnumStrOptions, "Data": EnumStrOptions},
-            custom_encode={EnumStrOptions: lambda v: (None, str(v))},
+            custom_encode={EnumStrOptions: lambda v: (None, v if isinstance(v, str) else v.value)},
             custom_decode={EnumStrOptions: EnumStrOptions},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.TWO, "Data": EnumStrOptions.TWO}
@@ -1444,7 +1444,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             credential=tables_primary_cosmos_account_key,
             transport=EncoderVerificationTransport(),
             entity_format={"RowKey": EnumBasicOptions, "Data": EnumBasicOptions},
-            custom_encode={EnumBasicOptions: lambda v: (None, v.value)},
+            custom_encode={EnumBasicOptions: lambda v: (None, v if isinstance(v, str) else v.value)},
             custom_decode={EnumBasicOptions: EnumBasicOptions},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
@@ -1485,7 +1485,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             credential=tables_primary_cosmos_account_key,
             transport=EncoderVerificationTransport(),
             entity_format={"RowKey": EnumStrOptions, "Data": EnumStrOptions},
-            custom_encode={EnumStrOptions: lambda v: (None, str(v))},
+            custom_encode={EnumStrOptions: lambda v: (None, v if isinstance(v, str) else v.value)},
             custom_decode={EnumStrOptions: EnumStrOptions},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.TWO, "Data": EnumStrOptions.TWO}
@@ -2285,7 +2285,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             credential=tables_primary_cosmos_account_key,
             transport=EncoderVerificationTransport(),
             entity_format={"RowKey": EnumBasicOptions, "Data": EnumBasicOptions},
-            custom_encode={EnumBasicOptions: lambda v: (None, v.value)},
+            custom_encode={EnumBasicOptions: lambda v: (None, v if isinstance(v, str) else v.value)},
             custom_decode={EnumBasicOptions: EnumBasicOptions},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
@@ -2321,7 +2321,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             credential=tables_primary_cosmos_account_key,
             transport=EncoderVerificationTransport(),
             entity_format={"RowKey": EnumStrOptions, "Data": EnumStrOptions},
-            custom_encode={EnumStrOptions: lambda v: (None, str(v))},
+            custom_encode={EnumStrOptions: lambda v: (None, v if isinstance(v, str) else v.value)},
             custom_decode={EnumStrOptions: EnumStrOptions},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.TWO, "Data": EnumStrOptions.TWO}
