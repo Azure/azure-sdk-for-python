@@ -23,41 +23,24 @@ USAGE:
 """
 import os
 import asyncio
-from typing import Literal, Optional
-from datetime import datetime, timezone
-from uuid import uuid4
+from typing import Optional
+from uuid import uuid4, UUID
+
 from dotenv import find_dotenv, load_dotenv
 from pydantic import BaseModel, Field, AliasChoices
-from azure.data.tables import EdmType
+
 from azure.data.tables.aio import TableClient
 
 
-class Review(BaseModel):
-    user_name: str
-    rating: int
-    review_text: Optional[str] = None
-    review_date: datetime
-
-
 class Restaurant(BaseModel):
-    id: str = Field(
-        default_factory=lambda: str(uuid4()),
+    id: UUID = Field(
+        default_factory=uuid4,
         serialization_alias="PartitionKey",
         validation_alias=AliasChoices("id", "PartitionKey"),
     )
     name: str = Field(serialization_alias="RowKey", validation_alias=AliasChoices("name", "RowKey"))
     street_address: str
     description: Optional[str] = None
-    review: Review
-
-
-def encode_review(value):
-    return EdmType.STRING, str(value)
-
-
-encoder_map = {
-    dict: encode_review,
-}
 
 
 class CreateDeleteEntity(object):
@@ -72,20 +55,14 @@ class CreateDeleteEntity(object):
 
     async def create_delete_entity(self):
         table_client = TableClient.from_connection_string(
-            self.connection_string, self.table_name, encoder_map=encoder_map
+            self.connection_string, self.table_name, entity_format={'PartitionKey': UUID}
         )
         async with table_client:
             await table_client.create_table()
 
-            review = Review(
-                user_name="Alex",
-                rating=8,
-                review_date=datetime(year=2014, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc),
-            )
             restaurant = Restaurant(
                 name="Cafe1",
                 street_address="One Microsoft Way, Redmond, WA, 98052",
-                review=review,
             )
             entity = restaurant.model_dump(by_alias=True)
 
@@ -93,9 +70,10 @@ class CreateDeleteEntity(object):
             print(f"Created entity: {result}")
 
             result = await table_client.get_entity(entity["PartitionKey"], entity["RowKey"])
-            print(f"Get entity result: {result}")
+            model = Restaurant(**result)
+            print(f"Get entity result: {model}")
 
-            await table_client.delete_entity(entity=entity)
+            await table_client.delete_entity(model.id, model.name)
             print("Successfully deleted!")
 
             await table_client.delete_table()

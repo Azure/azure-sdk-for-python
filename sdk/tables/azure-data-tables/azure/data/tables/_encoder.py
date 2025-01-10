@@ -3,19 +3,24 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from dataclasses import fields, is_dataclass
 from typing import (
     Any,
     Optional,
     SupportsBytes,
     SupportsFloat,
     SupportsInt,
+    is_typeddict,
     Tuple,
     Mapping,
     Union,
     Dict,
     Type,
     Callable,
-    MutableMapping,
+    Required,
+    NotRequired,
+    Literal,
+    Optional,
     cast,
     overload,
 )
@@ -28,13 +33,19 @@ from base64 import b64encode
 
 from ._entity import EdmType, EntityProperty
 from ._decoder import TablesEntityDatetime
-from ._common_conversion import _encode_base64, _to_utc_datetime, SupportedDataTypes
+from ._common_conversion import (
+    _encode_base64,
+    _to_utc_datetime,
+    _annotations,
+    _get_annotation_type,
+    SupportedDataTypes
+)
 from ._constants import MAX_INT32, MIN_INT32, MAX_INT64, MIN_INT64, _ERROR_VALUE_TOO_LARGE
 
 _ODATA_SUFFIX = "@odata.type"
 
 EncodeCallable = Callable[[Any], Tuple[Optional[EdmType], SupportedDataTypes]]
-EncoderMapType = Mapping[Union[Type, str], Union[EncodeCallable, EdmType]]
+EncoderMapType = Mapping[Type, Union[EncodeCallable, EdmType]]
 
 
 class TableEntityJSONEncoder(JSONEncoder):
@@ -56,8 +67,7 @@ class TableEntityJSONEncoder(JSONEncoder):
 
 class TableEntityEncoder:
 
-    def __init__(self, *, convert_map: EncoderMapType) -> None:
-        self._property_types: Dict[str, Union[EncodeCallable, EdmType]] = {}
+    def __init__(self, *, convert_map: EncoderMapType, entity_format) -> None:
         self._obj_types: Dict[Type, Union[EncodeCallable, EdmType]] = {
             int: EdmType.INT32,
             bool: EdmType.BOOLEAN,
@@ -70,7 +80,7 @@ class TableEntityEncoder:
             tuple: self._encode_tuple,
             EntityProperty: self._encode_tuple,
         }
-        self._edm_types: MutableMapping[EdmType, Callable[[Any], Tuple[Optional[EdmType], SupportedDataTypes]]] = {
+        self._edm_types: Dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], SupportedDataTypes]]] = {
             EdmType.BINARY: self._encode_binary,
             EdmType.BOOLEAN: self._encode_boolean,
             EdmType.DATETIME: self._encode_datetime,
@@ -80,11 +90,45 @@ class TableEntityEncoder:
             EdmType.INT64: self._encode_int64,
             EdmType.STRING: self._encode_string,
         }
-        for key, value in convert_map.items():
-            if isinstance(key, str):
-                self._property_types[key] = value
+        self._obj_types.update(convert_map)
+        self._property_types: Dict[str, Union[EncodeCallable, EdmType]] = {}
+        if entity_format:
+            if is_typeddict(entity_format):
+                # Scrape type encoding from typeddict defintion
+                for property_name, property_type in _annotations(entity_format):
+                    property_type = _get_annotation_type(property_type)
+                    self._add_property_type(property_name, property_type)
+
+            elif is_dataclass(entity_format):
+                # Scrape type encoding from a dataclass definition
+                for entity_field in fields(entity_format):
+                    property_type = _get_annotation_type(entity_field.type)
+                    property_name = entity_field.name
+                    self._add_property_type(property_name, property_type)
             else:
-                self._obj_types[key] = value
+                # Finally, we'll check if it's a simply dict of properties to types.
+                try:
+                    for property_name, property_type in entity_format.items():
+                        property_type = _get_annotation_type(property_type)
+                        self._add_property_type(property_name, property_type)
+                except (AttributeError, TypeError):
+                    raise TypeError(
+                        "The 'entity_format' should be a TypedDict, dataclass definition, "
+                        "or dict in the format '{\"PropertyName\": type}'"
+                    )
+
+    def _add_property_type(self, property_name: str, property_type: Union[Type, EdmType]) -> None:
+        try:
+            self._property_types[property_name] = self._edm_types[property_type]
+            return
+        except KeyError:
+            pass
+        try:
+            self._property_types[property_name] = self._obj_types[property_type]
+        except KeyError as e:
+            raise ValueError(
+                f"Unexpected type in entity format: '{property_type}', please provide encoder."
+            )
 
     @overload
     def __call__(self, entity: Mapping[str, Any], /) -> Dict[str, SupportedDataTypes]: ...

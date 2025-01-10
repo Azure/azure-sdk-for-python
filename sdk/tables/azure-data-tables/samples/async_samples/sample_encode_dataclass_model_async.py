@@ -26,11 +26,20 @@ import asyncio
 from datetime import datetime, timezone
 from uuid import uuid4, UUID
 from enum import Enum
-from dotenv import find_dotenv, load_dotenv
 from dataclasses import dataclass, asdict
-from typing import Optional
+from typing import Optional, Dict, Type, Tuple, Union, Callable, Any
+
+from dotenv import find_dotenv, load_dotenv
+
 from azure.data.tables import UpdateMode, EdmType
 from azure.data.tables.aio import TableClient
+
+
+class Color(Enum):
+    WHITE = "white"
+    GRAY = "gray"
+    BLACK = "black"
+    RED = "red"
 
 
 @dataclass
@@ -42,49 +51,27 @@ class Car:
     product_id: Optional[UUID] = None
     inventory_count: Optional[int] = None
     barcode: Optional[bytes] = None
-    color: Optional[str] = None
-    maker: Optional[str] = None
+    color: Optional[Color] = None
+    make: Optional[str] = None
     model: Optional[str] = None
     production_date: Optional[datetime] = None
-    big_number: Optional[int] = None
     is_second_hand: Optional[bool] = None
 
 
-class Color(str, Enum):
-    WHITE = "white"
-    GRAY = "gray"
-    BLACK = "black"
-
-
-def encode_int(value):
-    return EdmType.STRING, str(value)
-
-
-def encode_uuid(value):
-    return None, str(value)
-
-
-encoder_map = {
-    int: encode_int,
-    UUID: encode_uuid,
+# Here we will define how certain types should be encoded,
+# in this case, we want to define all Python integers to be treated
+# as int64, and we also want to provide custom encoding for the enum type 'Color'.
+encoder_map: Dict[Type, Union[EdmType, Callable[[Any], Tuple[None, str]]]] = {
+    Color: lambda v: (EdmType.STRING, v.value),
+    int: EdmType.INT64
 }
 
-
-def decode_string(value):
-    try:
-        return int(value)
-    except ValueError:
-        try:
-            return Color(value)
-        except ValueError:
-            try:
-                return UUID(value)
-            except ValueError:
-                return value
-
-
-decoder_map = {
-    EdmType.STRING: decode_string,
+# Here we will define how certain types should be decoded,
+# in this case we want to define all int64 properties to be decoded
+# as Python integers, as well as custom decoding for instantiating the 'Color' type.
+decoder_map: Dict[Union[Type, EdmType], Callable[[Any], Any]] = {
+    Color: Color,
+    EdmType.INT64: int
 }
 
 
@@ -100,7 +87,11 @@ class InsertUpdateDeleteEntity(object):
 
     async def create_delete_entity(self):
         table_client = TableClient.from_connection_string(
-            self.connection_string, self.table_name, encoder_map=encoder_map, decoder_map=decoder_map
+            self.connection_string,
+            self.table_name,
+            custom_encode=encoder_map,
+            custom_decode=decoder_map,
+            entity_format=Car
         )
         async with table_client:
             await table_client.create_table()
@@ -108,15 +99,14 @@ class InsertUpdateDeleteEntity(object):
             entity = Car(
                 PartitionKey="PK",
                 RowKey=uuid4(),
-                price=4.99,
+                price=4999.99,
                 last_updated=datetime.today(),
                 product_id=uuid4(),
                 inventory_count=42,
                 barcode=b"135aefg8oj0ld58",  # cspell:disable-line
                 color=Color.WHITE,
-                model="model",
+                model="Corolla",
                 production_date=datetime(year=2014, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc),
-                big_number=2**63,  # an integer exceeds max int64
                 is_second_hand=True,
             )
 

@@ -31,6 +31,13 @@ from typing import Any, Callable, Dict, Optional, Tuple, Union, Type
 from azure.data.tables import TableClient, UpdateMode, EdmType
 
 
+class Color(Enum):
+    WHITE = "white"
+    GRAY = "gray"
+    BLACK = "black"
+    RED = "red"
+
+
 @dataclass
 class Car:
     PartitionKey: str
@@ -40,44 +47,27 @@ class Car:
     product_id: Optional[UUID] = None
     inventory_count: Optional[int] = None
     barcode: Optional[bytes] = None
-    color: Optional[str] = None
-    maker: Optional[str] = None
+    color: Optional[Color] = None
+    make: Optional[str] = None
     model: Optional[str] = None
     production_date: Optional[datetime] = None
-    big_number: Optional[int] = None
     is_second_hand: Optional[bool] = None
 
 
-class Color(str, Enum):
-    WHITE = "white"
-    GRAY = "gray"
-    BLACK = "black"
-
-
-def encode_large_int(_: str, value: Any) -> Tuple[EdmType, str]:
-    return EdmType.STRING, str(value)
-
-
-def encode_uuid(_: str, value: Any) -> Tuple[None, str]:
-    return None, str(value)
-
-
-def decode_color(value: str) -> str:
-    try:
-        return Color(value)
-    except ValueError:
-        return value
-
-
-encoder_map: Dict[str, Callable] = {
-    "RowKey": encode_uuid,
-    "big_number": encode_large_int,
+# Here we will define how certain types should be encoded,
+# in this case, we want to define all Python integers to be treated
+# as int64, and we also want to provide custom encoding for the enum type 'Color'.
+encoder_map: Dict[str, Callable[[Any], Tuple[None, str]]] = {
+    Color: lambda v: (EdmType.STRING, v.value),
+    int: EdmType.INT64
 }
 
+# Here we will define how certain types should be decoded,
+# in this case we want to define all int64 properties to be decoded
+# as Python integers, as well as custom decoding for instantiating the 'Color' type.
 decoder_map: Dict[str, Union[EdmType, Callable[[Any], Any]]] = {
-    "RowKey": EdmType.GUID,  # We can override the selected EdmType for decoding
-    "color": decode_color,  # Or we can provide a custom callable.
-    "big_number": int,
+    Color: Color,
+    EdmType.INT64: int
 }
 
 
@@ -93,7 +83,11 @@ class InsertUpdateDeleteEntity(object):
 
     def create_delete_entity(self):
         table_client = TableClient.from_connection_string(
-            self.connection_string, self.table_name, encode_types=encoder_map, decode_types=decoder_map  # type: ignore
+            self.connection_string,
+            self.table_name,
+            custom_encode=encoder_map,
+            custom_decode=decoder_map,
+            entity_format=Car
         )
         with table_client:
             table_client.create_table()
@@ -101,15 +95,14 @@ class InsertUpdateDeleteEntity(object):
             entity = Car(
                 PartitionKey="PK",
                 RowKey=uuid4(),
-                price=4.99,
+                price=4999.99,
                 last_updated=datetime.today(),
                 product_id=uuid4(),
                 inventory_count=42,
                 barcode=b"135aefg8oj0ld58",  # cspell:disable-line
                 color=Color.WHITE,
-                model="model",
+                model="Corolla",
                 production_date=datetime(year=2014, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc),
-                big_number=2**63,  # an integer exceeds max int64
                 is_second_hand=True,
             )
 
@@ -129,8 +122,9 @@ class InsertUpdateDeleteEntity(object):
         table_client = TableClient.from_connection_string(
             self.connection_string,
             table_name=f"{self.table_name}UpsertUpdate",
-            encoder_map=encoder_map,
-            decoder_map=decoder_map,
+            custom_encode=encoder_map,
+            custom_decode=decoder_map,
+            entity_format=Car
         )
 
         with table_client:
@@ -139,7 +133,7 @@ class InsertUpdateDeleteEntity(object):
             entity1 = Car(
                 PartitionKey="PK",
                 RowKey=uuid4(),
-                price=4.99,
+                price=7999.99,
                 last_updated=datetime.today(),
                 product_id=uuid4(),
                 inventory_count=42,
@@ -148,11 +142,10 @@ class InsertUpdateDeleteEntity(object):
             entity2 = Car(
                 PartitionKey=entity1.PartitionKey,
                 RowKey=entity1.RowKey,
-                color="red",
-                maker="maker2",
-                model="model2",
+                color=Color.RED,
+                make="Honda",
+                model="Civic",
                 production_date=datetime(year=2014, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc),
-                big_number=2**63,  # an integer exceeds max int64
                 is_second_hand=True,
             )
 
@@ -167,7 +160,7 @@ class InsertUpdateDeleteEntity(object):
             entity3 = Car(
                 PartitionKey=entity1.PartitionKey,
                 RowKey=entity2.RowKey,
-                color="white",
+                color=Color.WHITE,
             )
             table_client.update_entity(mode=UpdateMode.REPLACE, entity=asdict(entity3))
             replaced_entity = table_client.get_entity(entity3.PartitionKey, str(entity3.RowKey))

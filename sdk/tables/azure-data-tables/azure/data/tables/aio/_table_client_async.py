@@ -77,6 +77,7 @@ class TableClient(AsyncTablesBaseClient):
         api_version: Optional[str] = None,
         custom_encode: Optional[EncoderMapType] = None,
         custom_decode: Optional[DecoderMapType] = None,
+        entity_format = None,
         **kwargs: Any,
     ) -> None:
         """Creates TableClient from a Credential.
@@ -95,20 +96,24 @@ class TableClient(AsyncTablesBaseClient):
             is "2019-02-02".
         :paramtype api_version: str or None
         :keyword custom_encode:
-            A mapping of types and properties and how they should be encoded.
+            A mapping of object types and how they should be encoded, either as existing edm type, or by custom callable.
         :paramtype custom_encode:
-            Mapping[Union[Type, str], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, datetime, bytes]]]] or None  # pylint: disable=line-too-long
+            Mapping[Type, Union[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, datetime, bytes]]]]] or None  # pylint: disable=line-too-long
         :keyword custom_decode:
-            A mapping of types and properties and how they should be decoded.
+            A mapping of object types or edm types and how they should be decoded by callable.
         :paramtype custom_decode:
-            Mapping[Union[EdmType, str], Union[EdmType, Callable[[Union[str, bool, int, float]], Any]]] or None
-        :returns: None
+            Mapping[Union[Type, EdmType], Callable[[Union[str, bool, int, float]], Any]] or None
+        :keyword entity_format:
+            The typing definition of the entity to be used to apply specific encoding and decoding to
+            specific properties within the encoder and decoder. This can be a TypedDict definition, a dataclass
+            type definition, or a dictionary in the format: `{"PropertyName": type | EdmyType}`. More information
+            can be found at `this README <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/README.md>`_  # pylint: disable=line-too-long
         """
         if not table_name:
             raise ValueError("Please specify a table name.")
         self.table_name: str = table_name
-        self._encoder = TableEntityEncoder(convert_map=custom_encode or {})
-        self._decoder = TableEntityDecoder(convert_map=custom_decode or {})
+        self._encoder = TableEntityEncoder(convert_map=custom_encode or {}, entity_format=entity_format)
+        self._decoder = TableEntityDecoder(convert_map=custom_decode or {}, entity_format=entity_format)
         super(TableClient, self).__init__(endpoint, credential=credential, api_version=api_version, **kwargs)
 
     @classmethod
@@ -120,6 +125,7 @@ class TableClient(AsyncTablesBaseClient):
         api_version: Optional[str] = None,
         custom_encode: Optional[EncoderMapType] = None,
         custom_decode: Optional[DecoderMapType] = None,
+        entity_format = None,
         **kwargs: Any,
     ) -> "TableClient":
         """Create TableClient from a Connection string.
@@ -130,13 +136,18 @@ class TableClient(AsyncTablesBaseClient):
             is "2019-02-02".
         :paramtype api_version: str or None
         :keyword custom_encode:
-            A mapping of types and properties and how they should be encoded.
+            A mapping of object types and how they should be encoded, either as existing edm type, or by custom callable.
         :paramtype custom_encode:
-            Mapping[Union[Type, str], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, datetime, bytes]]]] or None  # pylint: disable=line-too-long
+            Mapping[Type, Union[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, datetime, bytes]]]]] or None  # pylint: disable=line-too-long
         :keyword custom_decode:
-            A mapping of types and properties and how they should be decoded.
+            A mapping of object types or edm types and how they should be decoded by callable.
         :paramtype custom_decode:
-            Mapping[Union[EdmType, str], Union[EdmType, Callable[[Union[str, bool, int, float]], Any]]] or None
+            Mapping[Union[Type, EdmType], Callable[[Union[str, bool, int, float]], Any]] or None
+        :keyword entity_format:
+            The typing definition of the entity to be used to apply specific encoding and decoding to
+            specific properties within the encoder and decoder. This can be a TypedDict definition, a dataclass
+            type definition, or a dictionary in the format: `{"PropertyName": type | EdmyType}`. More information
+            can be found at `this README <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/README.md>`_  # pylint: disable=line-too-long
         :returns: A table client.
         :rtype: ~azure.data.tables.TableClient
 
@@ -157,6 +168,7 @@ class TableClient(AsyncTablesBaseClient):
             api_version=api_version,
             custom_encode=custom_encode,
             custom_decode=custom_decode,
+            entity_format=entity_format,
             **kwargs,
         )
 
@@ -168,6 +180,7 @@ class TableClient(AsyncTablesBaseClient):
         credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential]] = None,
         custom_encode: Optional[EncoderMapType] = None,
         custom_decode: Optional[DecoderMapType] = None,
+        entity_format = None,
         **kwargs: Any,
     ) -> "TableClient":
         """A client to interact with a specific Table.
@@ -181,13 +194,18 @@ class TableClient(AsyncTablesBaseClient):
             ~azure.core.credentials.AzureNamedKeyCredential or
             ~azure.core.credentials.AzureSasCredential or None
         :keyword custom_encode:
-            A mapping of types and properties and how they should be encoded.
+            A mapping of object types and how they should be encoded, either as existing edm type, or by custom callable.
         :paramtype custom_encode:
-            Mapping[Union[Type, str], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, datetime, bytes]]]] or None  # pylint: disable=line-too-long
+            Mapping[Type, Union[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, datetime, bytes]]]]] or None  # pylint: disable=line-too-long
         :keyword custom_decode:
-            A mapping of types and properties and how they should be decoded.
+            A mapping of object types or edm types and how they should be decoded by callable.
         :paramtype custom_decode:
-            Mapping[Union[EdmType, str], Union[EdmType, Callable[[Union[str, bool, int, float]], Any]]] or None
+            Mapping[Union[Type, EdmType], Callable[[Union[str, bool, int, float]], Any]] or None
+        :keyword entity_format:
+            The typing definition of the entity to be used to apply specific encoding and decoding to
+            specific properties within the encoder and decoder. This can be a TypedDict definition, a dataclass
+            type definition, or a dictionary in the format: `{"PropertyName": type | EdmyType}`. More information
+            can be found at `this README <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/README.md>`_  # pylint: disable=line-too-long
         :returns: A table client.
         :rtype: ~azure.data.tables.TableClient
         """
@@ -217,6 +235,7 @@ class TableClient(AsyncTablesBaseClient):
             credential=credential,
             custom_encode=custom_encode,
             custom_decode=custom_decode,
+            entity_format=entity_format,
             **kwargs,
         )
 

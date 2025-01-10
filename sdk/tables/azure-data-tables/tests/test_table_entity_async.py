@@ -2243,7 +2243,7 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
             url,
             table_name,
             credential=tables_primary_storage_account_key,
-            custom_decode={"Timestamp": EdmType.DATETIME},
+            entity_format={"Timestamp": EdmType.DATETIME},
         ) as client:
             received_entity2 = await client.get_entity("pk", "rk")
             assert received_entity2.metadata == received_entity1.metadata

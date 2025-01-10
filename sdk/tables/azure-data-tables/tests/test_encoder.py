@@ -686,7 +686,15 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 in str(error.value)
             )
 
-            # Test enums - it is not supported in old encoder
+        # Test enums - it is not supported in old encoder
+        with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={'RowKey': EnumBasicOptions},
+            custom_encode={EnumBasicOptions: lambda v: (None, v.value)},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -702,6 +710,14 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
+        with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={'RowKey': EnumStrOptions},
+            custom_encode={EnumStrOptions: lambda v: (None, v.value)},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.TWO, "Data": EnumStrOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -717,6 +733,14 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
+        with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={'RowKey': EnumIntOptions},
+            custom_encode={EnumIntOptions: lambda v: (None, v.value)},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumIntOptions.ONE, "Data": EnumIntOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -1309,11 +1333,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
     ):
         table_name = self.get_resource_name("uttable12")
         url = self.account_url(tables_storage_account_name, "table")
-        # Non-UTF8 characters in both keys and properties
-        # Invalid int32 and int64 values
-        # Infinite float values
-        # Non-string keys
-        # Test enums
+
         with TableClient(
             url, table_name, credential=tables_primary_storage_account_key, transport=EncoderVerificationTransport()
         ) as client:
@@ -1497,7 +1517,15 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             assert "The property name is invalid" in str(error.value)
             assert error.value.error_code.value == "PropertyNameInvalid"
 
-            # Test enums - it is not supported in old encoder
+        # Test enums - it is not supported in old encoder
+        with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={'RowKey': EnumBasicOptions},
+            custom_encode={EnumBasicOptions: lambda v: (None, v.value)},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -1530,6 +1558,14 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
+        with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={'RowKey': EnumStrOptions},
+            custom_encode={EnumStrOptions: lambda v: (None, v.value)},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.TWO, "Data": EnumStrOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -1562,6 +1598,14 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
+        with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={'RowKey': EnumIntOptions},
+            custom_encode={EnumIntOptions: lambda v: (None, v.value)},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", "Data": EnumIntOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -2137,11 +2181,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
     ):
         table_name = self.get_resource_name("uttable18")
         url = self.account_url(tables_storage_account_name, "table")
-        # Non-UTF8 characters in both keys and properties
-        # Invalid int32 and int64 values
-        # Infinite float values
-        # Non-string keys
-        # Test enums
+
         with TableClient(
             url, table_name, credential=tables_primary_storage_account_key, transport=EncoderVerificationTransport()
         ) as client:
@@ -2305,7 +2345,14 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             assert "The property name is invalid" in str(error.value)
             assert error.value.error_code.value == "PropertyNameInvalid"
 
-            # Test enums - it is not supported in old encoder
+        # Test enums - it is not supported in old encoder
+        with TableClient(
+            url, table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={'RowKey': EnumBasicOptions},
+            custom_encode={EnumBasicOptions: lambda v: (None, v.value)},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -2332,7 +2379,13 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK", "One"), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-
+        with TableClient(
+            url, table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={'RowKey': EnumStrOptions},
+            custom_encode={EnumStrOptions: lambda v: (None, v.value)},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.TWO, "Data": EnumStrOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -2359,7 +2412,13 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK", "Two"), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-
+        with TableClient(
+            url, table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={'RowKey': EnumIntOptions},
+            custom_encode={EnumIntOptions: lambda v: (None, v.value)},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", "Data": EnumIntOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -2480,17 +2539,15 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             with pytest.raises(TypeError) as error:
                 client.delete_entity("foo", recorded_uuid)
             assert "PartitionKey or RowKey must be of type string" in str(error.value)
-            client.delete_entity({"PartitionKey": "foo", "RowKey": recorded_uuid})
             with pytest.raises(TypeError) as error:
                 client.delete_entity("foo", b"binarydata")
             assert "PartitionKey or RowKey must be of type string" in str(error.value)
-            client.delete_entity({"PartitionKey": "foo", "RowKey": b"binarydata"})
         with TableClient(
             url,
             table_name,
             credential=tables_primary_storage_account_key,
             transport=EncoderVerificationTransport(),
-            custom_encode={"RowKey": EdmType.DATETIME},
+            entity_format={"RowKey": EdmType.DATETIME},
         ) as client:
             client.delete_entity({"PartitionKey": "foo", "RowKey": self.get_datetime()})
         return recorded_variables

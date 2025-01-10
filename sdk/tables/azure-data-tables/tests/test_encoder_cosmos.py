@@ -595,7 +595,15 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 in str(error.value)
             )
 
-            # Test enums - it is not supported in old encoder
+        # Test enums - it is not supported in old encoder
+        with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_cosmos_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={'RowKey': EnumBasicOptions},
+            custom_encode={EnumBasicOptions: lambda v: (None, v.value)},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -611,6 +619,14 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
+        with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_cosmos_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={'RowKey': EnumStrOptions},
+            custom_encode={EnumStrOptions: lambda v: (None, v.value)},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.TWO, "Data": EnumStrOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -626,6 +642,14 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
+        with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_cosmos_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={'RowKey': EnumIntOptions},
+            custom_encode={EnumIntOptions: lambda v: (None, v.value)},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumIntOptions.ONE, "Data": EnumIntOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -2408,17 +2432,15 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             with pytest.raises(TypeError) as error:
                 client.delete_entity("foo", recorded_uuid)
             assert "PartitionKey or RowKey must be of type string" in str(error.value)
-            client.delete_entity({"PartitionKey": "foo", "RowKey": recorded_uuid})
             with pytest.raises(TypeError) as error:
                 client.delete_entity("foo", b"binarydata")
             assert "PartitionKey or RowKey must be of type string" in str(error.value)
-            client.delete_entity({"PartitionKey": "foo", "RowKey": b"binarydata"})
         with TableClient(
             url,
             table_name,
             credential=tables_primary_cosmos_account_key,
             transport=EncoderVerificationTransport(),
-            custom_encode={"RowKey": EdmType.DATETIME},
+            entity_format={"RowKey": EdmType.DATETIME},
         ) as client:
             client.delete_entity({"PartitionKey": "foo", "RowKey": self.get_datetime()})
         return recorded_variables

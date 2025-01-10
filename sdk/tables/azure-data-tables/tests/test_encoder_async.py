@@ -2451,17 +2451,16 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
             with pytest.raises(TypeError) as error:
                 await client.delete_entity("foo", recorded_uuid)
             assert "PartitionKey or RowKey must be of type string" in str(error.value)
-            await client.delete_entity({"PartitionKey": "foo", "RowKey": recorded_uuid})
             with pytest.raises(TypeError) as error:
                 await client.delete_entity("foo", b"binarydata")
             assert "PartitionKey or RowKey must be of type string" in str(error.value)
-            await client.delete_entity({"PartitionKey": "foo", "RowKey": b"binarydata"})
+
         async with TableClient(
             url,
             table_name,
             credential=tables_primary_storage_account_key,
             transport=EncoderVerificationTransport(),
-            custom_encode={"RowKey": EdmType.DATETIME},
+            entity_format={"RowKey": datetime},
         ) as client:
             await client.delete_entity({"PartitionKey": "foo", "RowKey": self.get_datetime()})
         return recorded_variables

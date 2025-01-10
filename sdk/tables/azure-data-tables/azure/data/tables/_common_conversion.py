@@ -8,9 +8,36 @@ import hashlib
 import hmac
 from datetime import timezone, datetime
 from urllib.parse import ParseResult
-from typing import Optional, Tuple, List, Dict, Any, Union, cast
+from typing import (
+    Optional,
+    Type,
+    Tuple,
+    List,
+    Dict,
+    Any,
+    Union,
+    cast,
+    Literal
+)
+from typing_extensions import Required, NotRequired
 
 SupportedDataTypes = Union[str, bool, int, float, None, datetime, bytes]
+
+
+def _annotations(obj: Any) -> Dict[str, Any]:
+    try:
+        from inspect import get_annotations
+        return get_annotations(obj)
+    except ImportError:
+        return obj.__annotations__
+
+
+def _get_annotation_type(annotation: Any) -> Type:
+    if annotation in [Required, NotRequired, Optional]:
+        return annotation.__args__[0]
+    if annotation == Literal:
+        return type(annotation.__args__[0])
+    return cast(Type, annotation)
 
 
 def _to_str(value):

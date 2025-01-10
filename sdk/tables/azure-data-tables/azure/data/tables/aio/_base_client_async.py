@@ -78,13 +78,13 @@ class AsyncTablesBaseClient:  # pylint: disable=too-many-instance-attributes
             is "2019-02-02".
         :paramtype api_version: str or None
         :keyword custom_encode:
-            A mapping of types and properties and how they should be encoded.
+            A mapping of object types and how they should be encoded, either as existing edm type, or by custom callable.
         :paramtype custom_encode:
-            Mapping[Union[Type, str], Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, datetime, bytes]]]] or None  # pylint: disable=line-too-long
+            Mapping[Type, Union[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, datetime, bytes]]]]] or None  # pylint: disable=line-too-long
         :keyword custom_decode:
-            A mapping of types and properties and how they should be decoded.
+            A mapping of object types or edm types and how they should be decoded by callable.
         :paramtype custom_decode:
-            Mapping[Union[EdmType, str], Union[EdmType, Callable[[Union[str, bool, int, float]], Any]]] or None
+            Mapping[Union[Type, EdmType], Callable[[Union[str, bool, int, float]], Any]] or None
         """
         try:
             if not endpoint.lower().startswith("http"):
