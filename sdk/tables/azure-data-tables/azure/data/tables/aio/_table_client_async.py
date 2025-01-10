@@ -794,7 +794,7 @@ class TableClient(AsyncTablesBaseClient):
     @distributed_trace_async
     async def submit_transaction(
         self,
-        operations: Iterable[TransactionOperationType],
+        operations: Union[Iterable[TransactionOperationType], AsyncIterable[TransactionOperationType]],
         **kwargs,
     ) -> List[Mapping[str, Any]]:
         """Commits a list of operations as a single transaction.

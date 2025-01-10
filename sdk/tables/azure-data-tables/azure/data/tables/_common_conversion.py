@@ -25,11 +25,13 @@ def _annotations(obj: Any) -> Dict[str, Type]:
 
 
 def _get_annotation_type(annotation: Any) -> Type:
-    if annotation in [Required, NotRequired, Optional]:
-        return annotation.__args__[0]
-    if annotation is Literal:
-        return type(annotation.__args__[0])
-    return cast(Type, annotation)
+    if hasattr(annotation, '__origin__'):
+        if annotation.__origin__ in [Required, NotRequired, Union, Literal]:
+            return _get_annotation_type(annotation.__args__[0])
+        raise TypeError(f"Unsupported type hint: {annotation}")
+    if isinstance(annotation, type):
+        return annotation
+    return type(annotation)
 
 
 def _to_str(value):

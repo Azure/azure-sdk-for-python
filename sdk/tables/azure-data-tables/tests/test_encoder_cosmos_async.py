@@ -617,7 +617,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
                 verify_headers={"Content-Type": "application/json;odata=nometadata"},
-                verify_response=(lambda: client.get_entity("PK", EnumBasicOptions.ONE.value), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", EnumBasicOptions.ONE), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
@@ -627,7 +627,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             credential=tables_primary_cosmos_account_key,
             transport=EncoderVerificationTransport(),
             entity_format={"RowKey": EnumStrOptions},
-            custom_encode={EnumStrOptions: lambda v: (None, v.value)},
+            custom_encode={EnumStrOptions: lambda v: (None, str(v))},
             custom_decode={EnumStrOptions: EnumStrOptions},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.TWO, "Data": EnumStrOptions.TWO}
@@ -1469,7 +1469,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     "Content-Type": "application/json",
                     "Accept": "application/json",
                 },
-                verify_response=(lambda: client.get_entity("PK", "One"), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", EnumBasicOptions.ONE), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
             resp = await client.upsert_entity(
@@ -1481,7 +1481,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     "Content-Type": "application/json",
                     "Accept": "application/json",
                 },
-                verify_response=(lambda: client.get_entity("PK", "One"), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", EnumBasicOptions.ONE), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
@@ -1491,7 +1491,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             credential=tables_primary_cosmos_account_key,
             transport=EncoderVerificationTransport(),
             entity_format={"RowKey": EnumStrOptions},
-            custom_encode={EnumStrOptions: lambda v: (None, v.value)},
+            custom_encode={EnumStrOptions: lambda v: (None, str(v))},
             custom_decode={EnumStrOptions: EnumStrOptions},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.TWO, "Data": EnumStrOptions.TWO}
@@ -2313,7 +2313,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='One')",
                 verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-                verify_response=(lambda: client.get_entity("PK", "One"), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", EnumBasicOptions.ONE), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
             resp = await client.update_entity(
@@ -2322,7 +2322,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='One')",
                 verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-                verify_response=(lambda: client.get_entity("PK", "One"), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", EnumBasicOptions.ONE), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
@@ -2332,7 +2332,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             credential=tables_primary_cosmos_account_key,
             transport=EncoderVerificationTransport(),
             entity_format={"RowKey": EnumStrOptions},
-            custom_encode={EnumStrOptions: lambda v: (None, v.value)},
+            custom_encode={EnumStrOptions: lambda v: (None, str(v))},
             custom_decode={EnumStrOptions: EnumStrOptions},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.TWO, "Data": EnumStrOptions.TWO}
