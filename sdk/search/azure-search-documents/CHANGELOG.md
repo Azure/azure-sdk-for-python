@@ -1,16 +1,10 @@
 # Release History
 
-## 11.6.0b9 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 11.6.0b9 (2025-01-14)
 
 ### Bugs Fixed
 
 - Exposed `@search.document_debug_info` in the search results.
-
-### Other Changes
 
 ## 11.6.0b8 (2024-11-21)
 

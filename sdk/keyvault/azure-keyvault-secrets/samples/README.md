@@ -13,9 +13,9 @@ urlFragment: keyvault-secrets-samples
 ## Prerequisites
 
 You must have an [Azure subscription](https://azure.microsoft.com/free) and an
-[Azure Key Vault](https://docs.microsoft.com/azure/key-vault/general/overview) to run
+[Azure Key Vault](https://learn.microsoft.com/azure/key-vault/general/overview) to run
 these samples. You can create a key vault with the
-[Azure CLI](https://docs.microsoft.com/azure/key-vault/general/quick-create-cli).
+[Azure CLI](https://learn.microsoft.com/azure/key-vault/general/quick-create-cli).
 
 ## Setup
 
