@@ -77,14 +77,6 @@ def normalized_data_body(data, **kwargs):
     return [encode_str(data, encoding)]
 
 
-def normalized_sequence_body(sequence):  # pylint:disable=inconsistent-return-statements
-    # A helper method to normalize input into AMQP Sequence Body format
-    if isinstance(sequence, list) and all((isinstance(b, list) for b in sequence)):
-        return sequence
-    if isinstance(sequence, list):
-        return [sequence]
-
-
 def get_message_encoded_size(message):
     output = bytearray()
     encode_payload(output, message)

@@ -18,11 +18,3 @@ def normalized_data_body(data, **kwargs):
     if isinstance(data, list):
         return [encode_str(item, encoding) for item in data]
     return [encode_str(data, encoding)]
-
-
-def normalized_sequence_body(sequence):  # pylint: disable=inconsistent-return-statements
-    # A helper method to normalize input into AMQP Sequence Body format
-    if isinstance(sequence, list) and all((isinstance(b, list) for b in sequence)):
-        return sequence
-    if isinstance(sequence, list):
-        return [sequence]
