@@ -1,6 +1,6 @@
 -e ../../../tools/azure-sdk-tools
 ../../identity/azure-identity
 aiohttp
-openai
+openai[realtime]
 pillow
 pydantic
