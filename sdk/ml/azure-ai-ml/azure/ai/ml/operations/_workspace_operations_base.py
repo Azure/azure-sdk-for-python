@@ -356,7 +356,7 @@ class WorkspaceOperationsBase(ABC):
         if serverless_compute_settings:
             serverless_compute_settings = (
                 serverless_compute_settings._to_rest_object()
-            )  # pylint: disable=protected-access
+            )
 
         public_network_access = kwargs.get("public_network_access", workspace.public_network_access)
         network_acls = kwargs.get("network_acls", workspace.network_acls)
@@ -714,7 +714,6 @@ class WorkspaceOperationsBase(ABC):
         if workspace.identity:
             identity = workspace.identity._to_workspace_rest_object()
         else:
-            # pylint: disable=protected-access
             identity = IdentityConfiguration(
                 type=camel_to_snake(ManagedServiceIdentityType.SYSTEM_ASSIGNED)
             )._to_workspace_rest_object()

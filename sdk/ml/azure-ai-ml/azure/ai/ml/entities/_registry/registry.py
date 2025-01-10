@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=too-many-instance-attributes,protected-access
+# pylint: disable=protected-access
 
 from os import PathLike
 from pathlib import Path
@@ -86,7 +86,7 @@ class Registry(Resource):
     def dump(
         self,
         dest: Union[str, PathLike, IO[AnyStr]],
-        **kwargs: Any,  # pylint: disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         """Dump the registry spec into a file in yaml format.
 
@@ -103,7 +103,6 @@ class Registry(Resource):
         # JIT import to avoid experimental warnings on unrelated calls
         from azure.ai.ml._schema.registry.registry import RegistrySchema
 
-        # pylint: disable=no-member
         schema = RegistrySchema(context={BASE_PATH_CONTEXT_KEY: "./"})
 
         # Grab the first acr account of the first region and set that
@@ -152,7 +151,7 @@ class Registry(Resource):
         if real_registry and real_registry.region_details:
             replication_locations = [
                 RegistryRegionDetails._from_rest_object(details)
-                for details in real_registry.region_details  # pylint: disable=protected-access
+                for details in real_registry.region_details
             ]
         identity = None
         if rest_obj.identity and isinstance(rest_obj.identity, RestManagedServiceIdentity):

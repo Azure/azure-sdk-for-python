@@ -214,7 +214,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         )
 
     def _to_dict(self) -> Dict:
-        res: dict = SweepJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        res: dict = SweepJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return res
 
     def _to_rest_object(self) -> JobBase:

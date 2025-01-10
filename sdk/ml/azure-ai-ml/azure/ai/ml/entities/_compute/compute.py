@@ -154,7 +154,6 @@ class Compute(Resource, RestTranslatableMixin):
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     def _to_dict(self) -> Dict:
-        # pylint: disable=no-member
         res: dict = ComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return res
 

@@ -861,7 +861,7 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
         self.type = MonitorSignalType.FEATURE_ATTRIBUTION_DRIFT
 
     def _to_rest_object(
-        self, **kwargs: Any  # pylint: disable=unused-argument
+        self, **kwargs: Any
     ) -> RestFeatureAttributionDriftMonitoringSignal:
         default_window_size = kwargs.get("default_data_window_size")
         ref_data_window_size = kwargs.get("ref_data_window_size")
@@ -1262,7 +1262,7 @@ class GenerationTokenStatisticsSignal(RestTranslatableMixin):
                 self.metric_thresholds._to_rest_object()
                 if self.metric_thresholds
                 else GenerationTokenStatisticsMonitorMetricThreshold._get_default_thresholds()._to_rest_object()
-            ),  # pylint: disable=line-too-long
+            ),
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
             properties=self.properties,
             sampling_rate=self.sampling_rate if self.sampling_rate else 0.1,

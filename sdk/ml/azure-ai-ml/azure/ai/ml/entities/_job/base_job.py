@@ -52,7 +52,6 @@ class _BaseJob(Job):
         super().__init__(**kwargs)
 
     def _to_dict(self) -> Dict:
-        # pylint: disable=no-member
         res: dict = BaseJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return res
 

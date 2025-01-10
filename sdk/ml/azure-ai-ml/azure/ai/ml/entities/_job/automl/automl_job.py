@@ -277,11 +277,11 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
         """Restore MLTableJobInputs to JobInputs within data_settings."""
         if isinstance(self.training_data, MLTableJobInput):
             self.training_data = Input(
-                type=AssetTypes.MLTABLE, path=self.training_data.uri  # pylint: disable=no-member
+                type=AssetTypes.MLTABLE, path=self.training_data.uri
             )
         if isinstance(self.validation_data, MLTableJobInput):
             self.validation_data = Input(
-                type=AssetTypes.MLTABLE, path=self.validation_data.uri  # pylint: disable=no-member
+                type=AssetTypes.MLTABLE, path=self.validation_data.uri
             )
         if hasattr(self, "test_data") and isinstance(self.test_data, MLTableJobInput):
-            self.test_data = Input(type=AssetTypes.MLTABLE, path=self.test_data.uri)  # pylint: disable=no-member
+            self.test_data = Input(type=AssetTypes.MLTABLE, path=self.test_data.uri)
