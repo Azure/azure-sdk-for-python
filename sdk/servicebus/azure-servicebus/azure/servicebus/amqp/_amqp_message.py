@@ -143,7 +143,7 @@ class AmqpAnnotatedMessage(object):
             self._data_body = normalized_data_body(kwargs.get("data_body"))
             self._body_type = AmqpMessageBodyType.DATA
         elif "sequence_body" in kwargs:
-            self._sequence_body = normalized_sequence_body(kwargs.get("sequence_body"))
+            self._sequence_body = kwargs.get("sequence_body")
             self._body_type = AmqpMessageBodyType.SEQUENCE
         elif "value_body" in kwargs:
             self._value_body = kwargs.get("value_body")
