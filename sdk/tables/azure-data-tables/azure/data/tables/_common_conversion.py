@@ -11,6 +11,8 @@ from urllib.parse import ParseResult
 from typing import Optional, Type, Tuple, List, Dict, Any, Union, cast, Literal
 from typing_extensions import Required, NotRequired
 
+from ._entity import EdmType
+
 SupportedDataTypes = Union[str, bool, int, float, None, datetime, bytes]
 
 
@@ -29,7 +31,7 @@ def _get_annotation_type(annotation: Any) -> Type:
         if annotation.__origin__ in [Required, NotRequired, Union, Literal]:
             return _get_annotation_type(annotation.__args__[0])
         raise TypeError(f"Unsupported type hint: {annotation}")
-    if isinstance(annotation, type):
+    if isinstance(annotation, (type, EdmType)):
         return annotation
     return type(annotation)
 
