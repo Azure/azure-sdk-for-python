@@ -57,14 +57,14 @@ class TableServiceClient(AsyncTablesBaseClient):
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-02-02'.
         Setting to an older version may result in reduced feature compatibility.
-        :keyword custom_encode:
-            A mapping of object types and how they should be encoded, either as existing edm type, or by custom callable.
-        :paramtype custom_encode:
-            Mapping[Type, Union[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, datetime, bytes]]]]] or None  # pylint: disable=line-too-long
-        :keyword custom_decode:
-            A mapping of object types or edm types and how they should be decoded by callable.
-        :paramtype custom_decode:
-            Mapping[Union[Type, EdmType], Callable[[Union[str, bool, int, float]], Any]] or None
+    :keyword custom_encode:
+        A mapping of object types and how they should be encoded, either as existing edm type, or by custom callable.
+    :paramtype custom_encode:
+        Mapping[Type, Union[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, datetime, bytes]]]]] or None  # pylint: disable=line-too-long
+    :keyword custom_decode:
+        A mapping of object types or edm types and how they should be decoded by callable.
+    :paramtype custom_decode:
+        Mapping[Union[Type, EdmType], Callable[[Union[str, bool, int, float]], Any]] or None
 
     .. admonition:: Example:
 

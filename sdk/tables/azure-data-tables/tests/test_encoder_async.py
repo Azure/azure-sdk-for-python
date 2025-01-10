@@ -652,7 +652,16 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 in str(error.value)
             )
 
-            # Test enums - it is not supported in old encoder
+        # Test enums - it is not supported in old encoder
+        async with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={"RowKey": EnumBasicOptions},
+            custom_encode={EnumBasicOptions: lambda v: (None, v.value)},
+            custom_decode={EnumBasicOptions: EnumBasicOptions},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -668,6 +677,15 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
+        async with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={"RowKey": EnumStrOptions},
+            custom_encode={EnumStrOptions: lambda v: (None, v.value)},
+            custom_decode={EnumStrOptions: EnumStrOptions},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.TWO, "Data": EnumStrOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -683,6 +701,15 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
+        async with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={"RowKey": EnumIntOptions},
+            custom_encode={EnumIntOptions: lambda v: (None, v.value)},
+            custom_decode={EnumIntOptions: EnumIntOptions},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumIntOptions.ONE, "Data": EnumIntOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -1277,11 +1304,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
     ):
         table_name = self.get_resource_name("uttable12")
         url = self.account_url(tables_storage_account_name, "table")
-        # Non-UTF8 characters in both keys and properties
-        # Invalid int32 and int64 values
-        # Infinite float values
-        # Non-string keys
-        # Test enums
+
         async with TableClient(
             url, table_name, credential=tables_primary_storage_account_key, transport=EncoderVerificationTransport()
         ) as client:
@@ -1466,7 +1489,16 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
             assert "The property name is invalid" in str(error.value)
             assert error.value.error_code.value == "PropertyNameInvalid"
 
-            # Test enums - it is not supported in old encoder
+        # Test enums - it is not supported in old encoder
+        async with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={"RowKey": EnumBasicOptions},
+            custom_encode={EnumBasicOptions: lambda v: (None, v.value)},
+            custom_decode={EnumBasicOptions: EnumBasicOptions},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -1499,6 +1531,15 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
+        async with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={"RowKey": EnumStrOptions},
+            custom_encode={EnumStrOptions: lambda v: (None, v.value)},
+            custom_decode={EnumStrOptions: EnumStrOptions},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.TWO, "Data": EnumStrOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -1531,6 +1572,15 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
+        async with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={"RowKey": EnumIntOptions},
+            custom_encode={EnumIntOptions: lambda v: (None, v.value)},
+            custom_decode={EnumIntOptions: EnumIntOptions},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", "Data": EnumIntOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -2108,11 +2158,7 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
     ):
         table_name = self.get_resource_name("uttable18")
         url = self.account_url(tables_storage_account_name, "table")
-        # Non-UTF8 characters in both keys and properties
-        # Invalid int32 and int64 values
-        # Infinite float values
-        # Non-string keys
-        # Test enums
+
         async with TableClient(
             url, table_name, credential=tables_primary_storage_account_key, transport=EncoderVerificationTransport()
         ) as client:
@@ -2276,7 +2322,16 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
             assert "The property name is invalid" in str(error.value)
             assert error.value.error_code.value == "PropertyNameInvalid"
 
-            # Test enums - it is not supported in old encoder
+        # Test enums - it is not supported in old encoder
+        async with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={"RowKey": EnumBasicOptions},
+            custom_encode={EnumBasicOptions: lambda v: (None, v.value)},
+            custom_decode={EnumBasicOptions: EnumBasicOptions},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -2304,6 +2359,15 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
+        async with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={"RowKey": EnumStrOptions},
+            custom_encode={EnumStrOptions: lambda v: (None, v.value)},
+            custom_decode={EnumStrOptions: EnumStrOptions},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.TWO, "Data": EnumStrOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -2331,6 +2395,15 @@ class TestTableEncoderAsync(AzureRecordedTestCase, AsyncTableTestCase):
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
+        async with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={"RowKey": EnumIntOptions},
+            custom_encode={EnumIntOptions: lambda v: (None, v.value)},
+            custom_decode={EnumIntOptions: EnumIntOptions},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", "Data": EnumIntOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",

@@ -594,7 +594,7 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
             entity = TableEntity(PartitionKey=pk, RowKey=rk, test1=Color.YELLOW, test2=Color.BLUE, test3=Color.RED)
 
             table = self.ts.get_table_client(
-                self.table_name, custom_encode={Color: lambda v: (None, v.value)}, custom_decode={EdmType.STRING: Color}
+                self.table_name, custom_encode={Color: lambda v: (None, v.value)}, custom_decode={int: Color}
             )
             table.create_entity(entity=entity)
             resp_entity = table.get_entity(partition_key=pk, row_key=rk)

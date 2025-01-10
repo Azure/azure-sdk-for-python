@@ -694,6 +694,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             transport=EncoderVerificationTransport(),
             entity_format={"RowKey": EnumBasicOptions},
             custom_encode={EnumBasicOptions: lambda v: (None, v.value)},
+            custom_decode={EnumBasicOptions: EnumBasicOptions},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
             expected_entity = {
@@ -717,6 +718,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             transport=EncoderVerificationTransport(),
             entity_format={"RowKey": EnumStrOptions},
             custom_encode={EnumStrOptions: lambda v: (None, v.value)},
+            custom_decode={EnumStrOptions: EnumStrOptions},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.TWO, "Data": EnumStrOptions.TWO}
             expected_entity = {
@@ -740,6 +742,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             transport=EncoderVerificationTransport(),
             entity_format={"RowKey": EnumIntOptions},
             custom_encode={EnumIntOptions: lambda v: (None, v.value)},
+            custom_decode={EnumIntOptions: EnumIntOptions},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumIntOptions.ONE, "Data": EnumIntOptions.TWO}
             expected_entity = {
@@ -1525,6 +1528,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             transport=EncoderVerificationTransport(),
             entity_format={"RowKey": EnumBasicOptions},
             custom_encode={EnumBasicOptions: lambda v: (None, v.value)},
+            custom_decode={EnumBasicOptions: EnumBasicOptions},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
             expected_entity = {
@@ -1565,6 +1569,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             transport=EncoderVerificationTransport(),
             entity_format={"RowKey": EnumStrOptions},
             custom_encode={EnumStrOptions: lambda v: (None, v.value)},
+            custom_decode={EnumStrOptions: EnumStrOptions},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.TWO, "Data": EnumStrOptions.TWO}
             expected_entity = {
@@ -1605,6 +1610,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             transport=EncoderVerificationTransport(),
             entity_format={"RowKey": EnumIntOptions},
             custom_encode={EnumIntOptions: lambda v: (None, v.value)},
+            custom_decode={EnumIntOptions: EnumIntOptions},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", "Data": EnumIntOptions.TWO}
             expected_entity = {
@@ -2353,6 +2359,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             transport=EncoderVerificationTransport(),
             entity_format={"RowKey": EnumBasicOptions},
             custom_encode={EnumBasicOptions: lambda v: (None, v.value)},
+            custom_decode={EnumBasicOptions: EnumBasicOptions},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
             expected_entity = {
@@ -2387,6 +2394,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             transport=EncoderVerificationTransport(),
             entity_format={"RowKey": EnumStrOptions},
             custom_encode={EnumStrOptions: lambda v: (None, v.value)},
+            custom_decode={EnumStrOptions: EnumStrOptions},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.TWO, "Data": EnumStrOptions.TWO}
             expected_entity = {
@@ -2421,6 +2429,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             transport=EncoderVerificationTransport(),
             entity_format={"RowKey": EnumIntOptions},
             custom_encode={EnumIntOptions: lambda v: (None, v.value)},
+            custom_decode={EnumIntOptions: EnumIntOptions},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", "Data": EnumIntOptions.TWO}
             expected_entity = {

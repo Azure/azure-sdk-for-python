@@ -603,6 +603,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             transport=EncoderVerificationTransport(),
             entity_format={"RowKey": EnumBasicOptions},
             custom_encode={EnumBasicOptions: lambda v: (None, v.value)},
+            custom_decode={EnumBasicOptions: EnumBasicOptions},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
             expected_entity = {
@@ -626,6 +627,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             transport=EncoderVerificationTransport(),
             entity_format={"RowKey": EnumStrOptions},
             custom_encode={EnumStrOptions: lambda v: (None, v.value)},
+            custom_decode={EnumStrOptions: EnumStrOptions},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.TWO, "Data": EnumStrOptions.TWO}
             expected_entity = {
@@ -649,6 +651,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             transport=EncoderVerificationTransport(),
             entity_format={"RowKey": EnumIntOptions},
             custom_encode={EnumIntOptions: lambda v: (None, v.value)},
+            custom_decode={EnumIntOptions: EnumIntOptions},
         ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumIntOptions.ONE, "Data": EnumIntOptions.TWO}
             expected_entity = {
@@ -1250,11 +1253,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
     def test_encoder_upsert_entity_atypical_values(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         table_name = self.get_resource_name("uttable12")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
-        # Non-UTF8 characters in both keys and properties
-        # Invalid int32 and int64 values
-        # Infinite float values
-        # Non-string keys
-        # Test enums
+
         with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
@@ -1438,7 +1437,16 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             assert "The property name '123' is invalid" in str(error.value)
             assert error.value.error_code.value == "PropertyNameInvalid"
 
-            # Test enums - it is not supported in old encoder
+        # Test enums - it is not supported in old encoder
+        with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_cosmos_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={"RowKey": EnumBasicOptions},
+            custom_encode={EnumBasicOptions: lambda v: (None, v.value)},
+            custom_decode={EnumBasicOptions: EnumBasicOptions},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -1471,6 +1479,15 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
+        with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_cosmos_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={"RowKey": EnumStrOptions},
+            custom_encode={EnumStrOptions: lambda v: (None, v.value)},
+            custom_decode={EnumStrOptions: EnumStrOptions},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.TWO, "Data": EnumStrOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -1503,6 +1520,15 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
+        with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_cosmos_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={"RowKey": EnumIntOptions},
+            custom_encode={EnumIntOptions: lambda v: (None, v.value)},
+            custom_decode={EnumIntOptions: EnumIntOptions},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", "Data": EnumIntOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -2089,11 +2115,6 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
     def test_encoder_update_entity_atypical_values(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         table_name = self.get_resource_name("uttable18")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
-        # Non-UTF8 characters in both keys and properties
-        # Invalid int32 and int64 values
-        # Infinite float values
-        # Non-string keys
-        # Test enums
         with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
@@ -2257,7 +2278,16 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             assert "The property name '123' is invalid." in str(error.value)
             assert error.value.error_code.value == "PropertyNameInvalid"
 
-            # Test enums - it is not supported in old encoder
+        # Test enums - it is not supported in old encoder
+        with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_cosmos_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={"RowKey": EnumBasicOptions},
+            custom_encode={EnumBasicOptions: lambda v: (None, v.value)},
+            custom_decode={EnumBasicOptions: EnumBasicOptions},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -2285,6 +2315,15 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
+        with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_cosmos_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={"RowKey": EnumStrOptions},
+            custom_encode={EnumStrOptions: lambda v: (None, v.value)},
+            custom_decode={EnumStrOptions: EnumStrOptions},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.TWO, "Data": EnumStrOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -2311,7 +2350,15 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_response=(lambda: client.get_entity("PK", "Two"), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
-
+        with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_cosmos_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={"RowKey": EnumIntOptions},
+            custom_encode={EnumIntOptions: lambda v: (None, v.value)},
+            custom_decode={EnumIntOptions: EnumIntOptions},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", "Data": EnumIntOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
