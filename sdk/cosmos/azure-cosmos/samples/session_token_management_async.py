@@ -14,7 +14,7 @@ import azure.cosmos.exceptions as exceptions
 
 import asyncio
 import config
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.cosmos.http_constants import HttpHeaders
 
 # ----------------------------------------------------------------------------------------------------------
@@ -121,7 +121,7 @@ async def storing_session_tokens_container_feed_ranges(container):
 
 
 async def run_sample():
-    async with CosmosClient(HOST, CREDENTIAL) as client:  # type: ignore
+    async with CosmosClient(HOST, CREDENTIAL) as client:
         try:
             db = await client.create_database_if_not_exists(id=DATABASE_ID)
             container = await db.create_container_if_not_exists(id=CONTAINER_ID, partition_key=PartitionKey('/pk'))
