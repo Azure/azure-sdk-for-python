@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -18,6 +19,7 @@ from azure.confidentialledger.aio._client import (
 )
 
 # Since we can't `await` in __init__, use the sync client for the Identity Service.
+
 
 from azure.confidentialledger.certificate import ConfidentialLedgerCertificateClient
 from azure.confidentialledger._patch import ConfidentialLedgerCertificateCredential
