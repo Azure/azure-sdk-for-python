@@ -65,8 +65,8 @@ setup(
     ),
     python_requires=">=3.8",
     install_requires=[
-        "promptflow-devkit>=1.15.0",
-        "promptflow-core>=1.15.0",
+        "promptflow-devkit>=1.17.1",
+        "promptflow-core>=1.17.1",
         "pyjwt>=2.8.0",
         # pickle support for credentials was added to this release
         "azure-identity>=1.16.0",
