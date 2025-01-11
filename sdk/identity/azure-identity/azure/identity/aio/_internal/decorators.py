@@ -28,7 +28,7 @@ def log_get_token_async(fn):
             if _LOGGER.isEnabledFor(logging.DEBUG):
                 try:
                     base64_meta_data = token.token.split(".")[1]
-                    padding_needed = -(len(base64_meta_data) % 4)
+                    padding_needed = -len(base64_meta_data) % 4
                     if padding_needed:
                         base64_meta_data += "=" * padding_needed
                     json_bytes = base64.urlsafe_b64decode(base64_meta_data)
