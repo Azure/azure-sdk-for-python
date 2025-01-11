@@ -34,7 +34,8 @@ def _validate_derived_metric_info(metric_info: DerivedMetricInfo) -> bool:
 
 
 def _validate_document_filter_group_info(doc_filter_group: DocumentFilterConjunctionGroupInfo) -> bool:
-    _validate_telemetry_type(doc_filter_group.telemetry_type)
+    if not _validate_telemetry_type(doc_filter_group.telemetry_type):
+        return False
     # Validate filters
     for filter in doc_filter_group.filters.filters:
         # Validate field names to telemetry type
