@@ -15,7 +15,7 @@ DESCRIPTION:
 USAGE:
     python sample_chat_completions_with_azure_monitor_tracing.py
 
-    Set these two environment variables before running the sample:
+    Set these three or four environment variables before running the sample:
     1) AZURE_AI_CHAT_ENDPOINT - Your endpoint URL, in the form
         https://<your-deployment-name>.<your-azure-region>.models.ai.azure.com
         where `your-deployment-name` is your unique AI Model deployment name, and
