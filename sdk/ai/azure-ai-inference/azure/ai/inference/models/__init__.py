@@ -14,7 +14,6 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
-    AssistantMessage,
     ChatChoice,
     ChatCompletions,
     ChatCompletionsNamedToolChoice,
@@ -39,9 +38,7 @@ from ._models import (  # type: ignore
     StreamingChatCompletionsUpdate,
     StreamingChatResponseMessageUpdate,
     StreamingChatResponseToolCallUpdate,
-    SystemMessage,
     TextContentItem,
-    ToolMessage,
 )
 
 from ._enums import (  # type: ignore
@@ -58,7 +55,6 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "AssistantMessage",
     "ChatChoice",
     "ChatCompletions",
     "ChatCompletionsNamedToolChoice",
@@ -83,9 +79,7 @@ __all__ = [
     "StreamingChatCompletionsUpdate",
     "StreamingChatResponseMessageUpdate",
     "StreamingChatResponseToolCallUpdate",
-    "SystemMessage",
     "TextContentItem",
-    "ToolMessage",
     "ChatCompletionsToolChoicePreset",
     "ChatRole",
     "CompletionsFinishReason",

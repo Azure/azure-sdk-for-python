@@ -53,7 +53,7 @@ class ChatRequestMessage(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AssistantMessage(ChatRequestMessage, discriminator="assistant"):
+class AssistantMessageInternal(ChatRequestMessage, discriminator="assistant"):
     """A request chat message representing response or action from the assistant.
 
     :ivar role: The chat role associated with this message, which is always 'assistant' for
@@ -1145,7 +1145,7 @@ class StreamingChatResponseToolCallUpdate(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemMessage(ChatRequestMessage, discriminator="system"):
+class SystemMessageInternal(ChatRequestMessage, discriminator="system"):
     """A request chat message containing system instructions that influence how the model will
     generate a chat completions
     response.
@@ -1215,7 +1215,7 @@ class TextContentItem(ContentItem, discriminator="text"):
         super().__init__(*args, type="text", **kwargs)
 
 
-class ToolMessage(ChatRequestMessage, discriminator="tool"):
+class ToolMessageInternal(ChatRequestMessage, discriminator="tool"):
     """A request chat message representing requested output from a configured tool.
 
     :ivar role: The chat role associated with this message, which is always 'tool' for tool

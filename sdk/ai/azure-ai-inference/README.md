@@ -24,7 +24,7 @@ The Inference client library makes services calls using REST API version `2024-0
 
 ## Reporting issues
 
-To report issues with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues). Mention "azure-ai-inference" in the title or content.
+To report an issue with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues). Mention the package name "azure-ai-inference" in the title or content.
 
 ## Getting started
 
@@ -264,8 +264,8 @@ client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(
 
 response = client.complete(
     messages=[
-        SystemMessage(content="You are a helpful assistant."),
-        UserMessage(content="How many feet are in a mile?"),
+        SystemMessage("You are a helpful assistant."),
+        UserMessage("How many feet are in a mile?"),
     ]
 )
 
@@ -286,7 +286,7 @@ includes sending image data read from a local file.
 
 Alternatively, you can provide the messages as dictionary instead of using the strongly typed classes like `SystemMessage` and `UserMessage`:
 
-<!-- SNIPPET:sample_chat_completions_from_input_json.chat_completions -->
+<!-- SNIPPET:sample_chat_completions_from_input_dict.chat_completions -->
 
 ```python
 response = client.complete(
@@ -332,8 +332,8 @@ client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(
 response = client.complete(
     stream=True,
     messages=[
-        SystemMessage(content="You are a helpful assistant."),
-        UserMessage(content="Give me 5 good reasons why I should exercise every day."),
+        SystemMessage("You are a helpful assistant."),
+        UserMessage("Give me 5 good reasons why I should exercise every day."),
     ],
 )
 
@@ -358,8 +358,8 @@ In this example, extra JSON elements are inserted at the root of the request bod
 ```python
 response = client.complete(
     messages=[
-        SystemMessage(content="You are a helpful assistant."),
-        UserMessage(content="How many feet are in a mile?"),
+        SystemMessage("You are a helpful assistant."),
+        UserMessage("How many feet are in a mile?"),
     ],
     model_extras={"key1": "value1", "key2": "value2"},  # Optional. Additional parameters to pass to the model.
 )
@@ -566,7 +566,7 @@ For more information, see [Configure logging in the Azure libraries for Python](
 
 ### Reporting issues
 
-To report issues with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues). Mention "azure-ai-inference" in the title or content.
+To report an issue with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues). Mention "azure-ai-inference" in the title or content.
 
 ## Observability With OpenTelemetry
 

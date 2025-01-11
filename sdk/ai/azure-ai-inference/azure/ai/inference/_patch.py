@@ -7,7 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 
-Why do we patch auto-generated code?
+Why do we patch auto-generated code? Below is a summary of the changes made in all _patch files (not just this one):
 1. Add support for input argument `model_extras` (all clients)
 2. Add support for function load_client
 3. Add support for setting sticky chat completions/embeddings input arguments in the client constructor
@@ -16,9 +16,11 @@ Why do we patch auto-generated code?
 6. Add support for friendly print of result objects (__str__ method) (all clients)
 7. Add support for load() method in ImageUrl class (see /models/_patch.py)
 8. Add support for sending two auth headers for api-key auth (all clients)
-9. Simplify how "structured output" is set. Define "response_format" as a flat Union of strings and
+9. Simplify how chat completions "response_format" is set. Define "response_format" as a flat Union of strings and
    JsonSchemaFormat object, instead of using auto-generated base/derived classes named
    ChatCompletionsResponseFormatXxxInternal.
+10. Allow UserMessage("my message") in addition to UserMessage(content="my message"). Same applies to 
+AssistantMessage, SystemMessage and ToolMessage.
 
 """
 import json
@@ -92,12 +94,14 @@ def _get_internal_response_format(
         # auto-emitted classes that are marked as in Internal in TypeSpec are missing a constructor that sets
         # the discriminant field (`type`). This is why we need to explicitly set it here.
         if isinstance(response_format, str) and response_format == "text":
-            internal_response_format = _models._models.ChatCompletionsResponseFormatText(  # pylint: disable=protected-access
+            internal_response_format = _models._models.ChatCompletionsResponseFormatText(
                 type="text"
-            )
+            )  # pylint: disable=protected-access
         elif isinstance(response_format, str) and response_format == "json_object":
-            internal_response_format = _models._models.ChatCompletionsResponseFormatJsonObject(  # pylint: disable=protected-access
-                type="json_object"
+            internal_response_format = (
+                _models._models.ChatCompletionsResponseFormatJsonObject(  # pylint: disable=protected-access
+                    type="json_object"
+                )
             )
         elif isinstance(response_format, _models.JsonSchemaFormat):
             internal_response_format = (

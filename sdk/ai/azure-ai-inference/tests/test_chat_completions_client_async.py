@@ -140,8 +140,8 @@ class TestChatCompletionsClientAsync(ModelClientTestBase):
             try:
                 _ = await client.complete(
                     messages=[
-                        sdk.models.SystemMessage(content="system prompt"),
-                        sdk.models.UserMessage(content="user prompt 1"),
+                        sdk.models.SystemMessage("system prompt"),
+                        sdk.models.UserMessage("user prompt 1"),
                         sdk.models.AssistantMessage(
                             tool_calls=[
                                 sdk.models.ChatCompletionsToolCall(
@@ -159,10 +159,10 @@ class TestChatCompletionsClientAsync(ModelClientTestBase):
                                 ),
                             ]
                         ),
-                        sdk.models.ToolMessage(tool_call_id="some id", content="function response"),
-                        sdk.models.AssistantMessage(content="assistant prompt"),
+                        sdk.models.ToolMessage("function response", tool_call_id="some id"),
+                        sdk.models.AssistantMessage("assistant prompt"),
                         sdk.models.UserMessage(
-                            content=[
+                            [
                                 sdk.models.TextContentItem(text="user prompt 2"),
                                 sdk.models.ImageContentItem(
                                     image_url=sdk.models.ImageUrl(
