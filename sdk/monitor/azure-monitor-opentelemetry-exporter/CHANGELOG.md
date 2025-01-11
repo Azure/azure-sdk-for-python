@@ -4,6 +4,13 @@
 
 ### Features Added
 
+- Implement live metrics filtering for metrics
+  ([#37998](https://github.com/Azure/azure-sdk-for-python/pull/37998))
+- Add applying filter/validating filter logic to live metrics filtering
+  ([#38451](https://github.com/Azure/azure-sdk-for-python/pull/38451))
+- Implement live metrics filtering for docs
+  ([#38925](https://github.com/Azure/azure-sdk-for-python/pull/38925))
+
 ### Breaking Changes
 
 ### Bugs Fixed

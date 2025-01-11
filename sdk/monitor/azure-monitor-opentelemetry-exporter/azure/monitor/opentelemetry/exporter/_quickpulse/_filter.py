@@ -7,6 +7,7 @@ from typing import Any, Dict, List
 
 from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
     DerivedMetricInfo,
+    DocumentStreamInfo,
     FilterConjunctionGroupInfo,
     FilterInfo,
     PredicateType,
@@ -18,6 +19,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._projection import (
 from azure.monitor.opentelemetry.exporter._quickpulse._state import (
     _clear_quickpulse_projection_map,
     _set_quickpulse_derived_metric_infos,
+    _set_quickpulse_doc_stream_infos,
     _set_quickpulse_etag,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._types import (
@@ -25,7 +27,10 @@ from azure.monitor.opentelemetry.exporter._quickpulse._types import (
     _TelemetryData,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._utils import _filter_time_stamp_to_ms
-from azure.monitor.opentelemetry.exporter._quickpulse._validate import _validate_derived_metric_info
+from azure.monitor.opentelemetry.exporter._quickpulse._validate import (
+    _validate_derived_metric_info,
+    _validate_document_filter_group_info,
+)
 
 
 # Apply filter configuration based off response
@@ -38,7 +43,7 @@ def _update_filter_configuration(etag: str, config_bytes: bytes):
     # Process metric filter configuration
     _parse_metric_filter_configuration(config)
     # # Process document filter configuration
-    # _parse_document_filter_configuration(config)
+    _parse_document_filter_configuration(config)
     # Update new etag
     _set_quickpulse_etag(etag)
 
@@ -67,21 +72,23 @@ def _parse_metric_filter_configuration(config: Dict[str, Any]) -> None:
     _set_quickpulse_derived_metric_infos(metric_infos)
 
 
-# def _parse_document_filter_configuration(config: Dict[str, Any]) -> None:
-#     # Process document filter configuration
-#     doc_infos: Dict[TelemetryType, Dict[str, List[FilterConjunctionGroupInfo]]] = {}
-#     for doc_stream_dict in config.get("document_streams", []):
-#         doc_stream = DocumentStreamInfo.from_dict(doc_stream_dict)
-#         for doc_filter_group in doc_stream.document_filter_groups:
-#             if not _validate_document_filter_group_info(doc_filter_group):
-#                 continue
-#             # TODO: Rename exception fields
-#             telemetry_type: TelemetryType = TelemetryType(doc_filter_group.telemetry_type)
-#             if telemetry_type not in doc_infos:
-#                 doc_infos[telemetry_type] = {}
-#             if doc_stream.id not in doc_infos[telemetry_type]:
-#                 doc_infos[telemetry_type][doc_stream.id] = []
-#             doc_infos[telemetry_type][doc_stream.id].append(doc_filter_group.filters)
+def _parse_document_filter_configuration(config: Dict[str, Any]) -> None:
+    # Process document filter configuration
+    doc_infos: Dict[TelemetryType, Dict[str, List[FilterConjunctionGroupInfo]]] = {}
+    for doc_stream_dict in config.get("DocumentStreams", []):
+        doc_stream = DocumentStreamInfo.from_dict(doc_stream_dict)
+        for doc_filter_group in doc_stream.document_filter_groups:
+            if not _validate_document_filter_group_info(doc_filter_group):
+                continue
+            # Rename exception fields by parsing out "Exception." portion
+            _rename_exception_fields_for_filtering(doc_filter_group.filters)
+            telemetry_type: TelemetryType = TelemetryType(doc_filter_group.telemetry_type)
+            if telemetry_type not in doc_infos:
+                doc_infos[telemetry_type] = {}
+            if doc_stream.id not in doc_infos[telemetry_type]:
+                doc_infos[telemetry_type][doc_stream.id] = []
+            doc_infos[telemetry_type][doc_stream.id].append(doc_filter_group.filters)
+    _set_quickpulse_doc_stream_infos(doc_infos)
 
 
 def _rename_exception_fields_for_filtering(filter_groups: FilterConjunctionGroupInfo):

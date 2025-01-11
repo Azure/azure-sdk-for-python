@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 # cSpell:disable
-from typing import Any
+from typing import Any, Dict, List, Optional
 
 import logging
 import platform
@@ -39,9 +39,12 @@ from azure.monitor.opentelemetry.exporter._quickpulse._exporter import (
     _QuickpulseMetricReader,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._filter import (
+    _check_filters,
     _check_metric_filters,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
+    DerivedMetricInfo,
+    FilterConjunctionGroupInfo,
     MonitoringDataPoint,
     TelemetryType,
 )
@@ -53,6 +56,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._state import (
     _is_post_state,
     _append_quickpulse_document,
     _get_quickpulse_derived_metric_infos,
+    _get_quickpulse_doc_stream_infos,
     _set_global_quickpulse_state,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._types import (
@@ -174,8 +178,6 @@ class _QuickpulseManager(metaclass=Singleton):
         # Only record if in post state
         if _is_post_state():
             try:
-                document = _get_span_document(span)
-                _append_quickpulse_document(document)
                 duration_ms = 0
                 if span.end_time and span.start_time:
                     duration_ms = (span.end_time - span.start_time) / 1e9  # type: ignore
@@ -195,13 +197,14 @@ class _QuickpulseManager(metaclass=Singleton):
                         self._dependency_failure_rate_counter.add(1)
                     self._dependency_duration.record(duration_ms)
 
-                metric_infos_dict = _get_quickpulse_derived_metric_infos()
-                # check if filtering is enabled
-                if metric_infos_dict:
-                    # Derive metrics for quickpulse filtering
-                    data = _TelemetryData._from_span(span)
-                    _derive_metrics_from_telemetry_data(data)
-                    # TODO: derive exception metrics from span events
+                # Derive metrics for quickpulse filtering
+                data = _TelemetryData._from_span(span)
+                _derive_metrics_from_telemetry_data(data)
+
+                # Process docs for quickpulse filtering
+                _apply_document_filters_from_telemetry_data(data)
+
+                # TODO: derive exception metrics from span events
             except Exception:  # pylint: disable=broad-except
                 _logger.exception("Exception occurred while recording span.")
 
@@ -210,31 +213,33 @@ class _QuickpulseManager(metaclass=Singleton):
         if _is_post_state():
             try:
                 if log_data.log_record:
+                    exc_type = None
                     log_record = log_data.log_record
                     if log_record.attributes:
-                        document = _get_log_record_document(log_data)
-                        _append_quickpulse_document(document)
                         exc_type = log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)
                         exc_message = log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)
                         if exc_type is not None or exc_message is not None:
                             self._exception_rate_counter.add(1)
 
-                    metric_infos_dict = _get_quickpulse_derived_metric_infos()
-                    # check if filtering is enabled
-                    if metric_infos_dict:
-                        # Derive metrics for quickpulse filtering
-                        data = _TelemetryData._from_log_record(log_record)
-                        _derive_metrics_from_telemetry_data(data)
+                    # Derive metrics for quickpulse filtering
+                    data = _TelemetryData._from_log_record(log_record)
+                    _derive_metrics_from_telemetry_data(data)
+
+                    # Process docs for quickpulse filtering
+                    _apply_document_filters_from_telemetry_data(data, exc_type)  # type: ignore
             except Exception:  # pylint: disable=broad-except
                 _logger.exception("Exception occurred while recording log record.")
 
 
 # Filtering
 
-# Called by record_span/record_log when processing a span/log_record
+# Called by record_span/record_log when processing a span/log_record for metrics filtering
 # Derives metrics from projections if applicable to current filters in config
 def _derive_metrics_from_telemetry_data(data: _TelemetryData):
-    metric_infos_dict = _get_quickpulse_derived_metric_infos()
+    metric_infos_dict: Dict[TelemetryType, List[DerivedMetricInfo]] = _get_quickpulse_derived_metric_infos()
+    # if empty, filtering was not configured
+    if not metric_infos_dict:
+        return
     metric_infos = []  # type: ignore
     if isinstance(data, _RequestData):
         metric_infos = metric_infos_dict.get(TelemetryType.REQUEST)  # type: ignore
@@ -248,5 +253,45 @@ def _derive_metrics_from_telemetry_data(data: _TelemetryData):
         # Since this data matches the filter, create projections used to
         # generate filtered metrics
         _create_projections(metric_infos, data)
+
+
+# Called by record_span/record_log when processing a span/log_record for docs filtering
+# Finds doc stream Ids and their doc filter configurations
+def _apply_document_filters_from_telemetry_data(data: _TelemetryData, exc_type: Optional[str] = None):
+    doc_config_dict: Dict[TelemetryType, Dict[str, List[FilterConjunctionGroupInfo]]] = _get_quickpulse_doc_stream_infos()  # pylint: disable=C0301
+    stream_ids = set()
+    doc_config = {}  # type: ignore
+    if isinstance(data, _RequestData):
+        doc_config = doc_config_dict.get(TelemetryType.REQUEST, {})  # type: ignore
+    elif isinstance(data, _DependencyData):
+        doc_config = doc_config_dict.get(TelemetryType.DEPENDENCY, {})  # type: ignore
+    elif isinstance(data, _ExceptionData):
+        doc_config = doc_config_dict.get(TelemetryType.EXCEPTION, {})  # type: ignore
+    elif isinstance(data, _TraceData):
+        doc_config = doc_config_dict.get(TelemetryType.TRACE, {})  # type: ignore
+    for stream_id, filter_groups in doc_config.items():
+        for filter_group in filter_groups:
+            if _check_filters(filter_group.filters, data):
+                stream_ids.add(stream_id)
+                break
+
+    # We only append and send the document if either:
+    # 1. The document matched the filtering for a specific streamId
+    # 2. Filtering was not enabled for this telemetry type (empty doc_config)
+    if len(stream_ids) > 0 or not doc_config:
+        if type(data) in (_DependencyData, _RequestData):
+            document = _get_span_document(data)  # type: ignore
+        else:
+            document = _get_log_record_document(data, exc_type)  # type: ignore
+        # A stream (with a unique streamId) is relevant if there are multiple sources sending to the same
+        # ApplicationInsights instace with live metrics enabled
+        # Modify the document's streamIds to determine which stream to send to in post
+        # Note that the default case is that the list of document_stream_ids is empty, in which
+        # case no filtering is done for the telemetry type and it is sent to all streams
+        if stream_ids:
+            document.document_stream_ids = list(stream_ids)
+
+        # Add the generated document to be sent to quickpulse
+        _append_quickpulse_document(document)
 
 # cSpell:enable
