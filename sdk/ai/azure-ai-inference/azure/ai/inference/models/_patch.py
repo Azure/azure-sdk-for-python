@@ -65,7 +65,7 @@ class UserMessage(ChatRequestMessage, discriminator="user"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        if len(args) == 1 and (isinstance(args[0], str) or isinstance(args[0], List)):
+        if len(args) == 1 and isinstance(args[0], (List, str)):
             if kwargs.get("content") is not None:
                 raise ValueError("content cannot be provided as positional and keyword arguments")
             kwargs["content"] = args[0]
