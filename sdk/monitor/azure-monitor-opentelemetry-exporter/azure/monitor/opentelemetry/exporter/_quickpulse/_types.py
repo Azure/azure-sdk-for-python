@@ -94,6 +94,8 @@ class _DependencyData(_TelemetryData):
         attributes = {}
         dependency_type = "InProc"
         data = ""
+        if span.end_time and span.start_time:
+            duration_ms = (span.end_time - span.start_time) / 1e9
         if span.attributes:
             attributes = span.attributes
             target = trace_utils._get_target_for_dependency_from_peer(attributes)

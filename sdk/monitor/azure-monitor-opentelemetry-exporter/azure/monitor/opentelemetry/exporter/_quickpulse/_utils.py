@@ -1,17 +1,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from typing import List, Optional, Tuple, Union
 
-from opentelemetry.sdk._logs import LogData
 from opentelemetry.sdk.metrics._internal.point import (
     NumberDataPoint,
     HistogramDataPoint,
 )
 from opentelemetry.sdk.metrics.export import MetricsData as OTMetricsData
-from opentelemetry.sdk.trace import ReadableSpan
-from opentelemetry.semconv.trace import SpanAttributes
-from opentelemetry.trace import SpanKind
 
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _QUICKPULSE_METRIC_NAME_MAPPINGS,
@@ -33,9 +29,11 @@ from azure.monitor.opentelemetry.exporter._quickpulse._state import (
     _get_quickpulse_projection_map,
     _reset_quickpulse_projection_map,
 )
-from azure.monitor.opentelemetry.exporter.export.trace._utils import (
-    _get_url_for_http_dependency,
-    _get_url_for_http_request,
+from azure.monitor.opentelemetry.exporter._quickpulse._types import (
+    _DependencyData,
+    _ExceptionData,
+    _RequestData,
+    _TraceData,
 )
 
 
@@ -92,52 +90,38 @@ def _metric_to_quick_pulse_data_points(  # pylint: disable=too-many-nested-block
 
 
 # mypy: disable-error-code="assignment,union-attr"
-def _get_span_document(span: ReadableSpan) -> Union[RemoteDependencyDocument, RequestDocument]:
-    duration = 0
-    if span.end_time and span.start_time:
-        duration = span.end_time - span.start_time
-    status_code = span.attributes.get(SpanAttributes.HTTP_STATUS_CODE, "")  # type: ignore
-    grpc_status_code = span.attributes.get(SpanAttributes.RPC_GRPC_STATUS_CODE, "")  # type: ignore
-    span_kind = span.kind
-    if span_kind in (SpanKind.CLIENT, SpanKind.PRODUCER, SpanKind.INTERNAL):
-        url = _get_url_for_http_dependency(span.attributes)
+def _get_span_document(data: Union[_DependencyData, _RequestData]) -> Union[RemoteDependencyDocument, RequestDocument]:
+    if isinstance(data, _DependencyData):
         document = RemoteDependencyDocument(
             document_type=DocumentType.REMOTE_DEPENDENCY,
-            name=span.name,
-            command_name=url,
-            result_code=str(status_code),
-            duration=_ns_to_iso8601_string(duration),
+            name=data.name,
+            command_name=data.data,
+            result_code=str(data.result_code),
+            duration=_ms_to_iso8601_string(data.duration),
         )
     else:
-        url = _get_url_for_http_request(span.attributes)
-        if status_code:
-            code = str(status_code)
-        else:
-            code = str(grpc_status_code)
         document = RequestDocument(
             document_type=DocumentType.REQUEST,
-            name=span.name,
-            url=url,
-            response_code=code,
-            duration=_ns_to_iso8601_string(duration),
+            name=data.name,
+            url=data.url,
+            response_code=str(data.response_code),
+            duration=_ms_to_iso8601_string(data.duration),
         )
     return document
 
 
 # mypy: disable-error-code="assignment"
-def _get_log_record_document(log_data: LogData) -> Union[ExceptionDocument, TraceDocument]:
-    exc_type = log_data.log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)  # type: ignore
-    exc_message = log_data.log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)  # type: ignore
-    if exc_type is not None or exc_message is not None:
+def _get_log_record_document(data: Union[_ExceptionData, _TraceData], exc_type: Optional[str] = None) -> Union[ExceptionDocument, TraceDocument]:  # pylint: disable=C0301
+    if isinstance(data, _ExceptionData):
         document = ExceptionDocument(
             document_type=DocumentType.EXCEPTION,
-            exception_type=str(exc_type),
-            exception_message=str(exc_message),
+            exception_type=exc_type or "",
+            exception_message=data.message,
         )
     else:
         document = TraceDocument(
             document_type=DocumentType.TRACE,
-            message=log_data.log_record.body,
+            message=data.message,
         )
     return document
 
@@ -164,14 +148,15 @@ def _get_metrics_from_projections() -> List[Tuple[str, float]]:
 
 # Time
 
-
-def _ns_to_iso8601_string(nanoseconds: int) -> str:
-    seconds, nanoseconds_remainder = divmod(nanoseconds, 1e9)
-    microseconds = nanoseconds_remainder // 1000  # Convert nanoseconds to microseconds
-    dt = datetime.utcfromtimestamp(seconds)
-    dt_microseconds = timedelta(microseconds=microseconds)
-    dt_with_microseconds = dt + dt_microseconds
-    return dt_with_microseconds.isoformat()
+def _ms_to_iso8601_string(ms: float) -> str:
+    seconds, ms = divmod(ms, 1000)
+    minutes, seconds = divmod(seconds, 60)
+    hours, minutes = divmod(minutes, 60)
+    days, hours = divmod(hours, 24)
+    years, days = divmod(days, 365)
+    months, days = divmod(days, 30)
+    duration = f"P{years}Y{months}M{days}DT{hours}H{minutes}M{seconds}.{int(ms):03d}S"
+    return duration
 
 
 def _filter_time_stamp_to_ms(time_stamp: str) -> Optional[int]:
