@@ -10,7 +10,7 @@ This preview package for Python includes ADLS Gen2 specific API support made ava
 | [Package (PyPi)](https://pypi.org/project/azure-storage-file-datalake/)
 | [Package (Conda)](https://anaconda.org/microsoft/azure-storage/)
 | [API reference documentation](https://aka.ms/azsdk-python-storage-filedatalake-ref)
-| [Product documentation](https://docs.microsoft.com/azure/storage/)
+| [Product documentation](https://learn.microsoft.com/azure/storage/)
 | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake/samples)
 
 
@@ -19,7 +19,7 @@ This preview package for Python includes ADLS Gen2 specific API support made ava
 ### Prerequisites
 * Python 3.8 or later is required to use this package. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
-[Azure storage account](https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-quickstart-create-account) to use this package.
+[Azure storage account](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-quickstart-create-account) to use this package.
 
 ### Install the package
 Install the Azure DataLake Storage client library for Python with [pip](https://pypi.org/project/pip/):
@@ -30,9 +30,9 @@ pip install azure-storage-file-datalake --pre
 
 ### Create a storage account
 If you wish to create a new storage account, you can use the
-[Azure Portal](https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-quickstart-create-account#create-an-account-using-the-azure-portal),
-[Azure PowerShell](https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-quickstart-create-account#create-an-account-using-powershell),
-or [Azure CLI](https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-quickstart-create-account#create-an-account-using-azure-cli):
+[Azure Portal](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-quickstart-create-account#create-an-account-using-the-azure-portal),
+[Azure PowerShell](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-quickstart-create-account#create-an-account-using-powershell),
+or [Azure CLI](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-quickstart-create-account#create-an-account-using-azure-cli):
 
 ```bash
 # Create a new resource group to hold the storage account -
@@ -286,7 +286,7 @@ Several DataLake Storage Python SDK samples are available to you in the SDK's Gi
 ### Additional documentation
 
 Table for [ADLS Gen1 to ADLS Gen2 API Mapping](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-file-datalake/GEN1_GEN2_MAPPING.md)
-For more extensive REST documentation on Data Lake Storage Gen2, see the [Data Lake Storage Gen2 documentation](https://docs.microsoft.com/rest/api/storageservices/datalakestoragegen2/filesystem) on docs.microsoft.com.
+For more extensive REST documentation on Data Lake Storage Gen2, see the [Data Lake Storage Gen2 documentation](https://learn.microsoft.com/rest/api/storageservices/datalakestoragegen2/filesystem) on learn.microsoft.com.
 
 
 ## Contributing

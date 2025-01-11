@@ -83,7 +83,7 @@
 <td>Return last bytes of file</td>
 </tr>
 <tr>
-<td><a href="https://docs.microsoft.com/python/API/azure-datalake-store/azure.datalake.store.core.azuredlfilesystem?view=azure-python#read-block-fn--offset--length--delimiter-none-"><strong>read_block</strong></a></td>
+<td><a href="https://learn.microsoft.com/python/API/azure-datalake-store/azure.datalake.store.core.azuredlfilesystem?view=azure-python#read-block-fn--offset--length--delimiter-none-"><strong>read_block</strong></a></td>
 <td>Read a block of bytes from an ADL file</td>
 </tr>
 <tr>
@@ -116,7 +116,7 @@
 <td>Set the Access Control List (ACL) for a file or folder.</td>
 </tr>
 <tr>
-<td><a href="https://docs.microsoft.com/python/API/azure-datalake-store/azure.datalake.store.core.azuredlfilesystem?view=azure-python#modify-acl-entries-path--acl-spec--recursive-false--number-of-sub-process-none-"><strong>modify_acl_entries</strong></a></td>
+<td><a href="https://learn.microsoft.com/python/API/azure-datalake-store/azure.datalake.store.core.azuredlfilesystem?view=azure-python#modify-acl-entries-path--acl-spec--recursive-false--number-of-sub-process-none-"><strong>modify_acl_entries</strong></a></td>
 <td>Modify existing Access Control List (ACL) entries on a file or folder. If the entry does not exist it is added, otherwise it is updated based on the spec passed in. No entries are removed by this process (unlike set_acl).</td>
 </tr>
 <tr>
@@ -132,7 +132,7 @@
 <td rowspan="3">Probably users can achieve the same purpose by calling set_access_control with related parameters.</td>
 </tr>
 <tr>
-<td><a href="https://docs.microsoft.com/python/API/azure-datalake-store/azure.datalake.store.core.azuredlfilesystem?view=azure-python#remove-acl-path-"><strong>remove_acl</strong></a></td>
+<td><a href="https://learn.microsoft.com/python/API/azure-datalake-store/azure.datalake.store.core.azuredlfilesystem?view=azure-python#remove-acl-path-"><strong>remove_acl</strong></a></td>
 <td>Remove the entire, non default, ACL from the file or folder, including unnamed entries. Default entries cannot be removed this way, please use remove_default_acl for that. Note: this is not recursive, and applies only to the file or folder specified.</td>
 </tr>
 <tr>
@@ -140,7 +140,7 @@
 <td>Remove the entire default ACL from the folder. Default entries do not exist on files, if a file is specified, this operation does nothing. Note: this is not recursive, and applies only to the folder specified.</td>
 </tr>
 <tr>
-<td><a href="https://docs.microsoft.com/python/API/azure-datalake-store/azure.datalake.store.core.azuredlfilesystem?view=azure-python#open-path--mode--rb---blocksize-33554432--delimiter-none-"><strong>open</strong></a></td>
+<td><a href="https://learn.microsoft.com/python/API/azure-datalake-store/azure.datalake.store.core.azuredlfilesystem?view=azure-python#open-path--mode--rb---blocksize-33554432--delimiter-none-"><strong>open</strong></a></td>
 <td>Open a file for reading or writing to.</td>
 <td>N/A</td>
 <td>There is no open file operation In ADLS Gen2. However users can do operations to the file directly, eg. <strong>append_data, flush_data, download_file</strong></td>
