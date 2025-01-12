@@ -810,7 +810,7 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
                 target=ErrorTarget.PIPELINE,
                 error_category=ErrorCategory.USER_ERROR,
             )
-        return result
+        return result  # pylint: disable=possibly-used-before-assignment
 
 
 class PipelineOutput(NodeOutput):

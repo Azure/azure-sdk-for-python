@@ -566,7 +566,7 @@ class Model(_MyMutableMapping):
         if exclude_readonly:
             readonly_props = [p._rest_name for p in self._attr_to_rest_field.values() if _is_readonly(p)]
         for k, v in self.items():
-            if exclude_readonly and k in readonly_props:  # pyright: ignore
+            if exclude_readonly and k in readonly_props:  # pyright: ignore # pylint: disable=possibly-used-before-assignment
                 continue
             is_multipart_file_input = False
             try:

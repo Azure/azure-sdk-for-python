@@ -1130,7 +1130,7 @@ class CustomArmTemplateDeploymentPollingMethod(PollingMethod):
             error_msg = f"Unable to create resource. \n {error}\n"
             module_logger.error(error_msg)
             raise error
-        module_logger.info("Total time : %s\n", from_iso_duration_format_min_sec(total_duration))
+        module_logger.info("Total time : %s\n", from_iso_duration_format_min_sec(total_duration)) # pylint: disable=E0606
         return self.func()
 
     # pylint: disable=docstring-missing-param

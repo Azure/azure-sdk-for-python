@@ -177,6 +177,7 @@ class BlobStorageClient:
                 if e.error_code == KEY_AUTHENTICATION_ERROR_CODE:  # pylint: disable=no-member
                     formatted_msg = SAS_KEY_AUTHENTICATION_ERROR_MSG.format(
                         e.error_code, e.exc_value
+                    )
                     exception_with_documentation = Exception(formatted_msg)
                     exception_with_documentation.__traceback__ = e.exc_traceback
                     raise exception_with_documentation from e

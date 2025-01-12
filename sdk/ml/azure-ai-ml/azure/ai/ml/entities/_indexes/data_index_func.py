@@ -3,7 +3,6 @@
 # ---------------------------------------------------------
 # pylint: disable=protected-access
 # pylint: disable=no-member
-# pylint: disable=unused-argument
 
 import json
 import re
@@ -76,6 +75,8 @@ def index_data(
     :type description: str
     :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict[str, str]
+    :keyword name: Name of the job.
+    :type name: str
     :keyword display_name: Display name of the job.
     :type display_name: str
     :keyword experiment_name: Name of the experiment the job will be created under.

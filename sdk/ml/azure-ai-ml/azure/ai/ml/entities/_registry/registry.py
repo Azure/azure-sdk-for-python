@@ -194,7 +194,7 @@ class Registry(Resource):
             # Apply container_registry as acr_config of each region detail
             if global_acr_exists:
                 if not hasattr(region_detail, "acr_details") or len(region_detail.acr_details) == 0:
-                    region_detail.acr_config = [acr_input]
+                    region_detail.acr_config = [acr_input] # pylint: disable=(possibly-used-before-assignment
 
     def _to_rest_object(self) -> RestRegistry:
         """Build current parameterized schedule instance to a registry object before submission.

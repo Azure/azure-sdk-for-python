@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,no-member,arguments-renamed,unidiomatic-typecheck
+# pylint: disable=protected-access,arguments-renamed,unidiomatic-typecheck
 
 import logging
 import os
@@ -226,7 +226,7 @@ class OnlineDeployment(Deployment):
                 elif not isinstance(self.code_configuration.code, os.PathLike):
                     code_id = self.code_configuration.code.id
 
-                code = RestCodeConfiguration(code_id=code_id, scoring_script=self.code_configuration.scoring_script)
+                code = RestCodeConfiguration(code_id=code_id, scoring_script=self.code_configuration.scoring_script)  # pylint: disable=(possibly-used-before-assignment
 
         model_id = None
         if self.model:

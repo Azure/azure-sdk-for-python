@@ -508,7 +508,7 @@ class DistillationJob(Job, JobIOMixin):
         if isinstance(self.student_model, MLFlowModelJobInput):
             self.student_model = Input(
                 type=AssetTypes.MLFLOW_MODEL, path=self.student_model.uri
-            )  
+            )
 
     def __eq__(self, other: object) -> bool:
         """Returns True if both instances have the same values.

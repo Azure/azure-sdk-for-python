@@ -138,7 +138,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
             path=rest_model_version.model_uri,
             description=rest_model_version.description,
             tags=rest_model_version.tags,
-            flavors=flavors,
+            flavors=flavors, # pylint: disable=possibly-used-before-assignment
             properties=rest_model_version.properties,
             stage=model_stage,
             # pylint: disable=protected-access

@@ -6,8 +6,14 @@
 
 from typing import Iterable
 
-from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient202401Preview
-from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._restclient.v2024_01_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient202401Preview,
+)
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationScope,
+    _ScopeDependentOperations,
+)
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
@@ -37,7 +43,11 @@ class MarketplaceSubscriptionOperations(_ScopeDependentOperations):
         self._service_client = service_client.marketplace_subscriptions
 
     @experimental
-    @monitor_with_activity(ops_logger, "MarketplaceSubscription.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(
+        ops_logger,
+        "MarketplaceSubscription.BeginCreateOrUpdate",
+        ActivityType.PUBLICAPI,
+    )
     def begin_create_or_update(
         self, marketplace_subscription: MarketplaceSubscription, **kwargs
     ) -> LROPoller[MarketplaceSubscription]:
@@ -58,7 +68,9 @@ class MarketplaceSubscriptionOperations(_ScopeDependentOperations):
         )
 
     @experimental
-    @monitor_with_activity(ops_logger, "MarketplaceSubscription.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(
+        ops_logger, "MarketplaceSubscription.Get", ActivityType.PUBLICAPI
+    )
     def get(self, name: str, **kwargs) -> MarketplaceSubscription:
         """Get a Marketplace Subscription resource.
 
@@ -76,7 +88,9 @@ class MarketplaceSubscriptionOperations(_ScopeDependentOperations):
         )
 
     @experimental
-    @monitor_with_activity(ops_logger, "MarketplaceSubscription.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(
+        ops_logger, "MarketplaceSubscription.List", ActivityType.PUBLICAPI
+    )
     def list(self, **kwargs) -> Iterable[MarketplaceSubscription]:
         """List marketplace subscriptions of the workspace.
 
@@ -91,7 +105,9 @@ class MarketplaceSubscriptionOperations(_ScopeDependentOperations):
         )
 
     @experimental
-    @monitor_with_activity(ops_logger, "MarketplaceSubscription.BeginDelete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(
+        ops_logger, "MarketplaceSubscription.BeginDelete", ActivityType.PUBLICAPI
+    )
     def begin_delete(self, name: str, **kwargs) -> LROPoller[None]:
         """Delete a Marketplace Subscription.
 

@@ -322,7 +322,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         if not isinstance(self.component, Component):
             return validation_result
         for key, meta in self.component.inputs.items():
-            if key not in used_pipeline_inputs:
+            if key not in used_pipeline_inputs:  # pylint: disable=possibly-used-before-assignment
                 # Only validate inputs certainly used.
                 continue
             # raise error when required input with no default value not set
@@ -537,7 +537,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
             source = ComponentSource.REMOTE_WORKSPACE_JOB
             rest_component_jobs = {}
         # add _source on pipeline job.settings
-        if "_source" not in settings_dict:
+        if "_source" not in settings_dict: # pylint: disable=possibly-used-before-assignment
             settings_dict.update({"_source": source})
 
         # TODO: Revisit this logic when multiple types of component jobs are supported

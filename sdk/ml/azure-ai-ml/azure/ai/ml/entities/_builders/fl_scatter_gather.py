@@ -269,7 +269,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
             do_while(
                 body=scatter_gather_body,  # type: ignore[arg-type]
-                mapping=do_while_mapping,
+                mapping=do_while_mapping, # pylint: disable=possibly-used-before-assignment
                 max_iteration_count=self.max_iterations,
             )
             res_scatter: PipelineJob = scatter_gather_body.outputs  # type: ignore[assignment]
