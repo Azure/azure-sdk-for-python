@@ -43,7 +43,7 @@ class TestBaseAgentEventHandler:
 
     def test_event_handler_process_response_when_break_around_event_separators(self):
         # events are split into multiple chunks.
-        # Each chunk might contains more than one or incompleted response.
+        # Each chunk might contains more than one or incomplete response.
         # Test the chunks are borken around the event separators which are "\n\n"
         handler = self.MyAgentEventhHandler()
         new_line_indices = [i for i in range(len(main_stream_response)) if main_stream_response.startswith("\n\n", i)]
@@ -141,7 +141,7 @@ class TestBaseAgentEventHandler:
 
 class TestAgentEventHandler:
 
-    deseriazable_events = [
+    deserializable_events = [
         AgentStreamEvent.THREAD_CREATED.value,
         AgentStreamEvent.ERROR.value,
         AgentStreamEvent.DONE.value,
@@ -174,20 +174,19 @@ class TestAgentEventHandler:
     @patch("azure.ai.projects.models._patch.AgentEventHandler.on_unhandled_event")
     @pytest.mark.parametrize("event_type", [e.value for e in AgentStreamEvent])
     def test_parse_event(self, mock_on_unhandled_event: Mock, event_type: str):
-        # Make sure all the event types defined in AgentStreamEvent are deserialized except Created, Done, and Error
+        # Make sure all the event types defined in AgentStreamEvent are deserializable except Created, Done, and Error
         # And ensure handle_event is never raised.
 
         handler = self.MyAgentEventHandler()
         event_data_str = f"event: {event_type}\ndata: {{}}"
         _, event_obj, _ = handler._process_event(event_data_str)
 
-        if event_type in self.deseriazable_events:
+        if event_type in self.deserializable_events:
             assert isinstance(event_obj, str)
         else:
             assert not isinstance(event_obj, str)
 
         # The only event we are not handling today is CREATED which is never sent by backend.
-        # If this fails, consider adding a new event handler.
         if event_type == AgentStreamEvent.THREAD_CREATED.value:
             assert mock_on_unhandled_event.call_count == 1
         else:

@@ -2,11 +2,12 @@
 
 ## 1.0.0b5 (Unreleased)
 
-### Features Added
-
 ### Bugs Fixed
+* Fix events dropped in streaming (see [GitHub issue 39028](https://github.com/Azure/azure-sdk-for-python/issues/39028)).
+* Deserialize events, `thread.run.incomplete` into `ThreadRun` and raise `on_thread_run` method calls in event handlers. 
 
 ### Breaking Changes
+* `submit_tool_outputs_to_run` returns `None` instead of `ThreadRun` (see [GitHub issue 39028](https://github.com/Azure/azure-sdk-for-python/issues/39028)).
 
 ## 1.0.0b4 (2024-12-20)
 
