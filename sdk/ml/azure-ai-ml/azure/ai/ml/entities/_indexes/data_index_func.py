@@ -69,7 +69,7 @@ def index_data(
     """
     Create a PipelineJob object which can be used inside dsl.pipeline.
 
-    :keywork data_index: The data index configuration.
+    :keyword data_index: The data index configuration.
     :type data_index: DataIndex
     :keyword description: Description of the job.
     :type description: str
