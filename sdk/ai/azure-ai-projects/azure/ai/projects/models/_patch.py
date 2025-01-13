@@ -241,7 +241,7 @@ class ConnectionProperties:
                 self.key = connection.properties.credentials.key  # type: ignore
         self.token_credential = token_credential
 
-    def to_evaluator_model_config(self, deployment_name, api_version) -> Dict[str, str]:
+    def to_evaluator_model_config(self, deployment_name, api_version, *, include_credentials=False) -> Dict[str, str]:
         connection_type = self.connection_type.value
         if self.connection_type.value == ConnectionType.AZURE_OPEN_AI:
             connection_type = "azure_openai"
@@ -252,7 +252,7 @@ class ConnectionProperties:
                 "azure_endpoint": self.endpoint_url,
                 "type": connection_type,
                 "api_version": api_version,
-                "api_key": f"{self.id}/credentials/key",
+                "api_key": self.key if include_credentials else f"{self.id}/credentials/key" ,
             }
         else:
             model_config = {
