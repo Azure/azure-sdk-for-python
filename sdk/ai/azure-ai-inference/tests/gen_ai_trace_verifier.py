@@ -125,7 +125,9 @@ class GenAiTraceVerifier:
         prev_event = None
         for actual_event in list(span.events):
             if prev_event is not None and actual_event.timestamp <= prev_event.timestamp:
-                print(f"Event {actual_event.name} has a timestamp {actual_event.timestamp} that is not greater than the previous event's timestamp {prev_event.timestamp}, {prev_event.name}")
+                print(
+                    f"Event {actual_event.name} has a timestamp {actual_event.timestamp} that is not greater than the previous event's timestamp {prev_event.timestamp}, {prev_event.name}"
+                )
                 return False
             prev_event = actual_event
 

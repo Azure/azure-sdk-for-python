@@ -474,6 +474,7 @@ __all__: List[str] = [
     "AssistantMessage",
     "AsyncStreamingChatCompletions",
     "ChatCompletions",
+    "ChatRequestMessage",
     "EmbeddingsResult",
     "ImageEmbeddingInput",
     "ImageUrl",
