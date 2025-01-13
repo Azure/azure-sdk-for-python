@@ -168,7 +168,6 @@ class TestRunOps(LoadtestingAsyncTest):
         result = await run_client.stop_test_run("my-new-test-run-from-pytest-aio-abc")
         assert result is not None
 
-    @pytest.mark.live_test_only
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy_async
     async def test_get_metrics(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id):
