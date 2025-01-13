@@ -170,7 +170,7 @@ class TestRunOps(LoadtestingTest):
         with pytest.raises(ResourceNotFoundError):
             run_client.stop_test_run(NON_EXISTING_RESOURCE)
 
-
+    @pytest.mark.live_test_only
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy
     def test_get_metrics(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_run_id):
