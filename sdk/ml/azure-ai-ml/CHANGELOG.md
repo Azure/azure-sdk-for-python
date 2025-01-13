@@ -12,6 +12,11 @@
   - Fixed disableLocalAuthentication handling while creating amlCompute
   - Fixed model download issue
 
+## 1.23.1 (2025-01-07)
+
+### Bugs Fixed
+  - Removed marshmallow _T reference
+
 ## 1.23.0 (2024-12-05)
 
 ### Features Added

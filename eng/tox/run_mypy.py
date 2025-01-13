@@ -80,7 +80,9 @@ if __name__ == "__main__":
         )
     else:
         # check if samples dir exists, if not, skip sample code check
-        if not os.path.exists(os.path.join(args.target_package, "samples")):
+        samples = os.path.exists(os.path.join(args.target_package, "samples"))
+        generated_samples = os.path.exists(os.path.join(args.target_package, "generated_samples"))
+        if not samples and not generated_samples:
             logging.info(
                 f"Package {package_name} does not have a samples directory."
             )
@@ -89,7 +91,7 @@ if __name__ == "__main__":
                 *commands,
                 "--check-untyped-defs",
                 "--follow-imports=silent",
-                os.path.join(args.target_package, "samples")
+                os.path.join(args.target_package, "samples" if samples else "generated_samples"),
             ]
             try:
                 logging.info(

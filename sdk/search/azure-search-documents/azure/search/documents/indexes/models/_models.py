@@ -442,6 +442,7 @@ class SentimentSkill(SearchIndexerSkill):
 
 class AnalyzeTextOptions(_serialization.Model):
     """Specifies some text and analysis components used to break that text into tokens."""
+
     def __init__(
         self,
         *,
@@ -1414,7 +1415,7 @@ class SearchIndexer(_serialization.Model):  # pylint: disable=too-many-instance-
 
     def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
         """Return the JSON that would be sent to server from this model.
-        
+
         :param bool keep_readonly: If you want to serialize the readonly attributes
         :returns: A dict JSON compatible object
         :rtype: dict

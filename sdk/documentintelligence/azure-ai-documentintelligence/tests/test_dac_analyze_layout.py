@@ -226,7 +226,6 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         assert layout.pages[0].barcodes[0].polygon
         assert layout.pages[0].barcodes[0].confidence > 0.8
 
-    @pytest.mark.skip("Failing in playback. Tracking issue: https://github.com/Azure/azure-sdk-for-python/issues/38881")
     @skip_flaky_test
     @DocumentIntelligencePreparer()
     @recorded_by_proxy

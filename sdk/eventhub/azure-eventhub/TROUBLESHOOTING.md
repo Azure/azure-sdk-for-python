@@ -188,20 +188,20 @@ When filing GitHub issues, the following details are requested:
 [MigrationGuide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/migration_guide.md
 [SUPPORT]: https://github.com/Azure/azure-sdk-for-python/blob/main/SUPPORT.md
 
-<!-- docs.microsoft.com links -->
-[ExceptionModule]: https://docs.microsoft.com/python/api/azure-eventhub/azure.eventhub.exceptions
-[EventHubError]: https://docs.microsoft.com/python/api/azure-eventhub/azure.eventhub.exceptions.eventhuberror
-[AmqpTroubleshooting]: https://docs.microsoft.com/azure/service-bus-messaging/service-bus-amqp-troubleshoot
-[AuthorizeSAS]: https://docs.microsoft.com/azure/event-hubs/authorize-access-shared-access-signature
-[RBACRoles]: https://docs.microsoft.com/azure/event-hubs/troubleshoot-authentication-authorization
-[Epoch]: https://docs.microsoft.com/azure/event-hubs/event-hubs-event-processor-host#epoch
-[EventHubsIPAddresses]: https://docs.microsoft.com/azure/event-hubs/troubleshooting-guide#what-ip-addresses-do-i-need-to-allow
-[EventHubsMessagingExceptions]: https://docs.microsoft.com/azure/event-hubs/event-hubs-messaging-exceptions
-[EventHubsTroubleshooting]: https://docs.microsoft.com/azure/event-hubs/troubleshooting-guide
-[GetConnectionString]: https://docs.microsoft.com/azure/event-hubs/event-hubs-get-connection-string
-[IoTEventHubEndpoint]: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messages-read-builtin
-[IoTHubSAS]: https://docs.microsoft.com/azure/iot-hub/iot-hub-dev-guide-sas#security-tokens
-[TroubleshootAuthenticationAuthorization]: https://docs.microsoft.com/azure/event-hubs/troubleshoot-authentication-authorization
+<!-- learn.microsoft.com links -->
+[ExceptionModule]: https://learn.microsoft.com/python/api/azure-eventhub/azure.eventhub.exceptions
+[EventHubError]: https://learn.microsoft.com/python/api/azure-eventhub/azure.eventhub.exceptions.eventhuberror
+[AmqpTroubleshooting]: https://learn.microsoft.com/azure/service-bus-messaging/service-bus-amqp-troubleshoot
+[AuthorizeSAS]: https://learn.microsoft.com/azure/event-hubs/authorize-access-shared-access-signature
+[RBACRoles]: https://learn.microsoft.com/azure/event-hubs/troubleshoot-authentication-authorization
+[Epoch]: https://learn.microsoft.com/azure/event-hubs/event-hubs-event-processor-host#epoch
+[EventHubsIPAddresses]: https://learn.microsoft.com/azure/event-hubs/troubleshooting-guide#what-ip-addresses-do-i-need-to-allow
+[EventHubsMessagingExceptions]: https://learn.microsoft.com/azure/event-hubs/event-hubs-messaging-exceptions
+[EventHubsTroubleshooting]: https://learn.microsoft.com/azure/event-hubs/troubleshooting-guide
+[GetConnectionString]: https://learn.microsoft.com/azure/event-hubs/event-hubs-get-connection-string
+[IoTEventHubEndpoint]: https://learn.microsoft.com/azure/iot-hub/iot-hub-devguide-messages-read-builtin
+[IoTHubSAS]: https://learn.microsoft.com/azure/iot-hub/iot-hub-dev-guide-sas#security-tokens
+[TroubleshootAuthenticationAuthorization]: https://learn.microsoft.com/azure/event-hubs/troubleshoot-authentication-authorization
 
 <!-- external links -->
 [AuthenticationAndTheAzureSDK]: https://devblogs.microsoft.com/azure-sdk/authentication-and-the-azure-sdk
