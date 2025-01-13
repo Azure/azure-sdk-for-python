@@ -40,6 +40,6 @@ python: true
 Batch execution allows nested generation without the parent module overwriting the child.
 ```yaml
 batch:
-  - tag: confidential-ledger
   - tag: identity-service
+  - tag: confidential-ledger
 ```
