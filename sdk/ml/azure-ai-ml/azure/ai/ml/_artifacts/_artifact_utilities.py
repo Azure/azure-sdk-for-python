@@ -189,8 +189,11 @@ def list_logs_in_datastore(
             )
 
         log_dict[sub_name] = "{}/{}/{}?{}".format(
-            ds_info["account_url"], ds_info["container_name"], item_name, token
-        )  # pylint: disable=possibly-used-before-assignment
+            ds_info["account_url"],
+            ds_info["container_name"],
+            item_name,
+            token,  # pylint: disable=possibly-used-before-assignment
+        )
     return log_dict
 
 

@@ -227,8 +227,9 @@ class OnlineDeployment(Deployment):
                     code_id = self.code_configuration.code.id
 
                 code = RestCodeConfiguration(
-                    code_id=code_id, scoring_script=self.code_configuration.scoring_script
-                )  # pylint: disable=(possibly-used-before-assignment
+                    code_id=code_id,  # pylint: disable=possibly-used-before-assignment
+                    scoring_script=self.code_configuration.scoring_script,
+                )
 
         model_id = None
         if self.model:
