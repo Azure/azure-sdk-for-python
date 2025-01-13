@@ -65,7 +65,15 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     :paramtype context: Dict[str, str]
     """
 
-    def __init__(self, span: Optional[Span] = None, name: Optional[str] = "span", *, kind: Optional["SpanKind"] = None, links: Optional[List["CoreLink"]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        span: Optional[Span] = None,
+        name: Optional[str] = "span",
+        *,
+        kind: Optional["SpanKind"] = None,
+        links: Optional[List["CoreLink"]] = None,
+        **kwargs: Any,
+    ) -> None:
         self._context_tokens = []
         self._current_ctxt_manager: Optional[ContextManager[Span]] = None
 
@@ -148,7 +156,14 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         """
         return self._span_instance
 
-    def span(self, name: str = "span", *, kind: Optional["SpanKind"] = None, links: Optional[List["CoreLink"]] = None, **kwargs: Any) -> "OpenTelemetrySpan":
+    def span(
+        self,
+        name: str = "span",
+        *,
+        kind: Optional["SpanKind"] = None,
+        links: Optional[List["CoreLink"]] = None,
+        **kwargs: Any,
+    ) -> "OpenTelemetrySpan":
         """Create a child span for the current span and return it.
 
         :param name: Name of the child span

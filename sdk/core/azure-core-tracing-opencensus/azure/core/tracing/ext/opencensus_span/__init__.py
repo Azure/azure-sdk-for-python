@@ -41,7 +41,15 @@ _config_integration.trace_integrations(["threading"])
 class OpenCensusSpan(HttpSpanMixin, object):
     """Wraps a given OpenCensus Span so that it implements azure.core.tracing.AbstractSpan"""
 
-    def __init__(self, span: Optional[Span] = None, name: Optional[str] = "span", *, kind: Optional["SpanKind"] = None, links: Optional[List["CoreLink"]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, # pylint: disable=unused-argument
+        span: Optional[Span] = None,
+        name: Optional[str] = "span",
+        *,
+        kind: Optional["SpanKind"] = None,
+        links: Optional[List["CoreLink"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         If a span is not passed in, creates a new tracer. If the instrumentation key for Azure Exporter is given, will
         configure the azure exporter else will just create a new tracer.
@@ -108,7 +116,14 @@ class OpenCensusSpan(HttpSpanMixin, object):
         """
         return self._span_instance
 
-    def span(self, name: Optional[str] = "span", *, kind: Optional["SpanKind"] = None, links: Optional[List["CoreLink"]] = None, **kwargs: Any) -> "OpenCensusSpan":
+    def span(
+        self,
+        name: Optional[str] = "span",
+        *,
+        kind: Optional["SpanKind"] = None,
+        links: Optional[List["CoreLink"]] = None,
+        **kwargs: Any
+    ) -> "OpenCensusSpan":
         """Create a child span for the current span and append it to the child spans list in the span instance.
 
         :param name: Name of the child span
