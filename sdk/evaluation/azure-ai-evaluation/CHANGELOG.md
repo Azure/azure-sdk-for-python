@@ -13,6 +13,7 @@
 
 ### Other Changes
 - Changed minimum required python version to use this package from 3.8 to 3.9
+- Stop dependency on the local promptflow service. No promptflow service will automatically start when running evaluation.
 
 ## 1.1.0 (2024-12-12)
 

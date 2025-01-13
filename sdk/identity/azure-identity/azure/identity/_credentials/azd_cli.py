@@ -278,7 +278,7 @@ def _run_command(command: str, timeout: int) -> str:
         # failed to execute 'cmd' or '/bin/sh'
         error = CredentialUnavailableError(message="Failed to execute '{}'".format(args[0]))
         raise error from ex
-    except Exception as ex:  # pylint:disable=broad-except
+    except Exception as ex:
         # could be a timeout, for example
         error = CredentialUnavailableError(message="Failed to invoke the Azure Developer CLI")
         raise error from ex
