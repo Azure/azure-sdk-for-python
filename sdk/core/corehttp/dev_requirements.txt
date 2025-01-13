@@ -9,3 +9,5 @@ httpx>=0.25.0
 azure-storage-blob
 azure-data-tables
 azure-identity
+opentelemetry-sdk~=1.26
+opentelemetry-instrumentation-requests>=0.50b0

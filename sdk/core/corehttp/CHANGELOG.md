@@ -10,6 +10,12 @@
 - `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` now check if a credential has the `get_token_info` method defined. If so, the `get_token_info` method is used to acquire a token. [#38346](https://github.com/Azure/azure-sdk-for-python/pull/38346)
   - These policies now also check the `refresh_on` attribute when determining if a new token request should be made.
 - Added `model` attribute to `HttpResponseError` to allow accessing error attributes based on a known model. [#39636](https://github.com/Azure/azure-sdk-for-python/pull/39636)
+- Native tracing support was added. [#39172](https://github.com/Azure/azure-sdk-for-python/pull/39172)
+  - `DistributedHttpTracingPolicy` and `distributed_trace`/`distributed_trace_async` decorators were added to support OpenTelemetry tracing.
+    - A new `TracerProvider` class was added, allowing SDK developers to pass in various metadata to the OpenTelemetry tracer and spans.
+    - `OpenTelemetryTracer` and `OpenTelemetrySpan` classes were added to the `corehttp.instrumentation.tracing` namespace. `OpenTelemetryTracer` is a wrapper around the OpenTelemetry tracer, and `OpenTelemetrySpan` is a wrapper around the OpenTelemetry span.
+    - A `TracingOptions` TypedDict class was added to define the options that SDK users can use to configure tracing per-operation. These options include the ability to enable or disable tracing, set additional attributes on spans, and disable recording exceptions as events on spans.
+- Added a global settings object, `corehttp.settings`, to the `corehttp` package. This object can be used to set global settings for the `corehttp` package. Currently the only setting is `tracing_enabled` for enabling/disabling tracing. [#39172](https://github.com/Azure/azure-sdk-for-python/pull/39172)
 
 ### Breaking Changes
 
@@ -20,6 +26,8 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+- Added `opentelemetry-api` as an optional dependency for tracing. [#39172](https://github.com/Azure/azure-sdk-for-python/pull/39172)
 
 ## 1.0.0b5 (2024-02-29)
 
