@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Implements azure.core.tracing.AbstractSpan to wrap OpenTelemetry spans."""
-from typing import Any, ContextManager, Dict, Optional, Union, Callable, Sequence, cast
+from typing import Any, ContextManager, Dict, Optional, Union, Callable, Sequence, cast, List, TYPE_CHECKING
 import warnings
 
 from opentelemetry import context, trace
@@ -28,6 +28,8 @@ from azure.core.tracing import SpanKind, HttpSpanMixin  # type: ignore[attr-defi
 from ._schema import OpenTelemetrySchema
 from ._version import VERSION
 
+if TYPE_CHECKING:
+    from azure.core.tracing import Link as CoreLink
 
 AttributeValue = Union[
     str,
@@ -63,7 +65,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     :paramtype context: Dict[str, str]
     """
 
-    def __init__(self, span: Optional[Span] = None, name: Optional[str] = "span", **kwargs: Any) -> None:
+    def __init__(self, span: Optional[Span] = None, name: Optional[str] = "span", *, kind: Optional["SpanKind"] = None, links: Optional[List["CoreLink"]] = None, **kwargs: Any) -> None:
         self._context_tokens = []
         self._current_ctxt_manager: Optional[ContextManager[Span]] = None
 
@@ -76,7 +78,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
             return
 
         ## kind
-        span_kind = kwargs.pop("kind", None)
+        span_kind = kind
         otel_kind = (
             OpenTelemetrySpanKind.CLIENT
             if span_kind == SpanKind.CLIENT
@@ -118,7 +120,6 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
             schema_url=OpenTelemetrySchema.get_schema_url(self._schema_version),
         )
 
-        links = kwargs.pop("links", None)
         if links:
             try:
                 ot_links = []
@@ -147,7 +148,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         """
         return self._span_instance
 
-    def span(self, name: str = "span", **kwargs: Any) -> "OpenTelemetrySpan": #pylint:disable=docstring-keyword-should-match-keyword-only
+    def span(self, name: str = "span", *, kind: Optional["SpanKind"] = None, links: Optional[List["CoreLink"]] = None, **kwargs: Any) -> "OpenTelemetrySpan":
         """Create a child span for the current span and return it.
 
         :param name: Name of the child span
@@ -159,7 +160,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         :return: The OpenTelemetrySpan that is wrapping the child span instance.
         :rtype: ~azure.core.tracing.ext.opentelemetry_span.OpenTelemetrySpan
         """
-        return self.__class__(name=name, **kwargs)
+        return self.__class__(name=name, kind=kind, links=links, **kwargs)
 
     @property
     def kind(self) -> Optional[SpanKind]:

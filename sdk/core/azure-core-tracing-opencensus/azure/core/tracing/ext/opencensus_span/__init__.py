@@ -4,7 +4,7 @@
 # ------------------------------------
 """Implements azure.core.tracing.AbstractSpan to wrap opencensus spans."""
 import warnings
-from typing import Dict, Optional, Union, Callable, Sequence, Any, Generator
+from typing import Dict, Optional, Union, Callable, Sequence, Any, Generator, List, TYPE_CHECKING
 
 from opencensus.trace import Span, execution_context
 from opencensus.trace.tracer import Tracer
@@ -16,6 +16,9 @@ from opencensus.trace import config_integration as _config_integration
 from azure.core.tracing import SpanKind, HttpSpanMixin  # type: ignore[attr-defined]  # pylint: disable=no-name-in-module
 
 from ._version import VERSION
+
+if TYPE_CHECKING:
+    from azure.core.tracing import Link as CoreLink
 
 
 AttributeValue = Union[
@@ -38,7 +41,7 @@ _config_integration.trace_integrations(["threading"])
 class OpenCensusSpan(HttpSpanMixin, object):
     """Wraps a given OpenCensus Span so that it implements azure.core.tracing.AbstractSpan"""
 
-    def __init__(self, span: Optional[Span] = None, name: Optional[str] = "span", **kwargs: Any) -> None:
+    def __init__(self, span: Optional[Span] = None, name: Optional[str] = "span", *, kind: Optional["SpanKind"] = None, links: Optional[List["CoreLink"]] = None, **kwargs: Any) -> None:
         """
         If a span is not passed in, creates a new tracer. If the instrumentation key for Azure Exporter is given, will
         configure the azure exporter else will just create a new tracer.
@@ -52,7 +55,7 @@ class OpenCensusSpan(HttpSpanMixin, object):
         :paramtype links: list[~azure.core.tracing.Link]
         """
         tracer = self.get_current_tracer()
-        value = kwargs.pop("kind", None)
+        value = kind
         kind: Optional[SpanKind] = (
             OpenCensusSpanKind.CLIENT
             if value == SpanKind.CLIENT
@@ -81,7 +84,6 @@ class OpenCensusSpan(HttpSpanMixin, object):
         if value and kind is None:
             raise ValueError("Kind {} is not supported in OpenCensus".format(value))
 
-        links = kwargs.pop("links", None)
         self._span_instance = span or tracer.start_span(name=name)
         if kind is not None:
             self._span_instance.span_kind = kind
@@ -106,7 +108,7 @@ class OpenCensusSpan(HttpSpanMixin, object):
         """
         return self._span_instance
 
-    def span(self, name: Optional[str] = "span", **kwargs: Any) -> "OpenCensusSpan": #pylint:disable=docstring-keyword-should-match-keyword-only
+    def span(self, name: Optional[str] = "span", *, kind: Optional["SpanKind"] = None, links: Optional[List["CoreLink"]] = None, **kwargs: Any) -> "OpenCensusSpan":
         """Create a child span for the current span and append it to the child spans list in the span instance.
 
         :param name: Name of the child span
@@ -117,7 +119,7 @@ class OpenCensusSpan(HttpSpanMixin, object):
         :return: The OpenCensusSpan that is wrapping the child span instance
         :rtype: OpenCensusSpan
         """
-        return self.__class__(name=name, **kwargs)
+        return self.__class__(name=name, kind=kind, links=links, **kwargs)
 
     _KIND_MAPPING = {
         SpanKind.CLIENT: OpenCensusSpanKind.CLIENT,
