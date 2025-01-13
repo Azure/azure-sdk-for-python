@@ -8,6 +8,9 @@
 * Added support for Chat Completions response message in JSON format that adheres to a given JSON schema. Also known
 as "structured output". See new samples `sample_chat_completions_with_structured_output.py` and
 `sample_chat_completions_with_structured_output_pydantic.py`.
+* Made input argument `content` a positional argument (in addition to keyword argument), in the constructors of
+`UserMessage`, `SystemMessage`, `AssistantMessage` and `ToolMessage`. For example you no longer need to write
+`UserMessage(content="my message")`. Simply write `UserMessage("my message")`. All samples were updated accordingly.
 
 ### Breaking Changes
 
@@ -16,6 +19,7 @@ as "structured output". See new samples `sample_chat_completions_with_structured
 ### Bugs Fixed
 
 * Fix a bug that would cause an error when tracing was enabled and azure-core-tracing-opentelemetry was not installed and asynchronous chat completion was used.
+* Enforce distinct timestamps on prompt and completion tracing events to preserve the order for chat history.
 
 ## 1.0.0b6 (2024-11-11)
 

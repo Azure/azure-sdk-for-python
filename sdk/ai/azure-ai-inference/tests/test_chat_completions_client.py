@@ -135,8 +135,8 @@ class TestChatCompletionsClient(ModelClientTestBase):
             try:
                 _ = client.complete(
                     messages=[
-                        sdk.models.SystemMessage(content="system prompt"),
-                        sdk.models.UserMessage(content="user prompt 1"),
+                        sdk.models.SystemMessage("system prompt"),
+                        sdk.models.UserMessage("user prompt 1"),
                         sdk.models.AssistantMessage(
                             tool_calls=[
                                 sdk.models.ChatCompletionsToolCall(
@@ -154,10 +154,10 @@ class TestChatCompletionsClient(ModelClientTestBase):
                                 ),
                             ]
                         ),
-                        sdk.models.ToolMessage(tool_call_id="some id", content="function response"),
-                        sdk.models.AssistantMessage(content="assistant prompt"),
+                        sdk.models.ToolMessage("function response", tool_call_id="some id"),
+                        sdk.models.AssistantMessage("assistant prompt"),
                         sdk.models.UserMessage(
-                            content=[
+                            [
                                 sdk.models.TextContentItem(text="user prompt 2"),
                                 sdk.models.ImageContentItem(
                                     image_url=sdk.models.ImageUrl(
@@ -335,15 +335,15 @@ class TestChatCompletionsClient(ModelClientTestBase):
     def test_chat_completions_multi_turn(self, **kwargs):
         client = self._create_chat_client(**kwargs)
         messages = [
-            sdk.models.SystemMessage(content="You are a helpful assistant answering questions regarding length units."),
-            sdk.models.UserMessage(content="How many feet are in a mile?"),
+            sdk.models.SystemMessage("You are a helpful assistant answering questions regarding length units."),
+            sdk.models.UserMessage("How many feet are in a mile?"),
         ]
         response = client.complete(messages=messages)
         self._print_chat_completions_result(response)
         self._validate_chat_completions_result(response, ["5280", "5,280"])
         assert json.dumps(response.as_dict(), indent=2) == response.__str__()
-        messages.append(sdk.models.AssistantMessage(content=response.choices[0].message.content))
-        messages.append(sdk.models.UserMessage(content="and how many yards?"))
+        messages.append(sdk.models.AssistantMessage(response.choices[0].message.content))
+        messages.append(sdk.models.UserMessage("and how many yards?"))
         response = client.complete(messages=messages)
         self._print_chat_completions_result(response)
         self._validate_chat_completions_result(response, ["1760", "1,760"])
@@ -393,8 +393,8 @@ class TestChatCompletionsClient(ModelClientTestBase):
         response = client.complete(
             stream=True,
             messages=[
-                sdk.models.SystemMessage(content="You are a helpful assistant."),
-                sdk.models.UserMessage(content="Give me 3 good reasons why I should exercise every day."),
+                sdk.models.SystemMessage("You are a helpful assistant."),
+                sdk.models.UserMessage("Give me 3 good reasons why I should exercise every day."),
             ],
         )
         self._validate_chat_completions_streaming_result(response)
@@ -549,8 +549,8 @@ class TestChatCompletionsClient(ModelClientTestBase):
         )
         print(type(response_format))
         messages = [
-            sdk.models.SystemMessage(content="You are a helpful assistant answering questions on US geography"),
-            sdk.models.UserMessage(content="What's the distance between Seattle and Portland, as the crow flies?"),
+            sdk.models.SystemMessage("You are a helpful assistant answering questions on US geography"),
+            sdk.models.UserMessage("What's the distance between Seattle and Portland, as the crow flies?"),
         ]
         response = client.complete(messages=messages, response_format=response_format)
         self._print_chat_completions_result(response)
@@ -571,7 +571,7 @@ class TestChatCompletionsClient(ModelClientTestBase):
         client = self._create_chat_client(bad_key=True, **kwargs)
         exception_caught = False
         try:
-            response = client.complete(messages=[sdk.models.UserMessage(content="How many feet are in a mile?")])
+            response = client.complete(messages=[sdk.models.UserMessage("How many feet are in a mile?")])
         except AzureError as e:
             exception_caught = True
             print(e)

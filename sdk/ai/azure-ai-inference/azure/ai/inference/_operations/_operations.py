@@ -194,7 +194,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
     def _complete(
         self,
         *,
-        messages: List[_models.ChatRequestMessage],
+        messages: List[_models._models.ChatRequestMessage],
         extra_params: Optional[Union[str, _models._enums.ExtraParameters]] = None,
         content_type: str = "application/json",
         frequency_penalty: Optional[float] = None,
@@ -228,7 +228,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        messages: List[_models.ChatRequestMessage] = _Unset,
+        messages: List[_models._models.ChatRequestMessage] = _Unset,
         extra_params: Optional[Union[str, _models._enums.ExtraParameters]] = None,
         frequency_penalty: Optional[float] = None,
         stream_parameter: Optional[bool] = None,
@@ -259,7 +259,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
          Typical usage begins with a chat message for the System role that provides instructions for
          the behavior of the assistant, followed by alternating messages between the User and
          Assistant roles. Required.
-        :paramtype messages: list[~azure.ai.inference.models.ChatRequestMessage]
+        :paramtype messages: list[~azure.ai.inference.models._models.ChatRequestMessage]
         :keyword extra_params: Controls what happens if extra parameters, undefined by the REST API,
          are passed in the JSON request payload.
          This sets the HTTP request header ``extra-parameters``. Known values are: "error", "drop", and

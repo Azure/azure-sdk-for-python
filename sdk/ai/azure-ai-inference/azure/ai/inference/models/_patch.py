@@ -14,8 +14,11 @@ import queue
 import re
 import sys
 
-from typing import Any, List, AsyncIterator, Iterator, Optional, Union
+from typing import Mapping, Literal, Any, List, AsyncIterator, Iterator, Optional, Union, overload
 from azure.core.rest import HttpResponse, AsyncHttpResponse
+from ._enums import ChatRole
+from .._model_base import rest_discriminator, rest_field
+from ._models import ChatRequestMessage
 from ._models import ImageUrl as ImageUrlGenerated
 from ._models import ChatCompletions as ChatCompletionsGenerated
 from ._models import EmbeddingsResult as EmbeddingsResultGenerated
@@ -28,6 +31,180 @@ else:
     from typing_extensions import Self
 
 logger = logging.getLogger(__name__)
+
+
+class UserMessage(ChatRequestMessage, discriminator="user"):
+    """A request chat message representing user input to the assistant.
+
+    :ivar role: The chat role associated with this message, which is always 'user' for user
+     messages. Required. The role that provides input for chat completions.
+    :vartype role: str or ~azure.ai.inference.models.USER
+    :ivar content: The contents of the user message, with available input types varying by selected
+     model. Required. Is either a str type or a [ContentItem] type.
+    :vartype content: str or list[~azure.ai.inference.models.ContentItem]
+    """
+
+    role: Literal[ChatRole.USER] = rest_discriminator(name="role")  # type: ignore
+    """The chat role associated with this message, which is always 'user' for user messages. Required.
+     The role that provides input for chat completions."""
+    content: Union["str", List["_models.ContentItem"]] = rest_field()
+    """The contents of the user message, with available input types varying by selected model.
+     Required. Is either a str type or a [ContentItem] type."""
+
+    @overload
+    def __init__(
+        self,
+        content: Union[str, List["_models.ContentItem"]],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        if len(args) == 1 and isinstance(args[0], (List, str)):
+            if kwargs.get("content") is not None:
+                raise ValueError("content cannot be provided as positional and keyword arguments")
+            kwargs["content"] = args[0]
+            args = tuple()
+        super().__init__(*args, role=ChatRole.USER, **kwargs)
+
+
+class SystemMessage(ChatRequestMessage, discriminator="system"):
+    """A request chat message containing system instructions that influence how the model will
+    generate a chat completions
+    response.
+
+    :ivar role: The chat role associated with this message, which is always 'system' for system
+     messages. Required. The role that instructs or sets the behavior of the assistant.
+    :vartype role: str or ~azure.ai.inference.models.SYSTEM
+    :ivar content: The contents of the system message. Required.
+    :vartype content: str
+    """
+
+    role: Literal[ChatRole.SYSTEM] = rest_discriminator(name="role")  # type: ignore
+    """The chat role associated with this message, which is always 'system' for system messages.
+     Required. The role that instructs or sets the behavior of the assistant."""
+    content: str = rest_field()
+    """The contents of the system message. Required."""
+
+    @overload
+    def __init__(
+        self,
+        content: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        if len(args) == 1 and isinstance(args[0], str):
+            if kwargs.get("content") is not None:
+                raise ValueError("content cannot be provided as positional and keyword arguments")
+            kwargs["content"] = args[0]
+            args = tuple()
+        super().__init__(*args, role=ChatRole.SYSTEM, **kwargs)
+
+
+class AssistantMessage(ChatRequestMessage, discriminator="assistant"):
+    """A request chat message representing response or action from the assistant.
+
+    :ivar role: The chat role associated with this message, which is always 'assistant' for
+     assistant messages. Required. The role that provides responses to system-instructed,
+     user-prompted input.
+    :vartype role: str or ~azure.ai.inference.models.ASSISTANT
+    :ivar content: The content of the message.
+    :vartype content: str
+    :ivar tool_calls: The tool calls that must be resolved and have their outputs appended to
+     subsequent input messages for the chat
+     completions request to resolve as configured.
+    :vartype tool_calls: list[~azure.ai.inference.models.ChatCompletionsToolCall]
+    """
+
+    role: Literal[ChatRole.ASSISTANT] = rest_discriminator(name="role")  # type: ignore
+    """The chat role associated with this message, which is always 'assistant' for assistant messages.
+     Required. The role that provides responses to system-instructed, user-prompted input."""
+    content: Optional[str] = rest_field()
+    """The content of the message."""
+    tool_calls: Optional[List["_models.ChatCompletionsToolCall"]] = rest_field()
+    """The tool calls that must be resolved and have their outputs appended to subsequent input
+     messages for the chat
+     completions request to resolve as configured."""
+
+    @overload
+    def __init__(
+        self,
+        content: Optional[str] = None,
+        *,
+        tool_calls: Optional[List["_models.ChatCompletionsToolCall"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        if len(args) == 1 and isinstance(args[0], str):
+            if kwargs.get("content") is not None:
+                raise ValueError("content cannot be provided as positional and keyword arguments")
+            kwargs["content"] = args[0]
+            args = tuple()
+        super().__init__(*args, role=ChatRole.ASSISTANT, **kwargs)
+
+
+class ToolMessage(ChatRequestMessage, discriminator="tool"):
+    """A request chat message representing requested output from a configured tool.
+
+    :ivar role: The chat role associated with this message, which is always 'tool' for tool
+     messages. Required. The role that represents extension tool activity within a chat completions
+     operation.
+    :vartype role: str or ~azure.ai.inference.models.TOOL
+    :ivar content: The content of the message.
+    :vartype content: str
+    :ivar tool_call_id: The ID of the tool call resolved by the provided content. Required.
+    :vartype tool_call_id: str
+    """
+
+    role: Literal[ChatRole.TOOL] = rest_discriminator(name="role")  # type: ignore
+    """The chat role associated with this message, which is always 'tool' for tool messages. Required.
+     The role that represents extension tool activity within a chat completions operation."""
+    content: Optional[str] = rest_field()
+    """The content of the message."""
+    tool_call_id: str = rest_field()
+    """The ID of the tool call resolved by the provided content. Required."""
+
+    @overload
+    def __init__(
+        self,
+        content: Optional[str] = None,
+        *,
+        tool_call_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        if len(args) == 1 and isinstance(args[0], str):
+            if kwargs.get("content") is not None:
+                raise ValueError("content cannot be provided as positional and keyword arguments")
+            kwargs["content"] = args[0]
+            args = tuple()
+        super().__init__(*args, role=ChatRole.TOOL, **kwargs)
 
 
 class ChatCompletions(ChatCompletionsGenerated):
@@ -294,12 +471,17 @@ class AsyncStreamingChatCompletions(BaseStreamingChatCompletions):
 
 
 __all__: List[str] = [
-    "ImageUrl",
-    "ImageEmbeddingInput",
-    "ChatCompletions",
-    "EmbeddingsResult",
-    "StreamingChatCompletions",
+    "AssistantMessage",
     "AsyncStreamingChatCompletions",
+    "ChatCompletions",
+    "ChatRequestMessage",
+    "EmbeddingsResult",
+    "ImageEmbeddingInput",
+    "ImageUrl",
+    "StreamingChatCompletions",
+    "SystemMessage",
+    "ToolMessage",
+    "UserMessage",
 ]  # Add all objects you want publicly available to users at this package level
 
 

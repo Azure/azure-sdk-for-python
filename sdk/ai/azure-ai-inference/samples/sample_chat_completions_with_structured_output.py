@@ -131,8 +131,8 @@ def sample_chat_completions_with_structured_output():
             strict=True,
         ),
         messages=[
-            SystemMessage(content="You are a helpful assistant."),
-            UserMessage(content="Please give me directions and ingredients to bake a chocolate cake."),
+            SystemMessage("You are a helpful assistant."),
+            UserMessage("Please give me directions and ingredients to bake a chocolate cake."),
         ],
     )
 
