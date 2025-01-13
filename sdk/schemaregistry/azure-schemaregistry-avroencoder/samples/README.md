@@ -62,4 +62,4 @@ what you can do with the Azure Schema Registry Avro Encoder library.
 [encode_and_decode_event_data_message_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroencoder/samples/async_samples/encode_and_decode_event_data_message_async.py
 [eventhub_send_integration_async_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroencoder/samples/async_samples/eventhub_send_integration_async.py
 [eventhub_receive_integration_async_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroencoder/samples/async_samples/eventhub_receive_integration_async.py
-[api_reference]: https://docs.microsoft.com/python/api/overview/azure/schemaregistry-avroencoder-readme
+[api_reference]: https://learn.microsoft.com/python/api/overview/azure/schemaregistry-avroencoder-readme

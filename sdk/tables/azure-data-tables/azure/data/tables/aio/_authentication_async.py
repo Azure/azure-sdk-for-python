@@ -17,7 +17,7 @@ from .._authentication import _HttpChallenge, AzureSasCredentialPolicy, SharedKe
 class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
     """Adds a bearer token Authorization header to requests, for the tenant provided in authentication challenges.
 
-    See https://docs.microsoft.com/azure/active-directory/develop/claims-challenge for documentation on AAD
+    See https://learn.microsoft.com/azure/active-directory/develop/claims-challenge for documentation on AAD
     authentication challenges.
 
     :param credential: The credential.
