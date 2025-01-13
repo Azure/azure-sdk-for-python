@@ -329,7 +329,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [azure_sub]: https://azure.microsoft.com/free/
 [python_logging]: https://docs.python.org/3/library/logging.html
 [sr_avro_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroencoder/samples
-[api_reference]: https://docs.microsoft.com/python/api/overview/azure/schemaregistry-avroencoder-readme
+[api_reference]: https://learn.microsoft.com/python/api/overview/azure/schemaregistry-avroencoder-readme
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroencoder
 [change_log]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroencoder/CHANGELOG.md
 [schemaregistry_client]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry
@@ -337,4 +337,4 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [eventhubs_repo]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub
 [token_credential_interface]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core/azure/core/credentials.py
 [pypi_azure_identity]: https://pypi.org/project/azure-identity/
-[quickstart_guide]: https://docs.microsoft.com/azure/event-hubs/create-schema-registry
+[quickstart_guide]: https://learn.microsoft.com/azure/event-hubs/create-schema-registry
