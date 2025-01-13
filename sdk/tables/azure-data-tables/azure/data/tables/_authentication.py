@@ -202,9 +202,9 @@ class BearerTokenChallengePolicy(BearerTokenCredentialPolicy):
             challenge = _HttpChallenge(response.http_response.headers.get("WWW-Authenticate"))
             # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
             # if no scopes are included in the challenge, challenge.scope and challenge.resource will both be ''
-            scope = challenge.scope or challenge.resource + "/.default" if self._discover_scopes else self._scopes
+            scope = challenge.scope or challenge.resource + "/.default" if self._discover_scopes else cast(str, self._scopes)
             if scope == "/.default":
-                scope = self._scopes
+                scope = cast(str, self._scopes)
         except ValueError:
             return False
 
