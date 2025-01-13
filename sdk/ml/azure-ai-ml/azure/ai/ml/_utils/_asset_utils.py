@@ -7,6 +7,7 @@
 import hashlib
 import logging
 import os
+import json
 import uuid
 import warnings
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -15,7 +16,17 @@ from multiprocessing import cpu_count
 from os import PathLike
 from pathlib import Path
 from platform import system
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Union, cast
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Tuple,
+    Union,
+    cast,
+)
 
 from colorama import Fore
 from tqdm import TqdmWarning, tqdm
@@ -56,7 +67,11 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
 from azure.ai.ml._restclient.v2023_04_01.models import PendingUploadRequestDto
 from azure.ai.ml._utils._pathspec import GitWildMatchPattern, normalize_file
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix, retry, snake_to_camel
-from azure.ai.ml.constants._common import MAX_AUTOINCREMENT_ATTEMPTS, DefaultOpenEncoding, OrderString
+from azure.ai.ml.constants._common import (
+    MAX_AUTOINCREMENT_ATTEMPTS,
+    DefaultOpenEncoding,
+    OrderString,
+)
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.exceptions import (
     AssetPathException,
@@ -247,6 +262,33 @@ def _get_file_hash(filename: Union[str, os.PathLike], _hash: hash_type) -> hash_
     return _hash
 
 
+def delete_two_catalog_files(path):
+    """
+    Function that deletes the "catalog.json" and "catalog.json.sig" files located at 'path', if they exist
+
+    :param path: Path to the folder for signing
+    :type path: Union[Path, str]
+    :return: None
+    """
+    # catalog.json
+    file_path_json = os.path.join(path, "catalog.json")
+    if os.path.exists(file_path_json):
+        module_logger.warning("%s already exists. Deleting it", file_path_json)
+        os.remove(file_path_json)
+    # catalog.json.sig
+    file_path_json_sig = os.path.join(path, "catalog.json.sig")
+    if os.path.exists(file_path_json_sig):
+        module_logger.warning("%s already exists. Deleting it", file_path_json_sig)
+        os.remove(file_path_json_sig)
+
+
+def create_catalog_files(path, json_stub):
+    with open(os.path.join(path, "catalog.json"), "w", encoding=DefaultOpenEncoding.WRITE) as jsonFile1:
+        json.dump(json_stub, jsonFile1)
+    with open(os.path.join(path, "catalog.json.sig"), "w", encoding=DefaultOpenEncoding.WRITE) as jsonFile2:
+        json.dump(json_stub, jsonFile2)
+
+
 def _get_dir_hash(directory: Union[str, os.PathLike], _hash: hash_type, ignore_file: IgnoreFile) -> hash_type:
     dir_contents = Path(directory).iterdir()
     sorted_contents = sorted(dir_contents, key=lambda path: str(path).lower())
@@ -349,7 +391,10 @@ def get_content_hash(path: Union[str, os.PathLike], ignore_file: IgnoreFile = Ig
 
 
 def get_upload_files_from_folder(
-    path: Union[str, os.PathLike], *, prefix: str = "", ignore_file: IgnoreFile = IgnoreFile()
+    path: Union[str, os.PathLike],
+    *,
+    prefix: str = "",
+    ignore_file: IgnoreFile = IgnoreFile(),
 ) -> List[str]:
     path = Path(path)
     upload_paths = []
@@ -432,7 +477,12 @@ def traverse_directory(  # pylint: disable=unused-argument
     result = []
     for origin_file_path in origin_file_paths:
         relative_path = origin_file_path.relative_to(root)
-        result.append((_resolve_path(origin_file_path).as_posix(), Path(prefix).joinpath(relative_path).as_posix()))
+        result.append(
+            (
+                _resolve_path(origin_file_path).as_posix(),
+                Path(prefix).joinpath(relative_path).as_posix(),
+            )
+        )
     return result
 
 
