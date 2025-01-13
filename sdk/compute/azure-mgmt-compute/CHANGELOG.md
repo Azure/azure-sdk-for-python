@@ -8,6 +8,7 @@
 
 ### Breaking Changes
 
+  - Removed subfolders of some unused Api-Versions for smaller package size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ingore this change.
   - Model Gallery no longer has parameter identity
   - Model GalleryImage no longer has parameter allow_update_image
   - Model GalleryImageFeature no longer has parameter starts_at_version
