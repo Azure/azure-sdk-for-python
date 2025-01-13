@@ -508,6 +508,6 @@ def get_job_output_uris_from_dataplane(
             else None
         )
         output_name_to_model_uri = {
-            asset_id_to_output_name[k]: v.path for k, v in model_uris.values.items()}  # type: ignore
-
+            asset_id_to_output_name[k]: v.path for k, v in model_uris.values.items()  # type: ignore
+        }
     return {**output_name_to_dataset_uri, **output_name_to_model_uri}

@@ -108,7 +108,7 @@ class DockerClient(object):
         conda_yaml_contents: str,
         volumes: dict,
         environment: dict,
-        azureml_port: Union[Any, int],
+        azureml_port: int,
         local_endpoint_mode: LocalEndpointMode,
         prebuilt_image_name: Optional[str] = None,
         local_enable_gpu: Optional[bool] = False,
