@@ -26,7 +26,7 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):  # pylint: disabl
     best-in-class Microsoft machine learning algorithms.  The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language
     detection and question answering. Further documentation can be found in :code:`<a
-    href="https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview</a>`.0.
+    href="https://learn.microsoft.com/azure/cognitive-services/language-service/overview">https://learn.microsoft.com/azure/cognitive-services/language-service/overview</a>`.0.
 
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
