@@ -4,7 +4,6 @@ pyright = false
 pylint = true
 black = true
 verifytypes = false
-mindependency = false
 
 [tool.isort]
 profile = "black"
