@@ -17,7 +17,7 @@ USAGE:
     python queue_samples_hello_world_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
 
@@ -28,7 +28,7 @@ import sys
 
 class QueueHelloWorldSamplesAsync(object):
 
-    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+    connection_string = os.getenv("STORAGE_CONNECTION_STRING")
 
     async def create_client_with_connection_string_async(self):
         if self.connection_string is None:
@@ -52,7 +52,7 @@ class QueueHelloWorldSamplesAsync(object):
 
         # Instantiate the QueueClient from a connection string
         from azure.storage.queue.aio import QueueClient
-        queue = QueueClient.from_connection_string(conn_str=self.connection_string, queue_name="myqueue")
+        queue = QueueClient.from_connection_string(conn_str=self.connection_string, queue_name="asyncmyqueue")
 
         async with queue:
             # Create the queue

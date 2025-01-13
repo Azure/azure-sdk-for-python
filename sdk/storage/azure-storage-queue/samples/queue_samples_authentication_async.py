@@ -19,14 +19,14 @@ USAGE:
     python queue_samples_authentication_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
-    2) AZURE_STORAGE_ACCOUNT_URL - the queue service account URL
-    3) AZURE_STORAGE_ACCOUNT_NAME - the name of the storage account
-    4) AZURE_STORAGE_ACCESS_KEY - the storage account access key
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
+    2) STORAGE_ACCOUNT_QUEUE_URL - the queue service account URL
+    3) STORAGE_ACCOUNT_NAME - the name of the storage account
+    4) STORAGE_ACCOUNT_KEY - the storage account access key
 """
 
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import asyncio
 import os
 import sys
@@ -34,12 +34,10 @@ import sys
 
 class QueueAuthSamplesAsync(object):
 
-    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
-
-    account_url = os.getenv("AZURE_STORAGE_ACCOUNT_URL")
-    account_name = os.getenv("AZURE_STORAGE_ACCOUNT_NAME")
-    access_key = os.getenv("AZURE_STORAGE_ACCESS_KEY")
-
+    connection_string = os.getenv("STORAGE_CONNECTION_STRING")
+    account_url = os.getenv("STORAGE_ACCOUNT_QUEUE_URL")
+    account_name = os.getenv("STORAGE_ACCOUNT_NAME")
+    access_key = os.getenv("STORAGE_ACCOUNT_KEY")
     async def authentication_by_connection_string_async(self):
         if self.connection_string is None:
             print("Missing required environment variable(s). Please see specific test for more details." + '\n' +
@@ -65,12 +63,18 @@ class QueueAuthSamplesAsync(object):
         # Instantiate a QueueServiceClient using a shared access key
         # [START async_create_queue_service_client]
         from azure.storage.queue.aio import QueueServiceClient
-        queue_service = QueueServiceClient(account_url=self.account_url, credential=self.access_key)
+        from azure.storage.queue import QueueServiceClient, generate_account_sas, ResourceTypes, AccountSasPermissions
+        sas_token = generate_account_sas(
+            account_name=self.account_name, # type: ignore
+            account_key=self.access_key,
+            resource_types=ResourceTypes(service=True),
+            permission=AccountSasPermissions(read=True),
+            expiry = datetime.now(timezone.utc) + timedelta(days=1),
+        )
+        queue_service = QueueServiceClient(account_url=self.account_url, credential=sas_token)
         # [END async_create_queue_service_client]
-
         # Get information for the Queue Service
-        async with queue_service:
-            properties = await queue_service.get_service_properties()
+        properties = queue_service.get_service_properties()
 
     async def authentication_by_oauth_async(self):
         if self.account_url is None:
@@ -80,12 +84,10 @@ class QueueAuthSamplesAsync(object):
 
         # [START async_create_queue_service_client_oauth]
         # Get a token credential for authentication
-        from azure.identity.aio import DefaultAzureCredential
-        token_credential = DefaultAzureCredential()
 
         # Instantiate a QueueServiceClient using a token credential
         from azure.storage.queue.aio import QueueServiceClient
-        queue_service = QueueServiceClient(account_url=self.account_url, credential=token_credential)
+        queue_service = QueueServiceClient(account_url=self.account_url, credential=self.access_key)
         # [END async_create_queue_service_client_oauth]
 
         # Get information for the Queue Service
@@ -107,21 +109,18 @@ class QueueAuthSamplesAsync(object):
         queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # Create a SAS token to use for authentication of a client
-        from azure.storage.queue import generate_account_sas, ResourceTypes, AccountSasPermissions
-
+        from azure.storage.queue import QueueServiceClient, generate_account_sas, ResourceTypes, AccountSasPermissions
         sas_token = generate_account_sas(
-            self.account_name,
-            self.access_key,
+            account_name=self.account_name, # type: ignore
+            account_key=self.access_key,
             resource_types=ResourceTypes(service=True),
             permission=AccountSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(hours=1)
+            expiry = datetime.now(timezone.utc) + timedelta(days=1),
         )
-
         token_auth_queue_service = QueueServiceClient(account_url=self.account_url, credential=sas_token)
 
         # Get information for the Queue Service
-        async with token_auth_queue_service:
-            properties = await token_auth_queue_service.get_service_properties()
+        properties = token_auth_queue_service.get_service_properties()
 
 
 async def main():

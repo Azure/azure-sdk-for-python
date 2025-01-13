@@ -558,6 +558,14 @@
         "STORAGE_ACCOUNT_KEY": {
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('primaryAccountName')), variables('storageApiVersion')).keys[0].value]"
+        }, 
+        "STORAGE_CONNECTION_STRING": {
+          "type": "string",
+          "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('primaryAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('primaryAccountName')), '2023-01-01').keys[0].value, ';EndpointSuffix=', parameters('endpointSuffix'))]"
+        },
+        "STORAGE_ACCOUNT_QUEUE_URL": {
+          "type": "string",
+           "value": "[format('https://{0}.queue.core.windows.net', variables('primaryAccountName'))]"
         },
         "SECONDARY_STORAGE_ACCOUNT_NAME": {
             "type": "string",
