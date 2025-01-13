@@ -164,6 +164,7 @@ def _parse_event(event_data_str: str) -> Tuple[str, StreamEventData]:
     if event_type in {
         AgentStreamEvent.THREAD_RUN_CREATED.value,
         AgentStreamEvent.THREAD_RUN_QUEUED.value,
+        AgentStreamEvent.THREAD_RUN_INCOMPLETE.value,
         AgentStreamEvent.THREAD_RUN_IN_PROGRESS.value,
         AgentStreamEvent.THREAD_RUN_REQUIRES_ACTION.value,
         AgentStreamEvent.THREAD_RUN_COMPLETED.value,

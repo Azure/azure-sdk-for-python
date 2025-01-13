@@ -43,7 +43,10 @@ class TestBaseAsyncAgentEventHandler:
         pass
 
     @pytest.mark.asyncio
-    async def test_event_handler_process_response_when_break_around_indices(self):
+    async def test_event_handler_process_response_when_break_around_event_separators(self):
+        # events are split into multiple chunks.
+        # Each chunk might contains more than one or incomplete response.
+        # Test the chunks are borken around the event separators which are "\n\n"
         handler = self.MyAgentEventhHandler()
         new_line_indices = [i for i in range(len(main_stream_response)) if main_stream_response.startswith("\n\n", i)]
 
@@ -101,6 +104,7 @@ class TestBaseAsyncAgentEventHandler:
 
     @pytest.mark.asyncio
     async def test_event_handler_chain_responses(self):
+        # Test if the event handler can have the second stream followed by the first one.
         handler = self.MyAgentEventhHandler()
         handler.initialize(convert_to_byte_iterator(main_stream_response), self.mock_callable)
         handler.initialize(
@@ -120,6 +124,7 @@ class TestBaseAsyncAgentEventHandler:
 
     @pytest.mark.asyncio
     async def test_event_handler_reusable(self):
+        # Test if the event handler can be reused after a stream is done.
         handler = self.MyAgentEventhHandler()
         handler.initialize(convert_to_byte_iterator(main_stream_response), self.mock_callable)
         count = 0
@@ -142,12 +147,19 @@ class TestBaseAsyncAgentEventHandler:
 
 class TestAsyncAgentEventHandler:
 
+    deserializable_events = [
+        AgentStreamEvent.THREAD_CREATED.value,
+        AgentStreamEvent.ERROR.value,
+        AgentStreamEvent.DONE.value,
+    ]
+
     class MyAgentEventHandler(AsyncAgentEventHandler[None]):
         pass
 
     @pytest.mark.asyncio
     @patch("azure.ai.projects.models._patch._parse_event")
     async def test_tool_calls(self, mock_parse_event: AsyncMock):
+        # Test if the event type and status are met, submit function calls.
         submit_tool_outputs = AsyncMock()
         handler = self.MyAgentEventHandler()
 
@@ -165,3 +177,25 @@ class TestAsyncAgentEventHandler:
         assert mock_parse_event.call_args[0][0] == "event"
         assert submit_tool_outputs.call_count == 1
         assert submit_tool_outputs.call_args[0] == (event_obj, handler)
+
+    @pytest.mark.asyncio
+    @patch("azure.ai.projects.models._patch.AsyncAgentEventHandler.on_unhandled_event")
+    @pytest.mark.parametrize("event_type", [e.value for e in AgentStreamEvent])
+    async def test_parse_event(self, mock_on_unhandled_event: AsyncMock, event_type: str):
+        # Make sure all the event types defined in AgentStreamEvent are deserializable except Created, Done, and Error
+        # And ensure handle_event is never raised.
+
+        handler = self.MyAgentEventHandler()
+        event_data_str = f"event: {event_type}\ndata: {{}}"
+        _, event_obj, _ = await handler._process_event(event_data_str)
+
+        if event_type in self.deserializable_events:
+            assert isinstance(event_obj, str)
+        else:
+            assert not isinstance(event_obj, str)
+
+        # The only event we are not handling today is CREATED which is never sent by backend.
+        if event_type == AgentStreamEvent.THREAD_CREATED.value:
+            assert mock_on_unhandled_event.call_count == 1
+        else:
+            assert mock_on_unhandled_event.call_count == 0
