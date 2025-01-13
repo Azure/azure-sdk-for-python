@@ -199,7 +199,7 @@ class EventGridPublisherClient:
         :keyword channel_name: Optional. Used to specify the name of event channel when publishing to partner
         :paramtype channel_name: str or None
          namespaces with partner topic. For more details, visit
-         https://docs.microsoft.com/azure/event-grid/partner-events-overview
+         https://learn.microsoft.com/azure/event-grid/partner-events-overview
         :rtype: None
         """
         if not isinstance(events, list):
