@@ -64,7 +64,7 @@ class OpenCensusSpan(HttpSpanMixin, object):
         """
         tracer = self.get_current_tracer()
         value = kind
-        kind: Optional[SpanKind] = (
+        kind = (
             OpenCensusSpanKind.CLIENT
             if value == SpanKind.CLIENT
             else (
