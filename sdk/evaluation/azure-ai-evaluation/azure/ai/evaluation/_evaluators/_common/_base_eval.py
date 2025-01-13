@@ -4,7 +4,7 @@
 
 import inspect
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Dict, Generic, List, TypedDict, TypeVar, Union, cast, final
+from typing import Any, Callable, Dict, Generic, List, TypedDict, TypeVar, Union, cast, final, Optional
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from typing_extensions import ParamSpec, TypeAlias, get_overloads
@@ -12,8 +12,10 @@ from typing_extensions import ParamSpec, TypeAlias, get_overloads
 from azure.ai.evaluation._common.math import list_mean
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._common.utils import remove_optional_singletons
-from azure.ai.evaluation._constants import _ConversationNumericAggregationType
+from azure.ai.evaluation._constants import ConversationAggregationType
 from azure.ai.evaluation._model_configurations import Conversation
+
+from ._conversation_aggregators import GetAggregator
 
 P = ParamSpec("P")
 T = TypeVar("T")
@@ -73,8 +75,11 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
     :type eval_last_turn: bool
     :param conversation_aggregation_type: The type of aggregation to perform on the per-turn results of a conversation
         to produce a single result.
-        Default is ~azure.ai.evaluation._constants._ConversationNumericAggregationType.MEAN.
-    :type conversation_aggregation_type: ~azure.ai.evaluation._constants._ConversationNumericAggregationType
+        Default is ~azure.ai.evaluation.ConversationAggregationType.MEAN.
+    :type conversation_aggregation_type: ~azure.ai.evaluation.ConversationAggregationType
+    :param conversation_aggregator_override: A function that will be used to aggregate per-turn results. If provided,
+        overrides the standard aggregator implied by conversation_aggregation_type. None by default.
+    :type conversation_aggregator_override: Optional[Callable[[List[float]], float]]
     """
 
     # ~~~ METHODS THAT ALMOST ALWAYS NEED TO BE OVERRIDDEN BY CHILDREN~~~
@@ -86,13 +91,16 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         *,
         not_singleton_inputs: List[str] = ["conversation", "kwargs"],
         eval_last_turn: bool = False,
-        conversation_aggregation_type: str = _ConversationNumericAggregationType.MEAN,
+        conversation_aggregation_type: ConversationAggregationType = ConversationAggregationType.MEAN,
+        conversation_aggregator_override: Optional[Callable[[List[float]], float]] = None
     ):
         self._not_singleton_inputs = not_singleton_inputs
         self._eval_last_turn = eval_last_turn
         self._singleton_inputs = self._derive_singleton_inputs()
         self._async_evaluator = AsyncEvaluatorBase(self._real_call)
-        self._conversation_aggregation_type = conversation_aggregation_type
+        self._conversation_aggregation_function = GetAggregator(conversation_aggregation_type)
+        if conversation_aggregator_override!= None:
+            self._conversation_aggregation_function = conversation_aggregator_override
 
     # This needs to be overridden just to change the function header into something more informative,
     # and to be able to add a more specific docstring. The actual function contents should just be
@@ -366,13 +374,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         # Find and average all numeric values
         for metric, values in evaluation_per_turn.items():
             if all(isinstance(value, (int, float)) for value in values):
-                # Aggregate results in different ways depending on the aggregation type.
-                if self._conversation_aggregation_type == _ConversationNumericAggregationType.MEAN:
-                    aggregated[metric] = list_mean(cast(List[Union[int, float]], values))
-                elif self._conversation_aggregation_type == _ConversationNumericAggregationType.MAX:
-                    aggregated[metric] = max(cast(List[Union[int, float]], values))
-                elif self._conversation_aggregation_type == _ConversationNumericAggregationType.MIN:
-                    aggregated[metric] = min(cast(List[Union[int, float]], values))
+                aggregated[metric] = self._conversation_aggregation_function(cast(List[Union[int, float]], values))
         # Slap the per-turn results back in.
         aggregated["evaluation_per_turn"] = evaluation_per_turn
         return aggregated
@@ -400,9 +402,35 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         # Otherwise, aggregate results.
         return self._aggregate_results(per_turn_results=per_turn_results)
 
+    # ~~~ METHODS THAT SHOULD NOT BE OVERRIDDEN BY CHILDREN~~~``
+
     @final
     def _to_async(self) -> "AsyncEvaluatorBase":
         return self._async_evaluator
+
+    @final
+    def set_conversation_aggregation_type(self, conversation_aggregation_type: ConversationAggregationType) -> None:
+        """Input a conversation aggregation type to re-assign the aggregator function used by this evaluator for
+        multi-turn conversations. This aggregator is used to combine numeric outputs from each evaluation of a
+        multi-turn conversation into a single top-level result.
+
+        :param conversation_aggregation_type: The type of aggregation to perform on the per-turn results of a conversation
+            to produce a single result.
+        :type conversation_aggregation_type: ~azure.ai.evaluation.ConversationAggregationType
+        """
+        self._conversation_aggregation_function = GetAggregator(conversation_aggregation_type)
+
+    @final
+    def set_conversation_aggregator(self, aggregator: Callable[[List[float]], float]) -> None:
+        """Set the conversation aggregator function directly. This function will be applied to all numeric outputs
+        of an evaluator when it evaluates a conversation with multiple-turns thus ends up with multiple results per
+        evaluation that is needs to coalesce into a single result. Use when built-in aggregators do not
+        suit your needs, but use with caution.
+
+        :param aggregator: The function to use to aggregate per-turn results.
+        :type aggregator: Callable[[List[float]], float]
+        """
+        self._conversation_aggregation_function = aggregator
 
 
 class AsyncEvaluatorBase:

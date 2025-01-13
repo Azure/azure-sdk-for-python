@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import enum
 from typing import Literal
 
 
@@ -57,13 +58,14 @@ class EvaluationRunProperties:
     EVALUATION_SDK = "_azureml.evaluation_sdk_name"
 
 
-class _ConversationNumericAggregationType:
+class ConversationAggregationType(enum.Enum):
     """Defines how multiple conversation turns' worth of numeric results should be evaluated
     to produce a single value to define the overall conversation result."""
 
     MEAN = "mean"
     MAX = "max"
     MIN = "min"
+    SUM = "sum"
 
 
 DEFAULT_EVALUATION_RESULTS_FILE_NAME = "evaluation_results.json"

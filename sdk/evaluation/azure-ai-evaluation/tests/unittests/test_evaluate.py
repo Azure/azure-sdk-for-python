@@ -10,6 +10,7 @@ import pytest
 from pandas.testing import assert_frame_equal
 from promptflow.client import PFClient
 
+from azure.ai.evaluation._common.math import list_mean
 from azure.ai.evaluation import (
     ContentSafetyEvaluator,
     F1ScoreEvaluator,
@@ -21,7 +22,7 @@ from azure.ai.evaluation import (
     SelfHarmEvaluator,
     HateUnfairnessEvaluator,
 )
-from azure.ai.evaluation._constants import DEFAULT_EVALUATION_RESULTS_FILE_NAME, _ConversationNumericAggregationType
+from azure.ai.evaluation._constants import DEFAULT_EVALUATION_RESULTS_FILE_NAME, ConversationAggregationType
 from azure.ai.evaluation._evaluate._evaluate import (
     _aggregate_metrics,
     _apply_target_to_data,
@@ -696,24 +697,40 @@ class TestEvaluate:
 
         counting_eval = CountingEval()
         evaluators = {"count": counting_eval}
-        # test default behavior - average
+        # test default behavior - mean
         results = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
         assert results["rows"][0]["outputs.count.response"] == 1.5  # average of 1 and 2
         assert results["rows"][1]["outputs.count.response"] == 3.5  # average of 3 and 4
 
         # test maxing
         counting_eval.reset()
-        counting_eval._conversation_aggregation_type = _ConversationNumericAggregationType.MAX
+        counting_eval.set_conversation_aggregation_type(ConversationAggregationType.MAX)
         results = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
-        assert results["rows"][0]["outputs.count.response"] == 2  # max of 1 and 2
-        assert results["rows"][1]["outputs.count.response"] == 4  # max of 3 and 4
+        assert results["rows"][0]["outputs.count.response"] == 2
+        assert results["rows"][1]["outputs.count.response"] == 4
 
         # test minimizing
         counting_eval.reset()
-        counting_eval._conversation_aggregation_type = _ConversationNumericAggregationType.MIN
+        counting_eval.set_conversation_aggregation_type(ConversationAggregationType.MIN)
         results = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
-        assert results["rows"][0]["outputs.count.response"] == 1  # min of 1 and 2
-        assert results["rows"][1]["outputs.count.response"] == 3  # min of 3 and 4
+        assert results["rows"][0]["outputs.count.response"] == 1
+        assert results["rows"][1]["outputs.count.response"] == 3
+
+        # test sum
+        counting_eval.reset()
+        counting_eval.set_conversation_aggregation_type(ConversationAggregationType.SUM)
+        results = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        assert results["rows"][0]["outputs.count.response"] == 3
+        assert results["rows"][1]["outputs.count.response"] == 7
+
+        # test custom aggregator
+        def custom_aggregator(values):
+            return sum(values) + 1
+        counting_eval.reset()
+        counting_eval.set_conversation_aggregator(custom_aggregator)
+        results = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        assert results["rows"][0]["outputs.count.response"] == 4
+        assert results["rows"][1]["outputs.count.response"] == 8
 
     def test_default_conversation_aggregation_overrides(self):
         fake_project = {"subscription_id": "123", "resource_group_name": "123", "project_name": "123"}
@@ -722,8 +739,8 @@ class TestEvaluate:
         eval3 = SelfHarmEvaluator(None, fake_project)
         eval4 = HateUnfairnessEvaluator(None, fake_project)
         eval5 = F1ScoreEvaluator()  # Test default
-        assert eval1._conversation_aggregation_type == _ConversationNumericAggregationType.MAX
-        assert eval2._conversation_aggregation_type == _ConversationNumericAggregationType.MAX
-        assert eval3._conversation_aggregation_type == _ConversationNumericAggregationType.MAX
-        assert eval4._conversation_aggregation_type == _ConversationNumericAggregationType.MAX
-        assert eval5._conversation_aggregation_type == _ConversationNumericAggregationType.MEAN
+        assert eval1._conversation_aggregation_function == max
+        assert eval2._conversation_aggregation_function == max
+        assert eval3._conversation_aggregation_function == max
+        assert eval4._conversation_aggregation_function == max
+        assert eval5._conversation_aggregation_function == list_mean
