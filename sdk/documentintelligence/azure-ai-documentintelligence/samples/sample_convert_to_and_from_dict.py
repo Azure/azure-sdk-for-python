@@ -7,14 +7,15 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_convert_to_dict.py
+FILE: sample_convert_to_and_from_dict.py
 
 DESCRIPTION:
-    This sample demonstrates how to convert a model returned from an analyze operation
-    to a JSON serializable dictionary.
+    This sample demonstrates how to convert models returned from an analyze operation
+    to and from a dictionary. The dictionary in this sample is then converted to a
+    JSON file, then the same dictionary is converted back to its original model.
 
 USAGE:
-    python sample_convert_to_dict.py
+    python sample_convert_to_and_from_dict.py
 
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
@@ -34,6 +35,7 @@ def convert_to_and_from_dict():
         )
     )
 
+    # [START convert]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import AnalyzeResult
@@ -52,6 +54,18 @@ def convert_to_and_from_dict():
     # save the dictionary as JSON content in a JSON file
     with open("data.json", "w") as output_file:
         json.dump(analyze_result_dict, output_file, indent=4)
+    
+    # convert the dictionary back to the original model
+    model = AnalyzeResult(analyze_result_dict)
+
+    # use the model as normal
+    print("----Converted from dictionary AnalyzeResult----")
+    print(f"Model ID: '{model.model_id}'")
+    print(f"Number of pages analyzed {len(model.pages)}")
+    print(f"API version used: {model.api_version}")
+
+    print("----------------------------------------")
+    # [END convert]
 
 
 if __name__ == "__main__":
