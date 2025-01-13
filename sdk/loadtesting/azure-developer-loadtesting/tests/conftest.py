@@ -58,3 +58,8 @@ def add_sanitizers(test_proxy):
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
     add_body_key_sanitizer(json_path="$..url", value="url")
+
+
+def pytest_configure(config):
+    # register additional markers
+    config.addinivalue_line("markers", "live_test_only: mark test to be a live test only")
