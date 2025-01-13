@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b33 (Unreleased)
+## 1.0.0b33 (2025-01-13)
 
 ### Features Added
 
@@ -10,8 +10,6 @@
   ([#38451](https://github.com/Azure/azure-sdk-for-python/pull/38451))
 - Implement live metrics filtering for docs
   ([#38925](https://github.com/Azure/azure-sdk-for-python/pull/38925))
-
-### Breaking Changes
 
 ### Bugs Fixed
 
