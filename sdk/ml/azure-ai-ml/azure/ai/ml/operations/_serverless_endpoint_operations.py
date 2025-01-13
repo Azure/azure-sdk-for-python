@@ -97,7 +97,9 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
             endpoint.name,
             endpoint._to_rest_object(),  # type: ignore
             cls=(
-                lambda response, deserialized, headers: ServerlessEndpoint._from_rest_object(deserialized)  # type: ignore
+                lambda response, deserialized, headers: ServerlessEndpoint._from_rest_object(
+                    deserialized  # type: ignore
+                )
             ),
             **kwargs,
         )
@@ -117,7 +119,9 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
             self._workspace_name,
             name,
             cls=(
-                lambda response, deserialized, headers: ServerlessEndpoint._from_rest_object(deserialized)  # type: ignore
+                lambda response, deserialized, headers: ServerlessEndpoint._from_rest_object(
+                    deserialized  # type: ignore
+                )
             ),
             **kwargs,
         )
