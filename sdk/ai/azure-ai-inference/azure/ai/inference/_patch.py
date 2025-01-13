@@ -91,8 +91,8 @@ def _get_internal_response_format(
 
         if isinstance(response_format, str) and response_format == "text":
             internal_response_format = (
-                _models._models.ChatCompletionsResponseFormatText()
-            )  # pylint: disable=protected-access
+                _models._models.ChatCompletionsResponseFormatText()  # pylint: disable=protected-access
+            )
         elif isinstance(response_format, str) and response_format == "json_object":
             internal_response_format = (
                 _models._models.ChatCompletionsResponseFormatJsonObject()  # pylint: disable=protected-access
