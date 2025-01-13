@@ -7,7 +7,7 @@
 import json
 import logging
 import time
-from typing import Dict, List, Optional, Union, Any
+from typing import Dict, List, Optional
 
 from azure.ai.ml._local_endpoints.local_endpoint_mode import LocalEndpointMode
 from azure.ai.ml._local_endpoints.vscode_debug.vscode_client import VSCodeClient
