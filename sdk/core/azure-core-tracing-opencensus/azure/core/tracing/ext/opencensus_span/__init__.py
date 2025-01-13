@@ -4,7 +4,7 @@
 # ------------------------------------
 """Implements azure.core.tracing.AbstractSpan to wrap opencensus spans."""
 import warnings
-from typing import Dict, Optional, Union, Callable, Sequence, Any, Generator, List, TYPE_CHECKING
+from typing import Dict, Optional, Union, Callable, Sequence, Any, Generator, List
 
 from opencensus.trace import Span, execution_context
 from opencensus.trace.tracer import Tracer
@@ -13,12 +13,9 @@ from opencensus.trace.link import Link
 from opencensus.trace.propagation import trace_context_http_header_format
 from opencensus.trace import config_integration as _config_integration
 
-from azure.core.tracing import SpanKind, HttpSpanMixin  # type: ignore[attr-defined]  # pylint: disable=no-name-in-module
+from azure.core.tracing import SpanKind, HttpSpanMixin, Link as CoreLink  # type: ignore[attr-defined]  # pylint: disable=no-name-in-module
 
 from ._version import VERSION
-
-if TYPE_CHECKING:
-    from azure.core.tracing import Link as CoreLink
 
 
 AttributeValue = Union[

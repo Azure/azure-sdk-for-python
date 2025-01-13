@@ -23,13 +23,10 @@ try:
 except ImportError:
     _SUPPRESS_HTTP_INSTRUMENTATION_KEY = "suppress_http_instrumentation"
 
-from azure.core.tracing import SpanKind, HttpSpanMixin  # type: ignore[attr-defined] # pylint: disable=no-name-in-module
+from azure.core.tracing import SpanKind, HttpSpanMixin, Link as CoreLink  # type: ignore[attr-defined] # pylint: disable=no-name-in-module
 
 from ._schema import OpenTelemetrySchema
 from ._version import VERSION
-
-if TYPE_CHECKING:
-    from azure.core.tracing import Link as CoreLink
 
 AttributeValue = Union[
     str,
