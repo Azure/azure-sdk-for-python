@@ -150,8 +150,7 @@ class Registry(Resource):
         replication_locations = []
         if real_registry and real_registry.region_details:
             replication_locations = [
-                RegistryRegionDetails._from_rest_object(details)
-                for details in real_registry.region_details
+                RegistryRegionDetails._from_rest_object(details) for details in real_registry.region_details
             ]
         identity = None
         if rest_obj.identity and isinstance(rest_obj.identity, RestManagedServiceIdentity):
@@ -194,7 +193,7 @@ class Registry(Resource):
             # Apply container_registry as acr_config of each region detail
             if global_acr_exists:
                 if not hasattr(region_detail, "acr_details") or len(region_detail.acr_details) == 0:
-                    region_detail.acr_config = [acr_input] # pylint: disable=(possibly-used-before-assignment
+                    region_detail.acr_config = [acr_input]  # pylint: disable=(possibly-used-before-assignment
 
     def _to_rest_object(self) -> RestRegistry:
         """Build current parameterized schedule instance to a registry object before submission.

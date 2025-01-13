@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+
 class SnakeCaseFineTuningTaskTypes:
     CHAT_COMPLETION = "chat_completion"
     TEXT_COMPLETION = "text_completion"

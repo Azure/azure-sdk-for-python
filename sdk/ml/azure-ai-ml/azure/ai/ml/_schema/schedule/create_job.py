@@ -67,9 +67,7 @@ class BaseCreateJobSchema(BaseJobSchema):
     )
 
     # pylint: disable-next=docstring-missing-param
-    def _get_job_instance_for_remote_job(
-        self, id: Optional[str], data: Optional[dict], **kwargs
-    ) -> "Job":
+    def _get_job_instance_for_remote_job(self, id: Optional[str], data: Optional[dict], **kwargs) -> "Job":
         """Get a job instance to store updates for remote job.
 
         :return: The remote job

@@ -62,18 +62,12 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
 
     def _get_workspace_location(self) -> str:
         return str(
-            self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
-            .get(self._workspace_name)
-            .location
+            self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
         )
 
     @experimental
-    @monitor_with_activity(
-        ops_logger, "ServerlessEndpoint.BeginCreateOrUpdate", ActivityType.PUBLICAPI
-    )
-    def begin_create_or_update(
-        self, endpoint: ServerlessEndpoint, **kwargs
-    ) -> LROPoller[ServerlessEndpoint]:
+    @monitor_with_activity(ops_logger, "ServerlessEndpoint.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    def begin_create_or_update(self, endpoint: ServerlessEndpoint, **kwargs) -> LROPoller[ServerlessEndpoint]:
         """Create or update a serverless endpoint.
 
         :param endpoint: The serverless endpoint entity.
@@ -125,9 +119,7 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
         )
 
     @experimental
-    @monitor_with_activity(
-        ops_logger, "ServerlessEndpoint.list", ActivityType.PUBLICAPI
-    )
+    @monitor_with_activity(ops_logger, "ServerlessEndpoint.list", ActivityType.PUBLICAPI)
     def list(self, **kwargs) -> Iterable[ServerlessEndpoint]:
         """List serverless endpoints of the workspace.
 
@@ -142,9 +134,7 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
         )
 
     @experimental
-    @monitor_with_activity(
-        ops_logger, "ServerlessEndpoint.BeginDelete", ActivityType.PUBLICAPI
-    )
+    @monitor_with_activity(ops_logger, "ServerlessEndpoint.BeginDelete", ActivityType.PUBLICAPI)
     def begin_delete(self, name: str, **kwargs) -> LROPoller[None]:
         """Delete a Serverless Endpoint.
 
@@ -161,9 +151,7 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
         )
 
     @experimental
-    @monitor_with_activity(
-        ops_logger, "ServerlessEndpoint.GetKeys", ActivityType.PUBLICAPI
-    )
+    @monitor_with_activity(ops_logger, "ServerlessEndpoint.GetKeys", ActivityType.PUBLICAPI)
     def get_keys(self, name: str, **kwargs) -> EndpointAuthKeys:
         """Get serveless endpoint auth keys.
 
@@ -176,16 +164,12 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
             self._resource_group_name,
             self._workspace_name,
             name,
-            cls=lambda response, deserialized, headers: EndpointAuthKeys._from_rest_object(
-                deserialized
-            ),
+            cls=lambda response, deserialized, headers: EndpointAuthKeys._from_rest_object(deserialized),
             **kwargs,
         )
 
     @experimental
-    @monitor_with_activity(
-        ops_logger, "ServerlessEndpoint.BeginRegenerateKeys", ActivityType.PUBLICAPI
-    )
+    @monitor_with_activity(ops_logger, "ServerlessEndpoint.BeginRegenerateKeys", ActivityType.PUBLICAPI)
     def begin_regenerate_keys(
         self,
         name: str,
@@ -208,13 +192,9 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
             name=name,
         )
         if key_type.lower() == EndpointKeyType.PRIMARY_KEY_TYPE:
-            key_request = RegenerateEndpointKeysRequest(
-                key_type=KeyType.Primary, key_value=keys.primary_key
-            )
+            key_request = RegenerateEndpointKeysRequest(key_type=KeyType.Primary, key_value=keys.primary_key)
         elif key_type.lower() == EndpointKeyType.SECONDARY_KEY_TYPE:
-            key_request = RegenerateEndpointKeysRequest(
-                key_type=KeyType.Secondary, key_value=keys.secondary_key
-            )
+            key_request = RegenerateEndpointKeysRequest(key_type=KeyType.Secondary, key_value=keys.secondary_key)
         else:
             msg = "Key type must be 'primary' or 'secondary'."
             raise ValidationException(
@@ -230,8 +210,6 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
             workspace_name=self._workspace_name,
             endpoint_name=name,
             body=key_request,
-            cls=lambda response, deserialized, headers: EndpointAuthKeys._from_rest_object(
-                deserialized
-            ),
+            cls=lambda response, deserialized, headers: EndpointAuthKeys._from_rest_object(deserialized),
             **kwargs,
         )

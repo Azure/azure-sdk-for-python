@@ -92,9 +92,7 @@ class BatchJobSchema(PathAwareSchema):
                         InputTypes.STRING,
                         InputTypes.BOOLEAN,
                     }:
-                        data[EndpointYamlFields.BATCH_JOB_INPUT_DATA][key] = LiteralJobInput(
-                            value=input_data.default
-                        )
+                        data[EndpointYamlFields.BATCH_JOB_INPUT_DATA][key] = LiteralJobInput(value=input_data.default)
         if data.get(EndpointYamlFields.BATCH_JOB_OUTPUT_DATA, None):
             for key, output_data in data[EndpointYamlFields.BATCH_JOB_OUTPUT_DATA].items():
                 if isinstance(output_data, Output):

@@ -263,7 +263,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             properties=self.properties,
             compute_id=self.compute,
             objective=self.objective._to_rest_object() if self.objective else None,
-            trial=trial_component, # pylint: disable=possibly-used-before-assignment
+            trial=trial_component,  # pylint: disable=possibly-used-before-assignment
             tags=self.tags,
             inputs=to_rest_dataset_literal_inputs(self.inputs, job_type=self.type),
             outputs=to_rest_data_outputs(self.outputs),

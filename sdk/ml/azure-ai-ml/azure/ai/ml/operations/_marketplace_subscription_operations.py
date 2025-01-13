@@ -68,9 +68,7 @@ class MarketplaceSubscriptionOperations(_ScopeDependentOperations):
         )
 
     @experimental
-    @monitor_with_activity(
-        ops_logger, "MarketplaceSubscription.Get", ActivityType.PUBLICAPI
-    )
+    @monitor_with_activity(ops_logger, "MarketplaceSubscription.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, **kwargs) -> MarketplaceSubscription:
         """Get a Marketplace Subscription resource.
 
@@ -88,9 +86,7 @@ class MarketplaceSubscriptionOperations(_ScopeDependentOperations):
         )
 
     @experimental
-    @monitor_with_activity(
-        ops_logger, "MarketplaceSubscription.List", ActivityType.PUBLICAPI
-    )
+    @monitor_with_activity(ops_logger, "MarketplaceSubscription.List", ActivityType.PUBLICAPI)
     def list(self, **kwargs) -> Iterable[MarketplaceSubscription]:
         """List marketplace subscriptions of the workspace.
 
@@ -105,9 +101,7 @@ class MarketplaceSubscriptionOperations(_ScopeDependentOperations):
         )
 
     @experimental
-    @monitor_with_activity(
-        ops_logger, "MarketplaceSubscription.BeginDelete", ActivityType.PUBLICAPI
-    )
+    @monitor_with_activity(ops_logger, "MarketplaceSubscription.BeginDelete", ActivityType.PUBLICAPI)
     def begin_delete(self, name: str, **kwargs) -> LROPoller[None]:
         """Delete a Marketplace Subscription.
 

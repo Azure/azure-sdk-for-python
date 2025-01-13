@@ -117,7 +117,7 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
             properties=ScheduleProperties(
                 description=self.description,
                 properties=self.properties,
-                tags=tags, # pylint: disable=possibly-used-before-assignment
+                tags=tags,  # pylint: disable=possibly-used-before-assignment
                 action=CreateMonitorAction(
                     monitor_definition=self.create_monitor._to_rest_object(
                         default_data_window_size=default_data_window_size, ref_data_window_size=ref_data_window_size

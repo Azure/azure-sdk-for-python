@@ -226,7 +226,9 @@ class OnlineDeployment(Deployment):
                 elif not isinstance(self.code_configuration.code, os.PathLike):
                     code_id = self.code_configuration.code.id
 
-                code = RestCodeConfiguration(code_id=code_id, scoring_script=self.code_configuration.scoring_script)  # pylint: disable=(possibly-used-before-assignment
+                code = RestCodeConfiguration(
+                    code_id=code_id, scoring_script=self.code_configuration.scoring_script
+                )  # pylint: disable=(possibly-used-before-assignment
 
         model_id = None
         if self.model:

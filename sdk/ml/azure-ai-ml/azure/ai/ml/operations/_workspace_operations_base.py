@@ -354,9 +354,7 @@ class WorkspaceOperationsBase(ABC):
 
         serverless_compute_settings = kwargs.get("serverless_compute", workspace.serverless_compute)
         if serverless_compute_settings:
-            serverless_compute_settings = (
-                serverless_compute_settings._to_rest_object()
-            )
+            serverless_compute_settings = serverless_compute_settings._to_rest_object()
 
         public_network_access = kwargs.get("public_network_access", workspace.public_network_access)
         network_acls = kwargs.get("network_acls", workspace.network_acls)
@@ -1130,7 +1128,9 @@ class CustomArmTemplateDeploymentPollingMethod(PollingMethod):
             error_msg = f"Unable to create resource. \n {error}\n"
             module_logger.error(error_msg)
             raise error
-        module_logger.info("Total time : %s\n", from_iso_duration_format_min_sec(total_duration)) # pylint: disable=E0606
+        module_logger.info(
+            "Total time : %s\n", from_iso_duration_format_min_sec(total_duration)
+        )  # pylint: disable=E0606
         return self.func()
 
     # pylint: disable=docstring-missing-param

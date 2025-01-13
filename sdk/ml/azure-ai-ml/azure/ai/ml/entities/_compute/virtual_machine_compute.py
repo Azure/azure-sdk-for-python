@@ -164,7 +164,7 @@ class VirtualMachineCompute(Compute):
                 ssh_port=self.ssh_settings.ssh_port, administrator_account=credentials
             )
         vm_compute = VMResource(
-            properties=properties, # pylint: disable=possibly-used-before-assignment
+            properties=properties,  # pylint: disable=possibly-used-before-assignment
             resource_id=self.resource_id,
             description=self.description,
         )

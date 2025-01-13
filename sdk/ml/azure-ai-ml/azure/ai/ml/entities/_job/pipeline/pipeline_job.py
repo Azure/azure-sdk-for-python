@@ -537,7 +537,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
             source = ComponentSource.REMOTE_WORKSPACE_JOB
             rest_component_jobs = {}
         # add _source on pipeline job.settings
-        if "_source" not in settings_dict: # pylint: disable=possibly-used-before-assignment
+        if "_source" not in settings_dict:  # pylint: disable=possibly-used-before-assignment
             settings_dict.update({"_source": source})
 
         # TODO: Revisit this logic when multiple types of component jobs are supported

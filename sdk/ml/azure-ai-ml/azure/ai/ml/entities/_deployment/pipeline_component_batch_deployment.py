@@ -120,9 +120,7 @@ class PipelineComponentBatchDeployment(Resource):
                 param["endpoint_name"] = endpoint_name.lower()
 
     @classmethod
-    def _from_rest_object(
-        cls, deployment: RestBatchDeployment
-    ) -> "PipelineComponentBatchDeployment":
+    def _from_rest_object(cls, deployment: RestBatchDeployment) -> "PipelineComponentBatchDeployment":
         return PipelineComponentBatchDeployment(
             name=deployment.name,
             tags=deployment.tags,
@@ -147,8 +145,6 @@ class PipelineComponentBatchDeployment(Resource):
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     def _to_dict(self) -> Dict:
-        res: dict = PipelineComponentBatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
-            self
-        )
+        res: dict = PipelineComponentBatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
         return res

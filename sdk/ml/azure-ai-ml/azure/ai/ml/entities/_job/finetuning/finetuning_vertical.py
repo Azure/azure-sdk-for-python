@@ -161,13 +161,9 @@ class FineTuningVertical(FineTuningJob):
     def _restore_inputs(self) -> None:
         """Restore UriFileJobInputs to JobInputs within data_settings."""
         if isinstance(self.training_data, UriFileJobInput):
-            self.training_data = Input(
-                type=AssetTypes.URI_FILE, path=self.training_data.uri
-            )
+            self.training_data = Input(type=AssetTypes.URI_FILE, path=self.training_data.uri)
         if isinstance(self.validation_data, UriFileJobInput):
-            self.validation_data = Input(
-                type=AssetTypes.URI_FILE, path=self.validation_data.uri
-            )
+            self.validation_data = Input(type=AssetTypes.URI_FILE, path=self.validation_data.uri)
         if isinstance(self.model, MLFlowModelJobInput):
             self.model = Input(type=AssetTypes.MLFLOW_MODEL, path=self.model.uri)
 

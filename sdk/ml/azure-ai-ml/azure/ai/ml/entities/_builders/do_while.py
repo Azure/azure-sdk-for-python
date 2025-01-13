@@ -337,11 +337,7 @@ class DoWhile(LoopNode):
                         input_output_mapping[input_name] = input_output_mapping.get(input_name, []) + [output_name]
                         is_primitive_type = self.body._inputs[input_name]._meta._is_primitive_type
 
-                        if (
-                            input_validate_results.passed
-                            and not is_primitive_output
-                            and is_primitive_type
-                        ):
+                        if input_validate_results.passed and not is_primitive_output and is_primitive_type:
                             validate_results.append_error(
                                 yaml_path="mapping",
                                 message=(
