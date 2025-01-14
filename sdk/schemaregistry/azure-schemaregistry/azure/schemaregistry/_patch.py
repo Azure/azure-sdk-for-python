@@ -64,7 +64,6 @@ def _normalize_content_type(content_type: str) -> str:
 
 
 def _get_format(content_type: str) -> Union[SchemaFormat, str]:
-    # pylint:disable=redefined-builtin
     # Exception cases may be due to forward compatibility.
     # i.e. Getting a schema with a content type from a future API version.
     # In this case, we default to returning the content type string.
@@ -177,7 +176,7 @@ class SchemaRegistryClient:
         self._generated_client.close()
 
     @distributed_trace
-    def register_schema(  # pylint:disable=arguments-differ
+    def register_schema(
         self,
         group_name: str,
         name: str,
@@ -216,7 +215,7 @@ class SchemaRegistryClient:
             self._generated_client._register_schema(  # type:ignore # pylint:disable=protected-access
                 group_name=group_name,
                 schema_name=name,
-                content=cast(IO[Any], definition),
+                schema_content=cast(IO[Any], definition),
                 content_type=kwargs.pop("content_type", get_content_type(format)),
                 cls=partial(prepare_schema_properties_result, format),
                 **http_request_kwargs,
@@ -284,7 +283,7 @@ class SchemaRegistryClient:
         ...
 
     @distributed_trace
-    def get_schema(  # pylint: disable=docstring-missing-param,docstring-should-be-keyword
+    def get_schema(  # pylint: disable=docstring-missing-param,docstring-should-be-keyword,docstring-keyword-should-match-keyword-only
         self, *args: str, **kwargs: Any
     ) -> Schema:
         """Gets a registered schema. There are two ways to call this method:
