@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 # pylint: disable=client-method-missing-tracing-decorator
-from typing import Any, Union, Optional, TYPE_CHECKING
+from typing import Any, Union, Optional, TYPE_CHECKING, Type
 import logging
 from weakref import WeakSet
 from typing_extensions import Literal
@@ -110,12 +110,16 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         **kwargs: Any,
     ) -> None:
         uamqp_transport = kwargs.pop("uamqp_transport", False)
+        amqp_transport: Union[Type[PyamqpTransportAsync], Type["UamqpTransportAsync"]] = PyamqpTransportAsync
+
         if uamqp_transport:
             try:
                 from ._transport._uamqp_transport_async import UamqpTransportAsync
+                amqp_transport = UamqpTransportAsync
             except ImportError:
                 raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.3,<2.0.0`.") from None
-        self._amqp_transport = UamqpTransportAsync if uamqp_transport else PyamqpTransportAsync
+
+        self._amqp_transport = amqp_transport
         # If the user provided http:// or sb://, let's be polite and strip that.
         self.fully_qualified_namespace: str = strip_protocol_from_uri(fully_qualified_namespace.strip())
         self._credential = credential
@@ -166,7 +170,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         )
 
     @classmethod
-    def from_connection_string(
+    def from_connection_string( # pylint: disable=docstring-keyword-should-match-keyword-only
         cls,
         conn_str: str,
         *,
@@ -228,6 +232,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         """
         host, policy, key, entity_in_conn_str, token, token_expiry, emulator = _parse_conn_str(conn_str)
         kwargs["use_tls"] = not emulator
+        credential: Union[ServiceBusSASTokenCredential, ServiceBusSharedKeyCredential]
         if token and token_expiry:
             credential = ServiceBusSASTokenCredential(token, token_expiry)
         elif policy and key:
@@ -264,7 +269,14 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         if self._connection_sharing and self._connection:
             await self._connection.close()
 
-    def get_queue_sender(self, queue_name: str, **kwargs: Any) -> ServiceBusSender:
+    def get_queue_sender(
+            self,
+            queue_name: str,
+            *,
+            client_identifier: Optional[str] = None,
+            socket_timeout: Optional[float] = None,
+            **kwargs: Any
+        ) -> ServiceBusSender:
         """Get ServiceBusSender for the specific queue.
 
         :param str queue_name: The path of specific Service Bus Queue the client connects to.
@@ -288,7 +300,6 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
                 :caption: Create a new instance of the ServiceBusClient from connection string.
 
         """
-        # pylint: disable=protected-access
 
         if self._entity_name and queue_name != self._entity_name:
             raise ValueError(
@@ -314,6 +325,8 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             ssl_context=self._ssl_context,
             amqp_transport=self._amqp_transport,
             use_tls=self._config.use_tls,
+            client_identifier=client_identifier,
+            socket_timeout=socket_timeout,
             **kwargs,
         )
         self._handlers.add(handler)
@@ -323,6 +336,8 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         self,
         queue_name: str,
         *,
+        client_identifier: Optional[str] = None,
+        socket_timeout: Optional[float] = None,
         session_id: Optional[Union[str, NextAvailableSessionType]] = None,
         sub_queue: Optional[Union[ServiceBusSubQueue, str]] = None,
         receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK,
@@ -390,7 +405,6 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
                 :caption: Create a new instance of the ServiceBusSender from ServiceBusClient.
 
         """
-        # pylint: disable=protected-access
 
         if self._entity_name and queue_name != self._entity_name:
             raise ValueError(
@@ -436,12 +450,21 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             ssl_context=self._ssl_context,
             amqp_transport=self._amqp_transport,
             use_tls=self._config.use_tls,
+            client_identifier=client_identifier,
+            socket_timeout=socket_timeout,
             **kwargs,
         )
         self._handlers.add(handler)
         return handler
 
-    def get_topic_sender(self, topic_name: str, **kwargs: Any) -> ServiceBusSender:
+    def get_topic_sender(
+        self,
+        topic_name: str,
+        *,
+        client_identifier: Optional[str] = None,
+        socket_timeout: Optional[float] = None,
+        **kwargs: Any
+    ) -> ServiceBusSender:
         """Get ServiceBusSender for the specific topic.
 
         :param str topic_name: The path of specific Service Bus Topic the client connects to.
@@ -490,6 +513,8 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             ssl_context=self._ssl_context,
             amqp_transport=self._amqp_transport,
             use_tls=self._config.use_tls,
+            client_identifier=client_identifier,
+            socket_timeout=socket_timeout,
             **kwargs,
         )
         self._handlers.add(handler)
@@ -506,6 +531,8 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         max_wait_time: Optional[float] = None,
         auto_lock_renewer: Optional[AutoLockRenewer] = None,
         prefetch_count: int = 0,
+        client_identifier: Optional[str] = None,
+        socket_timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> ServiceBusReceiver:
         """Get ServiceBusReceiver for the specific subscription under the topic.
@@ -570,7 +597,6 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
 
 
         """
-        # pylint: disable=protected-access
 
         if self._entity_name and topic_name != self._entity_name:
             raise ValueError(
@@ -614,6 +640,8 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
                 ssl_context=self._ssl_context,
                 amqp_transport=self._amqp_transport,
                 use_tls=self._config.use_tls,
+                client_identifier=client_identifier,
+                socket_timeout=socket_timeout,
                 **kwargs,
             )
         except ValueError:
@@ -644,6 +672,8 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
                 ssl_context=self._ssl_context,
                 amqp_transport=self._amqp_transport,
                 use_tls=self._config.use_tls,
+                client_identifier=client_identifier,
+                socket_timeout=socket_timeout,
                 **kwargs,
             )
         self._handlers.add(handler)

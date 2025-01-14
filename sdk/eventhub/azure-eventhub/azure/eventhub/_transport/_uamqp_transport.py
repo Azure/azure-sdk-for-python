@@ -107,11 +107,11 @@ if uamqp_installed:
             Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
             Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
             Optional[Union["uamqp_ConnectionState", "pyamqp_ConnectionState"]],
-        ] = (  # pylint:disable=protected-access
-            c_uamqp.ConnectionState.CLOSE_RCVD,  # pylint:disable=c-extension-no-member
-            c_uamqp.ConnectionState.CLOSE_SENT,  # pylint:disable=c-extension-no-member
-            c_uamqp.ConnectionState.DISCARDING,  # pylint:disable=c-extension-no-member
-            c_uamqp.ConnectionState.END,  # pylint:disable=c-extension-no-member
+        ] = (
+            c_uamqp.ConnectionState.CLOSE_RCVD,
+            c_uamqp.ConnectionState.CLOSE_SENT,
+            c_uamqp.ConnectionState.DISCARDING,
+            c_uamqp.ConnectionState.END,
             None,
         )
         TRANSPORT_IDENTIFIER = f"{UAMQP_LIBRARY}/{__version__}"
@@ -288,7 +288,7 @@ if uamqp_installed:
             return {types.AMQPSymbol(symbol): types.AMQPLong(value) for (symbol, value) in link_properties.items()}
 
         @staticmethod
-        def create_connection(  # pylint:disable=unused-argument
+        def create_connection(
             *,
             endpoint: str,
             auth: authentication.JWTTokenAuth,
@@ -357,7 +357,7 @@ if uamqp_installed:
             return connection._state  # pylint:disable=protected-access
 
         @staticmethod
-        def create_send_client(  # pylint: disable=unused-argument
+        def create_send_client(
             *,
             config,
             target: str,
@@ -441,7 +441,7 @@ if uamqp_installed:
         @staticmethod
         def set_message_partition_key(
             message: Message, partition_key: Optional[Union[bytes, str]] = None, **kwargs: Any
-        ) -> Message:  # pylint:disable=unused-argument
+        ) -> Message:
             """Set the partition key as an annotation on a uamqp message.
 
             :param uamqp.Message message: The message to update.
@@ -492,7 +492,7 @@ if uamqp_installed:
             return source
 
         @staticmethod
-        def create_receive_client(  # pylint: disable=unused-argument
+        def create_receive_client(
             *,
             config,
             source: Source,
@@ -541,7 +541,7 @@ if uamqp_installed:
 
             client = ReceiveClient(
                 source,
-                debug=network_trace,  # pylint:disable=protected-access
+                debug=network_trace,
                 error_policy=retry_policy,
                 desired_capabilities=desired_capabilities,
                 prefetch=link_credit,
@@ -581,7 +581,7 @@ if uamqp_installed:
             """
             if (
                 isinstance(exception, errors.LinkDetach)
-                and exception.condition == constants.ErrorCodes.LinkStolen  # pylint: disable=no-member
+                and exception.condition == constants.ErrorCodes.LinkStolen
             ):
                 raise consumer._handle_exception(exception)  # pylint: disable=protected-access
 
@@ -763,7 +763,7 @@ if uamqp_installed:
         @staticmethod
         def _handle_exception(
             exception, closable, *, is_consumer=False  # pylint:disable=unused-argument
-        ):  # pylint:disable=too-many-branches, too-many-statements
+        ):
             try:  # closable is a producer/consumer object
                 name = closable._name  # pylint: disable=protected-access
             except AttributeError:  # closable is an client object

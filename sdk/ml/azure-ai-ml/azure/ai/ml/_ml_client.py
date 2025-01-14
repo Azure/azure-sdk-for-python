@@ -655,7 +655,7 @@ class MLClient:
         self._operation_container.add(AzureMLResourceType.ONLINE_DEPLOYMENT, self._online_deployments)
         self._operation_container.add(AzureMLResourceType.BATCH_DEPLOYMENT, self._batch_deployments)
         self._data = DataOperations(
-            self._operation_scope,
+            self._ws_operation_scope if registry_reference else self._operation_scope,
             self._operation_config,
             (self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview),
             self._service_client_01_2024_preview,

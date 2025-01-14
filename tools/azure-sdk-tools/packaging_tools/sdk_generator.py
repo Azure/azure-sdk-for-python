@@ -8,6 +8,7 @@ from subprocess import check_call, getoutput
 import shutil
 import re
 import os
+from functools import partial
 
 try:
     # py 311 adds this library natively
@@ -46,7 +47,10 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def is_multiapi_package(python_md_content: List[str]) -> bool:
-    return "multiapi: true" in "".join(python_md_content)
+    for line in python_md_content:
+        if re.findall(r"\s*multiapi\s*:\s*true", line):
+            return True
+    return False
 
 
 # return relative path like: network/azure-mgmt-network
@@ -179,49 +183,31 @@ def if_need_regenerate(meta: Dict[str, Any]) -> bool:
 # spec_folder: "../azure-rest-api-specs"
 # input_readme: "specification/paloaltonetworks/resource-manager/readme.md"
 @return_origin_path
-def update_metadata_for_multiapi_package(spec_folder: str, input_readme: str):
+def need_regen_for_multiapi_package(spec_folder: str, input_readme: str) -> bool:
     os.chdir(spec_folder)
     python_readme = (Path(input_readme).parent / "readme.python.md").absolute()
     if not python_readme.exists():
         _LOGGER.info(f"do not find python configuration: {python_readme}")
-        return
+        return False
 
     with open(python_readme, "r") as file_in:
         python_md_content = file_in.readlines()
     is_multiapi = is_multiapi_package(python_md_content)
     if not is_multiapi:
         _LOGGER.info(f"do not find multiapi configuration in {python_readme}")
-        return
-
-    sdk_folder = extract_sdk_folder(python_md_content)
-    if not sdk_folder:
-        _LOGGER.warning(f"don't find valid sdk folder in {python_readme}")
-        return
-    meta_path = Path("../azure-sdk-for-python/sdk", sdk_folder, "_meta.json")
-    if not meta_path.exists():
-        _LOGGER.warning(f"don't find _meta.json file: {meta_path}")
-        return
-
-    with open(meta_path, "r") as file_in:
-        meta = json.load(file_in)
-
-    need_regenerate = if_need_regenerate(meta)
+        return False
 
     after_handle = []
     for idx in range(len(python_md_content)):
+        if re.findall(r"\s*clear-output-folder\s*:\s*true\s*", python_md_content[idx]):
+            continue
+        if re.findall(r"\s*-\s*tag\s*:", python_md_content[idx]):
+            continue
         after_handle.append(python_md_content[idx])
-        if "batch:" in python_md_content[idx]:
-            line_number = choose_tag_and_update_meta(
-                idx + 1, python_md_content, after_handle, input_readme, meta, need_regenerate
-            )
-            after_handle.extend(python_md_content[line_number:])
-            break
 
     with open(python_readme, "w") as file_out:
         file_out.writelines(after_handle)
-
-    with open(meta_path, "w") as file_out:
-        json.dump(meta, file_out, indent=2)
+    return True
 
 
 def main(generate_input, generate_output):
@@ -239,10 +225,9 @@ def main(generate_input, generate_output):
         try:
             if "resource-manager" in readme_or_tsp:
                 relative_path_readme = str(Path(spec_folder, readme_or_tsp))
-                # we begin to trim package size so don't need opimization to speed SDK generation for now
-                # update_metadata_for_multiapi_package(spec_folder, readme_or_tsp)
                 del_outdated_files(relative_path_readme)
-                config = generate(
+                generate_mgmt = partial(
+                    generate,
                     CONFIG_FILE,
                     sdk_folder,
                     [],
@@ -251,6 +236,9 @@ def main(generate_input, generate_output):
                     force_generation=True,
                     python_tag=python_tag,
                 )
+                config = generate_mgmt()
+                if need_regen_for_multiapi_package(spec_folder, readme_or_tsp):
+                    generate_mgmt()
             elif "data-plane" in readme_or_tsp:
                 config = gen_dpg(readme_or_tsp, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
             else:

@@ -4,8 +4,8 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to get image embeddings vectors for 
-    two input images, using an asynchronous client.
+    This sample demonstrates how to get image embeddings vector for
+    an input image, using an asynchronous client.
 
     This sample assumes the AI model is hosted on a Serverless API or
     Managed Compute endpoint. For GitHub Models or Azure OpenAI endpoints,
@@ -27,7 +27,6 @@ import asyncio
 
 async def sample_image_embeddings_async():
     import os
-    import base64
 
     try:
         endpoint = os.environ["AZURE_AI_IMAGE_EMBEDDINGS_ENDPOINT"]
@@ -38,18 +37,13 @@ async def sample_image_embeddings_async():
         exit()
 
     from azure.ai.inference.aio import ImageEmbeddingsClient
-    from azure.ai.inference.models import EmbeddingInput
+    from azure.ai.inference.models import ImageEmbeddingInput
     from azure.core.credentials import AzureKeyCredential
-
-    with open("sample1.png", "rb") as f:
-        image1: str = base64.b64encode(f.read()).decode("utf-8")
-    with open("sample2.png", "rb") as f:
-        image2: str = base64.b64encode(f.read()).decode("utf-8")
 
     async with ImageEmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as client:
 
         # Do a single image embeddings operation. Start the operation and get a Future object.
-        response = await client.embed(input=[EmbeddingInput(image=image1), EmbeddingInput(image=image2)])
+        response = await client.embed(input=[ImageEmbeddingInput.load(image_file="sample1.png", image_format="png")])
 
         print("Embeddings response:")
         for item in response.data:

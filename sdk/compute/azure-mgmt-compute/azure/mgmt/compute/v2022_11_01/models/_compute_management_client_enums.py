@@ -35,10 +35,10 @@ class AvailabilitySetSkuTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class CachingTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values are:
-    :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
-    :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-    storage. ReadOnly for Premium storage**.
+    """Specifies the caching requirements. :code:`<br>`\\ :code:`<br>` Possible values are:
+    :code:`<br>`\\ :code:`<br>` **None** :code:`<br>`\\ :code:`<br>` **ReadOnly** :code:`<br>`\\
+    :code:`<br>` **ReadWrite** :code:`<br>`\\ :code:`<br>` Default: **None for Standard storage.
+    ReadOnly for Premium storage**.
     """
 
     NONE = "None"
@@ -71,9 +71,9 @@ class ConsistencyModeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class DedicatedHostLicenseTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the software license type that will be applied to the VMs deployed on the dedicated
-    host. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **None**
-    :code:`<br>`:code:`<br>` **Windows_Server_Hybrid** :code:`<br>`:code:`<br>`
-    **Windows_Server_Perpetual** :code:`<br>`:code:`<br>` Default: **None**.
+    host. :code:`<br>`\\ :code:`<br>` Possible values are: :code:`<br>`\\ :code:`<br>` **None**
+    :code:`<br>`\\ :code:`<br>` **Windows_Server_Hybrid** :code:`<br>`\\ :code:`<br>`
+    **Windows_Server_Perpetual** :code:`<br>`\\ :code:`<br>` Default: **None**.
     """
 
     NONE = "None"
@@ -124,12 +124,13 @@ class DiskControllerTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class DiskCreateOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies how the virtual machine should be created.:code:`<br>`:code:`<br>` Possible values
-    are::code:`<br>`:code:`<br>` **Attach** \\u2013 This value is used when you are using a
-    specialized disk to create the virtual machine.:code:`<br>`:code:`<br>` **FromImage** \\u2013
-    This value is used when you are using an image to create the virtual machine. If you are using
-    a platform image, you also use the imageReference element described above. If you are using a
-    marketplace image, you  also use the plan element previously described.
+    """Specifies how the virtual machine should be created.\\ :code:`<br>`\\ :code:`<br>` Possible
+    values are:\\ :code:`<br>`\\ :code:`<br>` **Attach** \\u2013 This value is used when you are
+    using a specialized disk to create the virtual machine.\\ :code:`<br>`\\ :code:`<br>`
+    **FromImage** \\u2013 This value is used when you are using an image to create the virtual
+    machine. If you are using a platform image, you also use the imageReference element described
+    above. If you are using a marketplace image, you  also use the plan element previously
+    described.
     """
 
     FROM_IMAGE = "FromImage"
@@ -139,10 +140,10 @@ class DiskCreateOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class DiskDeleteOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the behavior of the managed disk when the VM gets deleted i.e whether the managed
-    disk is deleted or detached. Supported values::code:`<br>`:code:`<br>` **Delete** If this value
-    is used, the managed disk is deleted when VM gets deleted.:code:`<br>`:code:`<br>` **Detach**
-    If this value is used, the managed disk is retained after VM gets
-    deleted.:code:`<br>`:code:`<br>` Minimum api-version: 2021-03-01.
+    disk is deleted or detached. Supported values:\\ :code:`<br>`\\ :code:`<br>` **Delete** If this
+    value is used, the managed disk is deleted when VM gets deleted.\\ :code:`<br>`\\ :code:`<br>`
+    **Detach** If this value is used, the managed disk is retained after VM gets deleted.\\
+    :code:`<br>`\\ :code:`<br>` Minimum api-version: 2021-03-01.
     """
 
     DELETE = "Delete"
@@ -152,11 +153,11 @@ class DiskDeleteOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class DiskDetachOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the detach behavior to be used while detaching a disk or which is already in the
     process of detachment from the virtual machine. Supported values: **ForceDetach**.
-    :code:`<br>`:code:`<br>` detachOption: **ForceDetach** is applicable only for managed data
+    :code:`<br>`\\ :code:`<br>` detachOption: **ForceDetach** is applicable only for managed data
     disks. If a previous detachment attempt of the data disk did not complete due to an unexpected
     failure from the virtual machine and the disk is still not released then use force-detach as a
     last resort option to detach the disk forcibly from the VM. All writes might not have been
-    flushed when using this detach behavior. :code:`<br>`:code:`<br>` This feature is still in
+    flushed when using this detach behavior. :code:`<br>`\\ :code:`<br>` This feature is still in
     preview mode and is not supported for VirtualMachineScaleSet. To force-detach a data disk
     update toBeDetached to 'true' along with setting detachOption: 'ForceDetach'.
     """
@@ -261,11 +262,11 @@ class IPVersions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class LinuxPatchAssessmentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the mode of VM Guest Patch Assessment for the IaaS virtual machine.:code:`<br
-    />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />` **ImageDefault** - You
-    control the timing of patch assessments on a virtual machine. :code:`<br />`:code:`<br />`
-    **AutomaticByPlatform** - The platform will trigger periodic patch assessments. The property
-    provisionVMAgent must be true.
+    """Specifies the mode of VM Guest Patch Assessment for the IaaS virtual machine.\\ :code:`<br
+    />`\\ :code:`<br />` Possible values are:\\ :code:`<br />`\\ :code:`<br />` **ImageDefault** -
+    You control the timing of patch assessments on a virtual machine. :code:`<br />`\\ :code:`<br
+    />` **AutomaticByPlatform** - The platform will trigger periodic patch assessments. The
+    property provisionVMAgent must be true.
     """
 
     IMAGE_DEFAULT = "ImageDefault"
@@ -283,11 +284,11 @@ class LinuxVMGuestPatchAutomaticByPlatformRebootSetting(str, Enum, metaclass=Cas
 
 class LinuxVMGuestPatchMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual machines associated
-    to virtual machine scale set with OrchestrationMode as Flexible.:code:`<br />`:code:`<br />`
-    Possible values are::code:`<br />`:code:`<br />` **ImageDefault** - The virtual machine's
-    default patching configuration is used. :code:`<br />`:code:`<br />` **AutomaticByPlatform** -
-    The virtual machine will be automatically updated by the platform. The property
-    provisionVMAgent must be true.
+    to virtual machine scale set with OrchestrationMode as Flexible.\\ :code:`<br />`\\ :code:`<br
+    />` Possible values are:\\ :code:`<br />`\\ :code:`<br />` **ImageDefault** - The virtual
+    machine's default patching configuration is used. :code:`<br />`\\ :code:`<br />`
+    **AutomaticByPlatform** - The virtual machine will be automatically updated by the platform.
+    The property provisionVMAgent must be true.
     """
 
     IMAGE_DEFAULT = "ImageDefault"
@@ -329,8 +330,8 @@ class OperatingSystemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This property allows you to specify the type of the OS that is included in the disk if creating
-    a VM from user-image or a specialized VHD. :code:`<br>`:code:`<br>` Possible values are:
-    :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**.
+    a VM from user-image or a specialized VHD. :code:`<br>`\\ :code:`<br>` Possible values are:
+    :code:`<br>`\\ :code:`<br>` **Windows** :code:`<br>`\\ :code:`<br>` **Linux**.
     """
 
     WINDOWS = "Windows"
@@ -398,8 +399,8 @@ class PatchOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ProtocolTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the protocol of WinRM listener. :code:`<br>`:code:`<br>` Possible values are:
-    :code:`<br>`\\ **http** :code:`<br>`:code:`<br>` **https**.
+    """Specifies the protocol of WinRM listener. :code:`<br>`\\ :code:`<br>` Possible values are:
+    :code:`<br>`\\ **http** :code:`<br>`\\ :code:`<br>` **https**.
     """
 
     HTTP = "Http"
@@ -407,9 +408,9 @@ class ProtocolTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ProximityPlacementGroupType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the type of the proximity placement group. :code:`<br>`:code:`<br>` Possible values
-    are: :code:`<br>`:code:`<br>` **Standard** : Co-locate resources within an Azure region or
-    Availability Zone. :code:`<br>`:code:`<br>` **Ultra** : For future use.
+    """Specifies the type of the proximity placement group. :code:`<br>`\\ :code:`<br>` Possible
+    values are: :code:`<br>`\\ :code:`<br>` **Standard** : Co-locate resources within an Azure
+    region or Availability Zone. :code:`<br>`\\ :code:`<br>` **Ultra** : For future use.
     """
 
     STANDARD = "Standard"
@@ -491,8 +492,8 @@ class RollingUpgradeStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class SecurityEncryptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the EncryptionType of the managed disk. :code:`<br>` It is set to
     DiskWithVMGuestState for encryption of the managed disk along with VMGuestState blob, and
-    VMGuestStateOnly for encryption of just the VMGuestState blob. :code:`<br>`:code:`<br>` NOTE:
-    It can be set for only Confidential VMs.
+    VMGuestStateOnly for encryption of just the VMGuestState blob. :code:`<br>`\\ :code:`<br>`
+    NOTE: It can be set for only Confidential VMs.
     """
 
     VM_GUEST_STATE_ONLY = "VMGuestStateOnly"
@@ -501,8 +502,8 @@ class SecurityEncryptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class SecurityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the SecurityType of the virtual machine. It has to be set to any specified value to
-    enable UefiSettings. :code:`<br>`:code:`<br>` Default: UefiSettings will not be enabled unless
-    this property is set.
+    enable UefiSettings. :code:`<br>`\\ :code:`<br>` Default: UefiSettings will not be enabled
+    unless this property is set.
     """
 
     TRUSTED_LAUNCH = "TrustedLaunch"
@@ -547,11 +548,11 @@ class StorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class UpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br />`:code:`<br
-    />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control the application
-    of updates to virtual machines in the scale set. You do this by using the manualUpgrade
-    action.:code:`<br />`:code:`<br />` **Automatic** - All virtual machines in the scale set are
-    automatically updated at the same time.
+    """Specifies the mode of an upgrade to virtual machines in the scale set.\\ :code:`<br />`\\
+    :code:`<br />` Possible values are:\\ :code:`<br />`\\ :code:`<br />` **Manual** - You  control
+    the application of updates to virtual machines in the scale set. You do this by using the
+    manualUpgrade action.\\ :code:`<br />`\\ :code:`<br />` **Automatic** - All virtual machines in
+    the scale set are  automatically updated at the same time.
     """
 
     AUTOMATIC = "Automatic"
@@ -585,8 +586,8 @@ class VirtualMachineEvictionPolicyTypes(str, Enum, metaclass=CaseInsensitiveEnum
 
 class VirtualMachinePriorityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the priority for a standalone virtual machine or the virtual machines in the scale
-    set. :code:`<br>`:code:`<br>` 'Low' enum will be deprecated in the future, please use 'Spot' as
-    the enum to deploy Azure Spot VM/VMSS.
+    set. :code:`<br>`\\ :code:`<br>` 'Low' enum will be deprecated in the future, please use 'Spot'
+    as the enum to deploy Azure Spot VM/VMSS.
     """
 
     REGULAR = "Regular"
@@ -610,17 +611,17 @@ class VirtualMachineScaleSetSkuScaleType(str, Enum, metaclass=CaseInsensitiveEnu
 
 
 class VirtualMachineSizeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the size of the virtual machine. :code:`<br>`:code:`<br>` The enum data type is
-    currently deprecated and will be removed by December 23rd 2023. :code:`<br>`:code:`<br>`
-    Recommended way to get the list of available sizes is using these APIs:
-    :code:`<br>`:code:`<br>` `List all available virtual machine sizes in an availability set
+    """Specifies the size of the virtual machine. :code:`<br>`\\ :code:`<br>` The enum data type is
+    currently deprecated and will be removed by December 23rd 2023. :code:`<br>`\\ :code:`<br>`
+    Recommended way to get the list of available sizes is using these APIs: :code:`<br>`\\
+    :code:`<br>` `List all available virtual machine sizes in an availability set
     <https://docs.microsoft.com/rest/api/compute/availabilitysets/listavailablesizes>`_
-    :code:`<br>`:code:`<br>` `List all available virtual machine sizes in a region
-    <https://docs.microsoft.com/rest/api/compute/resourceskus/list>`_ :code:`<br>`:code:`<br>`
+    :code:`<br>`\\ :code:`<br>` `List all available virtual machine sizes in a region
+    <https://docs.microsoft.com/rest/api/compute/resourceskus/list>`_ :code:`<br>`\\ :code:`<br>`
     `List all available virtual machine sizes for resizing
     <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_. For more
     information about virtual machine sizes, see `Sizes for virtual machines
-    <https://docs.microsoft.com/azure/virtual-machines/sizes>`_. :code:`<br>`:code:`<br>` The
+    <https://docs.microsoft.com/azure/virtual-machines/sizes>`_. :code:`<br>`\\ :code:`<br>` The
     available VM sizes depend on region and availability set.
     """
 
@@ -849,11 +850,11 @@ class VMGuestPatchRebootStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class WindowsPatchAssessmentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the mode of VM Guest patch assessment for the IaaS virtual machine.:code:`<br
-    />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />` **ImageDefault** - You
-    control the timing of patch assessments on a virtual machine.:code:`<br />`:code:`<br />`
-    **AutomaticByPlatform** - The platform will trigger periodic patch assessments. The property
-    provisionVMAgent must be true.
+    """Specifies the mode of VM Guest patch assessment for the IaaS virtual machine.\\ :code:`<br
+    />`\\ :code:`<br />` Possible values are:\\ :code:`<br />`\\ :code:`<br />` **ImageDefault** -
+    You control the timing of patch assessments on a virtual machine.\\ :code:`<br />`\\ :code:`<br
+    />` **AutomaticByPlatform** - The platform will trigger periodic patch assessments. The
+    property provisionVMAgent must be true.
     """
 
     IMAGE_DEFAULT = "ImageDefault"
@@ -871,15 +872,15 @@ class WindowsVMGuestPatchAutomaticByPlatformRebootSetting(str, Enum, metaclass=C
 
 class WindowsVMGuestPatchMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual machines associated
-    to virtual machine scale set with OrchestrationMode as Flexible.:code:`<br />`:code:`<br />`
-    Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control the application of
-    patches to a virtual machine. You do this by applying patches manually inside the VM. In this
-    mode, automatic updates are disabled; the property WindowsConfiguration.enableAutomaticUpdates
-    must be false:code:`<br />`:code:`<br />` **AutomaticByOS** - The virtual machine will
-    automatically be updated by the OS. The property WindowsConfiguration.enableAutomaticUpdates
-    must be true. :code:`<br />`:code:`<br />` **AutomaticByPlatform** - the virtual machine will
-    automatically updated by the platform. The properties provisionVMAgent and
-    WindowsConfiguration.enableAutomaticUpdates must be true.
+    to virtual machine scale set with OrchestrationMode as Flexible.\\ :code:`<br />`\\ :code:`<br
+    />` Possible values are:\\ :code:`<br />`\\ :code:`<br />` **Manual** - You  control the
+    application of patches to a virtual machine. You do this by applying patches manually inside
+    the VM. In this mode, automatic updates are disabled; the property
+    WindowsConfiguration.enableAutomaticUpdates must be false\\ :code:`<br />`\\ :code:`<br />`
+    **AutomaticByOS** - The virtual machine will automatically be updated by the OS. The property
+    WindowsConfiguration.enableAutomaticUpdates must be true. :code:`<br />`\\ :code:`<br />`
+    **AutomaticByPlatform** - the virtual machine will automatically updated by the platform. The
+    properties provisionVMAgent and WindowsConfiguration.enableAutomaticUpdates must be true.
     """
 
     MANUAL = "Manual"

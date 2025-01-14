@@ -69,7 +69,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -104,7 +104,7 @@ class AzureEntityResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -142,7 +142,7 @@ class Account(AzureEntityResource):  # pylint: disable=too-many-instance-attribu
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -259,6 +259,8 @@ class DeploymentModel(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    :ivar publisher: Deployment model publisher.
+    :vartype publisher: str
     :ivar format: Deployment model format.
     :vartype format: str
     :ivar name: Deployment model name.
@@ -270,6 +272,9 @@ class DeploymentModel(_serialization.Model):
     :vartype version: str
     :ivar source: Optional. Deployment model source ARM resource ID.
     :vartype source: str
+    :ivar source_account: Optional. Source of the model, another Microsoft.CognitiveServices
+     accounts ARM resource ID.
+    :vartype source_account: str
     :ivar call_rate_limit: The call rate limit Cognitive Services account.
     :vartype call_rate_limit: ~azure.mgmt.cognitiveservices.models.CallRateLimit
     """
@@ -279,23 +284,29 @@ class DeploymentModel(_serialization.Model):
     }
 
     _attribute_map = {
+        "publisher": {"key": "publisher", "type": "str"},
         "format": {"key": "format", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "version": {"key": "version", "type": "str"},
         "source": {"key": "source", "type": "str"},
+        "source_account": {"key": "sourceAccount", "type": "str"},
         "call_rate_limit": {"key": "callRateLimit", "type": "CallRateLimit"},
     }
 
     def __init__(
         self,
         *,
+        publisher: Optional[str] = None,
         format: Optional[str] = None,
         name: Optional[str] = None,
         version: Optional[str] = None,
         source: Optional[str] = None,
+        source_account: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword publisher: Deployment model publisher.
+        :paramtype publisher: str
         :keyword format: Deployment model format.
         :paramtype format: str
         :keyword name: Deployment model name.
@@ -307,12 +318,17 @@ class DeploymentModel(_serialization.Model):
         :paramtype version: str
         :keyword source: Optional. Deployment model source ARM resource ID.
         :paramtype source: str
+        :keyword source_account: Optional. Source of the model, another Microsoft.CognitiveServices
+         accounts ARM resource ID.
+        :paramtype source_account: str
         """
         super().__init__(**kwargs)
+        self.publisher = publisher
         self.format = format
         self.name = name
         self.version = version
         self.source = source
+        self.source_account = source_account
         self.call_rate_limit = None
 
 
@@ -321,6 +337,8 @@ class AccountModel(DeploymentModel):  # pylint: disable=too-many-instance-attrib
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    :ivar publisher: Deployment model publisher.
+    :vartype publisher: str
     :ivar format: Deployment model format.
     :vartype format: str
     :ivar name: Deployment model name.
@@ -332,9 +350,12 @@ class AccountModel(DeploymentModel):  # pylint: disable=too-many-instance-attrib
     :vartype version: str
     :ivar source: Optional. Deployment model source ARM resource ID.
     :vartype source: str
+    :ivar source_account: Optional. Source of the model, another Microsoft.CognitiveServices
+     accounts ARM resource ID.
+    :vartype source_account: str
     :ivar call_rate_limit: The call rate limit Cognitive Services account.
     :vartype call_rate_limit: ~azure.mgmt.cognitiveservices.models.CallRateLimit
-    :ivar base_model: Base Model Identifier.
+    :ivar base_model: Properties of Cognitive Services account deployment model.
     :vartype base_model: ~azure.mgmt.cognitiveservices.models.DeploymentModel
     :ivar is_default_version: If the model is default version.
     :vartype is_default_version: bool
@@ -348,8 +369,8 @@ class AccountModel(DeploymentModel):  # pylint: disable=too-many-instance-attrib
     :vartype finetune_capabilities: dict[str, str]
     :ivar deprecation: Cognitive Services account ModelDeprecationInfo.
     :vartype deprecation: ~azure.mgmt.cognitiveservices.models.ModelDeprecationInfo
-    :ivar lifecycle_status: Model lifecycle status. Known values are: "GenerallyAvailable" and
-     "Preview".
+    :ivar lifecycle_status: Model lifecycle status. Known values are: "Stable", "Preview",
+     "GenerallyAvailable", "Deprecating", and "Deprecated".
     :vartype lifecycle_status: str or ~azure.mgmt.cognitiveservices.models.ModelLifecycleStatus
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
@@ -361,10 +382,12 @@ class AccountModel(DeploymentModel):  # pylint: disable=too-many-instance-attrib
     }
 
     _attribute_map = {
+        "publisher": {"key": "publisher", "type": "str"},
         "format": {"key": "format", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "version": {"key": "version", "type": "str"},
         "source": {"key": "source", "type": "str"},
+        "source_account": {"key": "sourceAccount", "type": "str"},
         "call_rate_limit": {"key": "callRateLimit", "type": "CallRateLimit"},
         "base_model": {"key": "baseModel", "type": "DeploymentModel"},
         "is_default_version": {"key": "isDefaultVersion", "type": "bool"},
@@ -380,10 +403,12 @@ class AccountModel(DeploymentModel):  # pylint: disable=too-many-instance-attrib
     def __init__(
         self,
         *,
+        publisher: Optional[str] = None,
         format: Optional[str] = None,
         name: Optional[str] = None,
         version: Optional[str] = None,
         source: Optional[str] = None,
+        source_account: Optional[str] = None,
         base_model: Optional["_models.DeploymentModel"] = None,
         is_default_version: Optional[bool] = None,
         skus: Optional[List["_models.ModelSku"]] = None,
@@ -395,6 +420,8 @@ class AccountModel(DeploymentModel):  # pylint: disable=too-many-instance-attrib
         **kwargs: Any
     ) -> None:
         """
+        :keyword publisher: Deployment model publisher.
+        :paramtype publisher: str
         :keyword format: Deployment model format.
         :paramtype format: str
         :keyword name: Deployment model name.
@@ -406,7 +433,10 @@ class AccountModel(DeploymentModel):  # pylint: disable=too-many-instance-attrib
         :paramtype version: str
         :keyword source: Optional. Deployment model source ARM resource ID.
         :paramtype source: str
-        :keyword base_model: Base Model Identifier.
+        :keyword source_account: Optional. Source of the model, another Microsoft.CognitiveServices
+         accounts ARM resource ID.
+        :paramtype source_account: str
+        :keyword base_model: Properties of Cognitive Services account deployment model.
         :paramtype base_model: ~azure.mgmt.cognitiveservices.models.DeploymentModel
         :keyword is_default_version: If the model is default version.
         :paramtype is_default_version: bool
@@ -420,11 +450,19 @@ class AccountModel(DeploymentModel):  # pylint: disable=too-many-instance-attrib
         :paramtype finetune_capabilities: dict[str, str]
         :keyword deprecation: Cognitive Services account ModelDeprecationInfo.
         :paramtype deprecation: ~azure.mgmt.cognitiveservices.models.ModelDeprecationInfo
-        :keyword lifecycle_status: Model lifecycle status. Known values are: "GenerallyAvailable" and
-         "Preview".
+        :keyword lifecycle_status: Model lifecycle status. Known values are: "Stable", "Preview",
+         "GenerallyAvailable", "Deprecating", and "Deprecated".
         :paramtype lifecycle_status: str or ~azure.mgmt.cognitiveservices.models.ModelLifecycleStatus
         """
-        super().__init__(format=format, name=name, version=version, source=source, **kwargs)
+        super().__init__(
+            publisher=publisher,
+            format=format,
+            name=name,
+            version=version,
+            source=source,
+            source_account=source_account,
+            **kwargs
+        )
         self.base_model = base_model
         self.is_default_version = is_default_version
         self.skus = skus
@@ -496,6 +534,8 @@ class AccountProperties(_serialization.Model):  # pylint: disable=too-many-insta
     :vartype encryption: ~azure.mgmt.cognitiveservices.models.Encryption
     :ivar user_owned_storage: The storage accounts for this resource.
     :vartype user_owned_storage: list[~azure.mgmt.cognitiveservices.models.UserOwnedStorage]
+    :ivar aml_workspace: The user owned AML workspace properties.
+    :vartype aml_workspace: ~azure.mgmt.cognitiveservices.models.UserOwnedAmlWorkspace
     :ivar private_endpoint_connections: The private endpoint connection associated with the
      Cognitive Services account.
     :vartype private_endpoint_connections:
@@ -535,6 +575,8 @@ class AccountProperties(_serialization.Model):  # pylint: disable=too-many-insta
      list[~azure.mgmt.cognitiveservices.models.CommitmentPlanAssociation]
     :ivar abuse_penalty: The abuse penalty.
     :vartype abuse_penalty: ~azure.mgmt.cognitiveservices.models.AbusePenalty
+    :ivar rai_monitor_config: Cognitive Services Rai Monitor Config.
+    :vartype rai_monitor_config: ~azure.mgmt.cognitiveservices.models.RaiMonitorConfig
     """
 
     _validation = {
@@ -567,6 +609,7 @@ class AccountProperties(_serialization.Model):  # pylint: disable=too-many-insta
         "network_acls": {"key": "networkAcls", "type": "NetworkRuleSet"},
         "encryption": {"key": "encryption", "type": "Encryption"},
         "user_owned_storage": {"key": "userOwnedStorage", "type": "[UserOwnedStorage]"},
+        "aml_workspace": {"key": "amlWorkspace", "type": "UserOwnedAmlWorkspace"},
         "private_endpoint_connections": {"key": "privateEndpointConnections", "type": "[PrivateEndpointConnection]"},
         "public_network_access": {"key": "publicNetworkAccess", "type": "str"},
         "api_properties": {"key": "apiProperties", "type": "ApiProperties"},
@@ -584,6 +627,7 @@ class AccountProperties(_serialization.Model):  # pylint: disable=too-many-insta
         "locations": {"key": "locations", "type": "MultiRegionSettings"},
         "commitment_plan_associations": {"key": "commitmentPlanAssociations", "type": "[CommitmentPlanAssociation]"},
         "abuse_penalty": {"key": "abusePenalty", "type": "AbusePenalty"},
+        "rai_monitor_config": {"key": "raiMonitorConfig", "type": "RaiMonitorConfig"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -594,6 +638,7 @@ class AccountProperties(_serialization.Model):  # pylint: disable=too-many-insta
         network_acls: Optional["_models.NetworkRuleSet"] = None,
         encryption: Optional["_models.Encryption"] = None,
         user_owned_storage: Optional[List["_models.UserOwnedStorage"]] = None,
+        aml_workspace: Optional["_models.UserOwnedAmlWorkspace"] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         api_properties: Optional["_models.ApiProperties"] = None,
         dynamic_throttling_enabled: Optional[bool] = None,
@@ -602,6 +647,7 @@ class AccountProperties(_serialization.Model):  # pylint: disable=too-many-insta
         disable_local_auth: Optional[bool] = None,
         restore: Optional[bool] = None,
         locations: Optional["_models.MultiRegionSettings"] = None,
+        rai_monitor_config: Optional["_models.RaiMonitorConfig"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -616,6 +662,8 @@ class AccountProperties(_serialization.Model):  # pylint: disable=too-many-insta
         :paramtype encryption: ~azure.mgmt.cognitiveservices.models.Encryption
         :keyword user_owned_storage: The storage accounts for this resource.
         :paramtype user_owned_storage: list[~azure.mgmt.cognitiveservices.models.UserOwnedStorage]
+        :keyword aml_workspace: The user owned AML workspace properties.
+        :paramtype aml_workspace: ~azure.mgmt.cognitiveservices.models.UserOwnedAmlWorkspace
         :keyword public_network_access: Whether or not public endpoint access is allowed for this
          account. Known values are: "Enabled" and "Disabled".
         :paramtype public_network_access: str or
@@ -634,6 +682,8 @@ class AccountProperties(_serialization.Model):  # pylint: disable=too-many-insta
         :paramtype restore: bool
         :keyword locations: The multiregion settings of Cognitive Services account.
         :paramtype locations: ~azure.mgmt.cognitiveservices.models.MultiRegionSettings
+        :keyword rai_monitor_config: Cognitive Services Rai Monitor Config.
+        :paramtype rai_monitor_config: ~azure.mgmt.cognitiveservices.models.RaiMonitorConfig
         """
         super().__init__(**kwargs)
         self.provisioning_state = None
@@ -647,6 +697,7 @@ class AccountProperties(_serialization.Model):  # pylint: disable=too-many-insta
         self.network_acls = network_acls
         self.encryption = encryption
         self.user_owned_storage = user_owned_storage
+        self.aml_workspace = aml_workspace
         self.private_endpoint_connections = None
         self.public_network_access = public_network_access
         self.api_properties = api_properties
@@ -664,6 +715,7 @@ class AccountProperties(_serialization.Model):  # pylint: disable=too-many-insta
         self.locations = locations
         self.commitment_plan_associations = None
         self.abuse_penalty = None
+        self.rai_monitor_config = rai_monitor_config
 
 
 class AccountSku(_serialization.Model):
@@ -858,6 +910,147 @@ class ApiProperties(_serialization.Model):  # pylint: disable=too-many-instance-
         self.website_name = website_name
 
 
+class BillingMeterInfo(_serialization.Model):
+    """BillingMeterInfo.
+
+    :ivar name:
+    :vartype name: str
+    :ivar meter_id:
+    :vartype meter_id: str
+    :ivar unit:
+    :vartype unit: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "meter_id": {"key": "meterId", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+    }
+
+    def __init__(
+        self, *, name: Optional[str] = None, meter_id: Optional[str] = None, unit: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword name:
+        :paramtype name: str
+        :keyword meter_id:
+        :paramtype meter_id: str
+        :keyword unit:
+        :paramtype unit: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.meter_id = meter_id
+        self.unit = unit
+
+
+class CalculateModelCapacityParameter(_serialization.Model):
+    """Calculate Model Capacity parameter.
+
+    :ivar model: Properties of Cognitive Services account deployment model.
+    :vartype model: ~azure.mgmt.cognitiveservices.models.DeploymentModel
+    :ivar sku_name: The name of SKU.
+    :vartype sku_name: str
+    :ivar workloads: List of Model Capacity Calculator Workload.
+    :vartype workloads: list[~azure.mgmt.cognitiveservices.models.ModelCapacityCalculatorWorkload]
+    """
+
+    _attribute_map = {
+        "model": {"key": "model", "type": "DeploymentModel"},
+        "sku_name": {"key": "skuName", "type": "str"},
+        "workloads": {"key": "workloads", "type": "[ModelCapacityCalculatorWorkload]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        model: Optional["_models.DeploymentModel"] = None,
+        sku_name: Optional[str] = None,
+        workloads: Optional[List["_models.ModelCapacityCalculatorWorkload"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword model: Properties of Cognitive Services account deployment model.
+        :paramtype model: ~azure.mgmt.cognitiveservices.models.DeploymentModel
+        :keyword sku_name: The name of SKU.
+        :paramtype sku_name: str
+        :keyword workloads: List of Model Capacity Calculator Workload.
+        :paramtype workloads:
+         list[~azure.mgmt.cognitiveservices.models.ModelCapacityCalculatorWorkload]
+        """
+        super().__init__(**kwargs)
+        self.model = model
+        self.sku_name = sku_name
+        self.workloads = workloads
+
+
+class CalculateModelCapacityResult(_serialization.Model):
+    """Calculate Model Capacity result.
+
+    :ivar model: Properties of Cognitive Services account deployment model.
+    :vartype model: ~azure.mgmt.cognitiveservices.models.DeploymentModel
+    :ivar sku_name:
+    :vartype sku_name: str
+    :ivar estimated_capacity: Model Estimated Capacity.
+    :vartype estimated_capacity:
+     ~azure.mgmt.cognitiveservices.models.CalculateModelCapacityResultEstimatedCapacity
+    """
+
+    _attribute_map = {
+        "model": {"key": "model", "type": "DeploymentModel"},
+        "sku_name": {"key": "skuName", "type": "str"},
+        "estimated_capacity": {"key": "estimatedCapacity", "type": "CalculateModelCapacityResultEstimatedCapacity"},
+    }
+
+    def __init__(
+        self,
+        *,
+        model: Optional["_models.DeploymentModel"] = None,
+        sku_name: Optional[str] = None,
+        estimated_capacity: Optional["_models.CalculateModelCapacityResultEstimatedCapacity"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword model: Properties of Cognitive Services account deployment model.
+        :paramtype model: ~azure.mgmt.cognitiveservices.models.DeploymentModel
+        :keyword sku_name:
+        :paramtype sku_name: str
+        :keyword estimated_capacity: Model Estimated Capacity.
+        :paramtype estimated_capacity:
+         ~azure.mgmt.cognitiveservices.models.CalculateModelCapacityResultEstimatedCapacity
+        """
+        super().__init__(**kwargs)
+        self.model = model
+        self.sku_name = sku_name
+        self.estimated_capacity = estimated_capacity
+
+
+class CalculateModelCapacityResultEstimatedCapacity(_serialization.Model):  # pylint: disable=name-too-long
+    """Model Estimated Capacity.
+
+    :ivar value:
+    :vartype value: int
+    :ivar deployable_value:
+    :vartype deployable_value: int
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "int"},
+        "deployable_value": {"key": "deployableValue", "type": "int"},
+    }
+
+    def __init__(self, *, value: Optional[int] = None, deployable_value: Optional[int] = None, **kwargs: Any) -> None:
+        """
+        :keyword value:
+        :paramtype value: int
+        :keyword deployable_value:
+        :paramtype deployable_value: int
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.deployable_value = deployable_value
+
+
 class CallRateLimit(_serialization.Model):
     """The call rate limit Cognitive Services account.
 
@@ -908,6 +1101,8 @@ class CapacityConfig(_serialization.Model):
     :vartype step: int
     :ivar default: The default capacity.
     :vartype default: int
+    :ivar allowed_values: The array of allowed values for capacity.
+    :vartype allowed_values: list[int]
     """
 
     _attribute_map = {
@@ -915,6 +1110,7 @@ class CapacityConfig(_serialization.Model):
         "maximum": {"key": "maximum", "type": "int"},
         "step": {"key": "step", "type": "int"},
         "default": {"key": "default", "type": "int"},
+        "allowed_values": {"key": "allowedValues", "type": "[int]"},
     }
 
     def __init__(
@@ -924,6 +1120,7 @@ class CapacityConfig(_serialization.Model):
         maximum: Optional[int] = None,
         step: Optional[int] = None,
         default: Optional[int] = None,
+        allowed_values: Optional[List[int]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -935,18 +1132,21 @@ class CapacityConfig(_serialization.Model):
         :paramtype step: int
         :keyword default: The default capacity.
         :paramtype default: int
+        :keyword allowed_values: The array of allowed values for capacity.
+        :paramtype allowed_values: list[int]
         """
         super().__init__(**kwargs)
         self.minimum = minimum
         self.maximum = maximum
         self.step = step
         self.default = default
+        self.allowed_values = allowed_values
 
 
 class CheckDomainAvailabilityParameter(_serialization.Model):
     """Check Domain availability parameter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar subdomain_name: The subdomain name to use. Required.
     :vartype subdomain_name: str
@@ -985,11 +1185,11 @@ class CheckDomainAvailabilityParameter(_serialization.Model):
 class CheckSkuAvailabilityParameter(_serialization.Model):
     """Check SKU availability parameter.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar skus: The SKU of the resource. Required.
     :vartype skus: list[str]
-    :ivar kind: The Kind of the resource. Required.
+    :ivar kind: The kind (type) of cognitive service account. Required.
     :vartype kind: str
     :ivar type: The Type of the resource. Required.
     :vartype type: str
@@ -1011,7 +1211,7 @@ class CheckSkuAvailabilityParameter(_serialization.Model):
         """
         :keyword skus: The SKU of the resource. Required.
         :paramtype skus: list[str]
-        :keyword kind: The Kind of the resource. Required.
+        :keyword kind: The kind (type) of cognitive service account. Required.
         :paramtype kind: str
         :keyword type: The Type of the resource. Required.
         :paramtype type: str
@@ -1103,7 +1303,7 @@ class ProxyResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1112,22 +1312,6 @@ class ProxyResource(Resource):
     :vartype type: str
     """
 
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-
 
 class CommitmentPlan(ProxyResource):
     """Cognitive Services account commitment plan.
@@ -1135,7 +1319,7 @@ class CommitmentPlan(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1217,7 +1401,7 @@ class CommitmentPlanAccountAssociation(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1228,6 +1412,8 @@ class CommitmentPlanAccountAssociation(ProxyResource):
     :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
     :ivar etag: Resource Etag.
     :vartype etag: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
     :ivar account_id: The Azure resource id of the account.
     :vartype account_id: str
     """
@@ -1246,21 +1432,27 @@ class CommitmentPlanAccountAssociation(ProxyResource):
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
         "etag": {"key": "etag", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
         "account_id": {"key": "properties.accountId", "type": "str"},
     }
 
-    def __init__(self, *, account_id: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, tags: Optional[Dict[str, str]] = None, account_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
         :keyword account_id: The Azure resource id of the account.
         :paramtype account_id: str
         """
         super().__init__(**kwargs)
         self.system_data = None
         self.etag = None
+        self.tags = tags
         self.account_id = account_id
 
 
-class CommitmentPlanAccountAssociationListResult(_serialization.Model):
+class CommitmentPlanAccountAssociationListResult(_serialization.Model):  # pylint: disable=name-too-long
     """The list of cognitive services Commitment Plan Account Association operation response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1566,13 +1758,173 @@ class CommitmentTierListResult(_serialization.Model):
         self.value = None
 
 
+class RaiBlocklistConfig(_serialization.Model):
+    """Azure OpenAI blocklist config.
+
+    :ivar blocklist_name: Name of ContentFilter.
+    :vartype blocklist_name: str
+    :ivar blocking: If blocking would occur.
+    :vartype blocking: bool
+    """
+
+    _attribute_map = {
+        "blocklist_name": {"key": "blocklistName", "type": "str"},
+        "blocking": {"key": "blocking", "type": "bool"},
+    }
+
+    def __init__(self, *, blocklist_name: Optional[str] = None, blocking: Optional[bool] = None, **kwargs: Any) -> None:
+        """
+        :keyword blocklist_name: Name of ContentFilter.
+        :paramtype blocklist_name: str
+        :keyword blocking: If blocking would occur.
+        :paramtype blocking: bool
+        """
+        super().__init__(**kwargs)
+        self.blocklist_name = blocklist_name
+        self.blocking = blocking
+
+
+class CustomBlocklistConfig(RaiBlocklistConfig):
+    """Gets or sets the source to which filter applies.
+
+    :ivar blocklist_name: Name of ContentFilter.
+    :vartype blocklist_name: str
+    :ivar blocking: If blocking would occur.
+    :vartype blocking: bool
+    :ivar source: Content source to apply the Content Filters. Known values are: "Prompt" and
+     "Completion".
+    :vartype source: str or ~azure.mgmt.cognitiveservices.models.RaiPolicyContentSource
+    """
+
+    _attribute_map = {
+        "blocklist_name": {"key": "blocklistName", "type": "str"},
+        "blocking": {"key": "blocking", "type": "bool"},
+        "source": {"key": "source", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        blocklist_name: Optional[str] = None,
+        blocking: Optional[bool] = None,
+        source: Optional[Union[str, "_models.RaiPolicyContentSource"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword blocklist_name: Name of ContentFilter.
+        :paramtype blocklist_name: str
+        :keyword blocking: If blocking would occur.
+        :paramtype blocking: bool
+        :keyword source: Content source to apply the Content Filters. Known values are: "Prompt" and
+         "Completion".
+        :paramtype source: str or ~azure.mgmt.cognitiveservices.models.RaiPolicyContentSource
+        """
+        super().__init__(blocklist_name=blocklist_name, blocking=blocking, **kwargs)
+        self.source = source
+
+
+class DefenderForAISetting(ProxyResource):
+    """The Defender for AI resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar state: Defender for AI state on the AI resource. Known values are: "Disabled" and
+     "Enabled".
+    :vartype state: str or ~azure.mgmt.cognitiveservices.models.DefenderForAISettingState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "etag": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "etag": {"key": "etag", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "state": {"key": "properties.state", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        state: Optional[Union[str, "_models.DefenderForAISettingState"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword state: Defender for AI state on the AI resource. Known values are: "Disabled" and
+         "Enabled".
+        :paramtype state: str or ~azure.mgmt.cognitiveservices.models.DefenderForAISettingState
+        """
+        super().__init__(**kwargs)
+        self.system_data = None
+        self.etag = None
+        self.tags = tags
+        self.state = state
+
+
+class DefenderForAISettingResult(_serialization.Model):
+    """The list of cognitive services Defender for AI Settings.
+
+    :ivar next_link: The link used to get the next page of Defender for AI Settings.
+    :vartype next_link: str
+    :ivar value: The list of Defender for AI Settings.
+    :vartype value: list[~azure.mgmt.cognitiveservices.models.DefenderForAISetting]
+    """
+
+    _attribute_map = {
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[DefenderForAISetting]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[List["_models.DefenderForAISetting"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword next_link: The link used to get the next page of Defender for AI Settings.
+        :paramtype next_link: str
+        :keyword value: The list of Defender for AI Settings.
+        :paramtype value: list[~azure.mgmt.cognitiveservices.models.DefenderForAISetting]
+        """
+        super().__init__(**kwargs)
+        self.next_link = next_link
+        self.value = value
+
+
 class Deployment(ProxyResource):
     """Cognitive Services account deployment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1585,6 +1937,8 @@ class Deployment(ProxyResource):
     :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
     :ivar etag: Resource Etag.
     :vartype etag: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
     :ivar properties: Properties of Cognitive Services account deployment.
     :vartype properties: ~azure.mgmt.cognitiveservices.models.DeploymentProperties
     """
@@ -1604,6 +1958,7 @@ class Deployment(ProxyResource):
         "sku": {"key": "sku", "type": "Sku"},
         "system_data": {"key": "systemData", "type": "SystemData"},
         "etag": {"key": "etag", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
         "properties": {"key": "properties", "type": "DeploymentProperties"},
     }
 
@@ -1611,12 +1966,15 @@ class Deployment(ProxyResource):
         self,
         *,
         sku: Optional["_models.Sku"] = None,
+        tags: Optional[Dict[str, str]] = None,
         properties: Optional["_models.DeploymentProperties"] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword sku: The resource model definition representing SKU.
         :paramtype sku: ~azure.mgmt.cognitiveservices.models.Sku
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
         :keyword properties: Properties of Cognitive Services account deployment.
         :paramtype properties: ~azure.mgmt.cognitiveservices.models.DeploymentProperties
         """
@@ -1624,7 +1982,41 @@ class Deployment(ProxyResource):
         self.sku = sku
         self.system_data = None
         self.etag = None
+        self.tags = tags
         self.properties = properties
+
+
+class DeploymentCapacitySettings(_serialization.Model):
+    """Internal use only.
+
+    :ivar designated_capacity: The designated capacity.
+    :vartype designated_capacity: int
+    :ivar priority: The priority of this capacity setting.
+    :vartype priority: int
+    """
+
+    _validation = {
+        "designated_capacity": {"minimum": 0},
+        "priority": {"minimum": 0},
+    }
+
+    _attribute_map = {
+        "designated_capacity": {"key": "designatedCapacity", "type": "int"},
+        "priority": {"key": "priority", "type": "int"},
+    }
+
+    def __init__(
+        self, *, designated_capacity: Optional[int] = None, priority: Optional[int] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword designated_capacity: The designated capacity.
+        :paramtype designated_capacity: int
+        :keyword priority: The priority of this capacity setting.
+        :paramtype priority: int
+        """
+        super().__init__(**kwargs)
+        self.designated_capacity = designated_capacity
+        self.priority = priority
 
 
 class DeploymentListResult(_serialization.Model):
@@ -1657,7 +2049,7 @@ class DeploymentListResult(_serialization.Model):
         self.value = None
 
 
-class DeploymentProperties(_serialization.Model):
+class DeploymentProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Properties of Cognitive Services account deployment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1669,7 +2061,8 @@ class DeploymentProperties(_serialization.Model):
      ~azure.mgmt.cognitiveservices.models.DeploymentProvisioningState
     :ivar model: Properties of Cognitive Services account deployment model.
     :vartype model: ~azure.mgmt.cognitiveservices.models.DeploymentModel
-    :ivar scale_settings: Properties of Cognitive Services account deployment model.
+    :ivar scale_settings: Properties of Cognitive Services account deployment model. (Deprecated,
+     please use Deployment.sku instead.).
     :vartype scale_settings: ~azure.mgmt.cognitiveservices.models.DeploymentScaleSettings
     :ivar capabilities: The capabilities.
     :vartype capabilities: dict[str, str]
@@ -1683,6 +2076,14 @@ class DeploymentProperties(_serialization.Model):
      "OnceNewDefaultVersionAvailable", "OnceCurrentVersionExpired", and "NoAutoUpgrade".
     :vartype version_upgrade_option: str or
      ~azure.mgmt.cognitiveservices.models.DeploymentModelVersionUpgradeOption
+    :ivar dynamic_throttling_enabled: If the dynamic throttling is enabled.
+    :vartype dynamic_throttling_enabled: bool
+    :ivar current_capacity: The current capacity.
+    :vartype current_capacity: int
+    :ivar capacity_settings: Internal use only.
+    :vartype capacity_settings: ~azure.mgmt.cognitiveservices.models.DeploymentCapacitySettings
+    :ivar parent_deployment_name: The name of parent deployment.
+    :vartype parent_deployment_name: str
     """
 
     _validation = {
@@ -1690,6 +2091,7 @@ class DeploymentProperties(_serialization.Model):
         "capabilities": {"readonly": True},
         "call_rate_limit": {"readonly": True},
         "rate_limits": {"readonly": True},
+        "dynamic_throttling_enabled": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1701,6 +2103,10 @@ class DeploymentProperties(_serialization.Model):
         "call_rate_limit": {"key": "callRateLimit", "type": "CallRateLimit"},
         "rate_limits": {"key": "rateLimits", "type": "[ThrottlingRule]"},
         "version_upgrade_option": {"key": "versionUpgradeOption", "type": "str"},
+        "dynamic_throttling_enabled": {"key": "dynamicThrottlingEnabled", "type": "bool"},
+        "current_capacity": {"key": "currentCapacity", "type": "int"},
+        "capacity_settings": {"key": "capacitySettings", "type": "DeploymentCapacitySettings"},
+        "parent_deployment_name": {"key": "parentDeploymentName", "type": "str"},
     }
 
     def __init__(
@@ -1710,12 +2116,16 @@ class DeploymentProperties(_serialization.Model):
         scale_settings: Optional["_models.DeploymentScaleSettings"] = None,
         rai_policy_name: Optional[str] = None,
         version_upgrade_option: Optional[Union[str, "_models.DeploymentModelVersionUpgradeOption"]] = None,
+        current_capacity: Optional[int] = None,
+        capacity_settings: Optional["_models.DeploymentCapacitySettings"] = None,
+        parent_deployment_name: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword model: Properties of Cognitive Services account deployment model.
         :paramtype model: ~azure.mgmt.cognitiveservices.models.DeploymentModel
         :keyword scale_settings: Properties of Cognitive Services account deployment model.
+         (Deprecated, please use Deployment.sku instead.).
         :paramtype scale_settings: ~azure.mgmt.cognitiveservices.models.DeploymentScaleSettings
         :keyword rai_policy_name: The name of RAI policy.
         :paramtype rai_policy_name: str
@@ -1723,6 +2133,12 @@ class DeploymentProperties(_serialization.Model):
          "OnceNewDefaultVersionAvailable", "OnceCurrentVersionExpired", and "NoAutoUpgrade".
         :paramtype version_upgrade_option: str or
          ~azure.mgmt.cognitiveservices.models.DeploymentModelVersionUpgradeOption
+        :keyword current_capacity: The current capacity.
+        :paramtype current_capacity: int
+        :keyword capacity_settings: Internal use only.
+        :paramtype capacity_settings: ~azure.mgmt.cognitiveservices.models.DeploymentCapacitySettings
+        :keyword parent_deployment_name: The name of parent deployment.
+        :paramtype parent_deployment_name: str
         """
         super().__init__(**kwargs)
         self.provisioning_state = None
@@ -1733,10 +2149,15 @@ class DeploymentProperties(_serialization.Model):
         self.call_rate_limit = None
         self.rate_limits = None
         self.version_upgrade_option = version_upgrade_option
+        self.dynamic_throttling_enabled = None
+        self.current_capacity = current_capacity
+        self.capacity_settings = capacity_settings
+        self.parent_deployment_name = parent_deployment_name
 
 
 class DeploymentScaleSettings(_serialization.Model):
-    """Properties of Cognitive Services account deployment model.
+    """Properties of Cognitive Services account deployment model. (Deprecated, please use
+    Deployment.sku instead.).
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1776,6 +2197,36 @@ class DeploymentScaleSettings(_serialization.Model):
         self.scale_type = scale_type
         self.capacity = capacity
         self.active_capacity = None
+
+
+class DeploymentSkuListResult(_serialization.Model):
+    """The list of cognitive services accounts operation response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar next_link: The link used to get the next page of deployment skus.
+    :vartype next_link: str
+    :ivar value: Gets the list of Cognitive Services accounts deployment skus.
+    :vartype value: list[~azure.mgmt.cognitiveservices.models.SkuResource]
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[SkuResource]"},
+    }
+
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: The link used to get the next page of deployment skus.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.next_link = next_link
+        self.value = None
 
 
 class DomainAvailability(_serialization.Model):
@@ -1863,6 +2314,147 @@ class Encryption(_serialization.Model):
         super().__init__(**kwargs)
         self.key_vault_properties = key_vault_properties
         self.key_source = key_source
+
+
+class EncryptionScope(ProxyResource):
+    """Cognitive Services EncryptionScope.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: Properties of Cognitive Services EncryptionScope.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.EncryptionScopeProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "etag": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "etag": {"key": "etag", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "EncryptionScopeProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional["_models.EncryptionScopeProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword properties: Properties of Cognitive Services EncryptionScope.
+        :paramtype properties: ~azure.mgmt.cognitiveservices.models.EncryptionScopeProperties
+        """
+        super().__init__(**kwargs)
+        self.system_data = None
+        self.etag = None
+        self.tags = tags
+        self.properties = properties
+
+
+class EncryptionScopeListResult(_serialization.Model):
+    """The list of cognitive services EncryptionScopes.
+
+    :ivar next_link: The link used to get the next page of EncryptionScope.
+    :vartype next_link: str
+    :ivar value: The list of EncryptionScope.
+    :vartype value: list[~azure.mgmt.cognitiveservices.models.EncryptionScope]
+    """
+
+    _attribute_map = {
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[EncryptionScope]"},
+    }
+
+    def __init__(
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.EncryptionScope"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword next_link: The link used to get the next page of EncryptionScope.
+        :paramtype next_link: str
+        :keyword value: The list of EncryptionScope.
+        :paramtype value: list[~azure.mgmt.cognitiveservices.models.EncryptionScope]
+        """
+        super().__init__(**kwargs)
+        self.next_link = next_link
+        self.value = value
+
+
+class EncryptionScopeProperties(Encryption):
+    """Properties to EncryptionScope.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar key_vault_properties: Properties of KeyVault.
+    :vartype key_vault_properties: ~azure.mgmt.cognitiveservices.models.KeyVaultProperties
+    :ivar key_source: Enumerates the possible value of keySource for Encryption. Known values are:
+     "Microsoft.CognitiveServices" and "Microsoft.KeyVault".
+    :vartype key_source: str or ~azure.mgmt.cognitiveservices.models.KeySource
+    :ivar provisioning_state: Gets the status of the resource at the time the operation was called.
+     Known values are: "Accepted", "Creating", "Deleting", "Moving", "Failed", "Succeeded", and
+     "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.cognitiveservices.models.EncryptionScopeProvisioningState
+    :ivar state: The encryptionScope state. Known values are: "Disabled" and "Enabled".
+    :vartype state: str or ~azure.mgmt.cognitiveservices.models.EncryptionScopeState
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "key_vault_properties": {"key": "keyVaultProperties", "type": "KeyVaultProperties"},
+        "key_source": {"key": "keySource", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        key_vault_properties: Optional["_models.KeyVaultProperties"] = None,
+        key_source: Union[str, "_models.KeySource"] = "Microsoft.KeyVault",
+        state: Optional[Union[str, "_models.EncryptionScopeState"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword key_vault_properties: Properties of KeyVault.
+        :paramtype key_vault_properties: ~azure.mgmt.cognitiveservices.models.KeyVaultProperties
+        :keyword key_source: Enumerates the possible value of keySource for Encryption. Known values
+         are: "Microsoft.CognitiveServices" and "Microsoft.KeyVault".
+        :paramtype key_source: str or ~azure.mgmt.cognitiveservices.models.KeySource
+        :keyword state: The encryptionScope state. Known values are: "Disabled" and "Enabled".
+        :paramtype state: str or ~azure.mgmt.cognitiveservices.models.EncryptionScopeState
+        """
+        super().__init__(key_vault_properties=key_vault_properties, key_source=key_source, **kwargs)
+        self.provisioning_state = None
+        self.state = state
 
 
 class ErrorAdditionalInfo(_serialization.Model):
@@ -1971,7 +2563,7 @@ class Identity(_serialization.Model):
     :vartype principal_id: str
     :ivar user_assigned_identities: The list of user assigned identities associated with the
      resource. The user identity dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.  # pylint: disable=line-too-long
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.cognitiveservices.models.UserAssignedIdentity]
     """
@@ -2001,7 +2593,7 @@ class Identity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.cognitiveservices.models.ResourceIdentityType
         :keyword user_assigned_identities: The list of user assigned identities associated with the
          resource. The user identity dictionary key references will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.  # pylint: disable=line-too-long
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.cognitiveservices.models.UserAssignedIdentity]
         """
@@ -2015,7 +2607,7 @@ class Identity(_serialization.Model):
 class IpRule(_serialization.Model):
     """A rule governing the accessibility from a specific ip address or ip range.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: An IPv4 address range in CIDR notation, such as '124.56.78.91' (simple IP address)
      or '124.56.78.0/24' (all addresses that start with 124.56.78). Required.
@@ -2115,18 +2707,21 @@ class MetricName(_serialization.Model):
 class Model(_serialization.Model):
     """Cognitive Services Model.
 
-    :ivar model: Model Metadata.
+    :ivar model: Cognitive Services account Model.
     :vartype model: ~azure.mgmt.cognitiveservices.models.AccountModel
-    :ivar kind: The Kind of the Model.
+    :ivar kind: The kind (type) of cognitive service account.
     :vartype kind: str
-    :ivar sku_name: The SKU of the Model.
+    :ivar sku_name: The name of SKU.
     :vartype sku_name: str
+    :ivar description: The description of the model.
+    :vartype description: str
     """
 
     _attribute_map = {
         "model": {"key": "model", "type": "AccountModel"},
         "kind": {"key": "kind", "type": "str"},
         "sku_name": {"key": "skuName", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -2135,20 +2730,169 @@ class Model(_serialization.Model):
         model: Optional["_models.AccountModel"] = None,
         kind: Optional[str] = None,
         sku_name: Optional[str] = None,
+        description: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword model: Model Metadata.
+        :keyword model: Cognitive Services account Model.
         :paramtype model: ~azure.mgmt.cognitiveservices.models.AccountModel
-        :keyword kind: The Kind of the Model.
+        :keyword kind: The kind (type) of cognitive service account.
         :paramtype kind: str
-        :keyword sku_name: The SKU of the Model.
+        :keyword sku_name: The name of SKU.
         :paramtype sku_name: str
+        :keyword description: The description of the model.
+        :paramtype description: str
         """
         super().__init__(**kwargs)
         self.model = model
         self.kind = kind
         self.sku_name = sku_name
+        self.description = description
+
+
+class ModelCapacityCalculatorWorkload(_serialization.Model):
+    """Model Capacity Calculator Workload.
+
+    :ivar request_per_minute: Request per minute.
+    :vartype request_per_minute: int
+    :ivar request_parameters: Dictionary, Model Capacity Calculator Workload Parameters.
+    :vartype request_parameters:
+     ~azure.mgmt.cognitiveservices.models.ModelCapacityCalculatorWorkloadRequestParam
+    """
+
+    _attribute_map = {
+        "request_per_minute": {"key": "requestPerMinute", "type": "int"},
+        "request_parameters": {"key": "requestParameters", "type": "ModelCapacityCalculatorWorkloadRequestParam"},
+    }
+
+    def __init__(
+        self,
+        *,
+        request_per_minute: Optional[int] = None,
+        request_parameters: Optional["_models.ModelCapacityCalculatorWorkloadRequestParam"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword request_per_minute: Request per minute.
+        :paramtype request_per_minute: int
+        :keyword request_parameters: Dictionary, Model Capacity Calculator Workload Parameters.
+        :paramtype request_parameters:
+         ~azure.mgmt.cognitiveservices.models.ModelCapacityCalculatorWorkloadRequestParam
+        """
+        super().__init__(**kwargs)
+        self.request_per_minute = request_per_minute
+        self.request_parameters = request_parameters
+
+
+class ModelCapacityCalculatorWorkloadRequestParam(_serialization.Model):  # pylint: disable=name-too-long
+    """Dictionary, Model Capacity Calculator Workload Parameters.
+
+    :ivar avg_prompt_tokens: Average prompt tokens.
+    :vartype avg_prompt_tokens: int
+    :ivar avg_generated_tokens: Average generated tokens.
+    :vartype avg_generated_tokens: int
+    """
+
+    _attribute_map = {
+        "avg_prompt_tokens": {"key": "avgPromptTokens", "type": "int"},
+        "avg_generated_tokens": {"key": "avgGeneratedTokens", "type": "int"},
+    }
+
+    def __init__(
+        self, *, avg_prompt_tokens: Optional[int] = None, avg_generated_tokens: Optional[int] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword avg_prompt_tokens: Average prompt tokens.
+        :paramtype avg_prompt_tokens: int
+        :keyword avg_generated_tokens: Average generated tokens.
+        :paramtype avg_generated_tokens: int
+        """
+        super().__init__(**kwargs)
+        self.avg_prompt_tokens = avg_prompt_tokens
+        self.avg_generated_tokens = avg_generated_tokens
+
+
+class ModelCapacityListResult(_serialization.Model):
+    """The list of cognitive services accounts operation response.
+
+    :ivar next_link: The link used to get the next page of ModelSkuCapacity.
+    :vartype next_link: str
+    :ivar value: Gets the list of Cognitive Services accounts ModelSkuCapacity.
+    :vartype value: list[~azure.mgmt.cognitiveservices.models.ModelCapacityListResultValueItem]
+    """
+
+    _attribute_map = {
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[ModelCapacityListResultValueItem]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[List["_models.ModelCapacityListResultValueItem"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword next_link: The link used to get the next page of ModelSkuCapacity.
+        :paramtype next_link: str
+        :keyword value: Gets the list of Cognitive Services accounts ModelSkuCapacity.
+        :paramtype value: list[~azure.mgmt.cognitiveservices.models.ModelCapacityListResultValueItem]
+        """
+        super().__init__(**kwargs)
+        self.next_link = next_link
+        self.value = value
+
+
+class ModelCapacityListResultValueItem(ProxyResource):
+    """ModelCapacityListResultValueItem.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar location: The location of the Model Sku Capacity.
+    :vartype location: str
+    :ivar properties: Cognitive Services account ModelSkuCapacity.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.ModelSkuCapacityProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "ModelSkuCapacityProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: Optional[str] = None,
+        properties: Optional["_models.ModelSkuCapacityProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword location: The location of the Model Sku Capacity.
+        :paramtype location: str
+        :keyword properties: Cognitive Services account ModelSkuCapacity.
+        :paramtype properties: ~azure.mgmt.cognitiveservices.models.ModelSkuCapacityProperties
+        """
+        super().__init__(**kwargs)
+        self.location = location
+        self.properties = properties
 
 
 class ModelDeprecationInfo(_serialization.Model):
@@ -2218,6 +2962,8 @@ class ModelSku(_serialization.Model):
     :vartype capacity: ~azure.mgmt.cognitiveservices.models.CapacityConfig
     :ivar rate_limits: The list of rateLimit.
     :vartype rate_limits: list[~azure.mgmt.cognitiveservices.models.CallRateLimit]
+    :ivar cost: The list of billing meter info.
+    :vartype cost: list[~azure.mgmt.cognitiveservices.models.BillingMeterInfo]
     """
 
     _attribute_map = {
@@ -2226,6 +2972,7 @@ class ModelSku(_serialization.Model):
         "deprecation_date": {"key": "deprecationDate", "type": "iso-8601"},
         "capacity": {"key": "capacity", "type": "CapacityConfig"},
         "rate_limits": {"key": "rateLimits", "type": "[CallRateLimit]"},
+        "cost": {"key": "cost", "type": "[BillingMeterInfo]"},
     }
 
     def __init__(
@@ -2236,6 +2983,7 @@ class ModelSku(_serialization.Model):
         deprecation_date: Optional[datetime.datetime] = None,
         capacity: Optional["_models.CapacityConfig"] = None,
         rate_limits: Optional[List["_models.CallRateLimit"]] = None,
+        cost: Optional[List["_models.BillingMeterInfo"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2249,6 +2997,8 @@ class ModelSku(_serialization.Model):
         :paramtype capacity: ~azure.mgmt.cognitiveservices.models.CapacityConfig
         :keyword rate_limits: The list of rateLimit.
         :paramtype rate_limits: list[~azure.mgmt.cognitiveservices.models.CallRateLimit]
+        :keyword cost: The list of billing meter info.
+        :paramtype cost: list[~azure.mgmt.cognitiveservices.models.BillingMeterInfo]
         """
         super().__init__(**kwargs)
         self.name = name
@@ -2256,6 +3006,55 @@ class ModelSku(_serialization.Model):
         self.deprecation_date = deprecation_date
         self.capacity = capacity
         self.rate_limits = rate_limits
+        self.cost = cost
+
+
+class ModelSkuCapacityProperties(_serialization.Model):
+    """Cognitive Services account ModelSkuCapacity.
+
+    :ivar model: Properties of Cognitive Services account deployment model.
+    :vartype model: ~azure.mgmt.cognitiveservices.models.DeploymentModel
+    :ivar sku_name:
+    :vartype sku_name: str
+    :ivar available_capacity: The available capacity for deployment with this model and sku.
+    :vartype available_capacity: float
+    :ivar available_finetune_capacity: The available capacity for deployment with a fine-tune
+     version of this model and sku.
+    :vartype available_finetune_capacity: float
+    """
+
+    _attribute_map = {
+        "model": {"key": "model", "type": "DeploymentModel"},
+        "sku_name": {"key": "skuName", "type": "str"},
+        "available_capacity": {"key": "availableCapacity", "type": "float"},
+        "available_finetune_capacity": {"key": "availableFinetuneCapacity", "type": "float"},
+    }
+
+    def __init__(
+        self,
+        *,
+        model: Optional["_models.DeploymentModel"] = None,
+        sku_name: Optional[str] = None,
+        available_capacity: Optional[float] = None,
+        available_finetune_capacity: Optional[float] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword model: Properties of Cognitive Services account deployment model.
+        :paramtype model: ~azure.mgmt.cognitiveservices.models.DeploymentModel
+        :keyword sku_name:
+        :paramtype sku_name: str
+        :keyword available_capacity: The available capacity for deployment with this model and sku.
+        :paramtype available_capacity: float
+        :keyword available_finetune_capacity: The available capacity for deployment with a fine-tune
+         version of this model and sku.
+        :paramtype available_finetune_capacity: float
+        """
+        super().__init__(**kwargs)
+        self.model = model
+        self.sku_name = sku_name
+        self.available_capacity = available_capacity
+        self.available_finetune_capacity = available_finetune_capacity
 
 
 class MultiRegionSettings(_serialization.Model):
@@ -2299,6 +3098,8 @@ class NetworkRuleSet(_serialization.Model):
      match. This is only used after the bypass property has been evaluated. Known values are:
      "Allow" and "Deny".
     :vartype default_action: str or ~azure.mgmt.cognitiveservices.models.NetworkRuleAction
+    :ivar bypass: Setting for trusted services. Known values are: "None" and "AzureServices".
+    :vartype bypass: str or ~azure.mgmt.cognitiveservices.models.ByPassSelection
     :ivar ip_rules: The list of IP address rules.
     :vartype ip_rules: list[~azure.mgmt.cognitiveservices.models.IpRule]
     :ivar virtual_network_rules: The list of virtual network rules.
@@ -2307,6 +3108,7 @@ class NetworkRuleSet(_serialization.Model):
 
     _attribute_map = {
         "default_action": {"key": "defaultAction", "type": "str"},
+        "bypass": {"key": "bypass", "type": "str"},
         "ip_rules": {"key": "ipRules", "type": "[IpRule]"},
         "virtual_network_rules": {"key": "virtualNetworkRules", "type": "[VirtualNetworkRule]"},
     }
@@ -2315,6 +3117,7 @@ class NetworkRuleSet(_serialization.Model):
         self,
         *,
         default_action: Optional[Union[str, "_models.NetworkRuleAction"]] = None,
+        bypass: Optional[Union[str, "_models.ByPassSelection"]] = None,
         ip_rules: Optional[List["_models.IpRule"]] = None,
         virtual_network_rules: Optional[List["_models.VirtualNetworkRule"]] = None,
         **kwargs: Any
@@ -2324,6 +3127,8 @@ class NetworkRuleSet(_serialization.Model):
          virtualNetworkRules match. This is only used after the bypass property has been evaluated.
          Known values are: "Allow" and "Deny".
         :paramtype default_action: str or ~azure.mgmt.cognitiveservices.models.NetworkRuleAction
+        :keyword bypass: Setting for trusted services. Known values are: "None" and "AzureServices".
+        :paramtype bypass: str or ~azure.mgmt.cognitiveservices.models.ByPassSelection
         :keyword ip_rules: The list of IP address rules.
         :paramtype ip_rules: list[~azure.mgmt.cognitiveservices.models.IpRule]
         :keyword virtual_network_rules: The list of virtual network rules.
@@ -2331,8 +3136,386 @@ class NetworkRuleSet(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.default_action = default_action
+        self.bypass = bypass
         self.ip_rules = ip_rules
         self.virtual_network_rules = virtual_network_rules
+
+
+class NetworkSecurityPerimeter(_serialization.Model):
+    """Information about a linked Network Security Perimeter.
+
+    :ivar id: Fully qualified identifier of the resource.
+    :vartype id: str
+    :ivar perimeter_guid: Guid of the resource.
+    :vartype perimeter_guid: str
+    :ivar location: Location of the resource.
+    :vartype location: str
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "perimeter_guid": {"key": "perimeterGuid", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        perimeter_guid: Optional[str] = None,
+        location: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: Fully qualified identifier of the resource.
+        :paramtype id: str
+        :keyword perimeter_guid: Guid of the resource.
+        :paramtype perimeter_guid: str
+        :keyword location: Location of the resource.
+        :paramtype location: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.perimeter_guid = perimeter_guid
+        self.location = location
+
+
+class NetworkSecurityPerimeterAccessRule(_serialization.Model):
+    """Network Security Perimeter Access Rule.
+
+    :ivar name: Network Security Perimeter Access Rule Name.
+    :vartype name: str
+    :ivar properties: Properties of Network Security Perimeter Access Rule.
+    :vartype properties:
+     ~azure.mgmt.cognitiveservices.models.NetworkSecurityPerimeterAccessRuleProperties
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "NetworkSecurityPerimeterAccessRuleProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        properties: Optional["_models.NetworkSecurityPerimeterAccessRuleProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Network Security Perimeter Access Rule Name.
+        :paramtype name: str
+        :keyword properties: Properties of Network Security Perimeter Access Rule.
+        :paramtype properties:
+         ~azure.mgmt.cognitiveservices.models.NetworkSecurityPerimeterAccessRuleProperties
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.properties = properties
+
+
+class NetworkSecurityPerimeterAccessRuleProperties(_serialization.Model):  # pylint: disable=name-too-long
+    """The Properties of Network Security Perimeter Rule.
+
+    :ivar direction: Direction of Access Rule. Known values are: "Inbound" and "Outbound".
+    :vartype direction: str or ~azure.mgmt.cognitiveservices.models.NspAccessRuleDirection
+    :ivar address_prefixes: Address prefixes for inbound rules.
+    :vartype address_prefixes: list[str]
+    :ivar subscriptions: Subscriptions for inbound rules.
+    :vartype subscriptions:
+     list[~azure.mgmt.cognitiveservices.models.NetworkSecurityPerimeterAccessRulePropertiesSubscriptionsItem]
+    :ivar network_security_perimeters: NetworkSecurityPerimeters for inbound rules.
+    :vartype network_security_perimeters:
+     list[~azure.mgmt.cognitiveservices.models.NetworkSecurityPerimeter]
+    :ivar fully_qualified_domain_names: Fully qualified domain name for outbound rules.
+    :vartype fully_qualified_domain_names: list[str]
+    """
+
+    _attribute_map = {
+        "direction": {"key": "direction", "type": "str"},
+        "address_prefixes": {"key": "addressPrefixes", "type": "[str]"},
+        "subscriptions": {
+            "key": "subscriptions",
+            "type": "[NetworkSecurityPerimeterAccessRulePropertiesSubscriptionsItem]",
+        },
+        "network_security_perimeters": {"key": "networkSecurityPerimeters", "type": "[NetworkSecurityPerimeter]"},
+        "fully_qualified_domain_names": {"key": "fullyQualifiedDomainNames", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        direction: Optional[Union[str, "_models.NspAccessRuleDirection"]] = None,
+        address_prefixes: Optional[List[str]] = None,
+        subscriptions: Optional[List["_models.NetworkSecurityPerimeterAccessRulePropertiesSubscriptionsItem"]] = None,
+        network_security_perimeters: Optional[List["_models.NetworkSecurityPerimeter"]] = None,
+        fully_qualified_domain_names: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword direction: Direction of Access Rule. Known values are: "Inbound" and "Outbound".
+        :paramtype direction: str or ~azure.mgmt.cognitiveservices.models.NspAccessRuleDirection
+        :keyword address_prefixes: Address prefixes for inbound rules.
+        :paramtype address_prefixes: list[str]
+        :keyword subscriptions: Subscriptions for inbound rules.
+        :paramtype subscriptions:
+         list[~azure.mgmt.cognitiveservices.models.NetworkSecurityPerimeterAccessRulePropertiesSubscriptionsItem]
+        :keyword network_security_perimeters: NetworkSecurityPerimeters for inbound rules.
+        :paramtype network_security_perimeters:
+         list[~azure.mgmt.cognitiveservices.models.NetworkSecurityPerimeter]
+        :keyword fully_qualified_domain_names: Fully qualified domain name for outbound rules.
+        :paramtype fully_qualified_domain_names: list[str]
+        """
+        super().__init__(**kwargs)
+        self.direction = direction
+        self.address_prefixes = address_prefixes
+        self.subscriptions = subscriptions
+        self.network_security_perimeters = network_security_perimeters
+        self.fully_qualified_domain_names = fully_qualified_domain_names
+
+
+class NetworkSecurityPerimeterAccessRulePropertiesSubscriptionsItem(
+    _serialization.Model
+):  # pylint: disable=name-too-long
+    """Subscription for inbound rule.
+
+    :ivar id: Fully qualified identifier of subscription.
+    :vartype id: str
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+        """
+        :keyword id: Fully qualified identifier of subscription.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+
+
+class NetworkSecurityPerimeterConfiguration(ProxyResource):
+    """NSP Configuration for an Cognitive Services account.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar properties: NSP Configuration properties.
+    :vartype properties:
+     ~azure.mgmt.cognitiveservices.models.NetworkSecurityPerimeterConfigurationProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "NetworkSecurityPerimeterConfigurationProperties"},
+    }
+
+    def __init__(
+        self, *, properties: Optional["_models.NetworkSecurityPerimeterConfigurationProperties"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword properties: NSP Configuration properties.
+        :paramtype properties:
+         ~azure.mgmt.cognitiveservices.models.NetworkSecurityPerimeterConfigurationProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class NetworkSecurityPerimeterConfigurationAssociationInfo(_serialization.Model):  # pylint: disable=name-too-long
+    """Network Security Perimeter Configuration Association Information.
+
+    :ivar name: Name of the resource association.
+    :vartype name: str
+    :ivar access_mode: Access Mode of the resource association.
+    :vartype access_mode: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "access_mode": {"key": "accessMode", "type": "str"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, access_mode: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: Name of the resource association.
+        :paramtype name: str
+        :keyword access_mode: Access Mode of the resource association.
+        :paramtype access_mode: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.access_mode = access_mode
+
+
+class NetworkSecurityPerimeterConfigurationList(_serialization.Model):  # pylint: disable=name-too-long
+    """A list of NSP configurations for an Cognitive Services account.
+
+    :ivar value: Array of NSP configurations List Result for an Cognitive Services account.
+    :vartype value:
+     list[~azure.mgmt.cognitiveservices.models.NetworkSecurityPerimeterConfiguration]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[NetworkSecurityPerimeterConfiguration]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.NetworkSecurityPerimeterConfiguration"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: Array of NSP configurations List Result for an Cognitive Services account.
+        :paramtype value:
+         list[~azure.mgmt.cognitiveservices.models.NetworkSecurityPerimeterConfiguration]
+        :keyword next_link: Link to retrieve next page of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class NetworkSecurityPerimeterConfigurationProperties(_serialization.Model):  # pylint: disable=name-too-long
+    """The properties of an NSP Configuration.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provisioning_state: Provisioning state of NetworkSecurityPerimeter configuration.
+    :vartype provisioning_state: str
+    :ivar provisioning_issues: List of Provisioning Issues.
+    :vartype provisioning_issues: list[~azure.mgmt.cognitiveservices.models.ProvisioningIssue]
+    :ivar network_security_perimeter: Information about a linked Network Security Perimeter.
+    :vartype network_security_perimeter:
+     ~azure.mgmt.cognitiveservices.models.NetworkSecurityPerimeter
+    :ivar resource_association: Network Security Perimeter Configuration Association Information.
+    :vartype resource_association:
+     ~azure.mgmt.cognitiveservices.models.NetworkSecurityPerimeterConfigurationAssociationInfo
+    :ivar profile: Network Security Perimeter Profile Information.
+    :vartype profile: ~azure.mgmt.cognitiveservices.models.NetworkSecurityPerimeterProfileInfo
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "provisioning_issues": {"key": "provisioningIssues", "type": "[ProvisioningIssue]"},
+        "network_security_perimeter": {"key": "networkSecurityPerimeter", "type": "NetworkSecurityPerimeter"},
+        "resource_association": {
+            "key": "resourceAssociation",
+            "type": "NetworkSecurityPerimeterConfigurationAssociationInfo",
+        },
+        "profile": {"key": "profile", "type": "NetworkSecurityPerimeterProfileInfo"},
+    }
+
+    def __init__(
+        self,
+        *,
+        provisioning_issues: Optional[List["_models.ProvisioningIssue"]] = None,
+        network_security_perimeter: Optional["_models.NetworkSecurityPerimeter"] = None,
+        resource_association: Optional["_models.NetworkSecurityPerimeterConfigurationAssociationInfo"] = None,
+        profile: Optional["_models.NetworkSecurityPerimeterProfileInfo"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword provisioning_issues: List of Provisioning Issues.
+        :paramtype provisioning_issues: list[~azure.mgmt.cognitiveservices.models.ProvisioningIssue]
+        :keyword network_security_perimeter: Information about a linked Network Security Perimeter.
+        :paramtype network_security_perimeter:
+         ~azure.mgmt.cognitiveservices.models.NetworkSecurityPerimeter
+        :keyword resource_association: Network Security Perimeter Configuration Association
+         Information.
+        :paramtype resource_association:
+         ~azure.mgmt.cognitiveservices.models.NetworkSecurityPerimeterConfigurationAssociationInfo
+        :keyword profile: Network Security Perimeter Profile Information.
+        :paramtype profile: ~azure.mgmt.cognitiveservices.models.NetworkSecurityPerimeterProfileInfo
+        """
+        super().__init__(**kwargs)
+        self.provisioning_state = None
+        self.provisioning_issues = provisioning_issues
+        self.network_security_perimeter = network_security_perimeter
+        self.resource_association = resource_association
+        self.profile = profile
+
+
+class NetworkSecurityPerimeterProfileInfo(_serialization.Model):
+    """Network Security Perimeter Profile Information.
+
+    :ivar name: Name of the resource profile.
+    :vartype name: str
+    :ivar access_rules_version: Access rules version of the resource profile.
+    :vartype access_rules_version: int
+    :ivar access_rules:
+    :vartype access_rules:
+     list[~azure.mgmt.cognitiveservices.models.NetworkSecurityPerimeterAccessRule]
+    :ivar diagnostic_settings_version: Current diagnostic settings version.
+    :vartype diagnostic_settings_version: int
+    :ivar enabled_log_categories: List of enabled log categories.
+    :vartype enabled_log_categories: list[str]
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "access_rules_version": {"key": "accessRulesVersion", "type": "int"},
+        "access_rules": {"key": "accessRules", "type": "[NetworkSecurityPerimeterAccessRule]"},
+        "diagnostic_settings_version": {"key": "diagnosticSettingsVersion", "type": "int"},
+        "enabled_log_categories": {"key": "enabledLogCategories", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        access_rules_version: Optional[int] = None,
+        access_rules: Optional[List["_models.NetworkSecurityPerimeterAccessRule"]] = None,
+        diagnostic_settings_version: Optional[int] = None,
+        enabled_log_categories: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Name of the resource profile.
+        :paramtype name: str
+        :keyword access_rules_version: Access rules version of the resource profile.
+        :paramtype access_rules_version: int
+        :keyword access_rules:
+        :paramtype access_rules:
+         list[~azure.mgmt.cognitiveservices.models.NetworkSecurityPerimeterAccessRule]
+        :keyword diagnostic_settings_version: Current diagnostic settings version.
+        :paramtype diagnostic_settings_version: int
+        :keyword enabled_log_categories: List of enabled log categories.
+        :paramtype enabled_log_categories: list[str]
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.access_rules_version = access_rules_version
+        self.access_rules = access_rules
+        self.diagnostic_settings_version = diagnostic_settings_version
+        self.enabled_log_categories = enabled_log_categories
 
 
 class Operation(_serialization.Model):
@@ -2533,7 +3716,7 @@ class PrivateEndpointConnection(AzureEntityResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2612,7 +3795,7 @@ class PrivateEndpointConnectionProperties(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar private_endpoint: The resource of private end point.
     :vartype private_endpoint: ~azure.mgmt.cognitiveservices.models.PrivateEndpoint
@@ -2674,7 +3857,7 @@ class PrivateLinkResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2813,6 +3996,95 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
         self.actions_required = actions_required
 
 
+class ProvisioningIssue(_serialization.Model):
+    """ProvisioningIssue.
+
+    :ivar name: Name of the NSP provisioning issue.
+    :vartype name: str
+    :ivar properties: Properties of Provisioning Issue.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.ProvisioningIssueProperties
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "ProvisioningIssueProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        properties: Optional["_models.ProvisioningIssueProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Name of the NSP provisioning issue.
+        :paramtype name: str
+        :keyword properties: Properties of Provisioning Issue.
+        :paramtype properties: ~azure.mgmt.cognitiveservices.models.ProvisioningIssueProperties
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.properties = properties
+
+
+class ProvisioningIssueProperties(_serialization.Model):
+    """Properties of Provisioning Issue.
+
+    :ivar issue_type: Type of Issue.
+    :vartype issue_type: str
+    :ivar severity: Severity of the issue.
+    :vartype severity: str
+    :ivar description: Description of the issue.
+    :vartype description: str
+    :ivar suggested_resource_ids: IDs of resources that can be associated to the same perimeter to
+     remediate the issue.
+    :vartype suggested_resource_ids: list[str]
+    :ivar suggested_access_rules: Optional array, suggested access rules.
+    :vartype suggested_access_rules:
+     list[~azure.mgmt.cognitiveservices.models.NetworkSecurityPerimeterAccessRule]
+    """
+
+    _attribute_map = {
+        "issue_type": {"key": "issueType", "type": "str"},
+        "severity": {"key": "severity", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "suggested_resource_ids": {"key": "suggestedResourceIds", "type": "[str]"},
+        "suggested_access_rules": {"key": "suggestedAccessRules", "type": "[NetworkSecurityPerimeterAccessRule]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        issue_type: Optional[str] = None,
+        severity: Optional[str] = None,
+        description: Optional[str] = None,
+        suggested_resource_ids: Optional[List[str]] = None,
+        suggested_access_rules: Optional[List["_models.NetworkSecurityPerimeterAccessRule"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword issue_type: Type of Issue.
+        :paramtype issue_type: str
+        :keyword severity: Severity of the issue.
+        :paramtype severity: str
+        :keyword description: Description of the issue.
+        :paramtype description: str
+        :keyword suggested_resource_ids: IDs of resources that can be associated to the same perimeter
+         to remediate the issue.
+        :paramtype suggested_resource_ids: list[str]
+        :keyword suggested_access_rules: Optional array, suggested access rules.
+        :paramtype suggested_access_rules:
+         list[~azure.mgmt.cognitiveservices.models.NetworkSecurityPerimeterAccessRule]
+        """
+        super().__init__(**kwargs)
+        self.issue_type = issue_type
+        self.severity = severity
+        self.description = description
+        self.suggested_resource_ids = suggested_resource_ids
+        self.suggested_access_rules = suggested_access_rules
+
+
 class QuotaLimit(_serialization.Model):
     """QuotaLimit.
 
@@ -2852,10 +4124,620 @@ class QuotaLimit(_serialization.Model):
         self.rules = rules
 
 
+class RaiBlocklist(ProxyResource):
+    """Cognitive Services RaiBlocklist.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: Properties of Cognitive Services RaiBlocklist.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.RaiBlocklistProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "etag": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "etag": {"key": "etag", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "RaiBlocklistProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional["_models.RaiBlocklistProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword properties: Properties of Cognitive Services RaiBlocklist.
+        :paramtype properties: ~azure.mgmt.cognitiveservices.models.RaiBlocklistProperties
+        """
+        super().__init__(**kwargs)
+        self.system_data = None
+        self.etag = None
+        self.tags = tags
+        self.properties = properties
+
+
+class RaiBlocklistItem(ProxyResource):
+    """Cognitive Services RaiBlocklist Item.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: Properties of Cognitive Services RaiBlocklist Item.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.RaiBlocklistItemProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "etag": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "etag": {"key": "etag", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "RaiBlocklistItemProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional["_models.RaiBlocklistItemProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword properties: Properties of Cognitive Services RaiBlocklist Item.
+        :paramtype properties: ~azure.mgmt.cognitiveservices.models.RaiBlocklistItemProperties
+        """
+        super().__init__(**kwargs)
+        self.system_data = None
+        self.etag = None
+        self.tags = tags
+        self.properties = properties
+
+
+class RaiBlocklistItemBulkRequest(_serialization.Model):
+    """The Cognitive Services RaiBlocklist Item request body.
+
+    :ivar name:
+    :vartype name: str
+    :ivar properties: Properties of Cognitive Services RaiBlocklist Item.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.RaiBlocklistItemProperties
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "RaiBlocklistItemProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        properties: Optional["_models.RaiBlocklistItemProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name:
+        :paramtype name: str
+        :keyword properties: Properties of Cognitive Services RaiBlocklist Item.
+        :paramtype properties: ~azure.mgmt.cognitiveservices.models.RaiBlocklistItemProperties
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.properties = properties
+
+
+class RaiBlocklistItemProperties(_serialization.Model):
+    """RAI Custom Blocklist Item properties.
+
+    :ivar pattern: Pattern to match against.
+    :vartype pattern: str
+    :ivar is_regex: If the pattern is a regex pattern.
+    :vartype is_regex: bool
+    """
+
+    _attribute_map = {
+        "pattern": {"key": "pattern", "type": "str"},
+        "is_regex": {"key": "isRegex", "type": "bool"},
+    }
+
+    def __init__(self, *, pattern: Optional[str] = None, is_regex: Optional[bool] = None, **kwargs: Any) -> None:
+        """
+        :keyword pattern: Pattern to match against.
+        :paramtype pattern: str
+        :keyword is_regex: If the pattern is a regex pattern.
+        :paramtype is_regex: bool
+        """
+        super().__init__(**kwargs)
+        self.pattern = pattern
+        self.is_regex = is_regex
+
+
+class RaiBlockListItemsResult(_serialization.Model):
+    """The list of cognitive services RAI Blocklist Items.
+
+    :ivar next_link: The link used to get the next page of RaiBlocklistItems.
+    :vartype next_link: str
+    :ivar value: The list of RaiBlocklistItems.
+    :vartype value: list[~azure.mgmt.cognitiveservices.models.RaiBlocklistItem]
+    """
+
+    _attribute_map = {
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[RaiBlocklistItem]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[List["_models.RaiBlocklistItem"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword next_link: The link used to get the next page of RaiBlocklistItems.
+        :paramtype next_link: str
+        :keyword value: The list of RaiBlocklistItems.
+        :paramtype value: list[~azure.mgmt.cognitiveservices.models.RaiBlocklistItem]
+        """
+        super().__init__(**kwargs)
+        self.next_link = next_link
+        self.value = value
+
+
+class RaiBlocklistProperties(_serialization.Model):
+    """RAI Custom Blocklist properties.
+
+    :ivar description: Description of the block list.
+    :vartype description: str
+    """
+
+    _attribute_map = {
+        "description": {"key": "description", "type": "str"},
+    }
+
+    def __init__(self, *, description: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword description: Description of the block list.
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
+        self.description = description
+
+
+class RaiBlockListResult(_serialization.Model):
+    """The list of cognitive services RAI Blocklists.
+
+    :ivar next_link: The link used to get the next page of RaiBlocklists.
+    :vartype next_link: str
+    :ivar value: The list of RaiBlocklist.
+    :vartype value: list[~azure.mgmt.cognitiveservices.models.RaiBlocklist]
+    """
+
+    _attribute_map = {
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[RaiBlocklist]"},
+    }
+
+    def __init__(
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.RaiBlocklist"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword next_link: The link used to get the next page of RaiBlocklists.
+        :paramtype next_link: str
+        :keyword value: The list of RaiBlocklist.
+        :paramtype value: list[~azure.mgmt.cognitiveservices.models.RaiBlocklist]
+        """
+        super().__init__(**kwargs)
+        self.next_link = next_link
+        self.value = value
+
+
+class RaiContentFilter(ProxyResource):
+    """Azure OpenAI Content Filter.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar properties: Azure OpenAI Content Filter Properties.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.RaiContentFilterProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "RaiContentFilterProperties"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.RaiContentFilterProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: Azure OpenAI Content Filter Properties.
+        :paramtype properties: ~azure.mgmt.cognitiveservices.models.RaiContentFilterProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class RaiContentFilterListResult(_serialization.Model):
+    """The list of Content Filters.
+
+    :ivar next_link: The link used to get the next page of Content Filters.
+    :vartype next_link: str
+    :ivar value: The list of RaiContentFilter.
+    :vartype value: list[~azure.mgmt.cognitiveservices.models.RaiContentFilter]
+    """
+
+    _attribute_map = {
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[RaiContentFilter]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[List["_models.RaiContentFilter"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword next_link: The link used to get the next page of Content Filters.
+        :paramtype next_link: str
+        :keyword value: The list of RaiContentFilter.
+        :paramtype value: list[~azure.mgmt.cognitiveservices.models.RaiContentFilter]
+        """
+        super().__init__(**kwargs)
+        self.next_link = next_link
+        self.value = value
+
+
+class RaiContentFilterProperties(_serialization.Model):
+    """Azure OpenAI Content Filter Properties.
+
+    :ivar name: Name of Content Filter.
+    :vartype name: str
+    :ivar is_multi_level_filter: If the Content Filter has multi severity levels(Low, Medium, or
+     High).
+    :vartype is_multi_level_filter: bool
+    :ivar source: Content source to apply the Content Filters. Known values are: "Prompt" and
+     "Completion".
+    :vartype source: str or ~azure.mgmt.cognitiveservices.models.RaiPolicyContentSource
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "is_multi_level_filter": {"key": "isMultiLevelFilter", "type": "bool"},
+        "source": {"key": "source", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        is_multi_level_filter: Optional[bool] = None,
+        source: Optional[Union[str, "_models.RaiPolicyContentSource"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Name of Content Filter.
+        :paramtype name: str
+        :keyword is_multi_level_filter: If the Content Filter has multi severity levels(Low, Medium, or
+         High).
+        :paramtype is_multi_level_filter: bool
+        :keyword source: Content source to apply the Content Filters. Known values are: "Prompt" and
+         "Completion".
+        :paramtype source: str or ~azure.mgmt.cognitiveservices.models.RaiPolicyContentSource
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.is_multi_level_filter = is_multi_level_filter
+        self.source = source
+
+
+class RaiMonitorConfig(_serialization.Model):
+    """Cognitive Services Rai Monitor Config.
+
+    :ivar adx_storage_resource_id: The storage resource Id.
+    :vartype adx_storage_resource_id: str
+    :ivar identity_client_id: The identity client Id to access the storage.
+    :vartype identity_client_id: str
+    """
+
+    _attribute_map = {
+        "adx_storage_resource_id": {"key": "adxStorageResourceId", "type": "str"},
+        "identity_client_id": {"key": "identityClientId", "type": "str"},
+    }
+
+    def __init__(
+        self, *, adx_storage_resource_id: Optional[str] = None, identity_client_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword adx_storage_resource_id: The storage resource Id.
+        :paramtype adx_storage_resource_id: str
+        :keyword identity_client_id: The identity client Id to access the storage.
+        :paramtype identity_client_id: str
+        """
+        super().__init__(**kwargs)
+        self.adx_storage_resource_id = adx_storage_resource_id
+        self.identity_client_id = identity_client_id
+
+
+class RaiPolicy(ProxyResource):
+    """Cognitive Services RaiPolicy.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: Properties of Cognitive Services RaiPolicy.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.RaiPolicyProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "etag": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "etag": {"key": "etag", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "RaiPolicyProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional["_models.RaiPolicyProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword properties: Properties of Cognitive Services RaiPolicy.
+        :paramtype properties: ~azure.mgmt.cognitiveservices.models.RaiPolicyProperties
+        """
+        super().__init__(**kwargs)
+        self.system_data = None
+        self.etag = None
+        self.tags = tags
+        self.properties = properties
+
+
+class RaiPolicyContentFilter(_serialization.Model):
+    """Azure OpenAI Content Filter.
+
+    :ivar name: Name of ContentFilter.
+    :vartype name: str
+    :ivar enabled: If the ContentFilter is enabled.
+    :vartype enabled: bool
+    :ivar severity_threshold: Level at which content is filtered. Known values are: "Low",
+     "Medium", and "High".
+    :vartype severity_threshold: str or ~azure.mgmt.cognitiveservices.models.ContentLevel
+    :ivar blocking: If blocking would occur.
+    :vartype blocking: bool
+    :ivar source: Content source to apply the Content Filters. Known values are: "Prompt" and
+     "Completion".
+    :vartype source: str or ~azure.mgmt.cognitiveservices.models.RaiPolicyContentSource
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "severity_threshold": {"key": "severityThreshold", "type": "str"},
+        "blocking": {"key": "blocking", "type": "bool"},
+        "source": {"key": "source", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        enabled: Optional[bool] = None,
+        severity_threshold: Optional[Union[str, "_models.ContentLevel"]] = None,
+        blocking: Optional[bool] = None,
+        source: Optional[Union[str, "_models.RaiPolicyContentSource"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Name of ContentFilter.
+        :paramtype name: str
+        :keyword enabled: If the ContentFilter is enabled.
+        :paramtype enabled: bool
+        :keyword severity_threshold: Level at which content is filtered. Known values are: "Low",
+         "Medium", and "High".
+        :paramtype severity_threshold: str or ~azure.mgmt.cognitiveservices.models.ContentLevel
+        :keyword blocking: If blocking would occur.
+        :paramtype blocking: bool
+        :keyword source: Content source to apply the Content Filters. Known values are: "Prompt" and
+         "Completion".
+        :paramtype source: str or ~azure.mgmt.cognitiveservices.models.RaiPolicyContentSource
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.enabled = enabled
+        self.severity_threshold = severity_threshold
+        self.blocking = blocking
+        self.source = source
+
+
+class RaiPolicyListResult(_serialization.Model):
+    """The list of cognitive services RaiPolicies.
+
+    :ivar next_link: The link used to get the next page of RaiPolicy.
+    :vartype next_link: str
+    :ivar value: The list of RaiPolicy.
+    :vartype value: list[~azure.mgmt.cognitiveservices.models.RaiPolicy]
+    """
+
+    _attribute_map = {
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[RaiPolicy]"},
+    }
+
+    def __init__(
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.RaiPolicy"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword next_link: The link used to get the next page of RaiPolicy.
+        :paramtype next_link: str
+        :keyword value: The list of RaiPolicy.
+        :paramtype value: list[~azure.mgmt.cognitiveservices.models.RaiPolicy]
+        """
+        super().__init__(**kwargs)
+        self.next_link = next_link
+        self.value = value
+
+
+class RaiPolicyProperties(_serialization.Model):
+    """Azure OpenAI Content Filters properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: Content Filters policy type. Known values are: "UserManaged" and "SystemManaged".
+    :vartype type: str or ~azure.mgmt.cognitiveservices.models.RaiPolicyType
+    :ivar mode: Rai policy mode. The enum value mapping is as below: Default = 0, Deferred=1,
+     Blocking=2, Asynchronous_filter =3. Please use 'Asynchronous_filter' after 2024-10-01. It is
+     the same as 'Deferred' in previous version. Known values are: "Default", "Deferred",
+     "Blocking", and "Asynchronous_filter".
+    :vartype mode: str or ~azure.mgmt.cognitiveservices.models.RaiPolicyMode
+    :ivar base_policy_name: Name of Rai policy.
+    :vartype base_policy_name: str
+    :ivar content_filters: The list of Content Filters.
+    :vartype content_filters: list[~azure.mgmt.cognitiveservices.models.RaiPolicyContentFilter]
+    :ivar custom_blocklists: The list of custom Blocklist.
+    :vartype custom_blocklists: list[~azure.mgmt.cognitiveservices.models.CustomBlocklistConfig]
+    """
+
+    _validation = {
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "mode": {"key": "mode", "type": "str"},
+        "base_policy_name": {"key": "basePolicyName", "type": "str"},
+        "content_filters": {"key": "contentFilters", "type": "[RaiPolicyContentFilter]"},
+        "custom_blocklists": {"key": "customBlocklists", "type": "[CustomBlocklistConfig]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        mode: Optional[Union[str, "_models.RaiPolicyMode"]] = None,
+        base_policy_name: Optional[str] = None,
+        content_filters: Optional[List["_models.RaiPolicyContentFilter"]] = None,
+        custom_blocklists: Optional[List["_models.CustomBlocklistConfig"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword mode: Rai policy mode. The enum value mapping is as below: Default = 0, Deferred=1,
+         Blocking=2, Asynchronous_filter =3. Please use 'Asynchronous_filter' after 2024-10-01. It is
+         the same as 'Deferred' in previous version. Known values are: "Default", "Deferred",
+         "Blocking", and "Asynchronous_filter".
+        :paramtype mode: str or ~azure.mgmt.cognitiveservices.models.RaiPolicyMode
+        :keyword base_policy_name: Name of Rai policy.
+        :paramtype base_policy_name: str
+        :keyword content_filters: The list of Content Filters.
+        :paramtype content_filters: list[~azure.mgmt.cognitiveservices.models.RaiPolicyContentFilter]
+        :keyword custom_blocklists: The list of custom Blocklist.
+        :paramtype custom_blocklists: list[~azure.mgmt.cognitiveservices.models.CustomBlocklistConfig]
+        """
+        super().__init__(**kwargs)
+        self.type = None
+        self.mode = mode
+        self.base_policy_name = base_policy_name
+        self.content_filters = content_filters
+        self.custom_blocklists = custom_blocklists
+
+
 class RegenerateKeyParameters(_serialization.Model):
     """Regenerate key parameters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key_name: key name to generate (Key1|Key2). Required. Known values are: "Key1" and
      "Key2".
@@ -3010,7 +4892,7 @@ class ResourceSku(_serialization.Model):
 class ResourceSkuListResult(_serialization.Model):
     """The Get Skus operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The list of skus available for the subscription. Required.
     :vartype value: list[~azure.mgmt.cognitiveservices.models.ResourceSku]
@@ -3122,7 +5004,7 @@ class ResourceSkuRestrictions(_serialization.Model):
 class Sku(_serialization.Model):
     """The resource model definition representing SKU.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the SKU. Ex - P3. It is typically a letter+number code. Required.
     :vartype name: str
@@ -3331,6 +5213,45 @@ class SkuChangeInfo(_serialization.Model):
         self.count_of_downgrades = count_of_downgrades
         self.count_of_upgrades_after_downgrades = count_of_upgrades_after_downgrades
         self.last_change_date = last_change_date
+
+
+class SkuResource(_serialization.Model):
+    """Properties of Cognitive Services account resource sku resource properties.
+
+    :ivar resource_type: The resource type name.
+    :vartype resource_type: str
+    :ivar sku: The resource model definition representing SKU.
+    :vartype sku: ~azure.mgmt.cognitiveservices.models.Sku
+    :ivar capacity: The capacity configuration.
+    :vartype capacity: ~azure.mgmt.cognitiveservices.models.CapacityConfig
+    """
+
+    _attribute_map = {
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "capacity": {"key": "capacity", "type": "CapacityConfig"},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource_type: Optional[str] = None,
+        sku: Optional["_models.Sku"] = None,
+        capacity: Optional["_models.CapacityConfig"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword resource_type: The resource type name.
+        :paramtype resource_type: str
+        :keyword sku: The resource model definition representing SKU.
+        :paramtype sku: ~azure.mgmt.cognitiveservices.models.Sku
+        :keyword capacity: The capacity configuration.
+        :paramtype capacity: ~azure.mgmt.cognitiveservices.models.CapacityConfig
+        """
+        super().__init__(**kwargs)
+        self.resource_type = resource_type
+        self.sku = sku
+        self.capacity = capacity
 
 
 class SystemData(_serialization.Model):
@@ -3584,6 +5505,34 @@ class UserAssignedIdentity(_serialization.Model):
         self.client_id = None
 
 
+class UserOwnedAmlWorkspace(_serialization.Model):
+    """The user owned AML workspace for Cognitive Services account.
+
+    :ivar resource_id: Full resource id of a AML workspace resource.
+    :vartype resource_id: str
+    :ivar identity_client_id: Identity Client id of a AML workspace resource.
+    :vartype identity_client_id: str
+    """
+
+    _attribute_map = {
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "identity_client_id": {"key": "identityClientId", "type": "str"},
+    }
+
+    def __init__(
+        self, *, resource_id: Optional[str] = None, identity_client_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword resource_id: Full resource id of a AML workspace resource.
+        :paramtype resource_id: str
+        :keyword identity_client_id: Identity Client id of a AML workspace resource.
+        :paramtype identity_client_id: str
+        """
+        super().__init__(**kwargs)
+        self.resource_id = resource_id
+        self.identity_client_id = identity_client_id
+
+
 class UserOwnedStorage(_serialization.Model):
     """The user owned storage for Cognitive Services account.
 
@@ -3615,7 +5564,7 @@ class UserOwnedStorage(_serialization.Model):
 class VirtualNetworkRule(_serialization.Model):
     """A rule governing the accessibility from a specific virtual network.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Full resource id of a vnet subnet, such as
      '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.
@@ -3647,7 +5596,7 @@ class VirtualNetworkRule(_serialization.Model):
     ) -> None:
         """
         :keyword id: Full resource id of a vnet subnet, such as
-         '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.
+         '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.  # pylint: disable=line-too-long
          Required.
         :paramtype id: str
         :keyword state: Gets the state of virtual network rule.

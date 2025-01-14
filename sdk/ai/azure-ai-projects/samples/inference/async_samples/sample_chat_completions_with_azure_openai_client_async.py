@@ -33,25 +33,27 @@ async def sample_get_azure_openai_client_async():
     project_connection_string = os.environ["PROJECT_CONNECTION_STRING"]
     model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
-    async with AIProjectClient.from_connection_string(
-        credential=DefaultAzureCredential(),
-        conn_str=project_connection_string,
-    ) as project_client:
+    async with DefaultAzureCredential() as credential:
 
-        # Get an authenticated AsyncAzureOpenAI client for your default Azure OpenAI connection:
-        async with await project_client.inference.get_azure_openai_client(api_version="2024-06-01") as client:
+        async with AIProjectClient.from_connection_string(
+            credential=credential,
+            conn_str=project_connection_string,
+        ) as project_client:
 
-            response = await client.chat.completions.create(
-                model=model_deployment_name,
-                messages=[
-                    {
-                        "role": "user",
-                        "content": "How many feet are in a mile?",
-                    },
-                ],
-            )
+            # Get an authenticated AsyncAzureOpenAI client for your default Azure OpenAI connection:
+            async with await project_client.inference.get_azure_openai_client(api_version="2024-06-01") as client:
 
-            print(response.choices[0].message.content)
+                response = await client.chat.completions.create(
+                    model=model_deployment_name,
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": "How many feet are in a mile?",
+                        },
+                    ],
+                )
+
+                print(response.choices[0].message.content)
 
 
 async def main():

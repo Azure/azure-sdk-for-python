@@ -24,10 +24,12 @@ from ci_tools.parsing import ParsedSetup
 from ci_tools.environment_exclusions import (
     is_check_enabled,
     IGNORE_PACKAGES,
+    IGNORE_FILTER,
+    FILTER_EXCLUSIONS,
 )
-IGNORE_FILTER = ["nspkg", "mgmt", "cognitiveservices"]
-FILTER_EXCLUSIONS = ["azure-mgmt-core"]
-IGNORE_PACKAGES.append("azure-openai")
+IGNORE_FILTER.append("mgmt")
+FILTER_EXCLUSIONS.append("azure-mgmt-core")
+IGNORE_PACKAGES.extend(["azure-openai", "azure-eventhub-checkpointstoretable"])
 
 # Github
 GIT_TOKEN = os.environ["GH_TOKEN"]

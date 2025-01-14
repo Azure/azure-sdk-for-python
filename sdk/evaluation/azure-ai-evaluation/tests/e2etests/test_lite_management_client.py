@@ -1,6 +1,6 @@
 import pytest
 import logging
-from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+from azure.core.credentials import AzureSasCredential, TokenCredential
 from azure.ai.evaluation._azure._clients import LiteMLClient
 
 
@@ -34,7 +34,12 @@ class TestLiteAzureManagementClient(object):
 
     @pytest.mark.azuretest
     @pytest.mark.parametrize("include_credentials", [False, True])
-    def test_workspace_get_default_store(self, project_scope, azure_cred, include_credentials: bool):
+    @pytest.mark.parametrize("config_name", ["sas", "none"])
+    def test_workspace_get_default_store(
+        self, azure_cred, datastore_project_scopes, config_name: str, include_credentials: bool
+    ):
+        project_scope = datastore_project_scopes[config_name]
+
         client = LiteMLClient(
             subscription_id=project_scope["subscription_id"],
             resource_group=project_scope["resource_group_name"],
@@ -52,7 +57,11 @@ class TestLiteAzureManagementClient(object):
         assert store.endpoint
         assert store.container_name
         if include_credentials:
-            assert isinstance(store.credential, str) or isinstance(store.credential, AzureSasCredential)
+            assert (
+                (config_name == "account_key" and isinstance(store.credential, str))
+                or (config_name == "sas" and isinstance(store.credential, AzureSasCredential))
+                or (config_name == "none" and isinstance(store.credential, TokenCredential))
+            )
         else:
             assert store.credential == None
 
