@@ -28,7 +28,6 @@ from typing import Optional
 from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import RetryPolicy
-from azure.core.pipeline.transport._base import HttpRequest
 
 from . import exceptions
 from . import _endpoint_discovery_retry_policy
