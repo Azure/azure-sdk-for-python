@@ -14,7 +14,7 @@ DESCRIPTION:
     https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/README.md#key-concepts
 
 USAGE:
-    python sample_chat_completions_from_input_json_async.py
+    python sample_chat_completions_from_input_dict_async.py
 
     Set these two environment variables before running the sample:
     1) AZURE_AI_CHAT_ENDPOINT - Your endpoint URL, in the form 
@@ -29,7 +29,7 @@ USAGE:
 import asyncio
 
 
-async def sample_chat_completions_from_input_json_async():
+async def sample_chat_completions_from_input_dict_async():
     import os
     from azure.ai.inference.aio import ChatCompletionsClient
     from azure.core.credentials import AzureKeyCredential
@@ -68,7 +68,7 @@ async def sample_chat_completions_from_input_json_async():
 
 
 async def main():
-    await sample_chat_completions_from_input_json_async()
+    await sample_chat_completions_from_input_dict_async()
 
 
 if __name__ == "__main__":

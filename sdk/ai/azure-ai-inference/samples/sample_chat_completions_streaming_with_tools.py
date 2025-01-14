@@ -120,8 +120,8 @@ def sample_chat_completions_streaming_with_tools():
 
     # Make a streaming chat completions call asking for flight information, while providing a tool to handle the request
     messages = [
-        SystemMessage(content="You an assistant that helps users find flight information."),
-        UserMessage(content="What is the next flights from Seattle to Miami?"),
+        SystemMessage("You an assistant that helps users find flight information."),
+        UserMessage("What is the next flights from Seattle to Miami?"),
     ]
 
     response = client.complete(messages=messages, tools=[flight_info], stream=True)
@@ -165,7 +165,7 @@ def sample_chat_completions_streaming_with_tools():
     print(f"Function response = {function_response}")
 
     # Append the function response as a tool message to the chat history
-    messages.append(ToolMessage(tool_call_id=tool_call_id, content=function_response))
+    messages.append(ToolMessage(function_response, tool_call_id=tool_call_id))
 
     # With the additional tools information on hand, get another streaming response from the model
     response = client.complete(messages=messages, tools=[flight_info], stream=True)
