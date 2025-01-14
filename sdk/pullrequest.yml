@@ -26,3 +26,6 @@ extends:
     BuildTargetingString: "*"
     TestProxy: true
     TestTimeOutInMinutes: 180
+    excludePaths:
+    - sdk/cosmos
+

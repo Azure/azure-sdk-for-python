@@ -17,6 +17,9 @@ parameters:
   - name: BeforePublishSteps
     type: object
     default: []
+  - name: ExcludePaths
+    type: object
+    default: []
   - name: TestMarkArgument
     type: string
     default: ''
