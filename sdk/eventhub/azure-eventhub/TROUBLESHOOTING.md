@@ -61,7 +61,7 @@ By default the producer and consumer clients will retry for error conditions. We
      value is 3
 * **retry_backoff_factor**: A backoff factor to apply between attempts after the second try
 * **retry_backoff_max**: The maximum back off time. Default value is 120 seconds
-* **retry_mode: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential', where default is 'exponential'
+* **retry_mode**: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential', where default is 'exponential'
   
 ### Commonly encountered exceptions
 
@@ -225,7 +225,7 @@ When processing for one or more partitions is delayed, it is most often because 
 
 ### A partition is not being processed
 
-An event consumer runs continually in a host application for a prolonged period. Sometimes, it may appear that some partitions are uncrowned or are not being processed. Most often, this presents as [Partions close and initialize frequently](#partitions-close-and-initialize-frequently) or there are other errors/warning being raised related to the problem.
+An event consumer runs continually in a host application for a prolonged period. Sometimes, it may appear that some partitions are uncrowned or are not being processed. Most often, this presents as [Partitions close and initialize frequently](#partitions-close-and-initialize-frequently) or there are other errors/warning being raised related to the problem.
 
 If partitions are not observed closing and initializing frequently and no warning is being raised to the error callback, then a stalled or unowned partition may be part of a larger problem and a GitHub issue should be opened. Please see: [Filing GitHub issues](#filing-github-issues)
 
