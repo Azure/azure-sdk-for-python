@@ -248,8 +248,8 @@ class ConnectionProperties:
         :ivar api_version: Api version used by model deployment.
         :vartype api_version: str
         :ivar include_credentials: Include credentials in the model configuration. If set to True, the model configuration will have the key field set to the actual key value.
-            If set to False, the model configuration will have the key field set to the connection id.
-            To get the secret, connection get should be called with include_credentials set to True.
+        If set to False, the model configuration will have the key field set to the connection id.
+        To get the secret, connection get should be called with include_credentials set to True.
         """
         connection_type = self.connection_type.value
         if self.connection_type.value == ConnectionType.AZURE_OPEN_AI:
