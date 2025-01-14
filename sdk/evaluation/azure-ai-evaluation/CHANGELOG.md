@@ -10,6 +10,9 @@
 - Removed `[remote]` extra. This is no longer needed when tracking results in Azure AI Studio.
 - Fixed `AttributeError: 'NoneType' object has no attribute 'get'` while running simulator with 1000+ results
 - Fixed the non adversarial simulator to run in task-free mode
+- Content safety evaluators (violence, self harm, sexual, hate/unfairness) return the maximum result as the
+  main score when aggregating multiple per-turn evaluations from a conversation into a single overall
+  evaluation score. Other conversation-capable evaluators.
 
 ### Other Changes
 - Changed minimum required python version to use this package from 3.8 to 3.9

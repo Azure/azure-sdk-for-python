@@ -726,6 +726,7 @@ class TestEvaluate:
         # test custom aggregator
         def custom_aggregator(values):
             return sum(values) + 1
+
         counting_eval.reset()
         counting_eval.set_conversation_aggregator(custom_aggregator)
         results = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)

@@ -9,7 +9,6 @@ from typing import Any, Callable, Dict, Generic, List, TypedDict, TypeVar, Union
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from typing_extensions import ParamSpec, TypeAlias, get_overloads
 
-from azure.ai.evaluation._common.math import list_mean
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._common.utils import remove_optional_singletons
 from azure.ai.evaluation._constants import ConversationAggregationType
@@ -92,15 +91,16 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         not_singleton_inputs: List[str] = ["conversation", "kwargs"],
         eval_last_turn: bool = False,
         conversation_aggregation_type: ConversationAggregationType = ConversationAggregationType.MEAN,
-        conversation_aggregator_override: Optional[Callable[[List[float]], float]] = None
+        conversation_aggregator_override: Optional[Callable[[List[float]], float]] = None,
     ):
         self._not_singleton_inputs = not_singleton_inputs
         self._eval_last_turn = eval_last_turn
         self._singleton_inputs = self._derive_singleton_inputs()
         self._async_evaluator = AsyncEvaluatorBase(self._real_call)
         self._conversation_aggregation_function = GetAggregator(conversation_aggregation_type)
-        if conversation_aggregator_override!= None:
-            self._conversation_aggregation_function = conversation_aggregator_override
+        if conversation_aggregator_override is not None:
+            # Type ignore since we already checked for None, but mypy doesn't know that.
+            self._conversation_aggregation_function = conversation_aggregator_override  # type: ignore[assignment]
 
     # This needs to be overridden just to change the function header into something more informative,
     # and to be able to add a more specific docstring. The actual function contents should just be
@@ -414,8 +414,8 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         multi-turn conversations. This aggregator is used to combine numeric outputs from each evaluation of a
         multi-turn conversation into a single top-level result.
 
-        :param conversation_aggregation_type: The type of aggregation to perform on the per-turn results of a conversation
-            to produce a single result.
+        :param conversation_aggregation_type: The type of aggregation to perform on the per-turn
+            results of a conversation to produce a single result.
         :type conversation_aggregation_type: ~azure.ai.evaluation.ConversationAggregationType
         """
         self._conversation_aggregation_function = GetAggregator(conversation_aggregation_type)
