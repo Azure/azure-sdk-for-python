@@ -1566,7 +1566,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         file_data = await (await file_client.download_file()).read()
         assert file_data == b"Hello Async World!"  # data is fixed by mock transport
 
-        resp = await file_client.delete_blob()
+        resp = await file_client.delete_file()
         assert resp is None
 
     @DataLakePreparer()
