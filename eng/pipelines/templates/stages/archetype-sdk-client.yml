@@ -89,6 +89,7 @@ extends:
               Artifacts: ${{ parameters.Artifacts }}
               ${{ if eq(parameters.ServiceDirectory, 'template') }}:
                 TestPipeline: true
+              ExcludePaths: ${{ parameters.ExcludePaths }}
               BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
               AfterTestSteps: ${{ parameters.AfterTestSteps }}
               BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
