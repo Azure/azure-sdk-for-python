@@ -46,8 +46,8 @@ def sample_chat_completions_with_model_extras():
     # [START model_extras]
     response = client.complete(
         messages=[
-            SystemMessage(content="You are a helpful assistant."),
-            UserMessage(content="How many feet are in a mile?"),
+            SystemMessage("You are a helpful assistant."),
+            UserMessage("How many feet are in a mile?"),
         ],
         model_extras={"key1": "value1", "key2": "value2"},  # Optional. Additional parameters to pass to the model.
     )
