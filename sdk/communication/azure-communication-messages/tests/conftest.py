@@ -47,7 +47,7 @@ def start_proxy(test_proxy):
 
     FAKE_CONNECTION_STRING = "endpoint=https://sanitized.unitedstates.communication.azure.com/;accesskey=fake==="
     FAKE_ENDPOINT = "sanitized.unitedstates.communication.azure.com"
-    connection_str = os.environ.get("COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING", FAKE_CONNECTION_STRING)
+    connection_str = os.environ.get("COMMUNICATION_SAMPLES_CONNECTION_STRING", FAKE_CONNECTION_STRING)
     if connection_str is not None:
         endpoint, _ = parse_connection_str(connection_str)
         resource_name = endpoint.split(".")[0]

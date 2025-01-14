@@ -17,7 +17,7 @@ class MessagesPreparers(object):
     def messages_test_decorator(func: Callable[[], object], **kwargs: Any):
         def wrapper(self, *args, **kwargs):
             if is_live() or is_live_and_not_recording():
-                self.connection_string = os.getenv("COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING")
+                self.connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
                 endpoint, _ = parse_connection_str(self.connection_string)
                 self.resource_name = endpoint.split(".")[0]
 
