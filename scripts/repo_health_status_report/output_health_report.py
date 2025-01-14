@@ -23,8 +23,8 @@ from ci_tools.variables import in_ci
 from ci_tools.parsing import ParsedSetup
 from ci_tools.environment_exclusions import (
     is_check_enabled,
-    IGNORE_PACKAGES,
     IGNORE_FILTER,
+    IGNORE_PACKAGES,
     FILTER_EXCLUSIONS,
 )
 IGNORE_FILTER.append("mgmt")
