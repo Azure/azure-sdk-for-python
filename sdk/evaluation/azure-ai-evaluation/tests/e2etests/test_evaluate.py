@@ -296,7 +296,6 @@ class TestEvaluate:
         self,
         questions_file,
         azure_ml_client,
-        mock_trace_destination_to_cloud,
         project_scope,
     ):
         """Test evaluation with target function."""
@@ -312,7 +311,7 @@ class TestEvaluate:
         evaluation_name = "test_evaluate_track_in_cloud"
         # run the evaluation with targets
         result = evaluate(
-            # azure_ai_project=project_scope,
+            azure_ai_project=project_scope,
             evaluation_name=evaluation_name,
             data=questions_file,
             target=target_fn,
@@ -341,7 +340,6 @@ class TestEvaluate:
         self,
         data_file,
         azure_ml_client,
-        mock_trace_destination_to_cloud,
         project_scope,
     ):
         # data
@@ -352,7 +350,7 @@ class TestEvaluate:
 
         # run the evaluation
         result = evaluate(
-            # azure_ai_project=project_scope,
+            azure_ai_project=project_scope,
             evaluation_name=evaluation_name,
             data=data_file,
             evaluators={"f1_score": f1_score_eval},
