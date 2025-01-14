@@ -240,7 +240,7 @@ def append_results_to_csv(entities: list[dict[str, Any]]) -> None:
         for data in entities:
             row = [
                 data["Package"],
-                str(data["Date"]),
+                data["Date"].strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
                 data["LatestVersion"],
                 data["Score"],
                 data["PyTyped"],
