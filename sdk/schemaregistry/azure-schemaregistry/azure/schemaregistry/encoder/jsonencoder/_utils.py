@@ -21,7 +21,7 @@ import json
 try:
     import jsonschema
 except ImportError:
-    raise ImportError("install jsonschema to use this feature") from None
+    jsonschema = None
 
 from functools import partial
 

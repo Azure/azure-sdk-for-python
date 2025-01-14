@@ -44,9 +44,6 @@ ReturnType = TypeVar("ReturnType")
 ResponseType = TypeVar("ResponseType")
 
 
-def foo() -> None:
-    pass
-
 class PageIterator(Iterator[Iterator[ReturnType]]):
     def __init__(
         self,
