@@ -18,7 +18,7 @@ import logging
 import os
 import uuid
 from datetime import datetime
-from typing import Any, Dict, Tuple
+from typing import Dict, Tuple
 from uuid import uuid4
 
 from marshmallow import ValidationError
@@ -153,12 +153,12 @@ def error_preprocess(activityLogger, exception):
 
 
 @contextlib.contextmanager
-def log_activity(  # pylint:disable=useless-return
+def log_activity(
     logger,
     activity_name,
     activity_type=ActivityType.INTERNALCALL,
     custom_dimensions=None,
-) -> Any:
+):
     """Log an activity.
 
     An activity is a logical block of code that consumers want to monitor.
@@ -248,7 +248,7 @@ def log_activity(  # pylint:disable=useless-return
             else:
                 activityLogger.info(message)
         except Exception:  # pylint: disable=W0718
-            return  # pylint: disable=lost-exception,return-in-finally
+            pass
 
 
 # pylint: disable-next=docstring-missing-rtype

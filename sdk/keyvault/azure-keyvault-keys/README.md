@@ -73,7 +73,7 @@ client = KeyClient(vault_url=VAULT_URL, credential=credential)
 Azure Key Vault can create and store RSA and elliptic curve keys. Both can optionally be protected by hardware security
 modules (HSMs). Azure Key Vault can also perform cryptographic operations with them. For more information about keys
 and supported operations and algorithms, see the
-[Key Vault documentation](https://docs.microsoft.com/azure/key-vault/keys/about-keys).
+[Key Vault documentation](https://learn.microsoft.com/azure/key-vault/keys/about-keys).
 
 [KeyClient][key_client_docs] can create keys in the vault, get existing keys
 from the vault, update key metadata, and delete keys, as shown in the
@@ -411,8 +411,8 @@ contact opencode@microsoft.com with any additional questions or comments.
 [azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core#azure-core-library-exceptions
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
 [azure_identity_pypi]: https://pypi.org/project/azure-identity/
-[azure_keyvault]: https://docs.microsoft.com/azure/key-vault/
-[azure_keyvault_cli]: https://docs.microsoft.com/azure/key-vault/general/quick-create-cli
+[azure_keyvault]: https://learn.microsoft.com/azure/key-vault/
+[azure_keyvault_cli]: https://learn.microsoft.com/azure/key-vault/general/quick-create-cli
 [azure_sub]: https://azure.microsoft.com/free/
 
 [backup_operations_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-keys/samples/backup_restore_operations.py
@@ -435,9 +435,9 @@ contact opencode@microsoft.com with any additional questions or comments.
 [list_operations_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-keys/samples/list_operations.py
 [list_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-keys/samples/list_operations_async.py
 
-[managed_hsm]: https://docs.microsoft.com/azure/key-vault/managed-hsm/overview
-[managed_hsm_cli]: https://docs.microsoft.com/azure/key-vault/managed-hsm/quick-create-cli
-[managed_identity]: https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview
+[managed_hsm]: https://learn.microsoft.com/azure/key-vault/managed-hsm/overview
+[managed_hsm_cli]: https://learn.microsoft.com/azure/key-vault/managed-hsm/quick-create-cli
+[managed_identity]: https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview
 
 [pip]: https://pypi.org/project/pip/
 [pypi_package_keys]: https://pypi.org/project/azure-keyvault-keys/
@@ -447,6 +447,6 @@ contact opencode@microsoft.com with any additional questions or comments.
 [reference_docs]: https://aka.ms/azsdk/python/keyvault-keys/docs
 
 [send_request_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys/samples/send_request.py
-[soft_delete]: https://docs.microsoft.com/azure/key-vault/general/soft-delete-overview
+[soft_delete]: https://learn.microsoft.com/azure/key-vault/general/soft-delete-overview
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fkeyvault%2Fazure-keyvault-keys%2FREADME.png)

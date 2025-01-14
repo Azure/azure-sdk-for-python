@@ -5,7 +5,7 @@ from dataclasses import dataclass, fields
 from typing import Dict, no_type_check
 
 from opentelemetry.sdk._logs import LogRecord
-from opentelemetry.sdk.trace import ReadableSpan
+from opentelemetry.sdk.trace import Event, ReadableSpan
 from opentelemetry.semconv.trace import SpanAttributes
 from opentelemetry.trace import SpanKind
 
@@ -94,6 +94,8 @@ class _DependencyData(_TelemetryData):
         attributes = {}
         dependency_type = "InProc"
         data = ""
+        if span.end_time and span.start_time:
+            duration_ms = (span.end_time - span.start_time) / 1e9
         if span.attributes:
             attributes = span.attributes
             target = trace_utils._get_target_for_dependency_from_peer(attributes)
@@ -162,6 +164,15 @@ class _ExceptionData(_TelemetryData):
             message=str(log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE, "")),
             stack_trace=str(log_record.attributes.get(SpanAttributes.EXCEPTION_STACKTRACE, "")),
             custom_dimensions=log_record.attributes,
+        )
+
+    @staticmethod
+    @no_type_check
+    def _from_span_event(span_event: Event):
+        return _ExceptionData(
+            message=str(span_event.attributes.get(SpanAttributes.EXCEPTION_MESSAGE, "")),
+            stack_trace=str(span_event.attributes.get(SpanAttributes.EXCEPTION_STACKTRACE, "")),
+            custom_dimensions=span_event.attributes,
         )
 
 

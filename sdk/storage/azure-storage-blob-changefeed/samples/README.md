@@ -24,7 +24,7 @@ Several Storage Blobs Python SDK samples are available to you in the SDK's GitHu
 ## Prerequisites
 * Python 3.6 or later is required to use this package
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
-[Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to run these samples.
+[Azure storage account](https://learn.microsoft.com/azure/storage/common/storage-account-overview) to run these samples.
 
 ## Setup
 

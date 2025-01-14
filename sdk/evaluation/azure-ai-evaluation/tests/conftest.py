@@ -1,5 +1,4 @@
 from .__openai_patcher import TestProxyConfig, TestProxyHttpxClientBase  # isort: split
-from . import __pf_service_isolation  # isort: split  # noqa: F401
 
 import os
 import json
@@ -391,6 +390,22 @@ def project_scope(request, dev_connections: Dict[str, Any]) -> dict:
         raise ValueError(f"Connection '{conn_name}' not found in dev connections.")
 
     return dev_connections[conn_name]["value"]
+
+
+@pytest.fixture
+def datastore_project_scopes(connection_file, project_scope, mock_project_scope):
+    conn_name = "azure_ai_entra_id_project_scope"
+    if not is_live():
+        entra_id = mock_project_scope
+    else:
+        entra_id = connection_file.get(conn_name)
+        if not entra_id:
+            raise ValueError(f"Connection '{conn_name}' not found in dev connections.")
+
+    return {
+        "sas": project_scope,
+        "none": entra_id,
+    }
 
 
 @pytest.fixture
