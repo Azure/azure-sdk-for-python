@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b7 (Unreleased)
+## 1.0.0b7 (2025-01-15)
 
 ### Features Added
 
@@ -9,12 +9,12 @@
 as "structured output". See new samples `sample_chat_completions_with_structured_output.py` and
 `sample_chat_completions_with_structured_output_pydantic.py`.
 * Made input argument `content` a positional argument (in addition to keyword argument), in the constructors of
-`UserMessage`, `SystemMessage`, `AssistantMessage` and `ToolMessage`. For example you no longer need to write
+`UserMessage`, `SystemMessage`, `AssistantMessage` and `ToolMessage`. For example, you no longer need to write
 `UserMessage(content="my message")`. Simply write `UserMessage("my message")`. All samples were updated accordingly.
 
 ### Breaking Changes
 
-* If you previously configured your `ChatCompletionClient.complete()` call to output JSON format without a scheme, you have this in your code: `response_format=ChatCompletionsResponseFormatJSON()`. To maintain the same functionality, replace this with `response_format="json-object"`. We however recommend that you now switch to output JSON format with a provided schema if your AI model supports it.
+* If you previously configured your `ChatCompletionClient.complete()` call to output JSON format without a scheme, you have this in your code: `response_format=ChatCompletionsResponseFormatJSON()`. To maintain the same functionality, replace this with `response_format="json-object"`. We however recommend that you now switch to output JSON format with a provided schema if your AI model supports it: `response_format=JsonSchemaFormat(...)`.
 
 ### Bugs Fixed
 
