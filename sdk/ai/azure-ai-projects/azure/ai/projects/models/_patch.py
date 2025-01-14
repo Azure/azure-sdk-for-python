@@ -241,7 +241,16 @@ class ConnectionProperties:
                 self.key = connection.properties.credentials.key  # type: ignore
         self.token_credential = token_credential
 
-    def to_evaluator_model_config(self, deployment_name, api_version) -> Dict[str, str]:
+    def to_evaluator_model_config(self, deployment_name, api_version, *, include_credentials=False) -> Dict[str, str]:
+        """Get model configuration to be used with evaluators, from connection.
+        :ivar deployment_name: Deployment name to build model configuration.
+        :vartype id: str
+        :ivar api_version: Api version used by model deployment.
+        :vartype api_version: str
+        :ivar include_credentials: Include credentials in the model configuration. If set to True, the model configuration will have the key field set to the actual key value.
+            If set to False, the model configuration will have the key field set to the connection id.
+            To get the secret, connection get should be called with include_credentials set to True.
+        """
         connection_type = self.connection_type.value
         if self.connection_type.value == ConnectionType.AZURE_OPEN_AI:
             connection_type = "azure_openai"
@@ -252,7 +261,7 @@ class ConnectionProperties:
                 "azure_endpoint": self.endpoint_url,
                 "type": connection_type,
                 "api_version": api_version,
-                "api_key": f"{self.id}/credentials/key",
+                "api_key": self.key if include_credentials else f"{self.id}/credentials/key" ,
             }
         else:
             model_config = {
