@@ -11,7 +11,7 @@ from typing_extensions import ParamSpec, TypeAlias, get_overloads
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._common.utils import remove_optional_singletons
-from azure.ai.evaluation._constants import ConversationAggregationType
+from azure.ai.evaluation._constants import AggregationType
 from azure.ai.evaluation._model_configurations import Conversation
 
 from ._conversation_aggregators import GetAggregator
@@ -74,8 +74,8 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
     :type eval_last_turn: bool
     :param conversation_aggregation_type: The type of aggregation to perform on the per-turn results of a conversation
         to produce a single result.
-        Default is ~azure.ai.evaluation.ConversationAggregationType.MEAN.
-    :type conversation_aggregation_type: ~azure.ai.evaluation.ConversationAggregationType
+        Default is ~azure.ai.evaluation.AggregationType.MEAN.
+    :type conversation_aggregation_type: ~azure.ai.evaluation.AggregationType
     :param conversation_aggregator_override: A function that will be used to aggregate per-turn results. If provided,
         overrides the standard aggregator implied by conversation_aggregation_type. None by default.
     :type conversation_aggregator_override: Optional[Callable[[List[float]], float]]
@@ -90,7 +90,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         *,
         not_singleton_inputs: List[str] = ["conversation", "kwargs"],
         eval_last_turn: bool = False,
-        conversation_aggregation_type: ConversationAggregationType = ConversationAggregationType.MEAN,
+        conversation_aggregation_type: AggregationType = AggregationType.MEAN,
         conversation_aggregator_override: Optional[Callable[[List[float]], float]] = None,
     ):
         self._not_singleton_inputs = not_singleton_inputs
@@ -409,14 +409,14 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         return self._async_evaluator
 
     @final
-    def set_conversation_aggregation_type(self, conversation_aggregation_type: ConversationAggregationType) -> None:
+    def set_conversation_aggregation_type(self, conversation_aggregation_type: AggregationType) -> None:
         """Input a conversation aggregation type to re-assign the aggregator function used by this evaluator for
         multi-turn conversations. This aggregator is used to combine numeric outputs from each evaluation of a
         multi-turn conversation into a single top-level result.
 
         :param conversation_aggregation_type: The type of aggregation to perform on the per-turn
             results of a conversation to produce a single result.
-        :type conversation_aggregation_type: ~azure.ai.evaluation.ConversationAggregationType
+        :type conversation_aggregation_type: ~azure.ai.evaluation.AggregationType
         """
         self._conversation_aggregation_function = GetAggregator(conversation_aggregation_type)
 

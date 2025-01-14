@@ -22,7 +22,7 @@ from azure.ai.evaluation import (
     SelfHarmEvaluator,
     HateUnfairnessEvaluator,
 )
-from azure.ai.evaluation._constants import DEFAULT_EVALUATION_RESULTS_FILE_NAME, ConversationAggregationType
+from azure.ai.evaluation._constants import DEFAULT_EVALUATION_RESULTS_FILE_NAME, AggregationType
 from azure.ai.evaluation._evaluate._evaluate import (
     _aggregate_metrics,
     _apply_target_to_data,
@@ -701,21 +701,21 @@ class TestEvaluate:
 
         # test maxing
         counting_eval.reset()
-        counting_eval.set_conversation_aggregation_type(ConversationAggregationType.MAX)
+        counting_eval.set_conversation_aggregation_type(AggregationType.MAX)
         results = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
         assert results["rows"][0]["outputs.count.response"] == 2
         assert results["rows"][1]["outputs.count.response"] == 4
 
         # test minimizing
         counting_eval.reset()
-        counting_eval.set_conversation_aggregation_type(ConversationAggregationType.MIN)
+        counting_eval.set_conversation_aggregation_type(AggregationType.MIN)
         results = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
         assert results["rows"][0]["outputs.count.response"] == 1
         assert results["rows"][1]["outputs.count.response"] == 3
 
         # test sum
         counting_eval.reset()
-        counting_eval.set_conversation_aggregation_type(ConversationAggregationType.SUM)
+        counting_eval.set_conversation_aggregation_type(AggregationType.SUM)
         results = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
         assert results["rows"][0]["outputs.count.response"] == 3
         assert results["rows"][1]["outputs.count.response"] == 7

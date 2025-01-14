@@ -5,17 +5,17 @@
 from typing import Callable, List
 from azure.ai.evaluation._common.math import list_mean
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._constants import ConversationAggregationType
+from azure.ai.evaluation._constants import AggregationType
 
 
-def GetAggregator(aggregation_type: ConversationAggregationType) -> Callable[[List[float]], float]:
-    if aggregation_type == ConversationAggregationType.SUM:
+def GetAggregator(aggregation_type: AggregationType) -> Callable[[List[float]], float]:
+    if aggregation_type == AggregationType.SUM:
         return sum
-    if aggregation_type == ConversationAggregationType.MEAN:
+    if aggregation_type == AggregationType.MEAN:
         return list_mean
-    if aggregation_type == ConversationAggregationType.MAX:
+    if aggregation_type == AggregationType.MAX:
         return max
-    if aggregation_type == ConversationAggregationType.MIN:
+    if aggregation_type == AggregationType.MIN:
         return min
     raise EvaluationException(
         message=f"Unaccounted for aggregation type: {aggregation_type}",
