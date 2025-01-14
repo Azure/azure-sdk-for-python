@@ -103,7 +103,7 @@ class SearchClient(HeadersMixin):
 
     async def close(self) -> None:
         """Close the session.
-        
+
         :return: None
         :rtype: None
         """

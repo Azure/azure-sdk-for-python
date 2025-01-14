@@ -387,7 +387,7 @@ contact opencode@microsoft.com with any additional questions or comments.
 
 
 <!-- LINKS -->
-[access_control]: https://docs.microsoft.com/azure/key-vault/managed-hsm/access-control
+[access_control]: https://learn.microsoft.com/azure/key-vault/managed-hsm/access-control
 [access_control_operations_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/access_control_operations.py
 [access_control_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/access_control_operations_async.py
 [administration_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples
@@ -399,19 +399,19 @@ contact opencode@microsoft.com with any additional questions or comments.
 
 [backup_operations_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/backup_restore_operations.py
 [backup_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/backup_restore_operations_async.py
-[best_practices]: https://docs.microsoft.com/azure/key-vault/managed-hsm/best-practices
-[built_in_roles]: https://docs.microsoft.com/azure/key-vault/managed-hsm/built-in-roles
+[best_practices]: https://learn.microsoft.com/azure/key-vault/managed-hsm/best-practices
+[built_in_roles]: https://learn.microsoft.com/azure/key-vault/managed-hsm/built-in-roles
 
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 
 [default_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
 
-[keyvault_docs]: https://docs.microsoft.com/azure/key-vault/
+[keyvault_docs]: https://learn.microsoft.com/azure/key-vault/
 
 [library_src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/azure/keyvault/administration
 
-[managed_hsm]: https://docs.microsoft.com/azure/key-vault/managed-hsm/overview
-[managed_hsm_cli]: https://docs.microsoft.com/azure/key-vault/managed-hsm/quick-create-cli
+[managed_hsm]: https://learn.microsoft.com/azure/key-vault/managed-hsm/overview
+[managed_hsm_cli]: https://learn.microsoft.com/azure/key-vault/managed-hsm/quick-create-cli
 [managed_identity]: https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview
 [managed_identity_backup_setup]: https://learn.microsoft.com/azure/key-vault/managed-hsm/backup-restore#prerequisites-if-backing-up-and-restoring-using-user-assigned-managed-identity
 [managed_identity_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.ManagedIdentityCredential
