@@ -20,6 +20,9 @@ parameters:
   - name: BuildTargetingString
     type: string
     default: '*'
+  - name: ExcludePaths
+    type: object
+    default: []
 
 steps:
   - task: UsePythonVersion@0

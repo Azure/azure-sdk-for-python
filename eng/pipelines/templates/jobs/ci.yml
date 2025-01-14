@@ -80,6 +80,7 @@ jobs:
         Artifacts: ${{ parameters.Artifacts }}
         ArtifactSuffix: linux
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        ExcludePaths: ${{ parameters.ExcludePaths }}
 
   - job: 'Build_Windows'
     timeoutInMinutes: 90
@@ -98,6 +99,7 @@ jobs:
         Artifacts: ${{ parameters.Artifacts }}
         ArtifactSuffix: windows
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        ExcludePaths: ${{ parameters.ExcludePaths }}
 
   - job: 'Build_MacOS'
     timeoutInMinutes: 90
@@ -116,6 +118,7 @@ jobs:
         Artifacts: ${{ parameters.Artifacts }}
         ArtifactSuffix: mac
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        ExcludePaths: ${{ parameters.ExcludePaths }}
 
   - job: 'Build_Extended'
     displayName: Build Extended
