@@ -484,10 +484,6 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     V2022_10 = "2022-10"
     """This is the default version."""
 
-class TempClient:
-    def __init__(self, **kwargs: Any) -> None:
-        pass
-
 ###### Encoder Protocols ######
 
 
@@ -575,5 +571,4 @@ __all__: List[str] = [
     "MessageContent",
     "OutboundMessageContent",
     "InboundMessageContent",
-    "TempClient",
 ]  # Add all objects you want publicly available to users at this package level
