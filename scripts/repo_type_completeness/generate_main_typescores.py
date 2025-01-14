@@ -273,7 +273,8 @@ def should_run() -> bool:
     for week in month_dates:
         for day in week:
             if day.weekday() == calendar.FRIDAY and day.month == today.month:
-                monday_after_release_week = day + datetime.timedelta(days=10)
+                # monday_after_release_week = day + datetime.timedelta(days=10)
+                monday_after_release_week = day + datetime.timedelta(days=11)
                 return today == monday_after_release_week
 
     return False
