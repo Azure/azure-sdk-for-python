@@ -27,7 +27,8 @@ class TestEvaluate:
     def test_evaluate_with_csv_data(self, model_config, csv_file, data_file):
         def remove_whitespace(s):
             import re
-            return re.sub(r'\s+', '', s)
+
+            return re.sub(r"\s+", "", s)
 
         # load identical data files in different formats
         jsonl_input_data = pd.read_json(data_file, lines=True)
@@ -59,7 +60,9 @@ class TestEvaluate:
         assert jsonl_result["rows"][0]["inputs.context"] == csv_result["rows"][0]["inputs.context"]
         assert jsonl_result["rows"][0]["inputs.query"] == csv_result["rows"][0]["inputs.query"]
         assert jsonl_result["rows"][0]["inputs.ground_truth"] == csv_result["rows"][0]["inputs.ground_truth"]
-        assert remove_whitespace(jsonl_result["rows"][0]["inputs.response"]) == remove_whitespace(csv_result["rows"][0]["inputs.response"])
+        assert remove_whitespace(jsonl_result["rows"][0]["inputs.response"]) == remove_whitespace(
+            csv_result["rows"][0]["inputs.response"]
+        )
         assert (
             jsonl_row_result_df.shape[0] == len(jsonl_input_data) == csv_row_result_df.shape[0] == len(csv_input_data)
         )
