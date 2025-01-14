@@ -15,6 +15,7 @@
 
 ### Breaking Changes
 
+  - Removed subfolders of some unused Api-Versions for smaller package size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
   - Model BaseManagedCluster no longer has parameter power_state
   - Model Components1Q1Og48SchemasManagedclusterAllof1 no longer has parameter azure_portal_fqdn
   - Model Components1Q1Og48SchemasManagedclusterAllof1 no longer has parameter disable_local_accounts
