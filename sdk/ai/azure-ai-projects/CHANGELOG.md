@@ -5,6 +5,7 @@
 ### Bugs Fixed
 * Fix events dropped in streaming (see [GitHub issue 39028](https://github.com/Azure/azure-sdk-for-python/issues/39028)).
 * Deserialize events, `thread.run.incomplete` into `ThreadRun` and raise `on_thread_run` method calls in event handlers. 
+* Adding `include_credentials` parameter to `to_evaluator_model_config` to include credentials in the model config.
 
 ### Breaking Changes
 * `submit_tool_outputs_to_run` returns `None` instead of `ThreadRun` (see [GitHub issue 39028](https://github.com/Azure/azure-sdk-for-python/issues/39028)).
