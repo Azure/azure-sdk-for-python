@@ -58,8 +58,10 @@ def _parse_schema_properties_dict(response_headers: Mapping[str, Union[str, int]
         "version": int(response_headers["Schema-Version"]),
     }
 
+
 def _normalize_content_type(content_type: str) -> str:
     return content_type.replace(" ", "").lower()
+
 
 def _get_format(content_type: str) -> Union[SchemaFormat, str]:
     # pylint:disable=redefined-builtin
@@ -76,6 +78,7 @@ def _get_format(content_type: str) -> Union[SchemaFormat, str]:
     if normalized_content_type == NormalizedSchemaContentTypes.CUSTOM.value:
         return SchemaFormat.CUSTOM
     return content_type
+
 
 def prepare_schema_properties_result(  # pylint:disable=unused-argument,redefined-builtin
     format: str,
@@ -341,7 +344,7 @@ class SchemaRegistryClient:
                 cls=prepare_schema_result,
                 headers={  # TODO: remove when multiple content types in response are supported
                     "Accept": """application/json; serialization=Avro, application/json; """
-                        """serialization=json, text/plain; charset=utf-8"""
+                    """serialization=json, text/plain; charset=utf-8"""
                 },
                 stream=True,
                 **http_request_kwargs,
@@ -365,7 +368,7 @@ class SchemaRegistryClient:
                 cls=prepare_schema_result,
                 headers={  # TODO: remove when multiple content types in response are supported
                     "Accept": """application/json; serialization=Avro, application/json; """
-                        """serialization=json, text/plain; charset=utf-8"""
+                    """serialization=json, text/plain; charset=utf-8"""
                 },
                 stream=True,
                 **http_request_kwargs,
@@ -473,6 +476,7 @@ class Schema:
     def __repr__(self) -> str:
         return f"Schema(definition={self.definition}, properties={self.properties})"[:1024]
 
+
 # ApiVersion was added to a previously GA'd version. However, newer libraries should not
 # accept ApiVersion enums and only take strings. Leaving this here for backwards compatibility.
 class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -483,6 +487,7 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     V2021_10 = "2021-10"
     V2022_10 = "2022-10"
     """This is the default version."""
+
 
 ###### Encoder Protocols ######
 
