@@ -20,11 +20,11 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_private_endpoints_begin_delete(self, resource_group):
         response = self.client.private_endpoints.begin_delete(
             resource_group_name=resource_group.name,
             private_endpoint_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -32,11 +32,11 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_private_endpoints_get(self, resource_group):
         response = self.client.private_endpoints.get(
             resource_group_name=resource_group.name,
             private_endpoint_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -44,7 +44,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_private_endpoints_begin_create_or_update(self, resource_group):
         response = self.client.private_endpoints.begin_create_or_update(
             resource_group_name=resource_group.name,
             private_endpoint_name="str",
@@ -99,6 +99,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                     {
                         "auxiliaryMode": "str",
                         "auxiliarySku": "str",
+                        "defaultOutboundConnectivityEnabled": bool,
                         "disableTcpStateTracking": bool,
                         "dnsSettings": {
                             "appliedDnsServers": ["str"],
@@ -270,6 +271,13 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                 }
                                             ],
                                             "ipConfigurations": [...],
+                                            "ipamPoolPrefixAllocations": [
+                                                {
+                                                    "allocatedAddressPrefixes": ["str"],
+                                                    "id": "str",
+                                                    "numberOfIpAddresses": "str",
+                                                }
+                                            ],
                                             "name": "str",
                                             "natGateway": {"id": "str"},
                                             "networkSecurityGroup": {
@@ -637,6 +645,9 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                             "subnet": ...,
                                         }
                                     ],
+                                    "ipamPoolPrefixAllocations": [
+                                        {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                                    ],
                                     "name": "str",
                                     "natGateway": {"id": "str"},
                                     "networkSecurityGroup": {
@@ -952,6 +963,13 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                             }
                                                         ],
                                                         "ipConfigurations": [...],
+                                                        "ipamPoolPrefixAllocations": [
+                                                            {
+                                                                "allocatedAddressPrefixes": ["str"],
+                                                                "id": "str",
+                                                                "numberOfIpAddresses": "str",
+                                                            }
+                                                        ],
                                                         "name": "str",
                                                         "natGateway": {"id": "str"},
                                                         "networkSecurityGroup": {
@@ -1321,6 +1339,13 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                             "zones": ["str"],
                                                         },
                                                         "subnet": ...,
+                                                    }
+                                                ],
+                                                "ipamPoolPrefixAllocations": [
+                                                    {
+                                                        "allocatedAddressPrefixes": ["str"],
+                                                        "id": "str",
+                                                        "numberOfIpAddresses": "str",
                                                     }
                                                 ],
                                                 "name": "str",
@@ -1823,6 +1848,9 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                             "subnet": ...,
                                         }
                                     ],
+                                    "ipamPoolPrefixAllocations": [
+                                        {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                                    ],
                                     "name": "str",
                                     "natGateway": {"id": "str"},
                                     "networkSecurityGroup": ...,
@@ -2042,6 +2070,13 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                     "zones": ["str"],
                                                 },
                                                 "subnet": ...,
+                                            }
+                                        ],
+                                        "ipamPoolPrefixAllocations": [
+                                            {
+                                                "allocatedAddressPrefixes": ["str"],
+                                                "id": "str",
+                                                "numberOfIpAddresses": "str",
                                             }
                                         ],
                                         "name": "str",
@@ -2357,6 +2392,13 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                     }
                                                 ],
                                                 "ipConfigurations": [...],
+                                                "ipamPoolPrefixAllocations": [
+                                                    {
+                                                        "allocatedAddressPrefixes": ["str"],
+                                                        "id": "str",
+                                                        "numberOfIpAddresses": "str",
+                                                    }
+                                                ],
                                                 "name": "str",
                                                 "natGateway": {"id": "str"},
                                                 "networkSecurityGroup": {
@@ -2725,6 +2767,13 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                 "subnet": ...,
                                             }
                                         ],
+                                        "ipamPoolPrefixAllocations": [
+                                            {
+                                                "allocatedAddressPrefixes": ["str"],
+                                                "id": "str",
+                                                "numberOfIpAddresses": "str",
+                                            }
+                                        ],
                                         "name": "str",
                                         "natGateway": {"id": "str"},
                                         "networkSecurityGroup": {
@@ -3077,6 +3126,13 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                         }
                                                     ],
                                                     "ipConfigurations": [...],
+                                                    "ipamPoolPrefixAllocations": [
+                                                        {
+                                                            "allocatedAddressPrefixes": ["str"],
+                                                            "id": "str",
+                                                            "numberOfIpAddresses": "str",
+                                                        }
+                                                    ],
                                                     "name": "str",
                                                     "natGateway": {"id": "str"},
                                                     "networkSecurityGroup": {
@@ -3443,6 +3499,13 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                         "zones": ["str"],
                                                     },
                                                     "subnet": ...,
+                                                }
+                                            ],
+                                            "ipamPoolPrefixAllocations": [
+                                                {
+                                                    "allocatedAddressPrefixes": ["str"],
+                                                    "id": "str",
+                                                    "numberOfIpAddresses": "str",
                                                 }
                                             ],
                                             "name": "str",
@@ -3845,6 +3908,13 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                         }
                                                     ],
                                                     "ipConfigurations": [...],
+                                                    "ipamPoolPrefixAllocations": [
+                                                        {
+                                                            "allocatedAddressPrefixes": ["str"],
+                                                            "id": "str",
+                                                            "numberOfIpAddresses": "str",
+                                                        }
+                                                    ],
                                                     "name": "str",
                                                     "natGateway": {"id": "str"},
                                                     "networkSecurityGroup": {
@@ -4210,6 +4280,13 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                         "zones": ["str"],
                                                     },
                                                     "subnet": ...,
+                                                }
+                                            ],
+                                            "ipamPoolPrefixAllocations": [
+                                                {
+                                                    "allocatedAddressPrefixes": ["str"],
+                                                    "id": "str",
+                                                    "numberOfIpAddresses": "str",
                                                 }
                                             ],
                                             "name": "str",
@@ -4583,6 +4660,9 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                             "subnet": ...,
                         }
                     ],
+                    "ipamPoolPrefixAllocations": [
+                        {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                    ],
                     "name": "str",
                     "natGateway": {"id": "str"},
                     "networkSecurityGroup": {
@@ -4674,6 +4754,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                             {
                                 "auxiliaryMode": "str",
                                 "auxiliarySku": "str",
+                                "defaultOutboundConnectivityEnabled": bool,
                                 "disableTcpStateTracking": bool,
                                 "dnsSettings": {
                                     "appliedDnsServers": ["str"],
@@ -5508,7 +5589,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -5516,10 +5597,10 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_private_endpoints_list(self, resource_group):
         response = self.client.private_endpoints.list(
             resource_group_name=resource_group.name,
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -5527,9 +5608,9 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_subscription(self, resource_group):
+    def test_private_endpoints_list_by_subscription(self, resource_group):
         response = self.client.private_endpoints.list_by_subscription(
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

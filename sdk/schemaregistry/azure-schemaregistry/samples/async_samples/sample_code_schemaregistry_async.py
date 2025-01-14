@@ -37,7 +37,7 @@ USAGE:
 
 This example uses the async DefaultAzureCredential, which requests a token from Azure Active Directory.
 For more information on the async DefaultAzureCredential, see
- https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
+ https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 """
 import os
 import asyncio

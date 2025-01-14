@@ -136,3 +136,22 @@ def test_generate_mqtt_token(connection_string, hub, expected_url):
 
     assert len(decoded_token_1) == 3
     assert decoded_token_1['aud'] == expected_url.replace('ws', 'http')
+
+test_cases = [
+    ("Endpoint=http://localhost;Port=8080;AccessKey={};Version=1.0;".format(access_key), "hub", "ws://localhost:8080/clients/socketio/hubs/hub"),
+    ("Endpoint=https://a;AccessKey={};Version=1.0;".format(access_key), "hub", "wss://a/clients/socketio/hubs/hub"),
+    ("Endpoint=http://a;AccessKey={};Version=1.0;".format(access_key), "hub", "ws://a/clients/socketio/hubs/hub")
+]
+@pytest.mark.parametrize("connection_string,hub,expected_url", test_cases)
+def test_generate_socketio_token(connection_string, hub, expected_url):
+    client = WebPubSubServiceClient.from_connection_string(connection_string, hub)
+    url_1 = client.get_client_access_token(client_protocol="SocketIO")['url']
+
+    assert url_1.split("?")[0] == expected_url
+
+    token_1 = urlparse(url_1).query[len("access_token="):]
+
+    decoded_token_1 = _decode_token(client, token_1, path="/clients/socketio/hubs/hub")
+
+    assert len(decoded_token_1) == 3
+    assert decoded_token_1['aud'] == expected_url.replace('ws', 'http')

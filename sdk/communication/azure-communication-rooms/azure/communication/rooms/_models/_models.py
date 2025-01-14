@@ -10,10 +10,7 @@ from datetime import datetime
 from azure.core import CaseInsensitiveEnumMeta
 
 
-from .._shared.models import (
-    CommunicationIdentifier,
-    identifier_from_raw_id
-)
+from .._shared.models import CommunicationIdentifier, identifier_from_raw_id
 
 
 class ParticipantRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -34,6 +31,7 @@ class RoomParticipant:
     :ivar role: Role Name.
     :vartype role: Union[str, ParticipantRole]
     """
+
     @overload
     def __init__(
         self,
@@ -50,6 +48,7 @@ class RoomParticipant:
          values are: "Presenter", "Attendee", and "Consumer".
         :paramtype role: str or ~azure.communication.rooms.models.ParticipantRole
         """
+
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
@@ -59,14 +58,14 @@ class RoomParticipant:
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         if len(args) == 1:
-            self.communication_identifier = identifier_from_raw_id(args[0]['rawId'])
-            self.role = args[0]['role']
+            self.communication_identifier = identifier_from_raw_id(args[0]["rawId"])
+            self.role = args[0]["role"]
         elif args:
             raise TypeError(f"RoomParticipant.__init__() takes 2 positional arguments but {len(args) + 1} were given.")
         else:
-            self.communication_identifier = kwargs['communication_identifier']
-            self.role = kwargs.get('role', ParticipantRole.ATTENDEE)
-        self.role=self.role or ParticipantRole.ATTENDEE
+            self.communication_identifier = kwargs["communication_identifier"]
+            self.role = kwargs.get("role", ParticipantRole.ATTENDEE)
+        self.role = self.role or ParticipantRole.ATTENDEE
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -101,9 +100,8 @@ class CommunicationRoom:
         *,
         valid_from: Optional[datetime] = None,
         valid_until: Optional[datetime] = None,
-        pstn_dial_out_enabled: Optional[bool] = None
-    ):
-        ...
+        pstn_dial_out_enabled: Optional[bool] = None,
+    ): ...
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
         """
@@ -113,11 +111,11 @@ class CommunicationRoom:
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         if len(args) == 1:
-            self.id = args[0]['id']
-            self.created_at = args[0]['createdAt']
-            self.valid_from = args[0]['validFrom']
-            self.valid_until = args[0]['validUntil']
-            self.pstn_dial_out_enabled = args[0]['pstnDialOutEnabled']
+            self.id = args[0]["id"]
+            self.created_at = args[0]["createdAt"]
+            self.valid_from = args[0]["validFrom"]
+            self.valid_until = args[0]["validUntil"]
+            self.pstn_dial_out_enabled = args[0]["pstnDialOutEnabled"]
         elif args:
             raise TypeError(
                 f"CommunicationRoom.__init__() takes 2 positional arguments but {len(args) + 1} were given."
@@ -125,9 +123,9 @@ class CommunicationRoom:
         else:
             self.id = None
             self.created_at = None
-            self.valid_from = kwargs.get('valid_from')
-            self.valid_until = kwargs.get('valid_until')
-            self.pstn_dial_out_enabled = kwargs.get('pstn_dial_out_enabled')
+            self.valid_from = kwargs.get("valid_from")
+            self.valid_until = kwargs.get("valid_until")
+            self.pstn_dial_out_enabled = kwargs.get("pstn_dial_out_enabled")
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):

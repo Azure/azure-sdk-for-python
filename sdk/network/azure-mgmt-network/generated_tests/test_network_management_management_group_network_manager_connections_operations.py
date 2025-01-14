@@ -20,7 +20,7 @@ class TestNetworkManagementManagementGroupNetworkManagerConnectionsOperations(Az
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_management_group_network_manager_connections_create_or_update(self, resource_group):
         response = self.client.management_group_network_manager_connections.create_or_update(
             management_group_id="str",
             network_manager_connection_name="str",
@@ -41,7 +41,7 @@ class TestNetworkManagementManagementGroupNetworkManagerConnectionsOperations(Az
                 },
                 "type": "str",
             },
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -49,11 +49,11 @@ class TestNetworkManagementManagementGroupNetworkManagerConnectionsOperations(Az
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_management_group_network_manager_connections_get(self, resource_group):
         response = self.client.management_group_network_manager_connections.get(
             management_group_id="str",
             network_manager_connection_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -61,11 +61,11 @@ class TestNetworkManagementManagementGroupNetworkManagerConnectionsOperations(Az
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_management_group_network_manager_connections_delete(self, resource_group):
         response = self.client.management_group_network_manager_connections.delete(
             management_group_id="str",
             network_manager_connection_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -73,10 +73,10 @@ class TestNetworkManagementManagementGroupNetworkManagerConnectionsOperations(Az
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_management_group_network_manager_connections_list(self, resource_group):
         response = self.client.management_group_network_manager_connections.list(
             management_group_id="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

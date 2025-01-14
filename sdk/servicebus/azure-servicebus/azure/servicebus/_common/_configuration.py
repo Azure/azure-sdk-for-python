@@ -41,6 +41,7 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
         self.auto_reconnect = kwargs.get("auto_reconnect", True)
         self.keep_alive = kwargs.get("keep_alive", 30)
         self.timeout: float = kwargs.get("timeout", 60)
+        self.use_tls = kwargs.get("use_tls", True)
         default_socket_timeout = 0.2
 
         if self.http_proxy or self.transport_type.value == TransportType.AmqpOverWebsocket.value:

@@ -8,7 +8,7 @@ import copy
 from collections import defaultdict
 import asyncio
 from azure.eventhub.exceptions import OwnershipLostError  # type: ignore
-from azure.eventhub.aio import CheckpointStore  # type: ignore  # pylint: disable=no-name-in-module
+from azure.eventhub.aio import CheckpointStore  # type: ignore
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError, ResourceNotFoundError  # type: ignore
 from ._vendor.storage.blob.aio import ContainerClient, BlobClient
 from ._vendor.storage.blob._shared.base_client import parse_connection_str
@@ -67,7 +67,7 @@ class BlobCheckpointStore(CheckpointStore):
         self._cached_blob_clients = defaultdict()  # type: Dict[str, BlobClient]
 
     @classmethod
-    def from_connection_string(
+    def from_connection_string( # pylint:disable=docstring-keyword-should-match-keyword-only
         cls,
         conn_str: str,
         container_name: str,
@@ -96,7 +96,8 @@ class BlobCheckpointStore(CheckpointStore):
         :returns: A blob checkpoint store.
         :rtype: ~azure.eventhub.extensions.checkpointstoreblobaio.BlobCheckpointStore
         """
-        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob')
+        account_url, secondary, credential = parse_connection_str( # type: ignore[assignment]
+            conn_str, credential, 'blob') # type: ignore[arg-type]
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
 
@@ -113,8 +114,8 @@ class BlobCheckpointStore(CheckpointStore):
         result = self._cached_blob_clients.get(blob_name)
         if not result:
             result = self._container_client.get_blob_client(blob_name)
-            self._cached_blob_clients[blob_name] = result
-        return result
+            self._cached_blob_clients[blob_name] = result # type: ignore[assignment]
+        return result # type: ignore[return-value]
 
     async def _upload_ownership(
         self, ownership: Dict[str, Any], **kwargs: Any
@@ -141,7 +142,7 @@ class BlobCheckpointStore(CheckpointStore):
                 data=UPLOAD_DATA, overwrite=True, metadata=metadata, **kwargs
             )
         ownership["etag"] = uploaded_blob_properties["etag"]
-        ownership["last_modified_time"] = uploaded_blob_properties[
+        ownership["last_modified_time"] = uploaded_blob_properties[ # type: ignore[union-attr]
             "last_modified"
         ].timestamp()
 
@@ -222,7 +223,7 @@ class BlobCheckpointStore(CheckpointStore):
                 }
                 result.append(ownership)
             return result
-        except Exception as error:  # pylint:disable=broad-except
+        except Exception as error:
             logger.warning(
                 "An exception occurred during list_ownership for "
                 "namespace %r eventhub %r consumer group %r. "
@@ -259,7 +260,7 @@ class BlobCheckpointStore(CheckpointStore):
             return_exceptions=True
         )
         return [
-            ownership for ownership in results if not isinstance(ownership, Exception)
+            ownership for ownership in results if not isinstance(ownership, Exception) # type: ignore[misc]
         ]
 
     async def update_checkpoint(self, checkpoint: Dict[str, Any], **kwargs: Any) -> None:

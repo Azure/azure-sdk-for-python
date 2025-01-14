@@ -73,6 +73,7 @@ class ErrorTarget:
     GEN1_DATASTORE = "Gen1Datastore"
     GEN2_DATASTORE = "Gen2Datastore"
     WORKSPACE = "Workspace"
+    CAPABILITY_HOST = "CapabilityHost"
     COMPUTE = "Compute"
     DEPLOYMENT = "Deployment"
     ENDPOINT = "Endpoint"

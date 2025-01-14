@@ -7,4 +7,4 @@ pytest-cov
 pytest-mock
 pytest-xdist
 azure-ai-inference>=1.0.0b4
--e ../azure-ai-evaluation[remote]
+-e ../azure-ai-evaluation
