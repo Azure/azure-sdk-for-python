@@ -17,7 +17,7 @@ Param (
   [string] $ArtifactPath,
   [Parameter(Mandatory = $True)]
   [string] $TargetPath,
-  [Parameter(Mandatory=$true)]
+  [Parameter(Mandatory=$false)]
   [AllowEmptyCollection()]
   [array] $ExcludePaths
 )
