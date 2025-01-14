@@ -17,23 +17,24 @@ USAGE:
     python file_samples_directory.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
 import os
 import sys
 
-SOURCE_FILE = './SampleSource.txt'
-DEST_FILE = './SampleDestination.txt'
+current_dir = os.path.dirname(os.path.abspath(__file__))
+DEST_FILE = os.path.join(current_dir, "SampleDestination.txt")
+SOURCE_FILE = os.path.join(current_dir, "SampleSource.txt")
 
 
 class DirectorySamples(object):
 
-    connection_string = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
+    connection_string = os.getenv('STORAGE_CONNECTION_STRING')
 
     def create_directory_and_file(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: create_directory_and_file")
             sys.exit(1)
 
@@ -73,7 +74,7 @@ class DirectorySamples(object):
 
     def create_subdirectory_and_file(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: create_subdirectory_and_file")
             sys.exit(1)
 
@@ -122,7 +123,7 @@ class DirectorySamples(object):
 
     def get_subdirectory_client(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: get_subdirectory_client")
             sys.exit(1)
 
