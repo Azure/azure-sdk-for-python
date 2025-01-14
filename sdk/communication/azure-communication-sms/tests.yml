@@ -9,7 +9,6 @@ extends:
       CloudConfig:
         Public:
           SubscriptionConfigurations:
-            - $(sub-config-communication-services-cloud-test-resources-common)
             - $(sub-config-communication-services-sms-cloud-test-resources)
           MatrixReplace:
             - TestSamples=.*/true
