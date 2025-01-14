@@ -95,7 +95,7 @@ class PremiumPageBlobTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
     Specifies the page blob tier to set the blob to. This is only applicable to page
     blobs on premium storage accounts. Please take a look at:
-    https://docs.microsoft.com/en-us/azure/storage/storage-premium-storage#scalability-and-performance-targets
+    https://learn.microsoft.com/azure/storage/storage-premium-storage#scalability-and-performance-targets
     for detailed information on the corresponding IOPS and throughput per PageBlobTier.
     """
 

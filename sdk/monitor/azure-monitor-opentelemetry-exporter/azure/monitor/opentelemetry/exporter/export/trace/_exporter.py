@@ -125,7 +125,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         envelope.tags.update(_utils._populate_part_a_fields(resource))  # pylint: disable=W0212
         envelope.instrumentation_key = self._instrumentation_key
         data_point = MetricDataPoint(
-            name=str("_OTELRESOURCE_")[:1024],
+            name="_OTELRESOURCE_"[:1024],
             value=0,
         )
 
@@ -177,7 +177,6 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
 
 # pylint: disable=too-many-statements
 # pylint: disable=too-many-branches
-# pylint: disable=too-many-locals
 # pylint: disable=protected-access
 # mypy: disable-error-code="assignment,attr-defined,index,operator,union-attr"
 def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
@@ -196,7 +195,6 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
         envelope.tags[ContextTagKeys.AI_USER_ID] = span.attributes[SpanAttributes.ENDUSER_ID]
     if span.parent and span.parent.span_id:
         envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(span.parent.span_id)
-    # pylint: disable=too-many-nested-blocks
     if span.kind in (SpanKind.CONSUMER, SpanKind.SERVER):
         envelope.name = _REQUEST_ENVELOPE_NAME
         data = RequestData(
@@ -225,7 +223,6 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                         total += difference
                 data.measurements["timeSinceEnqueued"] = max(0, total / len(span.links))
         elif SpanAttributes.HTTP_METHOD in span.attributes:  # HTTP
-            url = ""
             path = ""
             if SpanAttributes.HTTP_USER_AGENT in span.attributes:
                 # TODO: Not exposed in Swagger, need to update def
@@ -234,35 +231,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             if SpanAttributes.HTTP_CLIENT_IP in span.attributes:
                 envelope.tags[ContextTagKeys.AI_LOCATION_IP] = span.attributes[SpanAttributes.HTTP_CLIENT_IP]
             # url
-            if SpanAttributes.HTTP_URL in span.attributes:
-                url = span.attributes[SpanAttributes.HTTP_URL]
-            elif SpanAttributes.HTTP_SCHEME in span.attributes and SpanAttributes.HTTP_TARGET in span.attributes:
-                scheme = span.attributes[SpanAttributes.HTTP_SCHEME]
-                http_target = span.attributes[SpanAttributes.HTTP_TARGET]
-                if SpanAttributes.HTTP_HOST in span.attributes:
-                    url = "{}://{}{}".format(
-                        scheme,
-                        span.attributes[SpanAttributes.HTTP_HOST],
-                        http_target,
-                    )
-                elif SpanAttributes.NET_HOST_PORT in span.attributes:
-                    host_port = span.attributes[SpanAttributes.NET_HOST_PORT]
-                    if SpanAttributes.HTTP_SERVER_NAME in span.attributes:
-                        server_name = span.attributes[SpanAttributes.HTTP_SERVER_NAME]
-                        url = "{}://{}:{}{}".format(
-                            scheme,
-                            server_name,
-                            host_port,
-                            http_target,
-                        )
-                    elif SpanAttributes.NET_HOST_NAME in span.attributes:
-                        host_name = span.attributes[SpanAttributes.NET_HOST_NAME]
-                        url = "{}://{}:{}{}".format(
-                            scheme,
-                            host_name,
-                            host_port,
-                            http_target,
-                        )
+            url = trace_utils._get_url_for_http_request(span.attributes)
             data.url = url
             # Http specific logic for ai.operation.name
             if SpanAttributes.HTTP_ROUTE in span.attributes:
@@ -511,7 +480,6 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
                 properties=properties,
                 exceptions=[exc_details],
             )
-            # pylint: disable=line-too-long
             envelope.data = MonitorBase(base_data=data, base_type="ExceptionData")
         else:
             envelope.name = _MESSAGE_ENVELOPE_NAME

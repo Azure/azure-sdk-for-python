@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_stream_iteration_with_toolset.py
-
 DESCRIPTION:
     This sample demonstrates how to use agent operations with toolset and iteration in streaming from
     the Azure Agents service using a synchronous client.
@@ -18,57 +16,26 @@ USAGE:
     pip install azure-ai-projects azure-identity
 
     Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
 """
 
 import os
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import AgentStreamEvent
-from azure.ai.projects.models import MessageDeltaChunk, MessageDeltaTextContent, RunStep, ThreadMessage, ThreadRun
+from azure.ai.projects.models import AgentStreamEvent, RunStepDeltaChunk
+from azure.ai.projects.models import (
+    MessageDeltaChunk,
+    RunStep,
+    ThreadMessage,
+    ThreadRun,
+)
 from azure.ai.projects.models import FunctionTool, ToolSet
-from azure.ai.projects.operations import AgentsOperations
+from azure.ai.projects.operations._operations import AgentsOperations
 from azure.identity import DefaultAzureCredential
 from user_functions import user_functions
-
-
-# Create an Azure AI Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
 )
-
-
-# Function to handle tool stream iteration
-def handle_submit_tool_outputs(operations: AgentsOperations, thread_id, run_id, tool_outputs):
-    try:
-        with operations.submit_tool_outputs_to_stream(
-            thread_id=thread_id,
-            run_id=run_id,
-            tool_outputs=tool_outputs,
-        ) as tool_stream:
-            for tool_event_type, tool_event_data in tool_stream:
-                if tool_event_type == AgentStreamEvent.ERROR:
-                    print(f"An error occurred in tool stream. Data: {tool_event_data}")
-                elif tool_event_type == AgentStreamEvent.DONE:
-                    print("Tool stream completed.")
-                    break
-                else:
-                    if isinstance(tool_event_data, MessageDeltaChunk):
-                        handle_message_delta(tool_event_data)
-
-    except Exception as e:
-        print(f"Failed to process tool stream: {e}")
-
-
-# Function to handle message delta chunks
-def handle_message_delta(delta: MessageDeltaChunk) -> None:
-    for content_part in delta.delta.content:
-        if isinstance(content_part, MessageDeltaTextContent):
-            text_value = content_part.text.value if content_part.text else "No text"
-            print(f"Text delta received: {text_value}")
-
 
 functions = FunctionTool(user_functions)
 toolset = ToolSet()
@@ -76,7 +43,10 @@ toolset.add(functions)
 
 with project_client:
     agent = project_client.agents.create_agent(
-        model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
+        name="my-assistant",
+        instructions="You are a helpful assistant",
+        toolset=toolset,
     )
     print(f"Created agent, agent ID: {agent.id}")
 
@@ -88,10 +58,13 @@ with project_client:
 
     with project_client.agents.create_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
 
-        for event_type, event_data in stream:
+        for event_type, event_data, _ in stream:
 
             if isinstance(event_data, MessageDeltaChunk):
-                handle_message_delta(event_data)
+                print(f"Text delta received: {event_data.text}")
+
+            elif isinstance(event_data, RunStepDeltaChunk):
+                print(f"RunStepDeltaChunk received. ID: {event_data.id}.")
 
             elif isinstance(event_data, ThreadMessage):
                 print(f"ThreadMessage created. ID: {event_data.id}, Status: {event_data.status}")
@@ -110,7 +83,6 @@ with project_client:
 
             elif event_type == AgentStreamEvent.DONE:
                 print("Stream completed.")
-                break
 
             else:
                 print(f"Unhandled Event Type: {event_type}, Data: {event_data}")

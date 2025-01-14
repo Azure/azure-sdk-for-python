@@ -49,4 +49,14 @@ directive:
   where: $.securityDefinitions
   transform: |
     $["SharedKey"]["in"] = "header";
+
+- from: swagger-document
+  where: $.parameters.TimezoneTransitionsYears
+  transform: |
+    $["x-ms-client-name"] = "dst_lating_years"
+
+- from: swagger-document
+  where: $.parameters.TimezoneTransitionsFrom
+  transform: |
+    $["x-ms-client-name"] = "dst_from"
 ```

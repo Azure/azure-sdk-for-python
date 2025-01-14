@@ -1,6 +1,6 @@
 # Troubleshooting Azure Cognitive Search SDK Issues
 
-The `azure-search-documents` package provides APIs for operations on the [Azure Cognitive Search](https://docs.microsoft.com/azure/search/search-what-is-azure-search) cloud service.
+The `azure-search-documents` package provides APIs for operations on the [Azure Cognitive Search](https://learn.microsoft.com/azure/search/search-what-is-azure-search) cloud service.
 
 ## Table of Contents
 
@@ -12,7 +12,7 @@ The `azure-search-documents` package provides APIs for operations on the [Azure 
 
 ## Troubleshooting Issues By Response Code
 
-See [this page](https://docs.microsoft.com/rest/api/searchservice/http-status-codes) for the common response status codes sent by the Azure Cognitive Search service.
+See [this page](https://learn.microsoft.com/rest/api/searchservice/http-status-codes) for the common response status codes sent by the Azure Cognitive Search service.
 
 ### 207 Multi-Status
 
@@ -20,7 +20,7 @@ This response status indicates a partial success for an indexing operation. Some
 
 ### 403 Forbidden
 
-Returned when you pass an invalid api-key. Search service uses two types of keys to control access: admin (read-write) and query (read-only). The **admin key** grants full rights to all operations, including the ability to manage the service, create and delete indexes, indexers, and data sources. The **query key** grants read-only access to indexes and documents. Ensure that the key used for an API call provides sufficient privileges for the operation. See [here](https://docs.microsoft.com/azure/search/search-security-api-keys) for details about managing API keys.
+Returned when you pass an invalid api-key. Search service uses two types of keys to control access: admin (read-write) and query (read-only). The **admin key** grants full rights to all operations, including the ability to manage the service, create and delete indexes, indexers, and data sources. The **query key** grants read-only access to indexes and documents. Ensure that the key used for an API call provides sufficient privileges for the operation. See [here](https://learn.microsoft.com/azure/search/search-security-api-keys) for details about managing API keys.
 
 If you are using the `azure-identity` package to authenticate requests to Azure Cognitive Search, please see our [troubleshooting guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TROUBLESHOOTING.md).
 
@@ -38,6 +38,6 @@ If this error occurs during document upload, it indicates that you've exceeded y
 ## Unexpected Search Query Results
 
 A common class of issues when using the Search SDK is that the result set of a search query is different from what is expected. 
-For such cases, you should start by running the search query in the portal to rule out any service-side issues with the search query or any parameter(s). Review the [OData syntax](https://docs.microsoft.com/azure/search/query-odata-filter-orderby-syntax), if any, used in the query.
+For such cases, you should start by running the search query in the portal to rule out any service-side issues with the search query or any parameter(s). Review the [OData syntax](https://learn.microsoft.com/azure/search/query-odata-filter-orderby-syntax), if any, used in the query.
 
-Once the result looks good in the portal, use that as the template to populate the objects and parameters in the search request APIs. You should also verify that the correct set of documents have been indexed and are being searched on the service side. One tip would be to start with a 'broad' query (one that returns a superset of desired results, possibly by giving a large value for or entirely removing, some [query parameters](https://docs.microsoft.com/rest/api/searchservice/search-documents#query-parameters)) and then progressively refining the query till it expresses the desired intent.
+Once the result looks good in the portal, use that as the template to populate the objects and parameters in the search request APIs. You should also verify that the correct set of documents have been indexed and are being searched on the service side. One tip would be to start with a 'broad' query (one that returns a superset of desired results, possibly by giving a large value for or entirely removing, some [query parameters](https://learn.microsoft.com/rest/api/searchservice/search-documents#query-parameters)) and then progressively refining the query till it expresses the desired intent.

@@ -7,7 +7,7 @@ from typing import Any, Dict, Optional, Union
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import ContentDecodePolicy
-from azure.core.pipeline.transport import (  # pylint:disable=unknown-option-value,no-legacy-azure-core-http-response-import
+from azure.core.pipeline.transport import (  # pylint:disable=no-legacy-azure-core-http-response-import
     HttpRequest,
     HttpResponse,
 )

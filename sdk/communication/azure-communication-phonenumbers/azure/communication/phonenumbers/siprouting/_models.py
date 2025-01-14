@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+
 class SipTrunk(object):
     """Represents a SIP trunk for routing calls. See RFC 4904.
 
@@ -14,22 +15,20 @@ class SipTrunk(object):
     """
 
     _attribute_map = {
-        'fqdn': {'key': 'fqdn', 'type': 'str'},
-        'sip_signaling_port': {'key': 'sipSignalingPort', 'type': 'int'},
+        "fqdn": {"key": "fqdn", "type": "str"},
+        "sip_signaling_port": {"key": "sipSignalingPort", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword fqdn: FQDN of the trunk.
         :paramtype fqdn: str
         :keyword sip_signaling_port: Gets or sets SIP signaling port of the trunk.
         :paramtype sip_signaling_port: int
         """
-        self.fqdn = kwargs.get('fqdn', None)
-        self.sip_signaling_port = kwargs.get('sip_signaling_port', None)
+        self.fqdn = kwargs.get("fqdn", None)
+        self.sip_signaling_port = kwargs.get("sip_signaling_port", None)
+
 
 class SipTrunkRoute(object):
     """Represents a trunk route for routing calls.
@@ -49,16 +48,13 @@ class SipTrunkRoute(object):
     """
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'number_pattern': {'key': 'numberPattern', 'type': 'str'},
-        'trunks': {'key': 'trunks', 'type': '[str]'},
+        "description": {"key": "description", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "number_pattern": {"key": "numberPattern", "type": "str"},
+        "trunks": {"key": "trunks", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword description: Gets or sets description of the route.
         :paramtype description: Optional[str]
@@ -73,7 +69,7 @@ class SipTrunkRoute(object):
          FQDN.
         :paramtype trunks: Optional[List[str]]
         """
-        self.description = kwargs.get('description', None)
-        self.name = kwargs.get('name', None)
-        self.number_pattern = kwargs.get('number_pattern', None)
-        self.trunks = kwargs.get('trunks',None)
+        self.description = kwargs.get("description", None)
+        self.name = kwargs.get("name", None)
+        self.number_pattern = kwargs.get("number_pattern", None)
+        self.trunks = kwargs.get("trunks", None)

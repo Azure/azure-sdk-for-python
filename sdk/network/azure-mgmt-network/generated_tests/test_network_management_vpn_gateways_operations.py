@@ -20,11 +20,11 @@ class TestNetworkManagementVpnGatewaysOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_vpn_gateways_get(self, resource_group):
         response = self.client.vpn_gateways.get(
             resource_group_name=resource_group.name,
             gateway_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -32,7 +32,7 @@ class TestNetworkManagementVpnGatewaysOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_vpn_gateways_begin_create_or_update(self, resource_group):
         response = self.client.vpn_gateways.begin_create_or_update(
             resource_group_name=resource_group.name,
             gateway_name="str",
@@ -169,7 +169,7 @@ class TestNetworkManagementVpnGatewaysOperations(AzureMgmtRecordedTestCase):
                 "virtualHub": {"id": "str"},
                 "vpnGatewayScaleUnit": 0,
             },
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -177,12 +177,12 @@ class TestNetworkManagementVpnGatewaysOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update_tags(self, resource_group):
+    def test_vpn_gateways_begin_update_tags(self, resource_group):
         response = self.client.vpn_gateways.begin_update_tags(
             resource_group_name=resource_group.name,
             gateway_name="str",
             vpn_gateway_parameters={"tags": {"str": "str"}},
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -190,11 +190,11 @@ class TestNetworkManagementVpnGatewaysOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_vpn_gateways_begin_delete(self, resource_group):
         response = self.client.vpn_gateways.begin_delete(
             resource_group_name=resource_group.name,
             gateway_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -202,11 +202,11 @@ class TestNetworkManagementVpnGatewaysOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_reset(self, resource_group):
+    def test_vpn_gateways_begin_reset(self, resource_group):
         response = self.client.vpn_gateways.begin_reset(
             resource_group_name=resource_group.name,
             gateway_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -214,11 +214,11 @@ class TestNetworkManagementVpnGatewaysOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_start_packet_capture(self, resource_group):
+    def test_vpn_gateways_begin_start_packet_capture(self, resource_group):
         response = self.client.vpn_gateways.begin_start_packet_capture(
             resource_group_name=resource_group.name,
             gateway_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -226,11 +226,11 @@ class TestNetworkManagementVpnGatewaysOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_stop_packet_capture(self, resource_group):
+    def test_vpn_gateways_begin_stop_packet_capture(self, resource_group):
         response = self.client.vpn_gateways.begin_stop_packet_capture(
             resource_group_name=resource_group.name,
             gateway_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -238,10 +238,10 @@ class TestNetworkManagementVpnGatewaysOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_vpn_gateways_list_by_resource_group(self, resource_group):
         response = self.client.vpn_gateways.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -249,9 +249,9 @@ class TestNetworkManagementVpnGatewaysOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_vpn_gateways_list(self, resource_group):
         response = self.client.vpn_gateways.list(
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

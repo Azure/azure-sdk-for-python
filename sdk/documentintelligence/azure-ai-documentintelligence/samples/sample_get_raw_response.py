@@ -38,7 +38,7 @@ def sample_raw_response_hook():
         responses["status_code"] = response.http_response.status_code
         responses["response_body"] = response.http_response.json()
 
-    client.get_resource_info(raw_response_hook=callback)
+    client.get_resource_details(raw_response_hook=callback)
 
     print(f"Response status code is: {responses['status_code']}")
     response_body = responses["response_body"]
