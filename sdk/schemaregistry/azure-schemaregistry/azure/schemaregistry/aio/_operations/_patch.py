@@ -37,7 +37,7 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
     """
 
     @distributed_trace_async
-    async def _get_schema_properties_by_content(
+    async def _get_schema_properties_by_content(    # type: ignore[override]
         self,
         group_name: str,
         schema_name: str,
@@ -78,7 +78,7 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = content_type or _headers.pop("Content-Type", "text/plain; charset=utf-8")
+        _content_type: str = content_type or _headers.pop("Content-Type", "text/plain; charset=utf-8")
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _content = schema_content
@@ -86,7 +86,7 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
         request = build_schema_registry_get_schema_properties_by_content_request(
             group_name=group_name,
             schema_name=schema_name,
-            content_type=content_type,
+            content_type=_content_type,
             api_version=self._config.api_version,
             content=_content,
             headers=_headers,
@@ -127,7 +127,7 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
             return cls(pipeline_response, None, response_headers)
 
     @distributed_trace_async
-    async def _register_schema(
+    async def _register_schema( # type: ignore[override]
         self,
         group_name: str,
         schema_name: str,
@@ -169,7 +169,7 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = content_type or _headers.pop("Content-Type", "text/plain; charset=utf-8")
+        _content_type: str = content_type or _headers.pop("Content-Type", "text/plain; charset=utf-8")
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _content = schema_content
@@ -177,7 +177,7 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
         request = build_schema_registry_register_schema_request(
             group_name=group_name,
             schema_name=schema_name,
-            content_type=content_type,
+            content_type=_content_type,
             api_version=self._config.api_version,
             content=_content,
             headers=_headers,
