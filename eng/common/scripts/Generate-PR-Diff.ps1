@@ -16,7 +16,10 @@ Param (
   [Parameter(Mandatory = $True)]
   [string] $ArtifactPath,
   [Parameter(Mandatory = $True)]
-  [string] $TargetPath
+  [string] $TargetPath,
+  [Parameter(Mandatory=$true)]
+  [AllowEmptyCollection()]
+  [array] $ExcludePaths
 )
 
 . (Join-Path $PSScriptRoot "Helpers" "git-helpers.ps1")
@@ -45,6 +48,7 @@ $changedFiles = @()
 $changedServices = @()
 
 $changedFiles = Get-ChangedFiles -DiffPath $TargetPath
+
 if ($changedFiles) {
   $changedServices = Get-ChangedServices -ChangedFiles $changedFiles
 }
@@ -52,6 +56,7 @@ if ($changedFiles) {
 $result = [PSCustomObject]@{
   "ChangedFiles"    = $changedFiles
   "ChangedServices" = $changedServices
+  "ExcludePaths"    = $ExcludePaths
   "PRNumber"        = if ($env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER) { $env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER } else { "-1" }
 }
 
