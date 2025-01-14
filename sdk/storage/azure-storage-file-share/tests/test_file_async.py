@@ -3991,3 +3991,28 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
         file_data = await (await file_client.download_file()).readall()
         assert file_data == b"Hello Async World!"  # data is fixed by mock transport
+
+    @FileSharePreparer()
+    async def test_mock_transport_with_content_validation(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+
+        transport = MockStorageTransport()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path="filemocktransport",
+            credential=storage_account_key,
+            transport=transport,
+            retry_total=0
+        )
+
+        data = b"Hello Async World!"
+        stream = AsyncStream(data)
+        resp = await file_client.upload_file(stream, validate_content=True)
+        assert resp is not None
+
+        file_data = await (await file_client.download_file(validate_content=True)).readall()
+        assert file_data == b"Hello Async World!"  # data is fixed by mock transport
