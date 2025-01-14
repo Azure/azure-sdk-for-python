@@ -10,6 +10,8 @@
   ([#38451](https://github.com/Azure/azure-sdk-for-python/pull/38451))
 - Implement live metrics filtering for docs
   ([#38925](https://github.com/Azure/azure-sdk-for-python/pull/38925))
+- Implement live metrics + filtering for span event exceptions
+  ([#39168](https://github.com/Azure/azure-sdk-for-python/pull/39168))
 
 ### Breaking Changes
 
