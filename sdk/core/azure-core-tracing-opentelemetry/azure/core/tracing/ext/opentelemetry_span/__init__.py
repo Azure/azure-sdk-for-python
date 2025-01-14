@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Implements azure.core.tracing.AbstractSpan to wrap OpenTelemetry spans."""
-from typing import Any, ContextManager, Dict, Optional, Union, Callable, Sequence, cast, List, TYPE_CHECKING
+from typing import Any, ContextManager, Dict, Optional, Union, Callable, Sequence, cast, List
 import warnings
 
 from opentelemetry import context, trace
