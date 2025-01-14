@@ -23,7 +23,7 @@ class MessagesPreparers(object):
 
             else:
                 self.connection_string = (
-                    "endpoint=https://sanitized.unitedstates.ppe.communication.azure.com/;accesskey=fake==="
+                    "endpoint=https://sanitized.unitedstates.ppe.communication.azure.net/;accesskey=fake==="
                 )
                 self.resource_name = "sanitized"
 
