@@ -20,12 +20,12 @@ class TestNetworkManagementVpnSiteLinksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_vpn_site_links_get(self, resource_group):
         response = self.client.vpn_site_links.get(
             resource_group_name=resource_group.name,
             vpn_site_name="str",
             vpn_site_link_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -33,11 +33,11 @@ class TestNetworkManagementVpnSiteLinksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_vpn_site(self, resource_group):
+    def test_vpn_site_links_list_by_vpn_site(self, resource_group):
         response = self.client.vpn_site_links.list_by_vpn_site(
             resource_group_name=resource_group.name,
             vpn_site_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

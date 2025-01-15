@@ -305,7 +305,7 @@ class TestConfigure(unittest.TestCase):
         self.assertEqual(azure_core_mock.tracing_implementation, OpenTelemetrySpan)
 
     @patch(
-        "azure.monitor.opentelemetry._configure.set_event_logger_provider",
+        "azure.monitor.opentelemetry._configure._set_event_logger_provider",
     )
     @patch(
         "azure.monitor.opentelemetry._configure.EventLoggerProvider",
@@ -373,7 +373,7 @@ class TestConfigure(unittest.TestCase):
         get_logger_mock.assert_called_once_with("test")
         logger_mock.addHandler.assert_called_once_with(logging_handler_init_mock)
         elp_mock.assert_called_once_with(lp_init_mock)
-        set_elp_mock.assert_called_once_with(elp_init_mock)
+        set_elp_mock.assert_called_once_with(elp_init_mock, False)
 
     @patch(
         "azure.monitor.opentelemetry._configure.getLogger",

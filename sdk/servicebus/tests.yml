@@ -10,9 +10,6 @@ extends:
         AZURE_SUBSCRIPTION_ID: $(SERVICEBUS_SUBSCRIPTION_ID)
         AZURE_TEST_RUN_LIVE: 'true'
         AZURE_SKIP_LIVE_RECORDING: 'True'
-        # Set fake authority host to ensure Managed Identity fail for Default Azure Credential
-        # so "execute samples" step correctly picks up Powershell credential.
-        AZURE_POD_IDENTITY_AUTHORITY_HOST: "FakeAuthorityHost"
       MatrixFilters:
         - PythonVersion=^(?!pypy3).*
       Clouds: 'Public'

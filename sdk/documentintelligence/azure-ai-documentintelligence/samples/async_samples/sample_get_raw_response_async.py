@@ -39,7 +39,7 @@ async def sample_raw_response_hook():
         responses["response_body"] = response.http_response.json()
 
     async with client:
-        await client.get_resource_info(raw_response_hook=callback)
+        await client.get_resource_details(raw_response_hook=callback)
 
     print(f"Response status code is: {responses['status_code']}")
     response_body = responses["response_body"]

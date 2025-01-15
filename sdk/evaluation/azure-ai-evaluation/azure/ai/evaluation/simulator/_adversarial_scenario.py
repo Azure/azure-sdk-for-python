@@ -44,3 +44,5 @@ class _UnstableAdversarialScenario(Enum):
     """
 
     ECI = "adv_politics"
+    ADVERSARIAL_IMAGE_GEN = "adv_image_gen"
+    ADVERSARIAL_IMAGE_MULTIMODAL = "adv_image_understanding"

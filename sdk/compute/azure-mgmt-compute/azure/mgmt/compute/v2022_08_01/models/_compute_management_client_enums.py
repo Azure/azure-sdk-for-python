@@ -61,9 +61,9 @@ class ConsistencyModeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class DedicatedHostLicenseTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the software license type that will be applied to the VMs deployed on the dedicated
-    host. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **None**
-    :code:`<br>`:code:`<br>` **Windows_Server_Hybrid** :code:`<br>`:code:`<br>`
-    **Windows_Server_Perpetual** :code:`<br>`:code:`<br>` Default: **None**.
+    host. :code:`<br>`\\ :code:`<br>` Possible values are: :code:`<br>`\\ :code:`<br>` **None**
+    :code:`<br>`\\ :code:`<br>` **Windows_Server_Hybrid** :code:`<br>`\\ :code:`<br>`
+    **Windows_Server_Perpetual** :code:`<br>`\\ :code:`<br>` Default: **None**.
     """
 
     NONE = "None"
@@ -234,11 +234,11 @@ class IPVersions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class LinuxPatchAssessmentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the mode of VM Guest Patch Assessment for the IaaS virtual machine.:code:`<br
-    />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />` **ImageDefault** - You
-    control the timing of patch assessments on a virtual machine. :code:`<br />`:code:`<br />`
-    **AutomaticByPlatform** - The platform will trigger periodic patch assessments. The property
-    provisionVMAgent must be true.
+    """Specifies the mode of VM Guest Patch Assessment for the IaaS virtual machine.\\ :code:`<br
+    />`\\ :code:`<br />` Possible values are:\\ :code:`<br />`\\ :code:`<br />` **ImageDefault** -
+    You control the timing of patch assessments on a virtual machine. :code:`<br />`\\ :code:`<br
+    />` **AutomaticByPlatform** - The platform will trigger periodic patch assessments. The
+    property provisionVMAgent must be true.
     """
 
     IMAGE_DEFAULT = "ImageDefault"
@@ -256,11 +256,11 @@ class LinuxVMGuestPatchAutomaticByPlatformRebootSetting(str, Enum, metaclass=Cas
 
 class LinuxVMGuestPatchMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual machines associated
-    to virtual machine scale set with OrchestrationMode as Flexible.:code:`<br />`:code:`<br />`
-    Possible values are::code:`<br />`:code:`<br />` **ImageDefault** - The virtual machine's
-    default patching configuration is used. :code:`<br />`:code:`<br />` **AutomaticByPlatform** -
-    The virtual machine will be automatically updated by the platform. The property
-    provisionVMAgent must be true.
+    to virtual machine scale set with OrchestrationMode as Flexible.\\ :code:`<br />`\\ :code:`<br
+    />` Possible values are:\\ :code:`<br />`\\ :code:`<br />` **ImageDefault** - The virtual
+    machine's default patching configuration is used. :code:`<br />`\\ :code:`<br />`
+    **AutomaticByPlatform** - The virtual machine will be automatically updated by the platform.
+    The property provisionVMAgent must be true.
     """
 
     IMAGE_DEFAULT = "ImageDefault"
@@ -377,9 +377,9 @@ class ProtocolTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ProximityPlacementGroupType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the type of the proximity placement group. :code:`<br>`:code:`<br>` Possible values
-    are: :code:`<br>`:code:`<br>` **Standard** : Co-locate resources within an Azure region or
-    Availability Zone. :code:`<br>`:code:`<br>` **Ultra** : For future use.
+    """Specifies the type of the proximity placement group. :code:`<br>`\\ :code:`<br>` Possible
+    values are: :code:`<br>`\\ :code:`<br>` **Standard** : Co-locate resources within an Azure
+    region or Availability Zone. :code:`<br>`\\ :code:`<br>` **Ultra** : For future use.
     """
 
     STANDARD = "Standard"
@@ -515,11 +515,11 @@ class StorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class UpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br />`:code:`<br
-    />` Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control the application
-    of updates to virtual machines in the scale set. You do this by using the manualUpgrade
-    action.:code:`<br />`:code:`<br />` **Automatic** - All virtual machines in the scale set are
-    automatically updated at the same time.
+    """Specifies the mode of an upgrade to virtual machines in the scale set.\\ :code:`<br />`\\
+    :code:`<br />` Possible values are:\\ :code:`<br />`\\ :code:`<br />` **Manual** - You  control
+    the application of updates to virtual machines in the scale set. You do this by using the
+    manualUpgrade action.\\ :code:`<br />`\\ :code:`<br />` **Automatic** - All virtual machines in
+    the scale set are  automatically updated at the same time.
     """
 
     AUTOMATIC = "Automatic"
@@ -816,11 +816,11 @@ class VMGuestPatchRebootStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class WindowsPatchAssessmentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the mode of VM Guest patch assessment for the IaaS virtual machine.:code:`<br
-    />`:code:`<br />` Possible values are::code:`<br />`:code:`<br />` **ImageDefault** - You
-    control the timing of patch assessments on a virtual machine.:code:`<br />`:code:`<br />`
-    **AutomaticByPlatform** - The platform will trigger periodic patch assessments. The property
-    provisionVMAgent must be true.
+    """Specifies the mode of VM Guest patch assessment for the IaaS virtual machine.\\ :code:`<br
+    />`\\ :code:`<br />` Possible values are:\\ :code:`<br />`\\ :code:`<br />` **ImageDefault** -
+    You control the timing of patch assessments on a virtual machine.\\ :code:`<br />`\\ :code:`<br
+    />` **AutomaticByPlatform** - The platform will trigger periodic patch assessments. The
+    property provisionVMAgent must be true.
     """
 
     IMAGE_DEFAULT = "ImageDefault"
@@ -838,15 +838,15 @@ class WindowsVMGuestPatchAutomaticByPlatformRebootSetting(str, Enum, metaclass=C
 
 class WindowsVMGuestPatchMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual machines associated
-    to virtual machine scale set with OrchestrationMode as Flexible.:code:`<br />`:code:`<br />`
-    Possible values are::code:`<br />`:code:`<br />` **Manual** - You  control the application of
-    patches to a virtual machine. You do this by applying patches manually inside the VM. In this
-    mode, automatic updates are disabled; the property WindowsConfiguration.enableAutomaticUpdates
-    must be false:code:`<br />`:code:`<br />` **AutomaticByOS** - The virtual machine will
-    automatically be updated by the OS. The property WindowsConfiguration.enableAutomaticUpdates
-    must be true. :code:`<br />`:code:`<br />` **AutomaticByPlatform** - the virtual machine will
-    automatically updated by the platform. The properties provisionVMAgent and
-    WindowsConfiguration.enableAutomaticUpdates must be true.
+    to virtual machine scale set with OrchestrationMode as Flexible.\\ :code:`<br />`\\ :code:`<br
+    />` Possible values are:\\ :code:`<br />`\\ :code:`<br />` **Manual** - You  control the
+    application of patches to a virtual machine. You do this by applying patches manually inside
+    the VM. In this mode, automatic updates are disabled; the property
+    WindowsConfiguration.enableAutomaticUpdates must be false\\ :code:`<br />`\\ :code:`<br />`
+    **AutomaticByOS** - The virtual machine will automatically be updated by the OS. The property
+    WindowsConfiguration.enableAutomaticUpdates must be true. :code:`<br />`\\ :code:`<br />`
+    **AutomaticByPlatform** - the virtual machine will automatically updated by the platform. The
+    properties provisionVMAgent and WindowsConfiguration.enableAutomaticUpdates must be true.
     """
 
     MANUAL = "Manual"

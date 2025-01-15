@@ -28,7 +28,6 @@ from typing import Optional
 from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import RetryPolicy
-from azure.core.pipeline.transport._base import HttpRequest
 
 from . import exceptions
 from . import _endpoint_discovery_retry_policy
@@ -79,7 +78,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
         client.connection_policy, global_endpoint_manager, *args
     )
     # HttpRequest we would need to modify for Container Recreate Retry Policy
-    request: Optional[HttpRequest] = None
+    request = None
     if args and len(args) > 3:
         # Reference HttpRequest instance in args
         request = args[3]

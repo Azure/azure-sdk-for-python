@@ -20,11 +20,11 @@ class TestCosmosDBManagementRestorableSqlContainersOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_restorable_sql_containers_list(self, resource_group):
         response = self.client.restorable_sql_containers.list(
             location="str",
             instance_id="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

@@ -26,12 +26,13 @@ from azure.communication.email import EmailClient
 
 sys.path.append("..")
 
+
 class EmailSingleRecipientSample(object):
 
     connection_string = os.getenv("COMMUNICATION_CONNECTION_STRING_EMAIL")
     sender_address = os.getenv("SENDER_ADDRESS")
     recipient_address = os.getenv("RECIPIENT_ADDRESS")
-    
+
     def send_email_to_single_recipient(self):
         # creating the email client
         email_client = EmailClient.from_connection_string(self.connection_string)
@@ -41,28 +42,22 @@ class EmailSingleRecipientSample(object):
             "content": {
                 "subject": "This is the subject",
                 "plainText": "This is the body",
-                "html": "<html><h1>This is the body</h1></html>"
+                "html": "<html><h1>This is the body</h1></html>",
             },
-            "recipients": {
-                "to": [
-                    {
-                        "address": self.recipient_address,
-                        "displayName": "Customer Name"
-                    }
-                ]
-            },
-            "senderAddress": self.sender_address
+            "recipients": {"to": [{"address": self.recipient_address, "displayName": "Customer Name"}]},
+            "senderAddress": self.sender_address,
         }
 
         try:
             # sending the email message
             poller = email_client.begin_send(message)
             response = poller.result()
-            print("Operation ID: " + response['id'])
+            print("Operation ID: " + response["id"])
         except HttpResponseError as ex:
             print(ex)
             pass
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     sample = EmailSingleRecipientSample()
     sample.send_email_to_single_recipient()

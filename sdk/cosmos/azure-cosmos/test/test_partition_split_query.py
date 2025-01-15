@@ -24,7 +24,7 @@ def get_test_item():
 
 
 def run_queries(container, iterations):
-    ret_list = list()
+    ret_list = []
     for i in range(iterations):
         curr = str(random.randint(0, 10))
         query = 'SELECT * FROM c WHERE c.attr1=' + curr + ' order by c.attr1'

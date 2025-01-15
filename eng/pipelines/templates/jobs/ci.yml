@@ -49,9 +49,6 @@ parameters:
   - name: VerifyAutorest
     type: boolean
     default: false
-  - name: ValidateFormatting
-    type: boolean
-    default: false
   - name: UnsupportedToxEnvironments
     type: string
     default: ''
@@ -229,7 +226,6 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
         VerifyAutorest: ${{ parameters.VerifyAutorest }}
-        ValidateFormatting: ${{ parameters.ValidateFormatting }}
         GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
 
   - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml
@@ -244,20 +240,26 @@ jobs:
       MatrixConfigs: ${{ parameters.MatrixConfigs }}
       MatrixFilters: ${{ parameters.MatrixFilters }}
       MatrixReplace: ${{ parameters.MatrixReplace }}
-      PreGenerationSteps:
-
-        - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
-
-        - task: Powershell@2
-          inputs:
-            pwsh: true
-            filePath: eng/scripts/distribute-packages-to-matrix.ps1
-            arguments: >-
-              -PackageInfoFolder "$(Build.ArtifactStagingDirectory)/PackageInfo"
-              -PlatformMatrix "${{ parameters.MatrixConfigs[0].Path }}"
-          displayName: 'Distribute Packages to Matrix'
-          condition: and(eq(variables['Build.Reason'], 'PullRequest'), eq('${{ parameters.ServiceDirectory }}','auto'))
-
+      ${{ if eq(parameters.ServiceDirectory, 'auto') }}:
+        SparseCheckoutPaths:
+          - "**/setup.py"
+          - "**/pyproject.toml"
+          - "tools/"
+          - "**/ci*.yml"
+          - "**/_version.py"
+          - "**/version.py"
+          - "**/README.md"
+          - "**/CHANGELOG.md"
+          - "**/*matrix*.json"
+        EnablePRGeneration: true
+        PRMatrixSetting: "TargetingString"
+        PreGenerationSteps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '3.12'
+          - template: /eng/common/pipelines/templates/steps/save-package-properties.yml
+            parameters:
+              ServiceDirectory: ${{parameters.ServiceDirectory}}
       CloudConfig:
         Cloud: Public
       AdditionalParameters:

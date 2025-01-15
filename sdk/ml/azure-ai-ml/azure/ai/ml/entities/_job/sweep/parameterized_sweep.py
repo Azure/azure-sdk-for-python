@@ -205,6 +205,7 @@ class ParameterizedSweep:  # pylint:disable=too-many-instance-attributes
         :keyword trial_timeout: timeout in seconds for each trial
         :paramtype trial_timeout: int
         """
+        # Looks related to https://github.com/pylint-dev/pylint/issues/3502, still an open issue
         # pylint:disable=attribute-defined-outside-init
         if self._limits is None:
             self._limits = SweepJobLimits(

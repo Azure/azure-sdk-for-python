@@ -4,14 +4,10 @@
 # license information.
 # -------------------------------------------------------------------------
 from azure.core.credentials import AccessToken
-from azure.communication.chat.aio import (
-    ChatClient
-)
+from azure.communication.chat.aio import ChatClient
 from azure.communication.chat import ChatParticipant
 
-from azure.communication.chat._shared.models import(
-    CommunicationUserIdentifier
-)
+from azure.communication.chat._shared.models import CommunicationUserIdentifier
 from unittest_helpers import mock_response
 from azure.core.exceptions import HttpResponseError
 from datetime import datetime, timezone
@@ -22,12 +18,14 @@ import pytest
 import time
 import calendar
 
+
 def _convert_datetime_to_utc_int(input):
     return int(calendar.timegm(input.utctimetuple()))
 
 
 async def mock_get_token(*_, **__):
     return AccessToken("some_token", _convert_datetime_to_utc_int(datetime.now().replace(tzinfo=timezone.utc)))
+
 
 credential = Mock(spec_set=["get_token"], get_token=mock_get_token)
 
@@ -37,68 +35,66 @@ async def test_create_chat_thread():
     thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
 
     async def mock_send(*_, **__):
-        return mock_response(status_code=201, json_payload={
-            "chatThread": {
-                "id": thread_id,
-                "topic": "test topic",
-                "createdOn": "2020-12-03T21:09:17Z",
-                "createdBy": "8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
-            }
-        })
+        return mock_response(
+            status_code=201,
+            json_payload={
+                "chatThread": {
+                    "id": thread_id,
+                    "topic": "test topic",
+                    "createdOn": "2020-12-03T21:09:17Z",
+                    "createdBy": "8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041",
+                }
+            },
+        )
 
     chat_client = ChatClient("https://endpoint", credential, transport=Mock(send=mock_send))
 
-    topic="test topic"
+    topic = "test topic"
     user = CommunicationUserIdentifier("8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041")
-    participants=[ChatParticipant(
-        identifier=user,
-        display_name='name',
-        share_history_time=datetime.utcnow()
-    )]
+    participants = [ChatParticipant(identifier=user, display_name="name", share_history_time=datetime.utcnow())]
     create_chat_thread_result = await chat_client.create_chat_thread(topic, thread_participants=participants)
     assert create_chat_thread_result.chat_thread.id == thread_id
+
 
 @pytest.mark.asyncio
 async def test_create_chat_thread_w_repeatability_request_id():
     thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
     idempotency_token = "b66d6031-fdcc-41df-8306-e524c9f226b8"
+
     async def mock_send(*_, **__):
-        return mock_response(status_code=201, json_payload={
-            "chatThread": {
-                "id": thread_id,
-                "topic": "test topic",
-                "createdOn": "2020-12-03T21:09:17Z",
-                "createdBy": "8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
-            }
-        })
+        return mock_response(
+            status_code=201,
+            json_payload={
+                "chatThread": {
+                    "id": thread_id,
+                    "topic": "test topic",
+                    "createdOn": "2020-12-03T21:09:17Z",
+                    "createdBy": "8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041",
+                }
+            },
+        )
 
     chat_client = ChatClient("https://endpoint", credential, transport=Mock(send=mock_send))
 
-    topic="test topic"
+    topic = "test topic"
     user = CommunicationUserIdentifier("8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041")
-    participants=[ChatParticipant(
-        identifier=user,
-        display_name='name',
-        share_history_time=datetime.utcnow()
-    )]
-    create_chat_thread_result = await chat_client.create_chat_thread(topic=topic,
-                                                              thread_participants=participants,
-                                                              idempotency_token=idempotency_token)
+    participants = [ChatParticipant(identifier=user, display_name="name", share_history_time=datetime.utcnow())]
+    create_chat_thread_result = await chat_client.create_chat_thread(
+        topic=topic, thread_participants=participants, idempotency_token=idempotency_token
+    )
     assert create_chat_thread_result.chat_thread.id == thread_id
+
 
 @pytest.mark.asyncio
 async def test_create_chat_thread_raises_error():
     async def mock_send(*_, **__):
         return mock_response(status_code=400, json_payload={"msg": "some error"})
+
     chat_client = ChatClient("https://endpoint", credential, transport=Mock(send=mock_send))
 
-    topic="test topic",
+    topic = ("test topic",)
     user = CommunicationUserIdentifier("8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041")
-    participants=[ChatParticipant(
-        identifier=user,
-        display_name='name',
-        share_history_time=datetime.utcnow()
-    )]
+    participants = [ChatParticipant(identifier=user, display_name="name", share_history_time=datetime.utcnow())]
 
     raised = False
     try:
@@ -108,6 +104,7 @@ async def test_create_chat_thread_raises_error():
 
     assert raised == True
 
+
 @pytest.mark.asyncio
 async def test_delete_chat_thread():
     thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
@@ -115,6 +112,7 @@ async def test_delete_chat_thread():
 
     async def mock_send(*_, **__):
         return mock_response(status_code=204)
+
     chat_client = ChatClient("https://endpoint", credential, transport=Mock(send=mock_send))
 
     raised = False
@@ -125,6 +123,7 @@ async def test_delete_chat_thread():
 
     assert raised == False
 
+
 @pytest.mark.asyncio
 async def test_list_chat_threads():
     thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
@@ -132,6 +131,7 @@ async def test_list_chat_threads():
 
     async def mock_send(*_, **__):
         return mock_response(status_code=200, json_payload={"value": [{"id": thread_id}]})
+
     chat_client = ChatClient("https://endpoint", credential, transport=Mock(send=mock_send))
 
     chat_threads = None

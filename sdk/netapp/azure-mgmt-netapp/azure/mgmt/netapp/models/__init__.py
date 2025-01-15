@@ -26,12 +26,15 @@ from ._models_py3 import BreakReplicationRequest
 from ._models_py3 import CapacityPool
 from ._models_py3 import CapacityPoolList
 from ._models_py3 import CapacityPoolPatch
+from ._models_py3 import ChangeKeyVault
 from ._models_py3 import CheckAvailabilityResponse
 from ._models_py3 import CloudErrorBody
 from ._models_py3 import ClusterPeerCommandResponse
 from ._models_py3 import DailySchedule
+from ._models_py3 import DestinationReplication
 from ._models_py3 import Dimension
 from ._models_py3 import EncryptionIdentity
+from ._models_py3 import EncryptionTransitionRequest
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
@@ -40,8 +43,10 @@ from ._models_py3 import FilePathAvailabilityRequest
 from ._models_py3 import GetGroupIdListForLDAPUserRequest
 from ._models_py3 import GetGroupIdListForLDAPUserResponse
 from ._models_py3 import HourlySchedule
+from ._models_py3 import KeyVaultPrivateEndpoint
 from ._models_py3 import KeyVaultProperties
 from ._models_py3 import LdapSearchScopeOpt
+from ._models_py3 import ListQuotaReportResponse
 from ._models_py3 import ListReplications
 from ._models_py3 import LogSpecification
 from ._models_py3 import ManagedServiceIdentity
@@ -63,6 +68,7 @@ from ._models_py3 import PoolChangeRequest
 from ._models_py3 import ProxyResource
 from ._models_py3 import QueryNetworkSiblingSetRequest
 from ._models_py3 import QuotaAvailabilityRequest
+from ._models_py3 import QuotaReport
 from ._models_py3 import ReestablishReplicationRequest
 from ._models_py3 import RegionInfo
 from ._models_py3 import RegionInfoAvailabilityZoneMappingsItem
@@ -119,6 +125,7 @@ from ._models_py3 import VolumeRevert
 from ._models_py3 import VolumeSnapshotProperties
 from ._models_py3 import WeeklySchedule
 
+from ._net_app_management_client_enums import AcceptGrowCapacityPoolForShortTermCloneSplit
 from ._net_app_management_client_enums import ActiveDirectoryStatus
 from ._net_app_management_client_enums import ApplicationType
 from ._net_app_management_client_enums import AvsDataStore
@@ -146,11 +153,13 @@ from ._net_app_management_client_enums import QosType
 from ._net_app_management_client_enums import RegionStorageToNetworkProximity
 from ._net_app_management_client_enums import RelationshipStatus
 from ._net_app_management_client_enums import ReplicationSchedule
+from ._net_app_management_client_enums import ReplicationType
 from ._net_app_management_client_enums import SecurityStyle
 from ._net_app_management_client_enums import ServiceLevel
 from ._net_app_management_client_enums import SmbAccessBasedEnumeration
 from ._net_app_management_client_enums import SmbNonBrowsable
 from ._net_app_management_client_enums import Type
+from ._net_app_management_client_enums import VolumeLanguage
 from ._net_app_management_client_enums import VolumeStorageToNetworkProximity
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -177,12 +186,15 @@ __all__ = [
     "CapacityPool",
     "CapacityPoolList",
     "CapacityPoolPatch",
+    "ChangeKeyVault",
     "CheckAvailabilityResponse",
     "CloudErrorBody",
     "ClusterPeerCommandResponse",
     "DailySchedule",
+    "DestinationReplication",
     "Dimension",
     "EncryptionIdentity",
+    "EncryptionTransitionRequest",
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
@@ -191,8 +203,10 @@ __all__ = [
     "GetGroupIdListForLDAPUserRequest",
     "GetGroupIdListForLDAPUserResponse",
     "HourlySchedule",
+    "KeyVaultPrivateEndpoint",
     "KeyVaultProperties",
     "LdapSearchScopeOpt",
+    "ListQuotaReportResponse",
     "ListReplications",
     "LogSpecification",
     "ManagedServiceIdentity",
@@ -214,6 +228,7 @@ __all__ = [
     "ProxyResource",
     "QueryNetworkSiblingSetRequest",
     "QuotaAvailabilityRequest",
+    "QuotaReport",
     "ReestablishReplicationRequest",
     "RegionInfo",
     "RegionInfoAvailabilityZoneMappingsItem",
@@ -269,6 +284,7 @@ __all__ = [
     "VolumeRevert",
     "VolumeSnapshotProperties",
     "WeeklySchedule",
+    "AcceptGrowCapacityPoolForShortTermCloneSplit",
     "ActiveDirectoryStatus",
     "ApplicationType",
     "AvsDataStore",
@@ -296,11 +312,13 @@ __all__ = [
     "RegionStorageToNetworkProximity",
     "RelationshipStatus",
     "ReplicationSchedule",
+    "ReplicationType",
     "SecurityStyle",
     "ServiceLevel",
     "SmbAccessBasedEnumeration",
     "SmbNonBrowsable",
     "Type",
+    "VolumeLanguage",
     "VolumeStorageToNetworkProximity",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
