@@ -160,6 +160,24 @@ class LibraryStatus(typing.TypedDict, total=False):
 
 PipelineResultsUnion = typing.Union[CIPipelineResult, TestsPipelineResult, TestsWeeklyPipelineResult]
 
+
+# This script makes the engineering systems assumption that a pipeline exists per service directory.
+# Here we have a special exception where communication creates separate pipelines for each package.
+# Hardcoding pipeline IDs for now, but if this becomes a common scenario, we should
+# consider updating the health report data schema to support this
+communication_mapping = {
+    "azure-communication-chat": {"ci": {"id": "2047", "link": ""}, "tests": {"id": "2723", "link": ""}, "tests_weekly": {"id": "3721", "link": ""}},
+    "azure-communication-phonenumbers": {"ci": {"id": "2047", "link": ""}, "tests": {"id": "2722", "link": ""}, "tests_weekly": {"id": "3732", "link": ""}},
+    "azure-communication-email": {"ci": {"id": "2047", "link": ""}, "tests": {"id": "5257", "link": ""}, "tests_weekly": {"id": "5258", "link": ""}},
+    "azure-communication-messages": {"ci": {"id": "2047", "link": ""}},
+    "azure-communication-sms": {"ci": {"id": "2047", "link": ""}, "tests": {"id": "2724", "link": ""}, "tests_weekly": {"id": "3736", "link": ""}},
+    "azure-communication-callautomation": {"ci": {"id": "2047", "link": ""}},
+    "azure-communication-identity": {"ci": {"id": "2047", "link": ""}, "tests": {"id": "2725", "link": ""}, "tests_weekly": {"id": "3725", "link": ""}},
+    "azure-communication-rooms": {"ci": {"id": "2047", "link": ""}, "tests": {"id": "4716", "link": ""}, "tests_weekly": {"id": "5131", "link": ""}},
+    "azure-communication-jobrouter": {"ci": {"id": "2047", "link": ""}},
+}
+
+
 SDK_TEAM_OWNED = [
     "azure-ai-documentintelligence",
     "azure-ai-formrecognizer",
@@ -389,6 +407,7 @@ def get_ci_result(service: str, pipeline_id: int | None, pipelines: dict[Service
     if not pipeline_id:
         print(f"No CI result for {service}")
         record_all_pipeline("ci", pipelines[service], "UNKNOWN")
+        pipelines[service]["ci"]["link"] = ""
         return
 
     build_response = httpx.get(get_build_url(pipeline_id), headers=AUTH_HEADERS)
@@ -431,6 +450,7 @@ def get_tests_result(service: str, pipeline_id: int | None, pipelines: dict[Serv
     if not pipeline_id:
         print(f"No live tests result for {service}")
         record_all_pipeline("tests", pipelines[service], "UNKNOWN")
+        pipelines[service]["tests"]["link"] = ""
         return
 
     build_response = httpx.get(get_build_url(pipeline_id), headers=AUTH_HEADERS)
@@ -467,6 +487,7 @@ def get_tests_weekly_result(service: str, pipeline_id: int | None, pipelines: di
     if not pipeline_id:
         print(f"No tests_weekly result for {service}")
         record_all_pipeline("tests_weekly", pipelines[service], "UNKNOWN")
+        pipelines[service]["tests_weekly"]["link"] = ""
         return
 
     build_response = httpx.get(get_build_url(pipeline_id), headers=AUTH_HEADERS)
@@ -894,6 +915,37 @@ def write_to_html(libraries: dict[ServiceDirectory, dict[LibraryName, LibrarySta
         file.write(html_with_css)
 
 
+def handle_special_case(service_directory: str, special_case_mapping: dict[str, typing.Any]) -> None:
+    """This script makes the engineering systems assumption that a pipeline exists per service directory.
+    For special exceptions where a pipeline was created per library, we need to handle things separately for now.
+    """
+    for library, pipeline_map in special_case_mapping.items():
+        record_all_pipeline("ci", pipelines[service_directory], "UNKNOWN")
+        record_all_pipeline("tests", pipelines[service_directory], "UNKNOWN")
+        record_all_pipeline("tests_weekly", pipelines[service_directory], "UNKNOWN")
+        get_ci_result(service_directory, pipeline_map.get("ci", {}).get("id"), pipelines)
+        get_tests_result(service_directory, pipeline_map.get("tests", {}).get("id"), pipelines)
+        get_tests_weekly_result(service_directory, pipeline_map.get("tests_weekly", {}).get("id"), pipelines)
+
+        details = libraries[service_directory][library]
+        if not is_check_enabled(str(details["path"]), "ci_enabled"):
+            details["status"] = "BLOCKED"
+            record_all_library(details, "DISABLED")
+            continue
+        report_check_result("mypy", pipelines[service_directory], details)
+        report_check_result("pylint", pipelines[service_directory], details)
+        report_check_result("pyright", pipelines[service_directory], details)
+        report_check_result("sphinx", pipelines[service_directory], details)
+        details["type_check_samples"] = (
+            "ENABLED" if is_check_enabled(str(details["path"]), "type_check_samples") else "DISABLED"
+        )
+        report_samples_result("samples", pipelines[service_directory], details)
+        details["sdk_owned"] = details["path"].name in SDK_TEAM_OWNED
+        report_test_result("tests", pipelines[service_directory], details)
+        report_test_result("ci", pipelines[service_directory], details)
+        report_overall_status(details)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Report the health status for the Python SDK repo.")
 
@@ -924,7 +976,9 @@ if __name__ == "__main__":
         get_tests_weekly_result(service, pipeline_ids.get("tests_weekly", {}).get("id"), pipelines)
 
     report_status(libraries, pipelines)
+    handle_special_case(service_directory="communication", special_case_mapping=communication_mapping)
     report_sla_and_total_issues(libraries)
+
     if args.format == "csv":
         write_to_csv(libraries)
     elif args.format == "md":
