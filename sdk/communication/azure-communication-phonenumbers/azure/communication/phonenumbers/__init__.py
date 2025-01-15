@@ -23,6 +23,7 @@ from ._generated.models import (
     OperatorInformationOptions,
     OperatorInformation,
     OperatorInformationResult,
+    PhoneNumberSearchResultError,
 )
 
 __all__ = [
@@ -42,5 +43,6 @@ __all__ = [
     'OperatorInformationOptions',
     'OperatorInformation',
     'OperatorInformationResult',
+    'PhoneNumberSearchResultError',
     'PhoneNumbersClient'
 ]
