@@ -1,5 +1,11 @@
 # Release History
 
+## 22.0.0 (2025-01-15)
+
+### Breaking Changes
+
+  - Removed operation UsageOperations.list_by_location
+
 ## 21.2.1 (2024-06-27)
 
 ### Bugs Fixed
