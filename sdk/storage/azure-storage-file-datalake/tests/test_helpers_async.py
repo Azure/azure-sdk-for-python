@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import Any, Dict
+from urllib.parse import urlparse
 
 from azure.core.pipeline.transport import AsyncHttpTransport
 from azure.core.rest import HttpRequest
@@ -103,7 +104,8 @@ class MockStorageTransport(AsyncHttpTransport):
             )
         elif request.method == 'PATCH':
             # upload_data_chunks
-            if "flush" in request.url:
+            parsed = urlparse(request.url)
+            if "action=flush" in parsed.query:
                 rest_response = RestAioHttpTransportResponse(
                     request=request,
                     internal_response=MockAioHttpClientResponse(
