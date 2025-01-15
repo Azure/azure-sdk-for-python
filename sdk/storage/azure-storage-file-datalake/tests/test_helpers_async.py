@@ -103,19 +103,34 @@ class MockStorageTransport(AsyncHttpTransport):
             )
         elif request.method == 'PATCH':
             # upload_data_chunks
-            rest_response = RestAioHttpTransportResponse(
-                request=request,
-                internal_response=MockAioHttpClientResponse(
-                    request.url,
-                    b"",
-                    {
-                        "Content-Length": "0",
-                    },
-                    202,
-                    "Accepted"
-                ),
-                decompress=False
-            )
+            if "flush" in request.url:
+                rest_response = RestAioHttpTransportResponse(
+                    request=request,
+                    internal_response=MockAioHttpClientResponse(
+                        request.url,
+                        b"",
+                        {
+                            "Content-Length": "0",
+                        },
+                        200,
+                        "OK"
+                    ),
+                    decompress=False
+                )
+            else:
+                rest_response = RestAioHttpTransportResponse(
+                    request=request,
+                    internal_response=MockAioHttpClientResponse(
+                        request.url,
+                        b"",
+                        {
+                            "Content-Length": "0",
+                        },
+                        202,
+                        "Accepted"
+                    ),
+                    decompress=False
+                )
         elif request.method == 'DELETE':
             # delete_file
             rest_response = RestAioHttpTransportResponse(

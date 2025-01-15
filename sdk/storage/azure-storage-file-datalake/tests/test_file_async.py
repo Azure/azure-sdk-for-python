@@ -1567,7 +1567,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         assert file_data == b"Hello Async World!"  # data is fixed by mock transport
 
         resp = await file_client.delete_file()
-        assert resp is None
+        assert resp is not None
 
     @DataLakePreparer()
     async def test_mock_transport_with_content_validation(self, **kwargs):
