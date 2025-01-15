@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-import yaml # type: ignore
+import yaml  # type: ignore
 from typing import Any, Dict, Optional, Set, List
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import FunctionTool, ToolSet, MessageRole, Agent
