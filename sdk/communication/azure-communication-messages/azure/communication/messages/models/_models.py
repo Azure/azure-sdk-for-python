@@ -1219,7 +1219,7 @@ class ReactionNotificationContent(NotificationContent, discriminator="reaction")
     :vartype to: list[str]
     :ivar kind: Message notification type is reaction. Required. Reaction message type.
     :vartype kind: str or ~azure.communication.messages.models.REACTION
-    :ivar emoji: emoji content like \\uD83D\\uDE00. Required.
+    :ivar emoji: emoji content like uD83D. Required.
     :vartype emoji: str
     :ivar message_id: ID of the previous message you want to reply to. Required.
     :vartype message_id: str
@@ -1228,7 +1228,7 @@ class ReactionNotificationContent(NotificationContent, discriminator="reaction")
     kind: Literal[CommunicationMessageKind.REACTION] = rest_discriminator(name="kind")  # type: ignore
     """Message notification type is reaction. Required. Reaction message type."""
     emoji: str = rest_field()
-    """emoji content like \uD83D\uDE00. Required."""
+    """emoji content like :) Required."""
     message_id: str = rest_field(name="messageId")
     """ID of the previous message you want to reply to. Required."""
 
