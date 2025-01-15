@@ -13,6 +13,7 @@ from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarg
 from azure.ai.evaluation._common.utils import remove_optional_singletons
 from azure.ai.evaluation._constants import AggregationType
 from azure.ai.evaluation._model_configurations import Conversation
+from azure.ai.evaluation._common._experimental import experimental
 
 from ._conversation_aggregators import GetAggregator, GetAggregatorType
 
@@ -408,6 +409,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
     def _to_async(self) -> "AsyncEvaluatorBase":
         return self._async_evaluator
 
+    @experimental
     @final
     def _set_conversation_aggregation_type(self, conversation_aggregation_type: AggregationType) -> None:
         """Input a conversation aggregation type to re-assign the aggregator function used by this evaluator for
@@ -420,6 +422,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         """
         self._conversation_aggregation_function = GetAggregator(conversation_aggregation_type)
 
+    @experimental
     @final
     def _set_conversation_aggregator(self, aggregator: Callable[[List[float]], float]) -> None:
         """Set the conversation aggregator function directly. This function will be applied to all numeric outputs
@@ -432,6 +435,8 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         """
         self._conversation_aggregation_function = aggregator
 
+    @experimental
+    @final
     def _get_conversation_aggregator_type(self) -> AggregationType:
         """Get the current conversation aggregation type used by this evaluator. This refers to the
         method used when a single input produces multiple evaluation results (ex: when a multi-turn conversation

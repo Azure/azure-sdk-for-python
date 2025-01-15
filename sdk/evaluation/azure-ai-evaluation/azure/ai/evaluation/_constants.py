@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 import enum
 from typing import Literal
+from azure.ai.evaluation._common._experimental import experimental
 
 
 class EvaluationMetrics:
@@ -58,6 +59,7 @@ class EvaluationRunProperties:
     EVALUATION_SDK = "_azureml.evaluation_sdk_name"
 
 
+@experimental
 class AggregationType(enum.Enum):
     """Defines how numeric evaluation results should be aggregated
     to produce a single value. Used by individual evaluators to combine per-turn results for

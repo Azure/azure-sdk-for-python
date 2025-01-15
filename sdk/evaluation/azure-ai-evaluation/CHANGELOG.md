@@ -11,12 +11,8 @@
 - Fixed `AttributeError: 'NoneType' object has no attribute 'get'` while running simulator with 1000+ results
 - Fixed the non adversarial simulator to run in task-free mode
 - Content safety evaluators (violence, self harm, sexual, hate/unfairness) return the maximum result as the
-  main score when aggregating multiple per-turn evaluations from a conversation into a single overall
-  evaluation score. Other conversation-capable evaluators still default to a mean.
-- Evaluator aggregation for producing a main score multi-turn conversations is now configurable. Can be configured
-  quickly by providing an Enum value (`~azure.ai.evaluation.AggregationType`) via
-  `eval.set_conversation_aggregation_type` or the exact aggregation function can be assigned directly via
-  `eval.set_conversation_aggregator`. New options are MEAN, SUM, MAX, and MIN.
+  main score when aggregating per-turn evaluations from a conversation into an overall
+  evaluation score. Other conversation-capable evaluators still default to a mean for aggregation.
 
 ### Other Changes
 - Changed minimum required python version to use this package from 3.8 to 3.9
