@@ -17,6 +17,8 @@
 ### Other Changes
 - Changed minimum required python version to use this package from 3.8 to 3.9
 - Stop dependency on the local promptflow service. No promptflow service will automatically start when running evaluation.
+- Evaluators internally allow for custom aggregation. However, this causes serialization failures if evaluated while the
+  environment variable `AI_EVALS_BATCH_USE_ASYNC` is set to false.
 
 ## 1.1.0 (2024-12-12)
 
