@@ -3,7 +3,7 @@
 ## 22.0.0 (2025-01-15)
 
 ### Breaking Changes
-
+  - Removed subfolders of some unused Api-Versions for smaller package size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
   - Removed operation UsageOperations.list_by_location
 
 ## 21.2.1 (2024-06-27)
