@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Support stable http semantic conventions for breeze exporter - REQUESTS
+  ([#38837](https://github.com/Azure/azure-sdk-for-python/pull/38837))
+
 ### Breaking Changes
 
 ### Bugs Fixed
@@ -14,8 +17,6 @@
 
 ### Features Added
 
-- Support stable http semantic conventions for breeze exporter - REQUESTS
-  ([#38837](https://github.com/Azure/azure-sdk-for-python/pull/38837))
 - Implement live metrics filtering for metrics
   ([#37998](https://github.com/Azure/azure-sdk-for-python/pull/37998))
 - Add applying filter/validating filter logic to live metrics filtering

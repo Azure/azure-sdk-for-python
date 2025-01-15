@@ -66,8 +66,9 @@ def _is_sql_db(db_system: str) -> bool:
 def _get_azure_sdk_target_source(attributes: Attributes) -> Optional[str]:
     # Currently logic only works for ServiceBus and EventHub
     if attributes:
-        peer_address = attributes.get("peer.address")
-        destination = attributes.get("message_bus.destination")
+        # New semconv attributes: https://github.com/Azure/azure-sdk-for-python/pull/29203
+        peer_address = attributes.get("net.peer.name") or attributes.get("peer.address")
+        destination = attributes.get("messaging.destination.name") or attributes.get("message_bus.destination")
         if peer_address and destination:
             return str(peer_address) + "/" + str(destination)
     return None
