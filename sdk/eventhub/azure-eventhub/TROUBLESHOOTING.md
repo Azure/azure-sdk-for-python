@@ -37,13 +37,13 @@ This troubleshooting guide covers failure investigation techniques, common error
 
 ## Handle Event Hubs exceptions
 
-All Event Hubs exceptions are wrapped in an [EventHubError][EventHubError].  They often have an underlying AMQP error code which specifies whether an error should be retried.  For retryable errors (ie. `amqp:connection:forced` or `amqp:link:detach-forced`), the client libraries will attempt to recover from these errors based on the retry options specified when instantiating the client:
+All Event Hubs exceptions are wrapped in an [EventHubError][EventHubError].  They often have an underlying AMQP error code which specifies whether an error should be retried.  For retryable errors (ie. `amqp:connection:forced` or `amqp:link:detach-forced`), the client libraries will attempt to recover from these errors based on the retry options specified using the following keyword arguments when instantiating the client:
 * `retry_total`: The total number of attempts to redo a failed operation when an error occurs
 * `retry_backoff_factor`: A backoff factor to apply between attempts after the second try
 * `retry_backoff_max`: The maximum back off time
 * `retry_mode`: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential'
 
-To configure retry options, follow the sample [client_retry][ClientCreation].  If the error is non-retryable, there is some configuration issue that needs to be resolved.
+To configure retry options, follow the sample [client_creation][ClientCreation].  If the error is non-retryable, there is some configuration issue that needs to be resolved.
 
 The recommended way to solve the specific exception the AMQP exception represents is to follow the
 [Event Hubs Messaging Exceptions][EventHubsMessagingExceptions] guidance.
@@ -56,12 +56,7 @@ An [EventHubError][EventHubError] contains three fields which describe the error
 * **error**: The error condition if available.
 * **details**: The error details, if included in the service response.
 
-By default the producer and consumer clients will retry for error conditions. We recommend that users of the clients use the following keyword arguments during creation of the client to change the retry behavior rather than retrying on their own:
-* **retry_total**: The total number of attempts to redo a failed operation when an error occurs. Default
-     value is 3
-* **retry_backoff_factor**: A backoff factor to apply between attempts after the second try
-* **retry_backoff_max**: The maximum back off time. Default value is 120 seconds
-* **retry_mode**: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential', where default is 'exponential'
+By default the producer and consumer clients will retry for error conditions.
   
 ### Commonly encountered exceptions
 
@@ -102,9 +97,9 @@ Applications should manage how they open and close the eventhub client.  It is e
 
 ### Cannot add components to the connection string
 
-The current generation of the Event Hubs client library supports connection strings only in the form published by the Azure portal. These are intended to provide basic location and shared key information only; configuring behavior of the clients is done through its options.
+The current generation of the Event Hubs clients supports connection strings only in the form published by the Azure portal. These are intended to provide basic location and shared key information only; configuring behavior of the clients is done through its options.
 
-Previous generations of the Event Hub clients allowed for some behavior to be configured by adding key/value components to a connection string. These components are no longer recognized and have no effect on client behavior.
+Previous generations of the Event Hubs clients allowed for some behavior to be configured by adding key/value components to a connection string. These components are no longer recognized and have no effect on client behavior.
 
 ### Connect using an IoT connection string
 
@@ -158,7 +153,7 @@ If enabling client logging is not enough to diagnose your issues. You can enable
 
 ### Logging required for filing Github issues
 
-When filing issues on Github please make sure that `DEBUG` level logs are enabled along with transport logging. This gives the the most amount of information and puts them in a position to best help you further. Ideally the timeperiod spans at least +/- 10 minutes from then issue occured as it can show patterns leading upto/after the issue that help in diagnosis and troubleshooting. Take a look at [Get Additional Help](#get-additional-help) for more information
+When filing issues on Github please make sure that `DEBUG` level logs are enabled along with transport logging. You can find instructions on enabling logging [here](#enable-and-configure-logging). This provides the team with the information necessary best help you further. Ideally the time period spans at least +/- 10 minutes from when the issue occured as it can show patterns leading up to/after the issue that help in diagnosis and troubleshooting. Take a look at [Get Additional Help](#get-additional-help) for more information.
 
 ## Troubleshoot EventHubProducerClient (Sync/Async) issues
 
@@ -170,17 +165,17 @@ When publishing messages, the Event Hubs service supports a single partition key
 
 The partition key of the EventHubs event is available in the Kafka record headers, the protocol specific key being "x-opt-partition-key" in the header.
 
-By design, Event Hubs does not promote the Kafka message key to be the Event Hubs partition key nor the reverse because with the same value, the Kafka client and the Event Hub client likely send the message to two different partitions.  It might cause some confusion if we set the value in the cross-protocol communication case.  Exposing the properties with a protocol specific key to the other protocol client should be good enough.
+By design, Event Hubs does not promote the Kafka message key to be the Event Hubs partition key nor the reverse because with the same value, the Kafka client and the Event Hubs client likely send the message to two different partitions.  It might cause some confusion if we set the value in the cross-protocol communication case.  Exposing the properties with a protocol specific key to the other protocol client should be good enough.
 
 ### Buffered producer not sending events
 
-The sync buffered producer client uses the ThreadpoolExecutor to manage the partitions and ensure that messages are sent in a timely manner. If its observed that messages are not being sent for a particular partition, ensure that there are enough workers available for all the partitions. By default ThreadpoolExecutor uses the formula described [here](https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor) to allocate max_workers. Keyword argument `buffer_concurrency` can be used to set the desired number of workers or accept a ThreadpoolExecutor with max_workers specified. We recommend a worker per partition.
+The sync buffered producer client uses the ThreadPoolExecutor to manage the partitions and ensure that messages are sent in a timely manner. If it's observed that messages are not being sent for a particular partition, ensure that there are enough workers available for all the partitions. By default ThreadPoolExecutor uses the formula described [here](https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor) to allocate max_workers. Keyword argument `buffer_concurrency` can be used to set the desired number of workers or accept a ThreadPoolExecutor with `max_workers` specified. We recommend one worker per partition.
 
 ## Troubleshoot EventHubConsumerClient issues
 
 ### Logs reflect intermittent HTTP 412 and HTTP 409 responses from storage
 
-This is normal and doesnt an indicate an issue with the consumer or the checkpoint store.
+This is normal and doesn't an indicate an issue with the consumer or the checkpoint store.
 
 An HTTP 412 precondition response occurs when the event processor requests ownership of a partition, but that partition was recently claimed by another processor. An HTTP 409 occurs when the processor issues a "create if not exists" call when creating data and the item already exists.
 
@@ -190,13 +185,13 @@ Though these are expected scenarios, because the HTTP response code falls into t
 
 This is usually normal and most often does not indicate an issue with the processor.
 
-Eventhub consumers configured to use the same Event Hub, consumer group, and checkpoint store will coordinate with one another to share the responsibility of processing partitions. When the number of event consumers changes, usually when scaling up/down, ownership of partitions is re-balanced and some may change owners.
+Event Hubs consumers configured to use the same Event Hubs, consumer group, and checkpoint store will coordinate with one another to share the responsibility of processing partitions. When the number of event consumers changes, usually when scaling up/down, ownership of partitions is re-balanced and some may change owners.
 
 During this time, it is normal and expected to see partitions initializing and closing across event consumers. After one or two minutes, ownership should stabilize and the frequency that partitions close and initialize should decrease. While ownership is stable, some error recovery scenarios may trigger partitions closing and initializing occasionally.
 
 ### Partitions close and initialize frequently
 
-If the number of consumers configured to us the same Event Hub, consumer group, and checkpoint store are being scaled or if host nodes are being rebooted, partitions closing and initializing frequently for a short time is normal an expected. If the behavior persists longer than five minutes, it likely indicates a problem.
+If the number of consumers configured to use the same Event Hubs, consumer group, and checkpoint store are being scaled or if host nodes are being rebooted, partitions closing and initializing frequently for a short time is normal and expected. If the behavior persists longer than five minutes, it likely indicates a problem.
 
 ### "...current receiver '<RECEIVER_NAME>' with epoch '0' is getting disconnected"
 
@@ -213,7 +208,7 @@ However, if no instances are being added or removed, there is an underlying issu
 
 ### Blocking Calls in Async
 
-When working with the async client, applications should ensure that they are not blocking the event loop as the load balancing operation runs as a task in the background. Blocking the event loop can impact load balancing, error handling, checkpointing, and recovering after an error. CPU-bound code that can block the event loop should be run in [executor](https://docs.python.org/3/library/asyncio-dev.html#running-blocking-code)
+When working with the async clients, applications should ensure that they are not blocking the event loop as the load balancing operation runs as a task in the background. Blocking the event loop can impact load balancing, error handling, checkpointing, and recovering after an error. CPU-bound code that can block the event loop should be run in [executor](https://docs.python.org/3/library/asyncio-dev.html#running-blocking-code)
 
 ### High CPU usage
 
@@ -225,9 +220,9 @@ When processing for one or more partitions is delayed, it is most often because 
 
 ### A partition is not being processed
 
-An event consumer runs continually in a host application for a prolonged period. Sometimes, it may appear that some partitions are uncrowned or are not being processed. Most often, this presents as [Partitions close and initialize frequently](#partitions-close-and-initialize-frequently) or there are other errors/warning being raised related to the problem.
+An event consumer runs continually in a host application for a prolonged period. Sometimes, it may appear that some partitions are uncrowned or are not being processed. Most often, this presents as [partitions closing and initialize frequently](#partitions-close-and-initialize-frequently) or there are other errors/warnings being raised related to the problem.
 
-If partitions are not observed closing and initializing frequently and no warning is being raised to the error callback, then a stalled or unowned partition may be part of a larger problem and a GitHub issue should be opened. Please see: [Filing GitHub issues](#filing-github-issues)
+If partitions are not observed closing and initializing frequently and no warning is being raised to the error callback, then a stalled or unowned partition may be part of a larger problem and a GitHub issue should be opened. Please see: [Filing GitHub issues](#filing-github-issues).
 
 ### Duplicate events are being processed
 
@@ -255,16 +250,16 @@ Additional information on ways to reach out for support can be found in the [SUP
 
 When filing GitHub issues, the following details are requested:
 
-* Event Hub environment
+* Event Hubs environment
   * How many partitions?
 * EventHubConsumerClient environment
-  * What is the machine(s) specs processing your Event Hub?
+  * What is the machine(s) specs processing your Event Hubs?
   * How many instances are running?
 * What is the average size of each EventData?
-* What is the traffic pattern like in your Event Hub?  (i.e. # messages/minute and if the EventHubConsumerClient is always busy or has slow traffic periods.)
+* What is the traffic pattern like in your Event Hubs?  (i.e. # messages/minute and if the EventHubConsumerClient is always busy or has slow traffic periods.)
 * Repro code and steps
   * This is important as we often cannot reproduce the issue in our environment.
-* Logs.  We need DEBUG logs, but if that is not possible, INFO at least.  Error and warning level logs do not provide enough information.  The period of at least +/- 10 minutes from when the issue occurred. See the [Enable and configure logging](#enable-and-configure-logging) section for more information.
+* Logs.  DEBUG level logs are needed to best help you. but if that is not possible, INFO at least.  Error and warning level logs do not provide enough information.  The period of at least +/- 10 minutes from when the issue occurred. See the [Enable and configure logging](#enable-and-configure-logging) section for more information.
 
 <!-- repo links -->
 [IoTConnectionString]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/samples/async_samples/iot_hub_connection_string_receive_async.py
