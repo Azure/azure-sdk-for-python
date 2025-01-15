@@ -12,7 +12,7 @@ DESCRIPTION:
     This sample demos how to read quick query data.
 USAGE: python datalake_samples_query.py
     Set the environment variables with your own values before running the sample.
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) DATALAKE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 import os
 import sys
@@ -53,10 +53,10 @@ CSV_DATA = b'Service,Package,Version,RepoPath,MissingDocs\r\nApp Configuration,'
 
 def main():
     try:
-        CONNECTION_STRING = os.environ['AZURE_STORAGE_CONNECTION_STRING']
+        CONNECTION_STRING = os.environ['DATALAKE_STORAGE_CONNECTION_STRING']
 
     except KeyError:
-        print("AZURE_STORAGE_CONNECTION_STRING must be set.")
+        print("DATALAKE_STORAGE_CONNECTION_STRING must be set.")
         sys.exit(1)
 
     datalake_service_client = DataLakeServiceClient.from_connection_string(CONNECTION_STRING)
