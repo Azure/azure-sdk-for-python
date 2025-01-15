@@ -701,21 +701,21 @@ class TestEvaluate:
 
         # test maxing
         counting_eval.reset()
-        counting_eval.set_conversation_aggregation_type(AggregationType.MAX)
+        counting_eval._set_conversation_aggregation_type(AggregationType.MAX)
         results = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
         assert results["rows"][0]["outputs.count.response"] == 2
         assert results["rows"][1]["outputs.count.response"] == 4
 
         # test minimizing
         counting_eval.reset()
-        counting_eval.set_conversation_aggregation_type(AggregationType.MIN)
+        counting_eval._set_conversation_aggregation_type(AggregationType.MIN)
         results = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
         assert results["rows"][0]["outputs.count.response"] == 1
         assert results["rows"][1]["outputs.count.response"] == 3
 
         # test sum
         counting_eval.reset()
-        counting_eval.set_conversation_aggregation_type(AggregationType.SUM)
+        counting_eval._set_conversation_aggregation_type(AggregationType.SUM)
         results = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
         assert results["rows"][0]["outputs.count.response"] == 3
         assert results["rows"][1]["outputs.count.response"] == 7
@@ -725,7 +725,7 @@ class TestEvaluate:
             return sum(values) + 1
 
         counting_eval.reset()
-        counting_eval.set_conversation_aggregator(custom_aggregator)
+        counting_eval._set_conversation_aggregator(custom_aggregator)
         results = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
         assert results["rows"][0]["outputs.count.response"] == 4
         assert results["rows"][1]["outputs.count.response"] == 8
@@ -742,3 +742,22 @@ class TestEvaluate:
         assert eval3._conversation_aggregation_function == max
         assert eval4._conversation_aggregation_function == max
         assert eval5._conversation_aggregation_function == list_mean
+
+    def test_conversation_aggregation_type_returns(self):
+        fake_project = {"subscription_id": "123", "resource_group_name": "123", "project_name": "123"}
+        eval1 = ViolenceEvaluator(None, fake_project)
+        # Test builtins
+        assert eval1._get_conversation_aggregator_type() == AggregationType.MAX
+        eval1._set_conversation_aggregation_type(AggregationType.SUM)
+        assert eval1._get_conversation_aggregator_type() == AggregationType.SUM
+        eval1._set_conversation_aggregation_type(AggregationType.MAX)
+        assert eval1._get_conversation_aggregator_type() == AggregationType.MAX
+        eval1._set_conversation_aggregation_type(AggregationType.MIN)
+        assert eval1._get_conversation_aggregator_type() == AggregationType.MIN
+
+        # test custom
+        def custom_aggregator(values):
+            return sum(values) + 1
+
+        eval1._set_conversation_aggregator(custom_aggregator)
+        assert eval1._get_conversation_aggregator_type() == AggregationType.CUSTOM

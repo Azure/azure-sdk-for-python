@@ -14,7 +14,7 @@ from azure.ai.evaluation._common.utils import remove_optional_singletons
 from azure.ai.evaluation._constants import AggregationType
 from azure.ai.evaluation._model_configurations import Conversation
 
-from ._conversation_aggregators import GetAggregator
+from ._conversation_aggregators import GetAggregator, GetAggregatorType
 
 P = ParamSpec("P")
 T = TypeVar("T")
@@ -409,7 +409,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         return self._async_evaluator
 
     @final
-    def set_conversation_aggregation_type(self, conversation_aggregation_type: AggregationType) -> None:
+    def _set_conversation_aggregation_type(self, conversation_aggregation_type: AggregationType) -> None:
         """Input a conversation aggregation type to re-assign the aggregator function used by this evaluator for
         multi-turn conversations. This aggregator is used to combine numeric outputs from each evaluation of a
         multi-turn conversation into a single top-level result.
@@ -421,7 +421,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         self._conversation_aggregation_function = GetAggregator(conversation_aggregation_type)
 
     @final
-    def set_conversation_aggregator(self, aggregator: Callable[[List[float]], float]) -> None:
+    def _set_conversation_aggregator(self, aggregator: Callable[[List[float]], float]) -> None:
         """Set the conversation aggregator function directly. This function will be applied to all numeric outputs
         of an evaluator when it evaluates a conversation with multiple-turns thus ends up with multiple results per
         evaluation that is needs to coalesce into a single result. Use when built-in aggregators do not
@@ -431,6 +431,17 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         :type aggregator: Callable[[List[float]], float]
         """
         self._conversation_aggregation_function = aggregator
+
+    def _get_conversation_aggregator_type(self) -> AggregationType:
+        """Get the current conversation aggregation type used by this evaluator. This refers to the
+        method used when a single input produces multiple evaluation results (ex: when a multi-turn conversation
+        is inputted into an evaluator that evaluates each turn individually). The individual inputs
+        are combined by the function implied here to produce a single overall result.
+
+        :return: The conversation aggregation type.
+        :rtype: ~azure.ai.evaluation.AggregationType
+        """
+        return GetAggregatorType(self._conversation_aggregation_function)
 
 
 class AsyncEvaluatorBase:
