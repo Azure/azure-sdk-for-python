@@ -1,3 +1,4 @@
+from typing import List, Dict, Union
 import json
 import math
 import os
@@ -761,3 +762,32 @@ class TestEvaluate:
 
         eval1._set_conversation_aggregator(custom_aggregator)
         assert eval1._get_conversation_aggregator_type() == AggregationType.CUSTOM
+
+    @pytest.mark.parametrize("use_async", ["true", "false"])  # Strings intended
+    def test_aggregation_serialization(self, evaluate_test_data_conversion_jsonl_file, use_async):
+        # This test exists to ensure that PF doesn't crash when trying to serialize a
+        # complex aggregation function.
+        from test_evaluators.test_inputs_evaluators import CountingEval
+
+        counting_eval = CountingEval()
+        evaluators = {"count": counting_eval}
+
+        def custom_aggregator(values: List[float]) -> float:
+            return sum(values) + 1
+
+        os.environ["AI_EVALS_BATCH_USE_ASYNC"] = use_async
+        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        counting_eval._set_conversation_aggregation_type(AggregationType.MIN)
+        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        counting_eval._set_conversation_aggregation_type(AggregationType.SUM)
+        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        counting_eval._set_conversation_aggregation_type(AggregationType.MAX)
+        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        if use_async == "true":
+            counting_eval._set_conversation_aggregator(custom_aggregator)
+            _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        else:
+            with pytest.raises(EvaluationException) as exc_info:
+                counting_eval._set_conversation_aggregator(custom_aggregator)
+                _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+            assert "Can't pickle local object" in exc_info.value.args[0]
