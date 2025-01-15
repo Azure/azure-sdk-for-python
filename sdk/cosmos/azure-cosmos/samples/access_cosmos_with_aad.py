@@ -67,7 +67,7 @@ def run_sample():
     create_sample_resources()
 
     # With this done, you can use your AAD service principal id and secret to create your ClientSecretCredential.
-    aad_credentials = ClientSecretCredential(
+    aad_client_secret_credentials = ClientSecretCredential(
         tenant_id=TENANT_ID,
         client_id=CLIENT_ID,
         client_secret=CLIENT_SECRET)

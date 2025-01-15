@@ -6,216 +6,20 @@ import os
 import json
 import azure.ai.inference as sdk
 import azure.ai.inference.aio as async_sdk
-from azure.ai.inference.tracing import AIInferenceInstrumentor
 
 from model_inference_test_base import (
     ModelClientTestBase,
     ServicePreparerChatCompletions,
     ServicePreparerAOAIChatCompletions,
-    ServicePreparerEmbeddings,
 )
-from azure.core.pipeline.transport import AioHttpTransport
-from azure.core.settings import settings
-from devtools_testutils.aio import recorded_by_proxy_async
-from azure.core.exceptions import AzureError, ServiceRequestError
-from azure.core.credentials import AzureKeyCredential
-from memory_trace_exporter import MemoryTraceExporter
-from gen_ai_trace_verifier import GenAiTraceVerifier
-from opentelemetry import trace
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 
-CONTENT_TRACING_ENV_VARIABLE = "AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED"
-content_tracing_initial_value = os.getenv(CONTENT_TRACING_ENV_VARIABLE)
+from devtools_testutils.aio import recorded_by_proxy_async
+from azure.core.exceptions import ServiceRequestError
+from azure.core.credentials import AzureKeyCredential
 
 
 # The test class name needs to start with "Test" to get collected by pytest
-class TestModelAsyncClient(ModelClientTestBase):
-
-    @classmethod
-    def teardown_class(cls):
-        if content_tracing_initial_value is not None:
-            os.environ[CONTENT_TRACING_ENV_VARIABLE] = content_tracing_initial_value
-
-    # **********************************************************************************
-    #
-    #         EMBEDDINGS REGRESSION TESTS - NO SERVICE RESPONSE REQUIRED
-    #
-    # **********************************************************************************
-
-    # Regression test. Send a request that includes all supported types of input objects. Make sure the resulting
-    # JSON payload that goes up to the service (including headers) is the correct one after hand-inspection.
-    @ServicePreparerEmbeddings()  # Not sure why this is needed. It errors out if not present. We don't use the env variables in this test.
-    async def test_async_embeddings_request_payload(self, **kwargs):
-        client = async_sdk.EmbeddingsClient(
-            endpoint="http://does.not.exist",
-            credential=AzureKeyCredential("key-value"),
-            headers={"some_header": "some_header_value"},
-            user_agent="MyAppId",
-        )
-        for _ in range(2):
-            try:
-                response = await client.embed(
-                    input=["first phrase", "second phrase", "third phrase"],
-                    dimensions=2048,
-                    encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
-                    input_type=sdk.models.EmbeddingInputType.QUERY,
-                    model_extras={
-                        "key1": 1,
-                        "key2": True,
-                        "key3": "Some value",
-                        "key4": [1, 2, 3],
-                        "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
-                    },
-                    model="some-model-id",
-                    raw_request_hook=self.request_callback,
-                )
-            except ServiceRequestError as _:
-                # The test should throw this exception!
-                self._validate_embeddings_json_request_payload()
-                continue
-            await client.close()
-            assert False
-        await client.close()
-
-    # Regression test. Send a request that includes all supported types of input objects, with embedding settings
-    # specified in the constructor. Make sure the resulting JSON payload that goes up to the service
-    # is the correct one after hand-inspection.
-    @ServicePreparerEmbeddings()  # Not sure why this is needed. It errors out if not present. We don't use the env variables in this test.
-    async def test_async_embeddings_request_payload_with_defaults(self, **kwargs):
-        client = async_sdk.EmbeddingsClient(
-            endpoint="http://does.not.exist",
-            credential=AzureKeyCredential("key-value"),
-            headers={"some_header": "some_header_value"},
-            user_agent="MyAppId",
-            dimensions=2048,
-            encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
-            input_type=sdk.models.EmbeddingInputType.QUERY,
-            model_extras={
-                "key1": 1,
-                "key2": True,
-                "key3": "Some value",
-                "key4": [1, 2, 3],
-                "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
-            },
-            model="some-model-id",
-        )
-        for _ in range(2):
-            try:
-                response = await client.embed(
-                    input=["first phrase", "second phrase", "third phrase"], raw_request_hook=self.request_callback
-                )
-            except ServiceRequestError as _:
-                # The test should throw this exception!
-                self._validate_embeddings_json_request_payload()
-                continue
-            await client.close()
-            assert False
-        await client.close()
-
-    # Regression test. Send a request that includes all supported types of input objects, with embeddings settings
-    # specified in the constructor and all of them overwritten in the 'embed' call.
-    # Make sure the resulting JSON payload that goes up to the service is the correct one after hand-inspection.
-    @ServicePreparerEmbeddings()  # Not sure why this is needed. It errors out if not present. We don't use the env variables in this test.
-    async def test_async_embeddings_request_payload_with_defaults_and_overrides(self, **kwargs):
-        client = async_sdk.EmbeddingsClient(
-            endpoint="http://does.not.exist",
-            credential=AzureKeyCredential("key-value"),
-            headers={"some_header": "some_header_value"},
-            user_agent="MyAppId",
-            dimensions=1024,
-            encoding_format=sdk.models.EmbeddingEncodingFormat.UINT8,
-            input_type=sdk.models.EmbeddingInputType.DOCUMENT,
-            model_extras={
-                "hey1": 2,
-                "key2": False,
-                "key3": "Some other value",
-                "key9": "Yet another value",
-            },
-            model="some-other-model-id",
-        )
-        for _ in range(2):
-            try:
-                response = await client.embed(
-                    input=["first phrase", "second phrase", "third phrase"],
-                    dimensions=2048,
-                    encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
-                    input_type=sdk.models.EmbeddingInputType.QUERY,
-                    model_extras={
-                        "key1": 1,
-                        "key2": True,
-                        "key3": "Some value",
-                        "key4": [1, 2, 3],
-                        "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
-                    },
-                    model="some-model-id",
-                    raw_request_hook=self.request_callback,
-                )
-            except ServiceRequestError as _:
-                # The test should throw this exception!
-                self._validate_embeddings_json_request_payload()
-                continue
-            await client.close()
-            assert False
-        await client.close()
-
-    # **********************************************************************************
-    #
-    #                      HAPPY PATH TESTS - TEXT EMBEDDINGS
-    #
-    # **********************************************************************************
-
-    @ServicePreparerEmbeddings()
-    @recorded_by_proxy_async
-    async def test_async_load_embeddings_client(self, **kwargs):
-
-        client = await self._load_async_embeddings_client(**kwargs)
-        assert isinstance(client, async_sdk.EmbeddingsClient)
-        assert client._model_info
-
-        response1 = await client.get_model_info()
-        self._print_model_info_result(response1)
-        self._validate_model_info_result(
-            response1, "embedding"
-        )  # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
-        await client.close()
-
-    @ServicePreparerEmbeddings()
-    @recorded_by_proxy_async
-    async def test_async_get_model_info_on_embeddings_client(self, **kwargs):
-        client = self._create_async_embeddings_client(**kwargs)
-        assert not client._model_info  # pylint: disable=protected-access
-
-        response1 = await client.get_model_info()
-        assert client._model_info  # pylint: disable=protected-access
-        self._print_model_info_result(response1)
-        self._validate_model_info_result(
-            response1, "embedding"
-        )  # TODO: This should be ModelType.EMBEDDINGS once the model is fixed
-
-        # Get the model info again. No network calls should be made here,
-        # as the response is cached in the client.
-        response2 = await client.get_model_info()
-        self._print_model_info_result(response2)
-        assert response1 == response2
-        await client.close()
-
-    @ServicePreparerEmbeddings()
-    @recorded_by_proxy_async
-    async def test_async_embeddings(self, **kwargs):
-        client = self._create_async_embeddings_client(**kwargs)
-        input = ["first phrase", "second phrase", "third phrase"]
-
-        # Request embeddings with default service format (list of floats)
-        response1 = await client.embed(input=input)
-        self._print_embeddings_result(response1)
-        self._validate_embeddings_result(response1)
-        assert json.dumps(response1.as_dict(), indent=2) == response1.__str__()
-
-        # Request embeddings as base64 encoded strings
-        response2 = await client.embed(input=input, encoding_format=sdk.models.EmbeddingEncodingFormat.BASE64)
-        self._print_embeddings_result(response2, sdk.models.EmbeddingEncodingFormat.BASE64)
-        self._validate_embeddings_result(response2, sdk.models.EmbeddingEncodingFormat.BASE64)
+class TestChatCompletionsClientAsync(ModelClientTestBase):
 
     # **********************************************************************************
     #
@@ -237,7 +41,7 @@ class TestModelAsyncClient(ModelClientTestBase):
 
         for _ in range(2):
             try:
-                response = await client.complete(
+                _ = await client.complete(
                     messages=[
                         sdk.models.SystemMessage(content="system prompt"),
                         sdk.models.UserMessage(content="user prompt 1"),
@@ -283,7 +87,7 @@ class TestModelAsyncClient(ModelClientTestBase):
                     max_tokens=321,
                     model="some-model-id",
                     presence_penalty=4.567,
-                    response_format=sdk.models.ChatCompletionsResponseFormatJSON(),
+                    response_format="json_object",
                     seed=654,
                     stop=["stop1", "stop2"],
                     stream=True,
@@ -293,12 +97,12 @@ class TestModelAsyncClient(ModelClientTestBase):
                     top_p=9.876,
                     raw_request_hook=self.request_callback,
                 )
+                await client.close()
+                assert False
             except ServiceRequestError as _:
                 # The test should throw this exception!
                 self._validate_chat_completions_json_request_payload()
                 continue
-            await client.close()
-            assert False
         await client.close()
 
     # Regression test. Send a request that includes all supported types of input objects, with chat settings
@@ -323,7 +127,7 @@ class TestModelAsyncClient(ModelClientTestBase):
             max_tokens=321,
             model="some-model-id",
             presence_penalty=4.567,
-            response_format=sdk.models.ChatCompletionsResponseFormatJSON(),
+            response_format="json_object",
             seed=654,
             stop=["stop1", "stop2"],
             temperature=8.976,
@@ -334,10 +138,10 @@ class TestModelAsyncClient(ModelClientTestBase):
 
         for _ in range(2):
             try:
-                response = await client.complete(
+                _ = await client.complete(
                     messages=[
-                        sdk.models.SystemMessage(content="system prompt"),
-                        sdk.models.UserMessage(content="user prompt 1"),
+                        sdk.models.SystemMessage("system prompt"),
+                        sdk.models.UserMessage("user prompt 1"),
                         sdk.models.AssistantMessage(
                             tool_calls=[
                                 sdk.models.ChatCompletionsToolCall(
@@ -355,10 +159,10 @@ class TestModelAsyncClient(ModelClientTestBase):
                                 ),
                             ]
                         ),
-                        sdk.models.ToolMessage(tool_call_id="some id", content="function response"),
-                        sdk.models.AssistantMessage(content="assistant prompt"),
+                        sdk.models.ToolMessage("function response", tool_call_id="some id"),
+                        sdk.models.AssistantMessage("assistant prompt"),
                         sdk.models.UserMessage(
-                            content=[
+                            [
                                 sdk.models.TextContentItem(text="user prompt 2"),
                                 sdk.models.ImageContentItem(
                                     image_url=sdk.models.ImageUrl(
@@ -372,12 +176,12 @@ class TestModelAsyncClient(ModelClientTestBase):
                     stream=True,
                     raw_request_hook=self.request_callback,
                 )
+                await client.close()
+                assert False
             except ServiceRequestError as _:
                 # The test should throw this exception!
                 self._validate_chat_completions_json_request_payload()
                 continue
-            await client.close()
-            assert False
         await client.close()
 
     # Regression test. Send a request that includes all supported types of input objects, with chat settings
@@ -401,7 +205,7 @@ class TestModelAsyncClient(ModelClientTestBase):
             max_tokens=768,
             model="some-other-model-id",
             presence_penalty=1.234,
-            response_format=sdk.models.ChatCompletionsResponseFormatText(),
+            response_format="text",
             seed=987,
             stop=["stop3", "stop5"],
             temperature=5.432,
@@ -412,7 +216,7 @@ class TestModelAsyncClient(ModelClientTestBase):
 
         for _ in range(2):
             try:
-                response = await client.complete(
+                _ = await client.complete(
                     messages=[
                         sdk.models.SystemMessage(content="system prompt"),
                         sdk.models.UserMessage(content="user prompt 1"),
@@ -458,7 +262,7 @@ class TestModelAsyncClient(ModelClientTestBase):
                     max_tokens=321,
                     model="some-model-id",
                     presence_penalty=4.567,
-                    response_format=sdk.models.ChatCompletionsResponseFormatJSON(),
+                    response_format="json_object",
                     seed=654,
                     stop=["stop1", "stop2"],
                     stream=True,
@@ -468,12 +272,12 @@ class TestModelAsyncClient(ModelClientTestBase):
                     top_p=9.876,
                     raw_request_hook=self.request_callback,
                 )
+                await client.close()
+                assert False
             except ServiceRequestError as _:
                 # The test should throw this exception!
                 self._validate_chat_completions_json_request_payload()
                 continue
-            await client.close()
-            assert False
         await client.close()
 
     # **********************************************************************************
@@ -494,7 +298,7 @@ class TestModelAsyncClient(ModelClientTestBase):
         self._print_model_info_result(response1)
         self._validate_model_info_result(
             response1, "chat-completion"  # TODO: This should be chat_completions based on REST API spec...
-        )  # TODO: This should be ModelType.CHAT once the model is fixed
+        )  # TODO: This should be ModelType.CHAT_COMPLETION once the model is fixed
         await client.close()
 
     @ServicePreparerChatCompletions()
@@ -508,7 +312,7 @@ class TestModelAsyncClient(ModelClientTestBase):
         self._print_model_info_result(response1)
         self._validate_model_info_result(
             response1, "chat-completion"
-        )  # TODO: This should be ModelType.CHAT once the model is fixed
+        )  # TODO: This should be ModelType.CHAT_COMPLETION once the model is fixed
 
         # Get the model info again. No network calls should be made here,
         # as the response is cached in the client.
@@ -519,22 +323,36 @@ class TestModelAsyncClient(ModelClientTestBase):
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy_async
+    async def test_async_chat_completions_with_entra_id_auth(self, **kwargs):
+        async with self._create_async_chat_client(key_auth=False, **kwargs) as client:
+            messages = [
+                sdk.models.SystemMessage(
+                    content="You are a helpful assistant answering questions regarding length units."
+                ),
+                sdk.models.UserMessage(content="How many feet are in a mile?"),
+            ]
+            response = await client.complete(messages=messages)
+            self._print_chat_completions_result(response)
+            self._validate_chat_completions_result(response, ["5280", "5,280"])
+            assert json.dumps(response.as_dict(), indent=2) == response.__str__()
+
+    @ServicePreparerChatCompletions()
+    @recorded_by_proxy_async
     async def test_async_chat_completions_multi_turn(self, **kwargs):
         messages = [
             sdk.models.SystemMessage(content="You are a helpful assistant answering questions regarding length units."),
             sdk.models.UserMessage(content="How many feet are in a mile?"),
         ]
-        client = self._create_async_chat_client(**kwargs)
-        response = await client.complete(messages=messages)
-        self._print_chat_completions_result(response)
-        self._validate_chat_completions_result(response, ["5280", "5,280"])
-        assert json.dumps(response.as_dict(), indent=2) == response.__str__()
-        messages.append(sdk.models.AssistantMessage(content=response.choices[0].message.content))
-        messages.append(sdk.models.UserMessage(content="and how many yards?"))
-        response = await client.complete(messages=messages)
-        self._print_chat_completions_result(response)
-        self._validate_chat_completions_result(response, ["1760", "1,760"])
-        await client.close()
+        async with self._create_async_chat_client(**kwargs) as client:
+            response = await client.complete(messages=messages)
+            self._print_chat_completions_result(response)
+            self._validate_chat_completions_result(response, ["5280", "5,280"])
+            assert json.dumps(response.as_dict(), indent=2) == response.__str__()
+            messages.append(sdk.models.AssistantMessage(content=response.choices[0].message.content))
+            messages.append(sdk.models.UserMessage(content="and how many yards?"))
+            response = await client.complete(messages=messages)
+            self._print_chat_completions_result(response)
+            self._validate_chat_completions_result(response, ["1760", "1,760"])
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy_async
@@ -582,7 +400,7 @@ class TestModelAsyncClient(ModelClientTestBase):
     @recorded_by_proxy_async
     async def test_async_chat_completions_with_bytes_input(self, **kwargs):
         client = self._create_async_chat_client(**kwargs)
-        response = await client.complete(self.read_text_file("chat.test.json"))
+        response = await client.complete(self._read_text_file("chat.test.json"))
         self._validate_chat_completions_result(response, ["5280", "5,280"])
         await client.close()
 
@@ -630,7 +448,9 @@ class TestModelAsyncClient(ModelClientTestBase):
             ],
         )
         self._print_chat_completions_result(response)
-        self._validate_chat_completions_result(response, ["juggling", "balls", "blue", "red", "green", "yellow"], True)
+        self._validate_chat_completions_result(
+            response, ["juggling", "balls", "blue", "red", "green", "yellow"], is_aoai=True
+        )
         await client.close()
 
     # We use AOAI endpoint here because at the moment there is no MaaS model that supports
@@ -654,13 +474,15 @@ class TestModelAsyncClient(ModelClientTestBase):
             ],
         )
         self._print_chat_completions_result(response)
-        self._validate_chat_completions_result(response, ["juggling", "balls", "blue", "red", "green", "yellow"], True)
+        self._validate_chat_completions_result(
+            response, ["juggling", "balls", "blue", "red", "green", "yellow"], is_aoai=True
+        )
         await client.close()
 
     # We use AOAI endpoint here because at the moment MaaS does not support Entra ID auth.
     @ServicePreparerAOAIChatCompletions()
     @recorded_by_proxy_async
-    async def test_async_chat_completions_with_entra_id_auth(self, **kwargs):
+    async def test_async_aoai_chat_completions_with_entra_id_auth(self, **kwargs):
         client = self._create_async_aoai_chat_client(key_auth=False, **kwargs)
         messages = [
             sdk.models.SystemMessage(content="You are a helpful assistant answering questions regarding length units."),
@@ -668,99 +490,27 @@ class TestModelAsyncClient(ModelClientTestBase):
         ]
         response = await client.complete(messages=messages)
         self._print_chat_completions_result(response)
-        self._validate_chat_completions_result(response, ["5280", "5,280"], True)
+        self._validate_chat_completions_result(response, ["5280", "5,280"], is_aoai=True)
         await client.close()
 
-    # **********************************************************************************
-    #
-    #                            ERROR TESTS
-    #
-    # **********************************************************************************
-
-    @ServicePreparerEmbeddings()
+    @ServicePreparerAOAIChatCompletions()
     @recorded_by_proxy_async
-    async def test_async_embeddings_with_auth_failure(self, **kwargs):
-        client = self._create_async_embeddings_client(bad_key=True, **kwargs)
-        exception_caught = False
-        try:
-            response = await client.embed(input=["first phrase", "second phrase", "third phrase"])
-        except AzureError as e:
-            exception_caught = True
-            print(e)
-            assert hasattr(e, "status_code")
-            assert e.status_code == 401
-            assert "auth token validation failed" in e.message.lower()
-        await client.close()
-        assert exception_caught
-
-    # **********************************************************************************
-    #
-    #                            TRACING TESTS - CHAT COMPLETIONS
-    #
-    # **********************************************************************************
-
-    def setup_memory_trace_exporter(self) -> MemoryTraceExporter:
-        # Setup Azure Core settings to use OpenTelemetry tracing
-        settings.tracing_implementation = "OpenTelemetry"
-        trace.set_tracer_provider(TracerProvider())
-        tracer = trace.get_tracer(__name__)
-        memoryExporter = MemoryTraceExporter()
-        span_processor = SimpleSpanProcessor(memoryExporter)
-        trace.get_tracer_provider().add_span_processor(span_processor)
-        return span_processor, memoryExporter
-
-    def modify_env_var(self, name, new_value):
-        current_value = os.getenv(name)
-        os.environ[name] = new_value
-        return current_value
-
-    @ServicePreparerChatCompletions()
-    @recorded_by_proxy_async
-    async def test_chat_completion_async_tracing_content_recording_disabled(self, **kwargs):
-        # Make sure code is not instrumented due to a previous test exception
-        try:
-            AIInferenceInstrumentor().uninstrument()
-        except RuntimeError as e:
-            pass
-        self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
-        client = self._create_async_chat_client(**kwargs)
-        processor, exporter = self.setup_memory_trace_exporter()
-        AIInferenceInstrumentor().instrument()
-        response = await client.complete(
-            messages=[
-                sdk.models.SystemMessage(content="You are a helpful assistant."),
-                sdk.models.UserMessage(content="What is the capital of France?"),
-            ],
+    async def test_async_aoai_chat_completions_with_structured_output(self, **kwargs):
+        client = self._create_async_aoai_chat_client(key_auth=True, **kwargs)
+        response_format = sdk.models.JsonSchemaFormat(
+            name="Test_JSON_Schema",
+            schema=ModelClientTestBase.OUTPUT_FORMAT_JSON_SCHEMA,
+            description="Describes a set of distances between locations",
+            strict=True,
         )
-        processor.force_flush()
-        spans = exporter.get_spans_by_name_starts_with("chat ")
-        if len(spans) == 0:
-            spans = exporter.get_spans_by_name("chat")
-        assert len(spans) == 1
-        span = spans[0]
-        expected_attributes = [
-            ("gen_ai.operation.name", "chat"),
-            ("gen_ai.system", "az.ai.inference"),
-            ("gen_ai.request.model", "chat"),
-            ("server.address", ""),
-            ("gen_ai.response.id", ""),
-            ("gen_ai.response.model", "mistral-large"),
-            ("gen_ai.usage.input_tokens", "+"),
-            ("gen_ai.usage.output_tokens", "+"),
-            ("gen_ai.response.finish_reasons", ("stop",)),
+        print(type(response_format))
+        messages = [
+            sdk.models.SystemMessage(content="You are a helpful assistant answering questions on US geography"),
+            sdk.models.UserMessage(content="What's the distance between Seattle and Portland, as the crow flies?"),
         ]
-        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
-        assert attributes_match == True
-
-        expected_events = [
-            {
-                "name": "gen_ai.choice",
-                "attributes": {
-                    "gen_ai.system": "az.ai.inference",
-                    "gen_ai.event.content": '{"finish_reason": "stop", "index": 0}',
-                },
-            }
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
-        assert events_match == True
-        AIInferenceInstrumentor().uninstrument()
+        response = await client.complete(messages=messages, response_format=response_format)
+        self._print_chat_completions_result(response)
+        self._validate_chat_completions_result(
+            response, ["distances", "location1", "Seattle", "location2", "Portland"], is_aoai=True, is_json=True
+        )
+        await client.close()
