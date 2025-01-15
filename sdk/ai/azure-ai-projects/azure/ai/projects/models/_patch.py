@@ -245,17 +245,18 @@ class ConnectionProperties:
         self, deployment_name: str, api_version: str, *, include_credentials: bool = False
     ) -> Dict[str, str]:
         """Get model configuration to be used with evaluators, from connection.
-        
+
         :param deployment_name: Deployment name to build model configuration.
         :type deployment_name: str
         :param api_version: API version used by model deployment.
         :type api_version: str
         :keyword include_credentials: Include credentials in the model configuration. If set to True, the model
-        configuration will have the key field set to the actual key value.
-        If set to False, the model configuration will have the key field set to the connection id.
-        To get the secret, connection get should be called with include_credentials set to True.
-        :keyword type include_credentials: bool
-        :return: Model configuration dictionary.
+         configuration will have the key field set to the actual key value.
+         If set to False, the model configuration will have the key field set to the connection id.
+         To get the secret, connection.get method should be called with include_credentials set to True.
+        :paramtype include_credentials: bool
+
+        :returns: Model configuration dictionary.
         :rtype: Dict[str, str]
         """
         connection_type = self.connection_type.value
