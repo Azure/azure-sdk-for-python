@@ -5,6 +5,7 @@
 
 import pytest
 
+from azure.eventhub.amqp import AmqpAnnotatedMessage
 from azure.eventhub._pyamqp import authentication, ReceiveClient, SendClient
 from azure.eventhub._pyamqp.constants import TransportType
 from azure.eventhub._pyamqp.message import Message
@@ -21,11 +22,13 @@ def send_message(live_eventhub):
     )
 
     message = Message(value="Single Message")
+    amqp_annotated_message = AmqpAnnotatedMessage(sequence_body=[{"sequence_number": 1}, {"sequence_number": 2}, {"sequence_number": 3}])
 
     with SendClient(
         live_eventhub["hostname"], target, auth=sas_auth, debug=True, transport_type=TransportType.Amqp
     ) as send_client:
         send_client.send_message(message)
+        send_client.send_message(amqp_annotated_message)
 
 
 def test_event_hubs_client_amqp(live_eventhub):
@@ -52,5 +55,6 @@ def test_event_hubs_client_amqp(live_eventhub):
         prefetch=1,
         transport_type=TransportType.Amqp,
     ) as receive_client:
-        messages = receive_client.receive_message_batch(max_batch_size=1)
-        assert len(messages) > 0
+        messages = receive_client.receive_message_batch(max_batch_size=2)
+        assert len(messages) > 1
+        assert messages[1].sequence_body == [{"sequence_number": 1}, {"sequence_number": 2}, {"sequence_number": 3}]
