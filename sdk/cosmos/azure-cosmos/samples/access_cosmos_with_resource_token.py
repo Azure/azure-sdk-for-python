@@ -11,6 +11,7 @@ import azure.cosmos.documents as documents
 
 import config
 import json
+from typing import Dict, Any
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites -
@@ -141,7 +142,7 @@ def run_sample():
         user = create_user_if_not_exists(db, USERNAME)
 
         # Permission to perform operations on all items inside a container
-        permission_definition = {
+        permission_definition: Dict[str, Any] = {
             "id": CONTAINER_ALL_PERMISSION,
             "permissionMode": documents.PermissionMode.All,
             "resource": container.container_link,
@@ -211,7 +212,7 @@ def run_sample():
         permission_definition = {
             "id": DOCUMENT_ALL_PERMISSION,
             "permissionMode": documents.PermissionMode.All,
-            "resource": item_3.get('_self') #this identifies the item with id "3"
+            "resource": str(item_3.get('_self')) #this identifies the item with id "3"
         }
 
         permission = create_permission_if_not_exists(user_2, permission_definition)

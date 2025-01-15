@@ -67,8 +67,8 @@ container = database.get_container_client(container_name)
 
 # [START list_containers]
 database = client.get_database_client(database_name)
-for container in database.list_containers():
-    print("Container ID: {}".format(container['id']))
+for container_dict in database.list_containers():
+    print("Container ID: {}".format(container_dict['id']))
 # [END list_containers]
 
 # Insert new items by defining a dict and calling Container.upsert_item
@@ -92,11 +92,11 @@ updated_item = container.upsert_item(item)
 # [START query_items]
 import json
 
-for item in container.query_items(
+for queried_item in container.query_items(
     query='SELECT * FROM products p WHERE p.productModel <> "DISCONTINUED"',
     enable_cross_partition_query=True,
 ):
-    print(json.dumps(item, indent=True))
+    print(json.dumps(queried_item, indent=True))
 # [END query_items]
 
 # Parameterized queries are also supported. This example
@@ -106,8 +106,8 @@ discontinued_items = container.query_items(
     query='SELECT * FROM products p WHERE p.productModel = @model AND p.productName="Widget"',
     parameters=[dict(name="@model", value="DISCONTINUED")],
 )
-for item in discontinued_items:
-    print(json.dumps(item, indent=True))
+for discontinued_item in discontinued_items:
+    print(json.dumps(discontinued_item, indent=True))
 # [END query_items_param]
 
 # [START priority_level option]
@@ -117,12 +117,12 @@ for item in discontinued_items:
 # then Azure Cosmos DB will throttle low priority requests to allow high priority requests to execute.
 # Can be used for Read, Write, and Query operations. This is specified with the `priority` keyword.
 # the value can either be low or high.
-for item in container.query_items(
+for queried_item in container.query_items(
     query='SELECT * FROM products p WHERE p.productModel <> "DISCONTINUED"',
     enable_cross_partition_query=True,
     priority="High"
 ):
-    print(json.dumps(item, indent=True))
+    print(json.dumps(queried_item, indent=True))
 
 # [END priority_level option]
 
@@ -131,10 +131,10 @@ for item in container.query_items(
 # so deletes must be done with the delete_item method
 # on the container.
 # [START delete_items]
-for item in container.query_items(
+for queried_item in container.query_items(
     query='SELECT * FROM products p WHERE p.productModel = "DISCONTINUED" AND p.productName="Widget"'
 ):
-    container.delete_item(item, partition_key="Widget")
+    container.delete_item(queried_item, partition_key="Widget")
 # [END delete_items]
 
 # Retrieve the properties of a database
@@ -202,13 +202,13 @@ for i in range(1, 10):
         dict(id="item{}".format(i), productName="Gadget", productModel="Model {}".format(i))
     )
 items = container.read_all_items()
-for item in items:
-    print(json.dumps(item, indent=True))
+for item_dict in items:
+    print(json.dumps(item_dict, indent=True))
 container.delete_all_items_by_partition_key("Gadget")
 print("All items in partition {} deleted.".format("Gadget"))
 items = container.read_all_items()
-for item in items:
-    print(json.dumps(item, indent=True))
+for item_dict in items:
+    print(json.dumps(item_dict, indent=True))
 # [END delete_all_items_by_partition_key]
 
 # Subpartitioning Samples Similar samples that show how to use subpartitioning
@@ -244,18 +244,18 @@ updated_item = container.upsert_item(item)
 # [START query_items]
 import json
 
-for item in container.query_items(
+for queried_item in container.query_items(
     query='SELECT * FROM products p WHERE p.state = "WA"',
     enable_cross_partition_query=True,
 ):
-    print(json.dumps(item, indent=True))
+    print(json.dumps(queried_item, indent=True))
 # [END query_items]
 
 # [START delete_items]
-for item in container.query_items(
+for queried_item in container.query_items(
     query='SELECT * FROM products p WHERE p.state = "GA"'
 ):
-    container.delete_item(item, partition_key=["GA", "Atlanta", 30363])
+    container.delete_item(queried_item, partition_key=["GA", "Atlanta", 30363])
 # [END delete_items]
 
 # Get the feed ranges list from container.
@@ -280,12 +280,12 @@ for feed_range in feed_ranges:
 
 # Query a sorted list of items that were changed for one feed range
 # [START query_items_change_feed]
-for item in container.query_items_change_feed(feed_range=feed_ranges[0]):
-    print(json.dumps(item, indent=True))
+for queried_item in container.query_items_change_feed(feed_range=feed_ranges[0]):
+    print(json.dumps(queried_item, indent=True))
 # [END query_items_change_feed]
 
 # Query a sorted list of items that were changed for one feed range
 # [START query_items_change_feed_from_beginning]
-for item in container.query_items_change_feed(feed_range=feed_ranges[0], start_time="Beginning"):
-    print(json.dumps(item, indent=True))
+for queried_item in container.query_items_change_feed(feed_range=feed_ranges[0], start_time="Beginning"):
+    print(json.dumps(queried_item, indent=True))
 # [END query_items_change_feed_from_beginning]

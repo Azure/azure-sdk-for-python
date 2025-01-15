@@ -17,8 +17,7 @@ def parse_connection_string(conn_str: str, case_sensitive_keys: bool = False) ->
         default), all keys will be lower-cased. If set to `True`, the original casing of the keys will be preserved.
     :rtype: Mapping
     :returns: Dict of connection string key/value pairs.
-    :raises:
-        ValueError: if each key in conn_str does not have a corresponding value and
+    :raises ValueError: if each key in conn_str does not have a corresponding value and
             for other bad formatting of connection strings - including duplicate
             args, bad syntax, etc.
     """

@@ -177,7 +177,6 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
 
 # pylint: disable=too-many-statements
 # pylint: disable=too-many-branches
-# pylint: disable=too-many-locals
 # pylint: disable=protected-access
 # mypy: disable-error-code="assignment,attr-defined,index,operator,union-attr"
 def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
@@ -196,7 +195,6 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
         envelope.tags[ContextTagKeys.AI_USER_ID] = span.attributes[SpanAttributes.ENDUSER_ID]
     if span.parent and span.parent.span_id:
         envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(span.parent.span_id)
-    # pylint: disable=too-many-nested-blocks
     if span.kind in (SpanKind.CONSUMER, SpanKind.SERVER):
         envelope.name = _REQUEST_ENVELOPE_NAME
         data = RequestData(
@@ -482,7 +480,6 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
                 properties=properties,
                 exceptions=[exc_details],
             )
-            # pylint: disable=line-too-long
             envelope.data = MonitorBase(base_data=data, base_type="ExceptionData")
         else:
             envelope.name = _MESSAGE_ENVELOPE_NAME

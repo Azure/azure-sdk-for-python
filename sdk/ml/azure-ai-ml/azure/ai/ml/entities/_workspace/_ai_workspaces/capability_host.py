@@ -53,7 +53,7 @@ class CapabilityHost(Resource):
     :type storage_connections: Optional[List[str]]
     :param capability_host_kind: The kind of capability host, either as a string or CapabilityHostKind enum.
         Default is AGENTS.
-    :type capability_host_kind: Optional[Union[str, CapabilityHostKind]]
+    :type capability_host_kind: Union[str, CapabilityHostKind]
     :param kwargs: Additional keyword arguments.
     :type kwargs: Any
 
@@ -75,7 +75,7 @@ class CapabilityHost(Resource):
         vector_store_connections: Optional[List[str]] = None,
         ai_services_connections: Optional[List[str]] = None,
         storage_connections: Optional[List[str]] = None,
-        capability_host_kind: Optional[Union[str, CapabilityHostKind]] = CapabilityHostKind.AGENTS,
+        capability_host_kind: Union[str, CapabilityHostKind] = CapabilityHostKind.AGENTS,
         **kwargs: Any,
     ):
         super().__init__(name=name, description=description, **kwargs)

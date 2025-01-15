@@ -73,8 +73,8 @@ class TestCosmosHttpLogger(unittest.TestCase):
         database_id = "database_test-" + str(uuid.uuid4())
         self.client_default.create_database(id=database_id)
         assert all(m.levelname == 'INFO' for m in self.mock_handler_default.messages)
-        messages_request = self.mock_handler_default.messages[0].message.split("\n")
-        messages_response = self.mock_handler_default.messages[1].message.split("\n")
+        messages_request = self.mock_handler_default.messages[3].message.split("\n")
+        messages_response = self.mock_handler_default.messages[4].message.split("\n")
         assert messages_request[1] == "Request method: 'GET'"
         assert 'Request headers:' in messages_request[2]
         assert messages_request[11] == 'No body was attached to the request'
@@ -91,9 +91,9 @@ class TestCosmosHttpLogger(unittest.TestCase):
         database_id = "database_test-" + str(uuid.uuid4())
         self.client_diagnostic.create_database(id=database_id)
         assert all(m.levelname == 'INFO' for m in self.mock_handler_diagnostic.messages)
-        messages_request = self.mock_handler_diagnostic.messages[3].message.split("\n")
-        messages_response = self.mock_handler_diagnostic.messages[4].message.split("\n")
-        elapsed_time = self.mock_handler_diagnostic.messages[2].message.split("\n")
+        messages_request = self.mock_handler_diagnostic.messages[13].message.split("\n")
+        messages_response = self.mock_handler_diagnostic.messages[14].message.split("\n")
+        elapsed_time = self.mock_handler_diagnostic.messages[5].message.split("\n")
         assert "/dbs" in messages_request[0]
         assert messages_request[1] == "Request method: 'POST'"
         assert 'Request headers:' in messages_request[2]
@@ -109,9 +109,9 @@ class TestCosmosHttpLogger(unittest.TestCase):
         except:
             pass
         assert all(m.levelname == 'INFO' for m in self.mock_handler_diagnostic.messages)
-        messages_request = self.mock_handler_diagnostic.messages[0].message.split("\n")
-        messages_response = self.mock_handler_diagnostic.messages[1].message.split("\n")
-        elapsed_time = self.mock_handler_diagnostic.messages[2].message.split("\n")
+        messages_request = self.mock_handler_diagnostic.messages[7].message.split("\n")
+        messages_response = self.mock_handler_diagnostic.messages[8].message.split("\n")
+        elapsed_time = self.mock_handler_diagnostic.messages[9].message.split("\n")
         assert "/dbs" in messages_request[0]
         assert messages_request[1] == "Request method: 'POST'"
         assert 'Request headers:' in messages_request[2]

@@ -21,12 +21,12 @@ class TestNetworkManagementVirtualHubBgpConnectionOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_virtual_hub_bgp_connection_get(self, resource_group):
         response = await self.client.virtual_hub_bgp_connection.get(
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             connection_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestNetworkManagementVirtualHubBgpConnectionOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_virtual_hub_bgp_connection_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.virtual_hub_bgp_connection.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -51,7 +51,7 @@ class TestNetworkManagementVirtualHubBgpConnectionOperationsAsync(AzureMgmtRecor
                     "provisioningState": "str",
                     "type": "str",
                 },
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -60,13 +60,13 @@ class TestNetworkManagementVirtualHubBgpConnectionOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_virtual_hub_bgp_connection_begin_delete(self, resource_group):
         response = await (
             await self.client.virtual_hub_bgp_connection.begin_delete(
                 resource_group_name=resource_group.name,
                 virtual_hub_name="str",
                 connection_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
