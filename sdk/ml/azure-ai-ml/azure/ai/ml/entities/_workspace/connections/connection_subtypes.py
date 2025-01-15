@@ -4,49 +4,44 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, List, Optional, Type, Union, Dict
 import re
+from typing import Any, Dict, List, Optional, Type, Union
 
 from azure.ai.ml._restclient.v2024_04_01_preview.models import ConnectionCategory
-from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.constants._common import (
-    CONNECTION_API_VERSION_KEY,
-    CONNECTION_API_TYPE_KEY,
-    CONNECTION_KIND_KEY,
-    CONNECTION_ACCOUNT_NAME_KEY,
-    CONNECTION_CONTAINER_NAME_KEY,
-    CONNECTION_RESOURCE_ID_KEY,
-    ConnectionTypes,
-    CognitiveServiceKinds,
-)
-from azure.ai.ml.entities._credentials import (
-    ApiKeyConfiguration,
-    AadCredentialConfiguration,
-)
-
 from azure.ai.ml._schema.workspace.connections.connection_subtypes import (
-    AzureBlobStoreConnectionSchema,
-    MicrosoftOneLakeConnectionSchema,
-    AzureOpenAIConnectionSchema,
-    AzureAIServicesConnectionSchema,
-    AzureAISearchConnectionSchema,
-    AzureContentSafetyConnectionSchema,
-    AzureSpeechServicesConnectionSchema,
     APIKeyConnectionSchema,
+    AzureAISearchConnectionSchema,
+    AzureAIServicesConnectionSchema,
+    AzureBlobStoreConnectionSchema,
+    AzureContentSafetyConnectionSchema,
+    AzureOpenAIConnectionSchema,
+    AzureSpeechServicesConnectionSchema,
+    MicrosoftOneLakeConnectionSchema,
     OpenAIConnectionSchema,
     SerpConnectionSchema,
     ServerlessConnectionSchema,
 )
+from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._utils.utils import camel_to_snake
+from azure.ai.ml.constants._common import (
+    CONNECTION_ACCOUNT_NAME_KEY,
+    CONNECTION_API_TYPE_KEY,
+    CONNECTION_API_VERSION_KEY,
+    CONNECTION_CONTAINER_NAME_KEY,
+    CONNECTION_KIND_KEY,
+    CONNECTION_RESOURCE_ID_KEY,
+    CognitiveServiceKinds,
+    ConnectionTypes,
+)
+from azure.ai.ml.entities._credentials import AadCredentialConfiguration, ApiKeyConfiguration
+
 from .one_lake_artifacts import OneLakeConnectionArtifact
 from .workspace_connection import WorkspaceConnection
-
 
 # Dev notes: Any new classes require modifying the elif chains in the following functions in the
 # WorkspaceConnection parent class: _from_rest_object, _get_entity_class_from_type, _get_schema_class_from_type
 
 
-@experimental
 class AzureBlobStoreConnection(WorkspaceConnection):
     """A connection to an Azure Blob Store.
 
@@ -153,7 +148,6 @@ class AzureBlobStoreConnection(WorkspaceConnection):
 # difficult for customers to find out what the target for their system ought to be.
 # Due to this, we construct the target internally by composing more inputs
 # that are more user-accessible.
-@experimental
 class MicrosoftOneLakeConnection(WorkspaceConnection):
     """A connection to a Microsoft One Lake. Connections of this type
     are further specified by their artifact class type, although
@@ -488,7 +482,6 @@ class AzureAIServicesConnection(ApiOrAadConnection):
         self.metadata[CONNECTION_RESOURCE_ID_KEY] = value
 
 
-@experimental
 class AzureAISearchConnection(ApiOrAadConnection):
     """A Connection that is specifically designed for handling connections to
     Azure AI Search.
@@ -527,7 +520,6 @@ class AzureAISearchConnection(ApiOrAadConnection):
         return AzureAISearchConnectionSchema
 
 
-@experimental
 class AzureContentSafetyConnection(ApiOrAadConnection):
     """A Connection geared towards a Azure Content Safety service.
 
@@ -570,7 +562,6 @@ class AzureContentSafetyConnection(ApiOrAadConnection):
         return AzureContentSafetyConnectionSchema
 
 
-@experimental
 class AzureSpeechServicesConnection(ApiOrAadConnection):
     """A Connection geared towards an Azure Speech service.
 

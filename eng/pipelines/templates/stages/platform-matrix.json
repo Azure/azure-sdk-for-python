@@ -17,8 +17,8 @@
     {
       "MacTestConfig": {
         "macos311": {
-          "OSVmImage": "env:LINUXVMIMAGE",
-          "Pool": "env:LINUXPOOL",
+          "OSVmImage": "env:MACVMIMAGE",
+          "Pool": "env:MACPOOL",
           "PythonVersion": "3.11",
           "CoverageArg": "--disablecov",
           "TestSamples": "false"

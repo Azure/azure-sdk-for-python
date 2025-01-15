@@ -63,7 +63,8 @@ class TestDACClassifyDocumentAsync(AsyncDocumentIntelligenceTest):
         async with di_admin_client:
             poller = await di_admin_client.begin_build_classifier(request)
             classifier = await poller.result()
-        assert classifier.classifier_id == recorded_variables.get("classifier_id")
+        # FIXME: Tracking issue: https://github.com/Azure/azure-sdk-for-python/issues/38881
+        # assert classifier.classifier_id == recorded_variables.get("classifier_id")
         assert len(classifier.doc_types) == 3
 
         with open(self.irs_classifier_document, "rb") as fd:
@@ -74,7 +75,6 @@ class TestDACClassifyDocumentAsync(AsyncDocumentIntelligenceTest):
             poller = await di_client.begin_classify_document(
                 classifier.classifier_id,
                 my_file,
-                content_type="application/octet-stream",
             )
             document = await poller.result()
             assert document.model_id == classifier.classifier_id

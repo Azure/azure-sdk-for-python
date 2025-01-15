@@ -67,14 +67,13 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
             )
 
     def _get_source(self):
-        # pylint: disable=protected-access
         if self._session:
             session_filter = None if self._session_id == NEXT_AVAILABLE_SESSION else self._session_id
             return self._amqp_transport.create_source(self._entity_uri, session_filter)
         return self._entity_uri
 
     def _check_message_alive(self, message, action):
-        # pylint: disable=no-member, protected-access
+        # pylint: disable=protected-access
         if message._is_peeked_message:
             raise ValueError(
                 f"The operation {action} is not supported for peeked messages."

@@ -22,16 +22,20 @@ from typing import (
     Awaitable,
     Callable,
     Dict,
+    Generic,
     Iterator,
     List,
+    Mapping,
     Optional,
     Set,
     Tuple,
     Type,
+    TypeVar,
     Union,
     cast,
     get_args,
     get_origin,
+    overload,
 )
 
 from azure.core.credentials import AccessToken, TokenCredential
@@ -41,6 +45,10 @@ from ._enums import AgentStreamEvent, ConnectionType
 from ._models import (
     AzureAISearchResource,
     AzureAISearchToolDefinition,
+    AzureFunctionDefinition,
+    AzureFunctionStorageQueue,
+    AzureFunctionToolDefinition,
+    AzureFunctionBinding,
     BingGroundingToolDefinition,
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
@@ -50,29 +58,38 @@ from ._models import (
     FunctionToolDefinition,
     GetConnectionResponse,
     IndexResource,
-    MessageDeltaChunk,
     MessageImageFileContent,
     MessageTextContent,
     MessageTextFileCitationAnnotation,
     MessageTextFilePathAnnotation,
-    OpenAIPageableListOfThreadMessage,
+    MicrosoftFabricToolDefinition,
+    OpenApiAuthDetails,
+    OpenApiToolDefinition,
+    OpenApiFunctionDefinition,
     RequiredFunctionToolCall,
     RunStep,
     RunStepDeltaChunk,
     SharepointToolDefinition,
     SubmitToolOutputsAction,
-    ThreadMessage,
     ThreadRun,
     ToolConnection,
     ToolConnectionList,
     ToolDefinition,
     ToolResources,
+    MessageDeltaTextContent,
+    VectorStoreDataSource,
 )
+
+from ._models import MessageDeltaChunk as MessageDeltaChunkGenerated
+from ._models import ThreadMessage as ThreadMessageGenerated
+from ._models import OpenAIPageableListOfThreadMessage as OpenAIPageableListOfThreadMessageGenerated
+from ._models import MessageAttachment as MessageAttachmentGenerated
+
+from .. import _types
 
 logger = logging.getLogger(__name__)
 
-
-StreamEventData = Union[MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep, None]
+StreamEventData = Union["MessageDeltaChunk", "ThreadMessage", ThreadRun, RunStep, str]
 
 
 def _filter_parameters(model_class: Type, parameters: Dict[str, Any]) -> Dict[str, Any]:
@@ -99,7 +116,9 @@ def _filter_parameters(model_class: Type, parameters: Dict[str, Any]) -> Dict[st
     return new_params
 
 
-def _safe_instantiate(model_class: Type, parameters: Union[str, Dict[str, Any]]) -> Union[str, StreamEventData]:
+def _safe_instantiate(
+    model_class: Type, parameters: Union[str, Dict[str, Any]], *, generated_class: Optional[Type] = None
+) -> StreamEventData:
     """
     Instantiate class with the set of parameters from the server.
 
@@ -109,9 +128,74 @@ def _safe_instantiate(model_class: Type, parameters: Union[str, Dict[str, Any]])
     :return: The class of model_class type if parameters is a dictionary, or the parameters themselves otherwise.
     :rtype: Any
     """
+    if not generated_class:
+        generated_class = model_class
     if not isinstance(parameters, dict):
         return parameters
-    return cast(StreamEventData, model_class(**_filter_parameters(model_class, parameters)))
+    return cast(StreamEventData, model_class(**_filter_parameters(generated_class, parameters)))
+
+
+def _parse_event(event_data_str: str) -> Tuple[str, StreamEventData]:
+    event_lines = event_data_str.strip().split("\n")
+    event_type: Optional[str] = None
+    event_data = ""
+    event_obj: StreamEventData
+    for line in event_lines:
+        if line.startswith("event:"):
+            event_type = line.split(":", 1)[1].strip()
+        elif line.startswith("data:"):
+            event_data = line.split(":", 1)[1].strip()
+
+    if not event_type:
+        raise ValueError("Event type not specified in the event data.")
+
+    try:
+        parsed_data: Union[str, Dict[str, StreamEventData]] = cast(Dict[str, StreamEventData], json.loads(event_data))
+    except json.JSONDecodeError:
+        parsed_data = event_data
+
+    # Workaround for service bug: Rename 'expires_at' to 'expired_at'
+    if event_type.startswith("thread.run.step") and isinstance(parsed_data, dict) and "expires_at" in parsed_data:
+        parsed_data["expired_at"] = parsed_data.pop("expires_at")
+
+    # Map to the appropriate class instance
+    if event_type in {
+        AgentStreamEvent.THREAD_RUN_CREATED.value,
+        AgentStreamEvent.THREAD_RUN_QUEUED.value,
+        AgentStreamEvent.THREAD_RUN_IN_PROGRESS.value,
+        AgentStreamEvent.THREAD_RUN_REQUIRES_ACTION.value,
+        AgentStreamEvent.THREAD_RUN_COMPLETED.value,
+        AgentStreamEvent.THREAD_RUN_FAILED.value,
+        AgentStreamEvent.THREAD_RUN_CANCELLING.value,
+        AgentStreamEvent.THREAD_RUN_CANCELLED.value,
+        AgentStreamEvent.THREAD_RUN_EXPIRED.value,
+    }:
+        event_obj = _safe_instantiate(ThreadRun, parsed_data)
+    elif event_type in {
+        AgentStreamEvent.THREAD_RUN_STEP_CREATED.value,
+        AgentStreamEvent.THREAD_RUN_STEP_IN_PROGRESS.value,
+        AgentStreamEvent.THREAD_RUN_STEP_COMPLETED.value,
+        AgentStreamEvent.THREAD_RUN_STEP_FAILED.value,
+        AgentStreamEvent.THREAD_RUN_STEP_CANCELLED.value,
+        AgentStreamEvent.THREAD_RUN_STEP_EXPIRED.value,
+    }:
+        event_obj = _safe_instantiate(RunStep, parsed_data)
+    elif event_type in {
+        AgentStreamEvent.THREAD_MESSAGE_CREATED.value,
+        AgentStreamEvent.THREAD_MESSAGE_IN_PROGRESS.value,
+        AgentStreamEvent.THREAD_MESSAGE_COMPLETED.value,
+        AgentStreamEvent.THREAD_MESSAGE_INCOMPLETE.value,
+    }:
+        event_obj = _safe_instantiate(ThreadMessage, parsed_data, generated_class=ThreadMessageGenerated)
+    elif event_type == AgentStreamEvent.THREAD_MESSAGE_DELTA.value:
+        event_obj = _safe_instantiate(MessageDeltaChunk, parsed_data, generated_class=MessageDeltaChunkGenerated)
+
+    elif event_type == AgentStreamEvent.THREAD_RUN_STEP_DELTA.value:
+        event_obj = _safe_instantiate(RunStepDeltaChunk, parsed_data)
+    else:
+        event_obj = str(parsed_data)
+
+    return event_type, event_obj
 
 
 class ConnectionProperties:
@@ -333,14 +417,125 @@ def is_optional(annotation) -> bool:
     return False
 
 
-class Tool(ABC):
+class MessageDeltaChunk(MessageDeltaChunkGenerated):
+    @property
+    def text(self) -> str:
+        """Get the text content of the delta chunk.
+
+        :rtype: str
+        """
+        if not self.delta or not self.delta.content:
+            return ""
+        return "".join(
+            content_part.text.value or ""
+            for content_part in self.delta.content
+            if isinstance(content_part, MessageDeltaTextContent) and content_part.text
+        )
+
+
+class ThreadMessage(ThreadMessageGenerated):
+    @property
+    def text_messages(self) -> List[MessageTextContent]:
+        """Returns all text message contents in the messages.
+
+        :rtype: List[MessageTextContent]
+        """
+        if not self.content:
+            return []
+        return [content for content in self.content if isinstance(content, MessageTextContent)]
+
+    @property
+    def image_contents(self) -> List[MessageImageFileContent]:
+        """Returns all image file contents from image message contents in the messages.
+
+        :rtype: List[MessageImageFileContent]
+        """
+        if not self.content:
+            return []
+        return [content for content in self.content if isinstance(content, MessageImageFileContent)]
+
+    @property
+    def file_citation_annotations(self) -> List[MessageTextFileCitationAnnotation]:
+        """Returns all file citation annotations from text message annotations in the messages.
+
+        :rtype: List[MessageTextFileCitationAnnotation]
+        """
+        if not self.content:
+            return []
+
+        return [
+            annotation
+            for content in self.content
+            if isinstance(content, MessageTextContent)
+            for annotation in content.text.annotations
+            if isinstance(annotation, MessageTextFileCitationAnnotation)
+        ]
+
+    @property
+    def file_path_annotations(self) -> List[MessageTextFilePathAnnotation]:
+        """Returns all file path annotations from text message annotations in the messages.
+
+        :rtype: List[MessageTextFilePathAnnotation]
+        """
+        if not self.content:
+            return []
+        return [
+            annotation
+            for content in self.content
+            if isinstance(content, MessageTextContent)
+            for annotation in content.text.annotations
+            if isinstance(annotation, MessageTextFilePathAnnotation)
+        ]
+
+
+class MessageAttachment(MessageAttachmentGenerated):
+    @overload
+    def __init__(
+        self,
+        *,
+        tools: List["FileSearchToolDefinition"],
+        file_id: Optional[str] = None,
+        data_source: Optional["VectorStoreDataSource"] = None,
+    ) -> None: ...
+    @overload
+    def __init__(
+        self,
+        *,
+        tools: List["CodeInterpreterToolDefinition"],
+        file_id: Optional[str] = None,
+        data_source: Optional["VectorStoreDataSource"] = None,
+    ) -> None: ...
+    @overload
+    def __init__(
+        self,
+        *,
+        tools: List["_types.MessageAttachmentToolDefinition"],
+        file_id: Optional[str] = None,
+        data_source: Optional["VectorStoreDataSource"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+ToolDefinitionT = TypeVar("ToolDefinitionT", bound=ToolDefinition)
+
+
+class Tool(ABC, Generic[ToolDefinitionT]):
     """
     An abstract class representing a tool that can be used by an agent.
     """
 
     @property
     @abstractmethod
-    def definitions(self) -> List[ToolDefinition]:
+    def definitions(self) -> List[ToolDefinitionT]:
         """Get the tool definitions."""
 
     @property
@@ -358,7 +553,7 @@ class Tool(ABC):
         """
 
 
-class BaseFunctionTool(Tool):
+class BaseFunctionTool(Tool[FunctionToolDefinition]):
     """
     A tool that executes user-defined functions.
     """
@@ -453,14 +648,14 @@ class BaseFunctionTool(Tool):
         return function, parsed_arguments
 
     @property
-    def definitions(self) -> List[ToolDefinition]:
+    def definitions(self) -> List[FunctionToolDefinition]:
         """
         Get the function definitions.
 
         :return: A list of function definitions.
         :rtype: List[ToolDefinition]
         """
-        return cast(List[ToolDefinition], self._definitions)
+        return self._definitions
 
     @property
     def resources(self) -> ToolResources:
@@ -505,29 +700,20 @@ class AsyncFunctionTool(BaseFunctionTool):
             return json.dumps({"error": error_message})
 
 
-class AzureAISearchTool(Tool):
+class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
     """
     A tool that searches for information using Azure AI Search.
     """
 
-    def __init__(self):
-        self.index_list = []
-
-    def add_index(self, index: str, name: str):
-        """
-        Add an index ID to the list of indices used to search.
-
-        :param str index: The index connection id.
-        :param str name: The index name.
-        """
-        # TODO
-        self.index_list.append(IndexResource(index_connection_id=index, index_name=name))
+    def __init__(self, index_connection_id: str, index_name: str):
+        self.index_list = [IndexResource(index_connection_id=index_connection_id, index_name=index_name)]
 
     @property
-    def definitions(self) -> List[ToolDefinition]:
+    def definitions(self) -> List[AzureAISearchToolDefinition]:
         """
         Get the Azure AI search tool definitions.
 
+        :return: A list of tool definitions.
         :rtype: List[ToolDefinition]
         """
         return [AzureAISearchToolDefinition()]
@@ -537,15 +723,115 @@ class AzureAISearchTool(Tool):
         """
         Get the Azure AI search resources.
 
+        :return: ToolResources populated with azure_ai_search associated resources.
         :rtype: ToolResources
         """
         return ToolResources(azure_ai_search=AzureAISearchResource(index_list=self.index_list))
+
+    def execute(self, tool_call: Any):
+        """
+        AI Search tool does not execute client-side.
+
+        :param Any tool_call: The tool call to execute.
+        """
+
+
+class OpenApiTool(Tool[OpenApiToolDefinition]):
+    """
+    A tool that retrieves information using an OpenAPI spec.
+    """
+
+    def __init__(self, name: str, description: str, spec: Any, auth: OpenApiAuthDetails):
+        self._definitions = [
+            OpenApiToolDefinition(
+                openapi=OpenApiFunctionDefinition(name=name, description=description, spec=spec, auth=auth)
+            )
+        ]
+
+    @property
+    def definitions(self) -> List[OpenApiToolDefinition]:
+        """
+        Get the OpenApi tool definitions.
+
+        :return: A list of tool definitions.
+        :rtype: List[ToolDefinition]
+        """
+        return self._definitions
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the tool resources for the agent.
+
+        :return: An empty ToolResources as OpenApiTool doesn't have specific resources.
+        :rtype: ToolResources
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any):
+        """
+        OpenApiTool does not execute client-side.
+
+        :param Any tool_call: The tool call to execute.
+        """
+
+
+class AzureFunctionTool(Tool[AzureFunctionToolDefinition]):
+    """
+    A tool that is used to inform agent about available the Azure function.
+
+    :param name: The azure function name.
+    :param description: The azure function description.
+    :param parameters: The description of function parameters.
+    :param input_queue: Input queue used, by azure function.
+    :param output_queue: Output queue used, by azure function.
+    """
+
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        parameters: Dict[str, Any],
+        input_queue: AzureFunctionStorageQueue,
+        output_queue: AzureFunctionStorageQueue,
+    ) -> None:
+        self._definitions = [
+            AzureFunctionToolDefinition(
+                azure_function=AzureFunctionDefinition(
+                    function=FunctionDefinition(
+                        name=name,
+                        description=description,
+                        parameters=parameters,
+                    ),
+                    input_binding=AzureFunctionBinding(storage_queue=input_queue),
+                    output_binding=AzureFunctionBinding(storage_queue=output_queue),
+                )
+            )
+        ]
+
+    @property
+    def definitions(self) -> List[AzureFunctionToolDefinition]:
+        """
+        Get the Azure AI search tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return self._definitions
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the Azure AI search resources.
+
+        :rtype: ToolResources
+        """
+        return ToolResources()
 
     def execute(self, tool_call: Any) -> Any:
         pass
 
 
-class ConnectionTool(Tool):
+class ConnectionTool(Tool[ToolDefinitionT]):
     """
     A tool that requires connection ids.
     Used as base class for Bing Grounding, Sharepoint, and Microsoft Fabric
@@ -572,13 +858,13 @@ class ConnectionTool(Tool):
         pass
 
 
-class BingGroundingTool(ConnectionTool):
+class BingGroundingTool(ConnectionTool[BingGroundingToolDefinition]):
     """
     A tool that searches for information using Bing.
     """
 
     @property
-    def definitions(self) -> List[ToolDefinition]:
+    def definitions(self) -> List[BingGroundingToolDefinition]:
         """
         Get the Bing grounding tool definitions.
 
@@ -587,13 +873,28 @@ class BingGroundingTool(ConnectionTool):
         return [BingGroundingToolDefinition(bing_grounding=ToolConnectionList(connection_list=self.connection_ids))]
 
 
-class SharepointTool(ConnectionTool):
+class FabricTool(ConnectionTool[MicrosoftFabricToolDefinition]):
+    """
+    A tool that searches for information using Microsoft Fabric.
+    """
+
+    @property
+    def definitions(self) -> List[MicrosoftFabricToolDefinition]:
+        """
+        Get the Microsoft Fabric tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return [MicrosoftFabricToolDefinition(fabric_aiskill=ToolConnectionList(connection_list=self.connection_ids))]
+
+
+class SharepointTool(ConnectionTool[SharepointToolDefinition]):
     """
     A tool that searches for information using Sharepoint.
     """
 
     @property
-    def definitions(self) -> List[ToolDefinition]:
+    def definitions(self) -> List[SharepointToolDefinition]:
         """
         Get the Sharepoint tool definitions.
 
@@ -602,7 +903,7 @@ class SharepointTool(ConnectionTool):
         return [SharepointToolDefinition(sharepoint_grounding=ToolConnectionList(connection_list=self.connection_ids))]
 
 
-class FileSearchTool(Tool):
+class FileSearchTool(Tool[FileSearchToolDefinition]):
     """
     A tool that searches for uploaded file information from the created vector stores.
 
@@ -637,7 +938,7 @@ class FileSearchTool(Tool):
         self.vector_store_ids.remove(store_id)
 
     @property
-    def definitions(self) -> List[ToolDefinition]:
+    def definitions(self) -> List[FileSearchToolDefinition]:
         """
         Get the file search tool definitions.
 
@@ -658,7 +959,7 @@ class FileSearchTool(Tool):
         pass
 
 
-class CodeInterpreterTool(Tool):
+class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
     """
     A tool that interprets code files uploaded to the agent.
 
@@ -691,7 +992,7 @@ class CodeInterpreterTool(Tool):
         self.file_ids.remove(file_id)
 
     @property
-    def definitions(self) -> List[ToolDefinition]:
+    def definitions(self) -> List[CodeInterpreterToolDefinition]:
         """
         Get the code interpreter tool definitions.
 
@@ -913,119 +1214,366 @@ class AsyncToolSet(BaseToolSet):
         return tool_outputs
 
 
-class AgentEventHandler:
-
-    def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
-        """Handle message delta events.
-
-        :param MessageDeltaChunk delta: The message delta.
-        """
-
-    def on_thread_message(self, message: "ThreadMessage") -> None:
-        """Handle thread message events.
-
-        :param ThreadMessage message: The thread message.
-        """
-
-    def on_thread_run(self, run: "ThreadRun") -> None:
-        """Handle thread run events.
-
-        :param ThreadRun run: The thread run.
-        """
-
-    def on_run_step(self, step: "RunStep") -> None:
-        """Handle run step events.
-
-        :param RunStep step: The run step.
-        """
-
-    def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:
-        """Handle run step delta events.
-
-        :param RunStepDeltaChunk delta: The run step delta.
-        """
-
-    def on_error(self, data: str) -> None:
-        """Handle error events.
-
-        :param str data: The error event's data.
-        """
-
-    def on_done(self) -> None:
-        """Handle the completion of the stream."""
-
-    def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
-        """Handle any unhandled event types.
-
-        :param str event_type: The event type.
-        :param Any event_data: The event's data.
-        """
+EventFunctionReturnT = TypeVar("EventFunctionReturnT")
+T = TypeVar("T")
+BaseAsyncAgentEventHandlerT = TypeVar("BaseAsyncAgentEventHandlerT", bound="BaseAsyncAgentEventHandler")
+BaseAgentEventHandlerT = TypeVar("BaseAgentEventHandlerT", bound="BaseAgentEventHandler")
 
 
-class AsyncAgentEventHandler:
+class BaseAsyncAgentEventHandler(AsyncIterator[T]):
 
-    async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
-        """Handle message delta events.
+    def __init__(self) -> None:
+        self.response_iterator: Optional[AsyncIterator[bytes]] = None
+        self.event_handler: Optional["BaseAsyncAgentEventHandler[T]"] = None
+        self.submit_tool_outputs: Optional[Callable[[ThreadRun, "BaseAsyncAgentEventHandler[T]"], Awaitable[None]]] = (
+            None
+        )
+        self.done: bool
+        self.buffer: str
 
-        :param MessageDeltaChunk delta: The message delta.
-        """
-
-    async def on_thread_message(self, message: "ThreadMessage") -> None:
-        """Handle thread message events.
-
-        :param ThreadMessage message: The thread message.
-        """
-
-    async def on_thread_run(self, run: "ThreadRun") -> None:
-        """Handle thread run events.
-
-        :param ThreadRun run: The thread run.
-        """
-
-    async def on_run_step(self, step: "RunStep") -> None:
-        """Handle run step events.
-
-        :param RunStep step: The run step.
-        """
-
-    async def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:
-        """Handle run step delta events.
-
-        :param RunStepDeltaChunk delta: The run step delta.
-        """
-
-    async def on_error(self, data: str) -> None:
-        """Handle error events.
-
-        :param str data: The error event's data.
-        """
-
-    async def on_done(self) -> None:
-        """Handle the completion of the stream."""
-
-    async def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
-        """Handle any unhandled event types.
-
-        :param str event_type: The event type.
-        :param Any event_data: The event's data.
-        """
-
-
-class AsyncAgentRunStream(AsyncIterator[Tuple[str, Union[str, StreamEventData]]]):
-    def __init__(
+    def initialize(
         self,
         response_iterator: AsyncIterator[bytes],
-        submit_tool_outputs: Callable[[ThreadRun, Optional[AsyncAgentEventHandler]], Awaitable[None]],
-        event_handler: Optional["AsyncAgentEventHandler"] = None,
+        submit_tool_outputs: Callable[[ThreadRun, "BaseAsyncAgentEventHandler[T]"], Awaitable[None]],
+        event_handler: Optional["BaseAsyncAgentEventHandler[T]"] = None,
     ):
         self.response_iterator = response_iterator
         self.event_handler = event_handler
+        self.submit_tool_outputs = submit_tool_outputs
         self.done = False
         self.buffer = ""
+
+    async def __anext__(self) -> T:
+        if self.response_iterator is None:
+            raise ValueError("The response handler was not initialized.")
+
+        async for chunk in self.response_iterator:
+            self.buffer += chunk.decode("utf-8")
+            split_buffer = self.buffer.split("\n\n")
+            self.buffer = split_buffer[-1]
+            for ln in split_buffer[:-1]:
+                event = await self._process_event(ln)
+                if event:
+                    return event
+
+        if self.buffer:
+            event = await self._process_event(self.buffer)
+            if event:
+                return event
+
+        raise StopAsyncIteration()
+
+    async def _process_event(self, event_data_str: str) -> Optional[T]:
+        raise NotImplementedError("This method needs to be implemented.")
+
+    async def until_done(self) -> None:
+        """
+        Iterates through all events until the stream is marked as done.
+        Calls the provided callback function with each event data.
+        """
+        try:
+            async for _ in self:
+                pass
+        except StopAsyncIteration:
+            pass
+
+
+class BaseAgentEventHandler(Iterator[T]):
+
+    def __init__(self) -> None:
+        self.response_iterator: Optional[Iterator[bytes]] = None
+        self.event_handler: Optional["BaseAgentEventHandler[T]"] = None
+        self.submit_tool_outputs: Optional[Callable[[ThreadRun, "BaseAgentEventHandler[T]"], Awaitable[None]]] = None
+        self.done: bool
+        self.buffer: str
+
+    def initialize(
+        self,
+        response_iterator: Iterator[bytes],
+        submit_tool_outputs: Callable[[ThreadRun, "BaseAgentEventHandler[T]"], Awaitable[None]],
+        event_handler: Optional["BaseAgentEventHandler[T]"] = None,
+    ) -> None:
+        self.response_iterator = response_iterator
+        self.event_handler = event_handler
         self.submit_tool_outputs = submit_tool_outputs
+        self.done = False
+        self.buffer = ""
+
+    def __next__(self) -> T:
+        if self.response_iterator is None:
+            raise ValueError("The response handler was not initialized.")
+
+        for chunk in self.response_iterator:
+            self.buffer += chunk.decode("utf-8")
+            split_buffer = self.buffer.split("\n\n")
+            self.buffer = split_buffer[-1]
+            for ln in split_buffer[:-1]:
+                event = self._process_event(ln)
+                if event:
+                    return event
+
+        if self.buffer:
+            event = self._process_event(self.buffer)
+            if event:
+                return event
+
+        raise StopIteration()
+
+    def _process_event(self, event_data_str: str) -> Optional[T]:
+        raise NotImplementedError("This method needs to be implemented.")
+
+    def until_done(self) -> None:
+        """
+        Iterates through all events until the stream is marked as done.
+        Calls the provided callback function with each event data.
+        """
+        try:
+            for _ in self:
+                pass
+        except StopIteration:
+            pass
+
+
+class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventData, Optional[EventFunctionReturnT]]]):
+
+    async def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData, Optional[EventFunctionReturnT]]:
+        event_type, event_data_obj = _parse_event(event_data_str)
+        if (
+            isinstance(event_data_obj, ThreadRun)
+            and event_data_obj.status == "requires_action"
+            and isinstance(event_data_obj.required_action, SubmitToolOutputsAction)
+        ):
+            await cast(Callable[[ThreadRun, "BaseAsyncAgentEventHandler"], Awaitable[None]], self.submit_tool_outputs)(
+                event_data_obj, self
+            )
+
+        func_rt: Optional[EventFunctionReturnT] = None
+        try:
+            if isinstance(event_data_obj, MessageDeltaChunk):
+                func_rt = await self.on_message_delta(event_data_obj)
+            elif isinstance(event_data_obj, ThreadMessage):
+                func_rt = await self.on_thread_message(event_data_obj)
+            elif isinstance(event_data_obj, ThreadRun):
+                func_rt = await self.on_thread_run(event_data_obj)
+            elif isinstance(event_data_obj, RunStep):
+                func_rt = await self.on_run_step(event_data_obj)
+            elif isinstance(event_data_obj, RunStepDeltaChunk):
+                func_rt = await self.on_run_step_delta(event_data_obj)
+            elif event_type == AgentStreamEvent.ERROR:
+                func_rt = await self.on_error(event_data_obj)
+            elif event_type == AgentStreamEvent.DONE:
+                func_rt = await self.on_done()
+                self.done = True  # Mark the stream as done
+            else:
+                func_rt = await self.on_unhandled_event(
+                    event_type, event_data_obj
+                )  # pylint: disable=assignment-from-none
+        except Exception as e:  # pylint: disable=broad-exception-caught
+            logging.error("Error in event handler for event '%s': %s", event_type, e)
+        return event_type, event_data_obj, func_rt
+
+    async def on_message_delta(
+        self, delta: "MessageDeltaChunk"  # pylint: disable=unused-argument
+    ) -> Optional[EventFunctionReturnT]:
+        """Handle message delta events.
+
+        :param MessageDeltaChunk delta: The message delta.
+        :rtype: Optional[EventFunctionReturnT]
+        """
+        return None
+
+    async def on_thread_message(
+        self, message: "ThreadMessage"  # pylint: disable=unused-argument
+    ) -> Optional[EventFunctionReturnT]:
+        """Handle thread message events.
+
+        :param ThreadMessage message: The thread message.
+        :rtype: Optional[EventFunctionReturnT]
+        """
+        return None
+
+    async def on_thread_run(
+        self, run: "ThreadRun"  # pylint: disable=unused-argument
+    ) -> Optional[EventFunctionReturnT]:
+        """Handle thread run events.
+
+        :param ThreadRun run: The thread run.
+        :rtype: Optional[EventFunctionReturnT]
+        """
+        return None
+
+    async def on_run_step(self, step: "RunStep") -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
+        """Handle run step events.
+
+        :param RunStep step: The run step.
+        :rtype: Optional[EventFunctionReturnT]
+        """
+        return None
+
+    async def on_run_step_delta(
+        self, delta: "RunStepDeltaChunk"  # pylint: disable=unused-argument
+    ) -> Optional[EventFunctionReturnT]:
+        """Handle run step delta events.
+
+        :param RunStepDeltaChunk delta: The run step delta.
+        :rtype: Optional[EventFunctionReturnT]
+        """
+        return None
+
+    async def on_error(self, data: str) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
+        """Handle error events.
+
+        :param str data: The error event's data.
+        :rtype: Optional[EventFunctionReturnT]
+        """
+        return None
+
+    async def on_done(
+        self,
+    ) -> Optional[EventFunctionReturnT]:
+        """Handle the completion of the stream.
+        :rtype: Optional[EventFunctionReturnT]
+        """
+        return None
+
+    async def on_unhandled_event(
+        self, event_type: str, event_data: str  # pylint: disable=unused-argument
+    ) -> Optional[EventFunctionReturnT]:
+        """Handle any unhandled event types.
+
+        :param str event_type: The event type.
+        :param Any event_data: The event's data.
+        :rtype: Optional[EventFunctionReturnT]
+        """
+        return None
+
+
+class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Optional[EventFunctionReturnT]]]):
+
+    def _process_event(self, event_data_str: str) -> Tuple[str, StreamEventData, Optional[EventFunctionReturnT]]:
+
+        event_type, event_data_obj = _parse_event(event_data_str)
+        if (
+            isinstance(event_data_obj, ThreadRun)
+            and event_data_obj.status == "requires_action"
+            and isinstance(event_data_obj.required_action, SubmitToolOutputsAction)
+        ):
+            cast(Callable[[ThreadRun, "BaseAgentEventHandler"], Awaitable[None]], self.submit_tool_outputs)(
+                event_data_obj, self
+            )
+
+        func_rt: Optional[EventFunctionReturnT] = None
+        try:
+            if isinstance(event_data_obj, MessageDeltaChunk):
+                func_rt = self.on_message_delta(event_data_obj)  # pylint: disable=assignment-from-none
+            elif isinstance(event_data_obj, ThreadMessage):
+                func_rt = self.on_thread_message(event_data_obj)  # pylint: disable=assignment-from-none
+            elif isinstance(event_data_obj, ThreadRun):
+                func_rt = self.on_thread_run(event_data_obj)  # pylint: disable=assignment-from-none
+            elif isinstance(event_data_obj, RunStep):
+                func_rt = self.on_run_step(event_data_obj)  # pylint: disable=assignment-from-none
+            elif isinstance(event_data_obj, RunStepDeltaChunk):
+                func_rt = self.on_run_step_delta(event_data_obj)  # pylint: disable=assignment-from-none
+            elif event_type == AgentStreamEvent.ERROR:
+                func_rt = self.on_error(event_data_obj)  # pylint: disable=assignment-from-none
+            elif event_type == AgentStreamEvent.DONE:
+                func_rt = self.on_done()  # pylint: disable=assignment-from-none
+                self.done = True  # Mark the stream as done
+            else:
+                func_rt = self.on_unhandled_event(event_type, event_data_obj)  # pylint: disable=assignment-from-none
+        except Exception as e:  # pylint: disable=broad-exception-caught
+            logging.error("Error in event handler for event '%s': %s", event_type, e)
+        return event_type, event_data_obj, func_rt
+
+    def on_message_delta(
+        self, delta: "MessageDeltaChunk"  # pylint: disable=unused-argument
+    ) -> Optional[EventFunctionReturnT]:
+        """Handle message delta events.
+
+        :param MessageDeltaChunk delta: The message delta.
+        :rtype: Optional[EventFunctionReturnT]
+        """
+        return None
+
+    def on_thread_message(
+        self, message: "ThreadMessage"  # pylint: disable=unused-argument
+    ) -> Optional[EventFunctionReturnT]:
+        """Handle thread message events.
+
+        :param ThreadMessage message: The thread message.
+        :rtype: Optional[EventFunctionReturnT]
+        """
+        return None
+
+    def on_thread_run(self, run: "ThreadRun") -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
+        """Handle thread run events.
+
+        :param ThreadRun run: The thread run.
+        :rtype: Optional[EventFunctionReturnT]
+        """
+        return None
+
+    def on_run_step(self, step: "RunStep") -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
+        """Handle run step events.
+
+        :param RunStep step: The run step.
+        :rtype: Optional[EventFunctionReturnT]
+        """
+        return None
+
+    def on_run_step_delta(
+        self, delta: "RunStepDeltaChunk"  # pylint: disable=unused-argument
+    ) -> Optional[EventFunctionReturnT]:
+        """Handle run step delta events.
+
+        :param RunStepDeltaChunk delta: The run step delta.
+        :rtype: Optional[EventFunctionReturnT]
+        """
+        return None
+
+    def on_error(self, data: str) -> Optional[EventFunctionReturnT]:  # pylint: disable=unused-argument
+        """Handle error events.
+
+        :param str data: The error event's data.
+        :rtype: Optional[EventFunctionReturnT]
+        """
+        return None
+
+    def on_done(
+        self,
+    ) -> Optional[EventFunctionReturnT]:
+        """Handle the completion of the stream."""
+        return None
+
+    def on_unhandled_event(
+        self, event_type: str, event_data: str  # pylint: disable=unused-argument
+    ) -> Optional[EventFunctionReturnT]:
+        """Handle any unhandled event types.
+
+        :param str event_type: The event type.
+        :param Any event_data: The event's data.
+        """
+        return None
+
+
+class AsyncAgentRunStream(Generic[BaseAsyncAgentEventHandlerT]):
+    def __init__(
+        self,
+        response_iterator: AsyncIterator[bytes],
+        submit_tool_outputs: Callable[[ThreadRun, BaseAsyncAgentEventHandlerT], Awaitable[None]],
+        event_handler: BaseAsyncAgentEventHandlerT,
+    ):
+        self.response_iterator = response_iterator
+        self.event_handler = event_handler
+        self.submit_tool_outputs = submit_tool_outputs
+        self.event_handler.initialize(
+            self.response_iterator,
+            cast(Callable[[ThreadRun, BaseAsyncAgentEventHandler], Awaitable[None]], submit_tool_outputs),
+            self.event_handler,
+        )
 
     async def __aenter__(self):
-        return self
+        return self.event_handler
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         close_method = getattr(self.response_iterator, "close", None)
@@ -1034,305 +1582,33 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Union[str, StreamEventData]]]
             if asyncio.iscoroutine(result):
                 await result
 
-    def __aiter__(self):
-        return self
 
-    async def __anext__(self) -> Tuple[str, Union[str, StreamEventData]]:
-        while True:
-            try:
-                chunk = await self.response_iterator.__anext__()
-                self.buffer += chunk.decode("utf-8")
-            except StopAsyncIteration:
-                if self.buffer:
-                    event_data_str, self.buffer = self.buffer, ""
-                    if event_data_str:
-                        return await self._process_event(event_data_str)
-                raise
-
-            while "\n\n" in self.buffer:
-                event_data_str, self.buffer = self.buffer.split("\n\n", 1)
-                return await self._process_event(event_data_str)
-
-    def _parse_event_data(self, event_data_str: str) -> Tuple[str, Union[str, StreamEventData], str]:
-        event_lines = event_data_str.strip().split("\n")
-        event_type: Optional[str] = None
-        event_data = ""
-        error_string = ""
-
-        for line in event_lines:
-            if line.startswith("event:"):
-                event_type = line.split(":", 1)[1].strip()
-            elif line.startswith("data:"):
-                event_data = line.split(":", 1)[1].strip()
-
-        if not event_type:
-            raise ValueError("Event type not specified in the event data.")
-
-        try:
-            parsed_data: Union[str, Dict[str, StreamEventData]] = cast(
-                Dict[str, StreamEventData], json.loads(event_data)
-            )
-        except json.JSONDecodeError:
-            parsed_data = event_data
-
-        # Workaround for service bug: Rename 'expires_at' to 'expired_at'
-        if event_type.startswith("thread.run.step") and isinstance(parsed_data, dict) and "expires_at" in parsed_data:
-            parsed_data["expired_at"] = parsed_data.pop("expires_at")
-
-        # Map to the appropriate class instance
-        if event_type in {
-            AgentStreamEvent.THREAD_RUN_CREATED.value,
-            AgentStreamEvent.THREAD_RUN_QUEUED.value,
-            AgentStreamEvent.THREAD_RUN_IN_PROGRESS.value,
-            AgentStreamEvent.THREAD_RUN_REQUIRES_ACTION.value,
-            AgentStreamEvent.THREAD_RUN_COMPLETED.value,
-            AgentStreamEvent.THREAD_RUN_FAILED.value,
-            AgentStreamEvent.THREAD_RUN_CANCELLING.value,
-            AgentStreamEvent.THREAD_RUN_CANCELLED.value,
-            AgentStreamEvent.THREAD_RUN_EXPIRED.value,
-        }:
-            event_data_obj = _safe_instantiate(ThreadRun, parsed_data)
-        elif event_type in {
-            AgentStreamEvent.THREAD_RUN_STEP_CREATED.value,
-            AgentStreamEvent.THREAD_RUN_STEP_IN_PROGRESS.value,
-            AgentStreamEvent.THREAD_RUN_STEP_COMPLETED.value,
-            AgentStreamEvent.THREAD_RUN_STEP_FAILED.value,
-            AgentStreamEvent.THREAD_RUN_STEP_CANCELLED.value,
-            AgentStreamEvent.THREAD_RUN_STEP_EXPIRED.value,
-        }:
-            event_data_obj = _safe_instantiate(RunStep, parsed_data)
-        elif event_type in {
-            AgentStreamEvent.THREAD_MESSAGE_CREATED.value,
-            AgentStreamEvent.THREAD_MESSAGE_IN_PROGRESS.value,
-            AgentStreamEvent.THREAD_MESSAGE_COMPLETED.value,
-            AgentStreamEvent.THREAD_MESSAGE_INCOMPLETE.value,
-        }:
-            event_data_obj = _safe_instantiate(ThreadMessage, parsed_data)
-        elif event_type == AgentStreamEvent.THREAD_MESSAGE_DELTA.value:
-            event_data_obj = _safe_instantiate(MessageDeltaChunk, parsed_data)
-        elif event_type == AgentStreamEvent.THREAD_RUN_STEP_DELTA.value:
-            event_data_obj = _safe_instantiate(RunStepDeltaChunk, parsed_data)
-        else:
-            event_data_obj = ""
-            error_string = str(parsed_data)
-
-        return event_type, event_data_obj, error_string
-
-    async def _process_event(self, event_data_str: str) -> Tuple[str, Union[str, StreamEventData]]:
-        event_type, event_data_obj, error_string = self._parse_event_data(event_data_str)
-
-        if (
-            isinstance(event_data_obj, ThreadRun)
-            and event_data_obj.status == "requires_action"
-            and isinstance(event_data_obj.required_action, SubmitToolOutputsAction)
-        ):
-            await self.submit_tool_outputs(event_data_obj, self.event_handler)
-        if self.event_handler:
-            try:
-                if isinstance(event_data_obj, MessageDeltaChunk):
-                    await self.event_handler.on_message_delta(event_data_obj)
-                elif isinstance(event_data_obj, ThreadMessage):
-                    await self.event_handler.on_thread_message(event_data_obj)
-                elif isinstance(event_data_obj, ThreadRun):
-                    await self.event_handler.on_thread_run(event_data_obj)
-                elif isinstance(event_data_obj, RunStep):
-                    await self.event_handler.on_run_step(event_data_obj)
-                elif isinstance(event_data_obj, RunStepDeltaChunk):
-                    await self.event_handler.on_run_step_delta(event_data_obj)
-                elif event_type == AgentStreamEvent.ERROR:
-                    await self.event_handler.on_error(error_string)
-                elif event_type == AgentStreamEvent.DONE:
-                    await self.event_handler.on_done()
-                    self.done = True  # Mark the stream as done
-                else:
-                    await self.event_handler.on_unhandled_event(event_type, event_data_obj)
-            except Exception as e:  # pylint: disable=broad-exception-caught
-                logging.error("Error in event handler for event '%s': %s", event_type, e)
-
-        return event_type, event_data_obj
-
-    async def until_done(self) -> None:
-        """
-        Iterates through all events until the stream is marked as done.
-        """
-        try:
-            async for _ in self:
-                pass  # The EventHandler handles the events
-        except StopAsyncIteration:
-            pass
-
-
-class AgentRunStream(Iterator[Tuple[str, Union[str, StreamEventData]]]):
+class AgentRunStream(Generic[BaseAgentEventHandlerT]):
     def __init__(
         self,
         response_iterator: Iterator[bytes],
-        submit_tool_outputs: Callable[[ThreadRun, Optional[AgentEventHandler]], None],
-        event_handler: Optional[AgentEventHandler] = None,
+        submit_tool_outputs: Callable[[ThreadRun, BaseAgentEventHandlerT], None],
+        event_handler: BaseAgentEventHandlerT,
     ):
         self.response_iterator = response_iterator
         self.event_handler = event_handler
-        self.done = False
-        self.buffer = ""
         self.submit_tool_outputs = submit_tool_outputs
+        self.event_handler.initialize(
+            self.response_iterator,
+            cast(Callable[[ThreadRun, BaseAgentEventHandler], Awaitable[None]], submit_tool_outputs),
+            self.event_handler,
+        )
 
     def __enter__(self):
-        return self
+        return self.event_handler
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         close_method = getattr(self.response_iterator, "close", None)
         if callable(close_method):
             close_method()
 
-    def __iter__(self):
-        return self
 
-    def __next__(self) -> Tuple[str, Union[str, StreamEventData]]:
-        if self.done:
-            raise StopIteration
-        while True:
-            try:
-                chunk = next(self.response_iterator)
-                self.buffer += chunk.decode("utf-8")
-            except StopIteration:
-                if self.buffer:
-                    event_data_str, self.buffer = self.buffer, ""
-                    if event_data_str:
-                        return self._process_event(event_data_str)
-                raise
-
-            while "\n\n" in self.buffer:
-                event_data_str, self.buffer = self.buffer.split("\n\n", 1)
-                return self._process_event(event_data_str)
-
-    def _parse_event_data(self, event_data_str: str) -> Tuple[str, Union[str, StreamEventData], str]:
-        event_lines = event_data_str.strip().split("\n")
-        event_type = None
-        event_data = ""
-        error_string = ""
-
-        for line in event_lines:
-            if line.startswith("event:"):
-                event_type = line.split(":", 1)[1].strip()
-            elif line.startswith("data:"):
-                event_data = line.split(":", 1)[1].strip()
-
-        if not event_type:
-            raise ValueError("Event type not specified in the event data.")
-
-        try:
-            parsed_data = json.loads(event_data)
-        except json.JSONDecodeError:
-            parsed_data = event_data
-
-        # Workaround for service bug: Rename 'expires_at' to 'expired_at'
-        if event_type.startswith("thread.run.step") and isinstance(parsed_data, dict) and "expires_at" in parsed_data:
-            parsed_data["expired_at"] = parsed_data.pop("expires_at")
-
-        # Map to the appropriate class instance
-        if event_type in {
-            AgentStreamEvent.THREAD_RUN_CREATED.value,
-            AgentStreamEvent.THREAD_RUN_QUEUED.value,
-            AgentStreamEvent.THREAD_RUN_IN_PROGRESS.value,
-            AgentStreamEvent.THREAD_RUN_REQUIRES_ACTION.value,
-            AgentStreamEvent.THREAD_RUN_COMPLETED.value,
-            AgentStreamEvent.THREAD_RUN_FAILED.value,
-            AgentStreamEvent.THREAD_RUN_CANCELLING.value,
-            AgentStreamEvent.THREAD_RUN_CANCELLED.value,
-            AgentStreamEvent.THREAD_RUN_EXPIRED.value,
-        }:
-            event_data_obj = _safe_instantiate(ThreadRun, parsed_data)
-        elif event_type in {
-            AgentStreamEvent.THREAD_RUN_STEP_CREATED.value,
-            AgentStreamEvent.THREAD_RUN_STEP_IN_PROGRESS.value,
-            AgentStreamEvent.THREAD_RUN_STEP_COMPLETED.value,
-            AgentStreamEvent.THREAD_RUN_STEP_FAILED.value,
-            AgentStreamEvent.THREAD_RUN_STEP_CANCELLED.value,
-            AgentStreamEvent.THREAD_RUN_STEP_EXPIRED.value,
-        }:
-            event_data_obj = _safe_instantiate(RunStep, parsed_data)
-        elif event_type in {
-            AgentStreamEvent.THREAD_MESSAGE_CREATED.value,
-            AgentStreamEvent.THREAD_MESSAGE_IN_PROGRESS.value,
-            AgentStreamEvent.THREAD_MESSAGE_COMPLETED.value,
-            AgentStreamEvent.THREAD_MESSAGE_INCOMPLETE.value,
-        }:
-            event_data_obj = _safe_instantiate(ThreadMessage, parsed_data)
-        elif event_type == AgentStreamEvent.THREAD_MESSAGE_DELTA.value:
-            event_data_obj = _safe_instantiate(MessageDeltaChunk, parsed_data)
-        elif event_type == AgentStreamEvent.THREAD_RUN_STEP_DELTA.value:
-            event_data_obj = _safe_instantiate(RunStepDeltaChunk, parsed_data)
-        else:
-            event_data_obj = ""
-            error_string = str(parsed_data)
-
-        return event_type, event_data_obj, error_string
-
-    def _process_event(self, event_data_str: str) -> Tuple[str, Union[str, StreamEventData]]:
-        event_type, event_data_obj, error_string = self._parse_event_data(event_data_str)
-
-        if (
-            isinstance(event_data_obj, ThreadRun)
-            and event_data_obj.status == "requires_action"
-            and isinstance(event_data_obj.required_action, SubmitToolOutputsAction)
-        ):
-            self.submit_tool_outputs(event_data_obj, self.event_handler)
-        if self.event_handler:
-            try:
-                if isinstance(event_data_obj, MessageDeltaChunk):
-                    self.event_handler.on_message_delta(event_data_obj)
-                elif isinstance(event_data_obj, ThreadMessage):
-                    self.event_handler.on_thread_message(event_data_obj)
-                elif isinstance(event_data_obj, ThreadRun):
-                    self.event_handler.on_thread_run(event_data_obj)
-                elif isinstance(event_data_obj, RunStep):
-                    self.event_handler.on_run_step(event_data_obj)
-                elif isinstance(event_data_obj, RunStepDeltaChunk):
-                    self.event_handler.on_run_step_delta(event_data_obj)
-                elif event_type == AgentStreamEvent.ERROR:
-                    self.event_handler.on_error(error_string)
-                elif event_type == AgentStreamEvent.DONE:
-                    self.event_handler.on_done()
-                    self.done = True  # Mark the stream as done
-                else:
-                    self.event_handler.on_unhandled_event(event_type, event_data_obj)
-            except Exception as e:  # pylint: disable=broad-exception-caught
-                logging.error("Error in event handler for event '%s': %s", event_type, e)
-
-        return event_type, event_data_obj
-
-    def until_done(self) -> None:
-        """
-        Iterates through all events until the stream is marked as done.
-        """
-        try:
-            for _ in self:
-                pass  # The EventHandler handles the events
-        except StopIteration:
-            pass
-
-
-class ThreadMessages:
-    """
-    Represents a collection of messages in a thread.
-
-    :param pageable_list: The pageable list of messages.
-    :type pageable_list: ~azure.ai.projects.models.OpenAIPageableListOfThreadMessage
-
-    :return: A collection of messages.
-    :rtype: ~azure.ai.projects.models.ThreadMessages
-    """
-
-    def __init__(self, pageable_list: OpenAIPageableListOfThreadMessage):
-        self._messages = pageable_list.data
-
-    @property
-    def messages(self) -> List[ThreadMessage]:
-        """Returns all messages in the messages.
-
-
-        :rtype: List[ThreadMessage]
-        """
-        return self._messages
+class OpenAIPageableListOfThreadMessage(OpenAIPageableListOfThreadMessageGenerated):
 
     @property
     def text_messages(self) -> List[MessageTextContent]:
@@ -1340,9 +1616,7 @@ class ThreadMessages:
 
         :rtype: List[MessageTextContent]
         """
-        texts = [
-            content for msg in self._messages for content in msg.content if isinstance(content, MessageTextContent)
-        ]
+        texts = [content for msg in self.data for content in msg.text_messages]
         return texts
 
     @property
@@ -1351,9 +1625,7 @@ class ThreadMessages:
 
         :rtype: List[MessageImageFileContent]
         """
-        return [
-            content for msg in self._messages for content in msg.content if isinstance(content, MessageImageFileContent)
-        ]
+        return [content for msg in self.data for content in msg.image_contents]
 
     @property
     def file_citation_annotations(self) -> List[MessageTextFileCitationAnnotation]:
@@ -1361,14 +1633,7 @@ class ThreadMessages:
 
         :rtype: List[MessageTextFileCitationAnnotation]
         """
-        annotations = [
-            annotation
-            for msg in self._messages
-            for content in msg.content
-            if isinstance(content, MessageTextContent)
-            for annotation in content.text.annotations
-            if isinstance(annotation, MessageTextFileCitationAnnotation)
-        ]
+        annotations = [annotation for msg in self.data for annotation in msg.file_citation_annotations]
         return annotations
 
     @property
@@ -1377,14 +1642,7 @@ class ThreadMessages:
 
         :rtype: List[MessageTextFilePathAnnotation]
         """
-        annotations = [
-            annotation
-            for msg in self._messages
-            for content in msg.content
-            if isinstance(content, MessageTextContent)
-            for annotation in content.text.annotations
-            if isinstance(annotation, MessageTextFilePathAnnotation)
-        ]
+        annotations = [annotation for msg in self.data for annotation in msg.file_path_annotations]
         return annotations
 
     def get_last_message_by_sender(self, sender: str) -> Optional[ThreadMessage]:
@@ -1396,7 +1654,7 @@ class ThreadMessages:
         :return: The last message from the specified sender.
         :rtype: ~azure.ai.projects.models.ThreadMessage
         """
-        for msg in self._messages:
+        for msg in self.data:
             if msg.role == sender:
                 return msg
         return None
@@ -1410,7 +1668,7 @@ class ThreadMessages:
         :return: The last text message from the specified sender.
         :rtype: ~azure.ai.projects.models.MessageTextContent
         """
-        for msg in self._messages:
+        for msg in self.data:
             if msg.role == sender:
                 for content in msg.content:
                     if isinstance(content, MessageTextContent):
@@ -1421,21 +1679,34 @@ class ThreadMessages:
 __all__: List[str] = [
     "AgentEventHandler",
     "AgentRunStream",
-    "AsyncAgentEventHandler",
     "AsyncAgentRunStream",
     "AsyncFunctionTool",
     "AsyncToolSet",
+    "AzureAISearchTool",
+    "AzureFunctionTool",
+    "BaseAsyncAgentEventHandler",
+    "BaseAgentEventHandler",
     "CodeInterpreterTool",
     "ConnectionProperties",
-    "ThreadMessages",
+    "AsyncAgentEventHandler",
+    "OpenAIPageableListOfThreadMessage",
     "FileSearchTool",
     "FunctionTool",
+    "OpenApiTool",
     "BingGroundingTool",
+    "StreamEventData",
     "SharepointTool",
+    "FabricTool",
     "AzureAISearchTool",
     "SASTokenCredential",
     "Tool",
     "ToolSet",
+    "BaseAsyncAgentEventHandlerT",
+    "BaseAgentEventHandlerT",
+    "ThreadMessage",
+    "MessageTextFileCitationAnnotation",
+    "MessageDeltaChunk",
+    "MessageAttachment",
 ]  # Add all objects you want publicly available to users at this package level
 
 

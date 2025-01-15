@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 # This script is used to create issues for client libraries failing the vnext of mypy, pyright, and pylint.
+from __future__ import annotations
 
 import sys
 import os
@@ -13,8 +14,11 @@ import datetime
 import re
 import calendar
 import typing
+import pathlib
 from typing_extensions import Literal
 from github import Github, Auth
+
+from ci_tools.variables import discover_repo_root
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -85,10 +89,46 @@ def get_date_for_version_bump(today: datetime.datetime) -> str:
     return merge_date.strftime("%Y-%m-%d")
 
 
-def create_vnext_issue(package_name: str, check_type: CHECK_TYPE) -> None:
+def get_labels(package_name: str, service: str) -> list[str]:
+    repo_root = discover_repo_root()
+    codeowners_path = pathlib.Path(repo_root) / ".github" / "CODEOWNERS"
+    with open(codeowners_path, "r") as codeowners_file:
+        codeowners = codeowners_file.readlines()
+
+    label = ""
+    service_label = ""
+    labels = []
+    if "mgmt" in package_name:
+        labels.append("Mgmt")
+    for line in codeowners:
+        if line.startswith("# PRLabel:"):
+            label = line.split("# PRLabel: %")[1].strip()
+        if label and line.startswith("/sdk/"):
+            parts = [part for part in line.split("@")[0].split("/") if part.strip()][1:]
+            if len(parts) > 2:
+                continue
+            service_directory = parts[0]
+            try:
+                library = parts[1]
+                if package_name == library:
+                    labels.append(label)
+                    return labels
+            except IndexError:
+                if service_directory == service:
+                    service_label = label
+
+    if service_label:
+        labels.append(service_label)
+    return labels
+
+
+def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
     """This is called when a client library fails a vnext check.
     An issue is created with the details or an existing issue is updated with the latest information."""
 
+    package_path = pathlib.Path(package_dir)
+    package_name = package_path.name
+    service_directory = package_path.parent.name
     auth = Auth.Token(os.environ["GH_TOKEN"])
     g = Github(auth=auth)
 
@@ -124,8 +164,10 @@ def create_vnext_issue(package_name: str, check_type: CHECK_TYPE) -> None:
 
     # create an issue for the library failing the vnext check
     if not vnext_issue:
+        labels = get_labels(package_name, service_directory)
+        labels.extend([check_type])
         logging.info(f"Issue does not exist for {package_name} with {check_type} version {version}. Creating...")
-        repo.create_issue(title=title, body=template, labels=[check_type])
+        repo.create_issue(title=title, body=template, labels=labels)
         return
 
     # an issue exists, let's update it so it reflects the latest typing/linting errors

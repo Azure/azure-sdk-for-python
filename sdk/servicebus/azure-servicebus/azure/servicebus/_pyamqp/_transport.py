@@ -1,4 +1,4 @@
-# -------------------------------------------------------------------------  # pylint: disable=file-needs-copyright-header
+# -------------------------------------------------------------------------  # pylint: disable=file-needs-copyright-header,useless-suppression
 # This is a fork of the transport.py which was originally written by Barry Pederson and
 # maintained by the Celery project: https://github.com/celery/py-amqp.
 #
@@ -31,9 +31,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
 # -------------------------------------------------------------------------
-
-
-from __future__ import absolute_import, unicode_literals
 
 import errno
 import re
@@ -96,7 +93,7 @@ _UNAVAIL = {errno.EAGAIN, errno.EINTR, errno.ENOENT, errno.EWOULDBLOCK}
 AMQP_PORT = 5672
 AMQPS_PORT = 5671
 AMQP_FRAME = memoryview(b"AMQP")
-EMPTY_BUFFER = bytes()
+EMPTY_BUFFER = b""
 SIGNED_INT_MAX = 0x7FFFFFFF
 
 # Match things like: [fe80::1]:5432, from RFC 2732
@@ -491,9 +488,13 @@ class SSLTransport(_AbstractTransport):
 
     def __init__(self, host, *, port=AMQPS_PORT, socket_timeout=None, ssl_opts=None, **kwargs):
         self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else {}
-        self.sslopts["server_hostname"] = host
+        self._custom_endpoint = kwargs.get("custom_endpoint")
+        self._custom_port = kwargs.get("custom_port")
+        self.sslopts["server_hostname"] = self._custom_endpoint or host
         self._read_buffer = BytesIO()
-        super(SSLTransport, self).__init__(host, port=port, socket_timeout=socket_timeout, **kwargs)
+        super(SSLTransport, self).__init__(
+            self._custom_endpoint or host, port=self._custom_port or port, socket_timeout=socket_timeout, **kwargs
+        )
 
     def _setup_transport(self):
         """Wrap the socket in an SSL object."""
@@ -745,7 +746,7 @@ class WebSocketTransport(_AbstractTransport):
             self.close()
             raise
 
-    def _read(self, n, initial=False, buffer=None, _errnos=None):  # pylint: disable=unused-argument
+    def _read(self, n, initial=False, buffer=None, _errnos=None):
         """Read exactly n bytes from the peer.
 
         :param int n: The number of bytes to read.

@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
 
+from datetime import datetime
 from typing import (
     Any, AnyStr, AsyncIterable, Dict, IO, Iterable, Optional, Union,
     TYPE_CHECKING)
@@ -23,7 +24,6 @@ from ..aio._upload_helper import upload_datalake_file
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
-    from datetime import datetime
     from .._models import ContentSettings
 
 
@@ -328,9 +328,9 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             #other-client--per-operation-configuration>`_.
         :rtype: None
         """
-        try:
+        if isinstance(expires_on, datetime):
             expires_on = convert_datetime_to_rfc1123(expires_on)
-        except AttributeError:
+        elif expires_on is not None:
             expires_on = str(expires_on)
         await self._datalake_client_for_blob_operation.path.set_expiry(expiry_options, expires_on=expires_on,
                                                                        **kwargs)

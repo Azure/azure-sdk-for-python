@@ -358,7 +358,7 @@ class TestTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
         table = await self._create_table(ts)
         try:
             # Act
-            identifiers = dict()
+            identifiers = {}
             for i in range(0, 6):
                 identifiers["id{}".format(i)] = None
 

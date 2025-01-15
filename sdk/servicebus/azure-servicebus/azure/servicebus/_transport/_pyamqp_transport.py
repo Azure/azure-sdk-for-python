@@ -441,7 +441,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         connection.close()
 
     @staticmethod
-    def create_send_client(config: "Configuration", **kwargs: Any) -> "SendClient":
+    def create_send_client(config: "Configuration", **kwargs: Any) -> "SendClient": # pylint: disable=docstring-keyword-should-match-keyword-only
         """
         Creates and returns the pyamqp SendClient.
         :param ~azure.servicebus._configuration.Configuration config: The configuration. Required.
@@ -467,6 +467,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
             transport_type=config.transport_type,
             http_proxy=config.http_proxy,
             socket_timeout=config.socket_timeout,
+            use_tls=config.use_tls,
             **kwargs,
         )
 
@@ -477,7 +478,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         logger: "Logger",
         timeout: int,
         last_exception: Optional[Exception],
-    ) -> None:  # pylint: disable=unused-argument
+    ) -> None:
         """
         Handles sending of service bus messages.
         :param ~azure.servicebus.ServiceBusSender sender: The sender with handler
@@ -493,7 +494,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
             if isinstance(message._message, list):  # BatchMessage
                 sender._handler.send_message(
                     BatchMessage(*message._message), timeout=timeout
-                )  # pylint:disable=protected-access
+                )
             else:  # Message
                 sender._handler.send_message(message._message, timeout=timeout)  # pylint:disable=protected-access
         except TimeoutError as exc:
@@ -504,7 +505,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
     @staticmethod
     def add_batch(
         sb_message_batch: "ServiceBusMessageBatch", outgoing_sb_message: "ServiceBusMessage"
-    ) -> None:  # pylint: disable=unused-argument
+    ) -> None:
         """
         Add ServiceBusMessage to the data body of the BatchMessage.
         :param ~azure.servicebus.ServiceBusMessageBatch sb_message_batch: ServiceBusMessageBatch to add data to.
@@ -529,7 +530,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         return source
 
     @staticmethod
-    def create_receive_client(receiver: "ServiceBusReceiver", **kwargs: "Any") -> "ReceiveClient":
+    def create_receive_client(receiver: "ServiceBusReceiver", **kwargs: "Any") -> "ReceiveClient": # pylint: disable=docstring-keyword-should-match-keyword-only
         """
         Creates and returns the receive client.
         :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver.
@@ -596,6 +597,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
             ),
             on_attach=functools.partial(PyamqpTransport.on_attach, receiver),
             socket_timeout=config.socket_timeout,
+            use_tls=config.use_tls,
             **kwargs,
         )
 
@@ -608,7 +610,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         :param ServiceBusReceiver receiver: Required.
         :param AttachFrame attach_frame: Required.
         """
-        # pylint: disable=protected-access, unused-argument
+        # pylint: disable=protected-access
         if receiver._session and attach_frame.source.address.decode() == receiver._entity_uri:
             # This has to live on the session object so that autorenew has access to it.
             receiver._session._session_start = utc_now()
@@ -728,7 +730,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         return message
 
     @staticmethod
-    def get_current_time(handler: "ReceiveClient") -> float:  # pylint: disable=unused-argument
+    def get_current_time(handler: "ReceiveClient") -> float:
         """
         Gets the current time.
         :param ~pyamqp.ReceiveClient handler: Client with link to get current time.
@@ -804,7 +806,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         raise ValueError(f"Unsupported settle operation type: {settle_operation}")
 
     @staticmethod
-    def parse_received_message(
+    def parse_received_message( # pylint:disable=docstring-keyword-should-match-keyword-only
         message: "Message", message_type: Type["ServiceBusReceivedMessage"], **kwargs: Any
     ) -> List["ServiceBusReceivedMessage"]:
         """
@@ -835,7 +837,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         return message.value
 
     @staticmethod
-    def create_token_auth(
+    def create_token_auth( # pylint: disable=docstring-keyword-should-match-keyword-only
         auth_uri: str, get_token: Callable[..., AccessToken], token_type: bytes, config: "Configuration", **kwargs: Any
     ) -> "JWTTokenAuth":
         """
@@ -852,7 +854,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         :rtype: ~pyamqp.authentication.JWTTokenAuth
         """
         # TODO: figure out why we're passing all these args to pyamqp JWTTokenAuth, which aren't being used
-        update_token = kwargs.pop("update_token")  # pylint: disable=unused-variable
+        update_token = kwargs.pop("update_token")
         if update_token:
             # update_token not actually needed by pyamqp
             # just using to detect which kwargs to pass
@@ -874,7 +876,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         config: "Configuration",
         reply_to: str,
         **kwargs: Any,
-    ) -> "Message":  # pylint:disable=unused-argument
+    ) -> "Message":
         """
         :param message: The message to send in the management request.
         :type message: Any

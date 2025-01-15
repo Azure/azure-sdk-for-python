@@ -8,9 +8,7 @@ from dateutil import parser
 from azure.communication.identity import CommunicationTokenScope
 
 
-def is_token_expiration_within_allowed_deviation(
-    expected_token_expiration, token_expires_in, allowed_deviation=0.05
-):
+def is_token_expiration_within_allowed_deviation(expected_token_expiration, token_expires_in, allowed_deviation=0.05):
     # type: (timedelta, datetime, float) -> bool
     utc_now = datetime.now(timezone.utc)
     token_expiration = parser.parse(str(token_expires_in))

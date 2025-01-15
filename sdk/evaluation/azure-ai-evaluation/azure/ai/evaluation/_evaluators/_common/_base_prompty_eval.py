@@ -10,6 +10,7 @@ from promptflow.core import AsyncPrompty
 from typing_extensions import override
 
 from azure.ai.evaluation._common.constants import PROMPT_BASED_REASON_EVALUATORS
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from ..._common.utils import construct_prompty_model_config, validate_model_config, parse_quality_evaluator_reason_score
 from . import EvaluatorBase
 
@@ -47,10 +48,12 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         self._prompty_file = prompty_file
         super().__init__(eval_last_turn=eval_last_turn)
 
+        subclass_name = self.__class__.__name__
+        user_agent = f"{USER_AGENT} (type=evaluator subtype={subclass_name})"
         prompty_model_config = construct_prompty_model_config(
             validate_model_config(model_config),
             self._DEFAULT_OPEN_API_VERSION,
-            USER_AGENT,
+            user_agent,
         )
 
         self._flow = AsyncPrompty.load(source=prompty_file, model=prompty_model_config)
@@ -69,6 +72,14 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         :return: The evaluation result.
         :rtype: Dict
         """
+        if "query" not in eval_input and "response" not in eval_input:
+            raise EvaluationException(
+                message="Only text conversation inputs are supported.",
+                internal_message="Only text conversation inputs are supported.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.CONVERSATION,
+            )
         llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
 
         score = math.nan
