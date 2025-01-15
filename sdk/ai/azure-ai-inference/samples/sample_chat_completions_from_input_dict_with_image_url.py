@@ -18,7 +18,7 @@ DESCRIPTION:
     https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/README.md#key-concepts
 
 USAGE:
-    python sample_chat_completions_from_input_json_with_image_url.py
+    python sample_chat_completions_from_input_dict_with_image_url.py
 
     Set these two or three environment variables before running the sample:
     1) AZURE_AI_CHAT_ENDPOINT - Your endpoint URL, in the form 
@@ -33,7 +33,7 @@ USAGE:
 # pyright: reportAttributeAccessIssue=false
 
 
-def sample_chat_completions_from_input_json_with_image_url():
+def sample_chat_completions_from_input_dict_with_image_url():
     import os
     from azure.ai.inference import ChatCompletionsClient
     from azure.core.credentials import AzureKeyCredential
@@ -85,4 +85,4 @@ def sample_chat_completions_from_input_json_with_image_url():
 
 
 if __name__ == "__main__":
-    sample_chat_completions_from_input_json_with_image_url()
+    sample_chat_completions_from_input_dict_with_image_url()

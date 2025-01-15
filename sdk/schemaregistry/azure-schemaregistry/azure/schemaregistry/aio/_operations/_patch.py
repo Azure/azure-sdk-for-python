@@ -6,7 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, IO, Any, TYPE_CHECKING
+from typing import List, IO, Any, TYPE_CHECKING, Optional
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from azure.core.exceptions import (
@@ -37,8 +37,15 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
     """
 
     @distributed_trace_async
-    async def _get_schema_properties_by_content(  # pylint: disable=inconsistent-return-statements
-        self, group_name: str, schema_name: str, schema_content: IO, **kwargs: Any
+    async def _get_schema_properties_by_content(    # type: ignore[override]
+        self,
+        group_name: str,
+        schema_name: str,
+        schema_content: IO,
+        *,
+        content_type: Optional[str] = None,
+        stream: bool = False,
+        **kwargs: Any
     ) -> None:
         """Get properties for existing schema.
 
@@ -51,9 +58,9 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
         :type schema_name: str
         :param schema_content: String representation (UTF-8) of the registered schema. Required.
         :type schema_content: IO
-        :keyword content_type: The content type for given schema. Default value is "text/plain;
+        :keyword content_type: The content type for given schema. If None, value will be "text/plain;
          charset=utf-8".
-        :paramtype content_type: str
+        :paramtype content_type: str or None
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -71,7 +78,7 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "text/plain; charset=utf-8"))
+        _content_type: str = content_type or _headers.pop("Content-Type", "text/plain; charset=utf-8")
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _content = schema_content
@@ -79,7 +86,7 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
         request = build_schema_registry_get_schema_properties_by_content_request(
             group_name=group_name,
             schema_name=schema_name,
-            content_type=content_type,
+            content_type=_content_type,
             api_version=self._config.api_version,
             content=_content,
             headers=_headers,
@@ -95,7 +102,7 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = stream
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
@@ -120,8 +127,15 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
             return cls(pipeline_response, None, response_headers)
 
     @distributed_trace_async
-    async def _register_schema(  # pylint: disable=inconsistent-return-statements
-        self, group_name: str, schema_name: str, content: IO, **kwargs: Any
+    async def _register_schema( # type: ignore[override]
+        self,
+        group_name: str,
+        schema_name: str,
+        schema_content: IO,
+        *,
+        content_type: Optional[str] = None,
+        stream: bool = False,
+        **kwargs: Any
     ) -> None:
         """Register new schema.
 
@@ -133,11 +147,11 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
         :type group_name: str
         :param schema_name: Name of schema. Required.
         :type schema_name: str
-        :param content: String representation (UTF-8) of the schema. Required.
-        :type content: IO
-        :keyword content_type: The content type for given schema. Default value is "text/plain;
+        :param schema_content: String representation (UTF-8) of the schema. Required.
+        :type schema_content: IO
+        :keyword content_type: The content type for given schema. If None, value will be "text/plain;
          charset=utf-8".
-        :paramtype content_type: str
+        :paramtype content_type: str or None
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -155,15 +169,15 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "text/plain; charset=utf-8"))
+        _content_type: str = content_type or _headers.pop("Content-Type", "text/plain; charset=utf-8")
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = content
+        _content = schema_content
 
         request = build_schema_registry_register_schema_request(
             group_name=group_name,
             schema_name=schema_name,
-            content_type=content_type,
+            content_type=_content_type,
             api_version=self._config.api_version,
             content=_content,
             headers=_headers,
@@ -179,7 +193,7 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = stream
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
