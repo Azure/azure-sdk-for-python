@@ -112,9 +112,13 @@ parser.add_argument(
     type=str,
     default="Error",
 )
+# rotate logs by default, if you want to disable it, use --no-rotating-logs flag
+parser.add_argument("--no-rotating-logs", action="store_true")
 
 
 args = parser.parse_args()
+
+rotating_logs = not args.no_rotating_logs
 starting_position = parse_starting_position(args)
 print_console = args.print_console or (os.environ.get("PRINT_CONSOLE") == "1")
 debug_level = getattr(logging, args.debug_level.upper(), logging.ERROR)
@@ -127,7 +131,7 @@ else:
     log_filename += ".log"
 logdir = os.environ.get("DEBUG_SHARE")
 logfilepath = f"{logdir}/{log_filename}"
-LOGGER = get_logger(logfilepath, "stress_receive_sync", level=debug_level, print_console=print_console)
+LOGGER = get_logger(logfilepath, "stress_receive_sync", level=debug_level, print_console=print_console, rotating_logs=rotating_logs)
 LOG_PER_COUNT = args.output_interval
 
 start_time = time.perf_counter()
