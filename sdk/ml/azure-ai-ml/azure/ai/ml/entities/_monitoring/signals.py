@@ -360,7 +360,7 @@ class MonitoringSignal(RestTranslatableMixin):
             ~azure.ai.ml.entities.GenerationSafetyQualityMonitoringMetricThreshold,
 
         ]]]
-    :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
+    :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to False.
     :paramtype alert_enabled: bool
     """
 
@@ -433,7 +433,7 @@ class DataSignal(MonitoringSignal):
         ~azure.ai.ml.entities.GenerationSafetyQualityMonitoringMetricThreshold,
 
     ]]
-    :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
+    :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to False.
     :paramtype alert_enabled: bool
     """
 
@@ -470,7 +470,7 @@ class DataDriftSignal(DataSignal):
     :paramtype reference_data: ~azure.ai.ml.entities.ReferenceData
     :param metric_thresholds: Metrics to calculate and their associated thresholds
     :paramtype metric_thresholds: ~azure.ai.ml.entities.DataDriftMetricThreshold
-    :param alert_enabled: The current notification mode for this signal
+    :param alert_enabled: Whether or not to enable alerts for the signal. Defaults to False.
     :paramtype alert_enabled: bool
     :param data_segment: The data segment used for scoping on a subset of the data population.
     :paramtype data_segment: ~azure.ai.ml.entities.DataSegment
@@ -573,7 +573,7 @@ class PredictionDriftSignal(MonitoringSignal):
     :paramtype reference_data: ~azure.ai.ml.entities.ReferenceData
     :param metric_thresholds: Metrics to calculate and their associated thresholds
     :paramtype metric_thresholds: ~azure.ai.ml.entities.DataDriftMetricThreshold
-    :param alert_enabled: The current notification mode for this signal
+    :param alert_enabled: Whether or not to enable alerts for the signal. Defaults to False.
     :paramtype alert_enabled: bool
     :param properties: Dictionary of additional properties.
     :paramtype properties: dict[str, str]
@@ -657,7 +657,7 @@ class DataQualitySignal(DataSignal):
     :paramtype reference_data: ~azure.ai.ml.entities.ReferenceData
     :param metric_thresholds: Metrics to calculate and their associated thresholds
     :paramtype metric_thresholds: ~azure.ai.ml.entities.DataDriftMetricThreshold
-    :param alert_enabled: The current notification mode for this signal
+    :param alert_enabled: Whether or not to enable alerts for the signal. Defaults to False.
     :paramtype alert_enabled: bool
     :keyword features: The feature filter identifying which feature(s) to calculate drift over.
     :paramtype features: Union[List[str], ~azure.ai.ml.entities.MonitorFeatureFilter, Literal['all_features']]
@@ -840,7 +840,7 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
     :keyword metric_thresholds: Metrics to calculate and their
         associated thresholds.
     :paramtype metric_thresholds: ~azure.ai.ml.entities.FeatureAttributionDriftMetricThreshold
-    :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
+    :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to False.
     :paramtype alert_enabled: bool
     """
 
@@ -907,7 +907,7 @@ class ModelPerformanceSignal(RestTranslatableMixin):
     :paramtype model_type: ~azure.ai.ml.constants.MonitorModelType
     :keyword data_segment: The data segment to calculate performance against.
     :paramtype data_segment: ~azure.ai.ml.entities.DataSegment
-    :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
+    :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to False.
     :paramtype alert_enabled: bool
     """
 
@@ -1017,7 +1017,7 @@ class CustomMonitoringSignal(RestTranslatableMixin):
     :paramtype component_id: str
     :keyword connection: Specify connection with environment variables and secret configs.
     :paramtype connection: Optional[~azure.ai.ml.entities.WorkspaceConnection]
-    :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
+    :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to False.
     :paramtype alert_enabled: bool
     :keyword properties: A dictionary of custom properties for the signal.
     :paramtype properties: Optional[dict[str, str]]
@@ -1145,7 +1145,7 @@ class GenerationSafetyQualitySignal(RestTranslatableMixin):
     :paramtype input_datasets: Optional[dict[str, ~azure.ai.ml.entities.LlmData]]
     :keyword metric_thresholds: Metrics to calculate and their associated thresholds.
     :paramtype metric_thresholds: ~azure.ai.ml.entities.GenerationSafetyQualityMonitoringMetricThreshold
-    :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
+    :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to False.
     :paramtype alert_enabled: bool
     :keyword connection_id: Gets or sets the connection ID used to connect to the
         content generation endpoint.
@@ -1216,7 +1216,7 @@ class GenerationTokenStatisticsSignal(RestTranslatableMixin):
     :paramtype input_dataset: Optional[~azure.ai.ml.entities.LlmData]
     :keyword metric_thresholds: Metrics to calculate and their associated thresholds. Defaults to App Traces
     :paramtype metric_thresholds: Optional[~azure.ai.ml.entities.GenerationTokenStatisticsMonitorMetricThreshold]
-    :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
+    :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to False.
     :paramtype alert_enabled: bool
     :keyword properties: The properties of the signal
     :paramtype properties: Optional[Dict[str, str]]
