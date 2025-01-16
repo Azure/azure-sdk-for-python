@@ -10,7 +10,9 @@ pr:
   paths:
     include:
     - "*"
-
+    # Note: The ExcludePaths template below needs to duplicate
+    # any excludes here. The reason being is that we can't access
+    # pr->paths->exclude
     exclude:
     - sdk/cosmos
 
@@ -26,3 +28,7 @@ extends:
     BuildTargetingString: "*"
     TestProxy: true
     TestTimeOutInMinutes: 180
+    # See pr->paths->exclude comment above. Anything added/removed there
+    # needs to be added/removed here.
+    ExcludePaths:
+      - sdk/cosmos
