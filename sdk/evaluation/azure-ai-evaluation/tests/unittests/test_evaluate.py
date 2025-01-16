@@ -11,6 +11,7 @@ import pytest
 from pandas.testing import assert_frame_equal
 from promptflow.client import PFClient
 
+from ci_tools.variables import in_ci
 from azure.ai.evaluation._common.math import list_mean
 from azure.ai.evaluation import (
     ContentSafetyEvaluator,
@@ -790,4 +791,8 @@ class TestEvaluate:
             with pytest.raises(EvaluationException) as exc_info:
                 counting_eval._set_conversation_aggregator(custom_aggregator)
                 _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
-            assert "Can't pickle local object" in exc_info.value.args[0]
+            # CI produces a slightly different error message
+            if in_ci():
+                assert "Can't get local object" in exc_info.value.args[0]
+            else:
+                assert "Can't pickle local object" in exc_info.value.args[0]
