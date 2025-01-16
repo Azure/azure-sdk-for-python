@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
-
 from typing import Any, Optional, cast
 
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
@@ -163,15 +161,11 @@ class FineTuningVertical(FineTuningJob):
     def _restore_inputs(self) -> None:
         """Restore UriFileJobInputs to JobInputs within data_settings."""
         if isinstance(self.training_data, UriFileJobInput):
-            self.training_data = Input(
-                type=AssetTypes.URI_FILE, path=self.training_data.uri  # pylint: disable=no-member
-            )
+            self.training_data = Input(type=AssetTypes.URI_FILE, path=self.training_data.uri)
         if isinstance(self.validation_data, UriFileJobInput):
-            self.validation_data = Input(
-                type=AssetTypes.URI_FILE, path=self.validation_data.uri  # pylint: disable=no-member
-            )
+            self.validation_data = Input(type=AssetTypes.URI_FILE, path=self.validation_data.uri)
         if isinstance(self.model, MLFlowModelJobInput):
-            self.model = Input(type=AssetTypes.MLFLOW_MODEL, path=self.model.uri)  # pylint: disable=no-member
+            self.model = Input(type=AssetTypes.MLFLOW_MODEL, path=self.model.uri)
 
     def __eq__(self, other: object) -> bool:
         """Returns True if both instances have the same values.

@@ -366,5 +366,5 @@ class InternalComponent(Component, AdditionalIncludesMixin):
                 ignore_file=rebased_ignore_file,
             )
 
-    def __call__(self, *args, **kwargs) -> InternalBaseNode:  # pylint: disable=useless-super-delegation
+    def __call__(self, *args, **kwargs) -> InternalBaseNode:
         return super(InternalComponent, self).__call__(*args, **kwargs)

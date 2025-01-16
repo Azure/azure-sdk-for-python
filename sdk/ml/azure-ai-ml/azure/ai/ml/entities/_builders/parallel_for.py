@@ -167,7 +167,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
             raise UserErrorException("Unsupported items type: {}".format(type(items)))
         return result
 
-    def _to_rest_object(self, **kwargs: Any) -> dict:  # pylint: disable=unused-argument
+    def _to_rest_object(self, **kwargs: Any) -> dict:
         """Convert self to a rest object for remote call.
 
         :return: The rest object
@@ -307,7 +307,6 @@ class ParallelFor(LoopNode, NodeIOMixin):
         validation_result: MutableValidationResult,
         body_component: Optional[Union[str, Component]] = None,
     ) -> None:
-        # pylint: disable=protected-access
         meta: dict = {}
         # all items have to be dict and have matched meta
         for item in items:
@@ -335,7 +334,6 @@ class ParallelFor(LoopNode, NodeIOMixin):
 
     @classmethod
     def _validate_item_value_type(cls, item: dict, validation_result: MutableValidationResult) -> None:
-        # pylint: disable=protected-access
         supported_types = (Input, str, bool, int, float, PipelineInput)
         for _, val in item.items():
             if not isinstance(val, supported_types):
