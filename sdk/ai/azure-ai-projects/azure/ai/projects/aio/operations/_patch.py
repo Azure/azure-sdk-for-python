@@ -52,7 +52,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from openai import AsyncAzureOpenAI
 
-    from azure.ai.inference.aio import ChatCompletionsClient, EmbeddingsClient
+    from azure.ai.inference.aio import ChatCompletionsClient, EmbeddingsClient, ImageEmbeddingsClient
     from azure.ai.projects import _types
 
 logger = logging.getLogger(__name__)
@@ -314,21 +314,24 @@ class InferenceOperations:
 
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
-                "[InferenceOperations.get_image_embeddings_client] Creating ImageEmbeddingsClient using API key authentication"
+                "[InferenceOperations.get_image_embeddings_client] "
+                "Creating ImageEmbeddingsClient using API key authentication"
             )
             from azure.core.credentials import AzureKeyCredential
 
             client = ImageEmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             logger.debug(
-                "[InferenceOperations.get_image_embeddings_client] Creating ImageEmbeddingsClient using Entra ID authentication"
+                "[InferenceOperations.get_image_embeddings_client] "
+                "Creating ImageEmbeddingsClient using Entra ID authentication"
             )
             client = ImageEmbeddingsClient(
                 endpoint=endpoint, credential=connection.token_credential, credential_scopes=credential_scopes
             )
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(
-                "[InferenceOperations.get_image_embeddings_client] Creating ImageEmbeddingsClient using SAS authentication"
+                "[InferenceOperations.get_image_embeddings_client] "
+                "Creating ImageEmbeddingsClient using SAS authentication"
             )
             raise ValueError("Getting embeddings client from a connection with SAS authentication is not yet supported")
         else:
