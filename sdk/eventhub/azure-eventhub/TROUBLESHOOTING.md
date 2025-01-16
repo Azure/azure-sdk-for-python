@@ -259,7 +259,7 @@ When filing GitHub issues, the following details are requested:
 * What is the traffic pattern like in your Event Hubs?  (i.e. # messages/minute and if the EventHubConsumerClient is always busy or has slow traffic periods.)
 * Repro code and steps
   * This is important as we often cannot reproduce the issue in our environment.
-* Logs.  DEBUG level logs are needed to best help you. but if that is not possible, INFO at least.  Error and warning level logs do not provide enough information.  The period of at least +/- 10 minutes from when the issue occurred. See the [Enable and configure logging](#enable-and-configure-logging) section for more information.
+* Logs.  DEBUG level logs are needed to best help you. If that is not possible, INFO level logs must be provided.  ERROR and WARNING level logs do not provide enough information to help debug the issue in most cases.  The time period for logst must be at least +/- 10 minutes from when the issue occurred. See the [Enable and configure logging](#enable-and-configure-logging) section for more information.
 
 <!-- repo links -->
 [IoTConnectionString]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/samples/async_samples/iot_hub_connection_string_receive_async.py
