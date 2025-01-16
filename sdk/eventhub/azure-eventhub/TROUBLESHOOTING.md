@@ -9,7 +9,10 @@ This troubleshooting guide covers failure investigation techniques, common error
 - [Connectivity issues](#connectivity-issues)
   - [Timeout when connecting to service](#timeout-when-connecting-to-service)
   - [SSL handshake failures](#ssl-handshake-failures)
-  - [Socket exhaustion errors](#socket-exhaustion-errors)
+  - [Managing clients](#managing-clients)
+  - [Adding components to the connection string does not work](#adding-components-to-the-connection-string-does-not-work)
+    - ["TransportType=AmqpWebSockets" Alternative](#transporttypeamqpwebsockets-alternative)
+    - ["Authentication=Managed Identity" Alternative](#authenticationmanaged-identity-alternative)
   - [Connect using an IoT connection string](#connect-using-an-iot-connection-string)
   - [Cannot add components to the connection string](#cannot-add-components-to-the-connection-string)
 - [Enable and configure logging](#enable-and-configure-logging)
@@ -21,8 +24,11 @@ This troubleshooting guide covers failure investigation techniques, common error
   - [412 precondition failures when using an event processor](#412-precondition-failures-when-using-an-event-processor)
   - [Partition ownership changes frequently](#partition-ownership-changes-frequently)
   - ["...current receiver '<RECEIVER_NAME>' with epoch '0' is getting disconnected"](#current-receiver-receiver_name-with-epoch-0-is-getting-disconnected)
+  - [Blocking Calls in Async](#blocking-calls-in-async)
   - [High CPU usage](#high-cpu-usage)
   - [Processor client stops receiving](#processor-client-stops-receiving)
+  - [Duplicate events are being processed](#duplicate-events-are-being-processed)
+  - [Soft Delete or Blob versioning is enabled for a Blob Storage checkpoint store](#soft-delete-or-blob-versioning-is-enabled-for-a-blob-storage-checkpoint-store)
   - [Migrate from legacy to new client library](#migrate-from-legacy-to-new-client-library)
 - [Get additional help](#get-additional-help)
   - [Filing GitHub issues](#filing-github-issues)
@@ -82,11 +88,15 @@ An `AuthenticationError` means that the provided credentials do not allow for th
 
 This error can occur when an intercepting proxy is used.  We recommend testing in your hosting environment with the proxy disabled to verify.
 
-### Socket exhaustion errors
+### Managing Clients
 
-Applications should prefer treating the Event Hubs clients as a singleton, creating and using a single instance through the lifetime of their application.  This is important as each client type manages its connection; creating a new Event Hub client results in a new AMQP connection, which uses a socket.  Additionally, it is essential to be aware that your client is responsible for calling `close()` when it is finished using a client or to use the `with statement` for clients so that they are automatically closed after the flow execution leaves that block.
+Applications should manage how they open and close the eventhub client.  It is essential to be aware that your application is responsible for calling `close()` when it is finished using a client or to use the `with statement` for clients so that they are automatically closed after the flow execution leaves that block. This make sures that the socket connection to the server is closed correctly.
 
-### Connect using an IoT connection string
+### Adding components to the connection string does not work
+
+The current generation of the Event Hubs client library supports connection strings only in the form published by the Azure portal. These are intended to provide basic location and shared key information only; configuring behavior of the clients is done through its options.
+
+Previous generations of the Event Hub clients allowed for some behavior to be configured by adding key/value components to a connection string. These components are no longer recognized and have no effect on client behavior.
 
 Because translating a connection string requires querying the IoT Hub service, the Event Hubs client library cannot use it directly.  The [IoT Hub Connection String Sample][IoTConnectionString] sample describes how to query IoT Hub to translate an IoT connection string into one that can be used with Event Hubs.
 
@@ -96,19 +106,19 @@ Further reading:
 
 #### Adding "TransportType=AmqpWebSockets"
 
-To use web sockets, pass in a kwarg `transport_type = TransportType.AmqpOverWebsocket` during client creation.
+To use web sockets, pass in a kwarg `transport_type = TransportType.AmqpOverWebsocket` during client [creation][WebsocketConfig].
 
 #### Adding "Authentication=Managed Identity"
 
-To authenticate with Managed Identity, see the sample [client_identity_authentication.py][PublishEventsWithAzureIdentity].
+To authenticate with Managed Identity, see the [sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/samples/sync_samples/client_identity_authentication.py).
 
-For more information about the `Azure.Identity` library, check out our [Authentication and the Azure SDK][AuthenticationAndTheAzureSDK] blog post.
+For more information about the `azure.identity` library, check out our [Authentication and the Azure SDK][AuthenticationAndTheAzureSDK] blog post.
 
 ## Enable and configure logging
 
 The Azure SDK for Python offers a consistent logging story to help troubleshoot application errors and expedite their resolution.  The logs produced will capture the flow of an application before reaching the terminal state to help locate the root issue.
 
-This library uses the standard [Logging] library for logging
+This library uses the standard [Logging] library for logging and an example to set up debug logging with transport level logging is [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub#logging). 
 
 - Enable `azure.eventhub` logger to collect traces from the library.
 
@@ -151,17 +161,39 @@ This error is expected when load balancing occurs after EventHubConsumerClient i
 
 However, if no instances are being added or removed, there is an underlying issue that should be addressed.  See [Partition ownership changes a lot](#partition-ownership-changes-a-lot) for additional information and [Filing GitHub issues](#filing-github-issues).
 
+### Blocking Calls in Async
+
+When working with the async client, Applications should ensure that they are not blocking the event loop as the load balancing operation runs as a task in the background. Blocking the event loop can impact load balancing, error handling, check pointing and recovering after an error. CPU bound code that can block the event loop should be run in [executor](https://docs.python.org/3/library/asyncio-dev.html#running-blocking-code)
+
 ### High CPU usage
 
 High CPU usage is usually because an instance owns too many partitions.  We recommend no more than three partitions for every 1 CPU core; better to start with 1.5 partitions for each CPU core and test increasing the number of partitions owned.
 
+### One or more partitions have high latency for processing
+
+When processing for one or more partitions is delayed, it is most often because an event processor owns too many partitions. Consider adding additional consumers to handle partitions, we generally recommend 1 - 3 partitions per consumer depending on throughput.
+
 ### Processor client stops receiving
 
-The processor client often is continually running in a host application for days on end.  Sometimes, they notice that EventHubConsumerClient is not processing one or more partitions.  Usually, this is not enough information to determine why the exception occurred.  The EventHubConsumerClient stopping is the symptom of an underlying cause (i.e. race condition) that occurred while trying to recover from a transient error.  Please see [Filing Github issues](#filing-github-issues) for the information we require.
+The processor client often is continually running in a host application for days on end.  Sometimes, they notice that EventHubConsumerClient is not processing one or more partitions.  Usually, this is not enough information to determine why the exception occurred.  The EventHubConsumerClient stopping is the symptom of an underlying cause that occurred while trying to recover from a transient error.  Please see [Filing Github issues](#filing-github-issues) for the information we require.
+
+### Duplicate events are being processed
+
+This is usually normal and most often does not indicate an issue unless partitions are frequently closing and initializing.
+
+An important call-out is that Event Hubs has an at-least-once delivery guarantee; it is highly recommended that applications ensure that processing is resilient to event duplication in whatever way is appropriate for their environment and application scenarios.
+
+Event processors configured to use the same Event Hub, consumer group, and checkpoint store will coordinate with one another to share the responsibility of processing partitions. When a processor isn’t able to reach its fair share of the work by claiming unowned partitions, it will attempt to steal ownership from other event processors. During this time, the new owner will begin reading from the last recorded checkpoint. At the same time, the old owner may be dispatching the events that it last read to the handler for processing; it will not understand that ownership has changed until it attempts to read the next set of events from the Event Hubs service.
+
+As a result, there will be an amount of duplicate events being processed when event processors are started or stopped which will subside when partition ownership has stabilized. If frequent partition initialization persists longer than five minutes, it likely indicates a problem.
+
+### "Soft Delete" or "Blob versioning" is enabled for a Blob Storage checkpoint store
+
+To coordinate with other event processors, the checkpoint store ownership records are inspected during each load balancing cycle.  When using an Azure Blob Storage as a checkpoint store, the "soft delete" and "Blob versioning" features can cause large delays when attempting to read the contents of a container.  It is strongly recommended that both be disabled.  For more information, see: [Soft delete for blobs][SoftDeleteBlobStorage] and [Blob versioning][VersioningBlobStorage].
 
 ### Migrate from legacy to new client library
 
-The [migration guide][MigrationGuide] includes steps on migrating from the legacy client and migrating legacy checkpoints.
+The [migration guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/migration_guide.md) includes steps on migrating from the legacy client and migrating legacy checkpoints.
 
 ## Get additional help
 
@@ -185,6 +217,8 @@ When filing GitHub issues, the following details are requested:
 <!-- repo links -->
 [IoTConnectionString]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/samples/async_samples/iot_hub_connection_string_receive_async.py
 [PublishEventsWithWebSocketsAndProxy]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/samples/async_samples/proxy_async.py
+[WebsocketConfig]: https://github.com/Azure/azure-sdk-for-python/blob/
+ab0ed5efa371db62dd820fdaed70b1e6821f4e0c/sdk/eventhub/azure-eventhub/samples/async_samples/send_and_receive_amqp_annotated_message_async.py#L95
 [MigrationGuide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/migration_guide.md
 [SUPPORT]: https://github.com/Azure/azure-sdk-for-python/blob/main/SUPPORT.md
 
