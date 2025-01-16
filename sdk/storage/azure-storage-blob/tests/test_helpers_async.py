@@ -86,7 +86,10 @@ class MockAioHttpClientResponse(ClientResponse):
 
 
 class MockStorageTransport(AsyncHttpTransport):
-    """This transport returns legacy aio http response objects from Azure Storage."""
+    """
+    This transport returns legacy http response objects from azure core and is 
+    intended only to test our backwards compatibility support.
+    """
     async def send(self, request: HttpRequest, **kwargs: Any) -> RestAioHttpTransportResponse:
         if request.method == 'GET':
             # download_blob
