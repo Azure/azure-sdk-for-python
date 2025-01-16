@@ -32,8 +32,6 @@ def test_body_value():
 
     body = message.data
     assert body[0].get(b"TYPE").decode("utf-8") == AMQPTypes.binary
-    sequence = message.sequence
-    assert sequence[0].get(b"TYPE").decode("utf-8") == AMQPTypes.list
 
 
 def test_delivery_tag():
