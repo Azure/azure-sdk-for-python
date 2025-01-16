@@ -237,7 +237,8 @@ def test_amqp_message():
     amqp_annotated_message = AmqpAnnotatedMessage(sequence_body=[1, 2, 3])
     body = [sequence for sequence in amqp_annotated_message.body]
     assert amqp_annotated_message.body_type == AmqpMessageBodyType.SEQUENCE
-    assert len(body) == 3
+    assert len(body) == 1
+    assert body[0] == [1, 2, 3]
 
     amqp_annotated_message = AmqpAnnotatedMessage(
         value_body=None,
