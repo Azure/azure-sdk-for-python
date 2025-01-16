@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13,7 +13,6 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from .. import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -276,7 +275,7 @@ class TrackedResource(Resource):
         self.location = location
 
 
-class AgentPool(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class AgentPool(TrackedResource):
     """AgentPool represents the agent pool of Kubernetes cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -802,7 +801,7 @@ class AvailableUpgrade(_serialization.Model):
         self.version = None
 
 
-class BareMetalMachine(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class BareMetalMachine(TrackedResource):
     """BareMetalMachine represents the physical machine in the rack.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1247,7 +1246,7 @@ class BareMetalMachineCordonParameters(_serialization.Model):
         self.evacuate = evacuate
 
 
-class BareMetalMachineKeySet(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class BareMetalMachineKeySet(TrackedResource):
     """BareMetalMachineKeySet represents the bare metal machine key set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1900,7 +1899,7 @@ class BgpServiceLoadBalancerConfiguration(_serialization.Model):
         self.ip_address_pools = ip_address_pools
 
 
-class BmcKeySet(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class BmcKeySet(TrackedResource):
     """BmcKeySet represents the baseboard management controller key set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2104,7 +2103,7 @@ class BmcKeySetPatchParameters(_serialization.Model):
         self.user_list = user_list
 
 
-class CloudServicesNetwork(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class CloudServicesNetwork(TrackedResource):
     """Upon creation, the additional services that are provided by the platform will be allocated and
     represented in the status of this resource. All resources associated with this cloud services
     network will be part
@@ -2335,7 +2334,7 @@ class CloudServicesNetworkPatchParameters(_serialization.Model):
         self.enable_default_egress_endpoints = enable_default_egress_endpoints
 
 
-class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class Cluster(TrackedResource):
     """Cluster represents the on-premises Network Cloud cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2892,7 +2891,7 @@ class ClusterList(_serialization.Model):
         self.value = value
 
 
-class ClusterManager(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class ClusterManager(TrackedResource):
     """ClusterManager represents a control-plane to manage one or more on-premises clusters.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3104,7 +3103,7 @@ class ClusterManagerPatchParameters(_serialization.Model):
         self.tags = tags
 
 
-class ClusterMetricsConfiguration(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class ClusterMetricsConfiguration(TrackedResource):
     """ClusterMetricsConfiguration represents the metrics configuration of an on-premises Network
     Cloud cluster.
 
@@ -3294,7 +3293,7 @@ class ClusterMetricsConfigurationPatchParameters(_serialization.Model):  # pylin
         self.enabled_metrics = enabled_metrics
 
 
-class ClusterPatchParameters(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ClusterPatchParameters(_serialization.Model):
     """ClusterPatchParameters represents the body of the request to patch the cluster properties.
 
     :ivar identity: The identity for the resource.
@@ -3625,7 +3624,7 @@ class CommandOutputSettings(_serialization.Model):
         self.container_url = container_url
 
 
-class Console(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class Console(TrackedResource):
     """Console represents the console of an on-premises Network Cloud virtual machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4357,7 +4356,7 @@ class ImageRepositoryCredentials(_serialization.Model):
         self.username = username
 
 
-class InitialAgentPoolConfiguration(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class InitialAgentPoolConfiguration(_serialization.Model):
     """InitialAgentPoolConfiguration specifies the configuration of a pool of virtual machines that
     are initially defined with a Kubernetes cluster.
 
@@ -4650,7 +4649,7 @@ class KeySetUserStatus(_serialization.Model):
         self.status_message = None
 
 
-class KubernetesCluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class KubernetesCluster(TrackedResource):
     """KubernetesCluster represents the Kubernetes cluster hosted on Network Cloud.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4864,7 +4863,7 @@ class KubernetesCluster(TrackedResource):  # pylint: disable=too-many-instance-a
         self.provisioning_state = None
 
 
-class KubernetesClusterFeature(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class KubernetesClusterFeature(TrackedResource):
     """KubernetesClusterFeature represents the feature of a Kubernetes cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5063,7 +5062,7 @@ class KubernetesClusterList(_serialization.Model):
         self.value = value
 
 
-class KubernetesClusterNode(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class KubernetesClusterNode(_serialization.Model):
     """KubernetesClusterNode represents the details of a node in a Kubernetes cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5303,7 +5302,7 @@ class KubernetesLabel(_serialization.Model):
         self.value = value
 
 
-class L2Network(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class L2Network(TrackedResource):
     """L2Network represents a network that utilizes a single isolation domain set up for layer-2
     resources.
 
@@ -5560,7 +5559,7 @@ class L2ServiceLoadBalancerConfiguration(_serialization.Model):
         self.ip_address_pools = ip_address_pools
 
 
-class L3Network(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class L3Network(TrackedResource):
     """L3Network represents a network that utilizes a single isolation domain set up for layer-3
     resources.
 
@@ -5931,7 +5930,7 @@ class MachineDisk(_serialization.Model):
         self.type = None
 
 
-class MachineSkuSlot(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class MachineSkuSlot(_serialization.Model):
     """MachineSkuSlot represents a single SKU and rack slot associated with the machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6600,7 +6599,7 @@ class OperationListResult(_serialization.Model):
         self.next_link = None
 
 
-class OperationStatusResult(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class OperationStatusResult(_serialization.Model):
     """The current status of an async operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6740,7 +6739,7 @@ class OsDisk(_serialization.Model):
         self.disk_size_gb = disk_size_gb
 
 
-class Rack(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class Rack(TrackedResource):
     """Rack represents the hardware of the rack and is dependent upon the cluster for lifecycle.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7045,7 +7044,7 @@ class RackPatchParameters(_serialization.Model):
         self.rack_serial_number = rack_serial_number
 
 
-class RackSku(Resource):  # pylint: disable=too-many-instance-attributes
+class RackSku(Resource):
     """RackSku represents the SKU information of the rack.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7502,7 +7501,7 @@ class SshPublicKey(_serialization.Model):
         self.key_data = key_data
 
 
-class StorageAppliance(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class StorageAppliance(TrackedResource):
     """StorageAppliance represents on-premises Network Cloud storage appliance.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8026,7 +8025,7 @@ class TagsParameter(_serialization.Model):
         self.tags = tags
 
 
-class TrunkedNetwork(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class TrunkedNetwork(TrackedResource):
     """TrunkedNetwork represents a network that utilizes multiple isolation domains and specified
     VLANs to create a trunked network.
 
@@ -8352,7 +8351,7 @@ class ValidationThreshold(_serialization.Model):
         self.value = value
 
 
-class VirtualMachine(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class VirtualMachine(TrackedResource):
     """VirtualMachine represents the on-premises Network Cloud virtual machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8777,7 +8776,7 @@ class VirtualMachinePowerOffParameters(_serialization.Model):
         self.skip_shutdown = skip_shutdown
 
 
-class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class Volume(TrackedResource):
     """Volume represents storage made available for use by resources running on the cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
