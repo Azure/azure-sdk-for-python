@@ -269,7 +269,7 @@ class ConnectionProperties:
                 "azure_endpoint": self.endpoint_url,
                 "type": connection_type,
                 "api_version": api_version,
-                "api_key": self.key if include_credentials else f"{self.id}/credentials/key",
+                "api_key": self.key if include_credentials and self.key else f"{self.id}/credentials/key",
             }
         else:
             model_config = {
