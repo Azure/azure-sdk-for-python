@@ -168,7 +168,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
     def _span_to_envelope(self, span: ReadableSpan) -> TelemetryItem:
         envelope = _convert_span_to_envelope(span)
         envelope.instrumentation_key = self._instrumentation_key
-        return envelope
+        return envelope  # type: ignore
 
     def _span_events_to_envelopes(self, span: ReadableSpan) -> Sequence[TelemetryItem]:
         if not span or len(span.events) == 0:
@@ -278,7 +278,8 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     )
                 except Exception:  # pylint: disable=broad-except
                     pass
-            status_code = span.attributes.get(HTTP_RESPONSE_STATUS_CODE) or span.attributes.get(SpanAttributes.HTTP_STATUS_CODE)
+            status_code = span.attributes.get(HTTP_RESPONSE_STATUS_CODE) \
+                or span.attributes.get(SpanAttributes.HTTP_STATUS_CODE)
             if status_code:
                 try:
                     status_code = int(status_code)  # type: ignore
