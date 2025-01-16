@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b5 (Unreleased)
+## 1.0.0b5 (2025-01-17)
 
 ### Features added
 
@@ -10,9 +10,10 @@ version 1.0.0b7 or above installed for this method to work.
 
 ### Bugs Fixed
 
-* Fix events dropped in streaming (see [GitHub issue 39028](https://github.com/Azure/azure-sdk-for-python/issues/39028)).
-* Deserialize events, `thread.run.incomplete` into `ThreadRun` and raise `on_thread_run` method calls in event handlers. 
-* Adding `include_credentials` parameter to `to_evaluator_model_config` to include credentials in the model config.
+* Fix for events dropped in streamed Agent response (see [GitHub issue 39028](https://github.com/Azure/azure-sdk-for-python/issues/39028)).
+* In Agents, incomplete status thread run event is now deserialized into a ThreadRun object, during stream iteration, and invokes the correct function `on_thread_run` (instead of the wrong function `on_unhandled_event`).
+* Fix an error when calling the `to_evaluator_model_config` method of class `ConnectionProperties`. See new input
+argument `include_credentials`.
 
 ### Breaking Changes
 
