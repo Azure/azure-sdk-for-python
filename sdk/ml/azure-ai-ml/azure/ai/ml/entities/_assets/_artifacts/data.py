@@ -231,7 +231,7 @@ class Data(Artifact):
         if not asset_artifact.datastore_arm_id and asset_artifact.full_storage_path:
             self.path = asset_artifact.full_storage_path
         else:
-            groups = re.search(regex, asset_artifact.datastore_arm_id)
+            groups = re.search(regex, asset_artifact.datastore_arm_id)  # type: ignore
             if groups:
                 datastore_name = groups.group(1)
                 self.path = SHORT_URI_FORMAT.format(datastore_name, asset_artifact.relative_path)

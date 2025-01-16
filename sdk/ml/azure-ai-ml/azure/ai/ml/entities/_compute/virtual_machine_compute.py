@@ -45,9 +45,9 @@ class VirtualMachineSshSettings:
     def __init__(
         self,
         *,
-        admin_username: str,
+        admin_username: Optional[str],
         admin_password: Optional[str] = None,
-        ssh_port: int = 22,
+        ssh_port: Optional[int] = 22,
         ssh_private_key_file: Optional[str] = None,
     ) -> None:
         self.admin_username = admin_username

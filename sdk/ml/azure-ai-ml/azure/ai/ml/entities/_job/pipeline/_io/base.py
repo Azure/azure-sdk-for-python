@@ -124,8 +124,8 @@ class InputOutputBase(ABC):
         )
         # TODO: remove this
         self._attribute_map: Dict = {}
-        self._name: str = ""
-        self._version: str = ""
+        self._name: Optional[str] = ""
+        self._version: Optional[str] = ""
         super(InputOutputBase, self).__init__(**kwargs)
 
     @abstractmethod
@@ -510,8 +510,8 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         super().__init__(meta=meta, data=data, **kwargs)
         self._port_name = port_name
         self._owner = owner
-        self._name: str = self._data.name if isinstance(self._data, Output) else None
-        self._version: str = self._data.version if isinstance(self._data, Output) else None
+        self._name: Optional[str] = self._data.name if isinstance(self._data, Output) else None
+        self._version: Optional[str] = self._data.version if isinstance(self._data, Output) else None
 
         self._assert_name_and_version()
 
@@ -528,7 +528,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         return self._port_name
 
     @property
-    def name(self) -> str:
+    def name(self) -> Optional[str]:
         """Used in registering output data.
 
         :return: The output name
@@ -556,7 +556,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             )
 
     @property
-    def version(self) -> str:
+    def version(self) -> Optional[str]:
         """Used in registering output data.
 
         :return: The output data
