@@ -2,12 +2,20 @@
 
 ## 1.0.0b5 (Unreleased)
 
+### Features added
+
+* Add method `.inference.get_image_embeddings_client` on `AIProjectClient` to get an authenticated
+`ImageEmbeddingsClient` (from the package azure-ai-inference). You need to have azure-ai-inference package
+version 1.0.0b7 or above installed for this method to work.
+
 ### Bugs Fixed
+
 * Fix events dropped in streaming (see [GitHub issue 39028](https://github.com/Azure/azure-sdk-for-python/issues/39028)).
 * Deserialize events, `thread.run.incomplete` into `ThreadRun` and raise `on_thread_run` method calls in event handlers. 
 * Adding `include_credentials` parameter to `to_evaluator_model_config` to include credentials in the model config.
 
 ### Breaking Changes
+
 * `submit_tool_outputs_to_run` returns `None` instead of `ThreadRun` (see [GitHub issue 39028](https://github.com/Azure/azure-sdk-for-python/issues/39028)).
 
 ## 1.0.0b4 (2024-12-20)

@@ -82,8 +82,8 @@ class InferenceOperations:
          resource. Optional. If not provided, the default Azure AI Services connection will be used.
         :type connection_name: str
 
-        :return: An authenticated chat completions client
-        :rtype: ~azure.ai.inference.models.ChatCompletionsClient
+        :return: An authenticated chat completions client.
+        :rtype: ~azure.ai.inference.ChatCompletionsClient
 
         :raises ~azure.core.exceptions.ResourceNotFoundError: if an Azure AI Services connection
          does not exist.
@@ -162,7 +162,7 @@ class InferenceOperations:
 
     @distributed_trace_async
     async def get_embeddings_client(self, *, connection_name: Optional[str] = None, **kwargs) -> "EmbeddingsClient":
-        """Get an authenticated asynchronousEmbeddingsClient (from the package azure-ai-inference) for the default
+        """Get an authenticated asynchronous EmbeddingsClient (from the package azure-ai-inference) for the default
         Azure AI Services connected resource (if `connection_name` is not specificed), or from the Azure AI
         Services resource given by its connection name.
 
@@ -174,8 +174,8 @@ class InferenceOperations:
          resource. Optional. If not provided, the default Azure AI Services connection will be used.
         :type connection_name: str
 
-        :return: An authenticated chat completions client
-        :rtype: ~azure.ai.inference.models.EmbeddingsClient
+        :return: An authenticated text embeddings client
+        :rtype: ~azure.ai.inference.EmbeddingsClient
 
         :raises ~azure.core.exceptions.ResourceNotFoundError: if an Azure AI Services connection
          does not exist.
@@ -240,6 +240,95 @@ class InferenceOperations:
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using SAS authentication"
+            )
+            raise ValueError("Getting embeddings client from a connection with SAS authentication is not yet supported")
+        else:
+            raise ValueError("Unknown authentication type")
+
+        return client
+
+    @distributed_trace_async
+    async def get_image_embeddings_client(
+        self, *, connection_name: Optional[str] = None, **kwargs
+    ) -> "ImageEmbeddingsClient":
+        """Get an authenticated asynchronous ImageEmbeddingsClient (from the package azure-ai-inference) for the default
+        Azure AI Services connected resource (if `connection_name` is not specificed), or from the Azure AI
+        Services resource given by its connection name.
+
+        At least one AI model that supports image embeddings must be deployed in this resource.
+
+        .. note:: The packages `azure-ai-inference` and `aiohttp` must be installed prior to calling this method.
+
+        :keyword connection_name: The name of a connection to an Azure AI Services resource in your AI Foundry project.
+         resource. Optional. If not provided, the default Azure AI Services connection will be used.
+        :type connection_name: str
+
+        :return: An authenticated image embeddings client
+        :rtype: ~azure.ai.inference.ImageEmbeddingsClient
+
+        :raises ~azure.core.exceptions.ResourceNotFoundError: if an Azure AI Services connection
+         does not exist.
+        :raises ~azure.core.exceptions.ModuleNotFoundError: if the `azure-ai-inference` package
+         is not installed.
+        :raises ValueError: if the connection name is an empty string.
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        kwargs.setdefault("merge_span", True)
+
+        if connection_name is not None and not connection_name:
+            raise ValueError("Connection name cannot be empty")
+
+        # Back-door way to access the old behavior where each AI model (non-OpenAI) was hosted on
+        # a separate "Serverless" connection. This is now deprecated.
+        use_serverless_connection: bool = os.getenv("USE_SERVERLESS_CONNECTION", None) == "true"
+
+        if connection_name:
+            connection = await self._outer_instance.connections.get(
+                connection_name=connection_name, include_credentials=True, **kwargs
+            )
+        else:
+            if use_serverless_connection:
+                connection = await self._outer_instance.connections.get_default(
+                    connection_type=ConnectionType.SERVERLESS, include_credentials=True, **kwargs
+                )
+            else:
+                connection = await self._outer_instance.connections.get_default(
+                    connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
+                )
+
+        logger.debug("[InferenceOperations.get_embeddings_client] connection = %s", str(connection))
+
+        try:
+            from azure.ai.inference.aio import ImageEmbeddingsClient
+        except ModuleNotFoundError as e:
+            raise ModuleNotFoundError(
+                "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
+            ) from e
+
+        if use_serverless_connection:
+            endpoint = connection.endpoint_url
+            credential_scopes = ["https://ml.azure.com/.default"]
+        else:
+            endpoint = f"{connection.endpoint_url}/models"
+            credential_scopes = ["https://cognitiveservices.azure.com/.default"]
+
+        if connection.authentication_type == AuthenticationType.API_KEY:
+            logger.debug(
+                "[InferenceOperations.get_image_embeddings_client] Creating ImageEmbeddingsClient using API key authentication"
+            )
+            from azure.core.credentials import AzureKeyCredential
+
+            client = ImageEmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
+        elif connection.authentication_type == AuthenticationType.ENTRA_ID:
+            logger.debug(
+                "[InferenceOperations.get_image_embeddings_client] Creating ImageEmbeddingsClient using Entra ID authentication"
+            )
+            client = ImageEmbeddingsClient(
+                endpoint=endpoint, credential=connection.token_credential, credential_scopes=credential_scopes
+            )
+        elif connection.authentication_type == AuthenticationType.SAS:
+            logger.debug(
+                "[InferenceOperations.get_image_embeddings_client] Creating ImageEmbeddingsClient using SAS authentication"
             )
             raise ValueError("Getting embeddings client from a connection with SAS authentication is not yet supported")
         else:
@@ -352,7 +441,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         :keyword include_credentials: Whether to populate the connection properties with authentication credentials.
             Optional.
         :type include_credentials: bool
-        :return: The connection properties, or `None` if there are no connections of the specified type.
+        :return: The connection properties.
         :rtype: ~azure.ai.projects.model.ConnectionProperties
         :raises ~azure.core.exceptions.ResourceNotFoundError:
         :raises ~azure.core.exceptions.HttpResponseError:
