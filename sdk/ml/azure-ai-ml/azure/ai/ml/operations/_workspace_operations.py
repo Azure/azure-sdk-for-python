@@ -432,7 +432,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
             return Workspace._from_rest_object(deserialized)
 
         with modified_operation_client(self.dataplane_workspace_operations, workspace_base_uri):
-            result = self.dataplane_workspace_operations.begin_hub_join(
+            result = self.dataplane_workspace_operations.begin_hub_join(  # type: ignore
                 resource_group_name=resource_group,
                 workspace_name=hub_name,
                 project_workspace_name=workspace.name,
