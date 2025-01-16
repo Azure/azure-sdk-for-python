@@ -123,7 +123,7 @@ class Compute(Resource, RestTranslatableMixin):
 
         class_type = cast(
             Optional[Union[AmlCompute, ComputeInstance, VirtualMachineCompute, KubernetesCompute, SynapseSparkCompute]],
-            mapping.get(compute_type, None),
+            mapping.get(compute_type, None),  # type: ignore
         )
         if class_type:
             return class_type._load_from_rest(obj)
