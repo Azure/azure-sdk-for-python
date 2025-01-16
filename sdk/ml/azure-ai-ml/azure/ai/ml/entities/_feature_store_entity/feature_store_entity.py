@@ -142,6 +142,5 @@ class FeatureStoreEntity(Asset):
         return FeatureStoreEntity(**loaded_schema)
 
     def _to_dict(self) -> Dict:
-        # pylint: disable=no-member
         res: dict = FeatureStoreEntitySchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return res
