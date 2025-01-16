@@ -844,6 +844,15 @@ with project_client.agents.create_stream(
 
 As you can see, this SDK parses the events and produces various event types similar to OpenAI assistants. In your use case, you might not be interested in handling all these types and may decide to parse the events on your own. To achieve this, please refer to [override base event handler](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_stream_with_base_override_eventhandler.py).
 
+```
+Note: Multiple streaming processes may be chained behind the scenes.
+
+When the SDK receives a `ThreadRun` event with the status `requires_action`, the next event will be `Done`, followed by termination. The SDK will submit the tool calls using the same event handler. The event handler will then chain the main stream with the tool stream.
+
+Consequently, when you iterate over the streaming using a for loop similar to the example above, the for loop will receive events from the main stream followed by events from the tool stream.
+```
+
+
 #### Retrieve Message
 
 To retrieve messages from agents, use the following example:
@@ -1070,7 +1079,7 @@ Make sure to install OpenTelemetry and the Azure SDK tracing plugin via
 
 ```bash
 pip install opentelemetry
-pip install azure-core-tracing-opentelemetry
+pip install azure-ai-projects azure-identity opentelemetry-sdk azure-core-tracing-opentelemetry
 ```
 
 You will also need an exporter to send telemetry to your observability backend. You can print traces to the console or use a local viewer such as [Aspire Dashboard](https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/standalone?tabs=bash).
