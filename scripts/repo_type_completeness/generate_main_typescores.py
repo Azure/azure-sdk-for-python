@@ -24,14 +24,16 @@ from ci_tools.parsing import ParsedSetup
 from ci_tools.environment_exclusions import (
     IGNORE_PACKAGES,
     is_check_enabled,
+    FILTER_EXCLUSIONS,
+    IGNORE_FILTER,
 )
 
 logging.getLogger().setLevel(logging.INFO)
 
 INACTIVE_CLASSIFIER = "Development Status :: 7 - Inactive"
 
-IGNORE_FILTER = ["nspkg", "mgmt", "cognitiveservices"]
-FILTER_EXCLUSIONS = ["azure-mgmt-core"]
+IGNORE_FILTER.append("mgmt")
+FILTER_EXCLUSIONS.append("azure-mgmt-core")
 IGNORE_PACKAGES.extend([
     "azure-openai",
     "azure-storage-extensions",
