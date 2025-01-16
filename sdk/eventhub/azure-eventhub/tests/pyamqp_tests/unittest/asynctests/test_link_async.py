@@ -103,5 +103,5 @@ async def test_detach_with_error(frame):
 
     with pytest.raises(AMQPLinkError) as ae:
         await link.get_state()
-        assert ae.condition == frame[2][0]
-        assert ae.description == frame[2][2]
+        assert ae.description == frame[2][1]
+        assert ae.info == frame[2][2]
