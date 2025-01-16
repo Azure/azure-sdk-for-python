@@ -20,7 +20,6 @@ from .._internal.pipeline import build_pipeline
 ABC = abc.ABC
 
 if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports
 
     from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
     from azure.core.pipeline.transport import HttpRequest
@@ -31,7 +30,6 @@ if TYPE_CHECKING:
 class ManagedIdentityClientBase(ABC):
     from azure.core.pipeline import PipelineResponse
 
-    # pylint:disable=missing-client-constructor-parameter-credential
     def __init__(self, request_factory: Callable, **kwargs: Any) -> None:
         self._cache = kwargs.pop("_cache", None) or TokenCache()
         self._content_callback = kwargs.pop("_content_callback", None)
