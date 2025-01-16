@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,no-member
+# pylint: disable=protected-access
 
 from abc import ABC
 from pathlib import Path

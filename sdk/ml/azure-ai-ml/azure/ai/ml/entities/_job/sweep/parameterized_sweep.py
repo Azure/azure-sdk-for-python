@@ -28,14 +28,12 @@ from .sampling_algorithm import (
     SamplingAlgorithmType,
 )
 
-# pylint: disable=unnecessary-lambda
 SAMPLING_ALGORITHM_TO_REST_CONSTRUCTOR: Dict[SamplingAlgorithmType, Type[RestSamplingAlgorithm]] = {
     SamplingAlgorithmType.RANDOM: RestRandomSamplingAlgorithm,
     SamplingAlgorithmType.GRID: RestGridSamplingAlgorithm,
     SamplingAlgorithmType.BAYESIAN: RestBayesianSamplingAlgorithm,
 }
 
-# pylint: disable=unnecessary-lambda
 SAMPLING_ALGORITHM_CONSTRUCTOR: Dict[SamplingAlgorithmType, Type[SamplingAlgorithm]] = {
     SamplingAlgorithmType.RANDOM: RandomSamplingAlgorithm,
     SamplingAlgorithmType.GRID: GridSamplingAlgorithm,

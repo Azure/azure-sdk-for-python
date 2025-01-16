@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=redefined-builtin, too-many-instance-attributes
+# pylint: disable=redefined-builtin
 import re
 from typing import Any, Dict, Optional, overload
 

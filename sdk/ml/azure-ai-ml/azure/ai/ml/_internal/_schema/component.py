@@ -119,7 +119,6 @@ class InternalComponentSchema(ComponentSchema):
         return ["properties"]
 
     def _serialize(self, obj, *, many: bool = False):
-        # pylint: disable=no-member
         if many and obj is not None:
             return super(InternalComponentSchema, self)._serialize(obj, many=many)
         ret = super(InternalComponentSchema, self)._serialize(obj)

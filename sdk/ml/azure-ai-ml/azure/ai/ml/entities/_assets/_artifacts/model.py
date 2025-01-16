@@ -122,7 +122,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         return res
 
     def _to_dict(self) -> Dict:
-        return dict(ModelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))  # pylint: disable=no-member
+        return dict(ModelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))
 
     @classmethod
     def _from_rest_object(cls, model_rest_object: ModelVersion) -> "Model":
@@ -138,7 +138,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
             path=rest_model_version.model_uri,
             description=rest_model_version.description,
             tags=rest_model_version.tags,
-            flavors=flavors,
+            flavors=flavors,  # pylint: disable=possibly-used-before-assignment
             properties=rest_model_version.properties,
             stage=model_stage,
             # pylint: disable=protected-access

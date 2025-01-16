@@ -246,7 +246,6 @@ class PipelineComponentFileRefField(FileRefField):
         """
         # Update base_path to parent path of component file.
         component_schema_context = deepcopy(self.context)
-        # pylint: disable=no-member
         value = _resolve_group_inputs_for_component(value)
         return _AnonymousPipelineComponentSchema(context=component_schema_context)._serialize(value, **kwargs)
 
@@ -259,7 +258,6 @@ class PipelineComponentFileRefField(FileRefField):
         # Update base_path to parent path of component file.
         component_schema_context = deepcopy(self.context)
         component_schema_context[BASE_PATH_CONTEXT_KEY] = source_path.parent
-        # pylint: disable=no-member
         component = _AnonymousPipelineComponentSchema(context=component_schema_context).load(
             component_dict, unknown=INCLUDE
         )
@@ -292,7 +290,7 @@ class PipelineSchema(BaseNodeSchema):
         from azure.ai.ml.entities._builders.pipeline import Pipeline
 
         data = parse_inputs_outputs(data)
-        return Pipeline(**data)  # pylint: disable=abstract-class-instantiated
+        return Pipeline(**data)
 
     @pre_dump
     def resolve_inputs_outputs(self, data, **kwargs):

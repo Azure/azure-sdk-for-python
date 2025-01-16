@@ -163,9 +163,7 @@ def _load_common_raising_marshmallow_error(
     **kwargs: Any,
 ) -> Resource:
     # pylint: disable=protected-access
-    res: Resource = cls._load(
-        data=yaml_dict, yaml_path=relative_origin, params_override=params_override, **kwargs
-    )  # pylint: disable=docstring-keyword-should-match-keyword-only
+    res: Resource = cls._load(data=yaml_dict, yaml_path=relative_origin, params_override=params_override, **kwargs)
     return res
 
 

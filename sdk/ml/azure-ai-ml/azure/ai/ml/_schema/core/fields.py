@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,protected-access,too-many-lines
+# pylint: disable=protected-access,too-many-lines
 
 import copy
 import logging

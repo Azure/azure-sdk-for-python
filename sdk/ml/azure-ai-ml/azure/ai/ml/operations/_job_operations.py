@@ -175,9 +175,7 @@ class JobOperations(_ScopeDependentOperations):
         self._api_base_url: Optional[str] = None
         self._container = "azureml"
         self._credential = credential
-        self._orchestrators = OperationOrchestrator(
-            self._all_operations, self._operation_scope, self._operation_config
-        )  # pylint: disable=line-too-long
+        self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope, self._operation_config)
 
         self.service_client_01_2024_preview = kwargs.pop("service_client_01_2024_preview", None)
         self.service_client_10_2024_preview = kwargs.pop("service_client_10_2024_preview", None)
@@ -673,7 +671,7 @@ class JobOperations(_ScopeDependentOperations):
 
             # Create all dependent resources
             self._resolve_arm_id_or_upload_dependencies(job)
-        except (ValidationException, ValidationError) as ex:  # pylint: disable=W0718
+        except (ValidationException, ValidationError) as ex:
             log_and_raise_error(ex)
 
         git_props = get_git_properties()
@@ -729,9 +727,7 @@ class JobOperations(_ScopeDependentOperations):
 
         return self._resolve_azureml_id(Job._from_rest_object(result))
 
-    def _create_or_update_with_different_version_api(  # pylint: disable=name-too-long
-        self, rest_job_resource: JobBase, **kwargs: Any
-    ) -> JobBase:
+    def _create_or_update_with_different_version_api(self, rest_job_resource: JobBase, **kwargs: Any) -> JobBase:
         service_client_operation = self._operation_2023_02_preview
         if rest_job_resource.properties.job_type == RestJobType_20241001Preview.FINE_TUNING:
             service_client_operation = self.service_client_10_2024_preview.jobs
@@ -752,9 +748,7 @@ class JobOperations(_ScopeDependentOperations):
 
         return result
 
-    def _create_or_update_with_latest_version_api(  # pylint: disable=name-too-long
-        self, rest_job_resource: JobBase, **kwargs: Any
-    ) -> JobBase:
+    def _create_or_update_with_latest_version_api(self, rest_job_resource: JobBase, **kwargs: Any) -> JobBase:
         service_client_operation = self.service_client_01_2024_preview.jobs
         result = service_client_operation.create_or_update(
             id=rest_job_resource.name,

@@ -85,7 +85,6 @@ class Code(Artifact):
         return res
 
     def _to_dict(self) -> Dict:
-        # pylint: disable=no-member
         res: dict = CodeAssetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return res
 

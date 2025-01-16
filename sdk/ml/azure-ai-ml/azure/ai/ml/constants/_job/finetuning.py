@@ -3,9 +3,6 @@
 # ---------------------------------------------------------
 
 
-# pylint: disable=protected-access
-
-
 class FineTuningConstants:
     AzureOpenAI = "azure-openai"
     Custom = "custom"

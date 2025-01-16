@@ -221,9 +221,7 @@ class DockerClient(object):
                 # to add debugpy statements
                 container.remove()
             app_path = environment[LocalEndpointConstants.ENVVAR_KEY_AML_APP_ROOT]
-            self._vscode_client.invoke_dev_container(
-                devcontainer_path=devcontainer_path, app_path=app_path
-            )  # pylint: disable=redundant-keyword-arg
+            self._vscode_client.invoke_dev_container(devcontainer_path=devcontainer_path, app_path=app_path)
             time.sleep(LocalEndpointConstants.DEFAULT_STARTUP_WAIT_TIME_SECONDS)
         else:
             container.start()

@@ -196,7 +196,7 @@ def log_activity(
 
     try:
         yield activityLogger
-    except BaseException as e:  # pylint: disable=W0718
+    except BaseException as e:
         exception = error_preprocess(activityLogger, e)
         completion_status = ActivityCompletionStatus.FAILURE
         # All the system and unknown errors except for NotImplementedError will be wrapped with a new exception.

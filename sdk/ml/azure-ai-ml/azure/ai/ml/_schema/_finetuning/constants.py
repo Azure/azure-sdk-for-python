@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
-
 
 class SnakeCaseFineTuningTaskTypes:
     CHAT_COMPLETION = "chat_completion"

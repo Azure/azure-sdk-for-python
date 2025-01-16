@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=client-accepts-api-version-keyword,(line-too-long,too-many-locals,no-member,too-many-statements,too-many-instance-attributes,too-many-lines,using-constant-test
+# pylint: disable=client-accepts-api-version-keyword,(too-many-statements,too-many-instance-attributes,too-many-lines
 
 import json
 import logging
@@ -160,7 +160,6 @@ class MLClient:
                 cloud name in kwargs and you must use an authority with DefaultAzureCredential.
     """
 
-    # pylint: disable=client-method-missing-type-annotations
     def __init__(
         self,
         credential: TokenCredential,

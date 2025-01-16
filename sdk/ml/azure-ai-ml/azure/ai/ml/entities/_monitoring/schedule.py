@@ -117,7 +117,7 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
             properties=ScheduleProperties(
                 description=self.description,
                 properties=self.properties,
-                tags=tags,
+                tags=tags,  # pylint: disable=possibly-used-before-assignment
                 action=CreateMonitorAction(
                     monitor_definition=self.create_monitor._to_rest_object(
                         default_data_window_size=default_data_window_size, ref_data_window_size=ref_data_window_size
@@ -144,7 +144,7 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     def _to_dict(self) -> Dict:
-        res: dict = MonitorScheduleSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        res: dict = MonitorScheduleSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return res
 
     @classmethod

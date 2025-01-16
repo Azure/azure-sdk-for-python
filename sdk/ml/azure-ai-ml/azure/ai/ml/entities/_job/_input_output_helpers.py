@@ -337,7 +337,7 @@ def from_rest_inputs_to_dataset_literal(inputs: Dict[str, RestJobInput]) -> Dict
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
 
-        from_rest_inputs[input_name] = input_data
+        from_rest_inputs[input_name] = input_data  # pylint: disable=possibly-used-before-assignment
     return from_rest_inputs
 
 

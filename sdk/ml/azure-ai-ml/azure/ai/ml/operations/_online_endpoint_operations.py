@@ -308,7 +308,6 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         input_data: Optional[Union[str, Data]] = None,
         params_override: Any = None,
         local: bool = False,
-        # pylint: disable=unused-argument
         **kwargs: Any,
     ) -> str:
         """Invokes the endpoint with the provided payload.
