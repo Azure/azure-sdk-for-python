@@ -416,7 +416,7 @@ class WorkspaceOperationsBase(ABC):
                 _ = workspace.tags.pop(bad_key, None)
 
         # pylint: disable=unused-argument, docstring-missing-param
-        def callback(_: Any, deserialized: Any, args: Any) -> Workspace:
+        def callback(_: Any, deserialized: Any, args: Any) -> Optional[Workspace]:
             """Callback to be called after completion
 
             :return: Workspace deserialized.
