@@ -7,6 +7,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed `partition_key` filter for `query_items_change_feed` API. See [PR 39233](https://github.com/Azure/azure-sdk-for-python/pull/39233)
 
 #### Other Changes
 
