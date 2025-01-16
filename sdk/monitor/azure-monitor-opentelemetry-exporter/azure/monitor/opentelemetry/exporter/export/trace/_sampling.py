@@ -5,7 +5,6 @@ from typing import Optional, Sequence
 # pylint:disable=no-name-in-module
 from fixedint import Int32
 
-# pylint:disable=W0611
 from opentelemetry.context import Context
 from opentelemetry.trace import Link, SpanKind, format_trace_id
 from opentelemetry.sdk.trace.sampling import (

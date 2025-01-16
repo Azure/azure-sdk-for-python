@@ -340,7 +340,7 @@ class FileSystemOperations:
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param properties: Optional. User-defined properties to be stored with the filesystem, in the
@@ -420,7 +420,7 @@ class FileSystemOperations:
 
         Set properties for the FileSystem.  This operation supports conditional HTTP requests.  For
         more information, see `Specifying Conditional Headers for Blob Service Operations
-        <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
+        <https://learn.microsoft.com/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
 
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
@@ -428,7 +428,7 @@ class FileSystemOperations:
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param properties: Optional. User-defined properties to be stored with the filesystem, in the
@@ -516,7 +516,7 @@ class FileSystemOperations:
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :return: None or the result of cls(response)
@@ -592,7 +592,7 @@ class FileSystemOperations:
         directories within the filesystem, will fail with status code 404 (Not Found) while the
         filesystem is being deleted. This operation supports conditional HTTP requests.  For more
         information, see `Specifying Conditional Headers for Blob Service Operations
-        <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
+        <https://learn.microsoft.com/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
 
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
@@ -600,7 +600,7 @@ class FileSystemOperations:
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param modified_access_conditions: Parameter group. Default value is None.
@@ -686,7 +686,7 @@ class FileSystemOperations:
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param continuation: Optional.  When deleting a directory, the number of paths that are deleted
@@ -812,7 +812,7 @@ class FileSystemOperations:
         :type showonly: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
