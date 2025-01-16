@@ -28,11 +28,10 @@ from ._operations import (
 from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class ChatCompletionsClient(ChatCompletionsClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class ChatCompletionsClient(ChatCompletionsClientOperationsMixin):
     """ChatCompletionsClient.
 
     :param endpoint: Service host. Required.
@@ -110,7 +109,7 @@ class ChatCompletionsClient(ChatCompletionsClientOperationsMixin):  # pylint: di
         self._client.__exit__(*exc_details)
 
 
-class EmbeddingsClient(EmbeddingsClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class EmbeddingsClient(EmbeddingsClientOperationsMixin):
     """EmbeddingsClient.
 
     :param endpoint: Service host. Required.
@@ -188,7 +187,7 @@ class EmbeddingsClient(EmbeddingsClientOperationsMixin):  # pylint: disable=clie
         self._client.__exit__(*exc_details)
 
 
-class ImageEmbeddingsClient(ImageEmbeddingsClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class ImageEmbeddingsClient(ImageEmbeddingsClientOperationsMixin):
     """ImageEmbeddingsClient.
 
     :param endpoint: Service host. Required.

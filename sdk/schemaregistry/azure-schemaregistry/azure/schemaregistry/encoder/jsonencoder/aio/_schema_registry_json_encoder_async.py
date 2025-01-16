@@ -48,7 +48,7 @@ from .._utils import (
     InboundMessageContent,
     OutboundMessageContent,
 )
-from ._async_lru import alru_cache  # pylint: disable=import-error
+from ._async_lru import alru_cache
 
 if TYPE_CHECKING:
     import azure.schemaregistry.aio
@@ -308,11 +308,11 @@ class JsonSchemaEncoder(object):
 
         # If schema_id, get schema for validation. If schema, get schema_id for content type.
         if schema_id and not schema:
-            cache_misses = self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter,no-member
+            cache_misses = self._get_schema.cache_info().misses
             schema_str = await self._get_schema(schema_id, **request_options)
-            new_cache_misses = self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter,no-member
+            new_cache_misses = self._get_schema.cache_info().misses
             if new_cache_misses > cache_misses:
-                cache_info = self._get_schema.cache_info()  # pylint: disable=no-value-for-parameter,no-member
+                cache_info = self._get_schema.cache_info()
                 _LOGGER.info(
                     "New entry has been added to schema cache. Cache info: %s",
                     str(cache_info),
@@ -323,13 +323,13 @@ class JsonSchemaEncoder(object):
                 raise TypeError("'group_name' is required in constructor, if 'schema' is passed to encode.")
 
             schema_fullname, schema_str, schema_dict = get_loaded_schema(schema, content)
-            cache_misses = self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter,no-member
+            cache_misses = self._get_schema_id.cache_info().misses
             schema_id = await self._get_schema_id(schema_fullname, schema_str, **request_options)
             new_cache_misses = (
-                self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter,no-member
+                self._get_schema_id.cache_info().misses
             )
             if new_cache_misses > cache_misses:
-                cache_info = self._get_schema_id.cache_info()  # pylint: disable=no-value-for-parameter,no-member
+                cache_info = self._get_schema_id.cache_info()
                 _LOGGER.info(
                     "New entry has been added to schema ID cache. Cache info: %s",
                     str(cache_info),
@@ -368,12 +368,12 @@ class JsonSchemaEncoder(object):
          from the registry.
         """
         schema_id, content = parse_message(message)
-        cache_misses = self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter,no-member
+        cache_misses = self._get_schema.cache_info().misses
         request_options = request_options or {}
         schema_definition = await self._get_schema(schema_id, **request_options)
-        new_cache_misses = self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter,no-member
+        new_cache_misses = self._get_schema.cache_info().misses
         if new_cache_misses > cache_misses:
-            cache_info = self._get_schema.cache_info()  # pylint: disable=no-value-for-parameter,no-member
+            cache_info = self._get_schema.cache_info()
             _LOGGER.info(
                 "New entry has been added to schema cache. Cache info: %s",
                 str(cache_info),

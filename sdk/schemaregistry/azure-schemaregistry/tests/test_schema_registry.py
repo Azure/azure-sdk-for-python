@@ -420,14 +420,14 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         schemaregistry_group = kwargs.pop("schemaregistry_group")
 
         sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
-        schema_groups = sr_client._generated_client.list_schema_groups()
+        schema_groups = sr_client._generated_client._list_schema_groups()
         for group in schema_groups:
             assert group == schemaregistry_group
 
         name = "test-schema1"
         sr_client.register_schema(schemaregistry_group, name, schema_str, format)
 
-        schema_versions = sr_client._generated_client.list_schema_versions(schemaregistry_group, name)
+        schema_versions = sr_client._generated_client._list_schema_versions(schemaregistry_group, name)
         versions = []
         for version in schema_versions:
             versions.append(version)
@@ -442,13 +442,15 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         avro_group_name = "avro_group"
         avro_schema_version = "1"
         avro_content_type = "application/json; serialization=Avro"
-        transport = MockTransport(response=MockResponse(
-            schema_id=avro_schema_id,
-            schema_name=avro_schema_name,
-            schema_group_name=avro_group_name,
-            schema_version=avro_schema_version,
-            content_type=avro_content_type,
-        ))
+        transport = MockTransport(
+            response=MockResponse(
+                schema_id=avro_schema_id,
+                schema_name=avro_schema_name,
+                schema_group_name=avro_group_name,
+                schema_version=avro_schema_version,
+                content_type=avro_content_type,
+            )
+        )
         mock_fqn = f"schemaregistry_fqn"
         credential = self.get_credential(SchemaRegistryClient)
         mock_client = SchemaRegistryClient(
