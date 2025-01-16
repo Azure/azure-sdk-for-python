@@ -92,5 +92,5 @@ with project_client:
     messages = project_client.agents.list_messages(thread_id=thread.id)
 
     # Print messages from the thread
-    for message in messages.text_messages:
-        print(message)
+    for text_message in messages.text_messages:
+        print(text_message)
