@@ -150,7 +150,6 @@ class Data(Artifact):
         return Data(**load_from_dict(DataSchema, yaml_data, context, **kwargs))
 
     def _to_dict(self) -> Dict:
-        # pylint: disable=no-member
         res: dict = DataSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return res
 

@@ -142,7 +142,6 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
     @monitor_with_activity(ops_logger, "Workspace.Get_Keys", ActivityType.PUBLICAPI)
     @distributed_trace
-    # pylint: disable=arguments-differ
     def get_keys(self, name: Optional[str] = None) -> Optional[WorkspaceKeys]:
         """Get WorkspaceKeys by workspace name.
 
