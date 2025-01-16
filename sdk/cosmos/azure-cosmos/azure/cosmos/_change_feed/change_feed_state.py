@@ -260,6 +260,7 @@ class ChangeFeedStateV2(ChangeFeedState):
             # the current token feed range spans less than single physical partition
             # for this case, need to set both the partition key range id and epk filter headers
             request_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = over_lapping_ranges[0]["id"]
+            request_headers[http_constants.HttpHeaders.ReadFeedKeyType] = "EffectivePartitionKeyRange"
             request_headers[http_constants.HttpHeaders.StartEpkString] = self._continuation.current_token.feed_range.min
             request_headers[http_constants.HttpHeaders.EndEpkString] = self._continuation.current_token.feed_range.max
 
