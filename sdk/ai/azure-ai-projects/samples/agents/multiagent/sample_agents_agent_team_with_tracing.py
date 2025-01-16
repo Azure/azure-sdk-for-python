@@ -31,12 +31,26 @@ project_client = AIProjectClient.from_connection_string(
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
 
-# Enable console tracing
+from opentelemetry import trace
+from azure.monitor.opentelemetry import configure_azure_monitor
+
+# Enable Azure Monitor tracing
+application_insights_connection_string = project_client.telemetry.get_connection_string()
+if not application_insights_connection_string:
+    print("Application Insights was not enabled for this project.")
+    print("Enable it via the 'Tracing' tab in your AI Foundry project page.")
+    exit()
+configure_azure_monitor(connection_string=application_insights_connection_string)
+
+# Enable console tracing without enabling agent traces
 # or, if you have local OTLP endpoint running, change it to
-exporter = ConsoleSpanExporter()
-trace.set_tracer_provider(TracerProvider())
-tracer = trace.get_tracer(__name__)
-trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(exporter))
+# exporter = ConsoleSpanExporter()
+# trace.set_tracer_provider(TracerProvider())
+# tracer = trace.get_tracer(__name__)
+# trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(exporter))
+
+# Enable console tracing with agent traces
+#project_client.telemetry.enable(destination=sys.stdout)
 
 with project_client:
     agent_team = AgentTeam("test_team", project_client=project_client)

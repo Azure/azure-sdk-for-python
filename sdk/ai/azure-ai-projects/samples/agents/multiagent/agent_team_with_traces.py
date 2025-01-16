@@ -12,7 +12,7 @@ from opentelemetry.trace import Span
 from azure.core.tracing import AbstractSpan
 from typing import Any, Dict, Optional, Set, Tuple, List
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import FunctionTool, ToolSet, MessageRole, Agent
+from azure.ai.projects.models import FunctionTool, ToolSet, MessageRole, Agent, AgentThread
 
 tracer = trace.get_tracer(__name__)
 
@@ -64,7 +64,7 @@ class AgentTeam:
     _teams: Dict[str, "AgentTeam"] = {}
 
     _project_client: AIProjectClient
-    _thread_id: str = ""
+    _agent_thread: Optional[AgentThread] = None
     _team_leader: Optional[_AgentTeamMember] = None
     _members: List[_AgentTeamMember] = []
     _tasks: List[_AgentTask] = []
@@ -280,51 +280,54 @@ class AgentTeam:
         """
         assert self._project_client is not None, "project client must not be None"
         assert self._team_leader is not None, "team leader must not be None"
-        thread = self._project_client.agents.create_thread()
-        with tracer.start_as_current_span("agent_team_request") as request_span:
-            self._current_request_span = request_span
-            request_span.set_attribute("agent_team.name", self.team_name)
-            print(f"Created thread with ID: {thread.id}")
-            self._thread_id = thread.id
+
+        if self._agent_thread is None:
+            self._agent_thread = self._project_client.agents.create_thread()
+            print(f"Created thread with ID: {self._agent_thread.id}")
+
+        with tracer.start_as_current_span("agent_team_request") as current_request_span:
+            self._current_request_span = current_request_span
+            self._current_request_span.set_attribute("agent_team.name", self.team_name)
             team_leader_request = self.TEAM_LEADER_INITIAL_REQUEST.format(original_request=request)
             _create_task(team_name=self.team_name, recipient=self._team_leader.name, request=team_leader_request, requestor="user")
             while self._tasks:
                 task = self._tasks.pop(0)
-                self._current_task_span = tracer.start_span("agent_team_task")
-                self._current_task_span.set_attribute("agent_team.name", self.team_name)
-                self._current_task_span.set_attribute("agent_team.task.recipient", task.recipient)
-                self._current_task_span.set_attribute("agent_team.task.requestor", task.requestor)
-                self._current_task_span.set_attribute("agent_team.task.description", task.task_description)
-                print(
-                    f"Starting task for agent '{task.recipient}'. "
-                    f"Requestor: '{task.requestor}'. "
-                    f"Task description: '{task.task_description}'."
-                )
-                message = self._project_client.agents.create_message(
-                    thread_id=self._thread_id,
-                    role="user",
-                    content=task.task_description,
-                )
-                print(f"Created message with ID: {message.id} for task in thread {self._thread_id}")
-                agent = self._get_member_by_name(task.recipient)
-                if agent and agent.agent_instance:
-                    run = self._project_client.agents.create_and_process_run(
-                        thread_id=self._thread_id, assistant_id=agent.agent_instance.id
+                with tracer.start_as_current_span("agent_team_task") as current_task_span:
+                    self._current_task_span = current_task_span
+                    self._current_task_span.set_attribute("agent_team.name", self.team_name)
+                    self._current_task_span.set_attribute("agent_team.task.recipient", task.recipient)
+                    self._current_task_span.set_attribute("agent_team.task.requestor", task.requestor)
+                    self._current_task_span.set_attribute("agent_team.task.description", task.task_description)
+                    print(
+                        f"Starting task for agent '{task.recipient}'. "
+                        f"Requestor: '{task.requestor}'. "
+                        f"Task description: '{task.task_description}'."
                     )
-                    print(f"Created and processed run for agent '{agent.name}', run ID: {run.id}")
-                    messages = self._project_client.agents.list_messages(thread_id=self._thread_id)
-                    text_message = messages.get_last_text_message_by_role(role=MessageRole.AGENT)
-                    if text_message and text_message.text:
-                        print(f"Agent '{agent.name}' completed task. " f"Outcome: {text_message.text.value}")
-                        self._add_task_completion_event(self._current_task_span, result=text_message.text.value)
+                    message = self._project_client.agents.create_message(
+                        thread_id=self._agent_thread.id,
+                        role="user",
+                        content=task.task_description,
+                    )
+                    print(f"Created message with ID: {message.id} for task in thread {self._agent_thread.id}")
+                    agent = self._get_member_by_name(task.recipient)
+                    if agent and agent.agent_instance:
+                        run = self._project_client.agents.create_and_process_run(
+                            thread_id=self._agent_thread.id, assistant_id=agent.agent_instance.id
+                        )
+                        print(f"Created and processed run for agent '{agent.name}', run ID: {run.id}")
+                        messages = self._project_client.agents.list_messages(thread_id=self._agent_thread.id)
+                        text_message = messages.get_last_text_message_by_role(role=MessageRole.AGENT)
+                        if text_message and text_message.text:
+                            print(f"Agent '{agent.name}' completed task. " f"Outcome: {text_message.text.value}")
+                            self._add_task_completion_event(self._current_task_span, result=text_message.text.value)
 
-                # If no tasks remain AND the recipient is not the TeamLeader,
-                # let the TeamLeader see if more delegation is needed.
-                if not self._tasks and not task.recipient == "TeamLeader":
-                    team_leader_request = self.TEAM_LEADER_TASK_COMPLETENESS_CHECK_INSTRUCTIONS
-                    _create_task(team_name=self.team_name, recipient=self._team_leader.name, request=team_leader_request, requestor="user")
-                self._current_task_span.end()
-                self._current_task_span = None
+                    # If no tasks remain AND the recipient is not the TeamLeader,
+                    # let the TeamLeader see if more delegation is needed.
+                    if not self._tasks and not task.recipient == "TeamLeader":
+                        team_leader_request = self.TEAM_LEADER_TASK_COMPLETENESS_CHECK_INSTRUCTIONS
+                        _create_task(team_name=self.team_name, recipient=self._team_leader.name, request=team_leader_request, requestor="user")
+                    self._current_task_span.end()
+                    self._current_task_span = None
             self._current_request_span.end()
             self._current_request_span = None
 
