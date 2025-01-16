@@ -141,7 +141,6 @@ class VirtualMachineCompute(Compute):
         return response
 
     def _to_dict(self) -> Dict:
-        # pylint: disable=no-member
         res: dict = VirtualMachineComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return res
 
@@ -165,7 +164,7 @@ class VirtualMachineCompute(Compute):
                 ssh_port=self.ssh_settings.ssh_port, administrator_account=credentials
             )
         vm_compute = VMResource(
-            properties=properties,
+            properties=properties,  # pylint: disable=possibly-used-before-assignment
             resource_id=self.resource_id,
             description=self.description,
         )

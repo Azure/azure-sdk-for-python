@@ -667,7 +667,6 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         """
         self._swept = True
         # inputs & outputs are already built in source Command obj
-        # pylint: disable=abstract-class-instantiated
         inputs, inputs_search_space = Sweep._get_origin_inputs_and_search_space(self.inputs)
         if search_space:
             inputs_search_space.update(search_space)
