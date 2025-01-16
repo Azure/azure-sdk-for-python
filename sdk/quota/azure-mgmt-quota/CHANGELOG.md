@@ -22,10 +22,6 @@
   - Added model `GroupQuotasEntityProperties`
   - Added model `SubscriptionQuotaAllocationsListProperties`
   - Added model `SubscriptionQuotaAllocationsProperties`
-  - Method `GroupQuotaLimitsRequestOperations.begin_update` has a new overload `def begin_update(self: None, management_group_id: str, group_quota_name: str, resource_provider_name: str, location: str, group_quota_request: Optional[GroupQuotaLimitList], content_type: str)`
-  - Method `GroupQuotaLimitsRequestOperations.begin_update` has a new overload `def begin_update(self: None, management_group_id: str, group_quota_name: str, resource_provider_name: str, location: str, group_quota_request: Optional[IO[bytes]], content_type: str)`
-  - Method `GroupQuotaSubscriptionAllocationRequestOperations.begin_update` has a new overload `def begin_update(self: None, management_group_id: str, group_quota_name: str, resource_provider_name: str, location: str, allocate_quota_request: SubscriptionQuotaAllocationsList, content_type: str)`
-  - Method `GroupQuotaSubscriptionAllocationRequestOperations.begin_update` has a new overload `def begin_update(self: None, management_group_id: str, group_quota_name: str, resource_provider_name: str, location: str, allocate_quota_request: IO[bytes], content_type: str)`
 
 ### Breaking Changes
 
@@ -75,9 +71,6 @@
   - Deleted or renamed method `GroupQuotaSubscriptionAllocationRequestOperations.begin_create_or_update`
   - Deleted or renamed model `GroupQuotaLocationSettingsOperations`
   - Deleted or renamed model `GroupQuotaUsagesOperations`
-  - Method `GroupQuotaSubscriptionAllocationRequestOperations.begin_update` re-ordered its parameters from `['self', 'management_group_id', 'group_quota_name', 'resource_provider_name', 'resource_name', 'allocate_quota_request', 'kwargs']` to `['self', 'management_group_id', 'group_quota_name', 'resource_provider_name', 'location', 'allocate_quota_request', 'kwargs']`
-  - Method `GroupQuotaLimitsRequestOperations.begin_update` re-ordered its parameters from `['self', 'management_group_id', 'group_quota_name', 'resource_provider_name', 'resource_name', 'group_quota_request', 'kwargs']` to `['self', 'management_group_id', 'group_quota_name', 'resource_provider_name', 'location', 'group_quota_request', 'kwargs']`
-  - Method `GroupQuotaLimitsOperations.list` re-ordered its parameters from `['self', 'management_group_id', 'group_quota_name', 'resource_provider_name', 'filter', 'kwargs']` to `['self', 'management_group_id', 'group_quota_name', 'resource_provider_name', 'location', 'kwargs']`
 
 ## 2.0.0b1 (2024-04-22)
 
