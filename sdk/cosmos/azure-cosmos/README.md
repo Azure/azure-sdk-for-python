@@ -3,6 +3,8 @@
 ## _Disclaimer_
 _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
+JRS - Test, this will be reverted.
+
 Azure Cosmos DB is a globally distributed, multi-model database service that supports document, key-value, wide-column, and graph databases.
 
 Use the Azure Cosmos DB SQL API SDK for Python to manage databases and the JSON documents they contain in this NoSQL database service. High level capabilities are:
@@ -83,7 +85,7 @@ client = CosmosClient(URL, credential=KEY)
 
 ### AAD Authentication
 
-You can also authenticate a client utilizing your service principal's AAD credentials and the azure identity package. 
+You can also authenticate a client utilizing your service principal's AAD credentials and the azure identity package.
 You can directly pass in the credentials information to ClientSecretCredential, or use the DefaultAzureCredential:
 ```python
 from azure.cosmos import CosmosClient
@@ -174,7 +176,7 @@ Streamable queries like `SELECT * FROM WHERE` *do* support continuation tokens.
 Typically, you can use [Azure Portal](https://portal.azure.com/), [Azure Cosmos DB Resource Provider REST API](https://docs.microsoft.com/rest/api/cosmos-db-resource-provider), [Azure CLI](https://docs.microsoft.com/cli/azure/azure-cli-reference-for-cosmos-db) or [PowerShell](https://docs.microsoft.com/azure/cosmos-db/manage-with-powershell) for the control plane unsupported limitations.
 
 ### Using The Async Client as a Workaround to Bulk
-While the SDK supports transactional batch, support for bulk requests is not yet implemented in the Python SDK. You can use the async client along with this [concurrency sample][cosmos_concurrency_sample] we have developed as a reference for a possible workaround. 
+While the SDK supports transactional batch, support for bulk requests is not yet implemented in the Python SDK. You can use the async client along with this [concurrency sample][cosmos_concurrency_sample] we have developed as a reference for a possible workaround.
 >[WARNING]
 > Using the asynchronous client for concurrent operations like shown in this sample will consume a lot of RUs very fast. We **strongly recommend** testing this out against the cosmos emulator first to verify your code works well and avoid incurring charges.
 
@@ -501,7 +503,7 @@ import os
 URL = os.environ['ACCOUNT_URI']
 KEY = os.environ['ACCOUNT_KEY']
 DATABASE_NAME = 'testDatabase'
-CONTAINER_NAME = 'products'    
+CONTAINER_NAME = 'products'
 
 async def create_products():
     client = CosmosClient(URL, credential=KEY)
@@ -544,7 +546,7 @@ async def create_products():
 
 ### Queries with the asynchronous client
 
-Unlike the synchronous client, the async client does not have an `enable_cross_partition` flag in the request. Queries without a specified partition key value will attempt to do a cross partition query by default. 
+Unlike the synchronous client, the async client does not have an `enable_cross_partition` flag in the request. Queries without a specified partition key value will attempt to do a cross partition query by default.
 
 Query results can be iterated, but the query's raw output returns an asynchronous iterator. This means that each object from the iterator is an awaitable object, and does not yet contain the true query result. In order to obtain the query results you can use an async for loop, which awaits each result as you iterate on the object, or manually await each query result as you iterate over the asynchronous iterator.
 
@@ -597,13 +599,13 @@ CONTAINER_NAME = 'testContainer'
 container = database.get_container_client(CONTAINER_NAME)
 
 def integrated_cache_snippet():
-    item_id = body['id'] 
+    item_id = body['id']
     query = 'SELECT * FROM c'
 
     #item cache
     container.read_item(item=item_id, partition_key=item_id, max_integrated_cache_staleness_in_ms=30000)
 
-    #query cache   
+    #query cache
     container.query_items(query=query,
          partition_key=item_id, max_integrated_cache_staleness_in_ms=30000)
 ```
@@ -655,7 +657,7 @@ search utilizing our Cosmos SDK. These two container-level configurations have t
 before you can use them.
 
 Each vector embedding should have a path to the relevant vector field in your items being stored, a supported data type
-(float32, int8, uint8), the vector's dimensions, and the distance function being used for that embedding. Vectors indexed 
+(float32, int8, uint8), the vector's dimensions, and the distance function being used for that embedding. Vectors indexed
 with the flat index type can be at most 505 dimensions. Vectors indexed with the quantizedFlat index type can be at most 4,096 dimensions.
 A sample vector embedding policy would look like this:
 ```python
@@ -945,7 +947,7 @@ There are several ways to use the diagnostics handler, those include the followi
     diagnostics_handler = cosmos_diagnostics_handler.CosmosDiagnosticsHandler()
     diagnostics_handler["duration"] = lambda x: x > 2000
     client = CosmosClient(URL, credential=KEY,logger=logger, diagnostics_handler=diagnostics_handler, enable_diagnostics_logging=True)
-    
+
     ```
 - Using a dictionary with the relevant functions to filter out the logs you don't want to see.
     ```python
@@ -964,13 +966,13 @@ There are several ways to use the diagnostics handler, those include the followi
   # Custom should_log method
   def should_log(self, **kwargs):
       return kwargs.get('duration') and kwargs['duration'] > 2000
-  
+
   # Initialize the logger
   logger = logging.getLogger('azure.cosmos')
   logger.setLevel(logging.INFO)
   file_handler = logging.FileHandler('diagnostics3.output')
   logger.addHandler(file_handler)
-  
+
   # Initialize the Cosmos client with custom diagnostics handler
   client = CosmosClient(endpoint, key,logger=logger, diagnostics_handler=should_log, enable_diagnostics_logging=True)
     ```
@@ -982,7 +984,7 @@ to use this functionality are the following:
 pip install azure-core-tracing-opentelemetry
 pip install opentelemetry-sdk
 ```
-For more information on this, we recommend taking a look at this [document](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core-tracing-opentelemetry/README.md) 
+For more information on this, we recommend taking a look at this [document](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core-tracing-opentelemetry/README.md)
 from Azure Core describing how to set it up. We have also added a [sample file][telemetry_sample] to show how it can
 be used with our SDK. This works the same way regardless of the Cosmos client you are using.
 

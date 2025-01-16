@@ -2,6 +2,8 @@
 
 # Azure Template Package client library for Python
 
+JRS - Test, this will be reverted.
+
 This template package matches necessary patterns that the development team has established to create a unified SDK. The packages contained herein can be installed singly or as part of the `azure` namespace. Any other introductory text should go here.
 
 This package has been tested with Python 3.7+.
