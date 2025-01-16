@@ -5,6 +5,9 @@ import logging
 import os
 from pathlib import Path
 from subprocess import check_call
+from typing import Any
+import multiprocessing
+from functools import partial
 
 from .package_utils import create_package, change_log_generate, extract_breaking_change
 
@@ -14,6 +17,11 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %X",
 )
 _LOGGER = logging.getLogger(__name__)
+
+
+def execute_func_with_timeout(func, timeout: int = 900) -> Any:
+    """Execute function with timeout"""
+    return multiprocessing.Pool(processes=1).apply_async(func).get(timeout)
 
 
 def main(generate_input, generate_output):
@@ -28,14 +36,18 @@ def main(generate_input, generate_output):
         prefolder = package["path"][0]
         # Changelog
         last_version = ["first release"]
+        change_log_func = partial(
+            change_log_generate,
+            package_name,
+            last_version,
+            package["tagIsStable"],
+            prefolder=prefolder,
+            is_multiapi=package["isMultiapi"],
+        )
         try:
-            md_output = change_log_generate(
-                package_name,
-                last_version,
-                package["tagIsStable"],
-                prefolder=prefolder,
-                is_multiapi=package["isMultiapi"],
-            )
+            md_output = execute_func_with_timeout(change_log_func)
+        except multiprocessing.TimeoutError:
+            md_output = "change log generation was timeout!!!"
         except:
             md_output = "change log generation failed!!!"
         package["changelog"] = {
