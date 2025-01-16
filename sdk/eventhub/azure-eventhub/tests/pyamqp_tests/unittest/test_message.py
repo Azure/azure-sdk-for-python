@@ -32,6 +32,8 @@ def test_body_value():
 
     body = message.data
     assert body[0].get(b"TYPE").decode("utf-8") == AMQPTypes.binary
+    sequence = message.sequence
+    assert sequence[0].get(b"TYPE").decode("utf-8") == AMQPTypes.list
 
 
 def test_delivery_tag():
@@ -63,3 +65,18 @@ def test_message_properties():
     value = AmqpMessageProperties()
     value.user_id = bytearray(b"\nweird\0user\1id\0\t")
     assert value.user_id == b"\nweird\0user\1id\0\t"
+
+
+def test_amqp_sequence_value():
+    message = Message(sequence=[{"key": "value"}, "test_message", 123, (1,2)])
+
+    output = bytearray()
+    encode_payload(output, message)
+
+    message = decode_payload(memoryview(output))
+    output = bytearray()
+
+
+    sequence = message.sequence
+    assert type(sequence) == list
+    assert sequence[0] == {b"key": b"value"}
