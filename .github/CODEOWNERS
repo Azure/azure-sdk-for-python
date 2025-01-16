@@ -359,7 +359,7 @@
 /sdk/servicefabric/                                                  @QingChenmsft @samedder
 
 # ServiceLabel: %SQL
-# ServiceOwners: @azureSQLGitHub                                          
+# ServiceOwners: @azureSQLGitHub
 
 # AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Service Bus
@@ -840,6 +840,7 @@
 /eng/common/                                                         @Azure/azure-sdk-eng
 /.github/workflows/                                                  @Azure/azure-sdk-eng
 /.github/CODEOWNERS                                                  @lmazuel @xiangyan99 @kristapratico @Azure/azure-sdk-eng
+/sdk/pullrequest.yml                                                 @scbedd @weshaggard @benbp
 
 /.config/1espt/                                                      @benbp @weshaggard
 
