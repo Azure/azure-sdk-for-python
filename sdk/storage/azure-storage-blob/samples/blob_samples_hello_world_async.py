@@ -13,27 +13,29 @@ DESCRIPTION:
     a blob using the blob_client.
 USAGE: python blob_samples_hello_world_async.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
 import os
 import sys
 import asyncio
+from azure.core.exceptions import ResourceExistsError
 
 # set up
-DEST_FILE = 'BlockDestination.txt'
-SOURCE_FILE = 'SampleSource.txt'
+current_dir = os.path.dirname(os.path.abspath(__file__))
+SOURCE_FILE = os.path.join(current_dir, 'SampleSource.txt')
+DEST_FILE = os.path.join(current_dir, 'BlockDestination.txt')
 
 
 class BlobSamplesAsync(object):
 
-    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+    connection_string = os.getenv("STORAGE_CONNECTION_STRING")
 
     #--Begin Blob Samples-----------------------------------------------------------------
 
     async def create_container_sample_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: create_container_sample_async")
             sys.exit(1)
 
@@ -43,7 +45,7 @@ class BlobSamplesAsync(object):
 
         async with blob_service_client:
             # Instantiate a new ContainerClient
-            container_client = blob_service_client.get_container_client("mycontainerasync")
+            container_client = blob_service_client.get_container_client("mycontainerasync1")
 
             try:
                 # Create new container in the service
@@ -53,14 +55,15 @@ class BlobSamplesAsync(object):
                 my_containers = []
                 async for container in blob_service_client.list_containers():
                     my_containers.append(container)
-
+            except ResourceExistsError:
+                print('exists')
             finally:
                 # Delete the container
                 await container_client.delete_container()
 
     async def block_blob_sample_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: block_blob_sample_async")
             sys.exit(1)
 
@@ -70,7 +73,7 @@ class BlobSamplesAsync(object):
 
         async with blob_service_client:
             # Instantiate a new ContainerClient
-            container_client = blob_service_client.get_container_client("myblockcontainerasync")
+            container_client = blob_service_client.get_container_client("myblockcontainerasync1")
 
             try:
                 # Create new Container in the service
@@ -102,7 +105,7 @@ class BlobSamplesAsync(object):
 
     async def stream_block_blob(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: stream_block_blob_async")
             sys.exit(1)
 
@@ -116,7 +119,7 @@ class BlobSamplesAsync(object):
 
         async with blob_service_client:
             # Instantiate a new ContainerClient
-            container_client = blob_service_client.get_container_client("containerasync")
+            container_client = blob_service_client.get_container_client("containerasync1")
             # Generate 4MB of data
             data = b'a'*4*1024*1024
 
@@ -153,7 +156,7 @@ class BlobSamplesAsync(object):
 
     async def page_blob_sample_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: page_blob_sample_async")
             sys.exit(1)
 
@@ -163,7 +166,7 @@ class BlobSamplesAsync(object):
 
         async with blob_service_client:
             # Instantiate a new ContainerClient
-            container_client = blob_service_client.get_container_client("mypagecontainerasync")
+            container_client = blob_service_client.get_container_client("mypagecontainerasync1")
 
             try:
                 # Create new Container in the Service
@@ -191,7 +194,7 @@ class BlobSamplesAsync(object):
 
     async def append_blob_sample_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: append_blob_sample_async")
             sys.exit(1)
 
@@ -201,7 +204,7 @@ class BlobSamplesAsync(object):
 
         async with blob_service_client:
             # Instantiate a new ContainerClient
-            container_client = blob_service_client.get_container_client("myappendcontainerasync")
+            container_client = blob_service_client.get_container_client("myappendcontainerasync1")
 
             try:
                 # Create new Container in the Service

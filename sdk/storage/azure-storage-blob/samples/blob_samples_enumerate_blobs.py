@@ -12,7 +12,7 @@ DESCRIPTION:
     This sample demos how to enumerate a container and print all blobs.
 USAGE: python blob_sammples_enumerate_blobs.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
 import os
@@ -21,14 +21,14 @@ from azure.storage.blob import ContainerClient
 
 def main():
     try:
-        CONNECTION_STRING = os.environ['AZURE_STORAGE_CONNECTION_STRING']
+        CONNECTION_STRING = os.environ['STORAGE_CONNECTION_STRING']
 
     except KeyError:
-        print("AZURE_STORAGE_CONNECTION_STRING must be set.")
+        print("STORAGE_CONNECTION_STRING must be set.")
         sys.exit(1)
 
-    container = ContainerClient.from_connection_string(CONNECTION_STRING, container_name="mycontainer")
-
+    container = ContainerClient.from_connection_string(CONNECTION_STRING, container_name="mycontainerenumerate")
+    container.create_container()
     blob_list = container.list_blobs()
     for blob in blob_list:
         print(blob.name + '\n')

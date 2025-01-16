@@ -128,6 +128,10 @@
             "apiVersion": "[variables('storageApiVersion')]",
             "name": "[concat(variables('primaryAccountName'), '/default')]",
             "properties": {
+              "deleteRetentionPolicy": {
+                "enabled": true,
+                "days": 7
+              },
             "containerDeleteRetentionPolicy": {
                 "enabled": true,
                 "days": 1
@@ -136,6 +140,24 @@
         "dependsOn": [
           "[variables('primaryAccountName')]"
         ]
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "[variables('storageApiVersion')]",
+            "name": "[concat(variables('primaryAccountName'), '/default/mycontainerdirectory')]",
+            "properties": {},
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', variables('primaryAccountName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "[variables('storageApiVersion')]",
+            "name": "[concat(variables('primaryAccountName'), '/default/mycontainerdirectory2')]",
+            "properties": {},
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', variables('primaryAccountName'))]"
+            ]
         },
         {
             "type": "Microsoft.Storage/storageAccounts/fileServices",
@@ -562,6 +584,14 @@
         "STORAGE_CONNECTION_STRING": {
           "type": "string",
           "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('primaryAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('primaryAccountName')), '2023-01-01').keys[0].value, ';EndpointSuffix=', parameters('endpointSuffix'))]"
+        },
+        "OAUTH_STORAGE_ACCOUNT_NAME": {
+            "type": "string",
+            "value": "[variables('primaryAccountName')]"
+        },
+        "STORAGE_ACCOUNT_BLOB_URL": {
+          "type": "string",
+          "value": "[format('https://{0}.blob.core.windows.net', variables('primaryAccountName'))]"
         },
         "STORAGE_ACCOUNT_QUEUE_URL": {
           "type": "string",

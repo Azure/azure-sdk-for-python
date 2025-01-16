@@ -12,7 +12,7 @@ DESCRIPTION:
     This sample demos basic operations of the blob service client.
 USAGE: python blob_samples_service_async.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
 import os
@@ -22,11 +22,11 @@ from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
 
 class BlobServiceSamplesAsync(object):
 
-    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+    connection_string = os.getenv("STORAGE_CONNECTION_STRING")
 
     async def get_storage_account_information_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: get_storage_account_information_async")
             sys.exit(1)
 
@@ -42,7 +42,7 @@ class BlobServiceSamplesAsync(object):
 
     async def blob_service_properties_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: blob_service_properties_async")
             sys.exit(1)
 
@@ -77,7 +77,7 @@ class BlobServiceSamplesAsync(object):
 
     async def blob_service_stats_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: blob_service_stats_async")
             sys.exit(1)
 
@@ -92,7 +92,7 @@ class BlobServiceSamplesAsync(object):
 
     async def container_operations_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: container_operations_async")
             sys.exit(1)
 
@@ -139,7 +139,7 @@ class BlobServiceSamplesAsync(object):
 
     async def get_blob_and_container_clients_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: get_blob_and_container_clients_async")
             sys.exit(1)
 
@@ -180,7 +180,7 @@ class BlobServiceSamplesAsync(object):
 
     async def get_blob_service_client_from_container_client_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: get_blob_service_client_from_container_client_async")
             sys.exit(1)
         # Instantiate a BlobServiceClient using a connection string

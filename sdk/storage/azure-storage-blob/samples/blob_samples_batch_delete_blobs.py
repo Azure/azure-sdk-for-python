@@ -10,18 +10,19 @@ DESCRIPTION:
 USAGE:
     python blob_samples_batch_delete_blobs.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
-SOURCE_FOLDER = "./sample-blobs/"
+current_dir = os.path.dirname(os.path.abspath(__file__))
+SOURCE_FOLDER = os.path.join(current_dir, "./sample-blobs/")
 
 
 def batch_delete_blobs_sample(local_path):
     # Set the connection string and container name values to initialize the Container Client
-    connection_string = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
+    connection_string = os.getenv('STORAGE_CONNECTION_STRING')
 
     if connection_string is None:
-        print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+        print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
               "Test: batch_delete_blobs_sample")
         sys.exit(1)
 
