@@ -208,7 +208,7 @@ However, if no instances are being added or removed, there is an underlying issu
 
 ### Blocking Calls in Async
 
-When working with the async clients, applications should ensure that they are not blocking the event loop as the load balancing operation runs as a task in the background. Blocking the event loop can impact load balancing, error handling, checkpointing, and recovering after an error. CPU-bound code that can block the event loop should be run in [executor](https://docs.python.org/3/library/asyncio-dev.html#running-blocking-code)
+When working with the async clients, applications should ensure that they are not blocking the event loop as the load balancing operation runs as a task in the background. Blocking the event loop can impact load balancing, error handling, checkpointing, and recovering after an error. CPU-bound code that can block the event loop should be run in [executor](https://docs.python.org/3/library/asyncio-dev.html#running-blocking-code).
 
 ### High CPU usage
 
@@ -259,7 +259,7 @@ When filing GitHub issues, the following details are requested:
 * What is the traffic pattern like in your Event Hubs?  (i.e. # messages/minute and if the EventHubConsumerClient is always busy or has slow traffic periods.)
 * Repro code and steps
   * This is important as we often cannot reproduce the issue in our environment.
-* Logs.  DEBUG level logs are needed to best help you. If that is not possible, INFO level logs must be provided.  ERROR and WARNING level logs do not provide enough information to help debug the issue in most cases.  The time period for logst must be at least +/- 10 minutes from when the issue occurred. See the [Enable and configure logging](#enable-and-configure-logging) section for more information.
+* Logs.  DEBUG level logs are needed to best help you. If that is not possible, INFO level logs must be provided.  ERROR and WARNING level logs do not provide enough information to help debug the issue in most cases.  The time period for logs must be at least +/- 10 minutes from when the issue occurred. See the [Enable and configure logging](#enable-and-configure-logging) section for more information.
 
 <!-- repo links -->
 [IoTConnectionString]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/samples/async_samples/iot_hub_connection_string_receive_async.py
