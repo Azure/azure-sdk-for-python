@@ -1,17 +1,22 @@
 # Release History
 
-## 7.13.1 (Unreleased)
+## 7.14.0 (Unreleased)
 
 ### Features Added
 
-- Added in emulator support, ServiceBusAdministrationClient is currently not supported by the emulator.
+- Added in emulator support, ServiceBusAdministrationClient is currently not supported by the emulator. ([#38655](https://github.com/Azure/azure-sdk-for-python/pull/38655))
 
 ### Bugs Fixed
 
 - Fixed a bug where async websocket disconnects were not being retried properly. ([#36280](https://github.com/Azure/azure-sdk-for-python/issues/36280))
 - Fixed a bug where sending large messages with synchronous client caused a frame buffer offset error ([#37916](https://github.com/Azure/azure-sdk-for-python/issues/37916))
+- Fix to handle websocket disconnect/close on aiohttp, as aiohttp raises a `TypeError` while asserting bytes. ([#32061](https://github.com/Azure/azure-sdk-for-python/pull/32061))
+
 
 ### Other Changes
+
+- Fixed mypy/pylint
+- Removed python 2.7 code ([#38735](https://github.com/Azure/azure-sdk-for-python/pull/38735))
 
 ## 7.13.0 (2024-11-12)
 

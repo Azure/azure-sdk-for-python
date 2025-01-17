@@ -4,9 +4,13 @@
 
 ### Bugs Fixed
 
-- Fixed a bug where async websocket disconnects were not being retried properly.
+- Fix to handle websocket disconnect/close on aiohttp, as aiohttp raises a `TypeError` while asserting bytes. ([#32061](https://github.com/Azure/azure-sdk-for-python/pull/32061))
 
 ### Other Changes
+
+- Updates to the Event Hubs Troubleshooting guidelines
+- Updates to mypy/pylint
+- Removed python 2.7 code ([#38735](https://github.com/Azure/azure-sdk-for-python/pull/38735))
 
 ## 5.13.0 (2024-11-12)
 
