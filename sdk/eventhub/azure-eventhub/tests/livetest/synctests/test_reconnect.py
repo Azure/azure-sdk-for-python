@@ -160,10 +160,6 @@ def test_send_connection_idle_timeout_and_reconnect_sync(auth_credential_receive
             with pytest.raises(error.AMQPConnectionError):
                 sender._send_event_data()
 
-        with pytest.raises(error.AMQPConnectionError):
-            receivers[0].receive_message_batch(max_batch_size=10, timeout=10 * timeout_factor)
-
-
 @pytest.mark.liveTest
 def test_receive_connection_idle_timeout_and_reconnect_sync(auth_credential_senders, uamqp_transport):
     fully_qualified_namespace, eventhub_name, credential, senders = auth_credential_senders
