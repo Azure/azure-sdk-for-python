@@ -24,10 +24,7 @@ USAGE:
 
 import os
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import (
-    AzureFunctionStorageQueue,
-    AzureFunctionTool,
-)
+from azure.ai.projects.models import AzureFunctionStorageQueue, AzureFunctionTool, MessageRole
 from azure.identity import DefaultAzureCredential
 
 project_client = AIProjectClient.from_connection_string(
@@ -89,8 +86,8 @@ with project_client:
     messages = project_client.agents.list_messages(thread_id=thread.id)
     print(f"Messages: {messages}")
 
-    # Get the last message from the sender
-    last_msg = messages.get_last_text_message_by_sender("assistant")
+    # Get the last message from agent
+    last_msg = messages.get_last_text_message_by_role(MessageRole.AGENT)
     if last_msg:
         print(f"Last Message: {last_msg.text.value}")
 

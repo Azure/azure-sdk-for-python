@@ -2,12 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Optional, Dict
+from typing import Any, Iterator, List, MutableMapping, Optional, Dict
 
 import json
 import os
 import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -20,7 +20,28 @@ from azure.ai.projects.models import (
     SubmitToolOutputsAction,
     SubmitToolOutputsDetails,
     ToolSet,
+    ToolOutput,
 )
+
+from azure.ai.projects.operations import AgentsOperations
+from user_functions import user_functions
+
+
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+
+
+def read_file(file_name: str) -> str:
+    with open(os.path.join(os.path.dirname(__file__), "assets", f"{file_name}.txt"), "r") as file:
+        return file.read()
+
+
+main_stream_response = read_file("main_stream_response")
+fetch_current_datetime_and_weather_stream_response = read_file("fetch_current_datetime_and_weather_stream_response")
+send_email_stream_response = read_file("send_email_stream_response")
+
+
+def convert_to_byte_iterator(main_stream_response: str) -> Iterator[bytes]:
+    yield main_stream_response.encode()
 
 
 def function1():
@@ -489,3 +510,51 @@ class TestAgentsOperations:
             self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run123", toolset)
             project_client.agents._handle_submit_tool_outputs(run)
             self._assert_stream_call(project_client.agents.submit_tool_outputs_to_stream, "run123", toolset)
+
+
+class TestIntegrationAgentsOperations:
+
+    def submit_tool_outputs_to_run(
+        self, thread_id: str, run_id: str, *, tool_outputs: List[ToolOutput], stream_parameter: bool, stream: bool
+    ) -> Iterator[bytes]:
+        assert thread_id == "thread_01"
+        assert run_id == "run_01"
+        assert stream_parameter == True
+        assert stream == True
+        if (
+            len(tool_outputs) == 2
+            and tool_outputs[0]["tool_call_id"] == "call_01"
+            and tool_outputs[1]["tool_call_id"] == "call_02"
+        ):
+            return convert_to_byte_iterator(fetch_current_datetime_and_weather_stream_response)
+        elif len(tool_outputs) == 1 and tool_outputs[0]["tool_call_id"] == "call_03":
+            return convert_to_byte_iterator(send_email_stream_response)
+        raise ValueError("Unexpected tool outputs")
+
+    @pytest.mark.asyncio
+    @patch(
+        "azure.ai.projects.operations._operations.AgentsOperations.create_run",
+        return_value=convert_to_byte_iterator(main_stream_response),
+    )
+    @patch("azure.ai.projects.operations._operations.AgentsOperations.__init__")
+    @patch(
+        "azure.ai.projects.operations._operations.AgentsOperations.submit_tool_outputs_to_run",
+    )
+    async def test_create_stream_with_tool_calls(self, mock_submit_tool_outputs_to_run: Mock, *args):
+        mock_submit_tool_outputs_to_run.side_effect = self.submit_tool_outputs_to_run
+        functions = FunctionTool(user_functions)
+        toolset = ToolSet()
+        toolset.add(functions)
+
+        operation = AgentsOperations()
+        operation._toolset = {"asst_01": toolset}
+        count = 0
+
+        with operation.create_stream(thread_id="thread_id", assistant_id="asst_01") as stream:
+            for _ in stream:
+                count += 1
+        assert count == (
+            main_stream_response.count("event:")
+            + fetch_current_datetime_and_weather_stream_response.count("event:")
+            + send_email_stream_response.count("event:")
+        )

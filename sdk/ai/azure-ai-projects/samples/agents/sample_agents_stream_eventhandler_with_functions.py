@@ -46,7 +46,6 @@ class MyEventHandler(AgentEventHandler):
     def __init__(self, functions: FunctionTool) -> None:
         super().__init__()
         self.functions = functions
-        super().__init__()
 
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         print(f"Text delta received: {delta.text}")
@@ -79,10 +78,11 @@ class MyEventHandler(AgentEventHandler):
 
             print(f"Tool outputs: {tool_outputs}")
             if tool_outputs:
-                with project_client.agents.submit_tool_outputs_to_stream(
+                # Once we receive 'requires_action' status, the next event will be DONE.
+                # Here we associate our existing event handler to the next stream.
+                project_client.agents.submit_tool_outputs_to_stream(
                     thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs, event_handler=self
-                ) as stream:
-                    stream.until_done()
+                )
 
     def on_run_step(self, step: "RunStep") -> None:
         print(f"RunStep type: {step.type}, Status: {step.status}")

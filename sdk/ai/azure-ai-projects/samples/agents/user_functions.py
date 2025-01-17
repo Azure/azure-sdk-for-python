@@ -66,6 +66,26 @@ def send_email(recipient: str, subject: str, body: str) -> str:
     return message_json
 
 
+def send_email_using_recipient_name(recipient: str, subject: str, body: str) -> str:
+    """
+    Sends an email with the specified subject and body to the recipient.
+
+    :param recipient (str): Name of the recipient.
+    :param subject (str): Subject of the email.
+    :param body (str): Body content of the email.
+    :return: Confirmation message.
+    :rtype: str
+    """
+    # In a real-world scenario, you'd use an SMTP server or an email service API.
+    # Here, we'll mock the email sending.
+    print(f"Sending email to {recipient}...")
+    print(f"Subject: {subject}")
+    print(f"Body:\n{body}")
+
+    message_json = json.dumps({"message": f"Email successfully sent to {recipient}."})
+    return message_json
+
+
 def calculate_sum(a: int, b: int) -> str:
     """Calculates the sum of two integers.
 
