@@ -14,9 +14,9 @@ USAGE:
 
     pip install azure-ai-projects azure-identity
 
-    Set this environment variables with your own values:
+    Set these environment variables with your own values:
     PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
-    MODEL_DEPLOYMENT_NAME - the name of the model deployment to use
+    MODEL_DEPLOYMENT_NAME - the name of the model deployment to use.
 """
 
 import os
