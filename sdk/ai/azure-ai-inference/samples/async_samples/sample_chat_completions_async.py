@@ -46,8 +46,8 @@ async def sample_chat_completions_async():
         # Do a single chat completion operation
         response = await client.complete(
             messages=[
-                SystemMessage(content="You are a helpful assistant."),
-                UserMessage(content="How many feet are in a mile?"),
+                SystemMessage("You are a helpful assistant."),
+                UserMessage("How many feet are in a mile?"),
             ]
         )
 

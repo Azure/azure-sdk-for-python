@@ -586,6 +586,12 @@
       ]
     },
     {
+      "filename": "tools/azure-sdk-tools/tests/test_labels.py",
+      "words": [
+        "vnext"
+      ]
+    },
+    {
       "filename": "doc/esrp_release.md",
       "words": [
         "ESRP"

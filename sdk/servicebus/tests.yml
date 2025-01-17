@@ -12,9 +12,3 @@ extends:
         AZURE_SKIP_LIVE_RECORDING: 'True'
       MatrixFilters:
         - PythonVersion=^(?!pypy3).*
-      Clouds: 'Public'
-      SupportedClouds: 'Public,UsGov'
-      CloudConfig:
-        Public:
-        UsGov:
-          Location: 'usgovarizona'
