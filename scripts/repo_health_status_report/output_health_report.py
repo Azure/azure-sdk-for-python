@@ -651,7 +651,11 @@ def map_codeowners_to_label(
             if len(parts) > 3:
                 # we don't distinguish past package level for SLA
                 continue
-            service_directory = parts[0]
+            try:
+                service_directory = parts[0]
+            except IndexError:
+                # it was a single file
+                continue
             tracked_labels[label] = service_directory
             try:
                 library = parts[1]
