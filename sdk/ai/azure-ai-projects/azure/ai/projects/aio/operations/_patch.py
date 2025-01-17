@@ -1624,7 +1624,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
-        event_handler: Optional[_models.AgentEventHandler] = None,
         **kwargs: Any,
     ) -> _models.AsyncAgentRunStream[_models.AsyncAgentEventHandler]:
         """Creates a new stream for an agent thread.
@@ -1704,9 +1703,6 @@ class AgentsOperations(AgentsOperationsGenerated):
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :keyword event_handler: The event handler to use for processing events during the run. Default
-         value is None.
-        :paramtype event_handler: ~azure.ai.projects.models.AsyncAgentEventHandler
         :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
         :rtype: ~azure.ai.projects.models.AsyncAgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1829,7 +1825,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         body: Union[JSON, IO[bytes]],
         *,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
-        event_handler: Optional[_models.AgentEventHandler] = None,
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> _models.AsyncAgentRunStream[_models.AsyncAgentEventHandler]:
@@ -1846,9 +1841,6 @@ class AgentsOperations(AgentsOperationsGenerated):
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
         :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
-        :keyword event_handler: The event handler to use for processing events during the run. Default
-         value is None.
-        :paramtype event_handler: ~azure.ai.projects.models.AsyncAgentEventHandler
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
