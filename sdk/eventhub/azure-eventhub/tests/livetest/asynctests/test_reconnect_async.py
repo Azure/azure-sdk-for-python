@@ -174,7 +174,7 @@ async def test_send_connection_idle_timeout_and_reconnect_async(
     retry = 0
     while retry < 3:
         try:
-            messages = receivers[0].receive_message_batch(max_batch_size=10, timeout=10 * timeout_factor)
+            messages = receivers[0].receive_message_batch(max_batch_size=10, timeout=100 * timeout_factor)
             if messages:
                 received_ed1 = EventData._from_message(messages[0])
                 assert received_ed1.body_as_str() == "data"
