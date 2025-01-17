@@ -271,8 +271,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
-        **kwargs: Arbitrary keyword arguments.
-        * keyword response_hook: A callable invoked with the response metadata.
         :returns: A DatabaseProxy instance representing the new database.
         :rtype: ~azure.cosmos.DatabaseProxy
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
@@ -339,8 +337,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
-        **kwargs: Arbitrary keyword arguments.
-        * keyword response_hook: A callable invoked with the response metadata.
         :returns: A DatabaseProxy instance representing the database.
         :rtype: ~azure.cosmos.DatabaseProxy
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
@@ -400,8 +396,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        **kwargs: Arbitrary keyword arguments.
-        * keyword response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of database properties (dicts).
         :rtype: Iterable[Dict[str, str]]
         """
@@ -448,8 +442,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        **kwargs: Arbitrary keyword arguments.
-        * keyword response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of database properties (dicts).
         :rtype: Iterable[Dict[str, str]]
         """
@@ -509,8 +501,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
-        **kwargs: Arbitrary keyword arguments.
-        * keyword response_hook: A callable invoked with the response metadata.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
         """
@@ -540,8 +530,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     def get_database_account(self, **kwargs) -> DatabaseAccount:
         """Retrieve the database account information.
 
-        **kwargs: Arbitrary keyword arguments.
-        * keyword response_hook: A callable invoked with the response metadata.
         :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
         :rtype: ~azure.cosmos.DatabaseAccount
         """
