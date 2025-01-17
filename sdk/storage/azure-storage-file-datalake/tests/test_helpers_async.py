@@ -3,48 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from io import IOBase, UnsupportedOperation
-from typing import Any, Dict, Optional
+from typing import Any, Dict
+from urllib.parse import urlparse
 
 from azure.core.pipeline.transport import AsyncHttpTransport
 from azure.core.rest import HttpRequest
 from azure.core.rest._aiohttp import RestAioHttpTransportResponse
 from aiohttp import ClientResponse
-
-
-class ProgressTracker:
-    def __init__(self, total: int, step: int):
-        self.total = total
-        self.step = step
-        self.current = 0
-
-    async def assert_progress(self, current: int, total: Optional[int]):
-        if self.current != self.total:
-            self.current += self.step
-
-        if total:
-            assert self.total == total
-        assert self.current == current
-
-    def assert_complete(self):
-        assert self.total == self.current
-
-
-class NonSeekableStream(IOBase):
-    def __init__(self, wrapped_stream):
-        self.wrapped_stream = wrapped_stream
-
-    def write(self, data):
-        return self.wrapped_stream.write(data)
-
-    def read(self, count):
-        return self.wrapped_stream.read(count)
-
-    def seek(self, *args, **kwargs):
-        raise UnsupportedOperation("boom!")
-
-    def tell(self):
-        return self.wrapped_stream.tell()
 
 
 class AsyncStream:
@@ -92,7 +57,7 @@ class MockStorageTransport(AsyncHttpTransport):
     """
     async def send(self, request: HttpRequest, **kwargs: Any) -> RestAioHttpTransportResponse:
         if request.method == 'GET':
-            # download_blob
+            # download_file
             headers = {
                 "Content-Type": "application/octet-stream",
                 "Content-Range": "bytes 0-17/18",
@@ -112,7 +77,7 @@ class MockStorageTransport(AsyncHttpTransport):
                 decompress=False
             )
         elif request.method == 'HEAD':
-            # get_blob_properties
+            # get_file_properties
             rest_response = RestAioHttpTransportResponse(
                 request=request,
                 internal_response=MockAioHttpClientResponse(
@@ -126,7 +91,7 @@ class MockStorageTransport(AsyncHttpTransport):
                 decompress=False
             )
         elif request.method == 'PUT':
-            # upload_blob
+            # upload_data
             rest_response = RestAioHttpTransportResponse(
                 request=request,
                 internal_response=MockAioHttpClientResponse(
@@ -140,8 +105,39 @@ class MockStorageTransport(AsyncHttpTransport):
                 ),
                 decompress=False
             )
+        elif request.method == 'PATCH':
+            # upload_data_chunks
+            parsed = urlparse(request.url)
+            if "action=flush" in parsed.query:
+                rest_response = RestAioHttpTransportResponse(
+                    request=request,
+                    internal_response=MockAioHttpClientResponse(
+                        request.url,
+                        b"",
+                        {
+                            "Content-Length": "0",
+                        },
+                        200,
+                        "OK"
+                    ),
+                    decompress=False
+                )
+            else:
+                rest_response = RestAioHttpTransportResponse(
+                    request=request,
+                    internal_response=MockAioHttpClientResponse(
+                        request.url,
+                        b"",
+                        {
+                            "Content-Length": "0",
+                        },
+                        202,
+                        "Accepted"
+                    ),
+                    decompress=False
+                )
         elif request.method == 'DELETE':
-            # delete_blob
+            # delete_file
             rest_response = RestAioHttpTransportResponse(
                 request=request,
                 internal_response=MockAioHttpClientResponse(
