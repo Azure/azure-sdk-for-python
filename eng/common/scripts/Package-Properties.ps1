@@ -162,6 +162,15 @@ function Get-PrPkgProperties([string]$InputDiffJson) {
     $allPackageProperties = Get-AllPkgProperties
     $diff = Get-Content $InputDiffJson | ConvertFrom-Json
     $targetedFiles = $diff.ChangedFiles
+
+    # ensure we don't try to concatenate to a null array if there are no changed files
+    if ($diff.DeletedFiles) {
+        if (-not $targetedFiles) {
+            $targetedFiles = @()
+        }
+        $targetedFiles += $diff.DeletedFiles
+    }
+
     # The exclude paths and the targeted files paths aren't full OS paths, they're
     # GitHub paths meaning they're relative to the repo root and slashes are forward
     # slashes "/". The ExcludePaths need to have a trailing slash added in order
