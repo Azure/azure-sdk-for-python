@@ -15,7 +15,7 @@ DESCRIPTION:
     2) Use a token credential from azure-identity to authenticate with Azure Active Directory
 
     See more details about authentication here:
-    https://docs.microsoft.com/azure/cognitive-services/authentication
+    https://learn.microsoft.com/azure/cognitive-services/authentication
 
 USAGE:
     python sample_authentication_async.py

@@ -413,11 +413,9 @@ class WorkspaceConnection(Resource):
         return loaded_data
 
     def _to_dict(self) -> Dict:
-        # pylint: disable=no-member
         schema_class = WorkspaceConnection._get_schema_class_from_type(self.type)
         # Not sure what this pylint complaint was about, probably due to the polymorphic
         # tricks at play. Disabling since testing indicates no issue.
-        # pylint: disable-next=missing-kwoa
         res: dict = schema_class(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return res
 

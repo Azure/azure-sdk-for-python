@@ -3,6 +3,7 @@
 ## 1.2.0 (Unreleased)
 
 ### Features Added
+- CSV files are now supported as data file inputs with `evaluate()` API. The CSV file should have a header row with column names that match the `data` and `target` fields in the `evaluate()` method and the filename should be passed as the `data` parameter.
 
 ### Breaking Changes
 
@@ -12,6 +13,7 @@
 - Fixed the non adversarial simulator to run in task-free mode
 
 ### Other Changes
+- Changed minimum required python version to use this package from 3.8 to 3.9
 - Stop dependency on the local promptflow service. No promptflow service will automatically start when running evaluation.
 
 ## 1.1.0 (2024-12-12)

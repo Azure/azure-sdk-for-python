@@ -39,7 +39,7 @@ from typing import (
     Union,
 )
 from ..._patch import SchemaFormat
-from ._utils import (  # pylint: disable=import-error
+from ._utils import (
     create_message_content,
     parse_message,
     decode_content,
@@ -248,13 +248,9 @@ class JsonSchemaEncoder(object):
 
         :param content: The content to be encoded.
         :type content: mapping[str, any]
-        :keyword schema: None.
-        :paramtype schema: None
         :keyword schema_id: Required. The schema ID corresponding to the pre-registered schema to be used
          for validation. `schema` must not be passed.
         :paramtype schema_id: str
-        :keyword message_type: None.
-        :paramtype message_type: None
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: dict[str, any] or None
         :returns: TypedDict of encoded content and content type.
