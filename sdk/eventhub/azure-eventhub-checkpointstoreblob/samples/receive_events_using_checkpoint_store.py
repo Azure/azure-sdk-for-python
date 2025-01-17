@@ -1,5 +1,5 @@
 import os
-from azure.eventhub import EventHubConsumerClient
+from azure.eventhub import EventHubConsumerClient # type: ignore[attr-defined]
 from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]

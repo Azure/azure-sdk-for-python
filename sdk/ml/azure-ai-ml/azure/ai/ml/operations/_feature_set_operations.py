@@ -349,9 +349,6 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :type version: str
         :keyword feature_name: The feature name. This argument is case-sensitive.
         :paramtype feature_name: str
-        :keyword tags: String representation of a comma-separated list of tag names, and optionally, values.
-            For example, "tag1,tag2=value2". If provided, only features matching the specified tags are returned.
-        :paramtype tags: str
         :return: Feature object
         :rtype: ~azure.ai.ml.entities.Feature
         """
@@ -419,7 +416,6 @@ class FeatureSetOperations(_ScopeDependentOperations):
         )
 
     def _validate_and_get_feature_set_spec(self, featureset: FeatureSet) -> FeaturesetSpecMetadata:
-        # pylint: disable=no-member
         if not (featureset.specification and featureset.specification.path):
             msg = "Missing FeatureSet specification path. Path is required for feature set."
             raise ValidationException(
@@ -438,7 +434,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
                     datastore_operations=self._datastore_operation,
                 )
                 featureset_spec_path = None
-            except Exception as ex:  # pylint: disable=W0718
+            except Exception as ex:
                 module_logger.info("Unable to access FeaturesetSpec at path %s", featureset_spec_path)
                 raise ex
             return FeaturesetSpecMetadata._load(featureset_spec_contents, featureset_spec_path)

@@ -21,7 +21,7 @@ from devtools_testutils import get_credential
 
 # for pytest.parametrize
 GA = "2024-10-21"
-PREVIEW = "2024-11-01-preview"
+PREVIEW = "2024-10-01-preview"
 LATEST = PREVIEW
 
 AZURE = "azure"
@@ -40,6 +40,7 @@ ENV_AZURE_OPENAI_ENDPOINT = "AZ_OPENAI_ENDPOINT"
 ENV_AZURE_OPENAI_KEY = "AZURE_OPENAI_KEY"
 ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT = "AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT"
 ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT = "AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT"
+ENV_AZURE_OPENAI_SWEDENCENTRAL_KEY = "AZURE_OPENAI_SWEDENCENTRAL_KEY"
 ENV_AZURE_OPENAI_SEARCH_ENDPOINT = "AZURE_OPENAI_SEARCH_ENDPOINT"
 ENV_AZURE_OPENAI_SEARCH_INDEX = "AZURE_OPENAI_SEARCH_INDEX"
 
@@ -178,6 +179,11 @@ def build_kwargs(args, api_type):
             return {"model": ENV_AZURE_OPENAI_CHAT_COMPLETIONS_GPT4_NAME}
         elif api_type == "gpt_4_openai":
             return {"model": ENV_OPENAI_CHAT_COMPLETIONS_GPT4_MODEL}
+    if test_feature.startswith("test_realtime"):
+        if api_type in ["gpt_4_azure"]:
+            return {"model": "gpt-4o-realtime-preview-1001"}
+        elif api_type == "gpt_4_openai":
+            return {"model": "gpt-4o-realtime-preview-2024-10-01"}
     if test_feature.startswith(("test_module_client", "test_cli")):
         return {}
     raise ValueError(f"Test feature: {test_feature} needs to have its kwargs configured.")

@@ -175,9 +175,7 @@ class BlobStorageClient:
                 properties = blob_client.get_blob_properties()
             except HttpResponseError as e:
                 if e.error_code == KEY_AUTHENTICATION_ERROR_CODE:  # pylint: disable=no-member
-                    formatted_msg = SAS_KEY_AUTHENTICATION_ERROR_MSG.format(
-                        e.error_code, e.exc_value
-                    )  # pylint: disable=no-member
+                    formatted_msg = SAS_KEY_AUTHENTICATION_ERROR_MSG.format(e.error_code, e.exc_value)
                     exception_with_documentation = Exception(formatted_msg)
                     exception_with_documentation.__traceback__ = e.exc_traceback
                     raise exception_with_documentation from e
@@ -209,7 +207,7 @@ class BlobStorageClient:
             self.overwrite = True  # if upload never confirmed, approve overriding the partial upload
         except ResourceNotFoundError:
             pass
-        except Exception as e:  # pylint: disable=W0718
+        except Exception as e:
             # pylint: disable=no-member
             if hasattr(e, "error_code") and e.error_code == STORAGE_AUTH_MISMATCH_ERROR:
                 msg = (
