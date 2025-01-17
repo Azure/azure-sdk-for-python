@@ -20,6 +20,9 @@ parameters:
   - name: BuildTargetingString
     type: string
     default: '*'
+  - name: ExcludePaths
+    type: object
+    default: []
 
 steps:
   - task: UsePythonVersion@0
@@ -62,6 +65,7 @@ steps:
   - template: /eng/common/pipelines/templates/steps/save-package-properties.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      ExcludePaths: ${{ parameters.ExcludePaths }}
 
   - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
     parameters:

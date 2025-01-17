@@ -9,12 +9,11 @@ extends:
       CloudConfig:
         Public:
           SubscriptionConfigurations:
-            - $(sub-config-communication-services-cloud-test-resources-common)
             - $(sub-config-communication-services-sms-cloud-test-resources)
           MatrixReplace:
             - TestSamples=.*/true
       EnvVars:
         AZURE_SKIP_LIVE_RECORDING: 'True'
-        AZURE_TEST_RUN_LIVE: 'True'
+        AZURE_TEST_RUN_LIVE: 'true'
       TestResourceDirectories:
         - communication/test-resources/

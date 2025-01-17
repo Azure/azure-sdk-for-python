@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=redefined-builtin,disable=unused-argument
+# pylint: disable=unused-argument
 
 from typing import Any, Optional
 

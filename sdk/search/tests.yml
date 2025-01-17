@@ -4,7 +4,6 @@ extends:
     template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       BuildTargetingString: azure-search-documents
-      SupportedClouds: 'Public,UsGov,China'
       TestTimeoutInMinutes: 240
       ServiceDirectory: search
       EnvVars:

@@ -16,7 +16,6 @@ from azure.monitor.opentelemetry.exporter._quickpulse._types import (
 from azure.monitor.opentelemetry.exporter._quickpulse._utils import _filter_time_stamp_to_ms
 
 
-# pylint: disable=protected-access
 def _validate_derived_metric_info(metric_info: DerivedMetricInfo) -> bool:
     if not _validate_telemetry_type(metric_info.telemetry_type):
         return False
@@ -50,7 +49,7 @@ def _validate_telemetry_type(telemetry_type: str) -> bool:
      # Validate telemetry type
     try:
         telemetry_type = TelemetryType(telemetry_type)
-    except Exception:  # pylint: disable=broad-except,invalid-name
+    except Exception:  # pylint: disable=broad-except
         return False
     # Only REQUEST, DEPENDENCY, EXCEPTION, TRACE are supported
     # No filtering options in UX for PERFORMANCE_COUNTERS
@@ -104,7 +103,7 @@ def _validate_filter_predicate_and_comparand(filter: FilterInfo) -> bool:
     # Validate predicate type
     try:
         predicate = PredicateType(filter.predicate)
-    except Exception:  # pylint: disable=broad-except,invalid-name
+    except Exception:  # pylint: disable=broad-except
         return False
     if not comparand:
         return False
@@ -121,7 +120,7 @@ def _validate_filter_predicate_and_comparand(filter: FilterInfo) -> bool:
             try:
                 # Response/ResultCode comparand should be interpreted as integer
                 int(comparand)
-            except Exception:  # pylint: disable=broad-except,invalid-name
+            except Exception:  # pylint: disable=broad-except
                 return False
     elif name == "Success":
         if predicate not in (PredicateType.EQUAL, PredicateType.NOT_EQUAL):
