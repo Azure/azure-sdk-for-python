@@ -77,4 +77,4 @@ def test_amqp_sequence_value():
 
     sequence = message.sequence
     assert type(sequence) == list
-    assert sequence[0] == {b"key": b"value"}
+    assert sequence[0][0] == {b"key": b"value"}
