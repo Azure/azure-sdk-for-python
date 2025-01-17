@@ -110,7 +110,7 @@ class MonitorDefinition(RestTranslatableMixin):
         return RestMonitorDefinition(
             compute_configuration=self.compute._to_rest_object(),
             monitoring_target=self.monitoring_target._to_rest_object() if self.monitoring_target else None,
-            signals=_signals,
+            signals=_signals,  # pylint: disable=possibly-used-before-assignment
             alert_notification_setting=rest_alert_notification,
         )
 
@@ -152,11 +152,11 @@ class MonitorDefinition(RestTranslatableMixin):
             == MonitorTargetTasks.QUESTION_ANSWERING.lower()  # type: ignore[union-attr]
         ):
             self.monitoring_signals = {
-                DEFAULT_TOKEN_USAGE_SIGNAL_NAME: GenerationTokenStatisticsSignal._get_default_token_statistics_signal(),  # pylint: disable=line-too-long
+                DEFAULT_TOKEN_USAGE_SIGNAL_NAME: GenerationTokenStatisticsSignal._get_default_token_statistics_signal(),
             }
         else:
             self.monitoring_signals = {
                 DEFAULT_DATA_DRIFT_SIGNAL_NAME: DataDriftSignal._get_default_data_drift_signal(),
-                DEFAULT_PREDICTION_DRIFT_SIGNAL_NAME: PredictionDriftSignal._get_default_prediction_drift_signal(),  # pylint: disable=line-too-long
+                DEFAULT_PREDICTION_DRIFT_SIGNAL_NAME: PredictionDriftSignal._get_default_prediction_drift_signal(),
                 DEFAULT_DATA_QUALITY_SIGNAL_NAME: DataQualitySignal._get_default_data_quality_signal(),
             }

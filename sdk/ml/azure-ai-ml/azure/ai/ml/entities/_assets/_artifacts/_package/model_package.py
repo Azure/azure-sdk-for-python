@@ -281,7 +281,6 @@ class ModelPackage(Resource, PackageRequest):
     def dump(
         self,
         dest: Union[str, PathLike, IO[AnyStr]],
-        # pylint: disable=unused-argument
         **kwargs: Any,
     ) -> None:
         """Dumps the job content into a file in YAML format.
@@ -297,7 +296,7 @@ class ModelPackage(Resource, PackageRequest):
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False)
 
     def _to_dict(self) -> Dict:
-        return dict(ModelPackageSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))  # pylint: disable=no-member
+        return dict(ModelPackageSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))
 
     @classmethod
     def _from_rest_object(cls, model_package_rest_object: PackageResponse) -> Any:
