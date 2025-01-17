@@ -14,6 +14,7 @@ from azure.ai.evaluation import (
     ContentSafetyEvaluator,
     F1ScoreEvaluator,
     GroundednessEvaluator,
+    SimilarityEvaluator,
     ProtectedMaterialEvaluator,
     evaluate,
 )
@@ -32,6 +33,16 @@ def _get_file(name):
     """Get the file from the unittest data folder."""
     data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
     return os.path.join(data_path, name)
+
+
+@pytest.fixture
+def unsupported_file_type():
+    return _get_file("unsupported_file_type.txt")
+
+
+@pytest.fixture
+def missing_header_csv_file():
+    return _get_file("no_header_evaluate_test_data.csv")
 
 
 @pytest.fixture
@@ -157,7 +168,7 @@ class TestEvaluate:
             )
 
         assert "Unable to load data from " in exc_info.value.args[0]
-        assert "Please ensure the input is valid JSONL format." in exc_info.value.args[0]
+        assert "Supported formats are JSONL and CSV. Detailed error:" in exc_info.value.args[0]
 
     def test_evaluate_missing_required_inputs(self, missing_columns_jsonl_file):
         with pytest.raises(EvaluationException) as exc_info:
@@ -678,3 +689,31 @@ class TestEvaluate:
         )  # type: ignore
         assert double_override_results["rows"][0]["outputs.echo.echo_query"] == "new query"
         assert double_override_results["rows"][0]["outputs.echo.echo_response"] == "new response"
+
+    def test_unsupported_file_inputs(self, mock_model_config, unsupported_file_type):
+        with pytest.raises(EvaluationException) as cm:
+            evaluate(
+                data=unsupported_file_type,
+                evaluators={"groundedness": GroundednessEvaluator(model_config=mock_model_config)},
+            )
+        assert "Unable to load data from " in cm.value.args[0]
+        assert "Supported formats are JSONL and CSV. Detailed error:" in cm.value.args[0]
+
+    def test_malformed_file_inputs(self, model_config, missing_header_csv_file, missing_columns_jsonl_file):
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluate(
+                data=missing_columns_jsonl_file,
+                evaluators={"similarity": SimilarityEvaluator(model_config=model_config)},
+                fail_on_evaluator_errors=True,
+            )
+
+        assert "Either 'conversation' or individual inputs must be provided." in str(exc_info.value)
+
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluate(
+                data=missing_header_csv_file,
+                evaluators={"similarity": SimilarityEvaluator(model_config=model_config)},
+                fail_on_evaluator_errors=True,
+            )
+
+        assert "Either 'conversation' or individual inputs must be provided." in str(exc_info.value)
