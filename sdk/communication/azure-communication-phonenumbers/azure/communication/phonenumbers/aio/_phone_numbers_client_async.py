@@ -355,8 +355,8 @@ class PhoneNumbersClient:
             **kwargs
         )
 
-    @distributed_trace
-    def search_operator_information(
+    @distributed_trace_async
+    async def search_operator_information(
         self, phone_numbers: Union[str, List[str]], options: Optional[OperatorInformationOptions] = None, **kwargs: Any
     ) -> OperatorInformationResult:
         """Searches for operator information for a given list of phone numbers.
@@ -373,7 +373,7 @@ class PhoneNumbersClient:
         if options is None:
             options = OperatorInformationOptions(include_additional_operator_details=False)
         request = OperatorInformationRequest(phone_numbers=phone_numbers, options=options)
-        return self._phone_number_client.phone_numbers.operator_information_search(request, **kwargs)
+        return await self._phone_number_client.phone_numbers.operator_information_search(request, **kwargs)
 
     async def __aenter__(self) -> "PhoneNumbersClient":
         await self._phone_number_client.__aenter__()
