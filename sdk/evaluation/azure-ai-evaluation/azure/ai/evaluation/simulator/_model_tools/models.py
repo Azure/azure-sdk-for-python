@@ -601,14 +601,18 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
         )
 
     def _parse_response(self, response_data: dict, request_data: Optional[dict] = None) -> dict:
+
+        # TODO: Fix this to parse a simple message as response_data
         # https://platform.openai.com/docs/api-reference/chat
         samples = []
         finish_reason = []
+        if "choices" in response_data:
+            for choice in response_data["choices"]:
+                if "message" in choice and "content" in choice["message"]:
+                    samples.append(choice["message"]["content"])
+                if "message" in choice and "finish_reason" in choice["message"]:
+                    finish_reason.append(choice["message"]["finish_reason"])
 
-        for choice in response_data["choices"]:
-            if "message" in choice and "content" in choice["message"]:
-                samples.append(choice["message"]["content"])
-            if "message" in choice and "finish_reason" in choice["message"]:
-                finish_reason.append(choice["message"]["finish_reason"])
-
-        return {"samples": samples, "finish_reason": finish_reason, "id": response_data["id"]}
+            return {"samples": samples, "finish_reason": finish_reason, "id": response_data["id"]}
+        else:
+            return {"samples": [response_data], "finish_reason": ["completed"], "id": "unknown"}

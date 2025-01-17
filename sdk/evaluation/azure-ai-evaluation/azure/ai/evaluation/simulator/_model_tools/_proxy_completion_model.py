@@ -103,7 +103,25 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
         :return: The formatted request data.
         :rtype: Dict
         """
-        request_data = {"messages": messages, **self.get_model_params()}
+        request_data = {
+            "messages": messages, 
+            "response_format": {
+                "type": "json_schema",
+                "json_schema": {
+                    "name": "UserMessage",
+                    "strict": True,
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "role": {"type": "string"},
+                            "content": {"type": "string"},
+                        },
+                        "required": ["role", "content"],
+                    }
+                }
+            },
+            **self.get_model_params()
+        }
         request_data.update(request_params)
         return request_data
 
@@ -187,7 +205,6 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
 
         time_start = time.time()
         full_response = None
-
         response = await session.post(url=self.endpoint_url, headers=proxy_headers, json=sim_request_dto.to_dict())
 
         if response.status_code != 202:
@@ -211,7 +228,6 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
         # Someone not under a crunch and with better async understandings should dig into this more.
         await asyncio.sleep(15)
         time.sleep(15)
-
         async with get_async_http_client().with_policies(retry_policy=retry_policy) as exp_retry_client:
             token = await self.token_manager.get_token_async()
             proxy_headers = {

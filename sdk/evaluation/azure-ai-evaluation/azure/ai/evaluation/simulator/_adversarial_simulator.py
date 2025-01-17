@@ -5,6 +5,7 @@
 # pylint: disable=E0401,E0611
 import asyncio
 import logging
+import json
 import random
 from typing import Any, Callable, Dict, List, Optional, Union, cast
 
@@ -244,8 +245,11 @@ class AdversarialSimulator:
             if len(tasks) >= max_simulation_results:
                 break
         for task in asyncio.as_completed(tasks):
-            sim_results.append(await task)
+            sim_result = await task
+            sim_results.append(sim_result)
             progress_bar.update(1)
+            with open("/Users/nagkumar/Documents/msft.nosync/azure-sdk-for-python/sdk/evaluation/azure-ai-evaluation/samples/outputfile.jsonl", "a") as file:
+                file.write(json.dumps({"conversation": {"messages": sim_result["messages"]}}) + "\n")
         progress_bar.close()
 
         return JsonLineList(sim_results)

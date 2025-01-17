@@ -102,17 +102,23 @@ async def simulate_conversation(
     """
 
     # Read the first prompt.
-    (first_response, request, _, full_response) = await bots[0].generate_response(
-        session=session,
-        conversation_history=[],
-        max_history=history_limit,
-        turn_number=0,
-    )
+    try:
+        (first_response, request, _, full_response) = await bots[0].generate_response(
+            session=session,
+            conversation_history=[],
+            max_history=history_limit,
+            turn_number=0,
+        )
+    except Exception as e:  # pylint: disable=broad-except
+        first_response = {"role": "user", "content": "Error: Unable to generate response."}
+        request = None
+        full_response = None
+
     if "id" in first_response:
         conversation_id: Optional[str] = first_response["id"]
     else:
         conversation_id = None
-    first_prompt = first_response["samples"][0]
+    first_prompt = first_response.get("content", "")
     if language != SupportedLanguages.English:
         if not isinstance(language, SupportedLanguages) or language not in SupportedLanguages:
             raise Exception(  # pylint: disable=broad-exception-raised
@@ -144,12 +150,17 @@ async def simulate_conversation(
             current_bot = bots[current_character_idx]
             # invoke Bot to generate response given the input request
             # pass only the last generated turn without passing the bot name.
-            response, request, _, full_response = await current_bot.generate_response(
-                session=session,
-                conversation_history=conversation_history,
-                max_history=history_limit,
-                turn_number=current_turn,
-            )
+            try:
+                response, request, _, full_response = await current_bot.generate_response(
+                    session=session,
+                    conversation_history=conversation_history,
+                    max_history=history_limit,
+                    turn_number=current_turn,
+                )
+            except Exception:  # pylint: disable=broad-except
+                response = {"role": "user", "content": "Error: Unable to generate response."}
+                request = None
+                full_response = response
 
             # check if conversation id is null, which means conversation starter was used. use id from next turn
             if conversation_id is None and "id" in response:
@@ -159,7 +170,7 @@ async def simulate_conversation(
                 ConversationTurn(
                     role=current_bot.role,
                     name=current_bot.name,
-                    message=response["samples"][0],
+                    message=response.get("content", ""),
                     full_response=full_response,
                     request=request,
                 )
