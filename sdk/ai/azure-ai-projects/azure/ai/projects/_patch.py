@@ -22,6 +22,7 @@ from ._serialization import Deserializer, Serializer
 from .operations import AgentsOperations, ConnectionsOperations, EvaluationsOperations, TelemetryOperations
 from .operations._patch import InferenceOperations
 
+# fake change
 
 class AIProjectClient(
     ClientGenerated
