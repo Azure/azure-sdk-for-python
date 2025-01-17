@@ -251,7 +251,7 @@ class SearchOperations:
         results in the exact same order the original queries were sent in the batch request. Each item
         is of one of the following types:
 
-        * `GeocodingResponse <https://docs.microsoft.com/rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ - If the query completed successfully.
+        * `GeocodingResponse <https://learn.microsoft.com/rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ - If the query completed successfully.
 
         * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in this case.
 
@@ -308,7 +308,7 @@ class SearchOperations:
         results in the exact same order the original queries were sent in the batch request. Each item
         is of one of the following types:
 
-        * `GeocodingResponse <https://docs.microsoft.com/rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ - If the query completed successfully.
+        * `GeocodingResponse <https://learn.microsoft.com/rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ - If the query completed successfully.
 
         * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in this case.
 
@@ -363,7 +363,7 @@ class SearchOperations:
         results in the exact same order the original queries were sent in the batch request. Each item
         is of one of the following types:
 
-        * `GeocodingResponse <https://docs.microsoft.com/rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ - If the query completed successfully.
+        * `GeocodingResponse <https://learn.microsoft.com/rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ - If the query completed successfully.
 
         * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in this case.
 
@@ -667,7 +667,7 @@ class SearchOperations:
         results in the exact same order the original queries were sent in the batch request. Each item
         is of one of the following types:
 
-        * `GeocodingResponse <https://docs.microsoft.com/rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ - If the query completed successfully.
+        * `GeocodingResponse <https://learn.microsoft.com/rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ - If the query completed successfully.
 
         * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in this case.
 
@@ -726,7 +726,7 @@ class SearchOperations:
         results in the exact same order the original queries were sent in the batch request. Each item
         is of one of the following types:
 
-        * `GeocodingResponse <https://docs.microsoft.com/rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ - If the query completed successfully.
+        * `GeocodingResponse <https://learn.microsoft.com/rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ - If the query completed successfully.
 
         * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in this case.
 
@@ -783,7 +783,7 @@ class SearchOperations:
         results in the exact same order the original queries were sent in the batch request. Each item
         is of one of the following types:
 
-        * `GeocodingResponse <https://docs.microsoft.com/rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ - If the query completed successfully.
+        * `GeocodingResponse <https://learn.microsoft.com/rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ - If the query completed successfully.
 
         * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in this case.
 
