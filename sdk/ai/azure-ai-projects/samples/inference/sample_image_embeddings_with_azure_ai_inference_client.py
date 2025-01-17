@@ -6,11 +6,11 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to get an authenticated 
-    async EmbeddingsClient from the azure.ai.inference package. For more information
+    async ImageEmbeddingsClient from the azure.ai.inference package. For more information
     on the azure.ai.inference package see https://pypi.org/project/azure-ai-inference/.
 
 USAGE:
-    python sample_text_embeddings_with_azure_ai_inference_client.py
+    python sample_image_embeddings_with_azure_ai_inference_client.py
 
     Before running the sample:
 
@@ -22,6 +22,7 @@ USAGE:
 """
 import os
 from azure.ai.projects import AIProjectClient
+from azure.ai.inference.models import ImageEmbeddingInput
 from azure.identity import DefaultAzureCredential
 
 project_connection_string = os.environ["PROJECT_CONNECTION_STRING"]
@@ -32,10 +33,12 @@ with AIProjectClient.from_connection_string(
     conn_str=project_connection_string,
 ) as project_client:
 
-    # Get an authenticated azure.ai.inference embeddings client for your default Serverless connection:
-    with project_client.inference.get_embeddings_client() as client:
+    # Get an authenticated azure.ai.inference image embeddings client for your default Serverless connection:
+    with project_client.inference.get_image_embeddings_client() as client:
 
-        response = client.embed(model=model_deployment_name, input=["first phrase", "second phrase", "third phrase"])
+        response = client.embed(
+            model=model_deployment_name, input=[ImageEmbeddingInput.load(image_file="sample1.png", image_format="png")]
+        )
 
         for item in response.data:
             length = len(item.embedding)

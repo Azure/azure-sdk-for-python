@@ -15,14 +15,17 @@ USAGE:
 
     pip install azure-ai-projects azure-identity
 
-    Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
+    Set these environment variables with your own values:
+    1) PROJECT_CONNECTION_STRING - The project connection string, as found in the overview page of your
+       Azure AI Foundry project.
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
+       the "Models + endpoints" tab in your Azure AI Foundry project.
 """
 
 import os
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import CodeInterpreterTool
-from azure.ai.projects.models import FilePurpose
+from azure.ai.projects.models import FilePurpose, MessageRole
 from azure.identity import DefaultAzureCredential
 from pathlib import Path
 
@@ -93,7 +96,7 @@ with project_client:
         print(f"End Index: {file_path_annotation.end_index}")
     # [END get_messages_and_save_files]
 
-    last_msg = messages.get_last_text_message_by_sender("assistant")
+    last_msg = messages.get_last_text_message_by_role(MessageRole.AGENT)
     if last_msg:
         print(f"Last Message: {last_msg.text.value}")
 
