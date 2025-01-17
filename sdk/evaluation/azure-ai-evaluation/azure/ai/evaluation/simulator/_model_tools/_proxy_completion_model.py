@@ -89,6 +89,10 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
         self.tkey = template_key
         self.tparam = template_parameters
         self.result_url: Optional[str] = None
+        if "conversation_id" in kwargs:
+            self.conversation_id = kwargs["conversation_id"]
+        else:
+            self.conversation_id = str(uuid.uuid4())
 
         super().__init__(name=name, **kwargs)
 
@@ -156,6 +160,30 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             session=session,
             request_data=request_data,
         )
+    
+    def _parse_response(self, response_data: dict, request_data: Optional[dict] = None) -> dict:
+        """
+        Parse the response data from the simulator service LLM.
+
+        :param response_data: The response data from the simulator service LLM.
+        :type response_data: Dict
+        :param request_data: The request data sent to the simulator service LLM.
+        :type request_data: Dict
+        :return: The parsed response data.
+
+        """
+        finish_reason = []
+        time_taken = 0
+        if "time_taken" in response_data:
+            time_taken = response_data["time_taken"]
+        if "finish_reason" in response_data:
+            finish_reason = response_data["finish_reason"]
+        return {
+            "content": response_data["content"],
+            "finish_reason": finish_reason,
+            "time_taken": time_taken,
+            "full_response": response_data
+        }
 
     async def request_api(
         self,
@@ -180,6 +208,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
         proxy_headers = {
             "Authorization": f"Bearer {token}",
             "Content-Type": "application/json",
+            "x-ms-client-request-id": self.conversation_id,
             "User-Agent": USER_AGENT,
         }
 
@@ -205,6 +234,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
 
         time_start = time.time()
         full_response = None
+
         response = await session.post(url=self.endpoint_url, headers=proxy_headers, json=sim_request_dto.to_dict())
 
         if response.status_code != 202:
@@ -228,6 +258,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
         # Someone not under a crunch and with better async understandings should dig into this more.
         await asyncio.sleep(15)
         time.sleep(15)
+
         async with get_async_http_client().with_policies(retry_policy=retry_policy) as exp_retry_client:
             token = await self.token_manager.get_token_async()
             proxy_headers = {
@@ -246,6 +277,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
 
         # Copy the full response and return it to be saved in jsonl.
         full_response = copy.copy(response_data)
+        full_response["id"] = self.conversation_id
 
         time_taken = time.time() - time_start
 

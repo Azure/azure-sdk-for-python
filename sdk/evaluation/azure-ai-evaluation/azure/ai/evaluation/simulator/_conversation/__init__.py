@@ -249,6 +249,7 @@ class CallbackConversationBot(ConversationBot):
         self.callback = callback
         self.user_template = user_template
         self.user_template_parameters = user_template_parameters
+        self._session_state = {}
 
         super().__init__(*args, **kwargs)
 
@@ -265,7 +266,10 @@ class CallbackConversationBot(ConversationBot):
         msg_copy = copy.deepcopy(chat_protocol_message)
         result = {}
         start_time = time.time()
-        result = await self.callback(msg_copy)
+        result = await self.callback(messages=msg_copy, stream=False, session_state=self._session_state, context=None)
+        if "session_state" in result:
+            self._session_state = {**self._session_state, **result["session_state"]}
+        result["session_state"] = self._session_state
         end_time = time.time()
         if not result:
             result = {
@@ -303,6 +307,7 @@ class CallbackConversationBot(ConversationBot):
         return {
             "template_parameters": template_parameters,
             "messages": messages,
+            "session_state": self._session_state,
             "$schema": "http://azureml/sdk-2-0/ChatConversation.json",
         }
 

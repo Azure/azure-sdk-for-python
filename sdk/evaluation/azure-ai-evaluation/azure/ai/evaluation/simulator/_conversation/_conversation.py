@@ -62,8 +62,6 @@ def is_closing_message_helper(response: str) -> bool:
     if (
         "bye" not in message.lower().split()
         and "goodbye" not in message.lower().split()
-        # and "thanks" not in message.lower()
-        # and "thank" not in message.lower()
     ):
         return False
     return True
@@ -109,13 +107,13 @@ async def simulate_conversation(
             max_history=history_limit,
             turn_number=0,
         )
-    except Exception as e:  # pylint: disable=broad-except
+    except Exception:  # pylint: disable=broad-except
         first_response = {"role": "user", "content": "Error: Unable to generate response."}
         request = None
         full_response = None
 
-    if "id" in first_response:
-        conversation_id: Optional[str] = first_response["id"]
+    if "id" in full_response:
+        conversation_id: Optional[str] = full_response["id"]
     else:
         conversation_id = None
     first_prompt = first_response.get("content", "")
@@ -164,7 +162,7 @@ async def simulate_conversation(
 
             # check if conversation id is null, which means conversation starter was used. use id from next turn
             if conversation_id is None and "id" in response:
-                conversation_id = response["id"]
+                conversation_id = full_response["id"]
             # add the generated response to the list of generated responses
             conversation_history.append(
                 ConversationTurn(
@@ -177,6 +175,7 @@ async def simulate_conversation(
             )
         except Exception as e:  # pylint: disable=broad-except
             logger.warning("Error: %s", str(e))
+            logger.warning("Use conversation_id to help us debug the issue: %s", str(conversation_id))
 
         # Increment outside the try block so we don't get stuck if
         # an exception is thrown
