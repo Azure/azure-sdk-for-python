@@ -19,8 +19,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
-
 """Create, read, update and delete users in the Azure Cosmos DB SQL API service.
 """
 
@@ -77,8 +75,9 @@ class UserProxy:
     async def read(self, **kwargs: Any) -> Dict[str, Any]:
         """Read user properties.
 
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        **kwargs: Arbitrary keyword arguments.
+        * keyword response_hook: A callable invoked with the response metadata.
+        * paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user couldn't be retrieved.
         :returns: A dictionary of the retrieved user properties.
         :rtype: Dict[str, Any]
@@ -102,8 +101,9 @@ class UserProxy:
         """List all permission for the user.
 
         :keyword int max_item_count: Max number of permissions to be returned in the enumeration operation.
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]], None]
+        **kwargs: Arbitrary keyword arguments.
+        * keyword response_hook: A callable invoked with the response metadata.
+        * paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]], None]
         :returns: An AsyncItemPaged of permissions (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -134,8 +134,9 @@ class UserProxy:
         :keyword parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :paramtype parameters: Optional[List[Dict[str, Any]]]
         :keyword int max_item_count: Max number of permissions to be returned in the enumeration operation.
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
+        **kwargs: Arbitrary keyword arguments.
+        * keyword response_hook: A callable invoked with the response metadata.
+        * paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
         :returns: An AsyncItemPaged of permissions (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -167,8 +168,9 @@ class UserProxy:
         :param permission: The ID (name), dict representing the properties or :class:`Permission`
             instance of the permission to be retrieved.
         :type permission: Union[str, Dict[str, Any], ~azure.cosmos.Permission]
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        **kwargs: Arbitrary keyword arguments.
+        * keyword response_hook: A callable invoked with the response metadata.
+        * paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given permission couldn't be retrieved.
         :returns: The retrieved permission object.
         :rtype: ~azure.cosmos.Permission
@@ -194,8 +196,9 @@ class UserProxy:
 
         :param body: A dict-like object representing the permission to create.
         :type body: Dict[str, Any]
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        **kwargs: Arbitrary keyword arguments.
+        * keyword response_hook: A callable invoked with the response metadata.
+        * paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given permission couldn't be created.
         :returns: A permission object representing the new permission.
         :rtype: ~azure.cosmos.Permission
@@ -223,8 +226,9 @@ class UserProxy:
 
         :param body: A dict-like object representing the permission to update or insert.
         :type body: Dict[str, Any]
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        **kwargs: Arbitrary keyword arguments.
+        * keyword response_hook: A callable invoked with the response metadata.
+        * paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given permission could not be upserted.
         :returns: A dict representing the upserted permission.
         :rtype: ~azure.cosmos.Permission
@@ -259,8 +263,9 @@ class UserProxy:
         :type permission: Union[str, Dict[str, Any], ~azure.cosmos.Permission]
         :param body: A dict-like object representing the permission to replace.
         :type body: Dict[str, Any]
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        **kwargs: Arbitrary keyword arguments.
+        * keyword response_hook: A callable invoked with the response metadata.
+        * paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace operation failed or the permission
             with given id does not exist.
         :returns: A permission object representing the permission after the replace operation went through.
@@ -293,8 +298,9 @@ class UserProxy:
         :param permission: The ID (name), dict representing the properties or :class:`Permission`
             instance of the permission to be deleted.
         :type permission: Union[str, Dict[str, Any], ~azure.cosmos.Permission]
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], None], None]
+        **kwargs: Arbitrary keyword arguments.
+        * keyword response_hook: A callable invoked with the response metadata.
+        * paramtype response_hook: Callable[[Dict[str, str], None], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The permission wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The permission does not exist for the user.
         :rtype: None

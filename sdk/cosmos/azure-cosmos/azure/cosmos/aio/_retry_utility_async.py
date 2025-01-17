@@ -40,7 +40,7 @@ from .. import _timeout_failover_retry_policy
 from .._container_recreate_retry_policy import ContainerRecreateRetryPolicy
 
 
-# pylint: disable=protected-access, disable=too-many-lines, disable=too-many-statements, disable=too-many-branches
+# pylint: disable=protected-access, disable=too-many-statements, disable=too-many-branches
 
 
 async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwargs):
@@ -235,7 +235,7 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                         await self.sleep(retry_settings, request.context.transport, response=response)
                         continue
                 break
-            except ClientAuthenticationError:  # pylint:disable=try-except-raise
+            except ClientAuthenticationError:
                 # the authentication policy failed such that the client's request can't
                 # succeed--we'll never have a response to it, so propagate the exception
                 raise

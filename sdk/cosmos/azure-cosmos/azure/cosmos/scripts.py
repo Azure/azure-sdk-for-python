@@ -31,9 +31,6 @@ from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options
 from .partition_key import NonePartitionKeyValue, _return_undefined_or_empty_partition_key
 
-# pylint: disable=protected-access
-# pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
-
 PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
 
 

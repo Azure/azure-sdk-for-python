@@ -24,8 +24,6 @@
 from azure.core.paging import PageIterator  # type: ignore
 from azure.cosmos._execution_context import execution_dispatcher
 
-# pylint: disable=protected-access
-
 
 class QueryIterable(PageIterator):
     """Represents an iterable object of the query results.
