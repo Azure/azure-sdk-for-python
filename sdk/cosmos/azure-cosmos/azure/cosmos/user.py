@@ -73,8 +73,6 @@ class UserProxy:
     def read(self, **kwargs: Any) -> Dict[str, Any]:
         """Read user properties.
 
-        **kwargs: Arbitrary keyword arguments.
-        * keyword response_hook: A callable invoked with the response metadata.
         :returns: A dictionary of the retrieved user properties.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user couldn't be retrieved.
         :rtype: dict[str, Any]
@@ -92,8 +90,6 @@ class UserProxy:
         """List all permission for the user.
 
         :param int max_item_count: Max number of permissions to be returned in the enumeration operation.
-        **kwargs: Arbitrary keyword arguments.
-        * keyword response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of permissions (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
@@ -127,8 +123,6 @@ class UserProxy:
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :type parameters: List[Dict[str, Any]]
         :param int max_item_count: Max number of permissions to be returned in the enumeration operation.
-        **kwargs: Arbitrary keyword arguments.
-        * keyword response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of permissions (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
@@ -161,8 +155,6 @@ class UserProxy:
         :param permission: The ID (name), dict representing the properties or :class:`~azure.cosmos.Permission`
             instance of the permission to be retrieved.
         :type permission: Union[str, ~azure.cosmos.Permission, Dict[str, Any]]
-        **kwargs: Arbitrary keyword arguments.
-        * keyword response_hook: A callable invoked with the response metadata.
         :returns: A dict representing the retrieved permission.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given permission couldn't be retrieved.
         :rtype: Dict[str, Any]
@@ -188,8 +180,6 @@ class UserProxy:
         To update or replace an existing permision, use the :func:`UserProxy.upsert_permission` method.
 
         :param Dict[str, Any] body: A dict-like object representing the permission to create.
-        **kwargs: Arbitrary keyword arguments.
-        * keyword response_hook: A callable invoked with the response metadata.
         :returns: A dict representing the new permission.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given permission couldn't be created.
         :rtype: Dict[str, Any]
@@ -217,8 +207,6 @@ class UserProxy:
         the permission does not exist, it is inserted.
 
         :param Dict[str, Any] body: A dict-like object representing the permission to update or insert.
-        **kwargs: Arbitrary keyword arguments.
-        * keyword response_hook: A callable invoked with the response metadata.
         :returns: A dict representing the upserted permission.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given permission could not be upserted.
         :rtype: Dict[str, Any]
@@ -250,8 +238,6 @@ class UserProxy:
             instance of the permission to be replaced.
         :type permission: Union[str, ~azure.cosmos.Permission, Dict[str, Any]]
         :param Dict[str, Any] body: A dict-like object representing the permission to replace.
-        **kwargs: Arbitrary keyword arguments.
-        * keyword response_hook: A callable invoked with the response metadata.
         :returns: A dict representing the permission after replace went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace operation failed or the permission
             with given id does not exist.
@@ -285,8 +271,6 @@ class UserProxy:
         :param permission: The ID (name), dict representing the properties or :class:`~azure.cosmos.Permission`
             instance of the permission to be replaced.
         :type permission: Union[str, ~azure.cosmos.Permission, Dict[str, Any]]
-        **kwargs: Arbitrary keyword arguments.
-        * keyword response_hook: A callable invoked with the response metadata.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The permission wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The permission does not exist for the user.
         :rtype: None

@@ -259,9 +259,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
-        **kwargs: Arbitrary keyword arguments.
-        * keyword response_hook: A callable invoked with the response metadata.
-        * paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
         :returns: A DatabaseProxy instance representing the new database.
         :rtype: ~azure.cosmos.aio.DatabaseProxy
@@ -320,9 +317,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
-        **kwargs: Arbitrary keyword arguments.
-        * keyword response_hook: A callable invoked with the response metadata.
-        * paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
         :returns: A DatabaseProxy instance representing the database.
         :rtype: ~azure.cosmos.DatabaseProxy
@@ -377,9 +371,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        **kwargs: Arbitrary keyword arguments.
-        * keyword response_hook: A callable invoked with the response metadata.
-        * paramtype response_hook: Callable[[Dict[str, str]], None]
         :returns: An AsyncItemPaged of database properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, str]]
         """
@@ -417,9 +408,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        **kwargs: Arbitrary keyword arguments.
-        * keyword response_hook: A callable invoked with the response metadata.
-        * paramtype response_hook: Callable[[Dict[str, str]], None]
         :returns: An AsyncItemPaged of database properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, str]]
         """
@@ -462,9 +450,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
-        **kwargs: Arbitrary keyword arguments.
-        * keyword response_hook: A callable invoked with the response metadata.
-        * paramtype response_hook: Callable[[Dict[str, str]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
         """
@@ -488,9 +473,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     async def _get_database_account(self, **kwargs: Any) -> DatabaseAccount:
         """Retrieve the database account information.
 
-        **kwargs: Arbitrary keyword arguments.
-        * keyword response_hook: A callable invoked with the response metadata.
-        * paramtype response_hook: Callable[[Dict[str, str]], None]
         :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
         :rtype: ~azure.cosmos.DatabaseAccount
         """
