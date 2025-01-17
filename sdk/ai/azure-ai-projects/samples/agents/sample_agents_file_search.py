@@ -91,6 +91,6 @@ with project_client:
     # Fetch and log all messages
     messages = project_client.agents.list_messages(thread_id=thread.id)
 
-    # Print citations from the messages
-    for citation in messages.file_citation_annotations:
-        print(citation)
+    # Print messages from the thread
+    for text_message in messages.text_messages:
+        print(text_message)
