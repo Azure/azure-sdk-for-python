@@ -651,7 +651,11 @@ def map_codeowners_to_label(
             if len(parts) > 3:
                 # we don't distinguish past package level for SLA
                 continue
-            service_directory = parts[0]
+            try:
+                service_directory = parts[0]
+            except IndexError:
+                # it was a single file
+                continue
             tracked_labels[label] = service_directory
             try:
                 library = parts[1]
@@ -969,14 +973,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     libraries = get_dataplane(include_sdk_owned=args.include_sdk_owned)
-    pipelines = get_pipelines(libraries)
-    for service, pipeline_ids in pipelines.items():
-        get_ci_result(service, pipeline_ids.get("ci", {}).get("id"), pipelines)
-        get_tests_result(service, pipeline_ids.get("tests", {}).get("id"), pipelines)
-        get_tests_weekly_result(service, pipeline_ids.get("tests_weekly", {}).get("id"), pipelines)
+    # pipelines = get_pipelines(libraries)
+    # for service, pipeline_ids in pipelines.items():
+    #     get_ci_result(service, pipeline_ids.get("ci", {}).get("id"), pipelines)
+    #     get_tests_result(service, pipeline_ids.get("tests", {}).get("id"), pipelines)
+    #     get_tests_weekly_result(service, pipeline_ids.get("tests_weekly", {}).get("id"), pipelines)
 
-    report_status(libraries, pipelines)
-    handle_special_case(service_directory="communication", special_case_mapping=communication_mapping)
+    # report_status(libraries, pipelines)
+    # handle_special_case(service_directory="communication", special_case_mapping=communication_mapping)
     report_sla_and_total_issues(libraries)
 
     if args.format == "csv":
