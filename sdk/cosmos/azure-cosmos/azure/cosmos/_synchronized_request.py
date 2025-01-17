@@ -80,7 +80,6 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     :rtype: tuple of (dict, dict)
 
     """
-    # pylint: disable=protected-access
 
     connection_timeout = connection_policy.RequestTimeout
     connection_timeout = kwargs.pop("connection_timeout", connection_timeout)

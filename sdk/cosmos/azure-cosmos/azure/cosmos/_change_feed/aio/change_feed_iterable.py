@@ -28,9 +28,6 @@ from azure.core.async_paging import AsyncPageIterator
 from azure.cosmos._change_feed.aio.change_feed_fetcher import ChangeFeedFetcherV1, ChangeFeedFetcherV2
 from azure.cosmos._change_feed.change_feed_state import ChangeFeedState, ChangeFeedStateVersion
 
-
-# pylint: disable=protected-access
-
 class ChangeFeedIterable(AsyncPageIterator):
     """Represents an iterable object of the change feed results.
 

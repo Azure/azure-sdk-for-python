@@ -214,7 +214,7 @@ class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProducerCompa
     """Provide a Comparator for document producers which respects orderby sort order.
     """
 
-    def __init__(self, sort_order):  # pylint: disable=super-init-not-called
+    def __init__(self, sort_order):
         """Instantiates this class
 
         :param list sort_order:

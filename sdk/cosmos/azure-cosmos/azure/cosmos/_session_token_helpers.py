@@ -27,8 +27,6 @@ from azure.cosmos._routing.routing_range import Range
 from azure.cosmos._vector_session_token import VectorSessionToken
 from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 
-# pylint: disable=protected-access
-
 
 # ex inputs and outputs:
 # 1. "1:1#51", "1:1#55" -> "1:1#55"

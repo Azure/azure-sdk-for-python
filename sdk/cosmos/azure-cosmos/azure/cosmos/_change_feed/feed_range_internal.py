@@ -55,7 +55,7 @@ class FeedRangeInternalPartitionKey(FeedRangeInternal):
     def __init__(
             self,
             pk_value: Union[str, int, float, bool, List[Union[str, int, float, bool]], _Empty, _Undefined],
-            feed_range: Range) -> None:  # pylint: disable=line-too-long
+            feed_range: Range) -> None:
 
         if pk_value is None:
             raise ValueError("PartitionKey cannot be None")
