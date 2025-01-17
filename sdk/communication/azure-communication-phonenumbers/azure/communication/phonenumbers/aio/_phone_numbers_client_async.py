@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+# pylint:  docstring-keyword-should-match-keyword-only
 from typing import List, Optional, Union, Any
 
 from azure.core.credentials_async import AsyncTokenCredential
