@@ -1264,6 +1264,9 @@ class AgentsOperations(AgentsOperationsGenerated):
          AgentsApiResponseFormat Default value is None.
         :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
          or ~azure.ai.projects.models.AgentsApiResponseFormat
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -1893,9 +1896,8 @@ class AgentsOperations(AgentsOperationsGenerated):
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :keyword event_handler: The event handler to use for processing events during the run. Default
-            value is None.
-        :paramtype event_handler: ~azure.ai.projects.models.AgentEventHandler
+        :keyword event_handler: None
+        :paramtype event_handler: None.  _models.AgentEventHandler will be applied as default.
         :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
         :rtype: ~azure.ai.projects.models.AgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2035,9 +2037,8 @@ class AgentsOperations(AgentsOperationsGenerated):
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
         :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
-        :keyword event_handler: The event handler to use for processing events during the run. Default
-            value is None.
-        :paramtype event_handler: ~azure.ai.projects.models.AgentEventHandler
+        :keyword event_handler: None
+        :paramtype event_handler: None.  _models.AgentEventHandler will be applied as default.
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2052,7 +2053,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         thread_id: str,
         body: Union[JSON, IO[bytes]],
         *,
-        e,
         event_handler: _models.BaseAgentEventHandlerT,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         content_type: str = "application/json",
@@ -2813,6 +2813,9 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :keyword file_ids: A list of file IDs that the vector store should use. Useful for tools like
          ``file_search`` that can access files. Default value is None.
         :paramtype file_ids: list[str]

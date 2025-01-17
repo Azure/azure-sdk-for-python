@@ -811,7 +811,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype metadata: Optional[Dict[str, str]]
         :keyword content_type: Content type of the body.
         :paramtype content_type: str
-        :keyword kwargs: Additional parameters.
         :return: An Agent object.
         :rtype: _models.Agent
         :raises: HttpResponseError for HTTP errors.
@@ -1073,6 +1072,9 @@ class AgentsOperations(AgentsOperationsGenerated):
          AgentsApiResponseFormat Default value is None.
         :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
          or ~azure.ai.projects.models.AgentsApiResponseFormat
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -1702,6 +1704,8 @@ class AgentsOperations(AgentsOperationsGenerated):
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
+        :keyword event_handler: None
+        :paramtype event_handler: None.  _models.AsyncAgentEventHandler will be applied as default.
         :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
         :rtype: ~azure.ai.projects.models.AsyncAgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1809,8 +1813,7 @@ class AgentsOperations(AgentsOperationsGenerated):
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :keyword event_handler: The event handler to use for processing events during the run. Default
-            value is None.
+        :keyword event_handler: The event handler to use for processing events during the run.
         :paramtype event_handler: ~azure.ai.projects.models.AsyncAgentEventHandler
         :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
         :rtype: ~azure.ai.projects.models.AsyncAgentRunStream
@@ -1841,6 +1844,8 @@ class AgentsOperations(AgentsOperationsGenerated):
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
         :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
+        :keyword event_handler: None
+        :paramtype event_handler: None.  _models.AsyncAgentEventHandler will be applied as default.
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2083,9 +2088,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword event_handler: The event handler to use for processing events during the run. Default
-            value is None.
-        :paramtype event_handler: ~azure.ai.projects.models.AsyncAgentEventHandler
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2610,6 +2612,9 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :keyword file_ids: A list of file IDs that the vector store should use. Useful for tools like
          ``file_search`` that can access files. Default value is None.
         :paramtype file_ids: list[str]
@@ -2774,6 +2779,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
+        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+         is 1.
+        :paramtype sleep_interval: float
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:
