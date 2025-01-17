@@ -28,11 +28,10 @@ from ._operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ChatCompletionsClient(ChatCompletionsClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class ChatCompletionsClient(ChatCompletionsClientOperationsMixin):
     """ChatCompletionsClient.
 
     :param endpoint: Service host. Required.
@@ -115,7 +114,7 @@ class ChatCompletionsClient(ChatCompletionsClientOperationsMixin):  # pylint: di
         await self._client.__aexit__(*exc_details)
 
 
-class EmbeddingsClient(EmbeddingsClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class EmbeddingsClient(EmbeddingsClientOperationsMixin):
     """EmbeddingsClient.
 
     :param endpoint: Service host. Required.
@@ -198,7 +197,7 @@ class EmbeddingsClient(EmbeddingsClientOperationsMixin):  # pylint: disable=clie
         await self._client.__aexit__(*exc_details)
 
 
-class ImageEmbeddingsClient(ImageEmbeddingsClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class ImageEmbeddingsClient(ImageEmbeddingsClientOperationsMixin):
     """ImageEmbeddingsClient.
 
     :param endpoint: Service host. Required.

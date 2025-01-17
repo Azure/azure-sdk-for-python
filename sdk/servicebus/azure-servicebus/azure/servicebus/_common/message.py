@@ -263,7 +263,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
         Messages with the same session identifier are subject to summary locking and enable exact in-order
         processing and demultiplexing. For non-sessionful entities, this value is ignored.
 
-        See Message Sessions in `https://docs.microsoft.com/azure/service-bus-messaging/message-sessions`.
+        See Message Sessions in `https://learn.microsoft.com/azure/service-bus-messaging/message-sessions`.
 
         :rtype: str or None
         """
@@ -305,7 +305,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
         The partition is chosen by a hash function over this value and cannot be chosen directly.
 
         See Partitioned queues and topics in
-        `https://docs.microsoft.com/azure/service-bus-messaging/service-bus-partitioning`.
+        `https://learn.microsoft.com/azure/service-bus-messaging/service-bus-partitioning`.
 
         :rtype: str or None
         """
@@ -338,7 +338,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
         A message-level time-to-live value cannot be longer than the entity's time-to-live setting and it is silently
         adjusted if it does.
 
-        See Expiration in `https://docs.microsoft.com/azure/service-bus-messaging/message-expiration`
+        See Expiration in `https://learn.microsoft.com/azure/service-bus-messaging/message-expiration`
 
         :rtype: ~datetime.timedelta
         """
@@ -454,7 +454,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
         reflecting the MessageId of a message that is being replied to.
 
         See Message Routing and Correlation in
-        `https://docs.microsoft.com/azure/service-bus-messaging/service-bus-messages-payloads?#message-routing-and-correlation`.
+        `https://learn.microsoft.com/azure/service-bus-messaging/service-bus-messages-payloads?#message-routing-and-correlation`.
 
         :rtype: str or None
         """
@@ -500,7 +500,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
         The message identifier is an application-defined value that uniquely identifies the message and its payload.
         The identifier is a free-form string and can reflect a GUID or an identifier derived from the
         application context.  If enabled, the duplicate detection (see
-        `https://docs.microsoft.com/azure/service-bus-messaging/duplicate-detection`)
+        `https://learn.microsoft.com/azure/service-bus-messaging/duplicate-detection`)
         feature identifies and removes second and further submissions of messages with the same message id.
 
         :rtype: str or None
@@ -530,7 +530,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
         or topic it expects the reply to be sent to.
 
         See Message Routing and Correlation in
-        `https://docs.microsoft.com/azure/service-bus-messaging/service-bus-messages-payloads?#message-routing-and-correlation`.
+        `https://learn.microsoft.com/azure/service-bus-messaging/service-bus-messages-payloads?#message-routing-and-correlation`.
 
         :rtype: str or None
         """
@@ -556,7 +556,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
         when sent to the reply entity.
 
         See Message Routing and Correlation in
-        `https://docs.microsoft.com/azure/service-bus-messaging/service-bus-messages-payloads?#message-routing-and-correlation`.
+        `https://learn.microsoft.com/azure/service-bus-messaging/service-bus-messages-payloads?#message-routing-and-correlation`.
 
         :rtype: str or None
         """
@@ -586,7 +586,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
         Applications can use this value in rule-driven auto-forward chaining scenarios to indicate the intended
         logical destination of the message.
 
-        See https://docs.microsoft.com/azure/service-bus-messaging/service-bus-auto-forwarding for more details.
+        See https://learn.microsoft.com/azure/service-bus-messaging/service-bus-auto-forwarding for more details.
 
         :rtype: str or None
         """

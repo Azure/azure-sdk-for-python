@@ -1,13 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 from datetime import datetime
-import json
 import unittest
 from unittest import mock
 
 from opentelemetry.sdk.metrics.export import HistogramDataPoint, NumberDataPoint
-from opentelemetry.semconv.trace import SpanAttributes
-from opentelemetry.trace import SpanKind
 
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _COMMITTED_BYTES_NAME,
@@ -20,11 +17,13 @@ from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
     MonitoringDataPoint,
     RemoteDependency,
     Request,
-    TelemetryType,
     Trace,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._types import (
     _DependencyData,
+    _ExceptionData,
+    _RequestData,
+    _TraceData,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
     _get_metrics_from_projections,
@@ -126,92 +125,64 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(mdp.metrics[0].name, "ID:1234")
         self.assertEqual(mdp.metrics[0].value, 5.0)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._ns_to_iso8601_string")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._get_url_for_http_dependency")
-    def test_get_span_document_client(self, url_mock, iso_mock):
-        span_mock = mock.Mock()
-        span_mock.name = "test_span"
-        span_mock.end_time = 10
-        span_mock.start_time = 4
-        span_mock.attributes = {
-            SpanAttributes.HTTP_STATUS_CODE: "200",
-            SpanAttributes.RPC_GRPC_STATUS_CODE: "400",
-        }
-        span_mock.kind = SpanKind.CLIENT
-        url_mock.return_value = "test_url"
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._ms_to_iso8601_string")
+    def test_get_span_document_client(self, iso_mock):
+        data = _DependencyData(
+            custom_dimensions={},
+            duration=1000,
+            name="test_dep",
+            result_code=200,
+            target="target",
+            type="test_type",
+            data="test_data",
+            success=True,
+        )
         iso_mock.return_value = "1000"
-        doc = _get_span_document(span_mock)
+        doc = _get_span_document(data)
         self.assertTrue(isinstance(doc, RemoteDependency))
         self.assertEqual(doc.document_type, DocumentType.REMOTE_DEPENDENCY)
-        self.assertEqual(doc.name, "test_span")
-        self.assertEqual(doc.command_name, "test_url")
+        self.assertEqual(doc.name, "test_dep")
+        self.assertEqual(doc.command_name, "test_data")
         self.assertEqual(doc.result_code, "200")
         self.assertEqual(doc.duration, "1000")
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._ns_to_iso8601_string")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._get_url_for_http_request")
-    def test_get_span_document_server(self, url_mock, iso_mock):
-        span_mock = mock.Mock()
-        span_mock.name = "test_span"
-        span_mock.end_time = 10
-        span_mock.start_time = 4
-        span_mock.attributes = {
-            SpanAttributes.HTTP_STATUS_CODE: "200",
-            SpanAttributes.RPC_GRPC_STATUS_CODE: "400",
-        }
-        span_mock.kind = SpanKind.SERVER
-        url_mock.return_value = "test_url"
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._ms_to_iso8601_string")
+    def test_get_span_document_server(self, iso_mock):
+        data = _RequestData(
+            custom_dimensions={},
+            duration=1000,
+            success=True,
+            name="test_req",
+            response_code=400,
+            url="test_url",
+        )
         iso_mock.return_value = "1000"
-        doc = _get_span_document(span_mock)
+        doc = _get_span_document(data)
         self.assertTrue(isinstance(doc, Request))
         self.assertEqual(doc.document_type, DocumentType.REQUEST)
-        self.assertEqual(doc.name, "test_span")
-        self.assertEqual(doc.url, "test_url")
-        self.assertEqual(doc.response_code, "200")
-        self.assertEqual(doc.duration, "1000")
-
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._ns_to_iso8601_string")
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._utils._get_url_for_http_request")
-    def test_get_span_document_server_grpc_status(self, url_mock, iso_mock):
-        span_mock = mock.Mock()
-        span_mock.name = "test_span"
-        span_mock.end_time = 10
-        span_mock.start_time = 4
-        span_mock.attributes = {
-            SpanAttributes.RPC_GRPC_STATUS_CODE: "400",
-        }
-        span_mock.kind = SpanKind.SERVER
-        url_mock.return_value = "test_url"
-        iso_mock.return_value = "1000"
-        doc = _get_span_document(span_mock)
-        self.assertTrue(isinstance(doc, Request))
-        self.assertEqual(doc.document_type, DocumentType.REQUEST)
-        self.assertEqual(doc.name, "test_span")
+        self.assertEqual(doc.name, "test_req")
         self.assertEqual(doc.url, "test_url")
         self.assertEqual(doc.response_code, "400")
         self.assertEqual(doc.duration, "1000")
 
-    def test_get_log_record_document_server_exc(self):
-        log_record = mock.Mock()
-        log_record.attributes = {
-            SpanAttributes.EXCEPTION_TYPE: "exc_type",
-            SpanAttributes.EXCEPTION_MESSAGE: "exc_message",
-        }
-        log_data = mock.Mock()
-        log_data.log_record = log_record
-        doc = _get_log_record_document(log_data)
+    def test_get_log_record_document_exc(self):
+        data = _ExceptionData(
+            message="exc_message",
+            stack_trace="",
+            custom_dimensions={},
+        )
+        doc = _get_log_record_document(data, exc_type="exc_type")
         self.assertTrue(isinstance(doc, Exception))
         self.assertEqual(doc.document_type, DocumentType.EXCEPTION)
         self.assertEqual(doc.exception_type, "exc_type")
         self.assertEqual(doc.exception_message, "exc_message")
 
-    def test_get_log_record_document_server_trace(self):
-        log_record = mock.Mock()
-        log_record.attributes = {}
-        log_record.body = "body"
-        log_data = mock.Mock()
-        log_data.log_record = log_record
-        doc = _get_log_record_document(log_data)
+    def test_get_log_record_document_trace(self):
+        data = _TraceData(
+            message="body",
+            custom_dimensions={},
+        )
+        doc = _get_log_record_document(data)
         self.assertTrue(isinstance(doc, Trace))
         self.assertEqual(doc.document_type, DocumentType.TRACE)
         self.assertEqual(doc.message, "body")

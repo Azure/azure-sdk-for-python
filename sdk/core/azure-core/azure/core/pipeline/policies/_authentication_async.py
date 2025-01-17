@@ -139,7 +139,6 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         :returns: a bool indicating whether the policy should send the request
         :rtype: bool
         """
-        # pylint:disable=unused-argument
         headers = response.http_response.headers
         error = get_challenge_parameter(headers, "Bearer", "error")
         if error == "insufficient_claims":

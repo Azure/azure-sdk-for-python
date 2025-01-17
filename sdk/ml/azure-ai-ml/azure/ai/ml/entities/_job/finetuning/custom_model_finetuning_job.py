@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,no-member
+# pylint: disable=protected-access
 
 from typing import Any, Dict
 
@@ -106,7 +106,7 @@ class CustomModelFineTuningJob(FineTuningVertical):
 
         return result
 
-    def _to_dict(self) -> Dict:  # pylint: disable=arguments-differ
+    def _to_dict(self) -> Dict:
         """Convert the object to a dictionary.
 
         :return: dictionary representation of the object.
