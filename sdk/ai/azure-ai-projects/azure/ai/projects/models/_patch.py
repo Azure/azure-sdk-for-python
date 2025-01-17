@@ -127,6 +127,7 @@ def _safe_instantiate(
     :param Type model_class: The class of model to be used.
     :param parameters: The parsed dictionary with parameters.
     :type parameters: Union[str, Dict[str, Any]]
+    :keyword Optional[Type] generated_class: The optional generated type.
     :return: The class of model_class type if parameters is a dictionary, or the parameters themselves otherwise.
     :rtype: Any
     """
