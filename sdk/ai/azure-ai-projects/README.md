@@ -1,4 +1,4 @@
-
+<!-- PIPY LONG DESCRIPTION BEGIN -->
 # Azure AI Projects client library for Python
 
 Use the AI Projects client library (in preview) to:
@@ -68,7 +68,7 @@ For example, get the inference endpoint URL and credentials associated with your
   - [Reporting issues](#reporting-issues)
 - [Next steps](#next-steps)
 - [Contributing](#contributing)
-
+<!-- PIPY LONG DESCRIPTION END -->
 ## Getting started
 
 ### Prerequisite
