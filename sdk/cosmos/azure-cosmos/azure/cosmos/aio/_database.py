@@ -169,7 +169,6 @@ class DatabaseProxy(object):
         vector_embedding_policy: Optional[Dict[str, Any]] = None,
         change_feed_policy: Optional[Dict[str, Any]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
-        computed_properties: List[Dict[str, str]] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Create a new container with the given ID (name).
@@ -203,9 +202,6 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :keyword List[Dict[str, str]] computed_properties: **provisional** Sets The computed properties for this
-            container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
-            `here: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :returns: A `ContainerProxy` instance representing the new container.
         :rtype: ~azure.cosmos.aio.ContainerProxy
@@ -291,7 +287,6 @@ class DatabaseProxy(object):
         vector_embedding_policy: Optional[Dict[str, Any]] = None,
         change_feed_policy: Optional[Dict[str, Any]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
-        computed_properties: List[Dict[str, str]] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Create a container if it does not exist already.
@@ -327,9 +322,6 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :keyword List[Dict[str, str]] computed_properties: **provisional** Sets The computed properties for this
-            container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
-            `here: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :returns: A `ContainerProxy` instance representing the new container.
         :rtype: ~azure.cosmos.aio.ContainerProxy
