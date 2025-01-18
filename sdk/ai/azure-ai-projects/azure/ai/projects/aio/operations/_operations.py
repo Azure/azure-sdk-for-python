@@ -12,6 +12,7 @@ import sys
 from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, TYPE_CHECKING, TypeVar, Union, overload
 import urllib.parse
 
+from azure.core import AsyncPipelineClient
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -31,6 +32,7 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import _model_base, models as _models
 from ..._model_base import SdkJSONEncoder, _deserialize
+from ..._serialization import Deserializer, Serializer
 from ..._vendor import FileType, prepare_multipart_form_data
 from ...operations._operations import (
     build_agents_cancel_run_request,
@@ -87,6 +89,7 @@ from ...operations._operations import (
     build_evaluations_update_request,
     build_telemetry_get_app_insights_request,
 )
+from .._configuration import AIProjectClientConfiguration
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -113,10 +116,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
     async def create_agent(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
@@ -4362,7 +4365,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         file_id: Optional[str] = None,
-        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
+        data_source: Optional[_models.VectorStoreDataSource] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         **kwargs: Any
     ) -> _models.VectorStoreFile:
@@ -4375,8 +4378,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype content_type: str
         :keyword file_id: Identifier of the file. Default value is None.
         :paramtype file_id: str
-        :keyword data_sources: Azure asset ID. Default value is None.
-        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
+        :keyword data_source: Azure asset ID. Default value is None.
+        :paramtype data_source: ~azure.ai.projects.models.VectorStoreDataSource
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
@@ -4410,7 +4413,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         file_id: Optional[str] = None,
-        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
+        data_source: Optional[_models.VectorStoreDataSource] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         **kwargs: Any
     ) -> _models.VectorStoreFile:
@@ -4422,8 +4425,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type body: JSON or IO[bytes]
         :keyword file_id: Identifier of the file. Default value is None.
         :paramtype file_id: str
-        :keyword data_sources: Azure asset ID. Default value is None.
-        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
+        :keyword data_source: Azure asset ID. Default value is None.
+        :paramtype data_source: ~azure.ai.projects.models.VectorStoreDataSource
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
@@ -4446,7 +4449,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.VectorStoreFile] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            body = {"chunking_strategy": chunking_strategy, "data_sources": data_sources, "file_id": file_id}
+            body = {"chunking_strategy": chunking_strategy, "data_source": data_source, "file_id": file_id}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -5060,10 +5063,10 @@ class ConnectionsOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
     async def _get_workspace(self, **kwargs: Any) -> _models._models.GetWorkspaceResponse:
@@ -5392,10 +5395,10 @@ class TelemetryOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
     async def _get_app_insights(
@@ -5483,10 +5486,10 @@ class EvaluationsOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
     async def get(self, id: str, **kwargs: Any) -> _models.Evaluation:
