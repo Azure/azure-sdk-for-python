@@ -1,6 +1,6 @@
 # Release History
 
-## 34.0.0 (2025-01-14)
+## 34.0.0 (2025-01-20)
 
 ### Features Added
 
