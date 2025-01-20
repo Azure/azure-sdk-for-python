@@ -21,11 +21,11 @@ class TestEventHubManagementApplicationGroupOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_namespace(self, resource_group):
+    async def test_application_group_list_by_namespace(self, resource_group):
         response = self.client.application_group.list_by_namespace(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2022-10-01-preview",
+            api_version="2024-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestEventHubManagementApplicationGroupOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update_application_group(self, resource_group):
+    async def test_application_group_create_or_update_application_group(self, resource_group):
         response = await self.client.application_group.create_or_update_application_group(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -55,7 +55,7 @@ class TestEventHubManagementApplicationGroupOperationsAsync(AzureMgmtRecordedTes
                 },
                 "type": "str",
             },
-            api_version="2022-10-01-preview",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -63,12 +63,12 @@ class TestEventHubManagementApplicationGroupOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_application_group_delete(self, resource_group):
         response = await self.client.application_group.delete(
             resource_group_name=resource_group.name,
             namespace_name="str",
             application_group_name="str",
-            api_version="2022-10-01-preview",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -76,12 +76,12 @@ class TestEventHubManagementApplicationGroupOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_application_group_get(self, resource_group):
         response = await self.client.application_group.get(
             resource_group_name=resource_group.name,
             namespace_name="str",
             application_group_name="str",
-            api_version="2022-10-01-preview",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself

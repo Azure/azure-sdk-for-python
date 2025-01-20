@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument
-
 from marshmallow import fields
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._utils._experimental import experimental
