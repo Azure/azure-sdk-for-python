@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +7,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -44,7 +43,7 @@ from ...operations._open_shift_managed_clusters_operations import (
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -71,6 +70,7 @@ class OpenShiftManagedClustersOperations:
 
     @distributed_trace
     def list(self, **kwargs: Any) -> AsyncIterable["_models.OpenShiftManagedCluster"]:
+        # pylint: disable=line-too-long
         """Gets a list of OpenShift managed clusters in the specified subscription.
 
         Gets a list of OpenShift managed clusters in the specified subscription. The operation returns
@@ -90,7 +90,7 @@ class OpenShiftManagedClustersOperations:
         )
         cls: ClsType[_models.OpenShiftManagedClusterListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -154,6 +154,7 @@ class OpenShiftManagedClustersOperations:
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
     ) -> AsyncIterable["_models.OpenShiftManagedCluster"]:
+        # pylint: disable=line-too-long
         """Lists OpenShift managed clusters in the specified subscription and resource group.
 
         Lists OpenShift managed clusters in the specified subscription and resource group. The
@@ -175,7 +176,7 @@ class OpenShiftManagedClustersOperations:
         )
         cls: ClsType[_models.OpenShiftManagedClusterListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -250,7 +251,7 @@ class OpenShiftManagedClustersOperations:
         :rtype: ~azure.mgmt.containerservice.v2019_09_30_preview.models.OpenShiftManagedCluster
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -301,7 +302,7 @@ class OpenShiftManagedClustersOperations:
         parameters: Union[_models.OpenShiftManagedCluster, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -372,6 +373,7 @@ class OpenShiftManagedClustersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OpenShiftManagedCluster]:
+        # pylint: disable=line-too-long
         """Creates or updates an OpenShift managed cluster.
 
         Creates or updates a OpenShift managed cluster with the specified configuration for agents and
@@ -405,6 +407,7 @@ class OpenShiftManagedClustersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OpenShiftManagedCluster]:
+        # pylint: disable=line-too-long
         """Creates or updates an OpenShift managed cluster.
 
         Creates or updates a OpenShift managed cluster with the specified configuration for agents and
@@ -435,6 +438,7 @@ class OpenShiftManagedClustersOperations:
         parameters: Union[_models.OpenShiftManagedCluster, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OpenShiftManagedCluster]:
+        # pylint: disable=line-too-long
         """Creates or updates an OpenShift managed cluster.
 
         Creates or updates a OpenShift managed cluster with the specified configuration for agents and
@@ -510,7 +514,7 @@ class OpenShiftManagedClustersOperations:
         parameters: Union[_models.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -581,6 +585,7 @@ class OpenShiftManagedClustersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OpenShiftManagedCluster]:
+        # pylint: disable=line-too-long
         """Updates tags on an OpenShift managed cluster.
 
         Updates an OpenShift managed cluster with the specified tags.
@@ -612,6 +617,7 @@ class OpenShiftManagedClustersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OpenShiftManagedCluster]:
+        # pylint: disable=line-too-long
         """Updates tags on an OpenShift managed cluster.
 
         Updates an OpenShift managed cluster with the specified tags.
@@ -641,6 +647,7 @@ class OpenShiftManagedClustersOperations:
         parameters: Union[_models.TagsObject, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OpenShiftManagedCluster]:
+        # pylint: disable=line-too-long
         """Updates tags on an OpenShift managed cluster.
 
         Updates an OpenShift managed cluster with the specified tags.
@@ -711,7 +718,7 @@ class OpenShiftManagedClustersOperations:
     async def _delete_initial(
         self, resource_group_name: str, resource_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
