@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any
+from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.pipeline import policies
@@ -18,9 +19,7 @@ from ._operations import JobRouterAdministrationClientOperationsMixin, JobRouter
 from ._serialization import Deserializer, Serializer
 
 
-class JobRouterAdministrationClient(
-    JobRouterAdministrationClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class JobRouterAdministrationClient(JobRouterAdministrationClientOperationsMixin):
     """JobRouterAdministrationClient.
 
     :param endpoint: Uri of your Communication resource. Required.
@@ -79,7 +78,7 @@ class JobRouterAdministrationClient(
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
@@ -88,7 +87,7 @@ class JobRouterAdministrationClient(
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "JobRouterAdministrationClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 
@@ -96,7 +95,7 @@ class JobRouterAdministrationClient(
         self._client.__exit__(*exc_details)
 
 
-class JobRouterClient(JobRouterClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class JobRouterClient(JobRouterClientOperationsMixin):
     """JobRouterClient.
 
     :param endpoint: Uri of your Communication resource. Required.
@@ -155,7 +154,7 @@ class JobRouterClient(JobRouterClientOperationsMixin):  # pylint: disable=client
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
@@ -164,7 +163,7 @@ class JobRouterClient(JobRouterClientOperationsMixin):  # pylint: disable=client
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "JobRouterClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

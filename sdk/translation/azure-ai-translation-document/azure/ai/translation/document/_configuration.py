@@ -26,8 +26,8 @@ class DocumentTranslationClientConfiguration:  # pylint: disable=too-many-instan
     :param endpoint: Supported document Translation endpoint, protocol and hostname, for example:
      https://{TranslatorResourceName}.cognitiveservices.azure.com/translator. Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is "2024-05-01".
@@ -81,8 +81,8 @@ class SingleDocumentTranslationClientConfiguration:  # pylint: disable=too-many-
     :param endpoint: Supported document Translation endpoint, protocol and hostname, for example:
      https://{TranslatorResourceName}.cognitiveservices.azure.com/translator. Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is "2024-05-01".

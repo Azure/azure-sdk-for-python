@@ -12,11 +12,11 @@ import azure.batch.models
 from azure.core.credentials import AzureNamedKeyCredential
 
 from devtools_testutils import (
-    AzureMgmtPreparer, 
-    AzureTestError, 
-    ResourceGroupPreparer, 
-    FakeResource, 
-    add_general_regex_sanitizer
+    AzureMgmtPreparer,
+    AzureTestError,
+    ResourceGroupPreparer,
+    FakeResource,
+    add_general_regex_sanitizer,
 )
 from devtools_testutils.fake_credentials import BATCH_TEST_PASSWORD
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM

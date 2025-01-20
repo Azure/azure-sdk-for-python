@@ -42,8 +42,8 @@ class FaceAdministrationClient:
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
      https://{resource-name}.cognitiveservices.azure.com). Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
     :keyword api_version: API Version. Known values are "v1.2-preview.1" and None. Default value is
@@ -127,8 +127,8 @@ class FaceClient(FaceClientOperationsMixin):
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
      https://{resource-name}.cognitiveservices.azure.com). Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
     :keyword api_version: API Version. Known values are "v1.2-preview.1" and None. Default value is
@@ -206,8 +206,8 @@ class FaceSessionClient(FaceSessionClientOperationsMixin):
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
      https://{resource-name}.cognitiveservices.azure.com). Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
     :keyword api_version: API Version. Known values are "v1.2-preview.1" and None. Default value is

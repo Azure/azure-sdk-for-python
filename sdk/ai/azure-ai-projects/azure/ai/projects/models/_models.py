@@ -233,7 +233,7 @@ class AgentsNamedToolChoice(_model_base.Model):
     """
 
     type: Union[str, "_models.AgentsNamedToolChoiceType"] = rest_field()
-    """the type of tool. If type is ``function``\\ , the function name must be set. Required. Known
+    """the type of tool. If type is ``function``\ , the function name must be set. Required. Known
      values are: \"function\", \"code_interpreter\", \"file_search\", \"bing_grounding\",
      \"fabric_aiskill\", \"sharepoint_grounding\", and \"azure_ai_search\"."""
     function: Optional["_models.FunctionName"] = rest_field()
@@ -383,6 +383,23 @@ class AppInsightsProperties(_model_base.Model):
     connection_string: str = rest_field(name="ConnectionString")
     """Authentication type of the connection target. Required."""
 
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_string: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
 
 class InputData(_model_base.Model):
     """Abstract data class for input data configuration.
@@ -430,7 +447,7 @@ class ApplicationInsightsConfiguration(InputData, discriminator="app_insights"):
     :vartype resource_id: str
     :ivar query: Query to fetch the data. Required.
     :vartype query: str
-    :ivar service_name: Service name.
+    :ivar service_name: Service name. Required.
     :vartype service_name: str
     :ivar connection_string: Connection String to connect to ApplicationInsights.
     :vartype connection_string: str
@@ -442,8 +459,8 @@ class ApplicationInsightsConfiguration(InputData, discriminator="app_insights"):
     """LogAnalytic Workspace resourceID associated with ApplicationInsights. Required."""
     query: str = rest_field()
     """Query to fetch the data. Required."""
-    service_name: Optional[str] = rest_field(name="serviceName")
-    """Service name."""
+    service_name: str = rest_field(name="serviceName")
+    """Service name. Required."""
     connection_string: Optional[str] = rest_field(name="connectionString")
     """Connection String to connect to ApplicationInsights."""
 
@@ -453,7 +470,7 @@ class ApplicationInsightsConfiguration(InputData, discriminator="app_insights"):
         *,
         resource_id: str,
         query: str,
-        service_name: Optional[str] = None,
+        service_name: str,
         connection_string: Optional[str] = None,
     ) -> None: ...
 
@@ -828,6 +845,23 @@ class CredentialsApiKeyAuth(_model_base.Model):
     key: str = rest_field()
     """The API key. Required."""
 
+    @overload
+    def __init__(
+        self,
+        *,
+        key: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
 
 class CredentialsSASAuth(_model_base.Model):
     """The credentials needed for Shared Access Signatures (SAS) authentication.
@@ -839,6 +873,23 @@ class CredentialsSASAuth(_model_base.Model):
 
     sas: str = rest_field(name="SAS")
     """The Shared Access Signatures (SAS) token. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        sas: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class Trigger(_model_base.Model):
@@ -1522,6 +1573,25 @@ class GetAppInsightsResponse(_model_base.Model):
     properties: "_models._models.AppInsightsProperties" = rest_field()
     """The properties of the resource. Required."""
 
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        name: str,
+        properties: "_models._models.AppInsightsProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
 
 class GetConnectionResponse(_model_base.Model):
     """Response from the listSecrets operation.
@@ -1542,6 +1612,25 @@ class GetConnectionResponse(_model_base.Model):
     properties: "_models._models.InternalConnectionProperties" = rest_field()
     """The properties of the resource. Required."""
 
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        name: str,
+        properties: "_models._models.InternalConnectionProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
 
 class GetWorkspaceResponse(_model_base.Model):
     """Response from the Workspace - Get operation.
@@ -1561,6 +1650,25 @@ class GetWorkspaceResponse(_model_base.Model):
     """The name of the resource. Required."""
     properties: "_models._models.WorkspaceProperties" = rest_field()
     """The properties of the resource. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        name: str,
+        properties: "_models._models.WorkspaceProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class IncompleteRunDetails(_model_base.Model):
@@ -1659,6 +1767,25 @@ class InternalConnectionProperties(_model_base.Model):
     target: str = rest_field()
     """The connection URL to be used for this service. Required."""
 
+    @overload
+    def __init__(
+        self,
+        *,
+        auth_type: str,
+        category: Union[str, "_models.ConnectionType"],
+        target: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
 
 class InternalConnectionPropertiesAADAuth(InternalConnectionProperties, discriminator="AAD"):
     """Connection properties for connections with AAD authentication (aka ``Entra ID passthrough``\\
@@ -1678,6 +1805,24 @@ class InternalConnectionPropertiesAADAuth(InternalConnectionProperties, discrimi
     auth_type: Literal[AuthenticationType.ENTRA_ID] = rest_discriminator(name="authType")  # type: ignore
     """Authentication type of the connection target. Required. Entra ID authentication (formerly known
      as AAD)"""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        category: Union[str, "_models.ConnectionType"],
+        target: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, auth_type=AuthenticationType.ENTRA_ID, **kwargs)
 
 
 class InternalConnectionPropertiesApiKeyAuth(InternalConnectionProperties, discriminator="ApiKey"):
@@ -1699,6 +1844,25 @@ class InternalConnectionPropertiesApiKeyAuth(InternalConnectionProperties, discr
     """Authentication type of the connection target. Required. API Key authentication"""
     credentials: "_models._models.CredentialsApiKeyAuth" = rest_field()
     """Credentials will only be present for authType=ApiKey. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        category: Union[str, "_models.ConnectionType"],
+        target: str,
+        credentials: "_models._models.CredentialsApiKeyAuth",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, auth_type=AuthenticationType.API_KEY, **kwargs)
 
 
 class InternalConnectionPropertiesSASAuth(InternalConnectionProperties, discriminator="SAS"):
@@ -1723,6 +1887,25 @@ class InternalConnectionPropertiesSASAuth(InternalConnectionProperties, discrimi
     credentials: "_models._models.CredentialsSASAuth" = rest_field()
     """Credentials will only be present for authType=ApiKey. Required."""
 
+    @overload
+    def __init__(
+        self,
+        *,
+        category: Union[str, "_models.ConnectionType"],
+        target: str,
+        credentials: "_models._models.CredentialsSASAuth",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, auth_type=AuthenticationType.SAS, **kwargs)
+
 
 class ListConnectionsResponse(_model_base.Model):
     """Response from the list operation.
@@ -1734,6 +1917,23 @@ class ListConnectionsResponse(_model_base.Model):
 
     value: List["_models._models.GetConnectionResponse"] = rest_field()
     """A list of connection list secrets. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: List["_models._models.GetConnectionResponse"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class MessageAttachment(_model_base.Model):
@@ -4303,7 +4503,7 @@ class RunStepDeltaCodeInterpreterDetailItemObject(_model_base.Model):  # pylint:
     """The input into the Code Interpreter tool call."""
     outputs: Optional[List["_models.RunStepDeltaCodeInterpreterOutput"]] = rest_field()
     """The outputs from the Code Interpreter tool call. Code Interpreter can output one or more
-     items, including text (\\ ``logs``\\ ) or images (\\ ``image``\\ ). Each of these are represented
+     items, including text (\ ``logs``\ ) or images (\ ``image``\ ). Each of these are represented
      by a
      different object type."""
 
@@ -5578,9 +5778,9 @@ class ThreadMessageOptions(_model_base.Model):
     """The role of the entity that is creating the message. Allowed values include:
      
      
-     * ``user``\\ : Indicates the message is sent by an actual user and should be used in most
+     * ``user``\ : Indicates the message is sent by an actual user and should be used in most
        cases to represent user-generated messages.
-     * ``assistant``\\ : Indicates the message is generated by the agent. Use this value to insert
+     * ``assistant``\ : Indicates the message is generated by the agent. Use this value to insert
        messages from the agent into the
        conversation. Required. Known values are: \"user\" and \"assistant\"."""
     content: str = rest_field()
@@ -5741,7 +5941,7 @@ class ThreadRun(_model_base.Model):
     """Details on why the run is incomplete. Will be ``null`` if the run is not incomplete. Required."""
     usage: "_models.RunCompletionUsage" = rest_field()
     """Usage statistics related to the run. This value will be ``null`` if the run is not in a
-     terminal state (i.e. ``in_progress``\\ , ``queued``\\ , etc.). Required."""
+     terminal state (i.e. ``in_progress``\ , ``queued``\ , etc.). Required."""
     temperature: Optional[float] = rest_field()
     """The sampling temperature used for this run. If not set, defaults to 1."""
     top_p: Optional[float] = rest_field()
@@ -5978,9 +6178,9 @@ class TruncationObject(_model_base.Model):
 
     type: Union[str, "_models.TruncationStrategy"] = rest_field()
     """The truncation strategy to use for the thread. The default is ``auto``. If set to
-     ``last_messages``\\ , the thread will
+     ``last_messages``\ , the thread will
      be truncated to the ``lastMessages`` count most recent messages in the thread. When set to
-     ``auto``\\ , messages in the middle of the thread
+     ``auto``\ , messages in the middle of the thread
      will be dropped to fit the context length of the model, ``max_prompt_tokens``. Required. Known
      values are: \"auto\" and \"last_messages\"."""
     last_messages: Optional[int] = rest_field()
@@ -6162,7 +6362,7 @@ class VectorStore(_model_base.Model):
     file_counts: "_models.VectorStoreFileCount" = rest_field()
     """Files count grouped by status processed or being processed by this vector store. Required."""
     status: Union[str, "_models.VectorStoreStatus"] = rest_field()
-    """The status of the vector store, which can be either ``expired``\\ , ``in_progress``\\ , or
+    """The status of the vector store, which can be either ``expired``\ , ``in_progress``\ , or
      ``completed``. A status of ``completed`` indicates that the vector store is ready for use.
      Required. Known values are: \"expired\", \"in_progress\", and \"completed\"."""
     expires_after: Optional["_models.VectorStoreExpirationPolicy"] = rest_field()
@@ -6553,8 +6753,8 @@ class VectorStoreFile(_model_base.Model):
     vector_store_id: str = rest_field()
     """The ID of the vector store that the file is attached to. Required."""
     status: Union[str, "_models.VectorStoreFileStatus"] = rest_field()
-    """The status of the vector store file, which can be either ``in_progress``\\ , ``completed``\\ ,
-     ``cancelled``\\ , or ``failed``. The status ``completed`` indicates that the vector store file
+    """The status of the vector store file, which can be either ``in_progress``\ , ``completed``\ ,
+     ``cancelled``\ , or ``failed``. The status ``completed`` indicates that the vector store file
      is ready for use. Required. Known values are: \"in_progress\", \"completed\", \"failed\", and
      \"cancelled\"."""
     last_error: "_models.VectorStoreFileError" = rest_field()
@@ -6623,8 +6823,8 @@ class VectorStoreFileBatch(_model_base.Model):
     vector_store_id: str = rest_field()
     """The ID of the vector store that the file is attached to. Required."""
     status: Union[str, "_models.VectorStoreFileBatchStatus"] = rest_field()
-    """The status of the vector store files batch, which can be either ``in_progress``\\ ,
-     ``completed``\\ , ``cancelled`` or ``failed``. Required. Known values are: \"in_progress\",
+    """The status of the vector store files batch, which can be either ``in_progress``\ ,
+     ``completed``\ , ``cancelled`` or ``failed``. Required. Known values are: \"in_progress\",
      \"completed\", \"cancelled\", and \"failed\"."""
     file_counts: "_models.VectorStoreFileCount" = rest_field()
     """Files count grouped by status processed or being processed by this vector store. Required."""
@@ -6898,3 +7098,20 @@ class WorkspaceProperties(_model_base.Model):
 
     application_insights: str = rest_field(name="applicationInsights")
     """Authentication type of the connection target. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        application_insights: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
