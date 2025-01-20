@@ -73,7 +73,7 @@ def change_log_generate(
 
     # fallback to old changelog tool
     _LOGGER.info("Fallback to old changelog tool")
-    return change_log_main(f"{package_name}:pypi", f"{package_name}:latest", tag_is_stable)
+    return (change_log_main(f"{package_name}:pypi", f"{package_name}:latest", tag_is_stable), last_version)
 
 
 def extract_breaking_change(changelog):
