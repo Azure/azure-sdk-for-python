@@ -21,7 +21,7 @@ class TestContainerServiceTrustedAccessRoleBindingsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_trusted_access_role_bindings_list(self, resource_group):
         response = self.client.trusted_access_role_bindings.list(
             resource_group_name=resource_group.name,
             resource_name="str",
@@ -33,7 +33,7 @@ class TestContainerServiceTrustedAccessRoleBindingsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_trusted_access_role_bindings_get(self, resource_group):
         response = await self.client.trusted_access_role_bindings.get(
             resource_group_name=resource_group.name,
             resource_name="str",
@@ -46,7 +46,7 @@ class TestContainerServiceTrustedAccessRoleBindingsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_trusted_access_role_bindings_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.trusted_access_role_bindings.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -77,7 +77,7 @@ class TestContainerServiceTrustedAccessRoleBindingsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_trusted_access_role_bindings_begin_delete(self, resource_group):
         response = await (
             await self.client.trusted_access_role_bindings.begin_delete(
                 resource_group_name=resource_group.name,
