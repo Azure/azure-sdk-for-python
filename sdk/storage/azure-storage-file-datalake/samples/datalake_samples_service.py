@@ -59,7 +59,7 @@ class DataLakeServiceSamples(object):
 
         # Create file systems
         # [START create_file_system_from_service_client]
-        datalake_service_client.create_file_system("filesystemserverice")
+        datalake_service_client.create_file_system("filesystemservice")
         # [END create_file_system_from_service_client]
         file_system_client = datalake_service_client.create_file_system("anotherfilesystem")
 
@@ -98,7 +98,7 @@ class DataLakeServiceSamples(object):
 
         # Delete File Systems
         # [START delete_file_system_from_service_client]
-        datalake_service_client.delete_file_system("filesystemserverice")
+        datalake_service_client.delete_file_system("filesystemservice")
         # [END delete_file_system_from_service_client]
         file_system_client.delete_file_system()
 
