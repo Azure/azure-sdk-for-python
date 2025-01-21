@@ -62,3 +62,7 @@
   - Model Frontend no longer has parameter public_ip_address
   - Model FrontendUpdate no longer has parameter properties
   - Model TrafficControllerUpdate no longer has parameter properties
+
+## 1.0.0b1 (2023-01-17)
+
+* Initial Release
