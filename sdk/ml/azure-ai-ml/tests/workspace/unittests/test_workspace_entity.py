@@ -6,14 +6,6 @@ from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml import load_workspace
 from azure.ai.ml._restclient.v2024_10_01_preview.models import (
-    EncryptionProperty,
-    ManagedServiceIdentity,
-    ManagedNetworkSettings,
-    KeyVaultProperties,
-    FeatureStoreSettings,
-    NetworkAcls,
-    ServerlessComputeSettings as RestServerlessComputeSettings,
-    Sku,
     Workspace as RestWorkspace,
 )
 from azure.ai.ml.constants._workspace import FirewallSku, IsolationMode
@@ -41,21 +33,33 @@ class TestWorkspaceEntity:
     def test_serverless_compute_settings_loaded_from_rest_object(
         self, settings: Optional[ServerlessComputeSettings]
     ) -> None:
-        workspace = Workspace(name="test_workspace", location="test_location", serverless_compute=settings)
+        workspace = Workspace(
+            name="test_workspace", location="test_location", serverless_compute=settings
+        )
         rest_object = workspace._to_rest_object()
         assert rest_object is not None
         if settings is None:
             assert rest_object.serverless_compute_settings is None
         else:
-            assert ServerlessComputeSettings._from_rest_object(rest_object.serverless_compute_settings) == settings
+            assert (
+                ServerlessComputeSettings._from_rest_object(
+                    rest_object.serverless_compute_settings
+                )
+                == settings
+            )
 
     def test_from_rest_object(self) -> None:
-        with open("./tests/test_configs/workspace/workspace_full_rest_response.json", "r") as f:
+        with open(
+            "./tests/test_configs/workspace/workspace_full_rest_response.json", "r"
+        ) as f:
             rest_object = RestWorkspace.deserialize(json.load(f))
 
         workspace = Workspace._from_rest_object(rest_object)
 
-        assert workspace.id == "/subscriptions/sub-id/test_workspace/providers/Microsoft.Storage/storageAccounts/storage-account-name"
+        assert (
+            workspace.id
+            == "/subscriptions/sub-id/test_workspace/providers/Microsoft.Storage/storageAccounts/storage-account-name"
+        )
         assert workspace.name == "test_workspace"
         assert workspace.location == "test_location"
         assert workspace.description == "test_description"
@@ -74,7 +78,10 @@ class TestWorkspaceEntity:
         assert workspace.image_build_compute == "test_image_build_compute"
         assert workspace.discovery_url == "test_discovery_url"
         assert workspace.mlflow_tracking_uri == "ml_flow_tracking_uri"
-        assert workspace.primary_user_assigned_identity == "test_primary_user_assigned_identity"
+        assert (
+            workspace.primary_user_assigned_identity
+            == "test_primary_user_assigned_identity"
+        )
         assert workspace.system_datastores_auth_mode == "AccessKey"
         assert workspace.enable_data_isolation == True
         assert workspace.allow_roleassignment_on_rg == True
@@ -89,9 +96,10 @@ class TestWorkspaceEntity:
         assert workspace.serverless_compute is not None
         assert workspace.network_acls is not None
 
-
     def test_from_rest_object_for_attributes_none(self) -> None:
-        with open("./tests/test_configs/workspace/workspace_full_rest_response.json", "r") as f:
+        with open(
+            "./tests/test_configs/workspace/workspace_full_rest_response.json", "r"
+        ) as f:
             rest_json = json.load(f)
             del rest_json["properties"]["managedNetwork"]
             del rest_json["properties"]["encryption"]
@@ -122,7 +130,10 @@ class TestWorkspaceEntity:
         assert workspace.image_build_compute == "test_image_build_compute"
         assert workspace.discovery_url == "test_discovery_url"
         assert workspace.mlflow_tracking_uri == "ml_flow_tracking_uri"
-        assert workspace.primary_user_assigned_identity == "test_primary_user_assigned_identity"
+        assert (
+            workspace.primary_user_assigned_identity
+            == "test_primary_user_assigned_identity"
+        )
         assert workspace.system_datastores_auth_mode == "AccessKey"
         assert workspace.enable_data_isolation == True
         assert workspace.allow_roleassignment_on_rg == True
@@ -161,21 +172,34 @@ class TestWorkspaceEntity:
             ),
         ],
     )
-    def test_workspace_load_override_serverless(self, settings: ServerlessComputeSettings) -> None:
+    def test_workspace_load_override_serverless(
+        self, settings: ServerlessComputeSettings
+    ) -> None:
         params_override = [
-            {"serverless_compute": {"custom_subnet": settings.custom_subnet, "no_public_ip": settings.no_public_ip}}
+            {
+                "serverless_compute": {
+                    "custom_subnet": settings.custom_subnet,
+                    "no_public_ip": settings.no_public_ip,
+                }
+            }
         ]
 
         workspace_override = load_workspace(
-            "./tests/test_configs/workspace/workspace_serverless.yaml", params_override=params_override
+            "./tests/test_configs/workspace/workspace_serverless.yaml",
+            params_override=params_override,
         )
         assert workspace_override.serverless_compute == settings
 
     def test_workspace_load_yamls_to_test_outbound_rule_load(self):
-        workspace = load_workspace("./tests/test_configs/workspace/workspace_many_ob_rules.yaml")
+        workspace = load_workspace(
+            "./tests/test_configs/workspace/workspace_many_ob_rules.yaml"
+        )
 
         assert workspace.managed_network is not None
-        assert workspace.managed_network.isolation_mode == IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND
+        assert (
+            workspace.managed_network.isolation_mode
+            == IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND
+        )
 
         rules = workspace.managed_network.outbound_rules
         assert rules[0].name == "microsoft"
@@ -196,10 +220,15 @@ class TestWorkspaceEntity:
         assert "10.0.0.0/24" in rules[2].address_prefixes
 
     def test_workspace_load_yamls_to_test_firewallsku_load(self):
-        workspace = load_workspace("./tests/test_configs/workspace/workspace_mvnet_with_firewallsku.yaml")
+        workspace = load_workspace(
+            "./tests/test_configs/workspace/workspace_mvnet_with_firewallsku.yaml"
+        )
 
         assert workspace.managed_network is not None
-        assert workspace.managed_network.isolation_mode == IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND
+        assert (
+            workspace.managed_network.isolation_mode
+            == IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND
+        )
         rules = workspace.managed_network.outbound_rules
 
         assert workspace.managed_network.firewall_sku == "Basic"
@@ -218,7 +247,9 @@ class TestWorkspaceEntity:
         assert rules[2].destination == "*.pytorch.org"
 
     def test_workspace_load_yaml_to_test_network_acls_load(self):
-        workspace = load_workspace("./tests/test_configs/workspace/ai_workspaces/workspacehub_with_networkacls.yaml")
+        workspace = load_workspace(
+            "./tests/test_configs/workspace/ai_workspaces/workspacehub_with_networkacls.yaml"
+        )
 
         assert workspace.network_acls is not None
         assert len(workspace.network_acls.ip_rules) == 2
