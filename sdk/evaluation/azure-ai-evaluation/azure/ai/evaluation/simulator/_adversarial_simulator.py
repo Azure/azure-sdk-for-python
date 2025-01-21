@@ -188,7 +188,7 @@ class AdversarialSimulator:
             )
         self._ensure_service_dependencies()
         conversation_id = str(uuid.uuid4())
-        logger.warning("Use conversation_id to help us debug the issue: %s", str(conversation_id))
+        logger.info("Use conversation_id to help us debug the issue: %s", str(conversation_id))
         templates = await self.adversarial_template_handler._get_content_harm_template_collections(scenario.value)
         concurrent_async_task = min(concurrent_async_task, 1000)
         semaphore = asyncio.Semaphore(concurrent_async_task)
