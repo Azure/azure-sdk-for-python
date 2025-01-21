@@ -6,7 +6,7 @@
 import time
 from unittest.mock import Mock
 
-from corehttp.credentials import AccessToken, ServiceKeyCredential, ServiceNamedKeyCredential
+from corehttp.credentials import AccessTokenInfo, ServiceKeyCredential, ServiceNamedKeyCredential
 from corehttp.exceptions import ServiceRequestError
 from corehttp.runtime.pipeline import Pipeline
 from corehttp.runtime.policies import (
@@ -22,24 +22,24 @@ import pytest
 def test_bearer_policy_adds_header():
     """The bearer token policy should add a header containing a token from its credential"""
     # 2524608000 == 01/01/2050 @ 12:00am (UTC)
-    expected_token = AccessToken("expected_token", 2524608000)
+    expected_token = AccessTokenInfo("expected_token", 2524608000)
 
     def verify_authorization_header(request):
         assert request.http_request.headers["Authorization"] == "Bearer {}".format(expected_token.token)
         return Mock()
 
-    fake_credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=expected_token))
+    fake_credential = Mock(spec_set=["get_token_info"], get_token_info=Mock(return_value=expected_token))
     policies = [BearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_authorization_header)]
 
     pipeline = Pipeline(transport=Mock(), policies=policies)
     pipeline.run(HttpRequest("GET", "https://spam.eggs"))
 
-    assert fake_credential.get_token.call_count == 1
+    assert fake_credential.get_token_info.call_count == 1
 
     pipeline.run(HttpRequest("GET", "https://spam.eggs"))
 
     # Didn't need a new token
-    assert fake_credential.get_token.call_count == 1
+    assert fake_credential.get_token_info.call_count == 1
 
 
 def test_bearer_policy_send():
@@ -51,10 +51,10 @@ def test_bearer_policy_send():
         assert request.http_request is expected_request
         return expected_response
 
-    def get_token(*_, **__):
-        return AccessToken("***", 42)
+    def get_token_info(*_, **__):
+        return AccessTokenInfo("***", 42)
 
-    fake_credential = Mock(spec_set=["get_token"], get_token=get_token)
+    fake_credential = Mock(spec_set=["get_token_info"], get_token_info=get_token_info)
     policies = [BearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_request)]
     response = Pipeline(transport=Mock(), policies=policies).run(expected_request)
 
@@ -62,26 +62,26 @@ def test_bearer_policy_send():
 
 
 def test_bearer_policy_token_caching():
-    good_for_one_hour = AccessToken("token", int(time.time()) + 3600)
-    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=good_for_one_hour))
+    good_for_one_hour = AccessTokenInfo("token", int(time.time()) + 3600)
+    credential = Mock(spec_set=["get_token_info"], get_token_info=Mock(return_value=good_for_one_hour))
     pipeline = Pipeline(transport=Mock(), policies=[BearerTokenCredentialPolicy(credential, "scope")])
 
     pipeline.run(HttpRequest("GET", "https://spam.eggs"))
-    assert credential.get_token.call_count == 1  # policy has no token at first request -> it should call get_token
+    assert credential.get_token_info.call_count == 1  # policy has no token at first request -> it should call get_token
 
     pipeline.run(HttpRequest("GET", "https://spam.eggs"))
-    assert credential.get_token.call_count == 1  # token is good for an hour -> policy should return it from cache
+    assert credential.get_token_info.call_count == 1  # token is good for an hour -> policy should return it from cache
 
-    expired_token = AccessToken("token", int(time.time()))
-    credential.get_token.reset_mock()
-    credential.get_token.return_value = expired_token
+    expired_token = AccessTokenInfo("token", int(time.time()))
+    credential.get_token_info.reset_mock()
+    credential.get_token_info.return_value = expired_token
     pipeline = Pipeline(transport=Mock(), policies=[BearerTokenCredentialPolicy(credential, "scope")])
 
     pipeline.run(HttpRequest("GET", "https://spam.eggs"))
-    assert credential.get_token.call_count == 1
+    assert credential.get_token_info.call_count == 1
 
     pipeline.run(HttpRequest("GET", "https://spam.eggs"))
-    assert credential.get_token.call_count == 2  # token expired -> policy should call get_token
+    assert credential.get_token_info.call_count == 2  # token expired -> policy should call get_token
 
 
 def test_bearer_policy_optionally_enforces_https():
@@ -91,10 +91,10 @@ def test_bearer_policy_optionally_enforces_https():
         assert "enforce_https" not in kwargs, "BearerTokenCredentialPolicy didn't pop the 'enforce_https' option"
         return Mock()
 
-    def get_token(*_, **__):
-        return AccessToken("***", 42)
+    def get_token_info(*_, **__):
+        return AccessTokenInfo("***", 42)
 
-    credential = Mock(spec_set=["get_token"], get_token=get_token)
+    credential = Mock(spec_set=["get_token_info"], get_token_info=get_token_info)
     pipeline = Pipeline(
         transport=Mock(send=assert_option_popped), policies=[BearerTokenCredentialPolicy(credential, "scope")]
     )
@@ -122,7 +122,7 @@ def test_bearer_policy_preserves_enforce_https_opt_out():
             assert "enforce_https" in request.context, "'enforce_https' is not in the request's context"
             return Mock()
 
-    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=AccessToken("***", 42)))
+    credential = Mock(spec_set=["get_token_info"], get_token_info=Mock(return_value=AccessTokenInfo("***", 42)))
     policies = [BearerTokenCredentialPolicy(credential, "scope"), ContextValidator()]
     pipeline = Pipeline(transport=Mock(), policies=policies)
 
@@ -132,14 +132,14 @@ def test_bearer_policy_preserves_enforce_https_opt_out():
 def test_bearer_policy_default_context():
     """The policy should call get_token with the scopes given at construction, and no keyword arguments, by default"""
     expected_scope = "scope"
-    token = AccessToken("", 0)
-    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=token))
+    token = AccessTokenInfo("", 0)
+    credential = Mock(spec_set=["get_token_info"], get_token_info=Mock(return_value=token))
     policy = BearerTokenCredentialPolicy(credential, expected_scope)
     pipeline = Pipeline(transport=Mock(), policies=[policy])
 
     pipeline.run(HttpRequest("GET", "https://localhost"))
 
-    credential.get_token.assert_called_once_with(expected_scope)
+    credential.get_token_info.assert_called_once_with(expected_scope)
 
 
 def test_bearer_policy_context_unmodified_by_default():
@@ -149,7 +149,7 @@ def test_bearer_policy_context_unmodified_by_default():
         def on_request(self, request):
             assert not any(request.context), "the policy shouldn't add to the request's context"
 
-    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=AccessToken("***", 42)))
+    credential = Mock(spec_set=["get_token_info"], get_token_info=Mock(return_value=AccessTokenInfo("***", 42)))
     policies = [BearerTokenCredentialPolicy(credential, "scope"), ContextValidator()]
     pipeline = Pipeline(transport=Mock(), policies=policies)
 
@@ -166,7 +166,9 @@ def test_bearer_policy_calls_on_challenge():
             self.__class__.called = True
             return False
 
-    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=AccessToken("***", int(time.time()) + 3600)))
+    credential = Mock(
+        spec_set=["get_token_info"], get_token_info=Mock(return_value=AccessTokenInfo("***", int(time.time()) + 3600))
+    )
     policies = [TestPolicy(credential, "scope")]
     response = Mock(status_code=401, headers={"WWW-Authenticate": 'Basic realm="localhost"'})
     transport = Mock(send=Mock(return_value=response))
@@ -181,8 +183,8 @@ def test_bearer_policy_cannot_complete_challenge():
     """BearerTokenCredentialPolicy should return the 401 response when it can't complete its challenge"""
 
     expected_scope = "scope"
-    expected_token = AccessToken("***", int(time.time()) + 3600)
-    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=expected_token))
+    expected_token = AccessTokenInfo("***", int(time.time()) + 3600)
+    credential = Mock(spec_set=["get_token_info"], get_token_info=Mock(return_value=expected_token))
     expected_response = Mock(status_code=401, headers={"WWW-Authenticate": 'Basic realm="localhost"'})
     transport = Mock(send=Mock(return_value=expected_response))
     policies = [BearerTokenCredentialPolicy(credential, expected_scope)]
@@ -192,7 +194,7 @@ def test_bearer_policy_cannot_complete_challenge():
 
     assert response.http_response is expected_response
     assert transport.send.call_count == 1
-    credential.get_token.assert_called_once_with(expected_scope)
+    credential.get_token_info.assert_called_once_with(expected_scope)
 
 
 def test_bearer_policy_calls_sansio_methods():
@@ -210,7 +212,9 @@ def test_bearer_policy_calls_sansio_methods():
             self.response = super(TestPolicy, self).send(request)
             return self.response
 
-    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=AccessToken("***", int(time.time()) + 3600)))
+    credential = Mock(
+        spec_set=["get_token_info"], get_token_info=Mock(return_value=AccessTokenInfo("***", int(time.time()) + 3600))
+    )
     policy = TestPolicy(credential, "scope")
     transport = Mock(send=Mock(return_value=Mock(status_code=200)))
 
@@ -384,3 +388,30 @@ def test_service_http_credential_policy():
     pipeline = Pipeline(transport=transport, policies=[credential_policy])
 
     pipeline.run(HttpRequest("GET", "https://test_key_credential"))
+
+
+def test_need_new_token():
+    expected_scope = "scope"
+    now = int(time.time())
+
+    policy = BearerTokenCredentialPolicy(Mock(), expected_scope)
+
+    # Token is expired.
+    policy._token = AccessTokenInfo("", now - 1200)
+    assert policy._need_new_token
+
+    # Token is about to expire within 300 seconds.
+    policy._token = AccessTokenInfo("", now + 299)
+    assert policy._need_new_token
+
+    # Token still has more than 300 seconds to live.
+    policy._token = AccessTokenInfo("", now + 305)
+    assert not policy._need_new_token
+
+    # Token has both expires_on and refresh_on set well into the future.
+    policy._token = AccessTokenInfo("", now + 1200, refresh_on=now + 1200)
+    assert not policy._need_new_token
+
+    # Token is not close to expiring, but refresh_on is in the past.
+    policy._token = AccessTokenInfo("", now + 1200, refresh_on=now - 1)
+    assert policy._need_new_token

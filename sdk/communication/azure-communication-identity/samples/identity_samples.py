@@ -49,25 +49,15 @@ class CommunicationIdentityClientSamples(object):
             CommunicationTokenScope,
         )
 
-        if (
-            self.client_id is not None
-            and self.client_secret is not None
-            and self.tenant_id is not None
-        ):
-            
+        if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
+
             endpoint, _ = parse_connection_str(self.connection_string)
-            identity_client = CommunicationIdentityClient(
-                endpoint, get_credential()
-            )
+            identity_client = CommunicationIdentityClient(endpoint, get_credential())
         else:
-            identity_client = CommunicationIdentityClient.from_connection_string(
-                self.connection_string
-            )
+            identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         user = identity_client.create_user()
         print(f"Getting token for: {user.properties.get('id')}")
-        tokenresponse = identity_client.get_token(
-            user, scopes=[CommunicationTokenScope.CHAT]
-        )
+        tokenresponse = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
         print(f"Token issued with value: {tokenresponse.token}")
 
     def get_token_with_custom_expiration(self):
@@ -76,20 +66,12 @@ class CommunicationIdentityClientSamples(object):
             CommunicationTokenScope,
         )
 
-        if (
-            self.client_id is not None
-            and self.client_secret is not None
-            and self.tenant_id is not None
-        ):
-          
+        if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
+
             endpoint, _ = parse_connection_str(self.connection_string)
-            identity_client = CommunicationIdentityClient(
-                endpoint, get_credential()
-            )
+            identity_client = CommunicationIdentityClient(endpoint, get_credential())
         else:
-            identity_client = CommunicationIdentityClient.from_connection_string(
-                self.connection_string
-            )
+            identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         user = identity_client.create_user()
         print(f"Getting token for: {user.properties.get('id')}")
         token_expires_in = timedelta(hours=1)
@@ -106,24 +88,14 @@ class CommunicationIdentityClientSamples(object):
             CommunicationTokenScope,
         )
 
-        if (
-            self.client_id is not None
-            and self.client_secret is not None
-            and self.tenant_id is not None
-        ):
-          
+        if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
+
             endpoint, _ = parse_connection_str(self.connection_string)
-            identity_client = CommunicationIdentityClient(
-                endpoint, get_credential()
-            )
+            identity_client = CommunicationIdentityClient(endpoint, get_credential())
         else:
-            identity_client = CommunicationIdentityClient.from_connection_string(
-                self.connection_string
-            )
+            identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         user = identity_client.create_user()
-        tokenresponse = identity_client.get_token(
-            user, scopes=[CommunicationTokenScope.CHAT]
-        )
+        tokenresponse = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
         print(f"Revoking token: {tokenresponse.token}")
         identity_client.revoke_tokens(user)
         print(f"{tokenresponse.token} revoked successfully")
@@ -131,20 +103,12 @@ class CommunicationIdentityClientSamples(object):
     def create_user(self):
         from azure.communication.identity import CommunicationIdentityClient
 
-        if (
-            self.client_id is not None
-            and self.client_secret is not None
-            and self.tenant_id is not None
-        ):
-            
+        if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
+
             endpoint, _ = parse_connection_str(self.connection_string)
-            identity_client = CommunicationIdentityClient(
-                endpoint, get_credential()
-            )
+            identity_client = CommunicationIdentityClient(endpoint, get_credential())
         else:
-            identity_client = CommunicationIdentityClient.from_connection_string(
-                self.connection_string
-            )
+            identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         print("Creating new user")
         user = identity_client.create_user()
         print(f"User created with id: {user.properties.get('id')}")
@@ -155,24 +119,14 @@ class CommunicationIdentityClientSamples(object):
             CommunicationTokenScope,
         )
 
-        if (
-            self.client_id is not None
-            and self.client_secret is not None
-            and self.tenant_id is not None
-        ):
-            
+        if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
+
             endpoint, _ = parse_connection_str(self.connection_string)
-            identity_client = CommunicationIdentityClient(
-                endpoint, get_credential()
-            )
+            identity_client = CommunicationIdentityClient(endpoint, get_credential())
         else:
-            identity_client = CommunicationIdentityClient.from_connection_string(
-                self.connection_string
-            )
+            identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         print("Creating new user with token")
-        user, tokenresponse = identity_client.create_user_and_token(
-            scopes=[CommunicationTokenScope.CHAT]
-        )
+        user, tokenresponse = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT])
         print(f"User created with id: {user.properties.get('id')}")
         print(f"Token issued with value: {tokenresponse.token}")
 
@@ -182,20 +136,12 @@ class CommunicationIdentityClientSamples(object):
             CommunicationTokenScope,
         )
 
-        if (
-            self.client_id is not None
-            and self.client_secret is not None
-            and self.tenant_id is not None
-        ):
-            
+        if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
+
             endpoint, _ = parse_connection_str(self.connection_string)
-            identity_client = CommunicationIdentityClient(
-                endpoint, get_credential()
-            )
+            identity_client = CommunicationIdentityClient(endpoint, get_credential())
         else:
-            identity_client = CommunicationIdentityClient.from_connection_string(
-                self.connection_string
-            )
+            identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         print("Creating new user with token")
         token_expires_in = timedelta(hours=1)
         user, tokenresponse = identity_client.create_user_and_token(
@@ -207,20 +153,12 @@ class CommunicationIdentityClientSamples(object):
     def delete_user(self):
         from azure.communication.identity import CommunicationIdentityClient
 
-        if (
-            self.client_id is not None
-            and self.client_secret is not None
-            and self.tenant_id is not None
-        ):
-           
+        if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
+
             endpoint, _ = parse_connection_str(self.connection_string)
-            identity_client = CommunicationIdentityClient(
-                endpoint, get_credential()
-            )
+            identity_client = CommunicationIdentityClient(endpoint, get_credential())
         else:
-            identity_client = CommunicationIdentityClient.from_connection_string(
-                self.connection_string
-            )
+            identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         user = identity_client.create_user()
         print(f"Deleting user: {user.properties.get('id')}")
         identity_client.delete_user(user)
@@ -232,20 +170,12 @@ class CommunicationIdentityClientSamples(object):
             return
         from azure.communication.identity import CommunicationIdentityClient
 
-        if (
-            self.client_id is not None
-            and self.client_secret is not None
-            and self.tenant_id is not None
-        ):
-         
+        if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
+
             endpoint, _ = parse_connection_str(self.connection_string)
-            identity_client = CommunicationIdentityClient(
-                endpoint, get_credential()
-            )
+            identity_client = CommunicationIdentityClient(endpoint, get_credential())
         else:
-            identity_client = CommunicationIdentityClient.from_connection_string(
-                self.connection_string
-            )
+            identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
 
         msal_app = PublicClientApplication(
             client_id=self.m365_client_id,
@@ -262,9 +192,7 @@ class CommunicationIdentityClientSamples(object):
         teams_user_oid = result["id_token_claims"]["oid"]
         print(f"AAD access token of a Teams User: {aad_token}")
 
-        tokenresponse = identity_client.get_token_for_teams_user(
-            aad_token, self.m365_client_id, teams_user_oid
-        )
+        tokenresponse = identity_client.get_token_for_teams_user(aad_token, self.m365_client_id, teams_user_oid)
         print(f"Token issued with value: {tokenresponse.token}")
 
 

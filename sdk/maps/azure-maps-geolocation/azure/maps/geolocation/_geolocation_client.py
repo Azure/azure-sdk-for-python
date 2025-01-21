@@ -9,9 +9,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 
 from ._base_client import MapsGeolocationClientBase
-from .models import (
-    CountryRegionResult
-)
+from .models import CountryRegionResult
 
 
 # By default, use the latest supported API version
@@ -46,22 +44,12 @@ class MapsGeolocationClient(MapsGeolocationClientBase):
             :caption: Creating the MapsGeolocationClient with a token credential.
     """
 
-    def __init__(
-        self,
-        credential: Union[AzureKeyCredential, TokenCredential],
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
 
-        super().__init__(
-            credential=credential, **kwargs
-        )
+        super().__init__(credential=credential, **kwargs)
 
     @distributed_trace
-    def get_country_code(
-        self,
-        ip_address: str,
-        **kwargs: Any
-    ) -> CountryRegionResult:
+    def get_country_code(self, ip_address: str, **kwargs: Any) -> CountryRegionResult:
         """
         This service will return the ISO country code for the provided IP address. Developers can use
         this information  to block or alter certain content based on geographical locations where the
@@ -87,13 +75,8 @@ class MapsGeolocationClient(MapsGeolocationClientBase):
                 :caption:  Return the ISO country code for the provided IP address.
         """
 
-        geolocation_result = self._geolocation_client.get_location(
-            format="json",
-            ip_address=ip_address,
-            **kwargs
-        )
+        geolocation_result = self._geolocation_client.get_location(format="json", ip_address=ip_address, **kwargs)
 
         return CountryRegionResult(
-            ip_address=geolocation_result.ip_address,
-            iso_code=geolocation_result.country_region.iso_code
+            ip_address=geolocation_result.ip_address, iso_code=geolocation_result.country_region.iso_code
         )

@@ -649,6 +649,30 @@ class TestSubpartitionCrud(unittest.TestCase):
         self.assertLess(EPK_range_4.min, olr_4_c.min)
         self.assertLess(EPK_range_4.max, olr_4_c.max)
 
+    def test_partitioned_collection_query_with_tuples_subpartition(self):
+        created_db = self.databaseForTest
+
+        collection_id = 'test_partitioned_collection_query_with_tuples_MH ' + str(uuid.uuid4())
+        created_collection = created_db.create_container(
+            id=collection_id,
+            partition_key=PartitionKey(path=['/state', '/city', '/zipcode'], kind=documents.PartitionKind.MultiHash)
+        )
+
+        document_definition = {'id': 'document1',
+                               'state': 'CA',
+                               'city': 'Oxnard',
+                               'zipcode': '93033'}
+
+        created_document = created_collection.create_item(body=document_definition)
+        self.assertEqual(created_document.get('id'), document_definition.get('id'))
+
+        # Query using tuple instead of list
+        document_list = list(
+            created_collection.query_items(query='Select * from c', partition_key=('CA', 'Oxnard', '93033')))
+        self.assertEqual(1, len(document_list))
+
+        created_db.delete_container(created_collection.id)
+
     # Commenting out delete items by pk until test pipelines support it
     # def test_delete_all_items_by_partition_key_subpartition(self):
     #     # create database

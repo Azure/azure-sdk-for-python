@@ -594,18 +594,9 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             # Invalid int32 and int64 values
             max_int64 = 9223372036854775807
             test_entity = {"PartitionKey": "PK1", "RowKey": "RK1", "Data": int((max_int64 + 1) * 1000)}
-            expected_entity = test_entity
             with pytest.raises(TypeError) as error:
-                _check_backcompat(test_entity, expected_entity)
+                client.create_entity(test_entity)
             assert "is too large to be cast to" in str(error.value)
-            resp = client.create_entity(
-                test_entity,
-                verify_payload=json.dumps(expected_entity, sort_keys=True),
-                verify_url=f"/{table_name}",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
-                verify_response=(lambda: client.get_entity("PK1", "RK1"), test_entity),
-            )
-            assert list(resp.keys()) == ["date", "etag", "version"]
 
             test_entity = {"PartitionKey": "PK2", "RowKey": "RK2", "Data": (max_int64 + 1, "Edm.Int64")}
             expected_entity = {
@@ -650,24 +641,9 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
 
             # Valid int64 value without Edm
             test_entity = {"PartitionKey": "PK4", "RowKey": "RK4", "Data": max_int64}
-            expected_entity = {
-                "PartitionKey": "PK4",
-                "RowKey": "RK4",
-                "Data": str(max_int64),
-                "Data@odata.type": "Edm.Int64",
-            }
-            response_entity = {"PartitionKey": "PK4", "RowKey": "RK4", "Data": EntityProperty(max_int64, EdmType.INT64)}
             with pytest.raises(TypeError) as error:
-                _check_backcompat(test_entity, expected_entity)
+                client.create_entity(test_entity)
             assert "is too large to be cast to" in str(error.value)
-            resp = client.create_entity(
-                test_entity,
-                verify_payload=json.dumps(expected_entity, sort_keys=True),
-                verify_url=f"/{table_name}",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
-                verify_response=(lambda: client.get_entity("PK4", "RK4"), response_entity),
-            )
-            assert list(resp.keys()) == ["date", "etag", "version"]
 
             # Infinite float values
             test_entity = {
@@ -1385,34 +1361,12 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             # Invalid int32 and int64 values
             max_int64 = 9223372036854775807
             test_entity = {"PartitionKey": "PK1", "RowKey": "RK1", "Data": int((max_int64 + 1) * 1000)}
-            expected_entity = test_entity
             with pytest.raises(TypeError) as error:
-                _check_backcompat(test_entity, expected_entity)
+                client.upsert_entity(test_entity, mode=UpdateMode.MERGE)
             assert "is too large to be cast to" in str(error.value)
-            resp = client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=json.dumps(expected_entity, sort_keys=True),
-                verify_url=f"/{table_name}(PartitionKey='PK1',RowKey='RK1')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-                verify_response=(lambda: client.get_entity("PK1", "RK1"), test_entity),
-            )
-            assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=json.dumps(expected_entity, sort_keys=True),
-                verify_url=f"/{table_name}(PartitionKey='PK1',RowKey='RK1')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-                verify_response=(lambda: client.get_entity("PK1", "RK1"), test_entity),
-            )
-            assert list(resp.keys()) == ["date", "etag", "version"]
+            with pytest.raises(TypeError) as error:
+                client.upsert_entity(test_entity, mode=UpdateMode.REPLACE)
+            assert "is too large to be cast to" in str(error.value)
 
             test_entity = {"PartitionKey": "PK2", "RowKey": "RK2", "Data": (max_int64 + 1, "Edm.Int64")}
             expected_entity = {
@@ -1487,40 +1441,12 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
 
             # Valid int64 value without Edm
             test_entity = {"PartitionKey": "PK4", "RowKey": "RK4", "Data": max_int64}
-            expected_entity = {
-                "PartitionKey": "PK4",
-                "RowKey": "RK4",
-                "Data": str(max_int64),
-                "Data@odata.type": "Edm.Int64",
-            }
-            response_entity = {"PartitionKey": "PK4", "RowKey": "RK4", "Data": EntityProperty(max_int64, EdmType.INT64)}
             with pytest.raises(TypeError) as error:
-                _check_backcompat(test_entity, expected_entity)
+                client.upsert_entity(test_entity, mode=UpdateMode.MERGE)
             assert "is too large to be cast to" in str(error.value)
-            resp = client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=json.dumps(expected_entity, sort_keys=True),
-                verify_url=f"/{table_name}(PartitionKey='PK4',RowKey='RK4')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-                verify_response=(lambda: client.get_entity("PK4", "RK4"), response_entity),
-            )
-            assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=json.dumps(expected_entity, sort_keys=True),
-                verify_url=f"/{table_name}(PartitionKey='PK4',RowKey='RK4')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-                verify_response=(lambda: client.get_entity("PK4", "RK4"), response_entity),
-            )
-            assert list(resp.keys()) == ["date", "etag", "version"]
+            with pytest.raises(TypeError) as error:
+                client.upsert_entity(test_entity, mode=UpdateMode.REPLACE)
+            assert "is too large to be cast to" in str(error.value)
 
             # Infinite float values
             test_entity = {
@@ -2278,29 +2204,12 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             # Invalid int32 and int64 values
             max_int64 = 9223372036854775807
             test_entity = {"PartitionKey": "PK1", "RowKey": "RK1", "Data": int((max_int64 + 1) * 1000)}
-            expected_entity = test_entity
-            client.upsert_entity({"PartitionKey": "PK1", "RowKey": "RK1"})
             with pytest.raises(TypeError) as error:
-                _check_backcompat(test_entity, expected_entity)
+                client.upsert_entity(test_entity, mode=UpdateMode.MERGE)
             assert "is too large to be cast to" in str(error.value)
-            resp = client.update_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=json.dumps(expected_entity, sort_keys=True),
-                verify_url=f"/{table_name}(PartitionKey='PK1',RowKey='RK1')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-                verify_response=(lambda: client.get_entity("PK1", "RK1"), test_entity),
-            )
-            assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.update_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=json.dumps(expected_entity, sort_keys=True),
-                verify_url=f"/{table_name}(PartitionKey='PK1',RowKey='RK1')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-                verify_response=(lambda: client.get_entity("PK1", "RK1"), test_entity),
-            )
-            assert list(resp.keys()) == ["date", "etag", "version"]
+            with pytest.raises(TypeError) as error:
+                client.upsert_entity(test_entity, mode=UpdateMode.REPLACE)
+            assert "is too large to be cast to" in str(error.value)
 
             test_entity = {"PartitionKey": "PK2", "RowKey": "RK2", "Data": (max_int64 + 1, "Edm.Int64")}
             expected_entity = {
@@ -2365,35 +2274,12 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
 
             # Valid int64 value without Edm
             test_entity = {"PartitionKey": "PK4", "RowKey": "RK4", "Data": max_int64}
-            expected_entity = {
-                "PartitionKey": "PK4",
-                "RowKey": "RK4",
-                "Data": str(max_int64),
-                "Data@odata.type": "Edm.Int64",
-            }
-            response_entity = {"PartitionKey": "PK4", "RowKey": "RK4", "Data": EntityProperty(max_int64, EdmType.INT64)}
             with pytest.raises(TypeError) as error:
-                _check_backcompat(test_entity, expected_entity)
+                client.update_entity(test_entity, mode=UpdateMode.MERGE)
             assert "is too large to be cast to" in str(error.value)
-            client.upsert_entity({"PartitionKey": "PK4", "RowKey": "RK4"})
-            resp = client.update_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=json.dumps(expected_entity, sort_keys=True),
-                verify_url=f"/{table_name}(PartitionKey='PK4',RowKey='RK4')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-                verify_response=(lambda: client.get_entity("PK4", "RK4"), response_entity),
-            )
-            assert list(resp.keys()) == ["date", "etag", "version"]
-            resp = client.update_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=json.dumps(expected_entity, sort_keys=True),
-                verify_url=f"/{table_name}(PartitionKey='PK4',RowKey='RK4')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-                verify_response=(lambda: client.get_entity("PK4", "RK4"), response_entity),
-            )
-            assert list(resp.keys()) == ["date", "etag", "version"]
+            with pytest.raises(TypeError) as error:
+                client.update_entity(test_entity, mode=UpdateMode.REPLACE)
+            assert "is too large to be cast to" in str(error.value)
 
             # Infinite float values
             test_entity = {

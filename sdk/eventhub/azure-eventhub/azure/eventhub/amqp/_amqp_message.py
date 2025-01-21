@@ -57,20 +57,14 @@ class AmqpAnnotatedMessage:
             return
 
         # manually constructed AMQPAnnotatedMessage
-        input_count_validation = len(
-            [
-                key
-                for key in ("data_body", "sequence_body", "value_body")
-                if key in kwargs
-            ]
-        )
+        input_count_validation = len([key for key in ("data_body", "sequence_body", "value_body") if key in kwargs])
         if input_count_validation != 1:
             raise ValueError(
                 "There should be one and only one of either data_body, sequence_body "
                 "or value_body being set as the body of the AmqpAnnotatedMessage."
             )
 
-        self._body_type: AmqpMessageBodyType = None # type: ignore
+        self._body_type: AmqpMessageBodyType = None  # type: ignore
         if "data_body" in kwargs:
             self._data_body = normalized_data_body(kwargs.get("data_body"))
             self._body_type = AmqpMessageBodyType.DATA
@@ -85,16 +79,14 @@ class AmqpAnnotatedMessage:
         self._header = AmqpMessageHeader(**header_dict) if "header" in kwargs else None
         self._footer = kwargs.get("footer")
         properties_dict = cast(Mapping, kwargs.get("properties"))
-        self._properties = (
-            AmqpMessageProperties(**properties_dict) if "properties" in kwargs else None
-        )
+        self._properties = AmqpMessageProperties(**properties_dict) if "properties" in kwargs else None
         self._application_properties = kwargs.get("application_properties")
         self._annotations = kwargs.get("annotations")
         self._delivery_annotations = kwargs.get("delivery_annotations")
 
     def __str__(self) -> str:
         if self._body_type == AmqpMessageBodyType.DATA:
-            return "".join(d.decode(self._encoding) for d in self._data_body)   # type: ignore
+            return "".join(d.decode(self._encoding) for d in self._data_body)  # type: ignore
         if self._body_type == AmqpMessageBodyType.SEQUENCE:
             return str(self._sequence_body)
         if self._body_type == AmqpMessageBodyType.VALUE:
@@ -118,15 +110,11 @@ class AmqpAnnotatedMessage:
         except:
             message_repr += ", properties=<read-error>"
         try:
-            message_repr += ", application_properties={}".format(
-                self.application_properties
-            )
+            message_repr += ", application_properties={}".format(self.application_properties)
         except:
             message_repr += ", application_properties=<read-error>"
         try:
-            message_repr += ", delivery_annotations={}".format(
-                self.delivery_annotations
-            )
+            message_repr += ", delivery_annotations={}".format(self.delivery_annotations)
         except:
             message_repr += ", delivery_annotations=<read-error>"
         try:
@@ -136,28 +124,36 @@ class AmqpAnnotatedMessage:
         return "AmqpAnnotatedMessage({})".format(message_repr)[:1024]
 
     def _from_amqp_message(self, message):
-        self._properties = AmqpMessageProperties(
-            message_id=message.properties.message_id,
-            user_id=message.properties.user_id,
-            to=message.properties.to,
-            subject=message.properties.subject,
-            reply_to=message.properties.reply_to,
-            correlation_id=message.properties.correlation_id,
-            content_type=message.properties.content_type,
-            content_encoding=message.properties.content_encoding,
-            absolute_expiry_time=message.properties.absolute_expiry_time,
-            creation_time=message.properties.creation_time,
-            group_id=message.properties.group_id,
-            group_sequence=message.properties.group_sequence,
-            reply_to_group_id=message.properties.reply_to_group_id,
-        ) if message.properties else None
-        self._header = AmqpMessageHeader(
-            delivery_count=message.header.delivery_count,
-            time_to_live=message.header.ttl,
-            first_acquirer=message.header.first_acquirer,
-            durable=message.header.durable,
-            priority=message.header.priority
-        ) if message.header else None
+        self._properties = (
+            AmqpMessageProperties(
+                message_id=message.properties.message_id,
+                user_id=message.properties.user_id,
+                to=message.properties.to,
+                subject=message.properties.subject,
+                reply_to=message.properties.reply_to,
+                correlation_id=message.properties.correlation_id,
+                content_type=message.properties.content_type,
+                content_encoding=message.properties.content_encoding,
+                absolute_expiry_time=message.properties.absolute_expiry_time,
+                creation_time=message.properties.creation_time,
+                group_id=message.properties.group_id,
+                group_sequence=message.properties.group_sequence,
+                reply_to_group_id=message.properties.reply_to_group_id,
+            )
+            if message.properties
+            else None
+        )
+        self._header = (
+            AmqpMessageHeader(
+                delivery_count=message.header.delivery_count,
+                time_to_live=message.header.ttl,
+                first_acquirer=message.header.first_acquirer,
+                durable=message.header.durable,
+                priority=message.header.priority,
+            )
+            if message.header
+            else None
+        )
         self._footer = message.footer if message.footer else {}
         self._annotations = message.message_annotations if message.message_annotations else {}
         self._delivery_annotations = message.delivery_annotations if message.delivery_annotations else {}
@@ -174,14 +170,17 @@ class AmqpAnnotatedMessage:
 
     @property
     def body(self) -> Any:
-        """The body of the Message. The format may vary depending on the body type:
-        For ~azure.eventhub.AmqpMessageBodyType.DATA, the body could be bytes or Iterable[bytes]
-        For ~azure.eventhub.AmqpMessageBodyType.SEQUENCE, the body could be List or Iterable[List]
-        For ~azure.eventhub.AmqpMessageBodyType.VALUE, the body could be any type.
+        """
+        The body of the Message. The format may vary depending on the body type:
+
+        For AmqpMessageBodyType.DATA, the body could be bytes or Iterable[bytes].
+        For AmqpMessageBodyType.SEQUENCE, the body could be List or Iterable[List].
+        For AmqpMessageBodyType.VALUE, the body could be any type.
+
         :rtype: Any
         """
-        if self._body_type == AmqpMessageBodyType.DATA: # pylint:disable=no-else-return
-            return (i for i in cast(List, self._data_body)) # type: ignore
+        if self._body_type == AmqpMessageBodyType.DATA:  # pylint:disable=no-else-return
+            return (i for i in cast(List, self._data_body))  # type: ignore
         elif self._body_type == AmqpMessageBodyType.SEQUENCE:
             return (i for i in cast(List, self._sequence_body))
         elif self._body_type == AmqpMessageBodyType.VALUE:
@@ -190,8 +189,10 @@ class AmqpAnnotatedMessage:
 
     @property
     def body_type(self) -> AmqpMessageBodyType:
-        """The body type of the underlying AMQP message.
-        rtype: ~azure.eventhub.amqp.AmqpMessageBodyType
+        """
+        The body type of the underlying AMQP message.
+
+        :rtype: ~azure.eventhub.amqp.AmqpMessageBodyType
         """
         return self._body_type
 
@@ -199,6 +200,7 @@ class AmqpAnnotatedMessage:
     def properties(self) -> Optional[AmqpMessageProperties]:
         """
         Properties to add to the message.
+
         :rtype: Optional[~azure.eventhub.amqp.AmqpMessageProperties]
         """
         return self._properties
@@ -251,6 +253,7 @@ class AmqpAnnotatedMessage:
     def header(self) -> Optional[AmqpMessageHeader]:
         """
         The message header.
+
         :rtype: Optional[~azure.eventhub.amqp.AmqpMessageHeader]
         """
         return self._header

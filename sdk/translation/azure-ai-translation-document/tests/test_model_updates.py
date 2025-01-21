@@ -8,7 +8,7 @@ import functools
 from azure.ai.translation.document.models import (
     DocumentStatus,
     FileFormatType,
-    StatusSummary,
+    TranslationStatusSummary,
     TranslationGlossary,
     TranslationStatus,
 )
@@ -177,7 +177,7 @@ class TestModelUpdates(DocumentTranslationTest):
     @recorded_by_proxy
     def test_translation_status_args(self, **kwargs):
         # Using keyword-only arguments to specify additional optional parameters
-        status_summary = StatusSummary(
+        status_summary = TranslationStatusSummary(
             total=10,
             failed=2,
             success=5,

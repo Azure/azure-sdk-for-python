@@ -1,7 +1,7 @@
 -e ../../../tools/azure-sdk-tools
 ../../core/azure-core
 ../../identity/azure-identity
-marshmallow<3.20
+marshmallow
 marshmallow-jsonschema==0.10.0
 mock
 pytest-cov
@@ -12,7 +12,7 @@ pytest-mock
 pytest
 pydash
 azure-mgmt-msi
-pywin32==304 ; sys_platform == 'win32'
+pywin32==306 ; sys_platform == 'win32'
 docker;platform.python_implementation!="PyPy"
 numpy;platform.python_implementation!="PyPy"
 scikit-image;platform.python_implementation!="PyPy"

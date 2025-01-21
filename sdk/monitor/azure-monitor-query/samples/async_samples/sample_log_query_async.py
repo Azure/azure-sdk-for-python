@@ -53,6 +53,7 @@ async def logs_query():
             print(err)
     await credential.close()
 
+
 # [END send_logs_query_async]
 
 if __name__ == "__main__":

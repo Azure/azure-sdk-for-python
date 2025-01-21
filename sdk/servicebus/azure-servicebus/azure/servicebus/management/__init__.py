@@ -53,5 +53,5 @@ __all__ = [
     "NamespaceProperties",
     "MessagingSku",
     "NamespaceType",
-    "ApiVersion"
+    "ApiVersion",
 ]

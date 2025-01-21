@@ -1,8 +1,8 @@
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 from azure.eventhub._pyamqp.message import Message
 from azure.eventhub._pyamqp.utils import AMQPTypes
 from azure.eventhub._pyamqp._encode import encode_payload
@@ -29,7 +29,7 @@ def test_body_value():
 
     message = decode_payload(memoryview(output))
     output = bytearray()
-    
+
     body = message.data
     assert body[0].get(b"TYPE").decode("utf-8") == AMQPTypes.binary
 
@@ -44,22 +44,22 @@ def test_message_properties():
     value = AmqpMessageProperties()
     assert not value.user_id
 
-    value =  AmqpMessageProperties()
-    value.user_id = bytearray(b'testuseridlongstring')
-    assert value.user_id == b'testuseridlongstring'
-
-    value =  AmqpMessageProperties()
-    value.user_id = bytearray(b'')
-    assert value.user_id == b''
+    value = AmqpMessageProperties()
+    value.user_id = bytearray(b"testuseridlongstring")
+    assert value.user_id == b"testuseridlongstring"
 
     value = AmqpMessageProperties()
-    value.user_id =bytearray(b'short')
-    assert value.user_id == b'short'
+    value.user_id = bytearray(b"")
+    assert value.user_id == b""
 
     value = AmqpMessageProperties()
-    value.user_id = bytearray(b'!@#$%^&*()+_?')
-    assert value.user_id == b'!@#$%^&*()+_?'
+    value.user_id = bytearray(b"short")
+    assert value.user_id == b"short"
 
     value = AmqpMessageProperties()
-    value.user_id = bytearray(b'\nweird\0user\1id\0\t')
-    assert value.user_id == b'\nweird\0user\1id\0\t'
+    value.user_id = bytearray(b"!@#$%^&*()+_?")
+    assert value.user_id == b"!@#$%^&*()+_?"
+
+    value = AmqpMessageProperties()
+    value.user_id = bytearray(b"\nweird\0user\1id\0\t")
+    assert value.user_id == b"\nweird\0user\1id\0\t"

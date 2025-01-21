@@ -12,5 +12,5 @@
 from .events_operations import EventsOperations
 
 __all__ = [
-    'EventsOperations',
+    "EventsOperations",
 ]

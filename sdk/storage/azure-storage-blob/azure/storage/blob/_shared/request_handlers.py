@@ -4,12 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Dict, Optional
-
 import logging
-from os import fstat
 import stat
 from io import (SEEK_END, SEEK_SET, UnsupportedOperation)
+from os import fstat
+from typing import Dict, Optional
 
 import isodate
 
@@ -186,7 +185,7 @@ def serialize_batch_body(requests, batch_id):
     # final line of body MUST have \r\n at the end, or it will not be properly read by the service
     batch_body.append(newline_bytes)
 
-    return bytes().join(batch_body)
+    return b"".join(batch_body)
 
 
 def _get_batch_request_delimiter(batch_id, is_prepend_dashes=False, is_append_dashes=False):

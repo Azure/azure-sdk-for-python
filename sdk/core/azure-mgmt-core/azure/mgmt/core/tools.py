@@ -23,9 +23,10 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Mapping, MutableMapping, Optional, Type, Union, cast
+from typing import Mapping, MutableMapping, Optional, Type, Union, cast, Dict, Any
 import re
 import logging
+from azure.core import AzureClouds
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -46,6 +47,7 @@ __all__ = [
     "resource_id",
     "is_valid_resource_id",
     "is_valid_resource_name",
+    "get_arm_endpoints",
 ]
 
 
@@ -217,3 +219,29 @@ def is_valid_resource_name(rname: str, exception_type: Optional[Type[BaseExcepti
     if exception_type:
         raise exception_type()
     return False
+
+
+def get_arm_endpoints(cloud_setting: AzureClouds) -> Dict[str, Any]:
+    """Get the ARM endpoint and ARM credential scopes for the given cloud setting.
+
+    :param cloud_setting: The cloud setting for which to get the ARM endpoint.
+    :type cloud_setting: AzureClouds
+    :return: The ARM endpoint and ARM credential scopes.
+    :rtype: dict[str, Any]
+    """
+    if cloud_setting == AzureClouds.AZURE_CHINA_CLOUD:
+        return {
+            "resource_manager": "https://management.chinacloudapi.cn/",
+            "credential_scopes": ["https://management.chinacloudapi.cn/.default"],
+        }
+    if cloud_setting == AzureClouds.AZURE_US_GOVERNMENT:
+        return {
+            "resource_manager": "https://management.usgovcloudapi.net/",
+            "credential_scopes": ["https://management.core.usgovcloudapi.net/.default"],
+        }
+    if cloud_setting == AzureClouds.AZURE_PUBLIC_CLOUD:
+        return {
+            "resource_manager": "https://management.azure.com/",
+            "credential_scopes": ["https://management.azure.com/.default"],
+        }
+    raise ValueError("Unknown cloud setting: {}".format(cloud_setting))

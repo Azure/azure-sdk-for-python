@@ -1,25 +1,13 @@
-# cSpell:ignore pscore
-# cSpell:ignore issecret
 trigger: none
 
 extends:
     template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      PreSteps:
-        - task: AzureCLI@2
-          displayName: Set OIDC variables
-          inputs:
-            azureSubscription: azure-sdk-tests-public
-            scriptType: pscore
-            scriptLocation: inlineScript
-            addSpnToEnvironment: true
-            inlineScript: |
-              Write-Host "##vso[task.setvariable variable=ARM_OIDC_TOKEN;issecret=true]$($env:idToken)"
       ServiceDirectory: monitor
       TestTimeoutInMinutes: 300
       BuildTargetingString: azure-monitor-*
+      PersistOidcToken: true
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(MONITOR_SUBSCRIPTION_ID)
         AZURE_TEST_RUN_LIVE: 'true'
         AZURE_SKIP_LIVE_RECORDING: 'true'
-        ARM_OIDC_TOKEN: $(ARM_OIDC_TOKEN)

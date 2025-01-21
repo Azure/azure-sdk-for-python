@@ -2,22 +2,25 @@ import json
 import math
 import os
 import pathlib
-import time
-
 import pandas as pd
 import pytest
 import requests
 from ci_tools.variables import in_ci
 
 from azure.ai.evaluation import (
-    evaluate,
-    ContentSafetyEvaluator,
     F1ScoreEvaluator,
     FluencyEvaluator,
     GroundednessEvaluator,
     evaluate,
 )
 from azure.ai.evaluation._common.math import list_mean_nan_safe
+from azure.ai.evaluation._azure._clients import LiteMLClient
+
+
+@pytest.fixture
+def csv_file():
+    data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
+    return os.path.join(data_path, "evaluate_test_data.csv")
 
 
 @pytest.fixture
@@ -44,15 +47,11 @@ def answer_evaluator_int_dict(response):
     return {42: len(response)}
 
 
-def answer_evaluator_json(response):
-    return json.dumps({"length": len(response)})
-
-
 def question_evaluator(query):
     return {"length": len(query)}
 
 
-def _get_run_from_run_history(flow_run_id, ml_client, project_scope):
+def _get_run_from_run_history(flow_run_id, azure_ml_client: LiteMLClient, project_scope):
     """Get run info from run history"""
     from azure.identity import DefaultAzureCredential
 
@@ -61,8 +60,8 @@ def _get_run_from_run_history(flow_run_id, ml_client, project_scope):
         "Authorization": token,
         "Content-Type": "application/json",
     }
-    workspace = ml_client.workspaces.get(project_scope["project_name"])
-    endpoint = workspace.discovery_url.split("discovery")[0]
+    workspace = azure_ml_client.workspace_get_info(project_scope["project_name"])
+    endpoint = (workspace.discovery_url or "").split("discovery")[0]
     pattern = (
         f"/subscriptions/{project_scope['subscription_id']}"
         f"/resourceGroups/{project_scope['resource_group_name']}"
@@ -92,45 +91,8 @@ def _get_run_from_run_history(flow_run_id, ml_client, project_scope):
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
 @pytest.mark.localtest
 class TestEvaluate:
-    @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
-    def test_evaluate_with_groundedness_evaluator(self, model_config, data_file):
-        # data
-        input_data = pd.read_json(data_file, lines=True)
-
-        groundedness_eval = GroundednessEvaluator(model_config)
-        f1_score_eval = F1ScoreEvaluator()
-
-        # run the evaluation
-        result = evaluate(
-            data=data_file,
-            evaluators={"grounded": groundedness_eval, "f1_score": f1_score_eval},
-        )
-
-        row_result_df = pd.DataFrame(result["rows"])
-        metrics = result["metrics"]
-
-        # validate the results
-        assert result is not None
-        assert result["rows"] is not None
-        assert row_result_df.shape[0] == len(input_data)
-
-        assert "outputs.grounded.gpt_groundedness" in row_result_df.columns.to_list()
-        assert "outputs.f1_score.f1_score" in row_result_df.columns.to_list()
-
-        assert "grounded.gpt_groundedness" in metrics.keys()
-        assert "f1_score.f1_score" in metrics.keys()
-
-        assert metrics.get("grounded.gpt_groundedness") == list_mean_nan_safe(
-            row_result_df["outputs.grounded.gpt_groundedness"]
-        )
-        assert metrics.get("f1_score.f1_score") == list_mean_nan_safe(row_result_df["outputs.f1_score.f1_score"])
-
-        assert row_result_df["outputs.grounded.gpt_groundedness"][2] in [4, 5]
-        assert row_result_df["outputs.f1_score.f1_score"][2] == 1
-        assert result["studio_url"] is None
-
-    @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
-    def test_evaluate_with_relative_data_path(self, model_config):
+    # Technically unit-test-able, but kept here due to file manipulation
+    def test_evaluate_with_relative_data_path(self):
         original_working_dir = os.getcwd()
 
         try:
@@ -138,76 +100,23 @@ class TestEvaluate:
             os.chdir(working_dir)
 
             data_file = "data/evaluate_test_data.jsonl"
-            input_data = pd.read_json(data_file, lines=True)
 
-            groundedness_eval = GroundednessEvaluator(model_config)
-            fluency_eval = FluencyEvaluator(model_config)
-
-            # Run the evaluation
+            f1_score_eval = F1ScoreEvaluator()
+            # run the evaluation with targets
             result = evaluate(
                 data=data_file,
-                evaluators={"grounded": groundedness_eval, "fluency": fluency_eval},
+                evaluators={"f1": f1_score_eval},
             )
-
             row_result_df = pd.DataFrame(result["rows"])
-            metrics = result["metrics"]
-
-            # Validate the results
-            assert result is not None
-            assert result["rows"] is not None
-            assert row_result_df.shape[0] == len(input_data)
-
-            assert "outputs.grounded.gpt_groundedness" in row_result_df.columns.to_list()
-            assert "outputs.fluency.gpt_fluency" in row_result_df.columns.to_list()
-
-            assert "grounded.gpt_groundedness" in metrics.keys()
-            assert "fluency.gpt_fluency" in metrics.keys()
+            assert "outputs.f1.f1_score" in row_result_df.columns
+            assert not any(math.isnan(f1) for f1 in row_result_df["outputs.f1.f1_score"])
         finally:
             os.chdir(original_working_dir)
 
-    @pytest.mark.azuretest
-    @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
-    def test_evaluate_with_content_safety_evaluator(self, project_scope, data_file):
-        input_data = pd.read_json(data_file, lines=True)
-
-        # CS evaluator tries to store the credential, which breaks multiprocessing at
-        # pickling stage. So we pass None for credential and let child evals
-        # generate a default credential at runtime.
-        # Internal Parallelism is also disabled to avoid faulty recordings.
-        content_safety_eval = ContentSafetyEvaluator(project_scope, credential=None, parallel=False)
-
-        # run the evaluation
-        result = evaluate(
-            data=data_file,
-            evaluators={"content_safety": content_safety_eval},
-        )
-
-        row_result_df = pd.DataFrame(result["rows"])
-        metrics = result["metrics"]
-        # validate the results
-        assert result is not None
-        assert result["rows"] is not None
-        assert row_result_df.shape[0] == len(input_data)
-
-        assert "outputs.content_safety.sexual" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.violence" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.self_harm" in row_result_df.columns.to_list()
-        assert "outputs.content_safety.hate_unfairness" in row_result_df.columns.to_list()
-
-        assert "content_safety.sexual_defect_rate" in metrics.keys()
-        assert "content_safety.violence_defect_rate" in metrics.keys()
-        assert "content_safety.self_harm_defect_rate" in metrics.keys()
-        assert "content_safety.hate_unfairness_defect_rate" in metrics.keys()
-
-        assert 0 <= metrics.get("content_safety.sexual_defect_rate") <= 1
-        assert 0 <= metrics.get("content_safety.violence_defect_rate") <= 1
-        assert 0 <= metrics.get("content_safety.self_harm_defect_rate") <= 1
-        assert 0 <= metrics.get("content_safety.hate_unfairness_defect_rate") <= 1
-
-    @pytest.mark.performance_test
+    # @pytest.mark.performance_test
     @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
     def test_evaluate_with_async_enabled_evaluator(self, model_config, data_file):
-        os.environ["PF_EVALS_BATCH_USE_ASYNC"] = "true"
+        os.environ["AI_EVALS_BATCH_USE_ASYNC"] = "true"
         fluency_eval = FluencyEvaluator(model_config)
 
         start_time = time.time()
@@ -228,22 +137,20 @@ class TestEvaluate:
         assert result["rows"] is not None
         input_data = pd.read_json(data_file, lines=True)
         assert row_result_df.shape[0] == len(input_data)
-        assert "outputs.fluency.gpt_fluency" in row_result_df.columns.to_list()
-        assert "fluency.gpt_fluency" in metrics.keys()
+        assert "outputs.fluency.fluency" in row_result_df.columns.to_list()
+        assert "fluency.fluency" in metrics.keys()
         assert duration < 10, f"evaluate API call took too long: {duration} seconds"
-        os.environ.pop("PF_EVALS_BATCH_USE_ASYNC")
+        os.environ.pop("AI_EVALS_BATCH_USE_ASYNC")
 
     @pytest.mark.parametrize(
-        "use_pf_client,function,column",
+        "function,column",
         [
-            (True, answer_evaluator, "length"),
-            (False, answer_evaluator, "length"),
-            (True, answer_evaluator_int, "output"),
-            (False, answer_evaluator_int, "output"),
-            (True, answer_evaluator_int_dict, "42"),
-            (False, answer_evaluator_int_dict, "42"),
+            (answer_evaluator, "length"),
+            (answer_evaluator_int, "output"),
+            (answer_evaluator_int_dict, "42"),
         ],
     )
+    @pytest.mark.parametrize("use_pf_client", [True, False])
     def test_evaluate_python_function(self, data_file, use_pf_client, function, column):
         # data
         input_data = pd.read_json(data_file, lines=True)
@@ -283,12 +190,13 @@ class TestEvaluate:
             evaluators={"answer": answer_evaluator, "f1": f1_score_eval},
         )
         row_result_df = pd.DataFrame(result["rows"])
-        assert "outputs.answer" in row_result_df.columns
+        assert "outputs.response" in row_result_df.columns
         assert "outputs.answer.length" in row_result_df.columns
         assert list(row_result_df["outputs.answer.length"]) == [28, 76, 22]
         assert "outputs.f1.f1_score" in row_result_df.columns
         assert not any(math.isnan(f1) for f1 in row_result_df["outputs.f1.f1_score"])
 
+    # TODO move to unit test, rename to column mapping focus
     @pytest.mark.parametrize(
         "evaluation_config",
         [
@@ -325,7 +233,8 @@ class TestEvaluate:
 
         mapping = None
         if evaluation_config:
-            mapping = evaluation_config.get("question_ev", evaluation_config.get("default", None))
+            config = evaluation_config.get("question_ev", evaluation_config.get("default", None))
+            mapping = config.get("column_mapping", config)
         if mapping and ("another_question" in mapping or mapping["query"] == "${data.query}"):
             query = "inputs.query"
         expected = list(row_result_df[query].str.len())
@@ -409,7 +318,7 @@ class TestEvaluate:
         evaluation_name = "test_evaluate_track_in_cloud"
         # run the evaluation with targets
         result = evaluate(
-            azure_ai_project=project_scope,
+            # azure_ai_project=project_scope,
             evaluation_name=evaluation_name,
             data=questions_file,
             target=target_fn,
@@ -428,7 +337,6 @@ class TestEvaluate:
         remote_run = _get_run_from_run_history(run_id, azure_ml_client, project_scope)
 
         assert remote_run is not None
-        assert remote_run["runMetadata"]["properties"]["azureml.promptflow.local_to_cloud"] == "true"
         assert remote_run["runMetadata"]["properties"]["runType"] == "eval_run"
         assert remote_run["runMetadata"]["properties"]["_azureml.evaluation_run"] == "promptflow.BatchRun"
         assert remote_run["runMetadata"]["displayName"] == evaluation_name
@@ -450,7 +358,7 @@ class TestEvaluate:
 
         # run the evaluation
         result = evaluate(
-            azure_ai_project=project_scope,
+            # azure_ai_project=project_scope,
             evaluation_name=evaluation_name,
             data=data_file,
             evaluators={"f1_score": f1_score_eval},
@@ -475,7 +383,7 @@ class TestEvaluate:
 
         assert remote_run is not None
         assert remote_run["runMetadata"]["properties"]["runType"] == "eval_run"
-        assert remote_run["runMetadata"]["properties"]["_azureml.evaluation_run"] == "azure-ai-generative-parent"
+        assert remote_run["runMetadata"]["properties"]["_azureml.evaluation_run"] == "promptflow.BatchRun"
         assert remote_run["runMetadata"]["displayName"] == evaluation_name
 
     @pytest.mark.parametrize(
@@ -529,3 +437,66 @@ class TestEvaluate:
     @pytest.mark.skip(reason="TODO: Add test back")
     def test_prompty_with_threadpool_implementation(self):
         pass
+
+    def test_evaluate_with_csv_data(self, csv_file, data_file):
+        def remove_whitespace(s):
+            import re
+
+            return re.sub(r"\s+", "", s)
+
+        # load identical data files in different formats
+        jsonl_input_data = pd.read_json(data_file, lines=True)
+        csv_input_data = pd.read_csv(csv_file)
+
+        # create evaluator
+        f1_score_eval = F1ScoreEvaluator()
+
+        # run the evaluation on jsonl data
+        jsonl_result = evaluate(
+            data=data_file,
+            evaluators={"f1_score": f1_score_eval},
+        )
+
+        jsonl_row_result_df = pd.DataFrame(jsonl_result["rows"])
+        jsonl_metrics = jsonl_result["metrics"]
+
+        # run the evaluation on csv data
+        csv_result = evaluate(
+            data=csv_file,
+            evaluators={"f1_score": f1_score_eval},
+        )
+
+        csv_row_result_df = pd.DataFrame(csv_result["rows"])
+        csv_metrics = csv_result["metrics"]
+
+        # validate the results
+        assert jsonl_result["metrics"] == csv_result["metrics"]
+        assert jsonl_result["rows"][0]["inputs.context"] == csv_result["rows"][0]["inputs.context"]
+        assert jsonl_result["rows"][0]["inputs.query"] == csv_result["rows"][0]["inputs.query"]
+        assert jsonl_result["rows"][0]["inputs.ground_truth"] == csv_result["rows"][0]["inputs.ground_truth"]
+        assert remove_whitespace(jsonl_result["rows"][0]["inputs.response"]) == remove_whitespace(
+            csv_result["rows"][0]["inputs.response"]
+        )
+        assert (
+            jsonl_row_result_df.shape[0] == len(jsonl_input_data) == csv_row_result_df.shape[0] == len(csv_input_data)
+        )
+
+        assert "outputs.f1_score.f1_score" in jsonl_row_result_df.columns.to_list()
+        assert "outputs.f1_score.f1_score" in csv_row_result_df.columns.to_list()
+
+        assert "f1_score.f1_score" in jsonl_metrics.keys()
+        assert "f1_score.f1_score" in csv_metrics.keys()
+
+        assert jsonl_metrics.get("f1_score.f1_score") == list_mean_nan_safe(
+            jsonl_row_result_df["outputs.f1_score.f1_score"]
+        )
+        assert csv_metrics.get("f1_score.f1_score") == list_mean_nan_safe(
+            csv_row_result_df["outputs.f1_score.f1_score"]
+        )
+
+        assert (
+            jsonl_row_result_df["outputs.f1_score.f1_score"][2]
+            == csv_row_result_df["outputs.f1_score.f1_score"][2]
+            == 1
+        )
+        assert jsonl_result["studio_url"] == csv_result["studio_url"] == None

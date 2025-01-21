@@ -27,9 +27,7 @@ def test_get_properties(auth_credentials, uamqp_transport):
     )
     with client:
         properties = client.get_eventhub_properties()
-        assert properties["eventhub_name"] == eventhub_name and properties[
-            "partition_ids"
-        ] == ["0", "1"]
+        assert properties["eventhub_name"] == eventhub_name and properties["partition_ids"] == ["0", "1"]
 
 
 @pytest.mark.liveTest
@@ -98,7 +96,11 @@ def test_get_partition_ids(auth_credentials, uamqp_transport):
         partition_ids = client.get_partition_ids()
         assert partition_ids == ["0", "1"]
 
-@pytest.mark.skipif(sys.platform.startswith("win"), reason="Large negative timestamp to datetime conversion fails on Windows with: https://bugs.python.org/issue36439")
+
+@pytest.mark.skipif(
+    sys.platform.startswith("win"),
+    reason="Large negative timestamp to datetime conversion fails on Windows with: https://bugs.python.org/issue36439",
+)
 @pytest.mark.liveTest
 def test_get_partition_properties(auth_credentials, uamqp_transport):
     fully_qualified_namespace, eventhub_name, credential = auth_credentials

@@ -35,19 +35,19 @@ class PersonalizerError(Model):
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        "code": {"required": True},
+        "message": {"required": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[PersonalizerError]'},
-        'inner_error': {'key': 'innerError', 'type': 'InternalError'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[PersonalizerError]"},
+        "inner_error": {"key": "innerError", "type": "InternalError"},
     }
 
-    def __init__(self, *, code, message: str, target: str=None, details=None, inner_error=None, **kwargs) -> None:
+    def __init__(self, *, code, message: str, target: str = None, details=None, inner_error=None, **kwargs) -> None:
         super(PersonalizerError, self).__init__(**kwargs)
         self.code = code
         self.message = message

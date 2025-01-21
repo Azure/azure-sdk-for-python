@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from __future__ import unicode_literals
-
 from enum import Enum
 
 
@@ -60,7 +58,7 @@ CUSTOM_CONDITION_BACKOFF = {
     b"com.microsoft:server-busy": 4,
     b"com.microsoft:timeout": 2,
     b"com.microsoft:operation-cancelled": 0,
-    b"com.microsoft:container-close": 4
+    b"com.microsoft:container-close": 4,
 }
 
 
@@ -72,8 +70,10 @@ class TransportType(Enum):
     AmqpOverWebsocket: Amqp over the Web Sockets transport protocol, it uses
     port 443.
     """
+
     Amqp = 1
     AmqpOverWebsocket = 2
+
 
 DEFAULT_AMQPS_PORT = 5671
 DEFAULT_AMQP_WSS_PORT = 443

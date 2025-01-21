@@ -4,9 +4,13 @@
 
 ### Features Added
 
+- Added `subscription` parameter to `AzureCliCredential` to specify the subscription to use when authenticating with the Azure CLI. ([#37994](https://github.com/Azure/azure-sdk-for-python/pull/37994))
+
 ### Breaking Changes
 
 ### Bugs Fixed
+
+- A bug in the error handling for AzureCliCredentials and AzureDeveloperCliCredential which would result in the unexpected error `'NoneType' object has no attribute 'startswith'` has been fixed ([#39176](https://github.com/Azure/azure-sdk-for-python/pull/39176))
 
 ### Other Changes
 

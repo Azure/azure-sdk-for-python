@@ -28,16 +28,12 @@ except (ModuleNotFoundError, ImportError):
 
 
 @pytest.mark.liveTest
-def test_send_with_long_interval_sync(
-    live_eventhub, sleep, uamqp_transport, timeout_factor
-):
+def test_send_with_long_interval_sync(live_eventhub, sleep, uamqp_transport, timeout_factor):
     test_partition = "0"
     sender = EventHubProducerClient(
         live_eventhub["hostname"],
         live_eventhub["event_hub"],
-        EventHubSharedKeyCredential(
-            live_eventhub["key_name"], live_eventhub["access_key"]
-        ),
+        EventHubSharedKeyCredential(live_eventhub["key_name"], live_eventhub["access_key"]),
         uamqp_transport=uamqp_transport,
     )
     with sender:
@@ -68,13 +64,9 @@ def test_send_with_long_interval_sync(
         sas_auth = uamqp.authentication.SASTokenAuth.from_shared_access_key(
             uri, live_eventhub["key_name"], live_eventhub["access_key"]
         )
-        receiver = uamqp.ReceiveClient(
-            source, auth=sas_auth, debug=False, timeout=5000, prefetch=500
-        )
+        receiver = uamqp.ReceiveClient(source, auth=sas_auth, debug=False, timeout=5000, prefetch=500)
     else:
-        sas_auth = SASTokenAuth(
-            uri, uri, live_eventhub["key_name"], live_eventhub["access_key"]
-        )
+        sas_auth = SASTokenAuth(uri, uri, live_eventhub["key_name"], live_eventhub["access_key"])
         receiver = ReceiveClient(
             live_eventhub["hostname"],
             source,
@@ -91,17 +83,13 @@ def test_send_with_long_interval_sync(
         received.extend(
             [
                 EventData._from_message(x)
-                for x in receiver.receive_message_batch(
-                    max_batch_size=1, timeout=5 * timeout_factor
-                )
+                for x in receiver.receive_message_batch(max_batch_size=1, timeout=5 * timeout_factor)
             ]
         )
         received.extend(
             [
                 EventData._from_message(x)
-                for x in receiver.receive_message_batch(
-                    max_batch_size=1, timeout=5 * timeout_factor
-                )
+                for x in receiver.receive_message_batch(max_batch_size=1, timeout=5 * timeout_factor)
             ]
         )
     finally:
@@ -111,9 +99,7 @@ def test_send_with_long_interval_sync(
 
 
 @pytest.mark.liveTest
-def test_send_connection_idle_timeout_and_reconnect_sync(
-    auth_credential_receivers, uamqp_transport, timeout_factor
-):
+def test_send_connection_idle_timeout_and_reconnect_sync(auth_credential_receivers, uamqp_transport, timeout_factor):
     fully_qualified_namespace, eventhub_name, credential, receivers = auth_credential_receivers
     if uamqp_transport:
         amqp_transport = UamqpTransport
@@ -137,9 +123,7 @@ def test_send_connection_idle_timeout_and_reconnect_sync(
     with sender:
         sender._open_with_retry()
         time.sleep(11)
-        ed = transform_outbound_single_message(
-            ed, EventData, amqp_transport.to_outgoing_amqp_message
-        )
+        ed = transform_outbound_single_message(ed, EventData, amqp_transport.to_outgoing_amqp_message)
         sender._unsent_events = [ed._message]
         if uamqp_transport:
             sender._unsent_events[0].on_send_complete = sender._on_outcome
@@ -163,7 +147,7 @@ def test_send_connection_idle_timeout_and_reconnect_sync(
             eventhub_name=eventhub_name,
             credential=credential(),
             idle_timeout=10,
-            uamqp_transport=uamqp_transport
+            uamqp_transport=uamqp_transport,
         )
         with client:
             ed = EventData("data")
@@ -171,18 +155,14 @@ def test_send_connection_idle_timeout_and_reconnect_sync(
         with sender:
             sender._open_with_retry()
             time.sleep(11)
-            ed = transform_outbound_single_message(
-                ed, EventData, amqp_transport.to_outgoing_amqp_message
-            )
+            ed = transform_outbound_single_message(ed, EventData, amqp_transport.to_outgoing_amqp_message)
             sender._unsent_events = [ed._message]
             sender._send_event_data()
 
     retry = 0
     while retry < 3:
         try:
-            messages = receivers[0].receive_message_batch(
-                max_batch_size=10, timeout=10 * timeout_factor
-            )
+            messages = receivers[0].receive_message_batch(max_batch_size=10, timeout=10 * timeout_factor)
             if messages:
                 received_ed1 = EventData._from_message(messages[0])
                 assert received_ed1.body_as_str() == "data"
@@ -192,9 +172,7 @@ def test_send_connection_idle_timeout_and_reconnect_sync(
 
 
 @pytest.mark.liveTest
-def test_receive_connection_idle_timeout_and_reconnect_sync(
-    auth_credential_senders, uamqp_transport
-):
+def test_receive_connection_idle_timeout_and_reconnect_sync(auth_credential_senders, uamqp_transport):
     fully_qualified_namespace, eventhub_name, credential, senders = auth_credential_senders
     client = EventHubConsumerClient(
         fully_qualified_namespace=fully_qualified_namespace,
@@ -220,16 +198,11 @@ def test_receive_connection_idle_timeout_and_reconnect_sync(
 
             if uamqp_transport:
                 consumer._handler.do_work()
-                assert (
-                    consumer._handler._connection._state
-                    == uamqp.c_uamqp.ConnectionState.DISCARDING
-                )
+                assert consumer._handler._connection._state == uamqp.c_uamqp.ConnectionState.DISCARDING
             else:
                 with pytest.raises(error.AMQPConnectionError):
                     consumer._handler.do_work()
-                assert (
-                    consumer._handler._connection.state == constants.ConnectionState.END
-                )
+                assert consumer._handler._connection.state == constants.ConnectionState.END
 
             duration = 10
             now_time = time.time()

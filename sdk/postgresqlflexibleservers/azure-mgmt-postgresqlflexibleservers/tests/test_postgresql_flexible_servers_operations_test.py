@@ -23,4 +23,3 @@ class TestPostgreSQLManagementOperations(AzureMgmtRecordedTestCase):
     def test_list(self, resource_group):
         response = self.client.operations.list()
         assert response.value
-        

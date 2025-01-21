@@ -1,5 +1,11 @@
 # Release History
 
+## 0.1.4 (2024-11-01)
+
+### Other Changes
+
+This package has been deprecated and will no longer be maintained after 11-01-2024. This package will only receive security fixes until 11-01-2024. To receive updates on new features and non-security bug fixes, upgrade to the replacement package, [azure-mgmt-cosmosdb](https://pypi.org/project/azure-mgmt-cosmosdb/).
+
 ## 0.1.3 (2017-05-02)
 
   - Added property enableAutomaticFailover and consistencyPolicy

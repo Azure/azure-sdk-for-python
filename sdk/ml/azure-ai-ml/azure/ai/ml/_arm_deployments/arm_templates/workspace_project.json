@@ -432,6 +432,17 @@
                 "description": "Managed network settings to be used for the workspace. If not specified, isolation mode Disabled is the default"
             }
         },
+        "provisionNetworkNow": {
+            "type": "string",
+            "defaultValue": "false",
+            "allowedValues": [
+                "true",
+                "false"
+            ],
+            "metadata": {
+                "description": "Set to provision the managed VNet with the default Options when creating a Workspace with the managed VNet enabled"
+            }
+        },
         "enable_data_isolation": {
             "type": "string",
             "defaultValue": "false",

@@ -23,7 +23,7 @@ class TestContainerAppsAPIConnectedEnvironmentsOperationsAsync(AzureMgmtRecorded
     @recorded_by_proxy_async
     async def test_list_by_subscription(self, resource_group):
         response = self.client.connected_environments.list_by_subscription(
-            api_version="2024-03-01",
+            api_version="2024-08-02-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestContainerAppsAPIConnectedEnvironmentsOperationsAsync(AzureMgmtRecorded
     async def test_list_by_resource_group(self, resource_group):
         response = self.client.connected_environments.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-03-01",
+            api_version="2024-08-02-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestContainerAppsAPIConnectedEnvironmentsOperationsAsync(AzureMgmtRecorded
         response = await self.client.connected_environments.get(
             resource_group_name=resource_group.name,
             connected_environment_name="str",
-            api_version="2024-03-01",
+            api_version="2024-08-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -62,6 +62,7 @@ class TestContainerAppsAPIConnectedEnvironmentsOperationsAsync(AzureMgmtRecorded
                 environment_envelope={
                     "location": "str",
                     "customDomainConfiguration": {
+                        "certificateKeyVaultProperties": {"identity": "str", "keyVaultUrl": "str"},
                         "certificatePassword": "str",
                         "certificateValue": bytes("bytes", encoding="utf-8"),
                         "customDomainVerificationId": "str",
@@ -89,7 +90,7 @@ class TestContainerAppsAPIConnectedEnvironmentsOperationsAsync(AzureMgmtRecorded
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-03-01",
+                api_version="2024-08-02-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -103,7 +104,7 @@ class TestContainerAppsAPIConnectedEnvironmentsOperationsAsync(AzureMgmtRecorded
             await self.client.connected_environments.begin_delete(
                 resource_group_name=resource_group.name,
                 connected_environment_name="str",
-                api_version="2024-03-01",
+                api_version="2024-08-02-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -116,7 +117,7 @@ class TestContainerAppsAPIConnectedEnvironmentsOperationsAsync(AzureMgmtRecorded
         response = await self.client.connected_environments.update(
             resource_group_name=resource_group.name,
             connected_environment_name="str",
-            api_version="2024-03-01",
+            api_version="2024-08-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -129,7 +130,7 @@ class TestContainerAppsAPIConnectedEnvironmentsOperationsAsync(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             connected_environment_name="str",
             check_name_availability_request={"name": "str", "type": "str"},
-            api_version="2024-03-01",
+            api_version="2024-08-02-preview",
         )
 
         # please add some check logic here by yourself

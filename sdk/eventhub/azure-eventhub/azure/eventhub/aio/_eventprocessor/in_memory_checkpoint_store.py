@@ -14,33 +14,19 @@ class InMemoryCheckpointStore(CheckpointStore):
         self._checkpoint_store_impl = CheckPointStoreImpl()
 
     async def list_ownership(
-        self,
-        fully_qualified_namespace: str,
-        eventhub_name: str,
-        consumer_group: str,
-        **kwargs: Any
+        self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str, **kwargs: Any
     ) -> Iterable[Dict[str, Any]]:
-        return self._checkpoint_store_impl.list_ownership(
-            fully_qualified_namespace, eventhub_name, consumer_group
-        )
+        return self._checkpoint_store_impl.list_ownership(fully_qualified_namespace, eventhub_name, consumer_group)
 
     async def claim_ownership(
         self, ownership_list: Iterable[Dict[str, Any]], **kwargs: Any
     ) -> Iterable[Dict[str, Any]]:
         return self._checkpoint_store_impl.claim_ownership(ownership_list)
 
-    async def update_checkpoint(
-        self, checkpoint: Dict[str, Optional[Union[str, int]]], **kwargs: Any
-    ) -> None:
+    async def update_checkpoint(self, checkpoint: Dict[str, Optional[Union[str, int]]], **kwargs: Any) -> None:
         self._checkpoint_store_impl.update_checkpoint(checkpoint)
 
     async def list_checkpoints(
-        self,
-        fully_qualified_namespace: str,
-        eventhub_name: str,
-        consumer_group: str,
-        **kwargs: Any
+        self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str, **kwargs: Any
     ) -> Iterable[Dict[str, Any]]:
-        return self._checkpoint_store_impl.list_checkpoints(
-            fully_qualified_namespace, eventhub_name, consumer_group
-        )
+        return self._checkpoint_store_impl.list_checkpoints(fully_qualified_namespace, eventhub_name, consumer_group)

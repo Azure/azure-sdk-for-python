@@ -24,8 +24,9 @@ import asyncio
 from azure.communication.chat.aio import CommunicationTokenCredential
 from azure.communication.identity import CommunicationIdentityClient
 
+
 class CommunicationTokenCredentialSamples(object):
-    
+
     connection_string = os.environ.get("COMMUNICATION_SAMPLES_CONNECTION_STRING", None)
     if not connection_string:
         raise ValueError("Set COMMUNICATION_SAMPLES_CONNECTION_STRING env before running this sample.")
@@ -36,7 +37,7 @@ class CommunicationTokenCredentialSamples(object):
     token = token_response.token
 
     async def create_credential_with_static_token(self):
-        # For short-lived clients, refreshing the token upon expiry is not necessary 
+        # For short-lived clients, refreshing the token upon expiry is not necessary
         # and `CommunicationTokenCredential` may be instantiated with a static token.
         async with CommunicationTokenCredential(self.token) as credential:
             token_response = await credential.get_token()
@@ -46,25 +47,26 @@ class CommunicationTokenCredentialSamples(object):
         # Alternatively, for long-lived clients, you can create a `CommunicationTokenCredential` with a callback to renew tokens if expired.
         # Here we assume that we have a function `fetch_token_from_server` that makes a network request to retrieve a token string for a user.
         # It's necessary that the `fetch_token_from_server` function returns a valid token (with an expiration date set in the future) at all times.
-        fetch_token_from_server = lambda: None 
-        async with CommunicationTokenCredential(
-            self.token, token_refresher=fetch_token_from_server) as credential:
+        fetch_token_from_server = lambda: None
+        async with CommunicationTokenCredential(self.token, token_refresher=fetch_token_from_server) as credential:
             token_response = await credential.get_token()
             print("Token issued with value: " + token_response.token)
 
     async def create_credential_with_proactive_refreshing_callback(self):
         # Optionally, you can enable proactive token refreshing where a fresh token will be acquired as soon as the
         # previous token approaches expiry. Using this method, your requests are less likely to be blocked to acquire a fresh token
-        fetch_token_from_server = lambda: None 
+        fetch_token_from_server = lambda: None
         async with CommunicationTokenCredential(
-            self.token, token_refresher=fetch_token_from_server, proactive_refresh=True) as credential:
+            self.token, token_refresher=fetch_token_from_server, proactive_refresh=True
+        ) as credential:
             token_response = await credential.get_token()
             print("Token issued with value: " + token_response.token)
-            
+
     def clean_up(self):
         print("cleaning up: deleting created user.")
         self.identity_client.delete_user(self.user)
-        
+
+
 async def main():
     sample = CommunicationTokenCredentialSamples()
     await sample.create_credential_with_static_token()
@@ -72,5 +74,6 @@ async def main():
     await sample.create_credential_with_proactive_refreshing_callback()
     sample.clean_up()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

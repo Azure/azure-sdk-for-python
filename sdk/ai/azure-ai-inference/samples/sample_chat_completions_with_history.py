@@ -44,16 +44,16 @@ def sample_chat_completions_with_history():
 
     messages = [
         SystemMessage(
-            content="You are an AI assistant that helps people find information. Your replies are short, no more than two sentences."
+            "You are an AI assistant that helps people find information. Your replies are short, no more than two sentences."
         ),
-        UserMessage(content="What year was construction of the international space station mostly done?"),
+        UserMessage("What year was construction of the international space station mostly done?"),
     ]
 
     response = client.complete(messages=messages)
     print(response.choices[0].message.content)
 
-    messages.append(AssistantMessage(content=response.choices[0].message.content))
-    messages.append(UserMessage(content="And what was the estimated cost to build it?"))
+    messages.append(AssistantMessage(response.choices[0].message.content))
+    messages.append(UserMessage("And what was the estimated cost to build it?"))
 
     response = client.complete(messages=messages)
     print(response.choices[0].message.content)

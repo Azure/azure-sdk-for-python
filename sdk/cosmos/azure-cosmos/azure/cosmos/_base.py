@@ -61,7 +61,8 @@ _COMMON_OPTIONS = {
     'supported_query_features': 'supportedQueryFeatures',
     'query_version': 'queryVersion',
     'priority': 'priorityLevel',
-    'no_response': 'responsePayloadOnWriteDisabled'
+    'no_response': 'responsePayloadOnWriteDisabled',
+    'max_item_count': 'maxItemCount',
 }
 
 # Cosmos resource ID validation regex breakdown:
@@ -170,6 +171,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     # set consistency level. check if set via options, this will override the default
     if options.get("consistencyLevel"):
         consistency_level = options["consistencyLevel"]
+        # TODO: move this line outside of if-else cause to remove the code duplication
         headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
     elif default_client_consistency_level is not None:
         consistency_level = default_client_consistency_level
@@ -227,8 +229,11 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         # else serialize using json dumps method which apart from regular values will serialize None into null
         else:
             # single partitioning uses a string and needs to be turned into a list
-            if isinstance(options["partitionKey"], list) and options["partitionKey"]:
-                pk_val = json.dumps(options["partitionKey"], separators=(',', ':'))
+            is_sequence_not_string = (isinstance(options["partitionKey"], Sequence) and
+                                      not isinstance(options["partitionKey"], str))
+
+            if is_sequence_not_string and options["partitionKey"]:
+                pk_val = json.dumps(list(options["partitionKey"]), separators=(',', ':'))
             else:
                 pk_val = json.dumps([options["partitionKey"]])
             headers[http_constants.HttpHeaders.PartitionKey] = pk_val

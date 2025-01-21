@@ -34,8 +34,7 @@ class EventsOperations(object):
 
         self.config = config
 
-    def reward(
-            self, event_id, value, custom_headers=None, raw=False, **operation_config):
+    def reward(self, event_id, value, custom_headers=None, raw=False, **operation_config):
         """Report reward to allocate to the top ranked action for the specified
         event.
 
@@ -57,10 +56,10 @@ class EventsOperations(object):
         reward1 = models.RewardRequest(value=value)
 
         # Construct URL
-        url = self.reward.metadata['url']
+        url = self.reward.metadata["url"]
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'eventId': self._serialize.url("event_id", event_id, 'str', max_length=256)
+            "Endpoint": self._serialize.url("self.config.endpoint", self.config.endpoint, "str", skip_quote=True),
+            "eventId": self._serialize.url("event_id", event_id, "str", max_length=256),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -69,12 +68,12 @@ class EventsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(reward1, 'RewardRequest')
+        body_content = self._serialize.body(reward1, "RewardRequest")
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -86,10 +85,10 @@ class EventsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    reward.metadata = {'url': '/events/{eventId}/reward'}
 
-    def activate(
-            self, event_id, custom_headers=None, raw=False, **operation_config):
+    reward.metadata = {"url": "/events/{eventId}/reward"}
+
+    def activate(self, event_id, custom_headers=None, raw=False, **operation_config):
         """Report that the specified event was actually displayed to the user and
         a reward should be expected for it.
 
@@ -106,10 +105,10 @@ class EventsOperations(object):
          :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
         """
         # Construct URL
-        url = self.activate.metadata['url']
+        url = self.activate.metadata["url"]
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'eventId': self._serialize.url("event_id", event_id, 'str', max_length=256)
+            "Endpoint": self._serialize.url("self.config.endpoint", self.config.endpoint, "str", skip_quote=True),
+            "eventId": self._serialize.url("event_id", event_id, "str", max_length=256),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -131,4 +130,5 @@ class EventsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    activate.metadata = {'url': '/events/{eventId}/activate'}
+
+    activate.metadata = {"url": "/events/{eventId}/activate"}

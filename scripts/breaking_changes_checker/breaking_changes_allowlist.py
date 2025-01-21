@@ -14,6 +14,8 @@ RUN_BREAKING_CHANGES_PACKAGES = ["azure-mgmt-*", "azure-ai-contentsafety", "azur
 
 IGNORE_BREAKING_CHANGES = {
     "azure-mgmt-": [
+        # Rules that mgmt packages want to ignore
+        ("AddedMethodOverload", "*"),
         # Changes due to latest dpg design + need to support overloads in this tool
         ("ChangedParameterOrdering", "*", "*", "__init__"),
         # Changes due to latest dpg design

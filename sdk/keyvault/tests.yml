@@ -12,19 +12,7 @@ extends:
     parameters:
       ServiceDirectory: keyvault
       Packages: ${{ parameters.Services }}
-      SupportedClouds: 'Public,UsGov,China'
       TestTimeoutInMinutes: 240
-      CloudConfig:
-        Public:
-        UsGov:
-          MatrixFilters:
-            - ArmTemplateParameters=^(?!.*enableHsm.*true)
-        China:
-          MatrixFilters:
-            - ArmTemplateParameters=^(?!.*enableHsm.*true)
-          Location: chinanorth3
       EnvVars:
         AZURE_TEST_RUN_LIVE: true
         AZURE_SKIP_LIVE_RECORDING: 'True'
-        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
-        AZURE_CLIENT_OID: $(aad-azure-sdk-test-client-oid)

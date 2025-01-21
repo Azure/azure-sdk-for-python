@@ -17,6 +17,7 @@ if TYPE_CHECKING:
     from .._transport._base import AmqpTransport
     from ..aio._transport._base_async import AmqpTransportAsync
 
+
 class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
     def _populate_attributes(self, **kwargs):
         self._amqp_transport: Union["AmqpTransport", "AmqpTransportAsync"]
@@ -24,27 +25,18 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         if kwargs.get("subscription_name"):
             self._subscription_name = kwargs.get("subscription_name")
             self._is_subscription = True
-            self.entity_path = (
-                self._entity_name + "/Subscriptions/" + self._subscription_name
-            )
+            self.entity_path = self._entity_name + "/Subscriptions/" + self._subscription_name
         else:
             self.entity_path = self._entity_name
 
-        self._auth_uri = "sb://{}/{}".format(
-            self.fully_qualified_namespace, self.entity_path
-        )
-        self._entity_uri = "amqps://{}/{}".format(
-            self.fully_qualified_namespace, self.entity_path
-        )
-        self._receive_mode = ServiceBusReceiveMode(
-            kwargs.get("receive_mode", ServiceBusReceiveMode.PEEK_LOCK)
-        )
+        self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self.entity_path)
+        self._entity_uri = "amqps://{}/{}".format(self.fully_qualified_namespace, self.entity_path)
+        self._receive_mode = ServiceBusReceiveMode(kwargs.get("receive_mode", ServiceBusReceiveMode.PEEK_LOCK))
 
         self._session_id = kwargs.get("session_id")
 
         self._error_policy = self._amqp_transport.create_retry_policy(
-            config=self._config,
-            is_session=bool(self._session_id)
+            config=self._config, is_session=bool(self._session_id)
         )
 
         self._name = kwargs.get("client_identifier") or "SBReceiver-{}".format(uuid.uuid4())
@@ -53,9 +45,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         self._connection = kwargs.get("connection")
         self._prefetch_count = int(kwargs.get("prefetch_count", 0))
         if self._prefetch_count < 0 or self._prefetch_count > 50000:
-            raise ValueError(
-                "prefetch_count must be an integer between 0 and 50000 inclusive."
-            )
+            raise ValueError("prefetch_count must be an integer between 0 and 50000 inclusive.")
         # The relationship between the amount can be received and the time interval is linear: amount ~= perf * interval
         # In large max_message_count case, like 5000, the pull receive would always return hundreds of messages limited
         # by the perf and time.
@@ -77,14 +67,13 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
             )
 
     def _get_source(self):
-        # pylint: disable=protected-access
         if self._session:
             session_filter = None if self._session_id == NEXT_AVAILABLE_SESSION else self._session_id
             return self._amqp_transport.create_source(self._entity_uri, session_filter)
         return self._entity_uri
 
     def _check_message_alive(self, message, action):
-        # pylint: disable=no-member, protected-access
+        # pylint: disable=protected-access
         if message._is_peeked_message:
             raise ValueError(
                 f"The operation {action} is not supported for peeked messages."
@@ -92,9 +81,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
             )
 
         if self._receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE:
-            raise ValueError(
-                f"The operation {action} is not supported in 'RECEIVE_AND_DELETE' receive mode."
-            )
+            raise ValueError(f"The operation {action} is not supported in 'RECEIVE_AND_DELETE' receive mode.")
 
         if message._settled:
             raise MessageAlreadySettled(action=action)

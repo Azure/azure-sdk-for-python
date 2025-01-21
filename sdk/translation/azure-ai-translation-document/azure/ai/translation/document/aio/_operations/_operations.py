@@ -42,7 +42,7 @@ from ..._operations._operations import (
     build_document_translation_get_translation_status_request,
     build_document_translation_list_document_statuses_request,
     build_document_translation_list_translation_statuses_request,
-    build_single_document_translation_document_translate_request,
+    build_single_document_translation_translate_request,
 )
 from ..._vendor import prepare_multipart_form_data
 from .._vendor import DocumentTranslationClientMixinABC, SingleDocumentTranslationClientMixinABC
@@ -325,7 +325,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         *,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        ids: Optional[List[str]] = None,
+        translation_ids: Optional[List[str]] = None,
         statuses: Optional[List[str]] = None,
         created_date_time_utc_start: Optional[datetime.datetime] = None,
         created_date_time_utc_end: Optional[datetime.datetime] = None,
@@ -412,8 +412,8 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
          server can't honor top and/or skip, the server MUST return an error to the
          client informing about it instead of just ignoring the query options. Default value is None.
         :paramtype skip: int
-        :keyword ids: Ids to use in filtering. Default value is None.
-        :paramtype ids: list[str]
+        :keyword translation_ids: Ids to use in filtering. Default value is None.
+        :paramtype translation_ids: list[str]
         :keyword statuses: Statuses to use in filtering. Default value is None.
         :paramtype statuses: list[str]
         :keyword created_date_time_utc_start: the start datetime to get items after. Default value is
@@ -451,7 +451,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,
-                    ids=ids,
+                    translation_ids=translation_ids,
                     statuses=statuses,
                     created_date_time_utc_start=created_date_time_utc_start,
                     created_date_time_utc_end=created_date_time_utc_end,
@@ -720,7 +720,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         *,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        ids: Optional[List[str]] = None,
+        document_ids: Optional[List[str]] = None,
         statuses: Optional[List[str]] = None,
         created_date_time_utc_start: Optional[datetime.datetime] = None,
         created_date_time_utc_end: Optional[datetime.datetime] = None,
@@ -803,8 +803,8 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
          server can't honor top and/or skip, the server MUST return an error to the
          client informing about it instead of just ignoring the query options. Default value is None.
         :paramtype skip: int
-        :keyword ids: Ids to use in filtering. Default value is None.
-        :paramtype ids: list[str]
+        :keyword document_ids: Ids to use in filtering. Default value is None.
+        :paramtype document_ids: list[str]
         :keyword statuses: Statuses to use in filtering. Default value is None.
         :paramtype statuses: list[str]
         :keyword created_date_time_utc_start: the start datetime to get items after. Default value is
@@ -843,7 +843,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,
-                    ids=ids,
+                    document_ids=document_ids,
                     statuses=statuses,
                     created_date_time_utc_start=created_date_time_utc_start,
                     created_date_time_utc_end=created_date_time_utc_end,
@@ -906,7 +906,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def _get_supported_formats(  # pylint: disable=protected-access
+    async def _get_supported_formats(
         self, *, type: Optional[Union[str, _models.FileFormatType]] = None, **kwargs: Any
     ) -> _models._models.SupportedFileFormats:
         """Returns a list of supported document formats.
@@ -981,7 +981,7 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
 ):
 
     @overload
-    async def document_translate(
+    async def translate(
         self,
         body: _models.DocumentTranslateContent,
         *,
@@ -1025,7 +1025,7 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
         """
 
     @overload
-    async def document_translate(
+    async def translate(
         self,
         body: JSON,
         *,
@@ -1069,7 +1069,7 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
         """
 
     @distributed_trace_async
-    async def document_translate(
+    async def translate(
         self,
         body: Union[_models.DocumentTranslateContent, JSON],
         *,
@@ -1130,7 +1130,7 @@ class SingleDocumentTranslationClientOperationsMixin(  # pylint: disable=name-to
         _data_fields: List[str] = []
         _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
-        _request = build_single_document_translation_document_translate_request(
+        _request = build_single_document_translation_translate_request(
             target_language=target_language,
             source_language=source_language,
             category=category,
