@@ -11,6 +11,7 @@
 - Removed `[remote]` extra. This is no longer needed when tracking results in Azure AI Studio.
 - Fixed `AttributeError: 'NoneType' object has no attribute 'get'` while running simulator with 1000+ results
 - Fixed the non adversarial simulator to run in task-free mode
+- Fixed bug in non adversarial simulator sample where `tasks` undefined
 
 ### Other Changes
 - Changed minimum required python version to use this package from 3.8 to 3.9
