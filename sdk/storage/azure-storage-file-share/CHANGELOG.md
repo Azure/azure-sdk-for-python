@@ -1,6 +1,6 @@
 # Release History
 
-## 12.21.0b1 (2025-01-14)
+## 12.21.0b1 (Unreleased)
 
 ### Features Added
 - Added support for service version 2025-05-05.
@@ -12,10 +12,6 @@ files and is only supported for the `NFS` protocol.
 request headers `x-ms-file-permission-key`, `x-ms-file-attributes`, `x-ms-file-creation-time`, and 
 `x-ms-file-last-write-time` by default. The request headers have been optional in the REST API since 
 service version 2021-06-08. The default behavior of these APIs remain the same.
-
-### Bugs Fixed
-- Fixed an issue where `StorageStreamDownloader.read()` on blob behaves differently for negative values
-when using `chars` instead of `size`.
 
 ## 12.20.0 (2024-11-13)
 
