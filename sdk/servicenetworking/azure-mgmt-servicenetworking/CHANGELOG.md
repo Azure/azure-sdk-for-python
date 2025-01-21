@@ -4,7 +4,6 @@
 
 ### Features Added
 
-  - Client `ServiceNetworkingMgmtClient` added method `send_request`
   - Client `ServiceNetworkingMgmtClient` added operation group `security_policies_interface`
   - Model `Association` added property `properties`
   - Model `AssociationUpdate` added property `properties`
