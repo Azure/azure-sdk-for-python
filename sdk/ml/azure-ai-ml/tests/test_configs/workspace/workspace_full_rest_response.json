@@ -23,8 +23,8 @@
             "status": "Enabled",
             "keyVaultProperties": {
                 "keyIdentifier": "key_identifier",
-                "keyVaultArmId": "key_vault_arm_id",
-            },
+                "keyVaultArmId": "key_vault_arm_id"
+            }
         },
         "hubResourceId": "hub_resource_id",
         "workspaceId": "workspace_id",
@@ -35,7 +35,7 @@
         "provisionNetworkNow": true,
         "featureStoreSettings": {},
         "serverlessComputeSettings": {},
-        "networkAcls": {},
+        "networkAcls": {}
     },
-    "identity": {"type": "ManagedServiceIdentityType"},
+    "identity": {"type": "ManagedServiceIdentityType"}
 }
