@@ -45,7 +45,7 @@ def main(generate_input, generate_output):
             is_multiapi=package["isMultiapi"],
         )
         try:
-            md_output = execute_func_with_timeout(change_log_func)
+            md_output, last_version = execute_func_with_timeout(change_log_func)
         except multiprocessing.TimeoutError:
             md_output = "change log generation was timeout!!!"
         except:
