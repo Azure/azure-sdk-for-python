@@ -64,13 +64,10 @@ def sample_chat_completions_with_tools():
         str: The airline name, fight number, date and time of the next flight between the cities, in JSON format.
         """
         if origin_city == "Seattle" and destination_city == "Miami":
-            return json.dumps({
-                "airline": "Delta",
-                "flight_number": "DL123",
-                "flight_date": "May 7th, 2024",
-                "flight_time": "10:00AM"})
+            return json.dumps(
+                {"airline": "Delta", "flight_number": "DL123", "flight_date": "May 7th, 2024", "flight_time": "10:00AM"}
+            )
         return json.dumps({"error": "No flights found between the cities"})
-
 
     # Define a function 'tool' that the model can use to retrieves flight information
     flight_info = ChatCompletionsToolDefinition(
@@ -95,15 +92,12 @@ def sample_chat_completions_with_tools():
     )
 
     # Create a chat completion client. Make sure you selected a model that supports tools.
-    client = ChatCompletionsClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(key)
-    )
+    client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Make a chat completions call asking for flight information, while providing a tool to handle the request
     messages = [
-        SystemMessage(content="You an assistant that helps users find flight information."),
-        UserMessage(content="What is the next flights from Seattle to Miami?"),
+        SystemMessage("You an assistant that helps users find flight information."),
+        UserMessage("What is the next flights from Seattle to Miami?"),
     ]
 
     response = client.complete(
@@ -136,7 +130,7 @@ def sample_chat_completions_with_tools():
             print(f"Function response = {function_response}")
 
             # Provide the tool response to the model, by appending it to the chat history
-            messages.append(ToolMessage(tool_call_id=tool_call.id, content=function_response))
+            messages.append(ToolMessage(function_response, tool_call_id=tool_call.id))
 
             # With the additional tools information on hand, get another response from the model
             response = client.complete(messages=messages, tools=[flight_info])

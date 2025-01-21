@@ -21,7 +21,7 @@ import datetime
 from azure.servicebus.aio.management import ServiceBusAdministrationClient
 from azure.identity.aio import DefaultAzureCredential
 
-FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
+FULLY_QUALIFIED_NAMESPACE = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
 TOPIC_NAME = "sb_mgmt_topic" + str(uuid.uuid4())
 
 
@@ -59,8 +59,7 @@ async def get_and_update_topic(servicebus_mgmt_client):
     # update by passing keyword arguments
     topic_properties = await servicebus_mgmt_client.get_topic(TOPIC_NAME)
     await servicebus_mgmt_client.update_topic(
-        topic_properties,
-        default_message_time_to_live=datetime.timedelta(minutes=15)
+        topic_properties, default_message_time_to_live=datetime.timedelta(minutes=15)
     )
 
 

@@ -59,9 +59,10 @@ async def send_logs():
     # Sample callback that raises the error if it corresponds to a specific HTTP error code.
     # This aborts the rest of the upload.
     async def on_error_abort(error: LogsUploadError) -> None:
-        if isinstance(error.error, HttpResponseError) and cast(HttpResponseError, error.error).status_code in (400, 401, 403):
-            print("Aborting upload...")
-            raise error.error
+        if isinstance(error.error, HttpResponseError):
+            if cast(HttpResponseError, error.error).status_code in (400, 401, 403):
+                print("Aborting upload...")
+                raise error.error
 
     client = LogsIngestionClient(endpoint=endpoint, credential=credential, logging_enable=True)
     async with client:

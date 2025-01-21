@@ -20,14 +20,14 @@ class TestWebSiteManagementWorkflowRunActionRepetitionsOperations(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_workflow_run_action_repetitions_list(self, resource_group):
         response = self.client.workflow_run_action_repetitions.list(
             resource_group_name=resource_group.name,
             name="str",
             workflow_name="str",
             run_name="str",
             action_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -35,7 +35,7 @@ class TestWebSiteManagementWorkflowRunActionRepetitionsOperations(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_workflow_run_action_repetitions_get(self, resource_group):
         response = self.client.workflow_run_action_repetitions.get(
             resource_group_name=resource_group.name,
             name="str",
@@ -43,7 +43,7 @@ class TestWebSiteManagementWorkflowRunActionRepetitionsOperations(AzureMgmtRecor
             run_name="str",
             action_name="str",
             repetition_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -51,7 +51,7 @@ class TestWebSiteManagementWorkflowRunActionRepetitionsOperations(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_expression_traces(self, resource_group):
+    def test_workflow_run_action_repetitions_list_expression_traces(self, resource_group):
         response = self.client.workflow_run_action_repetitions.list_expression_traces(
             resource_group_name=resource_group.name,
             name="str",
@@ -59,7 +59,7 @@ class TestWebSiteManagementWorkflowRunActionRepetitionsOperations(AzureMgmtRecor
             run_name="str",
             action_name="str",
             repetition_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

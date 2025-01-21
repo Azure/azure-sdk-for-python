@@ -8,14 +8,13 @@ from typing import TYPE_CHECKING
 import time
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from ...aio._base_handler_async import ServiceBusSharedKeyCredential
+
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineRequest
 
 
 class AsyncServiceBusSharedKeyCredentialPolicy(SansIOHTTPPolicy):
-    def __init__(
-        self, endpoint: str, credential: ServiceBusSharedKeyCredential, name: str
-    ) -> None:
+    def __init__(self, endpoint: str, credential: ServiceBusSharedKeyCredential, name: str) -> None:
         super(AsyncServiceBusSharedKeyCredentialPolicy, self).__init__()
         self._credential = credential
         self._endpoint = endpoint
@@ -27,18 +26,12 @@ class AsyncServiceBusSharedKeyCredentialPolicy(SansIOHTTPPolicy):
         self._token_expiry_on = 0
         self._token = None
 
-    async def _update_token(self):  # pylint: disable=invalid-overridden-method
-        if (
-            self._token_expiry_on + 60 <= time.time()
-        ):  # Update token if it's expiring in 60 seconds
-            access_token = await self._credential.get_token(
-                self._endpoint
-            )
+    async def _update_token(self):
+        if self._token_expiry_on + 60 <= time.time():  # Update token if it's expiring in 60 seconds
+            access_token = await self._credential.get_token(self._endpoint)
             self._token_expiry_on = access_token.expires_on
             self._token = access_token.token
 
-    async def on_request(
-        self, request: PipelineRequest
-    ):  # pylint: disable=invalid-overridden-method
+    async def on_request(self, request: PipelineRequest):  # pylint: disable=invalid-overridden-method
         await self._update_token()
         request.http_request.headers[self._name] = self._token

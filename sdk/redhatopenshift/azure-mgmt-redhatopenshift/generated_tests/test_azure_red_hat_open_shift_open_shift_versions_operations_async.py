@@ -24,7 +24,7 @@ class TestAzureRedHatOpenShiftOpenShiftVersionsOperationsAsync(AzureMgmtRecorded
     async def test_list(self, resource_group):
         response = self.client.open_shift_versions.list(
             location="str",
-            api_version="2023-09-04",
+            api_version="2023-11-22",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

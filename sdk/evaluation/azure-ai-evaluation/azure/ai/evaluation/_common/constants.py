@@ -6,6 +6,9 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+PROMPT_BASED_REASON_EVALUATORS = ["coherence", "relevance", "retrieval", "groundedness", "fluency"]
+
+
 class CommonConstants:
     """Define common constants."""
 
@@ -35,6 +38,7 @@ class Tasks:
     CONTENT_HARM = "content harm"
     PROTECTED_MATERIAL = "protected material"
     XPIA = "xpia"
+    GROUNDEDNESS = "groundedness"
 
 
 class _InternalAnnotationTasks:
@@ -56,6 +60,7 @@ class EvaluationMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SEXUAL = "sexual"
     PROTECTED_MATERIAL = "protected_material"
     XPIA = "xpia"
+    GROUNDEDNESS = "generic_groundedness"
 
 
 class _InternalEvaluationMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):

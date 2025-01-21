@@ -4,14 +4,16 @@ import os
 import time
 from unittest.mock import MagicMock, patch
 from uuid import uuid4
-
+import tempfile
 import jwt
+import pandas as pd
+import pathlib
 import pytest
-from promptflow.azure._utils._token_cache import ArmTokenCache
+from azure.ai.evaluation._azure._token_manager import AzureMLTokenManager
 
-from azure.ai.evaluation._exceptions import EvaluationException
 import azure.ai.evaluation._evaluate._utils as ev_utils
 from azure.ai.evaluation._evaluate._eval_run import EvalRun, RunStatus
+from azure.ai.evaluation._exceptions import EvaluationException
 
 
 def generate_mock_token():
@@ -20,7 +22,7 @@ def generate_mock_token():
 
 
 @pytest.mark.unittest
-@patch.object(ArmTokenCache, "_fetch_token", return_value=generate_mock_token())
+@patch.object(AzureMLTokenManager, "get_token", return_value=generate_mock_token())
 class TestEvalRun:
     """Unit tests for the eval-run object."""
 
@@ -34,10 +36,10 @@ class TestEvalRun:
         subscription_id="000000-0000-0000-0000-0000000",
         group_name="mock-rg-region",
         workspace_name="mock-ws-region",
-        ml_client=MagicMock(),
+        management_client=MagicMock(),
     )
 
-    def _get_mock_create_resonse(self, status=200):
+    def _get_mock_create_response(self, status=200):
         """Return the mock create request"""
         mock_response = MagicMock()
         mock_response.status_code = status
@@ -62,7 +64,7 @@ class TestEvalRun:
     def test_end_raises(self, token_mock, status, should_raise, caplog):
         """Test that end run raises exception if incorrect status is set."""
         with patch(
-            "azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=self._get_mock_create_resonse()
+            "azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=self._get_mock_create_response()
         ), caplog.at_level(logging.INFO):
             with EvalRun(run_name=None, **TestEvalRun._MOCK_CREDS) as run:
                 if should_raise:
@@ -76,7 +78,7 @@ class TestEvalRun:
     def test_run_logs_if_terminated(self, token_mock, caplog):
         """Test that run warn user if we are trying to terminate it twice."""
         with patch(
-            "azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=self._get_mock_create_resonse()
+            "azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=self._get_mock_create_response()
         ), caplog.at_level(logging.INFO):
             logger = logging.getLogger(EvalRun.__module__)
             # All loggers, having promptflow. prefix will have "promptflow" logger
@@ -89,7 +91,7 @@ class TestEvalRun:
                 subscription_id="mock",
                 group_name="mock",
                 workspace_name="mock",
-                ml_client=MagicMock(),
+                management_client=MagicMock(),
             )
             run._start_run()
             run._end_run("KILLED")
@@ -101,7 +103,7 @@ class TestEvalRun:
         """Test that if the terminal status setting was failed, it is logged."""
         with patch(
             "azure.ai.evaluation._http_utils.HttpPipeline.request",
-            side_effect=[self._get_mock_create_resonse(), self._get_mock_end_response(500)],
+            side_effect=[self._get_mock_create_response(), self._get_mock_end_response(500)],
         ), caplog.at_level(logging.INFO):
             logger = logging.getLogger(EvalRun.__module__)
             # All loggers, having promptflow. prefix will have "promptflow" logger
@@ -114,7 +116,7 @@ class TestEvalRun:
                 subscription_id="mock",
                 group_name="mock",
                 workspace_name="mock",
-                ml_client=MagicMock(),
+                management_client=MagicMock(),
             ):
                 pass
             assert len(caplog.records) == 1
@@ -139,7 +141,7 @@ class TestEvalRun:
                 subscription_id="mock",
                 group_name="mock",
                 workspace_name="mock",
-                ml_client=MagicMock(),
+                management_client=MagicMock(),
             )
             run._start_run()
             assert len(caplog.records) == 1
@@ -165,7 +167,7 @@ class TestEvalRun:
 
     def test_run_name(self, token_mock):
         """Test that the run name is the same as ID if name is not given."""
-        mock_response = self._get_mock_create_resonse()
+        mock_response = self._get_mock_create_response()
         with patch("azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=mock_response):
             with EvalRun(
                 run_name=None,
@@ -173,7 +175,7 @@ class TestEvalRun:
                 subscription_id="mock",
                 group_name="mock",
                 workspace_name="mock",
-                ml_client=MagicMock(),
+                management_client=MagicMock(),
             ) as run:
                 pass
         assert run.info.run_id == mock_response.json.return_value["run"]["info"]["run_id"]
@@ -182,7 +184,7 @@ class TestEvalRun:
 
     def test_run_with_name(self, token_mock):
         """Test that the run name is not the same as id if it is given."""
-        mock_response = self._get_mock_create_resonse()
+        mock_response = self._get_mock_create_response()
         mock_response.json.return_value["run"]["info"]["run_name"] = "test"
         with patch("azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=mock_response):
             with EvalRun(
@@ -191,7 +193,7 @@ class TestEvalRun:
                 subscription_id="mock",
                 group_name="mock",
                 workspace_name="mock",
-                ml_client=MagicMock(),
+                management_client=MagicMock(),
             ) as run:
                 pass
         assert run.info.run_id == mock_response.json.return_value["run"]["info"]["run_id"]
@@ -202,7 +204,7 @@ class TestEvalRun:
     def test_get_urls(self, token_mock):
         """Test getting url-s from eval run."""
         with patch(
-            "azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=self._get_mock_create_resonse()
+            "azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=self._get_mock_create_response()
         ):
             with EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS) as run:
                 pass
@@ -243,7 +245,7 @@ class TestEvalRun:
         with patch(
             "azure.ai.evaluation._http_utils.HttpPipeline.request",
             side_effect=[
-                self._get_mock_create_resonse(),
+                self._get_mock_create_response(),
                 mock_response,
                 self._get_mock_end_response(),
             ],
@@ -287,7 +289,7 @@ class TestEvalRun:
     ):
         """Test that if artifact path is empty, or dies not exist we are logging the error."""
         with patch(
-            "azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=self._get_mock_create_resonse()
+            "azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=self._get_mock_create_response()
         ), caplog.at_level(logging.INFO):
             with EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS) as run:
                 logger = logging.getLogger(EvalRun.__module__)
@@ -302,6 +304,30 @@ class TestEvalRun:
                 run.log_artifact(artifact_folder)
             assert len(caplog.records) == 1
             assert expected_error in caplog.records[0].message
+
+    def test_store_multi_modal_no_images(self, token_mock, caplog):
+        data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
+        data_file = os.path.join(data_path, "generated_qa_chat_conv.jsonl")
+        data_convo = pd.read_json(data_file, lines=True)
+        with tempfile.TemporaryDirectory() as tmpdir:
+            for value in data_convo["messages"]:
+                ev_utils._store_multimodal_content(value, tmpdir)
+
+    def test_store_multi_modal_image_urls(self, token_mock, caplog):
+        data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
+        data_file = os.path.join(data_path, "generated_conv_image_urls.jsonl")
+        data_convo = pd.read_json(data_file, lines=True)
+        with tempfile.TemporaryDirectory() as tmpdir:
+            for value in data_convo["messages"]:
+                ev_utils._store_multimodal_content(value, tmpdir)
+
+    def test_store_multi_modal_images(self, token_mock, caplog):
+        data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
+        data_file = os.path.join(data_path, "generated_conv_images.jsonl")
+        data_convo = pd.read_json(data_file, lines=True)
+        with tempfile.TemporaryDirectory() as tmpdir:
+            for value in data_convo["messages"]:
+                ev_utils._store_multimodal_content(value, tmpdir)
 
     def test_log_metrics_and_instance_results_logs_error(self, token_mock, caplog):
         """Test that we are logging the error when there is no trace destination."""
@@ -338,7 +364,7 @@ class TestEvalRun:
             subscription_id="mock",
             group_name="mock",
             workspace_name="mock",
-            ml_client=MagicMock(),
+            management_client=MagicMock(),
         ) as run:
             assert len(caplog.records) == 1
             assert "The results will be saved locally, but will not be logged to Azure." in caplog.records[0].message
@@ -366,7 +392,7 @@ class TestEvalRun:
             pf_run_mock._experiment_name = "mock_pf_experiment"
         with patch(
             "azure.ai.evaluation._http_utils.HttpPipeline.request",
-            return_value=self._get_mock_create_resonse(status_code),
+            return_value=self._get_mock_create_response(status_code),
         ):
             run = EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS, promptflow_run=pf_run_mock)
             assert run.status == RunStatus.NOT_STARTED, f"Get {run.status}, expected {RunStatus.NOT_STARTED}"
@@ -389,7 +415,7 @@ class TestEvalRun:
             subscription_id="mock",
             group_name="mock",
             workspace_name="mock",
-            ml_client=MagicMock(),
+            management_client=MagicMock(),
         )
         assert run.status == RunStatus.NOT_STARTED, f"Get {run.status}, expected {RunStatus.NOT_STARTED}"
         run._start_run()
@@ -405,7 +431,7 @@ class TestEvalRun:
         mock_write.text = lambda: "Mock error"
         with patch(
             "azure.ai.evaluation._http_utils.HttpPipeline.request",
-            side_effect=[self._get_mock_create_resonse(), mock_write, self._get_mock_end_response()],
+            side_effect=[self._get_mock_create_response(), mock_write, self._get_mock_end_response()],
         ), caplog.at_level(logging.INFO):
             with EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS) as run:
                 run.write_properties_to_run_history({"foo": "bar"})
@@ -429,7 +455,7 @@ class TestEvalRun:
             subscription_id="mock",
             group_name="mock",
             workspace_name="mock",
-            ml_client=MagicMock(),
+            management_client=MagicMock(),
         ) as run:
             run.write_properties_to_run_history({"foo": "bar"})
         assert len(caplog.records) == 3
@@ -467,7 +493,7 @@ class TestEvalRun:
         run = EvalRun(run_name=None, **TestEvalRun._MOCK_CREDS)
         with patch(
             "azure.ai.evaluation._http_utils.HttpPipeline.request",
-            return_value=self._get_mock_create_resonse(500 if status == RunStatus.BROKEN else 200),
+            return_value=self._get_mock_create_response(500 if status == RunStatus.BROKEN else 200),
         ):
             run._start_run()
             if status == RunStatus.TERMINATED:

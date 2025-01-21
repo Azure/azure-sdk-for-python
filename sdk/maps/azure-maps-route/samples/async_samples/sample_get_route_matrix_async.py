@@ -21,6 +21,7 @@ import os
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
+
 async def get_route_matrix_async():
     # [START get_route_matrix_async]
     from azure.core.credentials import AzureKeyCredential
@@ -31,7 +32,7 @@ async def get_route_matrix_async():
 
     route_matrix_query = RouteMatrixQuery(
         origins=GeoJsonMultiPoint(coordinates=[[4.85106, 52.36006], [4.85056, 52.36187]]),
-        destinations=GeoJsonMultiPoint(coordinates=[[4.85003, 52.36241], [13.42937, 52.50931]])
+        destinations=GeoJsonMultiPoint(coordinates=[[4.85003, 52.36241], [13.42937, 52.50931]]),
     )
 
     async with maps_route_client:
@@ -43,5 +44,6 @@ async def get_route_matrix_async():
         print(result.summary)
     # [END get_route_matrix_async]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(get_route_matrix_async())

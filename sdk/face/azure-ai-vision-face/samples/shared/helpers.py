@@ -21,11 +21,7 @@ import typing
 def get_logger(name):
     # create console handler
     handler = logging.StreamHandler()
-    handler.setFormatter(
-        logging.Formatter(
-            fmt="%(asctime)s %(levelname)s %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
-        )
-    )
+    handler.setFormatter(logging.Formatter(fmt="%(asctime)s %(levelname)s %(message)s", datefmt="%Y-%m-%d %H:%M:%S"))
 
     # create Logger
     logger = logging.getLogger(name)
@@ -42,9 +38,7 @@ def beautify_json(obj: typing.Dict[str, typing.Any]):
 def get_image_path(image_file_name: str):
     from .constants import TestImages
 
-    return Path(__file__).resolve().parent / (
-        TestImages.IMAGE_PARENT_FOLDER + "/" + image_file_name
-    )
+    return Path(__file__).resolve().parent / (TestImages.IMAGE_PARENT_FOLDER + "/" + image_file_name)
 
 
 def read_file_content(file_path: Path):

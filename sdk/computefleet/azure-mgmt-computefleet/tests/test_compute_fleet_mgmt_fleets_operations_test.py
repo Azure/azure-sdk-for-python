@@ -12,7 +12,7 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 
 AZURE_LOCATION = "eastus"
 
-
+@pytest.mark.live_test_only
 class TestComputeFleetMgmtFleetsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ComputeFleetMgmtClient)

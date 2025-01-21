@@ -19,12 +19,11 @@ USAGE:
 
 import asyncio
 import os
-from azure.communication.phonenumbers.aio import (
-    PhoneNumbersClient
-)
+from azure.communication.phonenumbers.aio import PhoneNumbersClient
 
-connection_str = os.getenv('COMMUNICATION_SAMPLES_CONNECTION_STRING')
+connection_str = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
 phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
+
 
 async def list_purchased_phone_numbers():
     async with phone_numbers_client:
@@ -34,5 +33,5 @@ async def list_purchased_phone_numbers():
             print(item.phone_number)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(list_purchased_phone_numbers())

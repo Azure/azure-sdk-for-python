@@ -4375,7 +4375,7 @@ class RouteOperations:
            consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
            provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
            again use 60 km/hour. Default value is 0.
-        
+
         :paramtype vehicle_max_speed: int
         :keyword vehicle_weight: Weight of the vehicle in kilograms.
 

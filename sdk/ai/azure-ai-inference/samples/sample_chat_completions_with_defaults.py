@@ -43,17 +43,14 @@ def sample_chat_completions_with_defaults():
 
     # Create a client with default chat completions settings
     client = ChatCompletionsClient(
-        endpoint=endpoint,
-        credential=AzureKeyCredential(key),
-        temperature=0.5,
-        max_tokens=1000
+        endpoint=endpoint, credential=AzureKeyCredential(key), temperature=0.5, max_tokens=1000
     )
 
     # Call the service with the defaults specified above
     response = client.complete(
         messages=[
-            SystemMessage(content="You are a helpful assistant."),
-            UserMessage(content="How many feet are in a mile?"),
+            SystemMessage("You are a helpful assistant."),
+            UserMessage("How many feet are in a mile?"),
         ],
     )
 
@@ -62,8 +59,8 @@ def sample_chat_completions_with_defaults():
     # You can always override one or more of the defaults for a specific call, as shown here
     response = client.complete(
         messages=[
-            SystemMessage(content="You are a helpful assistant."),
-            UserMessage(content="What's the distance from Earth to the Moon in miles?"),
+            SystemMessage("You are a helpful assistant."),
+            UserMessage("What's the distance from Earth to the Moon in miles?"),
         ],
         max_tokens=2000,
     )

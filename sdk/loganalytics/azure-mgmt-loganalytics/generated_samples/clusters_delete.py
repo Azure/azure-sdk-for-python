@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.loganalytics import LogAnalyticsManagementClient
 
 """
@@ -26,16 +27,15 @@ from azure.mgmt.loganalytics import LogAnalyticsManagementClient
 def main():
     client = LogAnalyticsManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="00000000-0000-0000-0000-00000000000",
+        subscription_id="53bc36c5-91e1-4d09-92c9-63b89e571926",
     )
 
-    response = client.clusters.begin_delete(
+    client.clusters.begin_delete(
         resource_group_name="oiautorest6685",
         cluster_name="oiautorest6685",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/operationalinsights/resource-manager/Microsoft.OperationalInsights/stable/2021-06-01/examples/ClustersDelete.json
+# x-ms-original-file: specification/operationalinsights/resource-manager/Microsoft.OperationalInsights/stable/2022-10-01/examples/ClustersDelete.json
 if __name__ == "__main__":
     main()

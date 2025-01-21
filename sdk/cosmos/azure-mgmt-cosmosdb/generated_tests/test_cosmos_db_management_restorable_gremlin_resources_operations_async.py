@@ -21,11 +21,11 @@ class TestCosmosDBManagementRestorableGremlinResourcesOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_restorable_gremlin_resources_list(self, resource_group):
         response = self.client.restorable_gremlin_resources.list(
             location="str",
             instance_id="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

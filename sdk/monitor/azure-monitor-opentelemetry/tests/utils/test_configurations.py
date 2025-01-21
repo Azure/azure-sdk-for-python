@@ -34,24 +34,19 @@ from opentelemetry.sdk.resources import Resource, Attributes
 from azure.monitor.opentelemetry._version import VERSION
 
 
-TEST_DEFAULT_RESOURCE = Resource({
-    "test.attributes.1": "test_value_1",
-    "test.attributes.2": "test_value_2"
-})
-TEST_CUSTOM_RESOURCE = Resource({
-    "test.attributes.2": "test_value_4",
-    "test.attributes.3": "test_value_3"
-})
-TEST_MERGED_RESOURCE = Resource({
-    "test.attributes.1": "test_value_1",
-    "test.attributes.2": "test_value_4",
-    "test.attributes.3": "test_value_3"
-})
+TEST_DEFAULT_RESOURCE = Resource({"test.attributes.1": "test_value_1", "test.attributes.2": "test_value_2"})
+TEST_CUSTOM_RESOURCE = Resource({"test.attributes.2": "test_value_4", "test.attributes.3": "test_value_3"})
+TEST_MERGED_RESOURCE = Resource(
+    {"test.attributes.1": "test_value_1", "test.attributes.2": "test_value_4", "test.attributes.3": "test_value_3"}
+)
 
 
 class TestConfigurations(TestCase):
     @patch.dict("os.environ", {}, clear=True)
-    @patch("azure.monitor.opentelemetry._utils.configurations._PREVIEW_INSTRUMENTED_LIBRARIES", ("previewlib1", "previewlib2"))
+    @patch(
+        "azure.monitor.opentelemetry._utils.configurations._PREVIEW_INSTRUMENTED_LIBRARIES",
+        ("previewlib1", "previewlib2"),
+    )
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_MERGED_RESOURCE)
     def test_get_configurations(self, resource_create_mock):
         configurations = _get_configurations(
@@ -81,18 +76,21 @@ class TestConfigurations(TestCase):
         resource_create_mock.assert_called_once_with(TEST_CUSTOM_RESOURCE.attributes)
         self.assertEqual(configurations["sampling_ratio"], 1.0)
         self.assertEqual(configurations["credential"], "test_credential")
-        self.assertEqual(configurations["instrumentation_options"], {
-            "azure_sdk" : {"enabled": True},
-            "django": {"enabled": True},
-            "fastapi": {"enabled": True},
-            "flask": {"enabled": False},
-            "psycopg2": {"enabled": True},
-            "requests": {"enabled": True},
-            "urllib": {"enabled": True},
-            "urllib3": {"enabled": True},
-            "previewlib1": {"enabled": False},
-            "previewlib2": {"enabled": False},
-        })
+        self.assertEqual(
+            configurations["instrumentation_options"],
+            {
+                "azure_sdk": {"enabled": True},
+                "django": {"enabled": True},
+                "fastapi": {"enabled": True},
+                "flask": {"enabled": False},
+                "psycopg2": {"enabled": True},
+                "requests": {"enabled": True},
+                "urllib": {"enabled": True},
+                "urllib3": {"enabled": True},
+                "previewlib1": {"enabled": False},
+                "previewlib2": {"enabled": False},
+            },
+        )
         self.assertEqual(configurations["storage_directory"], "test_directory")
         self.assertEqual(configurations["enable_live_metrics"], True)
         self.assertEqual(configurations["views"], ["test_view"])
@@ -108,16 +106,19 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["disable_logging"], False)
         self.assertEqual(configurations["disable_metrics"], False)
         self.assertEqual(configurations["disable_tracing"], False)
-        self.assertEqual(configurations["instrumentation_options"], {
-            "azure_sdk" : {"enabled": True},
-            "django" : {"enabled": True},
-            "fastapi" : {"enabled": True},
-            "flask" : {"enabled": True},
-            "psycopg2" : {"enabled": True},
-            "requests": {"enabled": True},
-            "urllib": {"enabled": True},
-            "urllib3": {"enabled": True},
-        })
+        self.assertEqual(
+            configurations["instrumentation_options"],
+            {
+                "azure_sdk": {"enabled": True},
+                "django": {"enabled": True},
+                "fastapi": {"enabled": True},
+                "flask": {"enabled": True},
+                "psycopg2": {"enabled": True},
+                "requests": {"enabled": True},
+                "urllib": {"enabled": True},
+                "urllib3": {"enabled": True},
+            },
+        )
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "azure_app_service,azure_vm")
         resource_create_mock.assert_called_once_with()
@@ -137,7 +138,7 @@ class TestConfigurations(TestCase):
             OTEL_TRACES_EXPORTER: "None",
             OTEL_LOGS_EXPORTER: "none",
             OTEL_METRICS_EXPORTER: "NONE",
-            OTEL_EXPERIMENTAL_RESOURCE_DETECTORS: "custom_resource_detector"
+            OTEL_EXPERIMENTAL_RESOURCE_DETECTORS: "custom_resource_detector",
         },
         clear=True,
     )
@@ -149,16 +150,19 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["disable_logging"], True)
         self.assertEqual(configurations["disable_metrics"], True)
         self.assertEqual(configurations["disable_tracing"], True)
-        self.assertEqual(configurations["instrumentation_options"], {
-            "azure_sdk" : {"enabled": False},
-            "django" : {"enabled": True},
-            "fastapi" : {"enabled": False},
-            "flask" : {"enabled": False},
-            "psycopg2" : {"enabled": True},
-            "requests": {"enabled": False},
-            "urllib": {"enabled": True},
-            "urllib3": {"enabled": True},
-        })
+        self.assertEqual(
+            configurations["instrumentation_options"],
+            {
+                "azure_sdk": {"enabled": False},
+                "django": {"enabled": True},
+                "fastapi": {"enabled": False},
+                "flask": {"enabled": False},
+                "psycopg2": {"enabled": True},
+                "requests": {"enabled": False},
+                "urllib": {"enabled": True},
+                "urllib3": {"enabled": True},
+            },
+        )
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
         resource_create_mock.assert_called_once_with()
@@ -192,55 +196,67 @@ class TestConfigurations(TestCase):
         clear=True,
     )
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    @patch("azure.monitor.opentelemetry._utils.configurations._PREVIEW_INSTRUMENTED_LIBRARIES", ("previewlib1", "previewlib2"))
+    @patch(
+        "azure.monitor.opentelemetry._utils.configurations._PREVIEW_INSTRUMENTED_LIBRARIES",
+        ("previewlib1", "previewlib2"),
+    )
     def test_merge_instrumentation_options_conflict(self, resource_create_mock):
         configurations = _get_configurations(
-            instrumentation_options = {
-                "azure_sdk" : {"enabled": True},
-                "django" : {"enabled": True},
-                "fastapi" : {"enabled": True},
-                "flask" : {"enabled": False},
+            instrumentation_options={
+                "azure_sdk": {"enabled": True},
+                "django": {"enabled": True},
+                "fastapi": {"enabled": True},
+                "flask": {"enabled": False},
                 "previewlib1": {"enabled": True},
             }
         )
 
-        self.assertEqual(configurations["instrumentation_options"], {
-            "azure_sdk" : {"enabled": True}, # Explicit configuration takes priority
-            "django" : {"enabled": True}, # Explicit configuration takes priority
-            "fastapi" : {"enabled": True},
-            "flask" : {"enabled": False},
-            "psycopg2" : {"enabled": True},
-            "previewlib1": {"enabled": True}, # Explicit configuration takes priority
-            "previewlib2": {"enabled": False},
-            "requests": {"enabled": True},
-            "urllib": {"enabled": True},
-            "urllib3": {"enabled": False},
-        })
+        self.assertEqual(
+            configurations["instrumentation_options"],
+            {
+                "azure_sdk": {"enabled": True},  # Explicit configuration takes priority
+                "django": {"enabled": True},  # Explicit configuration takes priority
+                "fastapi": {"enabled": True},
+                "flask": {"enabled": False},
+                "psycopg2": {"enabled": True},
+                "previewlib1": {"enabled": True},  # Explicit configuration takes priority
+                "previewlib2": {"enabled": False},
+                "requests": {"enabled": True},
+                "urllib": {"enabled": True},
+                "urllib3": {"enabled": False},
+            },
+        )
 
     @patch.dict("os.environ", {}, clear=True)
-    @patch("azure.monitor.opentelemetry._utils.configurations._PREVIEW_INSTRUMENTED_LIBRARIES", ("previewlib1", "previewlib2"))
+    @patch(
+        "azure.monitor.opentelemetry._utils.configurations._PREVIEW_INSTRUMENTED_LIBRARIES",
+        ("previewlib1", "previewlib2"),
+    )
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
     def test_merge_instrumentation_options_extra_args(self, resource_create_mock):
         configurations = _get_configurations(
-            instrumentation_options = {
-                "django" : {"enabled": True},
-                "fastapi" : {"enabled": True, "foo": "bar"},
-                "flask" : {"enabled": False, "foo": "bar"},
-                "psycopg2" : {"foo": "bar"},
+            instrumentation_options={
+                "django": {"enabled": True},
+                "fastapi": {"enabled": True, "foo": "bar"},
+                "flask": {"enabled": False, "foo": "bar"},
+                "psycopg2": {"foo": "bar"},
                 "previewlib1": {"enabled": True, "foo": "bar"},
                 "previewlib2": {"foo": "bar"},
             }
         )
 
-        self.assertEqual(configurations["instrumentation_options"], {
-            "azure_sdk" : {"enabled": True},
-            "django" : {"enabled": True},
-            "fastapi" : {"enabled": True, "foo": "bar"},
-            "flask" : {"enabled": False, "foo": "bar"},
-            "psycopg2" : {"enabled": True, "foo": "bar"},
-            "previewlib1": {"enabled": True, "foo": "bar"},
-            "previewlib2": {"enabled": False, "foo": "bar"},
-            "requests": {"enabled": True},
-            "urllib": {"enabled": True},
-            "urllib3": {"enabled": True},
-        })
+        self.assertEqual(
+            configurations["instrumentation_options"],
+            {
+                "azure_sdk": {"enabled": True},
+                "django": {"enabled": True},
+                "fastapi": {"enabled": True, "foo": "bar"},
+                "flask": {"enabled": False, "foo": "bar"},
+                "psycopg2": {"enabled": True, "foo": "bar"},
+                "previewlib1": {"enabled": True, "foo": "bar"},
+                "previewlib2": {"enabled": False, "foo": "bar"},
+                "requests": {"enabled": True},
+                "urllib": {"enabled": True},
+                "urllib3": {"enabled": True},
+            },
+        )

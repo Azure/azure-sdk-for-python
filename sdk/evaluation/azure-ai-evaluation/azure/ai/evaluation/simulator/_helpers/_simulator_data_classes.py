@@ -30,7 +30,19 @@ class Turn:
         return {
             "role": self.role.value if isinstance(self.role, ConversationRole) else self.role,
             "content": self.content,
-            "context": self.context,
+            "context": str(self.context),
+        }
+
+    def to_context_free_dict(self) -> Dict[str, Optional[str]]:
+        """
+        Convert the conversation turn to a dictionary without context.
+
+        :returns: A dictionary representation of the conversation turn without context.
+        :rtype: Dict[str, Optional[str]]
+        """
+        return {
+            "role": self.role.value if isinstance(self.role, ConversationRole) else self.role,
+            "content": self.content,
         }
 
     def __repr__(self):
@@ -65,6 +77,15 @@ class ConversationHistory:
         :rtype: List[Dict[str, str]]
         """
         return [turn.to_dict() for turn in self.history]
+
+    def to_context_free_list(self) -> List[Dict[str, Optional[str]]]:
+        """
+        Converts the conversation history to a list of dictionaries without context.
+
+        :returns: A list of dictionaries representing the conversation turns without context.
+        :rtype: List[Dict[str, str]]
+        """
+        return [turn.to_context_free_dict() for turn in self.history]
 
     def __len__(self) -> int:
         return len(self.history)

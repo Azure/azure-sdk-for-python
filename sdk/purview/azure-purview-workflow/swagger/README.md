@@ -13,4 +13,5 @@ package-mode: dataplane
 package-pprint-name: Azure Purview Workflow Service
 security: AADToken
 security-scopes: https://purview.azure.net/.default
+python: true
 ```

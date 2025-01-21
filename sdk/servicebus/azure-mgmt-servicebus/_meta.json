@@ -1,11 +1,19 @@
 {
-  "commit": "19f98c9f526f8db961f172276dd6d6882a86ed86",
+  "commit": "690a7656d65a03b134fa44fc7bb8013dc18a15b5",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.9.2",
+  "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.4.0",
-    "@autorest/modelerfour@4.24.3"
+    "@autorest/python@6.19.0",
+    "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/servicebus/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.4.0 --use=@autorest/modelerfour@4.24.3 --version=3.9.2 --version-tolerant=False",
-  "readme": "specification/servicebus/resource-manager/readme.md"
+  "autorest_command": "autorest specification/servicebus/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.19.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "readme": "specification/servicebus/resource-manager/readme.md",
+  "package-2022-10-preview": "2023-04-13 07:43:12 +0530 9bc5a13776661d0bc699efadece14870e2846d7f Microsoft.ServiceBus/preview/2022-10-01-preview/migrationconfigs.json",
+  "package-2022-01-preview": "2023-04-13 07:43:12 +0530 9bc5a13776661d0bc699efadece14870e2846d7f Microsoft.ServiceBus/preview/2022-01-01-preview/migrationconfigs.json",
+  "package-2021-11": "2022-06-05 19:46:58 -0700 2d6cb29af754f48a08f94cb6113bb1f01a4e0eb9 Microsoft.ServiceBus/stable/2021-11-01/namespace-preview.json",
+  "package-2021-06-preview": "2021-08-31 00:27:06 -0700 09fe30cc6703f65e479f54115b5d714f78de6c19 Microsoft.ServiceBus/preview/2021-06-01-preview/topics.json",
+  "package-2021-01-preview": "2021-05-25 00:36:37 -0700 216931dc4ec175664bbe8222f9ea5ea3def69106 Microsoft.ServiceBus/preview/2021-01-01-preview/namespace-preview.json",
+  "package-2018-01-preview": "2021-05-25 00:36:37 -0700 216931dc4ec175664bbe8222f9ea5ea3def69106 Microsoft.ServiceBus/preview/2018-01-01-preview/namespace-preview.json",
+  "package-2017-04": "2021-03-25 10:47:57 +0800 e4c056151df3c59bbb2221e23f623fdb625313c5 Microsoft.ServiceBus/stable/2017-04-01/Rules.json",
+  "package-2015-08": "2019-06-12 19:26:02 -0400 8024b7e11a19c823d835ae05ec00769eaa10b057 Microsoft.ServiceBus/stable/2015-08-01/servicebus.json"
 }

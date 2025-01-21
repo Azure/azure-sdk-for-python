@@ -25,9 +25,10 @@ class TestLogsTimespans(AzureMonitorQueryLogsTestCase):
 
         def callback(request):
             dic = json.loads(request.http_request.body)
-            assert dic.get('timespan') is None
+            assert dic.get("timespan") is None
+
         # returns LogsQueryResult
-        client.query_workspace(monitor_info['workspace_id'], query, timespan=None)
+        client.query_workspace(monitor_info["workspace_id"], query, timespan=None)
 
     def test_query_start_and_end_time(self, recorded_test, monitor_info):
         client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
@@ -38,9 +39,11 @@ class TestLogsTimespans(AzureMonitorQueryLogsTestCase):
 
         def callback(request):
             dic = json.loads(request.http_request.body)
-            assert dic.get('timespan') is not None
+            assert dic.get("timespan") is not None
 
-        client.query_workspace(monitor_info['workspace_id'], query, timespan=(start_time, end_time), raw_request_hook=callback)
+        client.query_workspace(
+            monitor_info["workspace_id"], query, timespan=(start_time, end_time), raw_request_hook=callback
+        )
 
     def test_query_duration_and_start_time(self, recorded_test, monitor_info):
         client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
@@ -52,9 +55,11 @@ class TestLogsTimespans(AzureMonitorQueryLogsTestCase):
 
         def callback(request):
             dic = json.loads(request.http_request.body)
-            assert '/PT259200.0S' in dic.get('timespan')
+            assert "/PT259200.0S" in dic.get("timespan")
 
-        client.query_workspace(monitor_info['workspace_id'], query, timespan=(start_time,duration), raw_request_hook=callback)
+        client.query_workspace(
+            monitor_info["workspace_id"], query, timespan=(start_time, duration), raw_request_hook=callback
+        )
 
     def test_query_duration_only(self, recorded_test, monitor_info):
         client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
@@ -64,9 +69,9 @@ class TestLogsTimespans(AzureMonitorQueryLogsTestCase):
 
         def callback(request):
             dic = json.loads(request.http_request.body)
-            assert 'PT259200.0S' in dic.get('timespan')
+            assert "PT259200.0S" in dic.get("timespan")
 
-        client.query_workspace(monitor_info['workspace_id'], query, timespan=duration, raw_request_hook=callback)
+        client.query_workspace(monitor_info["workspace_id"], query, timespan=duration, raw_request_hook=callback)
 
     def test_duration_to_iso8601(self):
         d1 = timedelta(days=1)
@@ -77,13 +82,13 @@ class TestLogsTimespans(AzureMonitorQueryLogsTestCase):
         d6 = timedelta(milliseconds=100000)
         d7 = timedelta(hours=24, days=1)
 
-        assert construct_iso8601(timespan=d1) == 'PT86400.0S'
-        assert construct_iso8601(timespan=d2) == 'PT604800.0S'
-        assert construct_iso8601(timespan=d3) == 'PT2160000.0S'
-        assert construct_iso8601(timespan=d4) == 'PT10.0S'
-        assert construct_iso8601(timespan=d5) == 'PT0.001S'
-        assert construct_iso8601(timespan=d5) == 'PT0.001S'
-        assert construct_iso8601(timespan=d7) == 'PT172800.0S'
+        assert construct_iso8601(timespan=d1) == "PT86400.0S"
+        assert construct_iso8601(timespan=d2) == "PT604800.0S"
+        assert construct_iso8601(timespan=d3) == "PT2160000.0S"
+        assert construct_iso8601(timespan=d4) == "PT10.0S"
+        assert construct_iso8601(timespan=d5) == "PT0.001S"
+        assert construct_iso8601(timespan=d5) == "PT0.001S"
+        assert construct_iso8601(timespan=d7) == "PT172800.0S"
 
         with pytest.raises(ValueError, match="timespan must be a timedelta or a tuple."):
             construct_iso8601(timespan=(datetime.now(UTC())))

@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from typing import Optional, Tuple
+from typing import no_type_check, Optional, Tuple
 from urllib.parse import urlparse
 
 from opentelemetry.semconv.trace import DbSystemValues, SpanAttributes
@@ -54,7 +54,7 @@ def _is_sql_db(db_system: str) -> bool:
         # spell-checker:ignore HSQLDB
         DbSystemValues.HSQLDB.value,
         DbSystemValues.H2.value,
-      )
+    )
 
 
 def _get_azure_sdk_target_source(attributes: Attributes) -> Optional[str]:
@@ -67,7 +67,7 @@ def _get_azure_sdk_target_source(attributes: Attributes) -> Optional[str]:
     return None
 
 
-def _get_scheme_for_http_dependency(attributes: Attributes) -> Optional[str]:
+def _get_http_scheme(attributes: Attributes) -> Optional[str]:
     if attributes:
         scheme = attributes.get(SpanAttributes.HTTP_SCHEME)
         if scheme:
@@ -75,9 +75,15 @@ def _get_scheme_for_http_dependency(attributes: Attributes) -> Optional[str]:
     return None
 
 
-def _get_url_for_http_dependency(scheme: Optional[str], attributes: Attributes) -> Optional[str]:
+# Dependency
+
+
+@no_type_check
+def _get_url_for_http_dependency(attributes: Attributes, scheme: Optional[str] = None) -> Optional[str]:
     url = None
     if attributes:
+        if not scheme:
+            scheme = _get_http_scheme(attributes)
         if SpanAttributes.HTTP_URL in attributes:
             url = attributes[SpanAttributes.HTTP_URL]
         elif scheme and SpanAttributes.HTTP_TARGET in attributes:
@@ -106,18 +112,43 @@ def _get_url_for_http_dependency(scheme: Optional[str], attributes: Attributes) 
                         peer_port,
                         http_target,
                     )
-    return str(url)
+    return url
 
 
+@no_type_check
+def _get_target_for_dependency_from_peer(attributes: Attributes) -> Optional[str]:
+    target = ""
+    if attributes:
+        if SpanAttributes.PEER_SERVICE in attributes:
+            target = attributes[SpanAttributes.PEER_SERVICE]
+        else:
+            if SpanAttributes.NET_PEER_NAME in attributes:
+                target = attributes[SpanAttributes.NET_PEER_NAME]
+            elif SpanAttributes.NET_PEER_IP in attributes:
+                target = attributes[SpanAttributes.NET_PEER_IP]
+            if SpanAttributes.NET_PEER_PORT in attributes:
+                port = attributes[SpanAttributes.NET_PEER_PORT]
+                # TODO: check default port for rpc
+                # This logic assumes default ports never conflict across dependency types
+                if port != _get_default_port_http(
+                    str(attributes.get(SpanAttributes.HTTP_SCHEME))
+                ) and port != _get_default_port_db(str(attributes.get(SpanAttributes.DB_SYSTEM))):
+                    target = "{}:{}".format(target, port)
+    return target
+
+
+@no_type_check
 def _get_target_and_path_for_http_dependency(
+    attributes: Attributes,
     target: Optional[str],
     url: Optional[str],
-    scheme: Optional[str],
-    attributes: Attributes,
+    scheme: Optional[str] = None,
 ) -> Tuple[Optional[str], str]:
     target_from_url = None
     path = ""
     if attributes:
+        if not scheme:
+            scheme = _get_http_scheme(attributes)
         if url:
             try:
                 parse_url = urlparse(url)
@@ -143,11 +174,12 @@ def _get_target_and_path_for_http_dependency(
                         target = str(host)
                 except Exception:  # pylint: disable=broad-except
                     pass
-            elif target_from_url:
+            elif target_from_url and not target:
                 target = target_from_url
     return (target, path)
 
 
+@no_type_check
 def _get_target_for_db_dependency(
     target: Optional[str],
     db_system: Optional[str],
@@ -156,18 +188,19 @@ def _get_target_for_db_dependency(
     if attributes:
         db_name = attributes.get(SpanAttributes.DB_NAME)
         if db_name:
-            if target is None:
+            if not target:
                 target = str(db_name)
             else:
                 target = "{}|{}".format(target, db_name)
-        elif target is None:
+        elif not target:
             target = db_system
     return target
 
 
+@no_type_check
 def _get_target_for_messaging_dependency(target: Optional[str], attributes: Attributes) -> Optional[str]:
     if attributes:
-        if target is None:
+        if not target:
             if SpanAttributes.MESSAGING_DESTINATION in attributes:
                 target = str(attributes[SpanAttributes.MESSAGING_DESTINATION])
             elif SpanAttributes.MESSAGING_SYSTEM in attributes:
@@ -175,9 +208,46 @@ def _get_target_for_messaging_dependency(target: Optional[str], attributes: Attr
     return target
 
 
+@no_type_check
 def _get_target_for_rpc_dependency(target: Optional[str], attributes: Attributes) -> Optional[str]:
     if attributes:
-        if target is None:
+        if not target:
             if SpanAttributes.RPC_SYSTEM in attributes:
                 target = str(attributes[SpanAttributes.RPC_SYSTEM])
     return target
+
+
+@no_type_check
+def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
+    url = ""
+    if attributes:
+        if SpanAttributes.HTTP_URL in attributes:
+            return attributes[SpanAttributes.HTTP_URL]
+        scheme = attributes.get(SpanAttributes.HTTP_SCHEME)
+        http_target = attributes.get(SpanAttributes.HTTP_TARGET)
+        if scheme and http_target:
+            if SpanAttributes.HTTP_HOST in attributes:
+                url = "{}://{}{}".format(
+                    scheme,
+                    attributes[SpanAttributes.HTTP_HOST],
+                    http_target,
+                )
+            elif SpanAttributes.NET_HOST_PORT in attributes:
+                host_port = attributes[SpanAttributes.NET_HOST_PORT]
+                if SpanAttributes.HTTP_SERVER_NAME in attributes:
+                    server_name = attributes[SpanAttributes.HTTP_SERVER_NAME]
+                    url = "{}://{}:{}{}".format(
+                        scheme,
+                        server_name,
+                        host_port,
+                        http_target,
+                    )
+                elif SpanAttributes.NET_HOST_NAME in attributes:
+                    host_name = attributes[SpanAttributes.NET_HOST_NAME]
+                    url = "{}://{}:{}{}".format(
+                        scheme,
+                        host_name,
+                        host_port,
+                        http_target,
+                    )
+    return url

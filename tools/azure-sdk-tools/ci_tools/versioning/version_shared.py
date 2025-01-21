@@ -19,16 +19,11 @@ from packaging.version import parse
 
 from datetime import date
 from ci_tools.functions import discover_targeted_packages
-from ci_tools.parsing import ParsedSetup
+from ci_tools.parsing import ParsedSetup, get_version_py, VERSION_REGEX
 from ci_tools.variables import discover_repo_root
 
 from subprocess import run
 
-VERSION_PY = "_version.py"
-# Auto generated code has version maintained in version.py.
-# We need to handle this old file name until generated code creates _version.py for all packages
-OLD_VERSION_PY = "version.py"
-VERSION_REGEX = r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]'
 VERSION_STRING = 'VERSION = "%s"'
 
 DEV_STATUS_REGEX = r'(classifiers=\[(\s)*)(["\']Development Status :: .*["\'])'
@@ -37,26 +32,17 @@ logging.getLogger().setLevel(logging.INFO)
 
 from typing import List
 
-
 def path_excluded(path, additional_excludes):
     return (
         any([excl in path for excl in additional_excludes])
         or "tests" in os.path.normpath(path).split(os.sep)
-        or is_metapackage(path)
+        or ParsedSetup.from_path(path).is_metapackage
     )
-
-
-# Metapackages do not have an 'azure' folder within them
-def is_metapackage(package_path):
-    dir_path = package_path if path.isdir(package_path) else path.split(package_path)[0]
-
-    azure_path = path.join(dir_path, "azure")
-    return not path.exists(azure_path)
 
 
 def get_setup_py_paths(glob_string, base_path, additional_excludes):
     setup_paths = discover_targeted_packages(glob_string, base_path)
-    filtered_paths = [path.join(p, "setup.py") for p in setup_paths if not path_excluded(p, additional_excludes)]
+    filtered_paths = [p for p in setup_paths if not path_excluded(p, additional_excludes)]
     return filtered_paths
 
 
@@ -74,7 +60,7 @@ def get_packages(
     paths = get_setup_py_paths(args.glob_string, target_dir, additional_excludes)
 
     # Check if package is excluded if a package name param is passed
-    if package_name and not any(filter(lambda x: package_name == os.path.basename(os.path.dirname(x)), paths)):
+    if package_name and not any(filter(lambda x: package_name == os.path.basename(x), paths)):
         logging.info("Package {} is excluded from version update tool".format(package_name))
         exit(0)
 
@@ -90,19 +76,8 @@ def get_packages(
     return packages
 
 
-def get_version_py(setup_py_location):
-    file_path, _ = path.split(setup_py_location)
-    # Find path to _version.py recursively in azure folder of package
-    azure_root_path = path.join(file_path, "azure")
-    for root, _, files in os.walk(azure_root_path):
-        if VERSION_PY in files:
-            return path.join(root, VERSION_PY)
-        elif OLD_VERSION_PY in files:
-            return path.join(root, OLD_VERSION_PY)
-
-
-def set_version_py(setup_py_location, new_version):
-    version_py_location = get_version_py(setup_py_location)
+def set_version_py(setup_path, new_version):
+    version_py_location = get_version_py(setup_path)
 
     version_contents = ""
     with open(version_py_location, "r") as version_py_file:
@@ -128,11 +103,11 @@ def get_classification(version):
         return "Development Status :: 4 - Beta"
 
 
-def set_dev_classifier(setup_py_location, version):
+def set_dev_classifier(setup_path, version):
     classification = get_classification(version)
 
     setup_contents = ""
-    with open(setup_py_location, "r+") as setup_py_file:
+    with open(setup_path, "r+") as setup_py_file:
         setup_contents = setup_py_file.read()
 
         # Reset position and truncate the file for new contents

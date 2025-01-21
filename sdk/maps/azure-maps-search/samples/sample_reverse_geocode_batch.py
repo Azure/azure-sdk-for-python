@@ -24,24 +24,28 @@ from azure.maps.search import MapsSearchClient
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
+
 def reverse_geocode_batch():
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
     try:
-        result = maps_search_client.get_reverse_geocoding_batch({
-              "batchItems": [
-                {"coordinates": [-122.349309, 47.620498]},
-                {"coordinates": [-122.138679, 47.630356]},
-              ],
-            },)
+        result = maps_search_client.get_reverse_geocoding_batch(
+            {
+                "batchItems": [
+                    {"coordinates": [-122.349309, 47.620498]},
+                    {"coordinates": [-122.138679, 47.630356]},
+                ],
+            },
+        )
 
-        if result.get('batchItems', False):
-            for idx, item in enumerate(result['batchItems']):
-                features = item['features']
+        if result.get("batchItems", False):
+            for idx, item in enumerate(result["batchItems"]):
+                features = item["features"]
                 if features:
-                    props = features[0].get('properties', {})
-                    if props and props.get('address', False):
+                    props = features[0].get("properties", {})
+                    if props and props.get("address", False):
                         print(
-                            props['address'].get('formattedAddress', f'No formatted address for item {idx + 1} found'))
+                            props["address"].get("formattedAddress", f"No formatted address for item {idx + 1} found")
+                        )
                     else:
                         print(f"Address {idx + 1} is None")
                 else:
@@ -54,5 +58,5 @@ def reverse_geocode_batch():
             print(f"Message: {exception.error.message}")
 
 
-if __name__ == '__main__':
-   reverse_geocode_batch()
+if __name__ == "__main__":
+    reverse_geocode_batch()

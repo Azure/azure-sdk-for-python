@@ -20,13 +20,13 @@ class TestCosmosDBManagementDatabaseOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_metrics(self, resource_group):
+    def test_database_list_metrics(self, resource_group):
         response = self.client.database.list_metrics(
             resource_group_name=resource_group.name,
             account_name="str",
             database_rid="str",
             filter="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -34,12 +34,12 @@ class TestCosmosDBManagementDatabaseOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_usages(self, resource_group):
+    def test_database_list_usages(self, resource_group):
         response = self.client.database.list_usages(
             resource_group_name=resource_group.name,
             account_name="str",
             database_rid="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -47,12 +47,12 @@ class TestCosmosDBManagementDatabaseOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_metric_definitions(self, resource_group):
+    def test_database_list_metric_definitions(self, resource_group):
         response = self.client.database.list_metric_definitions(
             resource_group_name=resource_group.name,
             account_name="str",
             database_rid="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

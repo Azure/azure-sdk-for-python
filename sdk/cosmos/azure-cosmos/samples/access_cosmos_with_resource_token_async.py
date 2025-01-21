@@ -11,6 +11,7 @@ import azure.cosmos.documents as documents
 import asyncio
 import config
 import json
+from typing import Dict, Any
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites -
@@ -136,7 +137,7 @@ async def run_sample():
             user = await create_user_if_not_exists(db, USERNAME)
 
             # Permission to perform operations on all items inside a container
-            permission_definition = {
+            permission_definition: Dict[str, Any] = {
                 "id": CONTAINER_ALL_PERMISSION,
                 "permissionMode": documents.PermissionMode.All,
                 "resource": container.container_link,
@@ -213,7 +214,7 @@ async def run_sample():
             permission_definition = {
                 "id": DOCUMENT_ALL_PERMISSION,
                 "permissionMode": documents.PermissionMode.All,
-                "resource": item_3.get('_self') #this identifies the item with id "3"
+                "resource": str(item_3.get('_self')) #this identifies the item with id "3"
             }
 
             permission = await create_permission_if_not_exists(user_2, permission_definition)

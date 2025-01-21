@@ -40,6 +40,7 @@ async def list_namespaces():
             print(err)
     await credential.close()
 
+
 # [END send_metric_namespaces_query_async]
 
 if __name__ == "__main__":

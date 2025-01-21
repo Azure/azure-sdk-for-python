@@ -12,13 +12,14 @@ from azure.communication.messages import (
 )
 from devtools_testutils import AzureRecordedTestCase
 
+
 class MessagesRecordedTestCase(AzureRecordedTestCase):
 
     def create_notification_message_client(self) -> NotificationMessagesClient:
         return NotificationMessagesClient.from_connection_string(
             conn_str=self.connection_string, http_logging_policy=get_http_logging_policy()
         )
-    
+
     def create_notification_message_client_from_token(self) -> NotificationMessagesClient:
         return NotificationMessagesClient.from_token_credentials(
             endpoint=self.endpoint_str, http_logging_policy=get_http_logging_policy()
@@ -28,7 +29,7 @@ class MessagesRecordedTestCase(AzureRecordedTestCase):
         return MessageTemplateClient.from_connection_string(
             conn_str=self.connection_string, http_logging_policy=get_http_logging_policy()
         )
-    
+
     def create_message_template_client_from_token(self) -> MessageTemplateClient:
         return MessageTemplateClient.from_token_credentials(
             endpoint=self.endpoint_str, http_logging_policy=get_http_logging_policy()

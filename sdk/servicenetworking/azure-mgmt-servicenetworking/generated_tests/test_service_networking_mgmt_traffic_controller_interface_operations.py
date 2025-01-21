@@ -20,9 +20,9 @@ class TestServiceNetworkingMgmtTrafficControllerInterfaceOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_subscription(self, resource_group):
+    def test_traffic_controller_interface_list_by_subscription(self, resource_group):
         response = self.client.traffic_controller_interface.list_by_subscription(
-            api_version="2024-05-01-preview",
+            api_version="2025-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -30,10 +30,10 @@ class TestServiceNetworkingMgmtTrafficControllerInterfaceOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_traffic_controller_interface_list_by_resource_group(self, resource_group):
         response = self.client.traffic_controller_interface.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-05-01-preview",
+            api_version="2025-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -41,11 +41,11 @@ class TestServiceNetworkingMgmtTrafficControllerInterfaceOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_traffic_controller_interface_get(self, resource_group):
         response = self.client.traffic_controller_interface.get(
             resource_group_name=resource_group.name,
             traffic_controller_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestServiceNetworkingMgmtTrafficControllerInterfaceOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_traffic_controller_interface_begin_create_or_update(self, resource_group):
         response = self.client.traffic_controller_interface.begin_create_or_update(
             resource_group_name=resource_group.name,
             traffic_controller_name="str",
@@ -78,7 +78,7 @@ class TestServiceNetworkingMgmtTrafficControllerInterfaceOperations(AzureMgmtRec
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-05-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -86,12 +86,12 @@ class TestServiceNetworkingMgmtTrafficControllerInterfaceOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_traffic_controller_interface_update(self, resource_group):
         response = self.client.traffic_controller_interface.update(
             resource_group_name=resource_group.name,
             traffic_controller_name="str",
             properties={"securityPolicyConfigurations": {"wafSecurityPolicy": {"id": "str"}}, "tags": {"str": "str"}},
-            api_version="2024-05-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -99,11 +99,11 @@ class TestServiceNetworkingMgmtTrafficControllerInterfaceOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_traffic_controller_interface_begin_delete(self, resource_group):
         response = self.client.traffic_controller_interface.begin_delete(
             resource_group_name=resource_group.name,
             traffic_controller_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

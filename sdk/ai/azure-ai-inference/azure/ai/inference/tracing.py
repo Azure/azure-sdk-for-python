@@ -9,6 +9,7 @@ import json
 import importlib
 import logging
 import os
+from time import time_ns
 from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
 from urllib.parse import urlparse
 
@@ -63,15 +64,26 @@ class AIInferenceInstrumentor:
         # and have a parameter that specifies the version to use.
         self._impl = _AIInferenceInstrumentorPreview()
 
-    def instrument(self) -> None:
+    def instrument(self, enable_content_recording: Optional[bool] = None) -> None:
         """
         Enable trace instrumentation for AI Inference.
 
-        Raises:
-            RuntimeError: If instrumentation is already enabled.
+        :param enable_content_recording: Whether content recording is enabled as part
+            of the traces or not. Content in this context refers to chat message content
+            and function call tool related function names, function parameter names and
+            values. True will enable content recording, False will disable it. If no value
+            s provided, then the value read from environment variable
+            AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. If the environment variable
+            is not found, then the value will default to False. Please note that successive calls
+            to instrument will always apply the content recording value provided with the most
+            recent call to instrument (including applying the environment variable if no value is
+            provided and defaulting to false if the environment variable is not found), even if
+            instrument was already previously called without uninstrument being called in between
+            the instrument calls.
 
+        :type enable_content_recording: bool, optional
         """
-        self._impl.instrument()
+        self._impl.instrument(enable_content_recording=enable_content_recording)
 
     def uninstrument(self) -> None:
         """
@@ -94,6 +106,15 @@ class AIInferenceInstrumentor:
         """
         return self._impl.is_instrumented()
 
+    def is_content_recording_enabled(self) -> bool:
+        """
+        This function gets the content recording value.
+
+        :return: A bool value indicating whether content recording is enabled.
+        :rtype: bool
+        """
+        return self._impl.is_content_recording_enabled()
+
 
 class _AIInferenceInstrumentorPreview:
     """
@@ -108,37 +129,37 @@ class _AIInferenceInstrumentorPreview:
             return False
         return str(s).lower() == "true"
 
-    def instrument(self):
+    def instrument(self, enable_content_recording: Optional[bool] = None):
         """
         Enable trace instrumentation for AI Inference.
 
-        Raises:
-            RuntimeError: If instrumentation is already enabled.
+        :param enable_content_recording: Whether content recording is enabled as part
+        of the traces or not. Content in this context refers to chat message content
+        and function call tool related function names, function parameter names and
+        values. True will enable content recording, False will disable it. If no value
+        is provided, then the value read from environment variable
+        AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. If the environment variable
+        is not found, then the value will default to False.
 
-        This method checks the environment variable
-        'AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED' to determine
-        whether to enable content tracing.
+        :type enable_content_recording: bool, optional
         """
-        if self.is_instrumented():
-            raise RuntimeError("Already instrumented")
-
-        var_value = os.environ.get("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED")
-        enable_content_tracing = self._str_to_bool(var_value)
-        self._instrument_inference(enable_content_tracing)
+        if enable_content_recording is None:
+            var_value = os.environ.get("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED")
+            enable_content_recording = self._str_to_bool(var_value)
+        if not self.is_instrumented():
+            self._instrument_inference(enable_content_recording)
+        else:
+            self._set_content_recording_enabled(enable_content_recording=enable_content_recording)
 
     def uninstrument(self):
         """
         Disable trace instrumentation for AI Inference.
 
-        Raises:
-            RuntimeError: If instrumentation is not currently enabled.
-
         This method removes any active instrumentation, stopping the tracing
         of AI Inference.
         """
-        if not self.is_instrumented():
-            raise RuntimeError("Not instrumented")
-        self._uninstrument_inference()
+        if self.is_instrumented():
+            self._uninstrument_inference()
 
     def is_instrumented(self):
         """
@@ -149,13 +170,32 @@ class _AIInferenceInstrumentorPreview:
         """
         return self._is_instrumented()
 
+    def set_content_recording_enabled(self, enable_content_recording: bool = False) -> None:
+        """This function sets the content recording value.
+
+        :param enable_content_recording: Indicates whether tracing of message content should be enabled.
+                                    This also controls whether function call tool function names,
+                                    parameter names and parameter values are traced.
+        :type enable_content_recording: bool
+        """
+        self._set_content_recording_enabled(enable_content_recording=enable_content_recording)
+
+    def is_content_recording_enabled(self) -> bool:
+        """This function gets the content recording value.
+
+        :return: A bool value indicating whether content tracing is enabled.
+        :rtype bool
+        """
+        return self._is_content_recording_enabled()
+
     def _set_attributes(self, span: "AbstractSpan", *attrs: Tuple[str, Any]) -> None:
         for attr in attrs:
             key, value = attr
             if value is not None:
                 span.add_attribute(key, value)
 
-    def _add_request_chat_message_event(self, span: "AbstractSpan", **kwargs: Any) -> None:
+    def _add_request_chat_message_events(self, span: "AbstractSpan", **kwargs: Any) -> int:
+        timestamp = 0
         for message in kwargs.get("messages", []):
             try:
                 message = message.as_dict()
@@ -163,14 +203,17 @@ class _AIInferenceInstrumentorPreview:
                 pass
 
             if message.get("role"):
-                name = f"gen_ai.{message.get('role')}.message"
-                span.span_instance.add_event(
-                    name=name,
-                    attributes={
+                timestamp = self._record_event(
+                    span,
+                    f"gen_ai.{message.get('role')}.message",
+                    {
                         "gen_ai.system": _INFERENCE_GEN_AI_SYSTEM_NAME,
                         "gen_ai.event.content": json.dumps(message),
                     },
+                    timestamp,
                 )
+
+        return timestamp
 
     def _parse_url(self, url):
         parsed = urlparse(url)
@@ -242,8 +285,11 @@ class _AIInferenceInstrumentorPreview:
 
         return "none"
 
-    def _add_response_chat_message_event(self, span: "AbstractSpan", result: _models.ChatCompletions) -> None:
+    def _add_response_chat_message_events(
+        self, span: "AbstractSpan", result: _models.ChatCompletions, last_event_timestamp_ns: int
+    ) -> None:
         for choice in result.choices:
+            attributes = {}
             if _trace_inference_content:
                 full_response: Dict[str, Any] = {
                     "message": {"content": choice.message.content},
@@ -274,7 +320,7 @@ class _AIInferenceInstrumentorPreview:
                     "gen_ai.system": _INFERENCE_GEN_AI_SYSTEM_NAME,
                     "gen_ai.event.content": json.dumps(response),
                 }
-            span.span_instance.add_event(name="gen_ai.choice", attributes=attributes)
+            last_event_timestamp_ns = self._record_event(span, "gen_ai.choice", attributes, last_event_timestamp_ns)
 
     def _add_response_chat_attributes(
         self,
@@ -298,15 +344,16 @@ class _AIInferenceInstrumentorPreview:
         if not finish_reasons is None:
             span.add_attribute("gen_ai.response.finish_reasons", finish_reasons)  # type: ignore
 
-    def _add_request_span_attributes(self, span: "AbstractSpan", _span_name: str, args: Any, kwargs: Any) -> None:
+    def _add_request_details(self, span: "AbstractSpan", args: Any, kwargs: Any) -> int:
         self._add_request_chat_attributes(span, *args, **kwargs)
         if _trace_inference_content:
-            self._add_request_chat_message_event(span, **kwargs)
+            return self._add_request_chat_message_events(span, **kwargs)
+        return 0
 
-    def _add_response_span_attributes(self, span: "AbstractSpan", result: object) -> None:
+    def _add_response_details(self, span: "AbstractSpan", result: object, last_event_timestamp_ns: int) -> None:
         if isinstance(result, _models.ChatCompletions):
             self._add_response_chat_attributes(span, result)
-            self._add_response_chat_message_event(span, result)
+            self._add_response_chat_message_events(span, result, last_event_timestamp_ns)
         # TODO add more models here
 
     def _accumulate_response(self, item, accumulate: Dict[str, Any]) -> None:
@@ -338,8 +385,41 @@ class _AIInferenceInstrumentorPreview:
                     if tool_call.function and tool_call.function.arguments:
                         accumulate["message"]["tool_calls"][-1]["function"]["arguments"] += tool_call.function.arguments
 
+    def _accumulate_async_streaming_response(self, item, accumulate: Dict[str, Any]) -> None:
+        if not "choices" in item:
+            return
+        if "finish_reason" in item["choices"][0] and item["choices"][0]["finish_reason"]:
+            accumulate["finish_reason"] = item["choices"][0]["finish_reason"]
+        if "index" in item["choices"][0] and item["choices"][0]["index"]:
+            accumulate["index"] = item["choices"][0]["index"]
+        if not "delta" in item["choices"][0]:
+            return
+        if "content" in item["choices"][0]["delta"] and item["choices"][0]["delta"]["content"]:
+            accumulate.setdefault("message", {})
+            accumulate["message"].setdefault("content", "")
+            accumulate["message"]["content"] += item["choices"][0]["delta"]["content"]
+        if "tool_calls" in item["choices"][0]["delta"] and item["choices"][0]["delta"]["tool_calls"]:
+            accumulate.setdefault("message", {})
+            accumulate["message"].setdefault("tool_calls", [])
+            if item["choices"][0]["delta"]["tool_calls"] is not None:
+                for tool_call in item["choices"][0]["delta"]["tool_calls"]:
+                    if tool_call.id:
+                        accumulate["message"]["tool_calls"].append(
+                            {
+                                "id": tool_call.id,
+                                "type": "",
+                                "function": {"name": "", "arguments": ""},
+                            }
+                        )
+                    if tool_call.function:
+                        accumulate["message"]["tool_calls"][-1]["type"] = "function"
+                    if tool_call.function and tool_call.function.name:
+                        accumulate["message"]["tool_calls"][-1]["function"]["name"] = tool_call.function.name
+                    if tool_call.function and tool_call.function.arguments:
+                        accumulate["message"]["tool_calls"][-1]["function"]["arguments"] += tool_call.function.arguments
+
     def _wrapped_stream(
-        self, stream_obj: _models.StreamingChatCompletions, span: "AbstractSpan"
+        self, stream_obj: _models.StreamingChatCompletions, span: "AbstractSpan", previous_event_timestamp: int
     ) -> _models.StreamingChatCompletions:
         class StreamWrapper(_models.StreamingChatCompletions):
             def __init__(self, stream_obj, instrumentor):
@@ -396,17 +476,92 @@ class _AIInferenceInstrumentorPreview:
                                     accumulate["message"]["tool_calls"] = list(
                                         tool_calls_function_names_and_arguments_removed
                                     )
-
-                    span.span_instance.add_event(
-                        name="gen_ai.choice",
-                        attributes={
-                            "gen_ai.system": _INFERENCE_GEN_AI_SYSTEM_NAME,
-                            "gen_ai.event.content": json.dumps(accumulate),
-                        },
-                    )
+                    attributes = {
+                        "gen_ai.system": _INFERENCE_GEN_AI_SYSTEM_NAME,
+                        "gen_ai.event.content": json.dumps(accumulate),
+                    }
+                    self._instrumentor._record_event(span, "gen_ai.choice", attributes, previous_event_timestamp)
                     span.finish()
 
         return StreamWrapper(stream_obj, self)
+
+    def _async_wrapped_stream(
+        self, stream_obj: _models.AsyncStreamingChatCompletions, span: "AbstractSpan", last_event_timestamp_ns: int
+    ) -> _models.AsyncStreamingChatCompletions:
+        class AsyncStreamWrapper(_models.AsyncStreamingChatCompletions):
+            def __init__(self, stream_obj, instrumentor, span, last_event_timestamp_ns):
+                super().__init__(stream_obj._response)
+                self._instrumentor = instrumentor
+                self._accumulate: Dict[str, Any] = {}
+                self._stream_obj = stream_obj
+                self.span = span
+                self._last_result = None
+                self._last_event_timestamp_ns = last_event_timestamp_ns
+
+            async def __anext__(self) -> "_models.StreamingChatCompletionsUpdate":
+                try:
+                    result = await super().__anext__()
+                    self._instrumentor._accumulate_async_streaming_response(  # pylint: disable=protected-access, line-too-long # pyright: ignore [reportFunctionMemberAccess]
+                        result, self._accumulate
+                    )
+                    self._last_result = result
+                except StopAsyncIteration as exc:
+                    self._trace_stream_content()
+                    raise exc
+                return result
+
+            def _trace_stream_content(self) -> None:
+                if self._last_result:
+                    self._instrumentor._add_response_chat_attributes(  # pylint: disable=protected-access, line-too-long # pyright: ignore [reportFunctionMemberAccess]
+                        span, self._last_result
+                    )
+                # Only one choice expected with streaming
+                self._accumulate["index"] = 0
+                # Delete message if content tracing is not enabled
+                if not _trace_inference_content:
+                    if "message" in self._accumulate:
+                        if "content" in self._accumulate["message"]:
+                            del self._accumulate["message"]["content"]
+                            if not self._accumulate["message"]:
+                                del self._accumulate["message"]
+                        if "message" in self._accumulate:
+                            if "tool_calls" in self._accumulate["message"]:
+                                tools_no_recording = self._instrumentor._remove_function_call_names_and_arguments(  # pylint: disable=protected-access, line-too-long # pyright: ignore [reportFunctionMemberAccess]
+                                    self._accumulate["message"]["tool_calls"]
+                                )
+                                self._accumulate["message"]["tool_calls"] = list(tools_no_recording)
+                attributes = {
+                    "gen_ai.system": _INFERENCE_GEN_AI_SYSTEM_NAME,
+                    "gen_ai.event.content": json.dumps(self._accumulate),
+                }
+                self._last_event_timestamp_ns = self._instrumentor._record_event(  # pylint: disable=protected-access, line-too-long # pyright: ignore [reportFunctionMemberAccess]
+                    span, "gen_ai.choice", attributes, self._last_event_timestamp_ns
+                )
+                span.finish()
+
+        async_stream_wrapper = AsyncStreamWrapper(stream_obj, self, span, last_event_timestamp_ns)
+        return async_stream_wrapper
+
+    def _record_event(
+        self, span: "AbstractSpan", name: str, attributes: Dict[str, Any], last_event_timestamp_ns: int
+    ) -> int:
+        timestamp = time_ns()
+
+        # we're recording multiple events, some of them are emitted within (hundreds of) nanoseconds of each other.
+        # time.time_ns resolution is not high enough on windows to guarantee unique timestamps for each message.
+        # Also Azure Monitor truncates resolution to microseconds and some other backends truncate to milliseconds.
+        #
+        # But we need to give users a way to restore event order, so we're incrementing the timestamp
+        # by 1 microsecond for each message.
+        #
+        # This is a workaround, we'll find a generic and better solution - see
+        # https://github.com/open-telemetry/semantic-conventions/issues/1701
+        if last_event_timestamp_ns > 0 and timestamp <= (last_event_timestamp_ns + 1000):
+            timestamp = last_event_timestamp_ns + 1000
+
+        span.span_instance.add_event(name=name, attributes=attributes, timestamp=timestamp)
+
+        return timestamp
 
     def _trace_sync_function(
         self,
@@ -452,16 +607,16 @@ class _AIInferenceInstrumentorPreview:
                     name=span_name,
                     kind=SpanKind.CLIENT,  # pyright: ignore [reportPossiblyUnboundVariable]
                 )
+
                 try:
                     # tracing events not supported in azure-core-tracing-opentelemetry
                     # so need to access the span instance directly
                     with span_impl_type.change_context(span.span_instance):
-                        self._add_request_span_attributes(span, span_name, args, kwargs)
+                        last_event_timestamp_ns = self._add_request_details(span, args, kwargs)
                         result = function(*args, **kwargs)
                         if kwargs.get("stream") is True:
-                            return self._wrapped_stream(result, span)
-                        self._add_response_span_attributes(span, result)
-
+                            return self._wrapped_stream(result, span, last_event_timestamp_ns)
+                        self._add_response_details(span, result, last_event_timestamp_ns)
                 except Exception as exc:
                     # Set the span status to error
                     if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
@@ -512,7 +667,7 @@ class _AIInferenceInstrumentorPreview:
         async def inner(*args, **kwargs):
             span_impl_type = settings.tracing_implementation()
             if span_impl_type is None:
-                return function(*args, **kwargs)
+                return await function(*args, **kwargs)
 
             class_function_name = function.__qualname__
 
@@ -531,11 +686,11 @@ class _AIInferenceInstrumentorPreview:
                     # tracing events not supported in azure-core-tracing-opentelemetry
                     # so need to access the span instance directly
                     with span_impl_type.change_context(span.span_instance):
-                        self._add_request_span_attributes(span, span_name, args, kwargs)
+                        last_event_timestamp_ns = self._add_request_details(span, args, kwargs)
                         result = await function(*args, **kwargs)
                         if kwargs.get("stream") is True:
-                            return self._wrapped_stream(result, span)
-                        self._add_response_span_attributes(span, result)
+                            return self._async_wrapped_stream(result, span, last_event_timestamp_ns)
+                        self._add_response_details(span, result, last_event_timestamp_ns)
 
                 except Exception as exc:
                     # Set the span status to error
@@ -674,3 +829,22 @@ class _AIInferenceInstrumentorPreview:
         :rtype: bool
         """
         return _inference_traces_enabled
+
+    def _set_content_recording_enabled(self, enable_content_recording: bool = False) -> None:
+        """This function sets the content recording value.
+
+        :param enable_content_recording: Indicates whether tracing of message content should be enabled.
+                                    This also controls whether function call tool function names,
+                                    parameter names and parameter values are traced.
+        :type enable_content_recording: bool
+        """
+        global _trace_inference_content  # pylint: disable=W0603
+        _trace_inference_content = enable_content_recording
+
+    def _is_content_recording_enabled(self) -> bool:
+        """This function gets the content recording value.
+
+        :return: A bool value indicating whether content tracing is enabled.
+        :rtype bool
+        """
+        return _trace_inference_content

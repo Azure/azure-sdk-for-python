@@ -32,7 +32,8 @@ def example_create_servicebus_client_async():
     # [START create_sb_client_from_conn_str_async]
     import os
     from azure.servicebus.aio import ServiceBusClient
-    servicebus_connection_str = os.environ['SERVICEBUS_CONNECTION_STR']
+
+    servicebus_connection_str = os.environ["SERVICEBUS_CONNECTION_STR"]
     servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
     # [END create_sb_client_from_conn_str_async]
 
@@ -40,10 +41,10 @@ def example_create_servicebus_client_async():
     import os
     from azure.identity.aio import DefaultAzureCredential
     from azure.servicebus.aio import ServiceBusClient
-    fully_qualified_namespace = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
+
+    fully_qualified_namespace = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
     servicebus_client = ServiceBusClient(
-        fully_qualified_namespace=fully_qualified_namespace,
-        credential=DefaultAzureCredential()
+        fully_qualified_namespace=fully_qualified_namespace, credential=DefaultAzureCredential()
     )
     # [END create_sb_client_async]
     return servicebus_client
@@ -54,19 +55,18 @@ async def example_create_servicebus_sender_async():
     # [START create_servicebus_sender_from_conn_str_async]
     import os
     from azure.servicebus.aio import ServiceBusSender
-    servicebus_connection_str = os.environ['SERVICEBUS_CONNECTION_STR']
-    queue_name = os.environ['SERVICEBUS_QUEUE_NAME']
-    queue_sender = ServiceBusSender._from_connection_string(
-        conn_str=servicebus_connection_str,
-        queue_name=queue_name
-    )
+
+    servicebus_connection_str = os.environ["SERVICEBUS_CONNECTION_STR"]
+    queue_name = os.environ["SERVICEBUS_QUEUE_NAME"]
+    queue_sender = ServiceBusSender._from_connection_string(conn_str=servicebus_connection_str, queue_name=queue_name)
     # [END create_servicebus_sender_from_conn_str_async]
 
     # [START create_servicebus_sender_from_sb_client_async]
     import os
     from azure.servicebus.aio import ServiceBusClient
-    servicebus_connection_str = os.environ['SERVICEBUS_CONNECTION_STR']
-    queue_name = os.environ['SERVICEBUS_QUEUE_NAME']
+
+    servicebus_connection_str = os.environ["SERVICEBUS_CONNECTION_STR"]
+    queue_name = os.environ["SERVICEBUS_QUEUE_NAME"]
     servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
     async with servicebus_client:
         queue_sender = servicebus_client.get_queue_sender(queue_name=queue_name)
@@ -75,8 +75,9 @@ async def example_create_servicebus_sender_async():
     # [START create_topic_sender_from_sb_client_async]
     import os
     from azure.servicebus.aio import ServiceBusClient
-    servicebus_connection_str = os.environ['SERVICEBUS_CONNECTION_STR']
-    topic_name = os.environ['SERVICEBUS_TOPIC_NAME']
+
+    servicebus_connection_str = os.environ["SERVICEBUS_CONNECTION_STR"]
+    topic_name = os.environ["SERVICEBUS_TOPIC_NAME"]
     servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
     async with servicebus_client:
         topic_sender = servicebus_client.get_topic_sender(topic_name=topic_name)
@@ -92,11 +93,11 @@ async def example_create_servicebus_receiver_async():
     # [START create_servicebus_receiver_from_conn_str_async]
     import os
     from azure.servicebus.aio import ServiceBusReceiver
-    servicebus_connection_str = os.environ['SERVICEBUS_CONNECTION_STR']
-    queue_name = os.environ['SERVICEBUS_QUEUE_NAME']
+
+    servicebus_connection_str = os.environ["SERVICEBUS_CONNECTION_STR"]
+    queue_name = os.environ["SERVICEBUS_QUEUE_NAME"]
     queue_receiver = ServiceBusReceiver._from_connection_string(
-        conn_str=servicebus_connection_str,
-        queue_name=queue_name
+        conn_str=servicebus_connection_str, queue_name=queue_name
     )
     # [END create_servicebus_receiver_from_conn_str_async]
 
@@ -104,18 +105,22 @@ async def example_create_servicebus_receiver_async():
     import os
     from azure.servicebus import ServiceBusSubQueue
     from azure.servicebus.aio import ServiceBusClient
-    servicebus_connection_str = os.environ['SERVICEBUS_CONNECTION_STR']
-    queue_name = os.environ['SERVICEBUS_QUEUE_NAME']
+
+    servicebus_connection_str = os.environ["SERVICEBUS_CONNECTION_STR"]
+    queue_name = os.environ["SERVICEBUS_QUEUE_NAME"]
     servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
     async with servicebus_client:
-        queue_receiver = servicebus_client.get_queue_receiver(queue_name=queue_name, sub_queue=ServiceBusSubQueue.DEAD_LETTER)
+        queue_receiver = servicebus_client.get_queue_receiver(
+            queue_name=queue_name, sub_queue=ServiceBusSubQueue.DEAD_LETTER
+        )
     # [END create_queue_deadletter_receiver_from_sb_client_async]
 
     # [START create_servicebus_receiver_from_sb_client_async]
     import os
     from azure.servicebus.aio import ServiceBusClient
-    servicebus_connection_str = os.environ['SERVICEBUS_CONNECTION_STR']
-    queue_name = os.environ['SERVICEBUS_QUEUE_NAME']
+
+    servicebus_connection_str = os.environ["SERVICEBUS_CONNECTION_STR"]
+    queue_name = os.environ["SERVICEBUS_QUEUE_NAME"]
     servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
     async with servicebus_client:
         queue_receiver = servicebus_client.get_queue_receiver(queue_name=queue_name)
@@ -125,22 +130,22 @@ async def example_create_servicebus_receiver_async():
     import os
     from azure.servicebus import ServiceBusSubQueue
     from azure.servicebus.aio import ServiceBusClient
-    servicebus_connection_str = os.environ['SERVICEBUS_CONNECTION_STR']
+
+    servicebus_connection_str = os.environ["SERVICEBUS_CONNECTION_STR"]
     topic_name = os.environ["SERVICEBUS_TOPIC_NAME"]
     subscription_name = os.environ["SERVICEBUS_SUBSCRIPTION_NAME"]
     servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
     async with servicebus_client:
         subscription_receiver = servicebus_client.get_subscription_receiver(
-            topic_name=topic_name,
-            subscription_name=subscription_name,
-            sub_queue=ServiceBusSubQueue.DEAD_LETTER
+            topic_name=topic_name, subscription_name=subscription_name, sub_queue=ServiceBusSubQueue.DEAD_LETTER
         )
     # [END create_subscription_deadletter_receiver_from_sb_client_async]
 
     # [START create_subscription_receiver_from_sb_client_async]
     import os
     from azure.servicebus.aio import ServiceBusClient
-    servicebus_connection_str = os.environ['SERVICEBUS_CONNECTION_STR']
+
+    servicebus_connection_str = os.environ["SERVICEBUS_CONNECTION_STR"]
     topic_name = os.environ["SERVICEBUS_TOPIC_NAME"]
     subscription_name = os.environ["SERVICEBUS_SUBSCRIPTION_NAME"]
     servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
@@ -157,12 +162,13 @@ async def example_create_servicebus_receiver_async():
 
 async def example_send_and_receive_async():
     from azure.servicebus import ServiceBusMessage
+
     servicebus_sender = await example_create_servicebus_sender_async()
     # [START send_async]
     async with servicebus_sender:
         message_send = ServiceBusMessage("Hello World")
         await servicebus_sender.send_messages(message_send)
-    # [END send_async]
+        # [END send_async]
         await servicebus_sender.send_messages([ServiceBusMessage("Hello World")] * 5)
 
     servicebus_sender = await example_create_servicebus_sender_async()
@@ -195,7 +201,7 @@ async def example_send_and_receive_async():
         async for message in servicebus_receiver:
             print(str(message))
             await servicebus_receiver.complete_message(message)
-    # [END receive_forever_async]
+            # [END receive_forever_async]
             break
 
         # [START abandon_message_async]
@@ -238,7 +244,7 @@ async def example_send_and_receive_async():
             lock_renewal.register(servicebus_receiver, message, max_lock_renewal_duration=60)
             await process_message(message)
             await servicebus_receiver.complete_message(message)
-    # [END auto_lock_renew_message_async]
+            # [END auto_lock_renew_message_async]
             break
     await lock_renewal.close()
 
@@ -268,8 +274,9 @@ async def example_receive_deferred_async():
 
 async def example_receive_deadletter_async():
     from azure.servicebus import ServiceBusSubQueue
-    servicebus_connection_str = os.environ['SERVICEBUS_CONNECTION_STR']
-    queue_name = os.environ['SERVICEBUS_QUEUE_NAME']
+
+    servicebus_connection_str = os.environ["SERVICEBUS_CONNECTION_STR"]
+    queue_name = os.environ["SERVICEBUS_QUEUE_NAME"]
 
     async with ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str) as servicebus_client:
         async with servicebus_client.get_queue_sender(queue_name) as servicebus_sender:
@@ -279,12 +286,12 @@ async def example_receive_deadletter_async():
             messages = await servicebus_receiver.receive_messages(max_wait_time=5)
             for message in messages:
                 await servicebus_receiver.dead_letter_message(
-                    message,
-                    reason='reason for dead lettering',
-                    error_description='description for dead lettering'
+                    message, reason="reason for dead lettering", error_description="description for dead lettering"
                 )
 
-        async with servicebus_client.get_queue_receiver(queue_name, sub_queue=ServiceBusSubQueue.DEAD_LETTER) as servicebus_deadletter_receiver:
+        async with servicebus_client.get_queue_receiver(
+            queue_name, sub_queue=ServiceBusSubQueue.DEAD_LETTER
+        ) as servicebus_deadletter_receiver:
             messages = await servicebus_deadletter_receiver.receive_messages(max_wait_time=5)
             for message in messages:
                 await servicebus_deadletter_receiver.complete_message(message)
@@ -292,14 +299,14 @@ async def example_receive_deadletter_async():
 
 
 async def example_session_ops_async():
-    servicebus_connection_str = os.environ['SERVICEBUS_CONNECTION_STR']
-    queue_name = os.environ['SERVICEBUS_SESSION_QUEUE_NAME']
+    servicebus_connection_str = os.environ["SERVICEBUS_CONNECTION_STR"]
+    queue_name = os.environ["SERVICEBUS_SESSION_QUEUE_NAME"]
     session_id = "<your session id>"
 
     async with ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str) as servicebus_client:
 
         async with servicebus_client.get_queue_sender(queue_name=queue_name) as sender:
-            await sender.send_messages(ServiceBusMessage('msg', session_id=session_id))
+            await sender.send_messages(ServiceBusMessage("msg", session_id=session_id))
 
         # [START get_session_async]
         async with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
@@ -335,7 +342,7 @@ async def example_session_ops_async():
             async for message in receiver:
                 await process_message(message)
                 await receiver.complete_message(message)
-        # [END auto_lock_renew_session_async]
+                # [END auto_lock_renew_session_async]
                 break
 
 

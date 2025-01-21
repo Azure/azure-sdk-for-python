@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from __future__ import unicode_literals, annotations
+from __future__ import annotations
 
 import logging
 import asyncio
@@ -34,6 +34,7 @@ from .._constants import (
 )
 from ._async_utils import get_dict_with_loop_if_needed
 from ._connection_manager_async import get_connection_manager
+
 try:
     from ._transport._uamqp_transport_async import UamqpTransportAsync
 except ImportError:
@@ -44,6 +45,7 @@ if TYPE_CHECKING:
     from .._pyamqp.message import Message
     from .._pyamqp.aio import AMQPClientAsync
     from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync
+
     try:
         from uamqp import (
             Message as uamqp_Message,
@@ -130,9 +132,7 @@ class EventHubSharedKeyCredential:
         self.key = key
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    async def get_token(
-        self, *scopes: str, **kwargs: Any # pylint:disable=unused-argument
-    ) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         if not scopes:
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)
@@ -154,9 +154,7 @@ class EventHubSASTokenCredential:
         self.expiry = expiry
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    async def get_token(
-        self, *scopes: str, **kwargs: Any  # pylint:disable=unused-argument
-    ) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """
         This method is automatically called when token is about to expire.
 
@@ -167,7 +165,7 @@ class EventHubSASTokenCredential:
         return AccessToken(self.token, self.expiry)
 
 
-class EventhubAzureNamedKeyTokenCredentialAsync: # pylint: disable=name-too-long
+class EventhubAzureNamedKeyTokenCredentialAsync:  # pylint: disable=name-too-long
     """The named key credential used for authentication.
 
     :param credential: The AzureNamedKeyCredential that should be used.
@@ -178,9 +176,7 @@ class EventhubAzureNamedKeyTokenCredentialAsync: # pylint: disable=name-too-long
         self._credential: AzureNamedKeyCredential = azure_named_key_credential
         self.token_type: bytes = b"servicebus.windows.net:sastoken"
 
-    async def get_token(
-        self, *scopes, **kwargs # pylint:disable=unused-argument
-    ) -> AccessToken:
+    async def get_token(self, *scopes, **kwargs) -> AccessToken:  # pylint:disable=unused-argument
         if not scopes:
             raise ValueError("No token scope provided.")
         name, key = self._credential.named_key
@@ -199,9 +195,7 @@ class EventhubAzureSasTokenCredentialAsync:
         self._credential = azure_sas_credential
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    async def get_token(
-        self, *scopes: str, **kwargs: Any  # pylint:disable=unused-argument
-    ) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """
         This method is automatically called when token is about to expire.
 
@@ -215,11 +209,7 @@ class EventhubAzureSasTokenCredentialAsync:
 
 class ClientBaseAsync(ClientBase):
     def __init__(
-        self,
-        fully_qualified_namespace: str,
-        eventhub_name: str,
-        credential: "CredentialTypes",
-        **kwargs: Any
+        self, fully_qualified_namespace: str, eventhub_name: str, credential: "CredentialTypes", **kwargs: Any
     ) -> None:
         self._internal_kwargs = get_dict_with_loop_if_needed(kwargs.get("loop", None))
         uamqp_transport = kwargs.get("uamqp_transport", False)
@@ -237,24 +227,17 @@ class ClientBaseAsync(ClientBase):
             eventhub_name=eventhub_name,
             credential=self._credential,
             amqp_transport=self._amqp_transport,
-            **kwargs
+            **kwargs,
         )
         kwargs["custom_endpoint_address"] = self._config.custom_endpoint_address
-        self._conn_manager_async = get_connection_manager(
-            amqp_transport=self._amqp_transport,
-            **kwargs
-        )
+        self._conn_manager_async = get_connection_manager(amqp_transport=self._amqp_transport, **kwargs)
 
     def __enter__(self) -> None:
-        raise TypeError(
-            "Asynchronous client must be opened with async context manager."
-        )
+        raise TypeError("Asynchronous client must be opened with async context manager.")
 
     @staticmethod
     def _from_connection_string(conn_str: str, **kwargs) -> Dict[str, Any]:
-        host, policy, key, entity, token, token_expiry, emulator = _parse_conn_str(
-            conn_str, **kwargs
-        )
+        host, policy, key, entity, token, token_expiry, emulator = _parse_conn_str(conn_str, **kwargs)
         kwargs["fully_qualified_namespace"] = host
         kwargs["eventhub_name"] = entity
         # Check if emulator is in use, unset tls if it is
@@ -275,7 +258,7 @@ class ClientBaseAsync(ClientBase):
 
         :keyword auth_uri: The URI to authenticate with.
         :paramtype auth_uri: str or None
-        
+
         :return: A JWTTokenAuthAsync instance to authenticate the session.
         :rtype: ~uamqp.authentication.JWTTokenAsync or JWTTokenAuthAsync
         """
@@ -322,7 +305,7 @@ class ClientBaseAsync(ClientBase):
         )
         if backoff <= self._config.backoff_max and (
             timeout_time is None or time.time() + backoff <= timeout_time
-        ):  # pylint:disable=no-else-return
+        ):
             await asyncio.sleep(backoff, **self._internal_kwargs)
             _LOGGER.info(
                 "%r has an exception (%r). Retrying...",
@@ -346,15 +329,13 @@ class ClientBaseAsync(ClientBase):
                 self._address, mgmt_auth=mgmt_auth, config=self._config
             )
             try:
-                conn = await self._conn_manager_async.get_connection(
-                    endpoint=self._address.hostname, auth=mgmt_auth
-                )
+                conn = await self._conn_manager_async.get_connection(endpoint=self._address.hostname, auth=mgmt_auth)
                 await mgmt_client.open_async(connection=conn)
                 while not await mgmt_client.client_ready_async():
                     await asyncio.sleep(0.05)
-                cast(Dict[Union[str, bytes], Any], mgmt_msg.application_properties)[
-                    "security_token"
-                ] = await self._amqp_transport.get_updated_token_async(mgmt_auth)
+                cast(Dict[Union[str, bytes], Any], mgmt_msg.application_properties)["security_token"] = (
+                    await self._amqp_transport.get_updated_token_async(mgmt_auth)
+                )
                 status_code, description, response = await self._amqp_transport.mgmt_client_request_async(
                     mgmt_client,
                     mgmt_msg,
@@ -384,68 +365,44 @@ class ClientBaseAsync(ClientBase):
                 last_exception = await self._amqp_transport._handle_exception_async(  # pylint: disable=protected-access
                     exception, self, is_consumer=True
                 )
-                await self._backoff_async(
-                    retried_times=retried_times, last_exception=last_exception
-                )
+                await self._backoff_async(retried_times=retried_times, last_exception=last_exception)
                 retried_times += 1
                 if retried_times > self._config.max_retries:
-                    _LOGGER.info(
-                        "%r returns an exception %r", self._container_id, last_exception
-                    )
+                    _LOGGER.info("%r returns an exception %r", self._container_id, last_exception)
                     raise last_exception from None
             finally:
                 await mgmt_client.close_async()
 
     async def _get_eventhub_properties_async(self) -> Dict[str, Any]:
-        mgmt_msg = self._amqp_transport.build_message(
-            application_properties={"name": self.eventhub_name}
-        )
-        response = await self._management_request_async(
-            mgmt_msg, op_type=MGMT_OPERATION
-        )
+        mgmt_msg = self._amqp_transport.build_message(application_properties={"name": self.eventhub_name})
+        response = await self._management_request_async(mgmt_msg, op_type=MGMT_OPERATION)
         output = {}
         eh_info: Dict[bytes, Any] = response.value
         if eh_info:
             output["eventhub_name"] = eh_info[b"name"].decode("utf-8")
-            output["created_at"] = utc_from_timestamp(
-                float(eh_info[b"created_at"]) / 1000
-            )
-            output["partition_ids"] = [
-                p.decode("utf-8") for p in eh_info[b"partition_ids"]
-            ]
+            output["created_at"] = utc_from_timestamp(float(eh_info[b"created_at"]) / 1000)
+            output["partition_ids"] = [p.decode("utf-8") for p in eh_info[b"partition_ids"]]
         return output
 
     async def _get_partition_ids_async(self) -> List[str]:
         return (await self._get_eventhub_properties_async())["partition_ids"]
 
-    async def _get_partition_properties_async(
-        self, partition_id: str
-    ) -> Dict[str, Any]:
+    async def _get_partition_properties_async(self, partition_id: str) -> Dict[str, Any]:
         mgmt_msg = self._amqp_transport.build_message(
             application_properties={
                 "name": self.eventhub_name,
                 "partition": partition_id,
             }
         )
-        response = await self._management_request_async(
-            mgmt_msg, op_type=MGMT_PARTITION_OPERATION
-        )
+        response = await self._management_request_async(mgmt_msg, op_type=MGMT_PARTITION_OPERATION)
         partition_info: Dict[bytes, Union[bytes, int]] = response.value
         output: Dict[str, Any] = {}
         if partition_info:
-            output["eventhub_name"] = cast(bytes, partition_info[b"name"]).decode(
-                "utf-8"
-            )
+            output["eventhub_name"] = cast(bytes, partition_info[b"name"]).decode("utf-8")
             output["id"] = cast(bytes, partition_info[b"partition"]).decode("utf-8")
-            output["beginning_sequence_number"] = cast(
-                int, partition_info[b"begin_sequence_number"]
-            )
-            output["last_enqueued_sequence_number"] = cast(
-                int, partition_info[b"last_enqueued_sequence_number"]
-            )
-            output["last_enqueued_offset"] = cast(
-                bytes, partition_info[b"last_enqueued_offset"]
-            ).decode("utf-8")
+            output["beginning_sequence_number"] = cast(int, partition_info[b"begin_sequence_number"])
+            output["last_enqueued_sequence_number"] = cast(int, partition_info[b"last_enqueued_sequence_number"])
+            output["last_enqueued_offset"] = cast(bytes, partition_info[b"last_enqueued_offset"]).decode("utf-8")
             output["is_empty"] = partition_info[b"is_partition_empty"]
             output["last_enqueued_time_utc"] = utc_from_timestamp(
                 float(cast(int, partition_info[b"last_enqueued_time_utc"]) / 1000)
@@ -466,9 +423,7 @@ class ConsumerProducerMixin(_MIXIN_BASE):
     def _check_closed(self) -> None:
         if self.closed:
             raise ClientClosedError(
-                "{} has been closed. Please create a new one to handle event data.".format(
-                    self._name
-                )
+                "{} has been closed. Please create a new one to handle event data.".format(self._name)
             )
 
     async def _open(self) -> None:
@@ -476,7 +431,7 @@ class ConsumerProducerMixin(_MIXIN_BASE):
         Open the EventHubConsumer using the supplied connection.
 
         """
-        # pylint: disable=protected-access,line-too-long
+        # pylint: disable=protected-access
         if not self.running:
             if self._handler:
                 await self._handler.close_async()
@@ -508,17 +463,12 @@ class ConsumerProducerMixin(_MIXIN_BASE):
     async def _handle_exception(self, exception: Exception, *, is_consumer: bool = False) -> Exception:
         # pylint: disable=protected-access
         exception = self._client._amqp_transport.check_timeout_exception(self, exception)
-        return await self._client._amqp_transport._handle_exception_async(
-            exception, self, is_consumer=is_consumer
-        )
+        return await self._client._amqp_transport._handle_exception_async(exception, self, is_consumer=is_consumer)
 
     async def _do_retryable_operation(
-        self,
-        operation: Callable[..., Any],
-        timeout: Optional[float] = None,
-        **kwargs: Any
+        self, operation: Callable[..., Any], timeout: Optional[float] = None, **kwargs: Any
     ) -> Optional[Any]:
-        # pylint:disable=protected-access,line-too-long
+        # pylint:disable=protected-access
         timeout_time = (time.time() + timeout) if timeout else None
         retried_times = 0
         last_exception = kwargs.pop("last_exception", None)
@@ -528,11 +478,7 @@ class ConsumerProducerMixin(_MIXIN_BASE):
         while retried_times <= max_retries:
             try:
                 if operation_need_param:
-                    return await operation(
-                        timeout_time=timeout_time,
-                        last_exception=last_exception,
-                        **kwargs
-                    )
+                    return await operation(timeout_time=timeout_time, last_exception=last_exception, **kwargs)
                 return await operation()
             except asyncio.CancelledError:  # pylint: disable=try-except-raise
                 raise

@@ -1,21 +1,13 @@
 trigger: none
 
 extends:
-    template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       BuildTargetingString: azure*
       ServiceDirectory: webpubsub
       MatrixReplace:
         - TestSamples=.*/true
       EnvVars:
-        WEBPUBSUB_TENANT_ID: $(webpubsub-tenant-id)
-        WEBPUBSUB_CLIENT_ID: $(webpubsub-client-id)
-        WEBPUBSUB_CLIENT_SECRET: $(webpubsub-client-secret)
-        WEBPUBSUB_SUBSCRIPTION_ID: $(webpubsub-subscription-id)
-        AZURE_TENANT_ID: $(webpubsub-tenant-id)
-        AZURE_CLIENT_ID: $(webpubsub-client-id)
-        AZURE_CLIENT_SECRET: $(webpubsub-client-secret)
-        AZURE_SUBSCRIPTION_ID: $(webpubsub-subscription-id)
         WEBPUBSUB_REVERSE_PROXY_ENDPOINT: $(webpubsub-reverse-proxy-endpoint)
         WEBPUBSUB_ENDPOINT: $(webpubsub-endpoint)
         WEBPUBSUB_CONNECTION_STRING: $(webpubsub-connection-string)

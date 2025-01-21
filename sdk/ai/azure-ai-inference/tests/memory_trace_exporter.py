@@ -34,6 +34,6 @@ class MemoryTraceExporter(SpanExporter):
 
     def get_spans_by_name(self, name: str) -> List[Span]:
         return [span for span in self._trace_list if span.name == name]
-    
+
     def get_spans(self) -> List[Span]:
         return [span for span in self._trace_list]

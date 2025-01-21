@@ -9,6 +9,11 @@ from .parse_functions import (
     update_build_config,
     compare_string_to_glob_array,
     get_ci_config,
+    get_version_py,
+    get_pyproject,
+    VERSION_REGEX,
+    VERSION_PY,
+    OLD_VERSION_PY
 )
 
 __all__ = [
@@ -22,4 +27,9 @@ __all__ = [
     "update_build_config",
     "compare_string_to_glob_array",
     "get_ci_config",
+    "get_version_py",
+    "get_pyproject",
+    "VERSION_REGEX",
+    "VERSION_PY",
+    "OLD_VERSION_PY"
 ]

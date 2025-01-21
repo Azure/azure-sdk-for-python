@@ -20,12 +20,12 @@ class TestWebSiteManagementWorkflowRunsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_workflow_runs_list(self, resource_group):
         response = self.client.workflow_runs.list(
             resource_group_name=resource_group.name,
             name="str",
             workflow_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,13 +33,13 @@ class TestWebSiteManagementWorkflowRunsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_workflow_runs_get(self, resource_group):
         response = self.client.workflow_runs.get(
             resource_group_name=resource_group.name,
             name="str",
             workflow_name="str",
             run_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -47,13 +47,13 @@ class TestWebSiteManagementWorkflowRunsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_cancel(self, resource_group):
+    def test_workflow_runs_cancel(self, resource_group):
         response = self.client.workflow_runs.cancel(
             resource_group_name=resource_group.name,
             name="str",
             workflow_name="str",
             run_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself

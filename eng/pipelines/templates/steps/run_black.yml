@@ -1,6 +1,5 @@
 parameters:
   ServiceDirectory: ''
-  ValidateFormatting: false
   EnvVars: {}
   AdditionalTestArgs: ''
 
@@ -19,10 +18,13 @@ steps:
   - task: PythonScript@0
     displayName: 'Run Black'
     inputs:
-      scriptPath: 'scripts/devops_tasks/validate_formatting.py'
+      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
       arguments: >-
         "$(TargetingString)"
-        --service_directory="${{ parameters.ServiceDirectory }}"
-        --validate="${{ parameters.ValidateFormatting }}"
+        --mark_arg="${{ parameters.TestMarkArgument }}"
+        --service="${{ parameters.ServiceDirectory }}"
+        --toxenv="black"
+        --filter-type="Omit_management"
+        ${{ parameters.AdditionalTestArgs }}
     env: ${{ parameters.EnvVars }}
-    condition: and(succeededOrFailed(), ne(variables['Skip.Pylint'],'true'))
+    condition: and(succeededOrFailed(), ne(variables['Skip.Black'],'true'))

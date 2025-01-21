@@ -16,16 +16,6 @@ USAGE:
 import asyncio
 from typing import Iterable, Union
 
-from corehttp.runtime import AsyncPipelineClient
-from corehttp.rest import HttpRequest, AsyncHttpResponse
-from corehttp.runtime.policies import (
-    AsyncHTTPPolicy,
-    SansIOHTTPPolicy,
-    HeadersPolicy,
-    UserAgentPolicy,
-    AsyncRetryPolicy,
-)
-
 
 async def sample_pipeline_client():
     # [START build_async_pipeline_client]

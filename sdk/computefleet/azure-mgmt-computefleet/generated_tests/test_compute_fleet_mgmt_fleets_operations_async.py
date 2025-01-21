@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -21,7 +22,7 @@ class TestComputeFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_fleets_get(self, resource_group):
         response = await self.client.fleets.get(
             resource_group_name=resource_group.name,
             fleet_name="str",
@@ -32,7 +33,7 @@ class TestComputeFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_fleets_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.fleets.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -276,10 +277,255 @@ class TestComputeFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCase):
                                 "timeCreated": "2020-02-20 00:00:00",
                                 "userData": "str",
                             },
+                            "additionalVirtualMachineCapabilities": {
+                                "hibernationEnabled": bool,
+                                "ultraSSDEnabled": bool,
+                            },
                             "computeApiVersion": "str",
                             "platformFaultDomainCount": 0,
                         },
                         "vmSizesProfile": [{"name": "str", "rank": 0}],
+                        "additionalLocationsProfile": {
+                            "locationProfiles": [
+                                {
+                                    "location": "str",
+                                    "virtualMachineProfileOverride": {
+                                        "applicationProfile": {
+                                            "galleryApplications": [
+                                                {
+                                                    "packageReferenceId": "str",
+                                                    "configurationReference": "str",
+                                                    "enableAutomaticUpgrade": bool,
+                                                    "order": 0,
+                                                    "tags": "str",
+                                                    "treatFailureAsDeploymentFailure": bool,
+                                                }
+                                            ]
+                                        },
+                                        "capacityReservation": {"capacityReservationGroup": {"id": "str"}},
+                                        "diagnosticsProfile": {
+                                            "bootDiagnostics": {"enabled": bool, "storageUri": "str"}
+                                        },
+                                        "extensionProfile": {
+                                            "extensions": [
+                                                {
+                                                    "id": "str",
+                                                    "name": "str",
+                                                    "properties": {
+                                                        "autoUpgradeMinorVersion": bool,
+                                                        "enableAutomaticUpgrade": bool,
+                                                        "forceUpdateTag": "str",
+                                                        "protectedSettings": {"str": {}},
+                                                        "protectedSettingsFromKeyVault": {
+                                                            "secretUrl": "str",
+                                                            "sourceVault": {"id": "str"},
+                                                        },
+                                                        "provisionAfterExtensions": ["str"],
+                                                        "provisioningState": "str",
+                                                        "publisher": "str",
+                                                        "settings": {"str": {}},
+                                                        "suppressFailures": bool,
+                                                        "type": "str",
+                                                        "typeHandlerVersion": "str",
+                                                    },
+                                                    "type": "str",
+                                                }
+                                            ],
+                                            "extensionsTimeBudget": "str",
+                                        },
+                                        "hardwareProfile": {
+                                            "vmSizeProperties": {"vCPUsAvailable": 0, "vCPUsPerCore": 0}
+                                        },
+                                        "licenseType": "str",
+                                        "networkProfile": {
+                                            "healthProbe": {"id": "str"},
+                                            "networkApiVersion": "str",
+                                            "networkInterfaceConfigurations": [
+                                                {
+                                                    "name": "str",
+                                                    "properties": {
+                                                        "ipConfigurations": [
+                                                            {
+                                                                "name": "str",
+                                                                "properties": {
+                                                                    "applicationGatewayBackendAddressPools": [
+                                                                        {"id": "str"}
+                                                                    ],
+                                                                    "applicationSecurityGroups": [{"id": "str"}],
+                                                                    "loadBalancerBackendAddressPools": [{"id": "str"}],
+                                                                    "loadBalancerInboundNatPools": [{"id": "str"}],
+                                                                    "primary": bool,
+                                                                    "privateIPAddressVersion": "str",
+                                                                    "publicIPAddressConfiguration": {
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "deleteOption": "str",
+                                                                            "dnsSettings": {
+                                                                                "domainNameLabel": "str",
+                                                                                "domainNameLabelScope": "str",
+                                                                            },
+                                                                            "idleTimeoutInMinutes": 0,
+                                                                            "ipTags": [
+                                                                                {"ipTagType": "str", "tag": "str"}
+                                                                            ],
+                                                                            "publicIPAddressVersion": "str",
+                                                                            "publicIPPrefix": {"id": "str"},
+                                                                        },
+                                                                        "sku": {"name": "str", "tier": "str"},
+                                                                    },
+                                                                    "subnet": {"id": "str"},
+                                                                },
+                                                            }
+                                                        ],
+                                                        "auxiliaryMode": "str",
+                                                        "auxiliarySku": "str",
+                                                        "deleteOption": "str",
+                                                        "disableTcpStateTracking": bool,
+                                                        "dnsSettings": {"dnsServers": ["str"]},
+                                                        "enableAcceleratedNetworking": bool,
+                                                        "enableFpga": bool,
+                                                        "enableIPForwarding": bool,
+                                                        "networkSecurityGroup": {"id": "str"},
+                                                        "primary": bool,
+                                                    },
+                                                }
+                                            ],
+                                        },
+                                        "osProfile": {
+                                            "adminPassword": "str",
+                                            "adminUsername": "str",
+                                            "allowExtensionOperations": bool,
+                                            "computerNamePrefix": "str",
+                                            "customData": "str",
+                                            "linuxConfiguration": {
+                                                "disablePasswordAuthentication": bool,
+                                                "enableVMAgentPlatformUpdates": bool,
+                                                "patchSettings": {
+                                                    "assessmentMode": "str",
+                                                    "automaticByPlatformSettings": {
+                                                        "bypassPlatformSafetyChecksOnUserSchedule": bool,
+                                                        "rebootSetting": "str",
+                                                    },
+                                                    "patchMode": "str",
+                                                },
+                                                "provisionVMAgent": bool,
+                                                "ssh": {"publicKeys": [{"keyData": "str", "path": "str"}]},
+                                            },
+                                            "requireGuestProvisionSignal": bool,
+                                            "secrets": [
+                                                {
+                                                    "sourceVault": {"id": "str"},
+                                                    "vaultCertificates": [
+                                                        {"certificateStore": "str", "certificateUrl": "str"}
+                                                    ],
+                                                }
+                                            ],
+                                            "windowsConfiguration": {
+                                                "additionalUnattendContent": [
+                                                    {
+                                                        "componentName": "Microsoft-Windows-Shell-Setup",
+                                                        "content": "str",
+                                                        "passName": "OobeSystem",
+                                                        "settingName": "str",
+                                                    }
+                                                ],
+                                                "enableAutomaticUpdates": bool,
+                                                "enableVMAgentPlatformUpdates": bool,
+                                                "patchSettings": {
+                                                    "assessmentMode": "str",
+                                                    "automaticByPlatformSettings": {
+                                                        "bypassPlatformSafetyChecksOnUserSchedule": bool,
+                                                        "rebootSetting": "str",
+                                                    },
+                                                    "enableHotpatching": bool,
+                                                    "patchMode": "str",
+                                                },
+                                                "provisionVMAgent": bool,
+                                                "timeZone": "str",
+                                                "winRM": {"listeners": [{"certificateUrl": "str", "protocol": "str"}]},
+                                            },
+                                        },
+                                        "scheduledEventsProfile": {
+                                            "osImageNotificationProfile": {"enable": bool, "notBeforeTimeout": "str"},
+                                            "terminateNotificationProfile": {"enable": bool, "notBeforeTimeout": "str"},
+                                        },
+                                        "securityPostureReference": {
+                                            "excludeExtensions": ["str"],
+                                            "id": "str",
+                                            "isOverridable": bool,
+                                        },
+                                        "securityProfile": {
+                                            "encryptionAtHost": bool,
+                                            "encryptionIdentity": {"userAssignedIdentityResourceId": "str"},
+                                            "proxyAgentSettings": {
+                                                "enabled": bool,
+                                                "keyIncarnationId": 0,
+                                                "mode": "str",
+                                            },
+                                            "securityType": "str",
+                                            "uefiSettings": {"secureBootEnabled": bool, "vTpmEnabled": bool},
+                                        },
+                                        "serviceArtifactReference": {"id": "str"},
+                                        "storageProfile": {
+                                            "dataDisks": [
+                                                {
+                                                    "createOption": "str",
+                                                    "lun": 0,
+                                                    "caching": "str",
+                                                    "deleteOption": "str",
+                                                    "diskIOPSReadWrite": 0,
+                                                    "diskMBpsReadWrite": 0,
+                                                    "diskSizeGB": 0,
+                                                    "managedDisk": {
+                                                        "diskEncryptionSet": {"id": "str"},
+                                                        "securityProfile": {
+                                                            "diskEncryptionSet": {"id": "str"},
+                                                            "securityEncryptionType": "str",
+                                                        },
+                                                        "storageAccountType": "str",
+                                                    },
+                                                    "name": "str",
+                                                    "writeAcceleratorEnabled": bool,
+                                                }
+                                            ],
+                                            "diskControllerType": "str",
+                                            "imageReference": {
+                                                "communityGalleryImageId": "str",
+                                                "exactVersion": "str",
+                                                "id": "str",
+                                                "offer": "str",
+                                                "publisher": "str",
+                                                "sharedGalleryImageId": "str",
+                                                "sku": "str",
+                                                "version": "str",
+                                            },
+                                            "osDisk": {
+                                                "createOption": "str",
+                                                "caching": "str",
+                                                "deleteOption": "str",
+                                                "diffDiskSettings": {"option": "str", "placement": "str"},
+                                                "diskSizeGB": 0,
+                                                "image": {"uri": "str"},
+                                                "managedDisk": {
+                                                    "diskEncryptionSet": {"id": "str"},
+                                                    "securityProfile": {
+                                                        "diskEncryptionSet": {"id": "str"},
+                                                        "securityEncryptionType": "str",
+                                                    },
+                                                    "storageAccountType": "str",
+                                                },
+                                                "name": "str",
+                                                "osType": "str",
+                                                "vhdContainers": ["str"],
+                                                "writeAcceleratorEnabled": bool,
+                                            },
+                                        },
+                                        "timeCreated": "2020-02-20 00:00:00",
+                                        "userData": "str",
+                                    },
+                                }
+                            ]
+                        },
                         "provisioningState": "str",
                         "regularPriorityProfile": {"allocationStrategy": "str", "capacity": 0, "minCapacity": 0},
                         "spotPriorityProfile": {
@@ -292,6 +538,28 @@ class TestComputeFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCase):
                         },
                         "timeCreated": "2020-02-20 00:00:00",
                         "uniqueId": "str",
+                        "vmAttributes": {
+                            "memoryInGiB": {"max": 0.0, "min": 0.0},
+                            "vCpuCount": {"max": 0, "min": 0},
+                            "acceleratorCount": {"max": 0, "min": 0},
+                            "acceleratorManufacturers": ["str"],
+                            "acceleratorSupport": "str",
+                            "acceleratorTypes": ["str"],
+                            "architectureTypes": ["str"],
+                            "burstableSupport": "str",
+                            "cpuManufacturers": ["str"],
+                            "dataDiskCount": {"max": 0, "min": 0},
+                            "excludedVMSizes": ["str"],
+                            "localStorageDiskTypes": ["str"],
+                            "localStorageInGiB": {"max": 0.0, "min": 0.0},
+                            "localStorageSupport": "str",
+                            "memoryInGiBPerVCpu": {"max": 0.0, "min": 0.0},
+                            "networkBandwidthInMbps": {"max": 0.0, "min": 0.0},
+                            "networkInterfaceCount": {"max": 0, "min": 0},
+                            "rdmaNetworkInterfaceCount": {"max": 0, "min": 0},
+                            "rdmaSupport": "str",
+                            "vmCategories": ["str"],
+                        },
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
@@ -313,7 +581,7 @@ class TestComputeFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_fleets_begin_update(self, resource_group):
         response = await (
             await self.client.fleets.begin_update(
                 resource_group_name=resource_group.name,
@@ -552,10 +820,255 @@ class TestComputeFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCase):
                                 "timeCreated": "2020-02-20 00:00:00",
                                 "userData": "str",
                             },
+                            "additionalVirtualMachineCapabilities": {
+                                "hibernationEnabled": bool,
+                                "ultraSSDEnabled": bool,
+                            },
                             "computeApiVersion": "str",
                             "platformFaultDomainCount": 0,
                         },
                         "vmSizesProfile": [{"name": "str", "rank": 0}],
+                        "additionalLocationsProfile": {
+                            "locationProfiles": [
+                                {
+                                    "location": "str",
+                                    "virtualMachineProfileOverride": {
+                                        "applicationProfile": {
+                                            "galleryApplications": [
+                                                {
+                                                    "packageReferenceId": "str",
+                                                    "configurationReference": "str",
+                                                    "enableAutomaticUpgrade": bool,
+                                                    "order": 0,
+                                                    "tags": "str",
+                                                    "treatFailureAsDeploymentFailure": bool,
+                                                }
+                                            ]
+                                        },
+                                        "capacityReservation": {"capacityReservationGroup": {"id": "str"}},
+                                        "diagnosticsProfile": {
+                                            "bootDiagnostics": {"enabled": bool, "storageUri": "str"}
+                                        },
+                                        "extensionProfile": {
+                                            "extensions": [
+                                                {
+                                                    "id": "str",
+                                                    "name": "str",
+                                                    "properties": {
+                                                        "autoUpgradeMinorVersion": bool,
+                                                        "enableAutomaticUpgrade": bool,
+                                                        "forceUpdateTag": "str",
+                                                        "protectedSettings": {"str": {}},
+                                                        "protectedSettingsFromKeyVault": {
+                                                            "secretUrl": "str",
+                                                            "sourceVault": {"id": "str"},
+                                                        },
+                                                        "provisionAfterExtensions": ["str"],
+                                                        "provisioningState": "str",
+                                                        "publisher": "str",
+                                                        "settings": {"str": {}},
+                                                        "suppressFailures": bool,
+                                                        "type": "str",
+                                                        "typeHandlerVersion": "str",
+                                                    },
+                                                    "type": "str",
+                                                }
+                                            ],
+                                            "extensionsTimeBudget": "str",
+                                        },
+                                        "hardwareProfile": {
+                                            "vmSizeProperties": {"vCPUsAvailable": 0, "vCPUsPerCore": 0}
+                                        },
+                                        "licenseType": "str",
+                                        "networkProfile": {
+                                            "healthProbe": {"id": "str"},
+                                            "networkApiVersion": "str",
+                                            "networkInterfaceConfigurations": [
+                                                {
+                                                    "name": "str",
+                                                    "properties": {
+                                                        "ipConfigurations": [
+                                                            {
+                                                                "name": "str",
+                                                                "properties": {
+                                                                    "applicationGatewayBackendAddressPools": [
+                                                                        {"id": "str"}
+                                                                    ],
+                                                                    "applicationSecurityGroups": [{"id": "str"}],
+                                                                    "loadBalancerBackendAddressPools": [{"id": "str"}],
+                                                                    "loadBalancerInboundNatPools": [{"id": "str"}],
+                                                                    "primary": bool,
+                                                                    "privateIPAddressVersion": "str",
+                                                                    "publicIPAddressConfiguration": {
+                                                                        "name": "str",
+                                                                        "properties": {
+                                                                            "deleteOption": "str",
+                                                                            "dnsSettings": {
+                                                                                "domainNameLabel": "str",
+                                                                                "domainNameLabelScope": "str",
+                                                                            },
+                                                                            "idleTimeoutInMinutes": 0,
+                                                                            "ipTags": [
+                                                                                {"ipTagType": "str", "tag": "str"}
+                                                                            ],
+                                                                            "publicIPAddressVersion": "str",
+                                                                            "publicIPPrefix": {"id": "str"},
+                                                                        },
+                                                                        "sku": {"name": "str", "tier": "str"},
+                                                                    },
+                                                                    "subnet": {"id": "str"},
+                                                                },
+                                                            }
+                                                        ],
+                                                        "auxiliaryMode": "str",
+                                                        "auxiliarySku": "str",
+                                                        "deleteOption": "str",
+                                                        "disableTcpStateTracking": bool,
+                                                        "dnsSettings": {"dnsServers": ["str"]},
+                                                        "enableAcceleratedNetworking": bool,
+                                                        "enableFpga": bool,
+                                                        "enableIPForwarding": bool,
+                                                        "networkSecurityGroup": {"id": "str"},
+                                                        "primary": bool,
+                                                    },
+                                                }
+                                            ],
+                                        },
+                                        "osProfile": {
+                                            "adminPassword": "str",
+                                            "adminUsername": "str",
+                                            "allowExtensionOperations": bool,
+                                            "computerNamePrefix": "str",
+                                            "customData": "str",
+                                            "linuxConfiguration": {
+                                                "disablePasswordAuthentication": bool,
+                                                "enableVMAgentPlatformUpdates": bool,
+                                                "patchSettings": {
+                                                    "assessmentMode": "str",
+                                                    "automaticByPlatformSettings": {
+                                                        "bypassPlatformSafetyChecksOnUserSchedule": bool,
+                                                        "rebootSetting": "str",
+                                                    },
+                                                    "patchMode": "str",
+                                                },
+                                                "provisionVMAgent": bool,
+                                                "ssh": {"publicKeys": [{"keyData": "str", "path": "str"}]},
+                                            },
+                                            "requireGuestProvisionSignal": bool,
+                                            "secrets": [
+                                                {
+                                                    "sourceVault": {"id": "str"},
+                                                    "vaultCertificates": [
+                                                        {"certificateStore": "str", "certificateUrl": "str"}
+                                                    ],
+                                                }
+                                            ],
+                                            "windowsConfiguration": {
+                                                "additionalUnattendContent": [
+                                                    {
+                                                        "componentName": "Microsoft-Windows-Shell-Setup",
+                                                        "content": "str",
+                                                        "passName": "OobeSystem",
+                                                        "settingName": "str",
+                                                    }
+                                                ],
+                                                "enableAutomaticUpdates": bool,
+                                                "enableVMAgentPlatformUpdates": bool,
+                                                "patchSettings": {
+                                                    "assessmentMode": "str",
+                                                    "automaticByPlatformSettings": {
+                                                        "bypassPlatformSafetyChecksOnUserSchedule": bool,
+                                                        "rebootSetting": "str",
+                                                    },
+                                                    "enableHotpatching": bool,
+                                                    "patchMode": "str",
+                                                },
+                                                "provisionVMAgent": bool,
+                                                "timeZone": "str",
+                                                "winRM": {"listeners": [{"certificateUrl": "str", "protocol": "str"}]},
+                                            },
+                                        },
+                                        "scheduledEventsProfile": {
+                                            "osImageNotificationProfile": {"enable": bool, "notBeforeTimeout": "str"},
+                                            "terminateNotificationProfile": {"enable": bool, "notBeforeTimeout": "str"},
+                                        },
+                                        "securityPostureReference": {
+                                            "excludeExtensions": ["str"],
+                                            "id": "str",
+                                            "isOverridable": bool,
+                                        },
+                                        "securityProfile": {
+                                            "encryptionAtHost": bool,
+                                            "encryptionIdentity": {"userAssignedIdentityResourceId": "str"},
+                                            "proxyAgentSettings": {
+                                                "enabled": bool,
+                                                "keyIncarnationId": 0,
+                                                "mode": "str",
+                                            },
+                                            "securityType": "str",
+                                            "uefiSettings": {"secureBootEnabled": bool, "vTpmEnabled": bool},
+                                        },
+                                        "serviceArtifactReference": {"id": "str"},
+                                        "storageProfile": {
+                                            "dataDisks": [
+                                                {
+                                                    "createOption": "str",
+                                                    "lun": 0,
+                                                    "caching": "str",
+                                                    "deleteOption": "str",
+                                                    "diskIOPSReadWrite": 0,
+                                                    "diskMBpsReadWrite": 0,
+                                                    "diskSizeGB": 0,
+                                                    "managedDisk": {
+                                                        "diskEncryptionSet": {"id": "str"},
+                                                        "securityProfile": {
+                                                            "diskEncryptionSet": {"id": "str"},
+                                                            "securityEncryptionType": "str",
+                                                        },
+                                                        "storageAccountType": "str",
+                                                    },
+                                                    "name": "str",
+                                                    "writeAcceleratorEnabled": bool,
+                                                }
+                                            ],
+                                            "diskControllerType": "str",
+                                            "imageReference": {
+                                                "communityGalleryImageId": "str",
+                                                "exactVersion": "str",
+                                                "id": "str",
+                                                "offer": "str",
+                                                "publisher": "str",
+                                                "sharedGalleryImageId": "str",
+                                                "sku": "str",
+                                                "version": "str",
+                                            },
+                                            "osDisk": {
+                                                "createOption": "str",
+                                                "caching": "str",
+                                                "deleteOption": "str",
+                                                "diffDiskSettings": {"option": "str", "placement": "str"},
+                                                "diskSizeGB": 0,
+                                                "image": {"uri": "str"},
+                                                "managedDisk": {
+                                                    "diskEncryptionSet": {"id": "str"},
+                                                    "securityProfile": {
+                                                        "diskEncryptionSet": {"id": "str"},
+                                                        "securityEncryptionType": "str",
+                                                    },
+                                                    "storageAccountType": "str",
+                                                },
+                                                "name": "str",
+                                                "osType": "str",
+                                                "vhdContainers": ["str"],
+                                                "writeAcceleratorEnabled": bool,
+                                            },
+                                        },
+                                        "timeCreated": "2020-02-20 00:00:00",
+                                        "userData": "str",
+                                    },
+                                }
+                            ]
+                        },
                         "provisioningState": "str",
                         "regularPriorityProfile": {"allocationStrategy": "str", "capacity": 0, "minCapacity": 0},
                         "spotPriorityProfile": {
@@ -568,6 +1081,28 @@ class TestComputeFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCase):
                         },
                         "timeCreated": "2020-02-20 00:00:00",
                         "uniqueId": "str",
+                        "vmAttributes": {
+                            "memoryInGiB": {"max": 0.0, "min": 0.0},
+                            "vCpuCount": {"max": 0, "min": 0},
+                            "acceleratorCount": {"max": 0, "min": 0},
+                            "acceleratorManufacturers": ["str"],
+                            "acceleratorSupport": "str",
+                            "acceleratorTypes": ["str"],
+                            "architectureTypes": ["str"],
+                            "burstableSupport": "str",
+                            "cpuManufacturers": ["str"],
+                            "dataDiskCount": {"max": 0, "min": 0},
+                            "excludedVMSizes": ["str"],
+                            "localStorageDiskTypes": ["str"],
+                            "localStorageInGiB": {"max": 0.0, "min": 0.0},
+                            "localStorageSupport": "str",
+                            "memoryInGiBPerVCpu": {"max": 0.0, "min": 0.0},
+                            "networkBandwidthInMbps": {"max": 0.0, "min": 0.0},
+                            "networkInterfaceCount": {"max": 0, "min": 0},
+                            "rdmaNetworkInterfaceCount": {"max": 0, "min": 0},
+                            "rdmaSupport": "str",
+                            "vmCategories": ["str"],
+                        },
                     },
                     "tags": {"str": "str"},
                 },
@@ -579,7 +1114,7 @@ class TestComputeFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_fleets_begin_delete(self, resource_group):
         response = await (
             await self.client.fleets.begin_delete(
                 resource_group_name=resource_group.name,
@@ -592,7 +1127,7 @@ class TestComputeFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_fleets_list_by_resource_group(self, resource_group):
         response = self.client.fleets.list_by_resource_group(
             resource_group_name=resource_group.name,
         )
@@ -602,7 +1137,7 @@ class TestComputeFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_subscription(self, resource_group):
+    async def test_fleets_list_by_subscription(self, resource_group):
         response = self.client.fleets.list_by_subscription()
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -610,7 +1145,7 @@ class TestComputeFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_virtual_machine_scale_sets(self, resource_group):
+    async def test_fleets_list_virtual_machine_scale_sets(self, resource_group):
         response = self.client.fleets.list_virtual_machine_scale_sets(
             resource_group_name=resource_group.name,
             name="str",

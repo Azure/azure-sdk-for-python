@@ -18,7 +18,7 @@ from azure.eventhub import EventData
 from azure.identity.aio import DefaultAzureCredential
 
 FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
 
 
 async def run():
@@ -35,7 +35,7 @@ async def run():
     async with producer:
         event_data_batch = await producer.create_batch()
         for i in range(to_send_message_cnt):
-            event_data = EventData('D' * bytes_per_message)
+            event_data = EventData("D" * bytes_per_message)
             try:
                 event_data_batch.add(event_data)
             except ValueError:

@@ -1,8 +1,8 @@
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 # The messaging layer defines two concrete types (source and target) to be used as the source and target of a
 # link. These types are supplied in the source and target fields of the attach frame when establishing or
@@ -33,6 +33,7 @@ class TerminusDurability(object):
 
     Determines which state of the terminus is held durably.
     """
+
     #: No Terminus state is retained durably
     NoDurability = 0
     #: Only the existence and configuration of the Terminus is retained durably.
@@ -57,6 +58,7 @@ class ExpiryPolicy(object):
     count down is aborted. If the conditions for the terminus-expiry-policy are subsequently
     re-met, the expiry timer restarts from its originally configured timeout value.
     """
+
     #: The expiry timer starts when Terminus is detached.
     LinkDetach = b"link-detach"
     #: The expiry timer starts when the most recently associated session is ended.
@@ -77,31 +79,32 @@ class DistributionMode(object):
 
     Policies for distributing messages when multiple links are connected to the same node.
     """
+
     #: Once successfully transferred over the link, the message will no longer be available
     #: to other links from the same node.
-    Move = b'move'
+    Move = b"move"
     #: Once successfully transferred over the link, the message is still available for other
     #: links from the same node.
-    Copy = b'copy'
+    Copy = b"copy"
 
 
 class LifeTimePolicy(object):
     #: Lifetime of dynamic node scoped to lifetime of link which caused creation.
     #: A node dynamically created with this lifetime policy will be deleted at the point that the link
     #: which caused its creation ceases to exist.
-    DeleteOnClose = 0x0000002b
+    DeleteOnClose = 0x0000002B
     #: Lifetime of dynamic node scoped to existence of links to the node.
     #: A node dynamically created with this lifetime policy will be deleted at the point that there remain
     #: no links for which the node is either the source or target.
-    DeleteOnNoLinks = 0x0000002c
+    DeleteOnNoLinks = 0x0000002C
     #: Lifetime of dynamic node scoped to existence of messages on the node.
     #: A node dynamically created with this lifetime policy will be deleted at the point that the link which
     #: caused its creation no longer exists and there remain no messages at the node.
-    DeleteOnNoMessages = 0x0000002d
+    DeleteOnNoMessages = 0x0000002D
     #: Lifetime of node scoped to existence of messages on or links to the node.
     #: A node dynamically created with this lifetime policy will be deleted at the point that the there are no
     #: links which have this node as their source or target, and there remain no messages at the node.
-    DeleteOnNoLinksOrMessages = 0x0000002e
+    DeleteOnNoLinksOrMessages = 0x0000002E
 
 
 class SupportedOutcomes(object):
@@ -129,24 +132,24 @@ class ApacheFilters(object):
 
 
 Source = namedtuple(
-    'Source',
+    "Source",
     [
-        'address',
-        'durable',
-        'expiry_policy',
-        'timeout',
-        'dynamic',
-        'dynamic_node_properties',
-        'distribution_mode',
-        'filters',
-        'default_outcome',
-        'outcomes',
-        'capabilities'
+        "address",
+        "durable",
+        "expiry_policy",
+        "timeout",
+        "dynamic",
+        "dynamic_node_properties",
+        "distribution_mode",
+        "filters",
+        "default_outcome",
+        "outcomes",
+        "capabilities",
     ],
-    defaults=(None,) * 11 # type: ignore
-    )
-Source._code = 0x00000028 # type: ignore # pylint: disable=protected-access
-Source._definition = ( # type: ignore # pylint: disable=protected-access
+    defaults=(None,) * 11,  # type: ignore
+)
+Source._code = 0x00000028  # type: ignore # pylint: disable=protected-access
+Source._definition = (  # type: ignore # pylint: disable=protected-access
     FIELD("address", AMQPTypes.string, False, None, False),
     FIELD("durable", AMQPTypes.uint, False, "none", False),
     FIELD("expiry_policy", AMQPTypes.symbol, False, ExpiryPolicy.SessionEnd, False),
@@ -157,7 +160,8 @@ Source._definition = ( # type: ignore # pylint: disable=protected-access
     FIELD("filters", FieldDefinition.filter_set, False, None, False),
     FIELD("default_outcome", ObjDefinition.delivery_state, False, None, False),
     FIELD("outcomes", AMQPTypes.symbol, False, None, True),
-    FIELD("capabilities", AMQPTypes.symbol, False, None, True))
+    FIELD("capabilities", AMQPTypes.symbol, False, None, True),
+)
 if _CAN_ADD_DOCSTRING:
     Source.__doc__ = """
     For containers which do not implement address resolution (and do not admit spontaneous link
@@ -219,27 +223,20 @@ if _CAN_ADD_DOCSTRING:
 
 
 Target = namedtuple(
-    'Target',
-    [
-        'address',
-        'durable',
-        'expiry_policy',
-        'timeout',
-        'dynamic',
-        'dynamic_node_properties',
-        'capabilities'
-    ],
-    defaults=(None,) * 7 # type: ignore
-    )
-Target._code = 0x00000029 # type: ignore # pylint: disable=protected-access
-Target._definition = ( # type: ignore # pylint: disable=protected-access
+    "Target",
+    ["address", "durable", "expiry_policy", "timeout", "dynamic", "dynamic_node_properties", "capabilities"],
+    defaults=(None,) * 7,  # type: ignore
+)
+Target._code = 0x00000029  # type: ignore # pylint: disable=protected-access
+Target._definition = (  # type: ignore # pylint: disable=protected-access
     FIELD("address", AMQPTypes.string, False, None, False),
     FIELD("durable", AMQPTypes.uint, False, "none", False),
     FIELD("expiry_policy", AMQPTypes.symbol, False, ExpiryPolicy.SessionEnd, False),
     FIELD("timeout", AMQPTypes.uint, False, 0, False),
     FIELD("dynamic", AMQPTypes.boolean, False, False, False),
     FIELD("dynamic_node_properties", FieldDefinition.node_properties, False, None, False),
-    FIELD("capabilities", AMQPTypes.symbol, False, None, True))
+    FIELD("capabilities", AMQPTypes.symbol, False, None, True),
+)
 if _CAN_ADD_DOCSTRING:
     Target.__doc__ = """
     For containers which do not implement address resolution (and do not admit spontaneous link attachment

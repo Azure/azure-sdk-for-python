@@ -8,8 +8,8 @@ from typing import Any, Dict, Iterable, List, Optional, Union, cast
 
 from marshmallow import ValidationError
 
-from azure.ai.ml._restclient.v2024_07_01_preview import AzureMachineLearningWorkspaces as ServiceClient072024Preview
-from azure.ai.ml._restclient.v2024_07_01_preview.models import ManagedNetworkProvisionOptions
+from azure.ai.ml._restclient.v2024_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102024Preview
+from azure.ai.ml._restclient.v2024_10_01_preview.models import ManagedNetworkProvisionOptions
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._http_utils import HttpPipeline
@@ -52,7 +52,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient072024Preview,
+        service_client: ServiceClient102024Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Any,
@@ -61,7 +61,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
             kwargs.pop("dataplane_client").workspaces if kwargs.get("dataplane_client") else None
         )
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline", None)
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self._provision_network_operation = service_client.managed_network_provisions
         super().__init__(
             operation_scope=operation_scope,
@@ -142,7 +142,6 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
     @monitor_with_activity(ops_logger, "Workspace.Get_Keys", ActivityType.PUBLICAPI)
     @distributed_trace
-    # pylint: disable=arguments-differ
     def get_keys(self, name: Optional[str] = None) -> Optional[WorkspaceKeys]:
         """Get WorkspaceKeys by workspace name.
 
@@ -433,7 +432,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
             return Workspace._from_rest_object(deserialized)
 
         with modified_operation_client(self.dataplane_workspace_operations, workspace_base_uri):
-            result = self.dataplane_workspace_operations.begin_hub_join(
+            result = self.dataplane_workspace_operations.begin_hub_join(  # type: ignore
                 resource_group_name=resource_group,
                 workspace_name=hub_name,
                 project_workspace_name=workspace.name,

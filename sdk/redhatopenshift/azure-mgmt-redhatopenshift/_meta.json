@@ -1,18 +1,11 @@
 {
-  "commit": "260f4f4012b3bebac33ea4db5c56105dd2fd33da",
+  "commit": "2776cb32cd6ca9ea953a13ae26c954b989e83367",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.15.0",
+    "@autorest/python@6.19.0",
     "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/redhatopenshift/resource-manager/Microsoft.RedHatOpenShift/openshiftclusters/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.15.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
-  "readme": "specification/redhatopenshift/resource-manager/Microsoft.RedHatOpenShift/openshiftclusters/readme.md",
-  "package-2020-04-30": "2024-05-15 18:25:55 +0200 7dae1e5f45f91ec89d16a628e102341490ced849 stable/2020-04-30/redhatopenshift.json",
-  "package-2021-09-01-preview": "2024-05-15 18:25:55 +0200 7dae1e5f45f91ec89d16a628e102341490ced849 preview/2021-09-01-preview/redhatopenshift.json",
-  "package-2022-04-01": "2024-05-15 18:25:55 +0200 7dae1e5f45f91ec89d16a628e102341490ced849 stable/2022-04-01/redhatopenshift.json",
-  "package-2022-09-04": "2024-05-15 18:25:55 +0200 7dae1e5f45f91ec89d16a628e102341490ced849 stable/2022-09-04/redhatopenshift.json",
-  "package-2023-04-01": "2024-05-15 18:25:55 +0200 7dae1e5f45f91ec89d16a628e102341490ced849 stable/2023-04-01/redhatopenshift.json",
-  "package-2023-09-04": "2024-05-15 18:25:55 +0200 7dae1e5f45f91ec89d16a628e102341490ced849 stable/2023-09-04/redhatopenshift.json",
-  "package-2023-11": "2024-05-15 18:25:55 +0200 7dae1e5f45f91ec89d16a628e102341490ced849 stable/2023-11-22/redhatopenshift.json"
+  "autorest_command": "autorest specification/redhatopenshift/resource-manager/Microsoft.RedHatOpenShift/openshiftclusters/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --tag=package-2023-11 --use=@autorest/python@6.19.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "readme": "specification/redhatopenshift/resource-manager/Microsoft.RedHatOpenShift/openshiftclusters/readme.md"
 }

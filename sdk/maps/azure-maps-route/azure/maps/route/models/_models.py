@@ -19,7 +19,7 @@ else:
 
 if TYPE_CHECKING:
     from .. import models as _models
-JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class BatchRequest(_serialization.Model):
@@ -429,7 +429,7 @@ class GeoJsonFeature(GeoJsonObject, GeoJsonFeatureData):
         self.properties = properties
         self.id = id
         self.feature_type = feature_type
-        self.type: str = "Feature" # type: ignore
+        self.type: str = "Feature"  # type: ignore
 
 
 class GeoJsonFeatureCollectionData(_serialization.Model):
@@ -491,7 +491,7 @@ class GeoJsonFeatureCollection(GeoJsonObject, GeoJsonFeatureCollectionData):
         """
         super().__init__(features=features, **kwargs)
         self.features = features
-        self.type: str = "FeatureCollection" # type: ignore
+        self.type: str = "FeatureCollection"  # type: ignore
 
 
 class GeoJsonGeometry(GeoJsonObject):
@@ -537,7 +537,7 @@ class GeoJsonGeometry(GeoJsonObject):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type: str = "GeoJsonGeometry" # type: ignore
+        self.type: str = "GeoJsonGeometry"  # type: ignore
 
 
 class GeoJsonGeometryCollectionData(_serialization.Model):

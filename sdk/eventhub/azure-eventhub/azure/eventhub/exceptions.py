@@ -24,17 +24,17 @@ class EventHubError(Exception):
         if details and isinstance(details, Exception):
             # TODO: issue #34266
             try:
-                condition = details.condition.value.decode("UTF-8") # type: ignore[attr-defined]
+                condition = details.condition.value.decode("UTF-8")  # type: ignore[attr-defined]
             except AttributeError:
                 try:
-                    condition = details.condition.decode("UTF-8") # type: ignore[attr-defined]
+                    condition = details.condition.decode("UTF-8")  # type: ignore[attr-defined]
                 except AttributeError:
                     condition = None
             if condition:
                 _, _, self.error = condition.partition(":")
                 self.message += "\nError: {}".format(self.error)
             try:
-                self._parse_error(details.description) # type: ignore[attr-defined]
+                self._parse_error(details.description)  # type: ignore[attr-defined]
                 for detail in self.details:
                     self.message += "\n{}".format(detail)
             except:  # pylint: disable=bare-except
@@ -43,11 +43,7 @@ class EventHubError(Exception):
 
     def _parse_error(self, error_list: Union[str, bytes]) -> None:
         details = []
-        self.message = (
-            error_list
-            if isinstance(error_list, str)
-            else error_list.decode("UTF-8")
-        )
+        self.message = error_list if isinstance(error_list, str) else error_list.decode("UTF-8")
         details_index = self.message.find(" Reference:")
         if details_index >= 0:
             details_msg = self.message[details_index + 1 :]

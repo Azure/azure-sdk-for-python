@@ -23,7 +23,7 @@
 """
 
 from . import exceptions
-from .http_constants import StatusCodes
+from .http_constants import StatusCodes as _StatusCodes
 
 
 class VectorSessionToken(object):
@@ -119,7 +119,7 @@ class VectorSessionToken(object):
 
         if self.version == other.version and len(self.local_lsn_by_region) != len(other.local_lsn_by_region):
             raise exceptions.CosmosHttpResponseError(
-                status_code=StatusCodes.INTERNAL_SERVER_ERROR,
+                status_code=_StatusCodes.INTERNAL_SERVER_ERROR,
                 message=("Compared session tokens '%s' and '%s' have unexpected regions."
                          % (self.session_token, other.session_token))
             )
@@ -146,7 +146,7 @@ class VectorSessionToken(object):
                 highest_local_lsn_by_region[region_id] = max(local_lsn1, local_lsn2)
             elif self.version == other.version:
                 raise exceptions.CosmosHttpResponseError(
-                    status_code=StatusCodes.INTERNAL_SERVER_ERROR,
+                    status_code=_StatusCodes.INTERNAL_SERVER_ERROR,
                     message=("Compared session tokens '%s' and '%s' have unexpected regions."
                              % (self.session_token, other.session_token))
                 )
