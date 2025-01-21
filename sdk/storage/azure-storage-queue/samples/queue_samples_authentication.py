@@ -26,7 +26,7 @@ USAGE:
 """
 
 
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 import os
 import sys
 
@@ -62,16 +62,7 @@ class QueueAuthSamples(object):
         # Instantiate a QueueServiceClient using a shared access key
         # [START create_queue_service_client]
         from azure.storage.queue import QueueServiceClient
-        from azure.storage.queue import QueueServiceClient, generate_account_sas, ResourceTypes, AccountSasPermissions
-
-        sas_token = generate_account_sas(
-            self.account_name, # type: ignore
-            self.access_key,
-            resource_types=ResourceTypes(service=True),
-            permission=AccountSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(hours=1)
-        )
-        queue_service = QueueServiceClient(account_url=self.account_url, credential=sas_token)
+        queue_service = QueueServiceClient(account_url=self.account_url, credential=self.access_key)
         # [END create_queue_service_client]
 
         # Get information for the Queue Service
@@ -85,7 +76,8 @@ class QueueAuthSamples(object):
 
         # [START create_queue_service_client_oauth]
         # Get a token credential for authentication
-
+        from azure.identity import DefaultAzureCredential
+        token_credential = DefaultAzureCredential()
         # Instantiate a QueueServiceClient using a token credential
         from azure.storage.queue import QueueServiceClient
         queue_service = QueueServiceClient(account_url=self.account_url, credential=self.access_key)

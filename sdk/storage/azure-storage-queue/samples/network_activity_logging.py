@@ -62,8 +62,7 @@ for queue in queues:
     queue_client = service_client.get_queue_client(queue.name)
     messages = queue_client.peek_messages(max_messages=20, logging_enable=True)
     for message in messages:
-        try:            
-            sanitized_content = ''.join([c if ord(c) < 128 else '?' for c in message.content])
-            print(' Message: {!r}'.format(base64.b64decode(sanitized_content)))
-        except binascii.Error:
+        try:
+            print(' Message: {!r}'.format(base64.b64decode(message.content)))
+        except (binascii.Error, ValueError) as e:
             print('  Message: {}'.format(message.content))
