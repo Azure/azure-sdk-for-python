@@ -4,6 +4,7 @@
 
 ### Bugs Fixed
 - Fixed an issue where custom transports may encounter `AttributeError` on certain requests.
+- Fixed request handler to handle `None` value for `expires_on` keyword to `set_file_expiry` API.
 
 ## 12.18.0 (2024-11-13)
 
