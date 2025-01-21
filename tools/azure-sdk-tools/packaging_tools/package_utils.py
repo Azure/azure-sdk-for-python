@@ -67,13 +67,16 @@ def change_log_generate(
     # try new changelog tool
     if prefolder and not is_multiapi:
         try:
-            return change_log_new(str(Path(prefolder) / package_name), not (last_stable_release and tag_is_stable))
+            return (
+                change_log_new(str(Path(prefolder) / package_name), not (last_stable_release and tag_is_stable)),
+                last_version,
+            )
         except Exception as e:
             _LOGGER.warning(f"Failed to generate changelog with breaking_change_detector: {e}")
 
     # fallback to old changelog tool
     _LOGGER.info("Fallback to old changelog tool")
-    return change_log_main(f"{package_name}:pypi", f"{package_name}:latest", tag_is_stable)
+    return (change_log_main(f"{package_name}:pypi", f"{package_name}:latest", tag_is_stable), last_version)
 
 
 def extract_breaking_change(changelog):
