@@ -33,6 +33,7 @@ class TestEvaluatePerformance:
     def test_bulk_evaluate(self, big_f1_data_file):
         """Test local-only evaluation against 100 inputs."""
         f1_score_eval = F1ScoreEvaluator()
+
         # run the evaluation with targets
         start = time.perf_counter()
         result = evaluate(
