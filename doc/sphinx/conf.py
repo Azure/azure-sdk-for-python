@@ -66,8 +66,8 @@ intersphinx_mapping = {
     'trio': ('https://trio.readthedocs.io/en/stable/', None),
     'msal': ('https://msal-python.readthedocs.io/en/latest/', None),
     # Azure packages
-    'azure-core': ('https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/', None),
-    'azure-identity': ('https://azuresdkdocs.blob.core.windows.net/$web/python/azure-identity/latest/', None),
+    'azure-core': ('https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/', None),
+    'azure-identity': ('https://azuresdkdocs.z19.web.core.windows.net/python/azure-identity/latest/', None),
 }
 
 autodoc_member_order = 'groupwise'

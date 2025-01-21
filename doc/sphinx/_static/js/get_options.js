@@ -23,11 +23,11 @@ function currentPackage(){
 function httpGetAsync(targetUrl, callback)
 {
     var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function() { 
+    xmlHttp.onreadystatechange = function() {
       if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
           callback(xmlHttp.responseText);
     }
-    xmlHttp.open("GET", targetUrl, true); // true for asynchronous 
+    xmlHttp.open("GET", targetUrl, true); // true for asynchronous
     xmlHttp.send(null);
 }
 
@@ -45,8 +45,8 @@ function hideSelectors(selectors){
 
 function populateOptions(optionSelector, otherSelectors){
   if(currentPackage()){
-    var versionRequestUrl = "https://azuresdkdocs.blob.core.windows.net/$web/" + SELECTED_LANGUAGE + "/" + currentPackage() + "/versioning/versions"
-    
+    var versionRequestUrl = "https://azuresdkdocs.z19.web.core.windows.net/" + SELECTED_LANGUAGE + "/" + currentPackage() + "/versioning/versions"
+
     httpGetAsync(versionRequestUrl, function(responseText){
       if(responseText){
         options = responseText.match(/[^\r\n]+/g)
@@ -68,7 +68,7 @@ function populateOptions(optionSelector, otherSelectors){
 
 function populateVersionDropDown(selector, values){
     var select = $(selector)
-    
+
     $('option', select).remove()
 
     $.each(values, function(index, text) {
@@ -80,17 +80,17 @@ function populateVersionDropDown(selector, values){
       select.selectedIndex = 0
     }
     else {
-      select.val(version)  
+      select.val(version)
     }
 }
 
 function getPackageUrl(language, package, version){
-  return "https://azuresdkdocs.blob.core.windows.net/$web/" + language + "/" + package + "/"+ version + "/index.html"
+  return "https://azuresdkdocs.z19.web.core.windows.net/" + language + "/" + package + "/"+ version + "/index.html"
 }
 
 function populateIndexList(selector, packageName)
 {
-  url = "https://azuresdkdocs.blob.core.windows.net/$web/" + SELECTED_LANGUAGE + "/" + packageName + "/versioning/versions"
+  url = "https://azuresdkdocs.z19.web.windows.net/" + SELECTED_LANGUAGE + "/" + packageName + "/versioning/versions"
 
   httpGetAsync(url, function (responseText){
     if(responseText){
