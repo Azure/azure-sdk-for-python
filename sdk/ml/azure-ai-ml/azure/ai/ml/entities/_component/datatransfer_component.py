@@ -24,7 +24,7 @@ from .._util import convert_ordered_dict_to_dict, validate_attribute_type
 from .component import Component
 
 
-class DataTransferComponent(Component):  # pylint: disable=too-many-instance-attributes
+class DataTransferComponent(Component):
     """DataTransfer component version, used to define a data transfer component.
 
     :param task: Task type in the data transfer component. Possible values are "copy_data",
@@ -280,7 +280,7 @@ class DataTransferImportComponent(DataTransferComponent):
 
 
 @experimental
-class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too-many-instance-attributes
+class DataTransferExportComponent(DataTransferComponent):
     """DataTransfer export component version, used to define a data transfer export component.
 
     :param sink: The sink of external data and databases.

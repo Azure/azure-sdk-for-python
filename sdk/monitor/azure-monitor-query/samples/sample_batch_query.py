@@ -15,6 +15,7 @@ For more information on DefaultAzureCredential, see https://learn.microsoft.com/
 **Note** - Although this example uses pandas to print the response, it's optional and
 isn't a required package for querying. Alternatively, native Python can be used as well.
 """
+
 # [START send_query_batch]
 from datetime import datetime, timedelta, timezone
 import os

@@ -10,7 +10,7 @@ from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.constants import AssetTypes, DataGenerationTaskType, DataGenerationType
-from azure.ai.ml.distillation import EndpointRequestSettings, PromptSettings, distillation
+from azure.ai.ml.model_customization import EndpointRequestSettings, PromptSettings, distillation
 from azure.ai.ml.entities import ServerlessConnection
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.operations._run_history_constants import JobStatus

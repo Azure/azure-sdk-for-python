@@ -23,7 +23,6 @@ USAGE:
         `your-azure-region` is the Azure region where your model is deployed.
     2) AZURE_AI_CHAT_KEY - Your model key (a 32-character string). Keep it secret.
 """
-# mypy: disable-error-code="union-attr,arg-type"
 # pyright: reportAttributeAccessIssue=false
 
 
@@ -73,7 +72,7 @@ def sample_chat_completions_from_input_prompt_string():
     messages = prompt_template.create_messages(input=input, rules=rules, chat_history=chat_history)
 
     client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-    response = client.complete(messages=messages)  # type: ignore[reportCallIssue, reportArgumentType]
+    response = client.complete(messages=messages)
 
     print(response.choices[0].message.content)
 

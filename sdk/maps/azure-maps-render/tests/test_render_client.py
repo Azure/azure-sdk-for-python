@@ -10,6 +10,7 @@ from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from render_preparer import MapsRenderPreparer
 from azure.maps.render import TilesetID
 
+
 class TestMapsRenderClient(AzureRecordedTestCase):
     def setup_method(self, method):
         self.client = MapsRenderClient(
@@ -20,22 +21,19 @@ class TestMapsRenderClient(AzureRecordedTestCase):
     @MapsRenderPreparer()
     @recorded_by_proxy
     def test_get_map_tile(self):
-        result = self.client.get_map_tile(
-            tileset_id=TilesetID.MICROSOFT_BASE,
-            z=6,
-            x=9,
-            y=22,
-            tile_size="512"
-        )
+        result = self.client.get_map_tile(tileset_id=TilesetID.MICROSOFT_BASE, z=6, x=9, y=22, tile_size="512")
 
         import types
+
         assert isinstance(result, types.GeneratorType)
 
     @MapsRenderPreparer()
     @recorded_by_proxy
     def test_get_map_tileset(self):
         result = self.client.get_map_tileset(tileset_id=TilesetID.MICROSOFT_BASE)
-        assert result.get("name", False) and (result["name"] == "microsoft.base" or result["name"] == "microsoft.core.vector")
+        assert result.get("name", False) and (
+            result["name"] == "microsoft.base" or result["name"] == "microsoft.core.vector"
+        )
         assert len(result.get("tiles", [])) > 0
 
     @MapsRenderPreparer()

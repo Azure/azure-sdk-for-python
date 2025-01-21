@@ -1,12 +1,62 @@
 # Release History
 
-## 1.22.0 (unreleased)
+## 1.25.0 (Unreleased)
+
+### Features Added
+
+### Bugs Fixed
+  - #39187 - Submitting a Command job created using the __call__ method on another Command is missing outputs
+
+## 1.24.0 (2025-01-07)
+
+### Bugs Fixed
+  - Fixed disableLocalAuthentication handling while creating amlCompute
+  - Fixed model download issue
+
+## 1.23.1 (2025-01-07)
+
+### Bugs Fixed
+  - Removed marshmallow _T reference
+
+## 1.23.0 (2024-12-05)
+
+### Features Added
+  - Added support for IP-based access control to default and hub workspaces. 
+  - Add support for additional include in spark component.
+  - Adding enterprise agent feature for AI Hub and AI Project. Adding Create, Delete and Get operations.
+  - Removing preview tag for following connections type
+    - Azure AI Search
+    - Azure AI Content Safety
+    - Azure AI Speech
+    - Azure Blob Storage
+    - Microsoft OneLake
+
+
+## 1.22.3 (2024-11-20)
+
+### Bugs Fixed
+  - Fix error message while resolving mlflow url in get workspace details
+
+## 1.22.2 (2024-11-18)
+
+### Bugs Fixed
+  - **#3620407** - Fix Datastore credentials show up as NoneCredentials
+
+## 1.22.1 (2024-11-13)
+
+
+### Bugs Fixed
+  - **#38493** - Fix error NoneType object is not subscriptable
+
+## 1.22.0 (2024-11-11)
 
 ### Features Added
   - Added support to select firewall sku to used for provisioning azure firewall when FQDN rules are added in
   AllowOnlyApprovedOutbound mode. FirewallSku options are `Standard` or `Basic`, defaults to `Standard`
   - Update TLS version from 1.0 to 1.2
-  - Added support for Distillation jobs. Can be created by importing `disillation` from `azure.ai.ml.distillation`
+  - Added support for Distillation jobs. Can be created by importing `disillation` from `azure.ai.ml.model_customization`
+  - Added Workspace property `ProvisionNetworkNow` to trigger the provisioning of the managed VNet with the default
+    Options when creating a Workspace with the managed VNet enabled, or else it does nothing
 ### Bugs Fixed
   - Fix send email notification issue in model monitoring
 

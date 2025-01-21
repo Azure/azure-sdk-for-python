@@ -26,7 +26,7 @@ USAGE:
 # These lines are intentionally excluded from the sample code, we use them to configure any vars
 # or to tweak usage in ways that keep samples looking consistent when rendered in docs and tools
 import os
-os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv("AZ_OPENAI_ENDPOINT")
+os.environ["AZURE_OPENAI_ENDPOINT"] = os.environ["AZ_OPENAI_ENDPOINT"]
 os.environ["AZURE_OPENAI_COMPLETIONS_DEPLOYMENT"] = "gpt-35-turbo-instruct"
 
 def completions_aoai_quickstart() -> None:
@@ -40,8 +40,8 @@ def completions_aoai_quickstart() -> None:
 
     client = AzureOpenAI(
         azure_ad_token_provider=token_provider,
-        azure_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT"),
-        api_version=os.getenv("API_VERSION_GA")
+        azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT"],
+        api_version=os.environ["API_VERSION_GA"]
         )
 
     #This will correspond to the custom name you chose for your deployment when you deployed a model.

@@ -136,7 +136,7 @@ class TestSimulator:
             text="Test text",
             num_queries=1,
             query_response_generating_prompty=None,
-            query_response_generating_prompty_kwargs={},
+            query_response_generating_prompty_options={},
             prompty_model_config={},
         )
         assert query_responses == [{"q": "query1", "r": "response1"}]
@@ -148,7 +148,7 @@ class TestSimulator:
         user_flow = simulator._load_user_simulation_flow(
             user_simulator_prompty=None,
             prompty_model_config={},
-            user_simulator_prompty_kwargs={},
+            user_simulator_prompty_options={},
         )
         assert user_flow is not None
 
@@ -169,7 +169,7 @@ class TestSimulator:
             max_conversation_turns=4,
             task="Test task",
             user_simulator_prompty=None,
-            user_simulator_prompty_kwargs={},
+            user_simulator_prompty_options={},
             target=AsyncMock(),
             api_call_delay_sec=0,
             progress_bar=AsyncMock(),
@@ -329,7 +329,7 @@ class TestSimulator:
             api_call_delay_sec=1,
             prompty_model_config={},
             user_simulator_prompty=None,
-            user_simulator_prompty_kwargs={},
+            user_simulator_prompty_options={},
             concurrent_async_tasks=1,
         )
 
@@ -354,7 +354,7 @@ class TestSimulator:
             target=AsyncMock(),
             api_call_delay_sec=1,
             user_simulator_prompty=None,
-            user_simulator_prompty_kwargs={},
+            user_simulator_prompty_options={},
             text="some text",
         )
 

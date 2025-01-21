@@ -1,20 +1,93 @@
 # Release History
 
-## 1.0.0b6 (Unreleased)
+## 1.2.0 (Unreleased)
 
 ### Features Added
+- CSV files are now supported as data file inputs with `evaluate()` API. The CSV file should have a header row with column names that match the `data` and `target` fields in the `evaluate()` method and the filename should be passed as the `data` parameter.
+
+### Breaking Changes
+
+### Bugs Fixed
+- Removed `[remote]` extra. This is no longer needed when tracking results in Azure AI Studio.
+- Fixed `AttributeError: 'NoneType' object has no attribute 'get'` while running simulator with 1000+ results
+- Fixed the non adversarial simulator to run in task-free mode
+
+### Other Changes
+- Changed minimum required python version to use this package from 3.8 to 3.9
+- Stop dependency on the local promptflow service. No promptflow service will automatically start when running evaluation.
+
+## 1.1.0 (2024-12-12)
+
+### Features Added
+- Added image support in `ContentSafetyEvaluator`, `ViolenceEvaluator`, `SexualEvaluator`, `SelfHarmEvaluator`, `HateUnfairnessEvaluator` and `ProtectedMaterialEvaluator`. Provide image URLs or base64 encoded images in `conversation` input for image evaluation. See below for an example:
+
+```python
+evaluator = ContentSafetyEvaluator(credential=azure_cred, azure_ai_project=project_scope)
+conversation = {
+    "messages": [
+        {
+            "role": "system",
+            "content": [
+                {"type": "text", "text": "You are an AI assistant that understands images."}
+            ],
+        },
+        {
+            "role": "user",
+            "content": [
+                {"type": "text", "text": "Can you describe this image?"},
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": "https://cdn.britannica.com/68/178268-050-5B4E7FB6/Tom-Cruise-2013.jpg"
+                    },
+                },
+            ],
+        },
+        {
+            "role": "assistant",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "The image shows a man with short brown hair smiling, wearing a dark-colored shirt.",
+                }
+            ],
+        },
+    ]
+}
+print("Calling Content Safety Evaluator for multi-modal")
+score = evaluator(conversation=conversation)
+```
+
+- Please switch to generic evaluators for image evaluations as mentioned above. `ContentSafetyMultimodalEvaluator`, `ContentSafetyMultimodalEvaluatorBase`, `ViolenceMultimodalEvaluator`, `SexualMultimodalEvaluator`, `SelfHarmMultimodalEvaluator`, `HateUnfairnessMultimodalEvaluator` and `ProtectedMaterialMultimodalEvaluator` will be deprecated in the next release.
+
+### Bugs Fixed
+- Removed `[remote]` extra. This is no longer needed when tracking results in Azure AI Foundry portal.
+- Fixed `AttributeError: 'NoneType' object has no attribute 'get'` while running simulator with 1000+ results
+
+## 1.0.1 (2024-11-15)
+
+### Bugs Fixed
+- Removing `azure-ai-inference` as dependency.
+- Fixed `AttributeError: 'NoneType' object has no attribute 'get'` while running simulator with 1000+ results
+
+## 1.0.0 (2024-11-13)
 
 ### Breaking Changes
 - The `parallel` parameter has been removed from composite evaluators: `QAEvaluator`, `ContentSafetyChatEvaluator`, and `ContentSafetyMultimodalEvaluator`. To control evaluator parallelism, you can now use the `_parallel` keyword argument, though please note that this private parameter may change in the future.
+- Parameters `query_response_generating_prompty_kwargs` and `user_simulator_prompty_kwargs` have been renamed to `query_response_generating_prompty_options` and `user_simulator_prompty_options` in the Simulator's __call__ method.
 
 ### Bugs Fixed
 - Fixed an issue where the `output_path` parameter in the `evaluate` API did not support relative path.
 - Output of adversarial simulators are of type `JsonLineList` and the helper function `to_eval_qr_json_lines` now outputs context from both user and assistant turns along with `category` if it exists in the conversation
 - Fixed an issue where during long-running simulations, API token expires causing "Forbidden" error. Instead, users can now set an environment variable `AZURE_TOKEN_REFRESH_INTERVAL` to refresh the token more frequently to prevent expiration and ensure continuous operation of the simulation.
 - Fixed an issue with the `ContentSafetyEvaluator` that caused parallel execution of sub-evaluators to fail. Parallel execution is now enabled by default again, but can still be disabled via the '_parallel' boolean keyword argument during class initialization.
+- Fix `evaluate` function not producing aggregated metrics if ANY values to be aggregated were None, NaN, or
+otherwise difficult to process. Such values are ignored fully, so the aggregated metric of `[1, 2, 3, NaN]`
+would be 2, not 1.5.
 
 ### Other Changes
 - Refined error messages for serviced-based evaluators and simulators.
+- Tracing has been disabled due to Cosmos DB initialization issue.
 - Introduced environment variable `AI_EVALS_DISABLE_EXPERIMENTAL_WARNING` to disable the warning message for experimental features.
 - Changed the randomization pattern for `AdversarialSimulator` such that there is an almost equal number of Adversarial harm categories (e.g. Hate + Unfairness, Self-Harm, Violence, Sex) represented in the  `AdversarialSimulator` outputs. Previously, for 200 `max_simulation_results` a user might see 140 results belonging to the 'Hate + Unfairness' category and 40 results belonging to the 'Self-Harm' category. Now, user will see 50 results for each of Hate + Unfairness, Self-Harm, Violence, and Sex.
 - For the `DirectAttackSimulator`, the prompt templates used to generate simulated outputs for each Adversarial harm category will no longer be in a randomized order by default. To override this behavior, pass `randomize_order=True` when you call the `DirectAttackSimulator`, for example:

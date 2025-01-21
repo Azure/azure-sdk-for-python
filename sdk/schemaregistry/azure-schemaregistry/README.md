@@ -494,13 +494,13 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [azure_sub]: https://azure.microsoft.com/free/
 [python_logging]: https://docs.python.org/3/library/logging.html
 [sr_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry/samples
-[api_reference]: https://docs.microsoft.com/python/api/overview/azure/schemaregistry-readme
+[api_reference]: https://learn.microsoft.com/python/api/overview/azure/schemaregistry-readme
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry
 [change_log]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry/CHANGELOG.md
-[schemas]: https://docs.microsoft.com/azure/event-hubs/schema-registry-overview#schemas
-[schema_groups]: https://docs.microsoft.com/azure/event-hubs/schema-registry-overview#schema-groups
+[schemas]: https://learn.microsoft.com/azure/event-hubs/schema-registry-overview#schemas
+[schema_groups]: https://learn.microsoft.com/azure/event-hubs/schema-registry-overview#schema-groups
 [schemaregistry_service]: https://aka.ms/schemaregistry
 [token_credential_interface]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core/azure/core/credentials.py
 [eventhubs_repo]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub
 [pypi_azure_identity]: https://pypi.org/project/azure-identity/
-[quickstart_guide]: https://docs.microsoft.com/azure/event-hubs/create-schema-registry
+[quickstart_guide]: https://learn.microsoft.com/azure/event-hubs/create-schema-registry

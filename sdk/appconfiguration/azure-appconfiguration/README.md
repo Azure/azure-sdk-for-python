@@ -109,7 +109,7 @@ export AZURE_CLIENT_SECRET="random password"
 export AZURE_TENANT_ID="tenant id"
 ```
 
-Assign one of the applicable [App Configuration roles](https://docs.microsoft.com/azure/azure-app-configuration/rest-api-authorization-azure-ad) to the service principal.
+Assign one of the applicable [App Configuration roles](https://learn.microsoft.com/azure/azure-app-configuration/rest-api-authorization-azure-ad) to the service principal.
 
 ##### Create a client
 Once the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and
@@ -447,9 +447,9 @@ see the [Code of Conduct FAQ][coc_faq] or contact [opencode@microsoft.com][coc_c
 additional questions or comments.
 
 <!-- LINKS -->
-[appconfig_docs]: https://docs.microsoft.com/azure/azure-app-configuration/
+[appconfig_docs]: https://learn.microsoft.com/azure/azure-app-configuration/
 [appconfig_rest]: https://github.com/Azure/AppConfiguration#rest-api-reference
-[azure_cli]: https://docs.microsoft.com/cli/azure
+[azure_cli]: https://learn.microsoft.com/cli/azure
 [azure_sub]: https://azure.microsoft.com/free/
 [configuration_client_class]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/azure/appconfiguration/_azure_appconfiguration_client.py
 [package]: https://pypi.org/project/azure-appconfiguration/
@@ -461,4 +461,4 @@ additional questions or comments.
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
 [troubleshooting_guide]: https://aka.ms/azsdk/python/appconfiguration/troubleshoot
-[label_concept]: https://docs.microsoft.com/azure/azure-app-configuration/concept-key-value#label-keys
+[label_concept]: https://learn.microsoft.com/azure/azure-app-configuration/concept-key-value#label-keys

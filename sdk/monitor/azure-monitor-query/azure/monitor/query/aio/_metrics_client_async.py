@@ -17,7 +17,7 @@ from .._enums import MetricAggregationType
 from ._helpers_async import get_authentication_policy
 from .._helpers import get_timespan_iso8601_endpoints, get_subscription_id_from_resource
 
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class MetricsClient:  # pylint: disable=client-accepts-api-version-keyword

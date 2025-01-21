@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +7,7 @@
 # --------------------------------------------------------------------------
 import datetime
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, Optional, Type, TypeVar, cast
+from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar, cast
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -35,7 +34,7 @@ from ...operations._operations import (
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -60,7 +59,6 @@ class MetricDefinitionsOperations:
 
     @distributed_trace
     def list(self, resource_uri: str, *, metricnamespace: Optional[str] = None, **kwargs: Any) -> AsyncIterable[JSON]:
-        # pylint: disable=line-too-long
         """Lists the metric definitions for the resource.
 
         :param resource_uri: The identifier of the resource. Required.
@@ -77,48 +75,34 @@ class MetricDefinitionsOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "category": "str",  # Optional. Custom category name for this metric.
+                    "category": "str",
                     "dimensions": [
                         {
-                            "value": "str",  # The invariant value. Required.
-                            "localizedValue": "str"  # Optional. The display name.
+                            "value": "str",
+                            "localizedValue": "str"
                         }
                     ],
-                    "displayDescription": "str",  # Optional. Detailed description of this
-                      metric.
-                    "id": "str",  # Optional. The resource identifier of the metric definition.
-                    "isDimensionRequired": bool,  # Optional. Flag to indicate whether the
-                      dimension is required.
+                    "displayDescription": "str",
+                    "id": "str",
+                    "isDimensionRequired": bool,
                     "metricAvailabilities": [
                         {
-                            "retention": "1 day, 0:00:00",  # Optional. The retention
-                              period for the metric at the specified timegrain.  Expressed as a
-                              duration 'PT1M', 'P1D', etc.
-                            "timeGrain": "1 day, 0:00:00"  # Optional. The time grain
-                              specifies a supported aggregation interval for the metric. Expressed as a
-                              duration 'PT1M', 'P1D', etc.
+                            "retention": "1 day, 0:00:00",
+                            "timeGrain": "1 day, 0:00:00"
                         }
                     ],
-                    "metricClass": "str",  # Optional. The class of the metric. Known values are:
-                      "Availability", "Transactions", "Errors", "Latency", and "Saturation".
+                    "metricClass": "str",
                     "name": {
-                        "value": "str",  # The invariant value. Required.
-                        "localizedValue": "str"  # Optional. The display name.
+                        "value": "str",
+                        "localizedValue": "str"
                     },
-                    "namespace": "str",  # Optional. The namespace the metric belongs to.
-                    "primaryAggregationType": "str",  # Optional. The primary aggregation type
-                      value defining how to use the values for display. Known values are: "None",
-                      "Average", "Count", "Minimum", "Maximum", and "Total".
-                    "resourceId": "str",  # Optional. The resource identifier of the resource
-                      that emitted the metric.
+                    "namespace": "str",
+                    "primaryAggregationType": "str",
+                    "resourceId": "str",
                     "supportedAggregationTypes": [
-                        "str"  # Optional. The collection of what aggregation types are
-                          supported.
+                        "str"
                     ],
-                    "unit": "str"  # Optional. The unit of the metric. Known values are: "Count",
-                      "Bytes", "Seconds", "CountPerSecond", "BytesPerSecond", "Percent",
-                      "MilliSeconds", "ByteSeconds", "Unspecified", "Cores", "MilliCores", "NanoCores",
-                      and "BitsPerSecond".
+                    "unit": "str"
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -126,7 +110,7 @@ class MetricDefinitionsOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -180,8 +164,6 @@ class MetricDefinitionsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                if _stream:
-                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
@@ -226,7 +208,6 @@ class MetricsOperations:
         rollupby: Optional[str] = None,
         **kwargs: Any
     ) -> JSON:
-        # pylint: disable=line-too-long
         """**Lists the metric values for a resource**.
 
         :param resource_uri: The identifier of the resource. Required.
@@ -255,13 +236,13 @@ class MetricsOperations:
         :paramtype orderby: str
         :keyword filter: The **$filter** is used to reduce the set of metric data
          returned.:code:`<br>`Example::code:`<br>`Metric contains metadata A, B and C.:code:`<br>`-
-         Return all time series of C where A = a1 and B = b1 or b2:code:`<br>`\ **$filter=A eq ‘a1’ and
-         B eq ‘b1’ or B eq ‘b2’ and C eq ‘*’**\ :code:`<br>`- Invalid variant::code:`<br>`\ **$filter=A
-         eq ‘a1’ and B eq ‘b1’ and C eq ‘*’ or B = ‘b2’**\ :code:`<br>`This is invalid because the
-         logical or operator cannot separate two different metadata names.:code:`<br>`- Return all time
-         series where A = a1, B = b1 and C = c1::code:`<br>`\ **$filter=A eq ‘a1’ and B eq ‘b1’ and C eq
-         ‘c1’**\ :code:`<br>`- Return all time series where A = a1:code:`<br>`\ **$filter=A eq ‘a1’ and
-         B eq ‘\ *’ and C eq ‘*\ ’**. Default value is None.
+         Return all time series of C where A = a1 and B = b1 or b2:code:`<br>`\\ **$filter=A eq ‘a1’ and
+         B eq ‘b1’ or B eq ‘b2’ and C eq ‘*’**\\ :code:`<br>`- Invalid variant::code:`<br>`\\
+         **$filter=A eq ‘a1’ and B eq ‘b1’ and C eq ‘*’ or B = ‘b2’**\\ :code:`<br>`This is invalid
+         because the logical or operator cannot separate two different metadata names.:code:`<br>`-
+         Return all time series where A = a1, B = b1 and C = c1::code:`<br>`\\ **$filter=A eq ‘a1’ and B
+         eq ‘b1’ and C eq ‘c1’**\\ :code:`<br>`- Return all time series where A = a1:code:`<br>`\\
+         **$filter=A eq ‘a1’ and B eq ‘\\ *’ and C eq ‘*\\ ’**. Default value is None.
         :paramtype filter: str
         :keyword result_type: Reduces the set of data collected. The syntax allowed depends on the
          operation. See the operation's description for details. Known values are: "Data" and
@@ -293,81 +274,53 @@ class MetricsOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "timespan": "str",  # The timespan for which the data was retrieved. Its
-                      value consists of two datetimes concatenated, separated by '/'.  This may be
-                      adjusted in the future and returned back from what was originally requested.
-                      Required.
+                    "timespan": "str",
                     "value": [
                         {
-                            "id": "str",  # The metric Id. Required.
+                            "id": "str",
                             "name": {
-                                "value": "str",  # The invariant value. Required.
-                                "localizedValue": "str"  # Optional. The display
-                                  name.
+                                "value": "str",
+                                "localizedValue": "str"
                             },
                             "timeseries": [
                                 {
                                     "data": [
                                         {
                                             "timeStamp": "2020-02-20
-                                              00:00:00",  # The timestamp for the metric value in ISO
-                                              8601 format. Required.
-                                            "average": 0.0,  # Optional.
-                                              The average value in the time range.
-                                            "count": 0.0,  # Optional.
-                                              The number of samples in the time range. Can be used to
-                                              determine the number of values that contributed to the
-                                              average value.
-                                            "maximum": 0.0,  # Optional.
-                                              The greatest value in the time range.
-                                            "minimum": 0.0,  # Optional.
-                                              The least value in the time range.
-                                            "total": 0.0  # Optional. The
-                                              sum of all of the values in the time range.
+                                              00:00:00",
+                                            "average": 0.0,
+                                            "count": 0.0,
+                                            "maximum": 0.0,
+                                            "minimum": 0.0,
+                                            "total": 0.0
                                         }
                                     ],
                                     "metadatavalues": [
                                         {
                                             "name": {
-                                                "value": "str",  #
-                                                  The invariant value. Required.
+                                                "value": "str",
                                                 "localizedValue":
-                                                  "str"  # Optional. The display name.
+                                                  "str"
                                             },
-                                            "value": "str"  # Optional.
-                                              The value of the metadata.
+                                            "value": "str"
                                         }
                                     ]
                                 }
                             ],
-                            "type": "str",  # The resource type of the metric resource.
-                              Required.
-                            "unit": "str",  # The unit of the metric. Required. Known
-                              values are: "Count", "Bytes", "Seconds", "CountPerSecond",
-                              "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds",
-                              "Unspecified", "Cores", "MilliCores", "NanoCores", and "BitsPerSecond".
-                            "displayDescription": "str",  # Optional. Detailed
-                              description of this metric.
-                            "errorCode": "str",  # Optional. 'Success' or the error
-                              details on query failures for this metric.
-                            "errorMessage": "str"  # Optional. Error message encountered
-                              querying this specific metric.
+                            "type": "str",
+                            "unit": "str",
+                            "displayDescription": "str",
+                            "errorCode": "str",
+                            "errorMessage": "str"
                         }
                     ],
-                    "cost": 0,  # Optional. The integer value representing the relative cost of
-                      the query.
-                    "interval": "str",  # Optional. The interval (window size) for which the
-                      metric data was returned in ISO 8601 duration format with a special case for
-                      'FULL' value that returns single datapoint for entire time span requested (""
-                      *Examples: PT15M, PT1H, P1D, FULL*"" ).  This may be adjusted and different from
-                      what was originally requested if AutoAdjustTimegrain=true is specified. This is
-                      not present if a metadata request was made.
-                    "namespace": "str",  # Optional. The namespace of the metrics being queried.
-                    "resourceregion": "str"  # Optional. The region of the resource being queried
-                      for metrics.
+                    "cost": 0,
+                    "interval": "str",
+                    "namespace": "str",
+                    "resourceregion": "str"
                 }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -408,8 +361,6 @@ class MetricsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -459,14 +410,13 @@ class MetricNamespacesOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "classification": "str",  # Optional. Kind of namespace. Known values are:
-                      "Platform", "Custom", and "Qos".
-                    "id": "str",  # Optional. The ID of the metric namespace.
-                    "name": "str",  # Optional. The escaped name of the namespace.
+                    "classification": "str",
+                    "id": "str",
+                    "name": "str",
                     "properties": {
-                        "metricNamespaceName": "str"  # Optional. The metric namespace name.
+                        "metricNamespaceName": "str"
                     },
-                    "type": "str"  # Optional. The type of the namespace.
+                    "type": "str"
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -474,7 +424,7 @@ class MetricNamespacesOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -528,8 +478,6 @@ class MetricNamespacesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                if _stream:
-                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 

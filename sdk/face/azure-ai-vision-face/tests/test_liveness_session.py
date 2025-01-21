@@ -63,7 +63,7 @@ class TestLivenessSession(AzureRecordedTestCase):
         }
 
         # key = session_id, value = device_correlation_id
-        created_session_dict = dict()
+        created_session_dict = {}
 
         # Create 2 sessions with different device_correlation_id
         for dcid in recorded_device_correlation_ids:

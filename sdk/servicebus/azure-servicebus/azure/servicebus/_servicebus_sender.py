@@ -36,6 +36,8 @@ from ._common.constants import (
     MGMT_REQUEST_MESSAGE_ID,
     MGMT_REQUEST_PARTITION_KEY,
     MAX_MESSAGE_LENGTH_BYTES,
+    MAX_BATCH_SIZE_STANDARD,
+    MAX_BATCH_SIZE_PREMIUM,
 )
 
 if TYPE_CHECKING:
@@ -46,7 +48,6 @@ if TYPE_CHECKING:
     )
 
     try:
-        # pylint:disable=unused-import
         from uamqp import SendClient as uamqp_SendClientSync
         from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
     except ImportError:
@@ -81,7 +82,6 @@ class SenderMixin:
         # TODO: What's the retry overlap between servicebus and pyamqp?
         self._error_policy = self._amqp_transport.create_retry_policy(self._config)
         self._name = kwargs.get("client_identifier") or f"SBSender-{uuid.uuid4()}"
-        self._max_message_size_on_link = 0
         self.entity_name: str = self._entity_name
 
     @classmethod
@@ -187,8 +187,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 topic_name=topic_name,
                 **kwargs,
             )
-
         self._max_message_size_on_link = 0
+        self._max_batch_size_on_link = 0
         self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
         self._handler: Union["pyamqp_SendClientSync", "uamqp_SendClientSync"]
@@ -203,7 +203,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         return self
 
     @classmethod
-    def _from_connection_string(cls, conn_str: str, **kwargs: Any) -> "ServiceBusSender":
+    def _from_connection_string(cls, conn_str: str, **kwargs: Any # pylint: disable=docstring-keyword-should-match-keyword-only
+                                )-> "ServiceBusSender":
         """Create a ServiceBusSender from a connection string.
 
         :param conn_str: The connection string of a Service Bus.
@@ -251,7 +252,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         )
 
     def _open(self):
-        # pylint: disable=protected-access
         if self._running:
             return
         if self._handler:
@@ -267,6 +267,10 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             self._max_message_size_on_link = (
                 self._amqp_transport.get_remote_max_message_size(self._handler) or MAX_MESSAGE_LENGTH_BYTES
             )
+            if self._max_message_size_on_link >= MAX_BATCH_SIZE_PREMIUM:
+                self._max_batch_size_on_link = MAX_BATCH_SIZE_PREMIUM
+            else:
+                self._max_batch_size_on_link = MAX_BATCH_SIZE_STANDARD
         except:
             self._close_handler()
             raise
@@ -275,7 +279,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self,
         message: Union[ServiceBusMessage, ServiceBusMessageBatch],
         timeout: Optional[float] = None,
-        last_exception: Optional[Exception] = None,  # pylint: disable=unused-argument
+        last_exception: Optional[Exception] = None,
     ) -> None:
         self._amqp_transport.send_messages(self, message, _LOGGER, timeout=timeout, last_exception=last_exception)
 
@@ -311,7 +315,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         """
         if kwargs:
             warnings.warn(f"Unsupported keyword args: {kwargs}")
-        # pylint: disable=protected-access
 
         self._check_live()
         obj_messages = transform_outbound_messages(
@@ -425,7 +428,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             raise ValueError("The timeout must be greater than 0.")
 
         try:  # Short circuit noop if an empty list or batch is provided.
-            if len(cast(Union[List, ServiceBusMessageBatch], message)) == 0:  # pylint: disable=len-as-condition
+            if len(cast(Union[List, ServiceBusMessageBatch], message)) == 0:
                 return
         except TypeError:  # continue if ServiceBusMessage
             pass
@@ -501,14 +504,14 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         if not self._max_message_size_on_link:
             self._open_with_retry()
 
-        if max_size_in_bytes and max_size_in_bytes > self._max_message_size_on_link:
+        if max_size_in_bytes and max_size_in_bytes > self._max_batch_size_on_link:
             raise ValueError(
                 f"Max message size: {max_size_in_bytes} is too large, "
-                f"acceptable max batch size is: {self._max_message_size_on_link} bytes."
+                f"acceptable max batch size is: {self._max_batch_size_on_link} bytes."
             )
 
         return ServiceBusMessageBatch(
-            max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link),
+            max_size_in_bytes=(max_size_in_bytes or self._max_batch_size_on_link),
             amqp_transport=self._amqp_transport,
             tracing_attributes={
                 TraceAttributes.TRACE_NET_PEER_NAME_ATTRIBUTE: self.fully_qualified_namespace,

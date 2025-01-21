@@ -24,7 +24,7 @@ class TestHybridComputeManagementMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.machines.delete(
             resource_group_name=resource_group.name,
             machine_name="str",
-            api_version="2024-07-10",
+            api_version="2024-07-31-preview",
         )
 
         # please add some check logic here by yourself
@@ -36,7 +36,7 @@ class TestHybridComputeManagementMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.machines.get(
             resource_group_name=resource_group.name,
             machine_name="str",
-            api_version="2024-07-10",
+            api_version="2024-07-31-preview",
         )
 
         # please add some check logic here by yourself
@@ -48,7 +48,7 @@ class TestHybridComputeManagementMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.machines.begin_assess_patches(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-07-10",
+            api_version="2024-07-31-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -76,7 +76,7 @@ class TestHybridComputeManagementMachinesOperations(AzureMgmtRecordedTestCase):
                     "maxPatchPublishDate": "2020-02-20 00:00:00",
                 },
             },
-            api_version="2024-07-10",
+            api_version="2024-07-31-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -87,7 +87,7 @@ class TestHybridComputeManagementMachinesOperations(AzureMgmtRecordedTestCase):
     def test_list_by_resource_group(self, resource_group):
         response = self.client.machines.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-07-10",
+            api_version="2024-07-31-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -97,7 +97,7 @@ class TestHybridComputeManagementMachinesOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_list_by_subscription(self, resource_group):
         response = self.client.machines.list_by_subscription(
-            api_version="2024-07-10",
+            api_version="2024-07-31-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

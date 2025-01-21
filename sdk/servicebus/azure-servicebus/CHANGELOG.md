@@ -1,20 +1,31 @@
 # Release History
 
-## 7.12.4 (Unreleased)
+## 7.13.1 (Unreleased)
 
 ### Features Added
-
-- Added `ssl_context` parameter to the clients to allow users to pass in the SSL context, in which case, `connection_verify` will be ignored if specified.([#37246](https://github.com/Azure/azure-sdk-for-python/issues/37246))
+- Added in emulator support, ServiceBusAdministrationClient is currently not supported by the emulator.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
-- Fixed a broken f-string present in a `ValueError` when using the async client ([37695](https://github.com/Azure/azure-sdk-for-python/issues/37695))
+### Other Changes
+
+## 7.13.0 (2024-11-12)
+
+### Features Added
+
+- Added `ssl_context` parameter to the clients to allow users to pass in the SSL context, in which case, `connection_verify` will be ignored if specified.([#37246](https://github.com/Azure/azure-sdk-for-python/issues/37246))
+
+### Bugs Fixed
+
+- Fixed a broken f-string present in a `ValueError` when using the async client. ([37695](https://github.com/Azure/azure-sdk-for-python/issues/37695))
+- Fixed a bug with the incorrect error being raised for larger than allowed batch size. ([38260](https://github.com/Azure/azure-sdk-for-python/issues/38260))
+- Fixed a bug with an error being raised when the fully-qualified namespace included a port, rather than ignoring the port. ([37547](https://github.com/Azure/azure-sdk-for-python/issues/37547))
 
 ### Other Changes
 
-- Added logging to track received messages.
+- Added debug logging to track received messages.
 
 ## 7.12.3 (2024-09-19)
 
@@ -774,7 +785,7 @@ Version 7.0.0b1 is a preview of our efforts to create a client library that is u
 
 * Introduces new AMQP-based API.
 * Original HTTP-based API still available under new namespace: azure.servicebus.control_client
-* For full API changes, please see updated [reference documentation](https://docs.microsoft.com/python/api/azure-servicebus/azure.servicebus?view=azure-python).
+* For full API changes, please see updated [reference documentation](https://learn.microsoft.com/python/api/azure-servicebus/azure.servicebus?view=azure-python).
 
 Within the new namespace, the original HTTP-based API from version 0.21.1 remains unchanged (i.e. no additional features or bugfixes)
 so for those intending to only use HTTP operations - there is no additional benefit in updating at this time.

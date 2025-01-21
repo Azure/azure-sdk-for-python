@@ -33,6 +33,9 @@
     "sdk/batch/azure-batch/**",
     "sdk/ai/**/index/**",
     "sdk/ai/azure-ai-generative/tests/**",
+    "sdk/ai/azure-ai-projects/samples/agents/nifty_500_quarterly_results.csv",
+    "/sdk/ai/azure-ai-projects/samples/evaluations/async_samples/data/**",
+    "/sdk/ai/azure-ai-projects/samples/evaluations/data/**",
     "sdk/ai/azure-ai-resources/azure/ai/resources/_index/_langchain/vendor/**",
     "sdk/ai/azure-ai-resources/azure/ai/resources/_restclient/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
@@ -74,6 +77,7 @@
     "sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/**",
     "sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_forms/**",
     "sdk/documentintelligence/azure-ai-documentintelligence/tests/sample_forms/**",
+    "sdk/documentintelligence/test-resources.json",
     "sdk/personalizer/azure-ai-personalizer/azure/ai/personalizer/**",
     "sdk/identity/azure-identity/images/**",
     "sdk/identity/azure-identity/tests/pod-identity/**",
@@ -94,6 +98,8 @@
     "sdk/translation/azure-ai-translation-document/doc/**",
     "sdk/translation/azure-ai-translation-document/tests/glossaries-valid.csv",
     "sdk/storage/azure-storage-blob/**",
+    "sdk/eventhub/azure-eventhub-checkpointstoreblob/azure/eventhub/extensions/checkpointstoreblob/_vendor/**",
+    "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/azure/eventhub/extensions/checkpointstoreblobaio/_vendor/**",
     "sdk/storage/azure-storage-extensions/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_utils/_virtual_cluster_utils/_restclient/**",
@@ -576,6 +582,12 @@
       "filename": "tools/azure-sdk-tools/gh_tools/**",
       "words": [
         "JOBID",
+        "vnext"
+      ]
+    },
+    {
+      "filename": "tools/azure-sdk-tools/tests/test_labels.py",
+      "words": [
         "vnext"
       ]
     },
@@ -1322,6 +1334,20 @@
       ]
     },
     {
+      "filename": "sdk/ai/azure-ai-projects/**",
+      "words": [
+        "ENTRAID",
+        "entraid",
+        "aiservices",
+        "OTEL",
+        "GENAI",
+        "fspath",
+        "myindexname",
+        "wttr",
+        "azureopenai"
+      ]
+    },
+    {
       "filename": "sdk/ai/azure-ai-inference/**",
       "words": [
         "ctxt",
@@ -1362,6 +1388,7 @@
         "fmeasure",
         "upia",
         "xpia",
+        "expirable",
       ]
     },
     {

@@ -22,6 +22,8 @@ from .._common.constants import (
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
     MGMT_REQUEST_SEQUENCE_NUMBERS,
     MAX_MESSAGE_LENGTH_BYTES,
+    MAX_BATCH_SIZE_PREMIUM,
+    MAX_BATCH_SIZE_STANDARD,
 )
 from .._common import mgmt_handlers
 from .._common.utils import transform_outbound_messages
@@ -40,7 +42,6 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
     try:
-        # pylint:disable=unused-import
         from uamqp.async_ops.client_async import SendClientAsync as uamqp_SendClientAsync
         from uamqp.authentication import JWTTokenAsync as uamqp_JWTTokenAuthAsync
     except ImportError:
@@ -140,8 +141,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 topic_name=topic_name,
                 **kwargs,
             )
-
         self._max_message_size_on_link = 0
+        self._max_batch_size_on_link = 0
         self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
         self._handler: Union["pyamqp_SendClientAsync", "uamqp_SendClientAsync"]
@@ -155,7 +156,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         return self
 
     @classmethod
-    def _from_connection_string(cls, conn_str: str, **kwargs: Any) -> "ServiceBusSender":
+    def _from_connection_string(cls, conn_str: str, **kwargs: Any) -> "ServiceBusSender": # pylint: disable=docstring-keyword-should-match-keyword-only
         """Create a ServiceBusSender from a connection string.
 
         :param str conn_str: The connection string of a Service Bus.
@@ -200,7 +201,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         )
 
     async def _open(self):
-        # pylint: disable=protected-access
         if self._running:
             return
         if self._handler:
@@ -215,6 +215,10 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             self._max_message_size_on_link = (
                 self._amqp_transport.get_remote_max_message_size(self._handler) or MAX_MESSAGE_LENGTH_BYTES
             )
+            if self._max_message_size_on_link >= MAX_BATCH_SIZE_PREMIUM:
+                self._max_batch_size_on_link = MAX_BATCH_SIZE_PREMIUM
+            else:
+                self._max_batch_size_on_link = MAX_BATCH_SIZE_STANDARD
         except:
             await self._close_handler()
             raise
@@ -261,7 +265,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         """
         if kwargs:
             warnings.warn(f"Unsupported keyword args: {kwargs}")
-        # pylint: disable=protected-access
 
         self._check_live()
         obj_messages = transform_outbound_messages(
@@ -383,7 +386,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             raise ValueError("The timeout must be greater than 0.")
 
         try:  # Short circuit noop if an empty list or batch is provided.
-            if len(cast(Union[List, ServiceBusMessageBatch], message)) == 0:  # pylint: disable=len-as-condition
+            if len(cast(Union[List, ServiceBusMessageBatch], message)) == 0:
                 return
         except TypeError:  # continue if ServiceBusMessage
             pass
@@ -458,14 +461,14 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         if not self._max_message_size_on_link:
             await self._open_with_retry()
 
-        if max_size_in_bytes and max_size_in_bytes > self._max_message_size_on_link:
+        if max_size_in_bytes and max_size_in_bytes > self._max_batch_size_on_link:
             raise ValueError(
                 f"Max message size: {max_size_in_bytes} is too large, "
-                f"acceptable max batch size is: {self._max_message_size_on_link} bytes."
+                f"acceptable max batch size is: {self._max_batch_size_on_link} bytes."
             )
 
         return ServiceBusMessageBatch(
-            max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link),
+            max_size_in_bytes=(max_size_in_bytes or self._max_batch_size_on_link),
             amqp_transport=self._amqp_transport,
             tracing_attributes={
                 TraceAttributes.TRACE_NET_PEER_NAME_ATTRIBUTE: self.fully_qualified_namespace,

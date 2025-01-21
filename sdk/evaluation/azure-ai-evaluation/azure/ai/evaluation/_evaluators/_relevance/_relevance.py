@@ -48,6 +48,9 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
     _PROMPTY_FILE = "relevance.prompty"
     _RESULT_KEY = "relevance"
 
+    id = "azureml://registries/azureml/models/Relevance-Evaluator/versions/4"
+    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+
     @override
     def __init__(self, model_config):
         current_dir = os.path.dirname(__file__)

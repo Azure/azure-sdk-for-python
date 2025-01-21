@@ -28,7 +28,7 @@ class DocumentIntelligenceClient(DIClientGenerated):
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2024-07-31-preview". Note that overriding this default value may result in unsupported
+     "2024-11-30". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
@@ -59,7 +59,7 @@ class DocumentIntelligenceAdministrationClient(DIAClientGenerated):
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2024-07-31-preview". Note that overriding this default value may result in unsupported
+     "2024-11-30". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """

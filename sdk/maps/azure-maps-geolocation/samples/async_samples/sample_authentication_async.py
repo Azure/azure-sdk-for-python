@@ -26,6 +26,7 @@ import asyncio
 import os
 import sys
 
+
 async def authentication_maps_service_client_with_subscription_key_credential_async():
     # [START create_maps_geolocation_service_client_with_key_async]
     from azure.core.credentials import AzureKeyCredential
@@ -40,6 +41,7 @@ async def authentication_maps_service_client_with_subscription_key_credential_as
         result = await maps_geolocation_client.get_country_code(ip_address="2001:4898:80e8:b::189")
 
     print(result)
+
 
 async def authentication_maps_service_client_with_aad_credential_async():
     """DefaultAzureCredential will use the values from these environment
@@ -65,7 +67,8 @@ async def main():
     await authentication_maps_service_client_with_subscription_key_credential_async()
     await authentication_maps_service_client_with_aad_credential_async()
 
-if __name__ == '__main__':
-    if sys.platform == 'win32':
+
+if __name__ == "__main__":
+    if sys.platform == "win32":
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(main())

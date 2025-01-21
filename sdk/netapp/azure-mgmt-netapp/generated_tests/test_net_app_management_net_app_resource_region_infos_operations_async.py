@@ -24,7 +24,7 @@ class TestNetAppManagementNetAppResourceRegionInfosOperationsAsync(AzureMgmtReco
     async def test_list(self, resource_group):
         response = self.client.net_app_resource_region_infos.list(
             location="str",
-            api_version="2024-07-01",
+            api_version="2024-07-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -35,7 +35,7 @@ class TestNetAppManagementNetAppResourceRegionInfosOperationsAsync(AzureMgmtReco
     async def test_get(self, resource_group):
         response = await self.client.net_app_resource_region_infos.get(
             location="str",
-            api_version="2024-07-01",
+            api_version="2024-07-01-preview",
         )
 
         # please add some check logic here by yourself

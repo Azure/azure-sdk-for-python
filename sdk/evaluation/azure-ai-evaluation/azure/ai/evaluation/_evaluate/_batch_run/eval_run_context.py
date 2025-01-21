@@ -14,6 +14,7 @@ from azure.ai.evaluation._constants import (
     OTEL_EXPORTER_OTLP_TRACES_TIMEOUT_DEFAULT,
     PF_BATCH_TIMEOUT_SEC,
     PF_BATCH_TIMEOUT_SEC_DEFAULT,
+    PF_DISABLE_TRACING,
 )
 
 from ..._user_agent import USER_AGENT
@@ -49,6 +50,7 @@ class EvalRunContext:
         if isinstance(self.client, ProxyClient):
             os.environ[PF_FLOW_ENTRY_IN_TMP] = "true"
             os.environ[PF_FLOW_META_LOAD_IN_SUBPROCESS] = "false"
+            os.environ[PF_DISABLE_TRACING] = "true"
 
             if os.environ.get(PF_BATCH_TIMEOUT_SEC) is None:
                 os.environ[PF_BATCH_TIMEOUT_SEC] = str(PF_BATCH_TIMEOUT_SEC_DEFAULT)
@@ -76,6 +78,7 @@ class EvalRunContext:
         if isinstance(self.client, ProxyClient):
             os.environ.pop(PF_FLOW_ENTRY_IN_TMP, None)
             os.environ.pop(PF_FLOW_META_LOAD_IN_SUBPROCESS, None)
+            os.environ.pop(PF_DISABLE_TRACING, None)
 
             if self._is_batch_timeout_set_by_system:
                 os.environ.pop(PF_BATCH_TIMEOUT_SEC, None)

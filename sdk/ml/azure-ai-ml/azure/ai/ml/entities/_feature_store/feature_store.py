@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=too-many-instance-attributes,protected-access
+# pylint: disable=protected-access
 
 
 from os import PathLike
@@ -171,7 +171,7 @@ class FeatureStore(Workspace):
         if not rest_obj:
             return None
 
-        workspace_object = Workspace._from_rest_object(rest_obj)
+        workspace_object = Workspace._from_rest_object(rest_obj, v2_service_context)
         if workspace_object is not None:
             return FeatureStore(
                 name=str(workspace_object.name),
@@ -222,6 +222,5 @@ class FeatureStore(Workspace):
         return FeatureStore(**loaded_schema)
 
     def _to_dict(self) -> Dict:
-        # pylint: disable=no-member
         res: dict = FeatureStoreSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return res
