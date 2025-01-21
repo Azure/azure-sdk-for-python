@@ -248,8 +248,6 @@ class AdversarialSimulator:
             sim_result = await task
             sim_results.append(sim_result)
             progress_bar.update(1)
-            with open("/Users/nagkumar/Documents/msft.nosync/azure-sdk-for-python/sdk/evaluation/azure-ai-evaluation/samples/outputfile.jsonl", "a") as file:
-                file.write(json.dumps({"conversation": {"messages": sim_result["messages"]}}) + "\n")
         progress_bar.close()
 
         return JsonLineList(sim_results)
