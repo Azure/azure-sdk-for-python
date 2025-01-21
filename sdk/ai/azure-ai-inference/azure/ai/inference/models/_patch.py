@@ -267,13 +267,13 @@ class ImageUrl(ImageUrlGenerated):
         file and encodes it as a base64 string, which together with the image format
         is then used to format the JSON `url` value passed in the request payload.
 
-        :ivar image_file: The name of the local image file to load. Required.
-        :vartype image_file: str
-        :ivar image_format: The MIME type format of the image. For example: "jpeg", "png". Required.
-        :vartype image_format: str
-        :ivar detail: The evaluation quality setting to use, which controls relative prioritization of
+        :keyword image_file: The name of the local image file to load. Required.
+        :paramtype image_file: str
+        :keyword image_format: The MIME type format of the image. For example: "jpeg", "png". Required.
+        :paramtype image_format: str
+        :keyword detail: The evaluation quality setting to use, which controls relative prioritization of
          speed, token consumption, and accuracy. Known values are: "auto", "low", and "high".
-        :vartype detail: str or ~azure.ai.inference.models.ImageDetailLevel
+        :paramtype detail: str or ~azure.ai.inference.models.ImageDetailLevel
         :return: An ImageUrl object with the image data encoded as a base64 string.
         :rtype: ~azure.ai.inference.models.ImageUrl
         :raises FileNotFoundError: when the image file could not be opened.
@@ -293,13 +293,13 @@ class ImageEmbeddingInput(EmbeddingInputGenerated):
         file and encodes it as a base64 string, which together with the image format
         is then used to format the JSON `url` value passed in the request payload.
 
-        :ivar image_file: The name of the local image file to load. Required.
-        :vartype image_file: str
-        :ivar image_format: The MIME type format of the image. For example: "jpeg", "png". Required.
-        :vartype image_format: str
-        :ivar text: Optional. The text input to feed into the model (like DINO, CLIP).
+        :keyword image_file: The name of the local image file to load. Required.
+        :paramtype image_file: str
+        :keyword image_format: The MIME type format of the image. For example: "jpeg", "png". Required.
+        :paramtype image_format: str
+        :keyword text: Optional. The text input to feed into the model (like DINO, CLIP).
          Returns a 422 error if the model doesn't support the value or parameter.
-        :vartype text: str
+        :paramtype text: str
         :return: An ImageEmbeddingInput object with the image data encoded as a base64 string.
         :rtype: ~azure.ai.inference.models.EmbeddingsInput
         :raises FileNotFoundError: when the image file could not be opened.
