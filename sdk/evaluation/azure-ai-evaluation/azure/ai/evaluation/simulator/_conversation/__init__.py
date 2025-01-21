@@ -43,6 +43,7 @@ class ConversationTurn:
     message: str = ""
     full_response: Optional[Dict[str, Any]] = None
     request: Optional[Any] = None
+    id: Optional[str] = None
 
     def to_openai_chat_format(self, reverse: bool = False) -> Dict[str, str]:
         """Convert the conversation turn to the OpenAI chat format.

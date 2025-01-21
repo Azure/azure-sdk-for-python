@@ -5,7 +5,7 @@
 # pylint: disable=E0401,E0611
 import asyncio
 import logging
-import json
+import uuid
 import random
 from typing import Any, Callable, Dict, List, Optional, Union, cast
 
@@ -187,6 +187,8 @@ class AdversarialSimulator:
                 blame=ErrorBlame.USER_ERROR,
             )
         self._ensure_service_dependencies()
+        conversation_id = str(uuid.uuid4())
+        logger.warning("Use conversation_id to help us debug the issue: %s", str(conversation_id))
         templates = await self.adversarial_template_handler._get_content_harm_template_collections(scenario.value)
         concurrent_async_task = min(concurrent_async_task, 1000)
         semaphore = asyncio.Semaphore(concurrent_async_task)
@@ -237,6 +239,7 @@ class AdversarialSimulator:
                             language=language,
                             semaphore=semaphore,
                             scenario=scenario,
+                            conversation_id=conversation_id
                         )
                     )
                 )
@@ -300,9 +303,10 @@ class AdversarialSimulator:
         language: SupportedLanguages,
         semaphore: asyncio.Semaphore,
         scenario: Union[AdversarialScenario, AdversarialScenarioJailbreak],
+        conversation_id: str,
     ) -> List[Dict]:
         user_bot = self._setup_bot(
-            role=ConversationRole.USER, template=template, parameters=parameters, scenario=scenario
+            role=ConversationRole.USER, template=template, parameters=parameters, scenario=scenario, conversation_id=conversation_id
         )
         system_bot = self._setup_bot(
             target=target, role=ConversationRole.ASSISTANT, template=template, parameters=parameters, scenario=scenario
@@ -323,6 +327,7 @@ class AdversarialSimulator:
                 turn_limit=max_conversation_turns,
                 api_call_delay_sec=api_call_delay_sec,
                 language=language,
+                conversation_id=conversation_id
             )
 
         return self._to_chat_protocol(
@@ -352,6 +357,7 @@ class AdversarialSimulator:
         parameters: TemplateParameters,
         target: Optional[Callable] = None,
         scenario: Union[AdversarialScenario, AdversarialScenarioJailbreak],
+        conversation_id: Optional[str] = None,
     ) -> ConversationBot:
         if role is ConversationRole.USER:
             model = self._get_user_proxy_completion_model(

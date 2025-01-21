@@ -77,6 +77,7 @@ async def simulate_conversation(
     history_limit: int = 5,
     api_call_delay_sec: float = 0,
     logger: logging.Logger = logging.getLogger(__name__),
+    conversation_id: Optional[str] = None,
 ) -> Tuple[Optional[str], List[ConversationTurn]]:
     """
     Simulate a conversation between the given bots.
@@ -95,6 +96,8 @@ async def simulate_conversation(
     :paramtype api_call_delay_sec: float
     :keyword logger: The logger to use for logging. Defaults to the logger named after the current module.
     :paramtype logger: logging.Logger
+    :keyword conversation_id: The ID of the conversation. Defaults to None.
+    :paramtype conversation_id: Optional[str]
     :return: Simulation a conversation between the given bots.
     :rtype: Tuple[Optional[str], List[ConversationTurn]]
     """
@@ -106,16 +109,13 @@ async def simulate_conversation(
             conversation_history=[],
             max_history=history_limit,
             turn_number=0,
+            conversation_id=conversation_id,
         )
     except Exception:  # pylint: disable=broad-except
         first_response = {"role": "user", "content": "Error: Unable to generate response."}
         request = None
         full_response = None
 
-    if "id" in full_response:
-        conversation_id: Optional[str] = full_response["id"]
-    else:
-        conversation_id = None
     first_prompt = first_response.get("content", "")
     if language != SupportedLanguages.English:
         if not isinstance(language, SupportedLanguages) or language not in SupportedLanguages:
@@ -134,6 +134,7 @@ async def simulate_conversation(
             message=first_prompt,
             full_response=full_response,
             request=request,
+            id=conversation_id,
         )
     ]
 
