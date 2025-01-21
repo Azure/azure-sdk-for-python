@@ -25,9 +25,8 @@ USAGE:
        in the Management Center of your AI Foundry project. 
     3) MODEL_DEPLOYMENT_NAME - The model deployment name, as found in the "Models + endpoints" tab of your AI Foundry project.
 """
-from typing import cast
-
 import os
+from typing import cast
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import ConnectionType, AuthenticationType
 from azure.identity import DefaultAzureCredential

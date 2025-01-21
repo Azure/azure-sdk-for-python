@@ -22,6 +22,7 @@ from azure.ai.evaluation._constants import (
 )
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import AzureAIProject
+from azure.ai.evaluation._version import VERSION
 from azure.ai.evaluation._azure._clients import LiteMLClient
 
 LOGGER = logging.getLogger(__name__)
@@ -190,7 +191,14 @@ def _log_metrics_and_instance_results(
                     properties={
                         EvaluationRunProperties.RUN_TYPE: "eval_run",
                         EvaluationRunProperties.EVALUATION_RUN: "promptflow.BatchRun",
+                        EvaluationRunProperties.EVALUATION_SDK: f"azure-ai-evaluation:{VERSION}",
                         "_azureml.evaluate_artifacts": json.dumps([{"path": artifact_name, "type": "table"}]),
+                    }
+                )
+            else:
+                ev_run.write_properties_to_run_history(
+                    properties={
+                        EvaluationRunProperties.EVALUATION_SDK: f"azure-ai-evaluation:{VERSION}",
                     }
                 )
 
@@ -320,3 +328,30 @@ def set_event_loop_policy() -> None:
         # Reference: https://stackoverflow.com/questions/45600579/asyncio-event-loop-is-closed-when-getting-loop
         # On Windows seems to be a problem with EventLoopPolicy, use this snippet to work around it
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())  # type: ignore[attr-defined]
+
+
+class JSONLDataFileLoader:
+    def __init__(self, filename: Union[os.PathLike, str]):
+        self.filename = filename
+
+    def load(self) -> pd.DataFrame:
+        return pd.read_json(self.filename, lines=True)
+
+
+class CSVDataFileLoader:
+    def __init__(self, filename: Union[os.PathLike, str]):
+        self.filename = filename
+
+    def load(self) -> pd.DataFrame:
+        return pd.read_csv(self.filename)
+
+
+class DataLoaderFactory:
+    @staticmethod
+    def get_loader(filename: Union[os.PathLike, str]) -> Union[JSONLDataFileLoader, CSVDataFileLoader]:
+        filename_str = str(filename).lower()
+        if filename_str.endswith(".csv"):
+            return CSVDataFileLoader(filename)
+
+        # fallback to JSONL to maintain backward compatibility
+        return JSONLDataFileLoader(filename)

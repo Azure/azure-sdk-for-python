@@ -10,15 +10,15 @@ DESCRIPTION:
     on the azure.ai.inference package see https://pypi.org/project/azure-ai-inference/.
 
 USAGE:
-    python sample_get_chat_completions_client.py
+    python sample_chat_completions_with_azure_ai_inference_client.py
 
     Before running the sample:
 
     pip install azure-ai-projects azure-identity
 
     Set these environment variables with your own values:
-    * PROJECT_CONNECTION_STRING - The Azure AI Project connection string, as found in your AI Studio Project.
-    * MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Studio Project.
+    * PROJECT_CONNECTION_STRING - The Azure AI Project connection string, as found in your AI Foundry project.
+    * MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Foundry project.
 """
 
 import os

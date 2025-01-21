@@ -23,25 +23,15 @@ from azure.ai.ml._azure_environments import (
     _resource_to_scopes,
 )
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.dataset_dataplane import (
-    AzureMachineLearningWorkspaces as ServiceClientDatasetDataplane,
-)
-from azure.ai.ml._restclient.model_dataplane import (
-    AzureMachineLearningWorkspaces as ServiceClientModelDataplane,
-)
-from azure.ai.ml._restclient.runhistory import (
-    AzureMachineLearningWorkspaces as ServiceClientRunHistory,
-)
+from azure.ai.ml._restclient.dataset_dataplane import AzureMachineLearningWorkspaces as ServiceClientDatasetDataplane
+from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspaces as ServiceClientModelDataplane
+from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as ServiceClientRunHistory
 from azure.ai.ml._restclient.runhistory.models import Run
-from azure.ai.ml._restclient.v2023_04_01_preview import (
-    AzureMachineLearningWorkspaces as ServiceClient022023Preview,
-)
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, ListViewType, UserIdentity
 from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_2401
-from azure.ai.ml._restclient.v2024_10_01_preview.models import (
-    JobType as RestJobType_20241001Preview,
-)
+from azure.ai.ml._restclient.v2024_10_01_preview.models import JobType as RestJobType_20241001Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -115,11 +105,7 @@ from ..entities._job.pipeline._io import InputOutputBase, PipelineInput, _GroupA
 from ._component_operations import ComponentOperations
 from ._compute_operations import ComputeOperations
 from ._dataset_dataplane_operations import DatasetDataplaneOperations
-from ._job_ops_helper import (
-    get_git_properties,
-    get_job_output_uris_from_dataplane,
-    stream_logs_until_completion,
-)
+from ._job_ops_helper import get_git_properties, get_job_output_uris_from_dataplane, stream_logs_until_completion
 from ._local_job_invoker import is_local_run, start_run_if_local
 from ._model_dataplane_operations import ModelDataplaneOperations
 from ._operation_orchestrator import (
@@ -174,7 +160,7 @@ class JobOperations(_ScopeDependentOperations):
         **kwargs: Any,
     ) -> None:
         super(JobOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
 
         self._operation_2023_02_preview = service_client_02_2023_preview.jobs
         self._service_client = service_client_02_2023_preview
@@ -189,9 +175,7 @@ class JobOperations(_ScopeDependentOperations):
         self._api_base_url: Optional[str] = None
         self._container = "azureml"
         self._credential = credential
-        self._orchestrators = OperationOrchestrator(
-            self._all_operations, self._operation_scope, self._operation_config
-        )  # pylint: disable=line-too-long
+        self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope, self._operation_config)
 
         self.service_client_01_2024_preview = kwargs.pop("service_client_01_2024_preview", None)
         self.service_client_10_2024_preview = kwargs.pop("service_client_10_2024_preview", None)
@@ -687,7 +671,7 @@ class JobOperations(_ScopeDependentOperations):
 
             # Create all dependent resources
             self._resolve_arm_id_or_upload_dependencies(job)
-        except (ValidationException, ValidationError) as ex:  # pylint: disable=W0718
+        except (ValidationException, ValidationError) as ex:
             log_and_raise_error(ex)
 
         git_props = get_git_properties()
@@ -743,9 +727,7 @@ class JobOperations(_ScopeDependentOperations):
 
         return self._resolve_azureml_id(Job._from_rest_object(result))
 
-    def _create_or_update_with_different_version_api(  # pylint: disable=name-too-long
-        self, rest_job_resource: JobBase, **kwargs: Any
-    ) -> JobBase:
+    def _create_or_update_with_different_version_api(self, rest_job_resource: JobBase, **kwargs: Any) -> JobBase:
         service_client_operation = self._operation_2023_02_preview
         if rest_job_resource.properties.job_type == RestJobType_20241001Preview.FINE_TUNING:
             service_client_operation = self.service_client_10_2024_preview.jobs
@@ -766,9 +748,7 @@ class JobOperations(_ScopeDependentOperations):
 
         return result
 
-    def _create_or_update_with_latest_version_api(  # pylint: disable=name-too-long
-        self, rest_job_resource: JobBase, **kwargs: Any
-    ) -> JobBase:
+    def _create_or_update_with_latest_version_api(self, rest_job_resource: JobBase, **kwargs: Any) -> JobBase:
         service_client_operation = self.service_client_01_2024_preview.jobs
         result = service_client_operation.create_or_update(
             id=rest_job_resource.name,

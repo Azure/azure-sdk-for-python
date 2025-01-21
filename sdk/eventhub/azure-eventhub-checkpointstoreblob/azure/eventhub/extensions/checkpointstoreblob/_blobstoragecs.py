@@ -89,7 +89,7 @@ class BlobCheckpointStore(CheckpointStore):
         self._cached_blob_clients = defaultdict()  # type: Dict[str, BlobClient]
 
     @classmethod
-    def from_connection_string(
+    def from_connection_string( # pylint:disable=docstring-keyword-should-match-keyword-only
         cls,
         conn_str: str,
         container_name: str,
@@ -117,7 +117,8 @@ class BlobCheckpointStore(CheckpointStore):
         :rtype: ~azure.eventhub.extensions.checkpointstoreblob.BlobCheckpointStore
         """
 
-        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob')
+        account_url, secondary, credential = parse_connection_str( # type: ignore[assignment]
+            conn_str, credential, 'blob') # type: ignore[arg-type]
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
 
@@ -243,7 +244,7 @@ class BlobCheckpointStore(CheckpointStore):
                 }
                 result.append(ownership)
             return result
-        except Exception as error:  # pylint:disable=broad-except
+        except Exception as error:
             logger.warning(
                 "An exception occurred during list_ownership for "
                 "namespace %r eventhub %r consumer group %r. "

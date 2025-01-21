@@ -1,8 +1,8 @@
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# pylint: disable=too-many-lines)
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -36,6 +36,7 @@ from .._operations._operations import (
     build_embeddings_embed_request,
     build_image_embeddings_embed_request,
 )
+from .._patch import _get_internal_response_format
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -86,20 +87,43 @@ async def load_client(
             "The AI model information is missing a value for `model type`. Cannot create an appropriate client."
         )
 
-    # TODO: Remove "completions" and "embedding" once Mistral Large and Cohere fixes their model type
-    if model_info.model_type in (_models.ModelType.CHAT, "completion", "chat-completion", "chat-completions"):
+    # TODO: Remove "completions", "chat-comletions" and "embedding" once Mistral Large and Cohere fixes their model type
+    if model_info.model_type in (
+        _models.ModelType.CHAT_COMPLETION,
+        "chat_completions",
+        "chat",
+        "completion",
+        "chat-completion",
+        "chat-completions",
+        "chat completion",
+        "chat completions",
+    ):
         chat_completion_client = ChatCompletionsClient(endpoint, credential, **kwargs)
         chat_completion_client._model_info = (  # pylint: disable=protected-access,attribute-defined-outside-init
             model_info
         )
         return chat_completion_client
 
-    if model_info.model_type in (_models.ModelType.EMBEDDINGS, "embedding"):
+    if model_info.model_type in (
+        _models.ModelType.EMBEDDINGS,
+        "embedding",
+        "text_embedding",
+        "text-embeddings",
+        "text embedding",
+        "text embeddings",
+    ):
         embedding_client = EmbeddingsClient(endpoint, credential, **kwargs)
         embedding_client._model_info = model_info  # pylint: disable=protected-access,attribute-defined-outside-init
         return embedding_client
 
-    if model_info.model_type == _models.ModelType.IMAGE_EMBEDDINGS:
+    if model_info.model_type in (
+        _models.ModelType.IMAGE_EMBEDDINGS,
+        "image_embedding",
+        "image-embeddings",
+        "image-embedding",
+        "image embedding",
+        "image embeddings",
+    ):
         image_embedding_client = ImageEmbeddingsClient(endpoint, credential, **kwargs)
         image_embedding_client._model_info = (  # pylint: disable=protected-access,attribute-defined-outside-init
             model_info
@@ -154,11 +178,12 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
     :paramtype top_p: float
     :keyword max_tokens: The maximum number of tokens to generate. Default value is None.
     :paramtype max_tokens: int
-    :keyword response_format: The format that the model must output. Use this to enable JSON mode
-        instead of the default text mode.
-        Note that to enable JSON mode, some AI models may also require you to instruct the model to
-        produce JSON via a system or user message. Default value is None.
-    :paramtype response_format: ~azure.ai.inference.models.ChatCompletionsResponseFormat
+    :keyword response_format: The format that the AI model must output. AI chat completions models typically output
+        unformatted text by default. This is equivalent to setting "text" as the response_format.
+        To output JSON format, without adhering to any schema, set to "json_object".
+        To output JSON format adhering to a provided schema, set this to an object of the class
+        ~azure.ai.inference.models.JsonSchemaFormat. Default value is None.
+    :paramtype response_format: Union[Literal['text', 'json_object'], ~azure.ai.inference.models.JsonSchemaFormat]
     :keyword stop: A collection of textual sequences that will end completions generation. Default
         value is None.
     :paramtype stop: list[str]
@@ -200,7 +225,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
+        response_format: Optional[Union[Literal["text", "json_object"], _models.JsonSchemaFormat]] = None,
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
@@ -221,7 +246,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         self._temperature = temperature
         self._top_p = top_p
         self._max_tokens = max_tokens
-        self._response_format = response_format
+        self._internal_response_format = _get_internal_response_format(response_format)
         self._stop = stop
         self._tools = tools
         self._tool_choice = tool_choice
@@ -255,7 +280,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
+        response_format: Optional[Union[Literal["text", "json_object"], _models.JsonSchemaFormat]] = None,
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
@@ -278,7 +303,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
+        response_format: Optional[Union[Literal["text", "json_object"], _models.JsonSchemaFormat]] = None,
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
@@ -301,7 +326,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
+        response_format: Optional[Union[Literal["text", "json_object"], _models.JsonSchemaFormat]] = None,
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
@@ -368,11 +393,12 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         :paramtype top_p: float
         :keyword max_tokens: The maximum number of tokens to generate. Default value is None.
         :paramtype max_tokens: int
-        :keyword response_format: The format that the model must output. Use this to enable JSON mode
-         instead of the default text mode.
-         Note that to enable JSON mode, some AI models may also require you to instruct the model to
-         produce JSON via a system or user message. Default value is None.
-        :paramtype response_format: ~azure.ai.inference.models.ChatCompletionsResponseFormat
+        :keyword response_format: The format that the AI model must output. AI chat completions models typically output
+         unformatted text by default. This is equivalent to setting "text" as the response_format.
+         To output JSON format, without adhering to any schema, set to "json_object".
+         To output JSON format adhering to a provided schema, set this to an object of the class
+         ~azure.ai.inference.models.JsonSchemaFormat. Default value is None.
+        :paramtype response_format: Union[Literal['text', 'json_object'], ~azure.ai.inference.models.JsonSchemaFormat]
         :keyword stop: A collection of textual sequences that will end completions generation. Default
          value is None.
         :paramtype stop: list[str]
@@ -462,7 +488,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
+        response_format: Optional[Union[Literal["text", "json_object"], _models.JsonSchemaFormat]] = None,
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
@@ -530,11 +556,12 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         :paramtype top_p: float
         :keyword max_tokens: The maximum number of tokens to generate. Default value is None.
         :paramtype max_tokens: int
-        :keyword response_format: The format that the model must output. Use this to enable JSON mode
-         instead of the default text mode.
-         Note that to enable JSON mode, some AI models may also require you to instruct the model to
-         produce JSON via a system or user message. Default value is None.
-        :paramtype response_format: ~azure.ai.inference.models.ChatCompletionsResponseFormat
+        :keyword response_format: The format that the AI model must output. AI chat completions models typically output
+         unformatted text by default. This is equivalent to setting "text" as the response_format.
+         To output JSON format, without adhering to any schema, set to "json_object".
+         To output JSON format adhering to a provided schema, set this to an object of the class
+         ~azure.ai.inference.models.JsonSchemaFormat. Default value is None.
+        :paramtype response_format: Union[Literal['text', 'json_object'], ~azure.ai.inference.models.JsonSchemaFormat]
         :keyword stop: A collection of textual sequences that will end completions generation. Default
          value is None.
         :paramtype stop: list[str]
@@ -578,6 +605,8 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
 
+        internal_response_format = _get_internal_response_format(response_format)
+
         if body is _Unset:
             if messages is _Unset:
                 raise TypeError("missing required argument: messages")
@@ -588,7 +617,9 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
                 "max_tokens": max_tokens if max_tokens is not None else self._max_tokens,
                 "model": model if model is not None else self._model,
                 "presence_penalty": presence_penalty if presence_penalty is not None else self._presence_penalty,
-                "response_format": response_format if response_format is not None else self._response_format,
+                "response_format": (
+                    internal_response_format if internal_response_format is not None else self._internal_response_format
+                ),
                 "seed": seed if seed is not None else self._seed,
                 "stop": stop if stop is not None else self._stop,
                 "temperature": temperature if temperature is not None else self._temperature,
@@ -1035,7 +1066,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
     async def embed(
         self,
         *,
-        input: List[_models.EmbeddingInput],
+        input: List[_models.ImageEmbeddingInput],
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
@@ -1049,7 +1080,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         :keyword input: Input image to embed. To embed multiple inputs in a single request, pass an
          array.
          The input must not exceed the max input tokens for the model. Required.
-        :paramtype input: list[~azure.ai.inference.models.EmbeddingInput]
+        :paramtype input: list[~azure.ai.inference.models.ImageEmbeddingInput]
         :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
          have. Default value is None.
         :paramtype dimensions: int
@@ -1121,7 +1152,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        input: List[_models.EmbeddingInput] = _Unset,
+        input: List[_models.ImageEmbeddingInput] = _Unset,
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
@@ -1139,7 +1170,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         :keyword input: Input image to embed. To embed multiple inputs in a single request, pass an
          array.
          The input must not exceed the max input tokens for the model. Required.
-        :paramtype input: list[~azure.ai.inference.models.EmbeddingInput]
+        :paramtype input: list[~azure.ai.inference.models.ImageEmbeddingInput]
         :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
          have. Default value is None.
         :paramtype dimensions: int

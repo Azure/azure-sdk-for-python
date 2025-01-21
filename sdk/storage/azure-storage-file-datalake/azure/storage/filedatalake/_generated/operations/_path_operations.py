@@ -980,7 +980,7 @@ class PathOperations:
         destination already exists and has a lease the lease is broken.  This operation supports
         conditional HTTP requests.  For more information, see `Specifying Conditional Headers for Blob
         Service Operations
-        <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
+        <https://learn.microsoft.com/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
         To fail if the destination already exists, use a conditional request with If-None-Match: "*".
 
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -989,7 +989,7 @@ class PathOperations:
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param resource: Required only for Create File and Create Directory. The value must be "file"
@@ -1238,7 +1238,7 @@ class PathOperations:
         can only be appended to a file. Concurrent writes to the same file using multiple clients are
         not supported. This operation supports conditional HTTP requests. For more information, see
         `Specifying Conditional Headers for Blob Service Operations
-        <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
+        <https://learn.microsoft.com/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
 
         :param action: The action must be "append" to upload data to be appended to a file, "flush" to
          flush previously uploaded data to a file, "setProperties" to set the properties of a file or
@@ -1263,7 +1263,7 @@ class PathOperations:
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param max_records: Optional. Valid for "SetAccessControlRecursive" operation. It specifies the
@@ -1501,7 +1501,7 @@ class PathOperations:
         Create and manage a lease to restrict write and delete access to the path. This operation
         supports conditional HTTP requests.  For more information, see `Specifying Conditional Headers
         for Blob Service Operations
-        <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
+        <https://learn.microsoft.com/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
 
         :param x_ms_lease_action: There are five lease actions: "acquire", "break", "change", "renew",
          and "release". Use "acquire" and specify the "x-ms-proposed-lease-id" and "x-ms-lease-duration"
@@ -1520,7 +1520,7 @@ class PathOperations:
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param x_ms_lease_break_period: The lease break period duration is optional to break a lease,
@@ -1641,7 +1641,7 @@ class PathOperations:
         Read the contents of a file.  For read operations, range requests are supported. This operation
         supports conditional HTTP requests.  For more information, see `Specifying Conditional Headers
         for Blob Service Operations
-        <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
+        <https://learn.microsoft.com/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
 
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
@@ -1649,7 +1649,7 @@ class PathOperations:
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param range: The HTTP Range request header specifies one or more byte ranges of the resource
@@ -1835,7 +1835,7 @@ class PathOperations:
         all system defined properties for a path. Get Access Control List returns the access control
         list for a path. This operation supports conditional HTTP requests.  For more information, see
         `Specifying Conditional Headers for Blob Service Operations
-        <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
+        <https://learn.microsoft.com/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
 
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
@@ -1843,7 +1843,7 @@ class PathOperations:
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param action: Optional. If the value is "getStatus" only the system defined properties for the
@@ -1967,7 +1967,7 @@ class PathOperations:
 
         Delete the file or directory. This operation supports conditional HTTP requests.  For more
         information, see `Specifying Conditional Headers for Blob Service Operations
-        <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
+        <https://learn.microsoft.com/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
 
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
@@ -1975,7 +1975,7 @@ class PathOperations:
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param recursive: Required. Default value is None.
@@ -2091,7 +2091,7 @@ class PathOperations:
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param owner: Optional. The owner of the blob or directory. Default value is None.
@@ -2215,7 +2215,7 @@ class PathOperations:
         :type mode: str or ~azure.storage.filedatalake.models.PathSetAccessControlRecursiveMode
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param continuation: Optional.  When deleting a directory, the number of paths that are deleted
@@ -2330,7 +2330,7 @@ class PathOperations:
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param position: This parameter allows the caller to upload data in parallel and control the
@@ -2540,7 +2540,7 @@ class PathOperations:
         :type position: int
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param content_length: Required for "Append Data" and "Flush Data".  Must be 0 for "Flush
@@ -2698,7 +2698,7 @@ class PathOperations:
         :type expiry_options: str or ~azure.storage.filedatalake.models.PathExpiryOptions
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -2776,7 +2776,7 @@ class PathOperations:
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://learn.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param undelete_source: Only for hierarchical namespace enabled accounts. Optional. The path of

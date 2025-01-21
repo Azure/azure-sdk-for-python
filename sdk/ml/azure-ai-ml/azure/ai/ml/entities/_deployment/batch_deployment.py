@@ -31,7 +31,7 @@ from .deployment import Deployment
 module_logger = logging.getLogger(__name__)
 
 
-class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attributes
+class BatchDeployment(Deployment):
     """Batch endpoint deployment entity.
 
     :param name: the name of the batch deployment
@@ -173,7 +173,7 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
         return self._provisioning_state
 
     def _to_dict(self) -> Dict:
-        res: dict = BatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        res: dict = BatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return res
 
     @classmethod

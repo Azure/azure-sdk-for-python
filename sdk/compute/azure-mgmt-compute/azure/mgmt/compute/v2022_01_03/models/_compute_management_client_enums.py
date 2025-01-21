@@ -65,9 +65,9 @@ class GalleryProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class GallerySharingPermissionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """This property allows you to specify the permission of sharing gallery. :code:`<br>`:code:`<br>`
-    Possible values are: :code:`<br>`:code:`<br>` **Private** :code:`<br>`:code:`<br>` **Groups**
-    :code:`<br>`:code:`<br>` **Community**.
+    """This property allows you to specify the permission of sharing gallery. :code:`<br>`\\
+    :code:`<br>` Possible values are: :code:`<br>`\\ :code:`<br>` **Private** :code:`<br>`\\
+    :code:`<br>` **Groups** :code:`<br>`\\ :code:`<br>` **Community**.
     """
 
     PRIVATE = "Private"
@@ -101,8 +101,8 @@ class OperatingSystemStateTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This property allows you to specify the supported type of the OS that application is built for.
-    :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Windows**
-    :code:`<br>`:code:`<br>` **Linux**.
+    :code:`<br>`\\ :code:`<br>` Possible values are: :code:`<br>`\\ :code:`<br>` **Windows**
+    :code:`<br>`\\ :code:`<br>` **Linux**.
     """
 
     WINDOWS = "Windows"
@@ -154,8 +154,8 @@ class SharedToValues(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class SharingProfileGroupTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """This property allows you to specify the type of sharing group. :code:`<br>`:code:`<br>`
-    Possible values are: :code:`<br>`:code:`<br>` **Subscriptions** :code:`<br>`:code:`<br>`
+    """This property allows you to specify the type of sharing group. :code:`<br>`\\ :code:`<br>`
+    Possible values are: :code:`<br>`\\ :code:`<br>` **Subscriptions** :code:`<br>`\\ :code:`<br>`
     **AADTenants**.
     """
 
@@ -174,8 +174,8 @@ class SharingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class SharingUpdateOperationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This property allows you to specify the operation type of gallery sharing update.
-    :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Add**
-    :code:`<br>`:code:`<br>` **Remove** :code:`<br>`:code:`<br>` **Reset**.
+    :code:`<br>`\\ :code:`<br>` Possible values are: :code:`<br>`\\ :code:`<br>` **Add**
+    :code:`<br>`\\ :code:`<br>` **Remove** :code:`<br>`\\ :code:`<br>` **Reset**.
     """
 
     ADD = "Add"

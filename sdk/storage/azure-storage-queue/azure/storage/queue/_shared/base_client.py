@@ -363,7 +363,7 @@ class TransportWrapper(HttpTransport):
 
 
 def _format_shared_key_credential(
-    account_name: str,
+    account_name: Optional[str],
     credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential", TokenCredential]] = None  # pylint: disable=line-too-long
 ) -> Any:
     if isinstance(credential, str):
