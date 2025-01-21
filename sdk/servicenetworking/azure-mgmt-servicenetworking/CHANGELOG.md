@@ -1,5 +1,9 @@
 # Release History
 
+## 1.0.0b1 (2025-01-20)
+
+change log generation failed!!!
+
 ## 1.1.0 (2025-01-20)
 
 ### Features Added
@@ -62,7 +66,3 @@
   - Model Frontend no longer has parameter public_ip_address
   - Model FrontendUpdate no longer has parameter properties
   - Model TrafficControllerUpdate no longer has parameter properties
-
-## 1.0.0b1 (2023-01-17)
-
-* Initial Release
