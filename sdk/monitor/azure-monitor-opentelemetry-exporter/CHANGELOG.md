@@ -1,10 +1,27 @@
 # Release History
 
-## 1.0.0b33 (Unreleased)
+## 1.0.0b34 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b33 (2025-01-14)
+
+### Features Added
+
+- Implement live metrics filtering for metrics
+  ([#37998](https://github.com/Azure/azure-sdk-for-python/pull/37998))
+- Add applying filter/validating filter logic to live metrics filtering
+  ([#38451](https://github.com/Azure/azure-sdk-for-python/pull/38451))
+- Implement live metrics filtering for docs
+  ([#38925](https://github.com/Azure/azure-sdk-for-python/pull/38925))
+- Implement live metrics + filtering for span event exceptions
+  ([#39168](https://github.com/Azure/azure-sdk-for-python/pull/39168))
 
 ### Bugs Fixed
 

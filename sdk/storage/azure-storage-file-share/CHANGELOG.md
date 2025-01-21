@@ -13,6 +13,11 @@ request headers `x-ms-file-permission-key`, `x-ms-file-attributes`, `x-ms-file-c
 `x-ms-file-last-write-time` by default. The request headers have been optional in the REST API since 
 service version 2021-06-08. The default behavior of these APIs remain the same.
 
+## 12.20.1 (2025-01-22)
+
+### Bugs Fixed
+- Fixed an issue where custom transports may encounter `AttributeError` on certain requests.
+
 ## 12.20.0 (2024-11-13)
 
 ### Features Added

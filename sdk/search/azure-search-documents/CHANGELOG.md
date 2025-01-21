@@ -1,6 +1,6 @@
 # Release History
 
-## 11.6.0b9 (Unreleased)
+## 11.6.0b10 (Unreleased)
 
 ### Features Added
 
@@ -8,9 +8,13 @@
 
 ### Bugs Fixed
 
-- Exposed `@search.document_debug_info` in the search results.
-
 ### Other Changes
+
+## 11.6.0b9 (2025-01-14)
+
+### Bugs Fixed
+
+- Exposed `@search.document_debug_info` in the search results.
 
 ## 11.6.0b8 (2024-11-21)
 
@@ -419,7 +423,7 @@
 
 ### Features Added
 
-- Support for [`AzureMachineLearningSkill`](https://docs.microsoft.com/azure/search/cognitive-search-aml-skill). The AML skill allows you to extend AI enrichment with a custom [Azure Machine Learning](https://docs.microsoft.com/azure/machine-learning/overview-what-is-azure-machine-learning) (AML) model. Once an AML model is [trained and deployed](https://docs.microsoft.com/azure/machine-learning/concept-azure-machine-learning-architecture#workspace), an AML skill integrates it into AI enrichment.
+- Support for [`AzureMachineLearningSkill`](https://learn.microsoft.com/azure/search/cognitive-search-aml-skill). The AML skill allows you to extend AI enrichment with a custom [Azure Machine Learning](https://learn.microsoft.com/azure/machine-learning/overview-what-is-azure-machine-learning) (AML) model. Once an AML model is [trained and deployed](https://learn.microsoft.com/azure/machine-learning/concept-azure-machine-learning-architecture#workspace), an AML skill integrates it into AI enrichment.
 
 ### Other Changes
 
