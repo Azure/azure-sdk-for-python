@@ -1,6 +1,6 @@
 # Release History
 
-## 12.24.1 (2025-01-21)
+## 12.24.1 (2025-01-22)
 
 ### Bugs Fixed
 - Fixed an issue where custom transports may encounter `AttributeError` on certain requests.
