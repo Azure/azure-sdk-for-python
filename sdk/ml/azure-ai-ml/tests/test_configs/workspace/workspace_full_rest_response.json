@@ -3,12 +3,8 @@
     "name": "test_workspace",
     "location": "test_location",
     "kind": "test_kind",
-    "sku": {
-        "name": "test_sku"
-    },
-    "tags": {
-        "test_tag": "test_value"
-    },
+    "sku": {"name": "test_sku"},
+    "tags": {"test_tag": "test_value"},
     "properties": {
         "description": "test_description",
         "friendlyName": "test_friendly_name",
@@ -27,8 +23,8 @@
             "status": "Enabled",
             "keyVaultProperties": {
                 "keyIdentifier": "key_identifier",
-                "keyVaultArmId": "key_vault_arm_id"
-            }
+                "keyVaultArmId": "key_vault_arm_id",
+            },
         },
         "hubResourceId": "hub_resource_id",
         "workspaceId": "workspace_id",
@@ -39,9 +35,7 @@
         "provisionNetworkNow": true,
         "featureStoreSettings": {},
         "serverlessComputeSettings": {},
-        "networkAcls": {}
+        "networkAcls": {},
     },
-    "identity": {
-        "type": "ManagedServiceIdentityType"
-    }
+    "identity": {"type": "ManagedServiceIdentityType"},
 }
