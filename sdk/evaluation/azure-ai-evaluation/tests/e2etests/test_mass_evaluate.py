@@ -338,6 +338,7 @@ class TestMassEvaluate:
             data=multimodal_input_selector(multi_modal_input_type),
             evaluators=evaluators,
             evaluator_config=evaluator_config,
+            azure_ai_project=project_scope,
             target=target,
         )
 
