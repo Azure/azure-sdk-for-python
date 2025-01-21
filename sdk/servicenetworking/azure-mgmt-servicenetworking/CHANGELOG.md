@@ -24,7 +24,7 @@
   - Added model `TrafficControllerUpdateProperties`
   - Added model `WafPolicy`
   - Added model `WafSecurityPolicy`
-  - Added model `SecurityPoliciesInterfaceOperations`
+  - Added operation group `SecurityPoliciesInterfaceOperations`
 
 ### Breaking Changes
 
