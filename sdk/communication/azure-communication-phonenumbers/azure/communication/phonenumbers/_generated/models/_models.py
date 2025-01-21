@@ -131,9 +131,9 @@ class OperatorDetails(_serialization.Model):
 
     :ivar name: Name of the phone operator.
     :vartype name: str
-    :ivar mobile_network_code: ISO 2 Mobile Network Code.
+    :ivar mobile_network_code: Mobile Network Code, 2 or 3 decimal digits that identify mobile networks within a country.
     :vartype mobile_network_code: str
-    :ivar mobile_country_code: ISO 2 Mobile Country Code.
+    :ivar mobile_country_code: Mobile Country Code, 3 decimal digits that identify a country.
     :vartype mobile_country_code: str
     """
 
@@ -154,9 +154,9 @@ class OperatorDetails(_serialization.Model):
         """
         :keyword name: Name of the phone operator.
         :paramtype name: str
-        :keyword mobile_network_code: ISO 2 Mobile Network Code.
+        :keyword mobile_network_code: Mobile Network Code, 2 or 3 decimal digits that identify mobile networks within a country.
         :paramtype mobile_network_code: str
-        :keyword mobile_country_code: ISO 2 Mobile Country Code.
+        :keyword mobile_country_code: Mobile Country Code, 3 decimal digits that identify a country.
         :paramtype mobile_country_code: str
         """
         super().__init__(**kwargs)
