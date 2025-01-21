@@ -601,14 +601,6 @@
           "type": "string",
            "value": "[format('https://{0}.file.core.windows.net', variables('primaryAccountName'))]"
         },
-        "STORAGE_ACCOUNT_NAME_CHANGE_FEED": {
-            "type": "string",
-            "value": "[variables('blobChangeFeedAccountName')]"
-        },
-        "STORAGE_ACCOUNT_KEY_CHANGE_FEED": {
-            "type": "string",
-            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('blobChangeFeedAccountName')), variables('storageApiVersion')).keys[0].value]"
-        },
         "SECONDARY_STORAGE_ACCOUNT_NAME": {
             "type": "string",
             "value": "[variables('secondaryAccountName')]"
