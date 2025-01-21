@@ -6,7 +6,7 @@ PrimaryPackage: azure-storage-file-datalake
 
 PackageVersions:
 - azure-core: 1.31.0
-  azure-storage-file-datalake: 12.13.2
+  azure-storage-file-datalake: 12.18.0
 - azure-core: source
   azure-storage-file-datalake: source
 
