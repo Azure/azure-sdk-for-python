@@ -830,4 +830,3 @@ class TestEvaluate:
             )
 
         assert "Either 'conversation' or individual inputs must be provided." in str(exc_info.value)
-

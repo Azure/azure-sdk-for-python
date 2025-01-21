@@ -30,6 +30,7 @@ def ten_queries_file():
 @pytest.mark.unittest
 class TestEvaluatePerformance:
     @pytest.mark.performance_test
+    @pytest.mark.skipif(in_ci(), reason="Causes a -9 pytest failure in CI")
     def test_bulk_evaluate(self, big_f1_data_file):
         """Test local-only evaluation against 100 inputs."""
         f1_score_eval = F1ScoreEvaluator()
@@ -71,7 +72,7 @@ class TestEvaluatePerformance:
         diff = end - start
         # Assume any system running this test can manage to multithread 10 runs into
         # 2 batches at most, so it should take between 1 and 1.5 seconds.
-        # Increasee to 1.75 to account for CI lag.
+        # Increase to 1.75 to account for CI lag.
         max_duration = 1.75
         assert diff < max_duration
         row_result_df = pd.DataFrame(result["rows"])
