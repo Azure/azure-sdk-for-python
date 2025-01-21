@@ -63,6 +63,8 @@ _Unset: Any = object()
 
 class InferenceOperations:
 
+    USER_AGENT_APP_ID = "AIProjectClient"
+
     def __init__(self, outer_instance):
         self._outer_instance = outer_instance
 
@@ -131,6 +133,11 @@ class InferenceOperations:
             endpoint = f"{connection.endpoint_url}/models"
             credential_scopes = ["https://cognitiveservices.azure.com/.default"]
 
+        if self._outer_instance._user_agent:
+            user_agent = f"{self._outer_instance._user_agent}-{self.USER_AGENT_APP_ID}"
+        else:
+            user_agent = self.USER_AGENT_APP_ID
+
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client]"
@@ -138,14 +145,14 @@ class InferenceOperations:
             )
             from azure.core.credentials import AzureKeyCredential
 
-            client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
+            client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key), user_agent=user_agent)
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client]"
                 + " Creating ChatCompletionsClient using Entra ID authentication"
             )
             client = ChatCompletionsClient(
-                endpoint=endpoint, credential=connection.token_credential, credential_scopes=credential_scopes
+                endpoint=endpoint, credential=connection.token_credential, credential_scopes=credential_scopes, user_agent=user_agent
             )
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(

@@ -20,6 +20,14 @@ USAGE:
     * PROJECT_CONNECTION_STRING - The Azure AI Project connection string, as found in your AI Foundry project.
     * MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Foundry project.
 """
+# Start remove me -- logging
+import sys
+import logging
+logger = logging.getLogger("azure")
+logger.setLevel(logging.DEBUG)
+logger.addHandler(logging.StreamHandler(stream=sys.stdout))
+# End remove me
+ 
 
 import os
 from azure.ai.projects import AIProjectClient
@@ -37,7 +45,21 @@ with AIProjectClient.from_connection_string(
     with project_client.inference.get_chat_completions_client() as client:
 
         response = client.complete(
-            model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
+            model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")], logging_enable=True
+        )
+
+        print(response.choices[0].message.content)
+
+with AIProjectClient.from_connection_string(
+    credential=DefaultAzureCredential(),
+    conn_str=project_connection_string,
+    user_agent="CallingApplication",
+) as project_client2:
+
+    with project_client2.inference.get_chat_completions_client() as client:
+
+        response = client.complete(
+            model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")], logging_enable=True
         )
 
         print(response.choices[0].message.content)

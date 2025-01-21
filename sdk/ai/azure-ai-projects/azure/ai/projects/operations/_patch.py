@@ -68,6 +68,20 @@ logger = logging.getLogger(__name__)
 class InferenceOperations:
 
     def __init__(self, outer_instance):
+
+        # All returned inference clients will have this application id set on their user-agent.
+        # For more info on user-agent HTTP header, see: https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy
+        USER_AGENT_APP_ID = "AIProjectClient"
+
+        if hasattr(outer_instance, '_user_agent') and outer_instance._user_agent:
+            # The calling application has set "user_agent" when constructing the AIProjectClient.
+            # Take that value and append a fixed concatenate it with the USER_AGENT_APP_ID.
+            self._user_agent = f"{outer_instance._user_agent}-{USER_AGENT_APP_ID}"
+        else:
+            # The calling application did not set "user_agent" when creating the AIProjectClient.
+            # Use the USER_AGENT_APP_ID as the user-agent of the inference clients.
+            self._user_agent = USER_AGENT_APP_ID
+
         self._outer_instance = outer_instance
 
     @distributed_trace
@@ -142,14 +156,14 @@ class InferenceOperations:
             )
             from azure.core.credentials import AzureKeyCredential
 
-            client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
+            client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key), user_agent=user_agent, logging_enable=True)
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client] "
                 + "Creating ChatCompletionsClient using Entra ID authentication"
             )
             client = ChatCompletionsClient(
-                endpoint=endpoint, credential=connection.token_credential, credential_scopes=credential_scopes
+                endpoint=endpoint, credential=connection.token_credential, credential_scopes=credential_scopes, user_agent=user_agent, logging_enable=True
             )
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(

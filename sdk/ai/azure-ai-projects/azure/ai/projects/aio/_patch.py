@@ -67,6 +67,8 @@ class AIProjectClient(
         kwargs2 = kwargs.copy()
         kwargs3 = kwargs.copy()
 
+        self._user_agent: Optional[str] = kwargs.get("user_agent", None)
+
         # For getting AppInsights connection string from the AppInsights resource.
         # The AppInsights resource URL is not known at this point. We need to get it from the
         # AzureML "Workspace - Get" REST API call. It will have the form:

@@ -21,6 +21,13 @@ USAGE:
     2) CONNECTION_NAME - The name of a connection, as found in the "Connected resources" tab
        in the Management Center of your AI Foundry project.
 """
+# Start remove me -- logging
+import sys
+import logging
+logger = logging.getLogger("azure")
+logger.setLevel(logging.DEBUG)
+logger.addHandler(logging.StreamHandler(stream=sys.stdout))
+# End remove me
 
 import os
 from azure.ai.projects import AIProjectClient
@@ -33,10 +40,11 @@ connection_name = os.environ["CONNECTION_NAME"]
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
     conn_str=project_connection_string,
+    logging_enable=True
 )
 
 with project_client:
-
+    """
     # List the properties of all connections
     connections = project_client.connections.list()
     print(f"====> Listing of all connections (found {len(connections)}):")
@@ -45,7 +53,7 @@ with project_client:
 
     # List the properties of all connections of a particular "type" (in this sample, Azure OpenAI connections)
     connections = project_client.connections.list(
-        connection_type=ConnectionType.AZURE_OPEN_AI,
+        connection_type=ConnectionType.AZURE_BLOB_STORAGE,
     )
     print(f"====> Listing of all Azure Open AI connections (found {len(connections)}):")
     for connection in connections:
@@ -53,12 +61,12 @@ with project_client:
 
     # Get the properties of the default connection of a particular "type", with credentials
     connection = project_client.connections.get_default(
-        connection_type=ConnectionType.AZURE_AI_SERVICES,
+        connection_type=ConnectionType.AZURE_BLOB_STORAGE,
         include_credentials=True,  # Optional. Defaults to "False"
     )
     print("====> Get default Azure AI Services connection:")
     print(connection)
-
+    """
     # Get the properties of a connection by its connection name:
     connection = project_client.connections.get(
         connection_name=connection_name, include_credentials=True  # Optional. Defaults to "False"
