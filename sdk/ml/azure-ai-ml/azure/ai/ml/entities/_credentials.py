@@ -116,7 +116,7 @@ class AccountKeyConfiguration(RestTranslatableMixin, DictMixin):
     def __init__(
         self,
         *,
-        account_key: str,
+        account_key: Optional[str],
     ) -> None:
         self.type = camel_to_snake(CredentialsType.ACCOUNT_KEY)
         self.account_key = account_key
@@ -157,7 +157,7 @@ class SasTokenConfiguration(RestTranslatableMixin, DictMixin):
     def __init__(
         self,
         *,
-        sas_token: str,
+        sas_token: Optional[str],
     ) -> None:
         super().__init__()
         self.type = camel_to_snake(CredentialsType.SAS)
@@ -209,7 +209,7 @@ class PatTokenConfiguration(RestTranslatableMixin, DictMixin):
             :caption: Configuring a personal access token configuration for a WorkspaceConnection.
     """
 
-    def __init__(self, *, pat: str) -> None:
+    def __init__(self, *, pat: Optional[str]) -> None:
         super().__init__()
         self.type = camel_to_snake(ConnectionAuthType.PAT)
         self.pat = pat
@@ -245,8 +245,8 @@ class UsernamePasswordConfiguration(RestTranslatableMixin, DictMixin):
     def __init__(
         self,
         *,
-        username: str,
-        password: str,
+        username: Optional[str],
+        password: Optional[str],
     ) -> None:
         super().__init__()
         self.type = camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD)
@@ -316,8 +316,8 @@ class ServicePrincipalConfiguration(BaseTenantCredentials):
     def __init__(
         self,
         *,
-        client_secret: str,
-        **kwargs: str,
+        client_secret: Optional[str],
+        **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
         self.type = camel_to_snake(CredentialsType.SERVICE_PRINCIPAL)
@@ -894,8 +894,8 @@ class AccessKeyConfiguration(RestTranslatableMixin, DictMixin):
     def __init__(
         self,
         *,
-        access_key_id: str,
-        secret_access_key: str,
+        access_key_id: Optional[str],
+        secret_access_key: Optional[str],
     ) -> None:
         super().__init__()
         self.type = camel_to_snake(ConnectionAuthType.ACCESS_KEY)
@@ -936,7 +936,7 @@ class ApiKeyConfiguration(RestTranslatableMixin, DictMixin):
     def __init__(
         self,
         *,
-        key: str,
+        key: Optional[str],
     ):
         super().__init__()
         self.type = camel_to_snake(ConnectionAuthType.API_KEY)

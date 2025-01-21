@@ -1,6 +1,16 @@
 # Release History
 
-## 1.0.0b33 (Unreleased)
+## 1.0.0b34 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b33 (2025-01-14)
 
 ### Features Added
 
@@ -12,8 +22,6 @@
   ([#38925](https://github.com/Azure/azure-sdk-for-python/pull/38925))
 - Implement live metrics + filtering for span event exceptions
   ([#39168](https://github.com/Azure/azure-sdk-for-python/pull/39168))
-
-### Breaking Changes
 
 ### Bugs Fixed
 

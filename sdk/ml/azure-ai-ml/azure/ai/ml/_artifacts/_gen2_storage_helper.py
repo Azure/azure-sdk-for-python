@@ -174,7 +174,7 @@ class Gen2StorageClient:
                     self.name = metadata.get("name")
                     self.version = metadata.get("version")
                     raise AssetNotChangedError
-        except Exception as e:  # pylint: disable=W0718
+        except Exception as e:
             # pylint: disable=no-member
             if hasattr(e, "error_code") and e.error_code == STORAGE_AUTH_MISMATCH_ERROR:
                 msg = (

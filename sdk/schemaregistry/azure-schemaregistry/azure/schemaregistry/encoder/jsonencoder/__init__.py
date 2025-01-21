@@ -23,14 +23,14 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from ._version import VERSION  # pylint: disable=import-error
+from ._version import VERSION
 
 __version__ = VERSION
 
 from ._schema_registry_json_encoder import (
     JsonSchemaEncoder,
-)  # pylint: disable=import-error
-from ._exceptions import InvalidContentError  # pylint: disable=import-error
+)
+from ._exceptions import InvalidContentError
 
 
 __all__ = ["JsonSchemaEncoder", "InvalidContentError"]

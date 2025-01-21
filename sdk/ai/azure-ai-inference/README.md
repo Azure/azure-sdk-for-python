@@ -6,7 +6,7 @@ Use the Inference client library (in preview) to:
 * Get information about the AI model
 * Do chat completions
 * Get text embeddings
-<!-- * Get image embeddings -->
+* Get image embeddings
 
 The Inference client library supports AI models deployed to the following services:
 
@@ -21,6 +21,10 @@ The Inference client library makes services calls using REST API version `2024-0
 | [API reference documentation](https://aka.ms/azsdk/azure-ai-inference/python/reference)
 | [Package (Pypi)](https://aka.ms/azsdk/azure-ai-inference/python/package)
 | [SDK source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/azure/ai/inference)
+
+## Reporting issues
+
+To report an issue with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues). Mention the package name "azure-ai-inference" in the title or content.
 
 ## Getting started
 
@@ -219,17 +223,15 @@ See simple chat completion examples below. More can be found in the [samples](ht
 
 ### Text Embeddings
 
-The `EmbeddingsClient` has a method named `embedding`. The method makes a REST API call to the `/embeddings` route on the provided endpoint, as documented in [the REST API reference](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-embeddings).
+The `EmbeddingsClient` has a method named `embed`. The method makes a REST API call to the `/embeddings` route on the provided endpoint, as documented in [the REST API reference](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-embeddings).
 
 See simple text embedding example below. More can be found in the [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples) folder.
 
-<!--
 ### Image Embeddings
 
-TODO: Add overview and link to explain image embeddings.
+The `ImageEmbeddingsClient` has a method named `embed`. The method makes a REST API call to the `/images/embeddings` route on the provided endpoint, as documented in [the REST API reference](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-images-embeddings).
 
-Embeddings operations target the URL route `images/embeddings` on the provided endpoint.
--->
+See simple image embedding example below. More can be found in the [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples) folder.
 
 ## Examples
 
@@ -239,7 +241,7 @@ In the following sections you will find simple examples of:
 * [Streaming chat completions](#streaming-chat-completions-example)
 * [Chat completions with additional model-specific parameters](#chat-completions-with-additional-model-specific-parameters)
 * [Text Embeddings](#text-embeddings-example)
-<!-- * [Image Embeddings](#image-embeddings-example) -->
+* [Image Embeddings](#image-embeddings-example)
 
 The examples create a synchronous client assuming a Serverless API or Managed Compute endpoint. Modify client
 construction code as descirbed in [Key concepts](#key-concepts) to have it work with GitHub Models endpoint or Azure OpenAI
@@ -262,8 +264,8 @@ client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(
 
 response = client.complete(
     messages=[
-        SystemMessage(content="You are a helpful assistant."),
-        UserMessage(content="How many feet are in a mile?"),
+        SystemMessage("You are a helpful assistant."),
+        UserMessage("How many feet are in a mile?"),
     ]
 )
 
@@ -272,17 +274,19 @@ print(response.choices[0].message.content)
 
 <!-- END SNIPPET -->
 
-The following types or messages are supported: `SystemMessage`,`UserMessage`, `AssistantMessage`, `ToolMessage`. See also samples:
+The following types of messages are supported: `SystemMessage`,`UserMessage`, `AssistantMessage`, `ToolMessage`. See also samples:
 
 * [sample_chat_completions_with_tools.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_tools.py) for usage of `ToolMessage`.
 * [sample_chat_completions_with_image_url.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_image_url.py) for usage of `UserMessage` that
 includes sending an image URL.
 * [sample_chat_completions_with_image_data.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_image_data.py) for usage of `UserMessage` that
 includes sending image data read from a local file.
+* [sample_chat_completions_with_structured_output.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_structured_output.py) and [sample_chat_completions_with_structured_output_pydantic.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_structured_output_pydantic.py) for configuring the service to respond with a JSON-formatted string, adhering to your schema.
+
 
 Alternatively, you can provide the messages as dictionary instead of using the strongly typed classes like `SystemMessage` and `UserMessage`:
 
-<!-- SNIPPET:sample_chat_completions_from_input_json.chat_completions -->
+<!-- SNIPPET:sample_chat_completions_from_input_dict.chat_completions -->
 
 ```python
 response = client.complete(
@@ -328,8 +332,8 @@ client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(
 response = client.complete(
     stream=True,
     messages=[
-        SystemMessage(content="You are a helpful assistant."),
-        UserMessage(content="Give me 5 good reasons why I should exercise every day."),
+        SystemMessage("You are a helpful assistant."),
+        UserMessage("Give me 5 good reasons why I should exercise every day."),
     ],
 )
 
@@ -354,8 +358,8 @@ In this example, extra JSON elements are inserted at the root of the request bod
 ```python
 response = client.complete(
     messages=[
-        SystemMessage(content="You are a helpful assistant."),
-        UserMessage(content="How many feet are in a mile?"),
+        SystemMessage("You are a helpful assistant."),
+        UserMessage("How many feet are in a mile?"),
     ],
     model_extras={"key1": "value1", "key2": "value2"},  # Optional. Additional parameters to pass to the model.
 )
@@ -412,6 +416,39 @@ data[2]: length=1024, [0.04196167, 0.029083252, ..., -0.0027484894, 0.0073127747
 
 To generate embeddings for additional phrases, simply call `client.embed` multiple times using the same `client`.
 
+### Image Embeddings example
+
+This example demonstrates how to get image embeddings, for a Serverless API or Managed Compute endpoint, with key authentication, assuming `endpoint` and `key` are already defined. For Entra ID authentication, GitHub models endpoint or Azure OpenAI endpoint, modify the code to create the client as specified in the above sections.
+
+<!-- SNIPPET:sample_image_embeddings.image_embeddings -->
+
+```python
+from azure.ai.inference import ImageEmbeddingsClient
+from azure.ai.inference.models import ImageEmbeddingInput
+from azure.core.credentials import AzureKeyCredential
+
+client = ImageEmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
+response = client.embed(input=[ImageEmbeddingInput.load(image_file="sample1.png", image_format="png")])
+
+for item in response.data:
+    length = len(item.embedding)
+    print(
+        f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "
+        f"..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
+    )
+```
+
+<!-- END SNIPPET -->
+
+The length of the embedding vector depends on the model, but you should see something like this:
+
+```text
+data[0]: length=1024, [0.0103302, -0.04425049, ..., -0.011543274, -0.0009088516]
+```
+
+To generate image embeddings for additional images, simply call `client.embed` multiple times using the same `client`.
+
 <!--
 ### Image Embeddings example
 
@@ -421,7 +458,7 @@ This example demonstrates how to get image embeddings.
 
 ```python
 from azure.ai.inference import ImageEmbeddingsClient
-from azure.ai.inference.models import EmbeddingInput
+from azure.ai.inference.models import ImageEmbeddingInput
 from azure.core.credentials import AzureKeyCredential
 
 with open("sample1.png", "rb") as f:
@@ -431,7 +468,7 @@ with open("sample2.png", "rb") as f:
 
 client = ImageEmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-response = client.embed(input=[EmbeddingInput(image=image1), EmbeddingInput(image=image2)])
+response = client.embed(input=[ImageEmbeddingInput(image=image1), ImageEmbeddingInput(image=image2)])
 
 for item in response.data:
     length = len(item.embedding)
@@ -529,7 +566,7 @@ For more information, see [Configure logging in the Azure libraries for Python](
 
 ### Reporting issues
 
-To report issues with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues)
+To report an issue with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues). Mention "azure-ai-inference" in the title or content.
 
 ## Observability With OpenTelemetry
 

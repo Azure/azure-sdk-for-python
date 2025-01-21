@@ -15,7 +15,7 @@ DESCRIPTION:
 USAGE:
     python sample_chat_completions_with_azure_monitor_tracing.py
 
-    Set these two environment variables before running the sample:
+    Set these three or four environment variables before running the sample:
     1) AZURE_AI_CHAT_ENDPOINT - Your endpoint URL, in the form
         https://<your-deployment-name>.<your-azure-region>.models.ai.azure.com
         where `your-deployment-name` is your unique AI Model deployment name, and
@@ -116,8 +116,8 @@ def chat_completion_with_function_call(key, endpoint):
 
     client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key), model="gpt-4o-mini")
     messages = [
-        SystemMessage(content="You are a helpful assistant."),
-        UserMessage(content="What is the weather and temperature in Seattle?"),
+        SystemMessage("You are a helpful assistant."),
+        UserMessage("What is the weather and temperature in Seattle?"),
     ]
 
     response = client.complete(messages=messages, tools=[weather_description, temperature_in_city])
@@ -135,7 +135,7 @@ def chat_completion_with_function_call(key, endpoint):
                     function_response = callable_func(**function_args)
                     print(f"Function response = {function_response}")
                     # Provide the tool response to the model, by appending it to the chat history
-                    messages.append(ToolMessage(tool_call_id=tool_call.id, content=function_response))
+                    messages.append(ToolMessage(function_response, tool_call_id=tool_call.id))
                     # With the additional tools information on hand, get another response from the model
             response = client.complete(messages=messages, tools=[weather_description, temperature_in_city])
 
