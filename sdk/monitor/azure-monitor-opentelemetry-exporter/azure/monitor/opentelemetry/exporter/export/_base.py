@@ -308,7 +308,7 @@ class BaseExporter:
                     _update_requests_map(_REQ_EXCEPTION_NAME[1], value=exc_type)
                 result = ExportResult.FAILED_RETRYABLE
             except Exception as ex:
-                logger.error("Envelopes could not be exported and are not retryable: %s.", ex)  # pylint: disable=do-not-log-exceptions
+                logger.error("Envelopes could not be exported and are not retryable: %s.", ex)  # pylint: disable=C4766
                 if self._should_collect_stats():
                     _update_requests_map(_REQ_EXCEPTION_NAME[1], value=ex.__class__.__name__)
                 result = ExportResult.FAILED_NOT_RETRYABLE
