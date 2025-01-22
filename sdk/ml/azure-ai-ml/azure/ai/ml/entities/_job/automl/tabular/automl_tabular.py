@@ -270,7 +270,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
         :keyword exit_score: Target score for experiment. The experiment terminates after this score is reached.
             If not specified (no criteria), the experiment runs until no further progress is made
             on the primary metric. For for more information on exit criteria, see this `article
-            <https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#exit-criteria>`_
+            <https://learn.microsoft.com/azure/machine-learning/how-to-configure-auto-train#exit-criteria>`_
             , defaults to None
         :paramtype exit_score: typing.Optional[float]
         :keyword max_concurrent_trials: This is the maximum number of iterations that would be executed in parallel.
@@ -358,7 +358,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
 
         :keyword enable_onnx_compatible_models: Whether to enable or disable enforcing the ONNX-compatible models.
             The default is False. For more information about Open Neural Network Exchange (ONNX) and Azure Machine
-            Learning,see this `article <https://docs.microsoft.com/azure/machine-learning/concept-onnx>`__.
+            Learning,see this `article <https://learn.microsoft.com/azure/machine-learning/concept-onnx>`__.
         :paramtype enable_onnx_compatible_models: typing.Optional[bool]
         :keyword enable_dnn_training: Whether to include DNN based models during model selection.
             However, the default is True for DNN NLP tasks, and it's False for all other AutoML tasks.
@@ -366,7 +366,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
         :keyword enable_model_explainability: Whether to enable explaining the best AutoML model at the end of all
             AutoML training iterations. For more information, see
             `Interpretability: model explanations in automated machine learning
-            <https://docs.microsoft.com/azure/machine-learning/how-to-machine-learning-interpretability-automl>`__.
+            <https://learn.microsoft.com/azure/machine-learning/how-to-machine-learning-interpretability-automl>`__.
             , defaults to None
         :paramtype enable_model_explainability: typing.Optional[bool]
         :keyword enable_stack_ensemble: Whether to enable/disable StackEnsemble iteration.
@@ -374,12 +374,12 @@ class AutoMLTabular(AutoMLVertical, ABC):
             Similarly, for Timeseries tasks, StackEnsemble iteration will be disabled by default, to avoid risks of
             overfitting due to small training set used in fitting the meta learner.
             For more information about ensembles, see `Ensemble configuration
-            <https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#ensemble>`__
+            <https://learn.microsoft.com/azure/machine-learning/how-to-configure-auto-train#ensemble>`__
             , defaults to None
         :paramtype enable_stack_ensemble: typing.Optional[bool]
         :keyword enable_vote_ensemble: Whether to enable/disable VotingEnsemble iteration.
             For more information about ensembles, see `Ensemble configuration
-            <https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#ensemble>`__
+            <https://learn.microsoft.com/azure/machine-learning/how-to-configure-auto-train#ensemble>`__
             , defaults to None
         :paramtype enable_vote_ensemble: typing.Optional[bool]
         :keyword stack_ensemble_settings: Settings for StackEnsemble iteration, defaults to None
