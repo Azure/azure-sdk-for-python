@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.0b2 (2025-01-20)
+## 2.0.0b2 (2025-01-22)
 
 ### Features Added
 
@@ -27,8 +27,6 @@
 
   - Deleted or renamed client operation group `QuotaMgmtClient.group_quota_usages`
   - Deleted or renamed client operation group `QuotaMgmtClient.group_quota_location_settings`
-  - Method `GroupQuotaLimitsOperations.list` changed from `synchronous` to `asynchronous`
-  - Method `GroupQuotaSubscriptionAllocationOperations.list` changed from `synchronous` to `asynchronous`
   - Model `GroupQuotaDetails` deleted or renamed its instance variable `region`
   - Model `GroupQuotaLimit` deleted or renamed its instance variable `id`
   - Model `GroupQuotaLimit` deleted or renamed its instance variable `name`
