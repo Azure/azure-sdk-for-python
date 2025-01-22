@@ -111,7 +111,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
         self._blob_account_url = blob_account_url
 
         self._blob_service_client = BlobServiceClient(self._blob_account_url, credential, **kwargs)
-        self._blob_service_client._hosts[LocationMode.SECONDARY] = ""  # type: ignore [index]
+        self._blob_service_client._hosts[LocationMode.SECONDARY] = ""
 
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
@@ -119,7 +119,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
         super(DataLakeServiceClient, self).__init__(parsed_url, service='dfs',
                                                     credential=self._raw_credential, **kwargs)
         # ADLS doesn't support secondary endpoint, make sure it's empty
-        self._hosts[LocationMode.SECONDARY] = ""  # type: ignore [index]
+        self._hosts[LocationMode.SECONDARY] = ""
 
         self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
