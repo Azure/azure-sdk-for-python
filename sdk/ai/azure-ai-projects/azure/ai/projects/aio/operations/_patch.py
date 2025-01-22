@@ -3,13 +3,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.core.credentials import TokenCredential
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import asyncio
-import concurrent
+import concurrent.futures
 import io
 import logging
 import os
@@ -31,6 +30,7 @@ from typing import (
     overload,
 )
 
+from azure.core.credentials import TokenCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.tracing.decorator_async import distributed_trace_async
 
