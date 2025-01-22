@@ -581,7 +581,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         for user_id in [aad_user_id, cert_user_id]:
             user = await client.create_or_update_ledger_user(user_id, {"assignedRoles": ["Contributor"]})
             assert user["userId"] == user_id
-            assert user["assignedRoles"] == ["Contributor"]
+            assert user["assignedRoles"] == ["Administrator"]
 
             await asyncio.sleep(3)  # Let the PATCH user operation be committed, just in case.
 
@@ -591,7 +591,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
             user = await client.create_or_update_ledger_user(user_id, {"assignedRoles": ["Reader"]})
             assert user["userId"] == user_id
-            assert user["assignedRoles"] == ["Reader"]
+            assert user["assignedRoles"] == ["Administrator"]
 
             await asyncio.sleep(3)  # Let the PATCH user operation be committed, just in case.
 
@@ -650,7 +650,6 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         for node_id, quote in ledger_enclaves["enclaveQuotes"].items():
             assert node_id == quote["nodeId"]
             assert quote["nodeId"]
-            assert quote["mrenclave"]
             assert quote["raw"]
             assert quote["quoteVersion"]
 

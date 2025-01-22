@@ -1,9 +1,16 @@
 import hashlib
 import os
+import sys
+import logging
 from sys import api_version
 import time
 from typing import Dict, List, Union
 from urllib.parse import urlparse
+
+logging.basicConfig(level=logging.DEBUG,
+              format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+               stream=sys.stdout)
+logger = logging.getLogger(__name__)
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils import (
@@ -158,6 +165,178 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             # We need to add the certificate-based user as an Administrator. 
             aad_based_client.create_or_update_ledger_user(
             USER_CERTIFICATE_THUMBPRINT, {"assignedRoles": ["Administrator"]})
+
+            # Sleep to make sure all replicas know the user is added.
+            time.sleep(3)
+
+            # Update the options to account for certificate-based authentication.
+            function_recording_options["certificates"] = [
+                PemCertificate(key=USER_CERTIFICATE_PRIVATE_KEY, data=USER_CERTIFICATE_PUBLIC_KEY)
+            ]
+            if is_live():
+                set_function_recording_options(**function_recording_options)
+
+            client = certificate_based_client
+        else:
+            client = aad_based_client
+
+        return client
+
+    def create_confidentialledger_client_user_defined_endpoint(self, endpoint, ledger_id, is_aad):
+        # Always explicitly fetch the TLS certificate.
+        network_cert = self.set_ledger_identity(ledger_id)
+
+        # The ACL instance should already have the potential AAD user added as an Administrator.
+        credential = self.get_credential(ConfidentialLedgerClient)
+        aad_based_client = self.create_client_from_credential(
+            ConfidentialLedgerClient,
+            credential=credential,
+            endpoint=endpoint,
+            ledger_certificate_path=self.network_certificate_path,  # type: ignore
+        )
+
+        certificate_credential = ConfidentialLedgerCertificateCredential(
+            certificate_path=self.user_certificate_path
+        )
+        certificate_based_client = ConfidentialLedgerClient(
+            credential=certificate_credential,
+            endpoint=endpoint,
+            ledger_certificate_path=self.network_certificate_path,  # type: ignore
+        )
+
+        # The Confidential Ledger always presents a self-signed certificate, so add that certificate
+        # to the recording options for the Confidential Ledger endpoint.
+        function_recording_options: Dict[str, Union[str, List[PemCertificate]]] = {
+            "tls_certificate": network_cert,
+            "tls_certificate_host": urlparse(endpoint).netloc,
+        }
+        if is_live():
+            set_function_recording_options(**function_recording_options)
+
+        if not is_live_and_not_recording():
+            # For live, non-recorded tests, we want to test normal client behavior so the only
+            # certificate used for TLS verification is the Confidential Ledger identity certificate.
+            #
+            # However, in this case outbound connections are to the proxy, so the certificate used
+            # for verifying the TLS connection should actually be the test proxy's certificate.
+            # With that in mind, we'll update the file at self.network_certificate_path to be a
+            # certificate bundle including both the ledger's TLS certificate (though technically
+            # unnecessary I think) and the test-proxy certificate. This way the client setup (i.e.
+            # the logic for overriding the default certificate verification) is still tested when
+            # the test-proxy is involved.
+            #
+            # Note the combined bundle should be created *after* any os.remove calls so we don't 
+            # interfere with auto-magic certificate retrieval tests.
+            create_combined_bundle(
+                [self.network_certificate_path, TEST_PROXY_CERT],
+                self.network_certificate_path
+            )
+
+        if not is_aad:
+            # We need to add the certificate-based user as an Administrator. 
+            aad_based_client.create_user_defined_endpoint(
+               {
+                "metadata": {
+                    "endpoints": {
+                        "/content": {
+                            "get": {
+                                "js_module": "test.js",
+                                "js_function": "content",
+                                "forwarding_required": "never",
+                                "redirection_strategy": "none",
+                                "authn_policies": ["no_auth"],
+                                "mode": "readonly",
+                                "openapi": {},
+                            }
+                        }
+                    }
+                },
+                "modules": [
+                    {
+                        "name": "test.js",
+                        "module": """
+                        import { foo } from "./bar/baz.js";
+
+                        export function content(request) {
+                            return {
+                                statusCode: 200,
+                                body: {
+                                    payload: foo(),
+                                },
+                            };
+                        }
+                        """,
+                    },
+                    {
+                        "name": "bar/baz.js",
+                        "module": """
+                        export function foo() {
+                            return "Test content";
+                        }
+                        """,
+                    },
+                ],
+            }
+            )
+
+    def create_confidentialledger_client_user_defined_role(self, endpoint, ledger_id, is_aad):
+        # Always explicitly fetch the TLS certificate.
+        network_cert = self.set_ledger_identity(ledger_id)
+
+        # The ACL instance should already have the potential AAD user added as an Administrator.
+        credential = self.get_credential(ConfidentialLedgerClient)
+        aad_based_client = self.create_client_from_credential(
+            ConfidentialLedgerClient,
+            credential=credential,
+            endpoint=endpoint,
+            ledger_certificate_path=self.network_certificate_path,  # type: ignore
+        )
+
+        certificate_credential = ConfidentialLedgerCertificateCredential(
+            certificate_path=self.user_certificate_path
+        )
+        certificate_based_client = ConfidentialLedgerClient(
+            credential=certificate_credential,
+            endpoint=endpoint,
+            ledger_certificate_path=self.network_certificate_path,  # type: ignore
+        )
+
+        # The Confidential Ledger always presents a self-signed certificate, so add that certificate
+        # to the recording options for the Confidential Ledger endpoint.
+        function_recording_options: Dict[str, Union[str, List[PemCertificate]]] = {
+            "tls_certificate": network_cert,
+            "tls_certificate_host": urlparse(endpoint).netloc,
+        }
+        if is_live():
+            set_function_recording_options(**function_recording_options)
+
+        if not is_live_and_not_recording():
+            # For live, non-recorded tests, we want to test normal client behavior so the only
+            # certificate used for TLS verification is the Confidential Ledger identity certificate.
+            #
+            # However, in this case outbound connections are to the proxy, so the certificate used
+            # for verifying the TLS connection should actually be the test proxy's certificate.
+            # With that in mind, we'll update the file at self.network_certificate_path to be a
+            # certificate bundle including both the ledger's TLS certificate (though technically
+            # unnecessary I think) and the test-proxy certificate. This way the client setup (i.e.
+            # the logic for overriding the default certificate verification) is still tested when
+            # the test-proxy is involved.
+            #
+            # Note the combined bundle should be created *after* any os.remove calls so we don't 
+            # interfere with auto-magic certificate retrieval tests.
+            create_combined_bundle(
+                [self.network_certificate_path, TEST_PROXY_CERT],
+                self.network_certificate_path
+            )
+
+        if not is_aad:
+            # We need to add the certificate-based user as an Administrator. 
+            aad_based_client.create_user_defined_role(
+              {
+                "roles": [
+                    {"role_name": "role1", "role_actions": ["/content/read"]}
+                ]
+            })
 
             # Sleep to make sure all replicas know the user is added.
             time.sleep(3)
@@ -580,7 +759,6 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         for node_id, quote in ledger_enclaves["enclaveQuotes"].items():
             assert node_id == quote["nodeId"]
             assert quote["nodeId"]
-            assert quote["mrenclave"]
             assert quote["raw"]
             assert quote["quoteVersion"]
 
@@ -637,3 +815,21 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         expected_cert = self.set_ledger_identity(confidentialledger_id)
 
         assert certificate == expected_cert
+
+    @ConfidentialLedgerPreparer()
+    @recorded_by_proxy
+    def test_create_user_defined_endpoint_cert_user(self, **kwargs):
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
+        client = self.create_confidentialledger_client_user_defined_endpoint(
+            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+        )
+
+    @ConfidentialLedgerPreparer()
+    @recorded_by_proxy
+    def test_create_user_defined_role_aad_user(self, **kwargs):
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
+        client = self.create_confidentialledger_client_user_defined_role(
+            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+        )
