@@ -1194,7 +1194,7 @@ Be sure to protect non redacted logs to avoid compromising security.
 
 For more information, see [Configure logging in the Azure libraries for Python](https://aka.ms/azsdk/python/logging)
 
-## Reporting issues
+### Reporting issues
 
 To report an issue with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues). Mention the package name "azure-ai-projects" in the title or content.
 

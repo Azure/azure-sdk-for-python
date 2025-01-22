@@ -84,7 +84,8 @@ class InferenceOperations:
     ) -> "ChatCompletionsClient":
         """Get an authenticated asynchronous ChatCompletionsClient (from the package azure-ai-inference) for the default
         Azure AI Services connected resource (if `connection_name` is not specificed), or from the Azure AI
-        Services resource given by its connection name.
+        Services resource given by its connection name. Keyword arguments are passed to the constructor of
+        ChatCompletionsClient.
 
         At least one AI model that supports chat completions must be deployed in this resource.
 
@@ -115,16 +116,16 @@ class InferenceOperations:
 
         if connection_name:
             connection = await self._outer_instance.connections.get(
-                connection_name=connection_name, include_credentials=True, **kwargs
+                connection_name=connection_name, include_credentials=True
             )
         else:
             if use_serverless_connection:
                 connection = await self._outer_instance.connections.get_default(
-                    connection_type=ConnectionType.SERVERLESS, include_credentials=True, **kwargs
+                    connection_type=ConnectionType.SERVERLESS, include_credentials=True
                 )
             else:
                 connection = await self._outer_instance.connections.get_default(
-                    connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
+                    connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True
                 )
 
         logger.debug("[InferenceOperations.get_chat_completions_client] connection = %s", str(connection))
@@ -153,7 +154,8 @@ class InferenceOperations:
             client = ChatCompletionsClient(
                 endpoint=endpoint,
                 credential=AzureKeyCredential(connection.key),
-                user_agent=self._user_agent,
+                user_agent=kwargs.pop("user_agent", self._user_agent),
+                **kwargs,
             )
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             logger.debug(
@@ -164,7 +166,8 @@ class InferenceOperations:
                 endpoint=endpoint,
                 credential=connection.token_credential,
                 credential_scopes=credential_scopes,
-                user_agent=self._user_agent,
+                user_agent=kwargs.pop("user_agent", self._user_agent),
+                **kwargs,
             )
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(
@@ -183,7 +186,8 @@ class InferenceOperations:
     async def get_embeddings_client(self, *, connection_name: Optional[str] = None, **kwargs) -> "EmbeddingsClient":
         """Get an authenticated asynchronous EmbeddingsClient (from the package azure-ai-inference) for the default
         Azure AI Services connected resource (if `connection_name` is not specificed), or from the Azure AI
-        Services resource given by its connection name.
+        Services resource given by its connection name. Keyword arguments are passed to the constructor of
+        EmbeddingsClient.
 
         At least one AI model that supports text embeddings must be deployed in this resource.
 
@@ -214,16 +218,16 @@ class InferenceOperations:
 
         if connection_name:
             connection = await self._outer_instance.connections.get(
-                connection_name=connection_name, include_credentials=True, **kwargs
+                connection_name=connection_name, include_credentials=True
             )
         else:
             if use_serverless_connection:
                 connection = await self._outer_instance.connections.get_default(
-                    connection_type=ConnectionType.SERVERLESS, include_credentials=True, **kwargs
+                    connection_type=ConnectionType.SERVERLESS, include_credentials=True
                 )
             else:
                 connection = await self._outer_instance.connections.get_default(
-                    connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
+                    connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True
                 )
 
         logger.debug("[InferenceOperations.get_embeddings_client] connection = %s", str(connection))
@@ -249,7 +253,10 @@ class InferenceOperations:
             from azure.core.credentials import AzureKeyCredential
 
             client = EmbeddingsClient(
-                endpoint=endpoint, credential=AzureKeyCredential(connection.key), user_agent=self._user_agent
+                endpoint=endpoint,
+                credential=AzureKeyCredential(connection.key),
+                user_agent=kwargs.pop("user_agent", self._user_agent),
+                **kwargs,
             )
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             logger.debug(
@@ -259,7 +266,8 @@ class InferenceOperations:
                 endpoint=endpoint,
                 credential=connection.token_credential,
                 credential_scopes=credential_scopes,
-                user_agent=self._user_agent,
+                user_agent=kwargs.pop("user_agent", self._user_agent),
+                **kwargs,
             )
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(
@@ -277,7 +285,8 @@ class InferenceOperations:
     ) -> "ImageEmbeddingsClient":
         """Get an authenticated asynchronous ImageEmbeddingsClient (from the package azure-ai-inference) for the default
         Azure AI Services connected resource (if `connection_name` is not specificed), or from the Azure AI
-        Services resource given by its connection name.
+        Services resource given by its connection name. Keyword arguments are passed to the constructor of
+        ImageEmbeddingsClient.
 
         At least one AI model that supports image embeddings must be deployed in this resource.
 
@@ -308,16 +317,16 @@ class InferenceOperations:
 
         if connection_name:
             connection = await self._outer_instance.connections.get(
-                connection_name=connection_name, include_credentials=True, **kwargs
+                connection_name=connection_name, include_credentials=True
             )
         else:
             if use_serverless_connection:
                 connection = await self._outer_instance.connections.get_default(
-                    connection_type=ConnectionType.SERVERLESS, include_credentials=True, **kwargs
+                    connection_type=ConnectionType.SERVERLESS, include_credentials=True
                 )
             else:
                 connection = await self._outer_instance.connections.get_default(
-                    connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
+                    connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True
                 )
 
         logger.debug("[InferenceOperations.get_embeddings_client] connection = %s", str(connection))
@@ -344,7 +353,10 @@ class InferenceOperations:
             from azure.core.credentials import AzureKeyCredential
 
             client = ImageEmbeddingsClient(
-                endpoint=endpoint, credential=AzureKeyCredential(connection.key), user_agent=self._user_agent
+                endpoint=endpoint,
+                credential=AzureKeyCredential(connection.key),
+                user_agent=kwargs.pop("user_agent", self._user_agent),
+                **kwargs,
             )
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             logger.debug(
@@ -355,7 +367,8 @@ class InferenceOperations:
                 endpoint=endpoint,
                 credential=connection.token_credential,
                 credential_scopes=credential_scopes,
-                user_agent=self._user_agent,
+                user_agent=kwargs.pop("user_agent", self._user_agent),
+                **kwargs,
             )
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(
