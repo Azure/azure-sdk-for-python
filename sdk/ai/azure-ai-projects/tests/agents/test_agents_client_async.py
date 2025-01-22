@@ -2263,16 +2263,14 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         if file_id:
             ds = None
         else:
-            ds = [
-                VectorStoreDataSource(
-                    asset_identifier=kwargs["azure_ai_projects_agents_tests_data_path"],
-                    asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
-                )
-            ]
+            ds = VectorStoreDataSource(
+                asset_identifier=kwargs["azure_ai_projects_agents_tests_data_path"],
+                asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
+            )
         vector_store = await ai_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
         assert vector_store.id
         vector_store_file = await ai_client.agents.create_vector_store_file(
-            vector_store_id=vector_store.id, data_sources=ds, file_id=file_id
+            vector_store_id=vector_store.id, data_source=ds, file_id=file_id
         )
         assert vector_store_file.id
         await self._test_file_search(ai_client, vector_store, file_id)

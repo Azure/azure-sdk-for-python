@@ -8,6 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import asyncio
+import concurrent.futures
 import io
 import logging
 import os
@@ -29,6 +30,7 @@ from typing import (
     overload,
 )
 
+from azure.core.credentials import TokenCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -54,6 +56,8 @@ if TYPE_CHECKING:
 
     from azure.ai.inference.aio import ChatCompletionsClient, EmbeddingsClient, ImageEmbeddingsClient
     from azure.ai.projects import _types
+    from azure.core.credentials import AccessToken
+    from azure.core.credentials_async import AsyncTokenCredential
 
 logger = logging.getLogger(__name__)
 
@@ -497,10 +501,11 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
                 from ...models._patch import SASTokenCredential
 
                 cred_prop = cast(InternalConnectionPropertiesSASAuth, connection.properties)
+                sync_credential =  _SyncCredentialWrapper(self._config.credential)
 
                 token_credential = SASTokenCredential(
                     sas_token=cred_prop.credentials.sas,
-                    credential=self._config.credential,
+                    credential=sync_credential,
                     subscription_id=self._config.subscription_id,
                     resource_group_name=self._config.resource_group_name,
                     project_name=self._config.project_name,
@@ -3036,6 +3041,39 @@ class AgentsOperations(AgentsOperationsGenerated):
         if assistant_id in self._toolset:
             del self._toolset[assistant_id]
         return await super().delete_agent(assistant_id, **kwargs)
+
+
+class _SyncCredentialWrapper(TokenCredential):
+    """
+    The class, synchronizing AsyncTokenCredential.
+
+    :param async_credential: The async credential to be synchronized.
+    :type async_credential: ~azure.core.credentials_async.AsyncTokenCredential
+    """
+
+    def __init__(self, async_credential: "AsyncTokenCredential"):
+        self._async_credential = async_credential
+
+    def get_token(
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any,
+    ) -> "AccessToken":
+
+        pool = concurrent.futures.ThreadPoolExecutor()
+        return pool.submit(
+            asyncio.run,
+            self._async_credential.get_token(
+                *scopes,
+                claims=claims,
+                tenant_id=tenant_id,
+                enable_cae=enable_cae,
+                **kwargs,
+            ),
+        ).result()
 
 
 __all__: List[str] = [
