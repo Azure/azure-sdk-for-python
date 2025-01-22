@@ -76,9 +76,9 @@ with project_client:
     messages = project_client.agents.list_messages(thread_id=thread.id)
     
     for message in reversed(messages.data):
-        if not isinstance(message.content[0], MessageTextContent):
-            continue
         # To remove characters, which are not correctly handled by print, we will encode the message
-        # and then decode it again. 
-        clean_message = message.content[0].text.value.encode('ascii', 'ignore').decode('utf-8')
+        # and then decode it again.
+        clean_message = "\n".join(
+            text_msg.text.value.encode('ascii', 'ignore').decode('utf-8') for text_msg in message.text_messages
+        )
         print(f"Role: {message.role}  Message: {clean_message}")
