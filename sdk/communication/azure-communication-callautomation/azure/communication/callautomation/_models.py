@@ -259,12 +259,12 @@ class TextSource:
     :keyword text: Text for the cognitive service to be played. Required.
     :paramtype text: str
     :keyword source_locale: Source language locale to be played. Refer to available locales here:
-        https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts
+        https://learn.microsoft.com/azure/cognitive-services/speech-service/language-support?tabs=stt-tts
     :paramtype source_locale: str
     :keyword voice_kind: Voice kind type. Known values are: "male" and "female".
     :paramtype voice_kind: str or ~azure.communication.callautomation.VoiceKind
     :keyword voice_name: Voice name to be played. Refer to available Text-to-speech voices here:
-        https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts
+        https://learn.microsoft.com/azure/cognitive-services/speech-service/language-support?tabs=stt-tts
     :paramtype voice_name: str
     :keyword play_source_cache_id: Cached source id of the play media, if it exists.
     :paramtype play_source_cache_id: str
@@ -276,12 +276,12 @@ class TextSource:
     """Text for the cognitive service to be played."""
     source_locale: Optional[str]
     """Source language locale to be played. Refer to available locales here:
-        https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"""
+        https://learn.microsoft.com/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"""
     voice_kind: Optional[Union[str, "VoiceKind"]]
     """Voice kind type. Known values are: "male" and "female"."""
     voice_name: Optional[str]
     """Voice name to be played. Refer to available Text-to-speech voices here:
-        https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"""
+        https://learn.microsoft.com/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"""
     play_source_cache_id: Optional[str]
     """Cached source id of the play media, if it exists."""
     custom_voice_endpoint_id: Optional[str]
