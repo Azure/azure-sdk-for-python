@@ -338,7 +338,7 @@ class BaseStreamingChatCompletions:
 
         # Convert `bytes` to string and split the string by newline, while keeping the new line char.
         # the last may be a partial "line" that does not contain a newline char at the end.
-        line_list: List[str] = re.split(r"(?<=\n)", element.decode("utf-8"))
+        line_list: List[str] = re.split(r"(?<=\n)", element.decode("utf-8", errors="replace"))  # or errors="ignore"
         for index, line in enumerate(line_list):
 
             if self._ENABLE_CLASS_LOGS:
