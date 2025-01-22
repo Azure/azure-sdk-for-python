@@ -69,8 +69,8 @@
   - Method `GroupQuotaSubscriptionAllocationRequestOperations.begin_update` deleted or renamed its parameter `resource_name` of kind `positional_or_keyword`
   - Method `GroupQuotaSubscriptionAllocationRequestOperations.get` inserted a `positional_or_keyword` parameter `resource_provider_name`
   - Deleted or renamed method `GroupQuotaSubscriptionAllocationRequestOperations.begin_create_or_update`
-  - Deleted or renamed model `GroupQuotaLocationSettingsOperations`
-  - Deleted or renamed model `GroupQuotaUsagesOperations`
+  - Deleted or renamed operation group `GroupQuotaLocationSettingsOperations`
+  - Deleted or renamed operation group `GroupQuotaUsagesOperations`
 
 ## 2.0.0b1 (2024-04-22)
 
