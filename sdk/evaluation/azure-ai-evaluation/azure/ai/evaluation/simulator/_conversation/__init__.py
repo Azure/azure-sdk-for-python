@@ -165,25 +165,24 @@ class ConversationBot:
         :return: The response from the ConversationBot.
         :rtype: Tuple[dict, dict, float, dict]
         """
-
         # check if this is the first turn and the conversation_starter is not None,
         # return the conversations starter rather than generating turn using LLM
         if turn_number == 0 and self.conversation_starter is not None:
             # if conversation_starter is a dictionary, pass it into samples as is
             if isinstance(self.conversation_starter, dict):
-                samples: List[Union[str, jinja2.Template, Dict]] = [self.conversation_starter]
+                message_content: Union[str, jinja2.Template, Dict] = self.conversation_starter
             if isinstance(self.conversation_starter, jinja2.Template):
-                samples = [self.conversation_starter.render(**self.persona_template_args)]
+                message_content = self.conversation_starter.render(**self.persona_template_args)
             else:
-                samples = [self.conversation_starter]
+                message_content = self.conversation_starter
             jailbreak_string = self.persona_template_args.get("jailbreak_string", None)
             if jailbreak_string:
-                samples = [f"{jailbreak_string} {samples[0]}"]
+                message_content = f"{jailbreak_string} {samples[0]}"
             time_taken = 0
 
             finish_reason = ["stop"]
 
-            parsed_response = {"samples": samples, "finish_reason": finish_reason, "id": None}
+            parsed_response = {"message_content": message_content, "finish_reason": finish_reason, "id": None}
             full_response = parsed_response
             return parsed_response, {}, time_taken, full_response
 
@@ -200,17 +199,9 @@ class ConversationBot:
 
         messages = [{"role": "system", "content": prompt}]
 
-        # The ChatAPI must respond as ASSISTANT, so if this bot is USER, we need to reverse the messages
-        if (self.role == ConversationRole.USER) and (isinstance(self.model, (OpenAIChatCompletionsModel))):
-            # in here we need to simulate the user, The chatapi only generate turn as assistant and
-            # can't generate turn as user
-            # thus we reverse all rules in history messages,
-            # so that messages produced from the other bot passed here as user messages
-            messages.extend([turn.to_openai_chat_format(reverse=True) for turn in conversation_history[-max_history:]])
-            prompt_role = ConversationRole.USER.value
-        else:
+        if conversation_history:
             messages.extend([turn.to_openai_chat_format() for turn in conversation_history[-max_history:]])
-            prompt_role = self.role.value
+        prompt_role = self.role.value
 
         response = await self.model.get_conversation_completion(
             messages=messages,
@@ -282,7 +273,7 @@ class CallbackConversationBot(ConversationBot):
         time_taken = end_time - start_time
         try:
             response = {
-                "samples": [result["messages"][-1]["content"]],
+                "message_content": result["messages"][-1]["content"],
                 "finish_reason": ["stop"],
                 "id": None,
             }

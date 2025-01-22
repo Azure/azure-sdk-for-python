@@ -101,7 +101,6 @@ async def simulate_conversation(
     :return: Simulation a conversation between the given bots.
     :rtype: Tuple[Optional[str], List[ConversationTurn]]
     """
-
     # Read the first prompt.
     try:
         (first_response, request, _, full_response) = await bots[0].generate_response(
@@ -109,14 +108,13 @@ async def simulate_conversation(
             conversation_history=[],
             max_history=history_limit,
             turn_number=0,
-            conversation_id=conversation_id,
         )
     except Exception:  # pylint: disable=broad-except
         first_response = {"role": "user", "content": "Error: Unable to generate response."}
         request = None
         full_response = None
 
-    first_prompt = first_response.get("content", "")
+    first_prompt = first_response.get("message_content", "")
     if language != SupportedLanguages.English:
         if not isinstance(language, SupportedLanguages) or language not in SupportedLanguages:
             raise Exception(  # pylint: disable=broad-exception-raised
@@ -165,11 +163,30 @@ async def simulate_conversation(
             if conversation_id is None and "id" in response:
                 conversation_id = full_response["id"]
             # add the generated response to the list of generated responses
+            message_content = ""
+            if "message_content" in response:
+                message_content = response["message_content"]
+            if "content" in response:
+                message_content = response["content"]
+            if "messages" in response:
+                if isinstance(response["messages"], list) and len(response["messages"]) > 0:
+                    message_content = response["messages"][-1].get("content", "")
+                if isinstance(response["messages"], dict) and "content" in response["messages"]:
+                    message_content = response["messages"]["content"]
+            
+            if message_content == "":
+                raise EvaluationException(
+                    message="Response does not contain any messages.",
+                    internal_message="Response does not contain any messages.",
+                    error_category=ErrorCategory.INVALID_VALUE,
+                    error_target=ErrorTarget.CONVERSATION,
+                )
+
             conversation_history.append(
                 ConversationTurn(
                     role=current_bot.role,
                     name=current_bot.name,
-                    message=response.get("content", ""),
+                    message=message_content,
                     full_response=full_response,
                     request=request,
                 )

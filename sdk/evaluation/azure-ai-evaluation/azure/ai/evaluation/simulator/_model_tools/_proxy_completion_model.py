@@ -178,8 +178,15 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             time_taken = response_data["time_taken"]
         if "finish_reason" in response_data:
             finish_reason = response_data["finish_reason"]
+        if "content" in response_data:
+            return {
+                "message_content": response_data["content"],
+                "finish_reason": finish_reason,
+                "time_taken": time_taken,
+                "full_response": response_data
+            }
         return {
-            "content": response_data["content"],
+            "message_content": response_data['choices'][0]['message']['content'],
             "finish_reason": finish_reason,
             "time_taken": time_taken,
             "full_response": response_data
