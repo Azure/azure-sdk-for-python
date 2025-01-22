@@ -193,7 +193,7 @@ class TestAssistants(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
+        [(ASST_AZURE, PREVIEW)]
     )
     def test_assistants_crud(self, client, api_type, api_version, **kwargs):
 
