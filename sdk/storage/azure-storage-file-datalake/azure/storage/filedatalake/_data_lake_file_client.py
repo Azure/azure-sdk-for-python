@@ -6,7 +6,6 @@
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
 from datetime import datetime
-from io import BytesIO
 from typing import (
     Any, AnyStr, AsyncIterable, cast, Dict, IO, Iterable, Optional, Union,
     TYPE_CHECKING
@@ -34,7 +33,6 @@ from ._upload_helper import upload_datalake_file
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-    from datetime import datetime
     from ._models import ContentSettings
 
 
