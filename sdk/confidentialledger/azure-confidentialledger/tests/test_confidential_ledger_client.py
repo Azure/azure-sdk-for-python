@@ -279,7 +279,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             }
             )
 
-    def create_confidentialledger_client_user_defined_role(self, endpoint, ledger_id, is_aad):
+    def create_confidentialledger_client_user_defined_role(self, endpoint, ledger_id, is_aad, role_name):
         # Always explicitly fetch the TLS certificate.
         network_cert = self.set_ledger_identity(ledger_id)
 
@@ -334,9 +334,11 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             aad_based_client.create_user_defined_role(
               {
                 "roles": [
-                    {"role_name": "role1", "role_actions": ["/content/read"]}
+                    {"role_name": role_name, "role_actions": ["/content/read"]}
                 ]
             })
+
+            aad_based_client.delete_user_defined_role(role_name=role_name)
 
             # Sleep to make sure all replicas know the user is added.
             time.sleep(3)
@@ -831,5 +833,5 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client_user_defined_role(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+            confidentialledger_endpoint, confidentialledger_id, is_aad=False, role_name="modify"
         )

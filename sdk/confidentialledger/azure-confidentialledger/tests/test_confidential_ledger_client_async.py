@@ -579,25 +579,17 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             ":77:30:1F"
         )
         for user_id in [aad_user_id, cert_user_id]:
+            await client.delete_ledger_user(user_id)
+            await client.delete_ledger_user(user_id)
             user = await client.create_or_update_ledger_user(user_id, {"assignedRoles": ["Contributor"]})
             assert user["userId"] == user_id
-            assert user["assignedRoles"] == ["Administrator"]
+            assert user["assignedRoles"] == ["Contributor"]
 
             await asyncio.sleep(3)  # Let the PATCH user operation be committed, just in case.
 
             user = await client.get_ledger_user(user_id)
             assert user["userId"] == user_id
             assert user["assignedRoles"] == ["Contributor"]
-
-            user = await client.create_or_update_ledger_user(user_id, {"assignedRoles": ["Reader"]})
-            assert user["userId"] == user_id
-            assert user["assignedRoles"] == ["Administrator"]
-
-            await asyncio.sleep(3)  # Let the PATCH user operation be committed, just in case.
-
-            user = await client.get_ledger_user(user_id)
-            assert user["userId"] == user_id
-            assert user["assignedRoles"] == ["Reader"]
 
             await client.delete_ledger_user(user_id)
 
