@@ -115,6 +115,8 @@ def load_client(
     """
     Load a client from a given endpoint URL. The method makes a REST API call to the `/info` route
     on the given endpoint, to determine the model type and therefore which client to instantiate.
+    Keyword arguments are passed to the appropriate client's constructor, so if you need to set things like
+    `api_version`, `logging_enable`, `user_agent`, etc., you can do so here.
     This method will only work when using Serverless API or Managed Compute endpoint.
     It will not work for GitHub Models endpoint or Azure OpenAI endpoint.
 
@@ -124,10 +126,6 @@ def load_client(
      AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2024-05-01-preview". Note that overriding this default value may result in unsupported
-     behavior.
-    :paramtype api_version: str
     :return: The appropriate synchronous client associated with the given endpoint
     :rtype: ~azure.ai.inference.ChatCompletionsClient or ~azure.ai.inference.EmbeddingsClient
      or ~azure.ai.inference.ImageEmbeddingsClient

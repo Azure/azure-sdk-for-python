@@ -21,13 +21,13 @@ class TestEventHubManagementNetworkSecurityPerimeterConfigurationsOperationsAsyn
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_network_security_perimeter_configurations_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.network_security_perimeter_configurations.begin_create_or_update(
                 resource_group_name=resource_group.name,
                 namespace_name="str",
                 resource_association_name="str",
-                api_version="2022-10-01-preview",
+                api_version="2024-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
