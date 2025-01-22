@@ -1,7 +1,9 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import enum
 from typing import Literal
+from azure.ai.evaluation._common._experimental import experimental
 
 
 class EvaluationMetrics:
@@ -55,6 +57,22 @@ class EvaluationRunProperties:
     RUN_TYPE = "runType"
     EVALUATION_RUN = "_azureml.evaluation_run"
     EVALUATION_SDK = "_azureml.evaluation_sdk_name"
+
+
+@experimental
+class AggregationType(enum.Enum):
+    """Defines how numeric evaluation results should be aggregated
+    to produce a single value. Used by individual evaluators to combine per-turn results for
+    a conversation-based input. In general, wherever this enum is used, it is also possible
+    to directly assign the underlying aggregation function for more complex use cases.
+    The 'custom' value is generally not an acceptable input, and should only be used as an output
+    to indicate that a custom aggregation function has been injected."""
+
+    MEAN = "mean"
+    MAX = "max"
+    MIN = "min"
+    SUM = "sum"
+    CUSTOM = "custom"
 
 
 DEFAULT_EVALUATION_RESULTS_FILE_NAME = "evaluation_results.json"
