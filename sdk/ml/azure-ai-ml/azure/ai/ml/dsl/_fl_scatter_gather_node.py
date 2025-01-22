@@ -4,7 +4,6 @@
 
 import importlib
 
-# pylint: disable=protected-access
 from typing import Any, Dict, List, Optional, Union
 
 from azure.ai.ml._utils._experimental import experimental
@@ -15,7 +14,6 @@ from azure.ai.ml.entities._builders.fl_scatter_gather import FLScatterGather
 
 def _check_for_import(package_name: str) -> None:
     try:
-        # pylint: disable=unused-import
         importlib.import_module(package_name)
     except ImportError as e:
         raise ImportError(

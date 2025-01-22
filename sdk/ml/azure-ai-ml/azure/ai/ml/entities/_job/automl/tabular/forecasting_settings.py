@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes
 
 from typing import List, Optional, Union
 

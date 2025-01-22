@@ -47,8 +47,8 @@ def sample_load_client():
     if type(client) is ChatCompletionsClient:
         response = client.complete(
             messages=[
-                SystemMessage(content="You are a helpful assistant."),
-                UserMessage(content="How many feet are in a mile?"),
+                SystemMessage("You are a helpful assistant."),
+                UserMessage("How many feet are in a mile?"),
             ]
         )
 

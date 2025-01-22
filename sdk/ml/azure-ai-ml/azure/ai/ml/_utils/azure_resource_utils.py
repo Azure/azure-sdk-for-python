@@ -19,7 +19,7 @@ def get_resources_from_subscriptions(
         subsList = subscription_list
     else:
         try:
-            from azure.mgmt.resource import SubscriptionClient  # pylint: disable=import-error
+            from azure.mgmt.resource import SubscriptionClient
         except ImportError as e:
             raise ImportError("azure-mgmt-resource is required to get all accessible subscriptions") from e
 
@@ -28,7 +28,7 @@ def get_resources_from_subscriptions(
             subsList.append(sub.as_dict().get("subscription_id"))
 
     try:
-        import azure.mgmt.resourcegraph as arg  # pylint: disable=import-error
+        import azure.mgmt.resourcegraph as arg
     except ImportError as e:
         raise ImportError("azure-mgmt-resourcegraph is required query resources from subscriptions") from e
 

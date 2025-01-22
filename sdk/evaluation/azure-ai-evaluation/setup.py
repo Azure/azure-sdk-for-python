@@ -46,7 +46,6 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
@@ -63,10 +62,10 @@ setup(
             "azure.ai",
         ]
     ),
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     install_requires=[
-        "promptflow-devkit>=1.15.0",
-        "promptflow-core>=1.15.0",
+        "promptflow-devkit>=1.17.1",
+        "promptflow-core>=1.17.1",
         "pyjwt>=2.8.0",
         # pickle support for credentials was added to this release
         "azure-identity>=1.16.0",

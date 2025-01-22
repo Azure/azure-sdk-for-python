@@ -3,7 +3,6 @@
 # ---------------------------------------------------------
 
 # pylint: disable=R0902,too-many-locals
-# pylint: disable=C0302,too-many-lines
 
 from typing import Optional, Union
 

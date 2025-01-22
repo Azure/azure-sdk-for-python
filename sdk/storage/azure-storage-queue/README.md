@@ -11,7 +11,7 @@ Common uses of Queue storage include:
 | [Package (PyPI)](https://pypi.org/project/azure-storage-queue/)
 | [Package (Conda)](https://anaconda.org/microsoft/azure-storage/)
 | [API reference documentation](https://aka.ms/azsdk-python-storage-queue-ref)
-| [Product documentation](https://docs.microsoft.com/azure/storage/)
+| [Product documentation](https://learn.microsoft.com/azure/storage/)
 | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue/samples)
 
 ## Getting started
@@ -19,7 +19,7 @@ Common uses of Queue storage include:
 ### Prerequisites
 * Python 3.8 or later is required to use this package. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
-[Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to use this package.
+[Azure storage account](https://learn.microsoft.com/azure/storage/common/storage-account-overview) to use this package.
 
 ### Install the package
 Install the Azure Storage Queues client library for Python with [pip](https://pypi.org/project/pip/):
@@ -30,9 +30,9 @@ pip install azure-storage-queue
 
 ### Create a storage account
 If you wish to create a new storage account, you can use the
-[Azure Portal](https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal),
-[Azure PowerShell](https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-powershell),
-or [Azure CLI](https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-cli):
+[Azure Portal](https://learn.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal),
+[Azure PowerShell](https://learn.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-powershell),
+or [Azure CLI](https://learn.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-cli):
 
 ```bash
 # Create a new resource group to hold the storage account -
@@ -57,9 +57,9 @@ service = QueueServiceClient(account_url="https://<my-storage-account-name>.queu
 
 #### Looking up the account URL
 You can find the storage account's queue service URL using the
-[Azure Portal](https://docs.microsoft.com/azure/storage/common/storage-account-overview#storage-account-endpoints),
-[Azure PowerShell](https://docs.microsoft.com/powershell/module/az.storage/get-azstorageaccount),
-or [Azure CLI](https://docs.microsoft.com/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-show):
+[Azure Portal](https://learn.microsoft.com/azure/storage/common/storage-account-overview#storage-account-endpoints),
+[Azure PowerShell](https://learn.microsoft.com/powershell/module/az.storage/get-azstorageaccount),
+or [Azure CLI](https://learn.microsoft.com/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-show):
 
 ```bash
 # Get the queue service URL for the storage account
@@ -68,8 +68,8 @@ az storage account show -n my-storage-account-name -g my-resource-group --query 
 
 #### Types of credentials
 The `credential` parameter may be provided in a number of different forms, depending on the type of
-[authorization](https://docs.microsoft.com/azure/storage/common/storage-auth) you wish to use:
-1. To use a [shared access signature (SAS) token](https://docs.microsoft.com/azure/storage/common/storage-sas-overview),
+[authorization](https://learn.microsoft.com/azure/storage/common/storage-auth) you wish to use:
+1. To use a [shared access signature (SAS) token](https://learn.microsoft.com/azure/storage/common/storage-sas-overview),
    provide the token as a string. If your account URL includes the SAS token, omit the credential parameter.
    You can generate a SAS token from the Azure Portal under "Shared access signature" or use one of the `generate_sas()`
    functions to create a sas token for the storage account or queue:
@@ -90,7 +90,7 @@ The `credential` parameter may be provided in a number of different forms, depen
     queue_service_client = QueueServiceClient(account_url="https://<my_account_name>.queue.core.windows.net", credential=sas_token)
     ```
 
-2. To use a storage account [shared key](https://docs.microsoft.com/rest/api/storageservices/authenticate-with-shared-key/)
+2. To use a storage account [shared key](https://learn.microsoft.com/rest/api/storageservices/authenticate-with-shared-key/)
    (aka account key or access key), provide the key as a string. This can be found in the Azure Portal under the "Access Keys"
    section or by running the following Azure CLI command:
 
@@ -102,7 +102,7 @@ The `credential` parameter may be provided in a number of different forms, depen
     service = QueueServiceClient(account_url="https://<my_account_name>.queue.core.windows.net", credential="<account_access_key>")
     ```
 
-3. To use an [Azure Active Directory (AAD) token credential](https://docs.microsoft.com/azure/storage/common/storage-auth-aad),
+3. To use an [Azure Active Directory (AAD) token credential](https://learn.microsoft.com/azure/storage/common/storage-auth-aad),
    provide an instance of the desired credential type obtained from the
    [azure-identity](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials) library.
    For example, [DefaultAzureCredential](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential)
@@ -110,8 +110,8 @@ The `credential` parameter may be provided in a number of different forms, depen
 
    This requires some initial setup:
    * [Install azure-identity](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#install-the-package)
-   * [Register a new AAD application](https://docs.microsoft.com/azure/active-directory/develop/quickstart-register-app) and give permissions to access Azure Storage
-   * [Grant access](https://docs.microsoft.com/azure/storage/common/storage-auth-aad-rbac-portal) to Azure Queue data with RBAC in the Azure Portal
+   * [Register a new AAD application](https://learn.microsoft.com/azure/active-directory/develop/quickstart-register-app) and give permissions to access Azure Storage
+   * [Grant access](https://learn.microsoft.com/azure/storage/common/storage-auth-aad-rbac-portal) to Azure Queue data with RBAC in the Azure Portal
    * Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
      AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
 
@@ -393,7 +393,7 @@ Several Storage Queues Python SDK samples are available to you in the SDK's GitH
     * Peek and update messages
 
 ### Additional documentation
-For more extensive documentation on Azure Queue storage, see the [Azure Queue storage documentation](https://docs.microsoft.com/azure/storage/queues/) on docs.microsoft.com.
+For more extensive documentation on Azure Queue storage, see the [Azure Queue storage documentation](https://learn.microsoft.com/azure/storage/queues/) on learn.microsoft.com.
 
 ## Contributing
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.

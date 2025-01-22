@@ -27,6 +27,8 @@ from azure.ai.evaluation import (
     RetrievalEvaluator,
     ContentSafetyMultimodalEvaluator,
     ProtectedMaterialMultimodalEvaluator,
+    SexualMultimodalEvaluator,
+    SexualEvaluator,
     RougeType,
     evaluate,
 )
@@ -293,38 +295,40 @@ class TestMassEvaluate:
 
     # Image urls with target is disabled due to being unstable in CI
     @pytest.mark.parametrize(
-        "multi_modal_input_type,pm_evaluator_class,cs_evaluator_class",
+        "multi_modal_input_type",
         [
-            ("imageurls", ProtectedMaterialMultimodalEvaluator, ContentSafetyMultimodalEvaluator),
-            ("imageurls", ProtectedMaterialEvaluator, ContentSafetyEvaluator),
-            # ("imageurls_with_target", ProtectedMaterialMultimodalEvaluator, ContentSafetyMultimodalEvaluator),
-            # ("imageurls_with_target", ProtectedMaterialEvaluator, ContentSafetyEvaluator),
-            ("b64_images", ProtectedMaterialMultimodalEvaluator, ContentSafetyMultimodalEvaluator),
-            ("b64_images", ProtectedMaterialEvaluator, ContentSafetyEvaluator),
+            "imageurls",
+            "imageurls_with_target",
+            "b64_images",
         ],
     )
     def test_evaluate_multimodal(
         self,
         multi_modal_input_type,
-        pm_evaluator_class,
-        cs_evaluator_class,
         multimodal_input_selector,
         azure_cred,
         project_scope,
     ):
-        # Content safety is removed due to being unstable in playback mode
+        # ContentSafetyMultimodalEvaluator is excluded due 2 reasons:
+        # - It fails in playback mode for some reason
+        # - It's imminently being removed in favor of the ContentSafetyEvaluator.
         evaluators = {
-            # "content_safety" : cs_evaluator_class(credential=azure_cred, azure_ai_project=project_scope),
-            "protected_material": pm_evaluator_class(credential=azure_cred, azure_ai_project=project_scope),
+            "protected_material_old": ProtectedMaterialMultimodalEvaluator(
+                credential=azure_cred, azure_ai_project=project_scope
+            ),
+            "content_safety": ContentSafetyEvaluator(credential=azure_cred, azure_ai_project=project_scope),
+            "protected_material": ProtectedMaterialEvaluator(credential=azure_cred, azure_ai_project=project_scope),
+            "sexual_old": SexualMultimodalEvaluator(credential=azure_cred, azure_ai_project=project_scope),
+            "sexual": SexualEvaluator(credential=azure_cred, azure_ai_project=project_scope),
         }
 
-        evaluator_config = None  # use default normally
+        evaluator_config = None  # use default column mapping normally
         target = None
+        # imageurls_with_target has special column mapping to convert target function into inputted conversation.
         if multi_modal_input_type == "imageurls_with_target":
-            evaluator_config = {
-                # "content_safety": {"conversation": "${target.conversation}"},
-                "protected_material": {"conversation": "${target.conversation}"},
-            }
+            evaluator_config = {}
+            for key in evaluators.keys():
+                evaluator_config[key] = {"conversation": "${target.conversation}"}
             from .target_fn import target_multimodal_fn1
 
             target = target_multimodal_fn1
@@ -344,6 +348,11 @@ class TestMassEvaluate:
         assert result is not None
         assert result["rows"] is not None
 
+        if multi_modal_input_type == "imageurls_with_target":
+            # imageurls_with_target has 1 extra column: outputs.conversation due to the target mapping
+            assert len(row_result_df.keys()) == 32
+        else:
+            assert len(row_result_df.keys()) == 31
         assert "outputs.protected_material.artwork_label" in row_result_df.columns.to_list()
         assert "outputs.protected_material.artwork_reason" in row_result_df.columns.to_list()
         assert "outputs.protected_material.fictional_characters_label" in row_result_df.columns.to_list()
@@ -351,31 +360,46 @@ class TestMassEvaluate:
         assert "outputs.protected_material.logos_and_brands_label" in row_result_df.columns.to_list()
         assert "outputs.protected_material.logos_and_brands_reason" in row_result_df.columns.to_list()
 
-        # assert "outputs.content_safety.sexual" in row_result_df.columns.to_list()
-        # assert "outputs.content_safety.violence" in row_result_df.columns.to_list()
-        # assert "outputs.content_safety.self_harm" in row_result_df.columns.to_list()
-        # assert "outputs.content_safety.hate_unfairness" in row_result_df.columns.to_list()
-        # assert "outputs.content_safety.sexual_score" in row_result_df.columns.to_list()
-        # assert "outputs.content_safety.violence_score" in row_result_df.columns.to_list()
-        # assert "outputs.content_safety.self_harm_score" in row_result_df.columns.to_list()
-        # assert "outputs.content_safety.hate_unfairness_score" in row_result_df.columns.to_list()
-        # assert "outputs.content_safety.sexual_reason" in row_result_df.columns.to_list()
-        # assert "outputs.content_safety.violence_reason" in row_result_df.columns.to_list()
-        # assert "outputs.content_safety.self_harm_reason" in row_result_df.columns.to_list()
-        # assert "outputs.content_safety.hate_unfairness_reason" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.sexual" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.violence" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.self_harm" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.hate_unfairness" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.sexual_score" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.violence_score" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.self_harm_score" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.hate_unfairness_score" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.sexual_reason" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.violence_reason" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.self_harm_reason" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.hate_unfairness_reason" in row_result_df.columns.to_list()
 
-        # assert "content_safety.sexual_defect_rate" in metrics.keys()
-        # assert "content_safety.violence_defect_rate" in metrics.keys()
-        # assert "content_safety.self_harm_defect_rate" in metrics.keys()
-        # assert "content_safety.hate_unfairness_defect_rate" in metrics.keys()
-        assert "protected_material.fictional_characters_label" in metrics.keys()
-        assert "protected_material.logos_and_brands_label" in metrics.keys()
-        assert "protected_material.artwork_label" in metrics.keys()
+        assert "outputs.sexual.sexual_score" in row_result_df.columns.to_list()
+        assert "outputs.sexual.sexual_reason" in row_result_df.columns.to_list()
+        assert "outputs.sexual.sexual" in row_result_df.columns.to_list()
 
-        # assert 0 <= metrics.get("content_safety.sexual_defect_rate") <= 1
-        # assert 0 <= metrics.get("content_safety.violence_defect_rate") <= 1
-        # assert 0 <= metrics.get("content_safety.self_harm_defect_rate") <= 1
-        # assert 0 <= metrics.get("content_safety.hate_unfairness_defect_rate") <= 1
+        # TODO remove _old values when multi-modal specific evaluators are removed
+        assert "outputs.protected_material_old.artwork_label" in row_result_df.columns.to_list()
+        assert "outputs.protected_material_old.artwork_reason" in row_result_df.columns.to_list()
+        assert "outputs.protected_material_old.fictional_characters_label" in row_result_df.columns.to_list()
+        assert "outputs.protected_material_old.fictional_characters_reason" in row_result_df.columns.to_list()
+        assert "outputs.protected_material_old.logos_and_brands_label" in row_result_df.columns.to_list()
+        assert "outputs.protected_material_old.logos_and_brands_reason" in row_result_df.columns.to_list()
+
+        assert "outputs.sexual_old.sexual_score" in row_result_df.columns.to_list()
+        assert "outputs.sexual_old.sexual_reason" in row_result_df.columns.to_list()
+        assert "outputs.sexual_old.sexual" in row_result_df.columns.to_list()
+
+        assert len(metrics) == 12
+        assert 0 <= metrics.get("content_safety.sexual_defect_rate") <= 1
+        assert 0 <= metrics.get("content_safety.violence_defect_rate") <= 1
+        assert 0 <= metrics.get("content_safety.self_harm_defect_rate") <= 1
+        assert 0 <= metrics.get("content_safety.hate_unfairness_defect_rate") <= 1
         assert 0 <= metrics.get("protected_material.fictional_characters_label") <= 1
         assert 0 <= metrics.get("protected_material.logos_and_brands_label") <= 1
         assert 0 <= metrics.get("protected_material.artwork_label") <= 1
+        assert 0 <= metrics.get("sexual.sexual_defect_rate") <= 1
+        # TODO remove _old values when multi-modal specific evaluators are removed
+        assert 0 <= metrics.get("protected_material_old.fictional_characters_label") <= 1
+        assert 0 <= metrics.get("protected_material_old.logos_and_brands_label") <= 1
+        assert 0 <= metrics.get("protected_material_old.artwork_label") <= 1
+        assert 0 <= metrics.get("sexual_old.sexual_defect_rate") <= 1

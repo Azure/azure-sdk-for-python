@@ -33,6 +33,7 @@ from ._utils import (
     _log_metrics_and_instance_results,
     _trace_destination_from_project_scope,
     _write_output,
+    DataLoaderFactory,
 )
 
 TClient = TypeVar("TClient", ProxyClient, CodeClient)
@@ -431,10 +432,11 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
             )
 
     try:
-        initial_data_df = pd.read_json(data, lines=True)
+        data_loader = DataLoaderFactory.get_loader(data)
+        initial_data_df = data_loader.load()
     except Exception as e:
         raise EvaluationException(
-            message=f"Unable to load data from '{data}'. Please ensure the input is valid JSONL format. Detailed error: {e}.",
+            message=f"Unable to load data from '{data}'. Supported formats are JSONL and CSV. Detailed error: {e}.",
             target=ErrorTarget.EVALUATE,
             category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
@@ -456,7 +458,7 @@ def _apply_target_to_data(
 
     :param target: The function to be applied to data.
     :type target: Callable
-    :param data: The path to input jsonl file.
+    :param data: The path to input jsonl or csv file.
     :type data: Union[str, os.PathLike]
     :param pf_client: The promptflow client to be used.
     :type pf_client: PFClient
@@ -578,7 +580,7 @@ def evaluate(
         data will be run through target function and then results will be evaluated.
 
     :keyword data: Path to the data to be evaluated or passed to target if target is set.
-        Only .jsonl format files are supported.  `target` and `data` both cannot be None. Required.
+        JSONL and CSV files are supported.  `target` and `data` both cannot be None. Required.
     :paramtype data: str
     :keyword evaluators: Evaluators to be used for evaluation. It should be a dictionary with key as alias for evaluator
         and value as the evaluator function. Required.
