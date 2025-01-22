@@ -150,7 +150,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 module_logger.warning(
                     "Instance type %s may be too small for compute resources. "
                     "Minimum recommended compute SKU is Standard_DS3_v2 for general purpose endpoints. Learn more about SKUs here: "  # pylint: disable=line-too-long
-                    "https://learn.microsoft.com/en-us/azure/machine-learning/referencemanaged-online-endpoints-vm-sku-list",
+                    "https://learn.microsoft.com/azure/machine-learning/referencemanaged-online-endpoints-vm-sku-list",
                     deployment.instance_type,
                 )
             if (
