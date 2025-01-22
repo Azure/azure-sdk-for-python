@@ -168,7 +168,7 @@ class AgentTeam:
         :param instructions: The instructions for the team leader. These instructions
                              are not modified by the implementation, so all required
                              information about other team members and how to pass tasks
-                             to them should be inlcuded.
+                             to them should be included.
         :param toolset: An optional ToolSet to configure specific tools (functions, etc.)
                         for the team leader.
         """
