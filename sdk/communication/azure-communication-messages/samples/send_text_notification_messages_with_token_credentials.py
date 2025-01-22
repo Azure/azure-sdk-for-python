@@ -12,7 +12,7 @@ FILE: send_text_notification_messages_with_token_credentials.py
 DESCRIPTION:
     This sample demonstrates sending an Whatsapp message from business phone number to a single user. The NotificationMessageClient is 
     authenticated using Bearer TokenCredentials with azureidentity.
-    More information here: https://learn.microsoft.com/en-us/python/api/overview/azure/identity-readme?view=azure-python
+    More information here: https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python
 USAGE:
     python send_text_notification_messages_with_token_credentials.py
 
@@ -21,8 +21,8 @@ USAGE:
     2) RECIPIENT_PHONE_NUMBER - a phone number with Whatsapp capabilities. Use list for recipient phone number.
     3) WHATSAPP_CHANNEL_ID - Channel created in Azure portal for Advanced Messaging.
     4) Follow defining environment variables for DefaultAzureCredentials as give here:
-        https://learn.microsoft.com/en-us/python/api/overview/azure/identity-readme?view=azure-python#environment-variables
-        https://learn.microsoft.com/en-us/entra/identity-platform/howto-create-service-principal-portal
+        https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#environment-variables
+        https://learn.microsoft.com/entra/identity-platform/howto-create-service-principal-portal
         Variable name	      Value
         AZURE_CLIENT_ID     ID of a Microsoft Entra application
         AZURE_TENANT_ID     ID of the application's Microsoft Entra tenant
