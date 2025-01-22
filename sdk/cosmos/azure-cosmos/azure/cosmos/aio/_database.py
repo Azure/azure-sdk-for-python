@@ -199,7 +199,7 @@ class DatabaseProxy(object):
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword List[Dict[str, str]] computed_properties: **provisional** Sets The computed properties for this
             container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
-            `here: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
+            `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
@@ -324,7 +324,7 @@ class DatabaseProxy(object):
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword List[Dict[str, str]] computed_properties: **provisional** Sets The computed properties for this
             container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
-            `here: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
+            `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
