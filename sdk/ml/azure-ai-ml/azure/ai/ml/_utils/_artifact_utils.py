@@ -132,7 +132,7 @@ class ArtifactCache:
 
         # Organization URL has two format, https://dev.azure.com/{organization} and
         # https://{organization}.visualstudio.com
-        # https://docs.microsoft.com/en-us/azure/devops/extend/develop/work-with-urls?view=azure-devops&tabs=http
+        # https://learn.microsoft.com/azure/devops/extend/develop/work-with-urls?view=azure-devops&tabs=http
         if "dev.azure.com" in origin_url:
             regex = r"^https:\/\/\w*@?dev\.azure\.com\/(\w*)\/(\w*)"
             results = re.findall(regex, origin_url)
