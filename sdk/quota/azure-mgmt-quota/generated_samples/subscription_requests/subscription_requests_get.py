@@ -15,7 +15,7 @@ from azure.mgmt.quota import QuotaMgmtClient
     pip install azure-identity
     pip install azure-mgmt-quota
 # USAGE
-    python put_group_quota_enforcement.py
+    python subscription_requests_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,15 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.group_quota_location_settings.begin_create_or_update(
+    response = client.group_quota_subscription_requests.get(
         management_group_id="E7EC67B3-7657-4966-BFFC-41EFD36BAA09",
         group_quota_name="groupquota1",
-        resource_provider_name="Microsoft.Compute",
-        location="eastus",
-    ).result()
+        request_id_parameter="00000000-0000-0000-0000-000000000000",
+    )
     print(response)
 
 
-# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/preview/2023-06-01-preview/examples/GroupQuotasEnforcement/PutGroupQuotaEnforcement.json
+# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/preview/2024-12-18-preview/examples/SubscriptionRequests/SubscriptionRequests_Get.json
 if __name__ == "__main__":
     main()
