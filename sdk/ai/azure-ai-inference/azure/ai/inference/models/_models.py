@@ -405,6 +405,106 @@ class ChatCompletionsToolDefinition(_model_base.Model):
         self.type: Literal["function"] = "function"
 
 
+class ContentItem(_model_base.Model):
+    """An abstract representation of a structured content item within a chat message.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ImageContentItem, ChatMessageAudioContentItem, TextContentItem
+
+    :ivar type: The discriminated object type. Required. Default value is None.
+    :vartype type: str
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    type: str = rest_discriminator(name="type")
+    """The discriminated object type. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChatMessageAudioContentItem(ContentItem, discriminator="input_audio"):
+    """A structured chat content item containing an audio content.
+
+    :ivar type: The discriminated object type: always 'input_audio' for this type. Required.
+     Default value is "input_audio".
+    :vartype type: str
+    :ivar input_audio: The details of the input audio. Required.
+    :vartype input_audio: ~azure.ai.inference.models.ChatMessageInputAudio
+    """
+
+    type: Literal["input_audio"] = rest_discriminator(name="type")  # type: ignore
+    """The discriminated object type: always 'input_audio' for this type. Required. Default value is
+     \"input_audio\"."""
+    input_audio: "_models.ChatMessageInputAudio" = rest_field()
+    """The details of the input audio. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        input_audio: "_models.ChatMessageInputAudio",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="input_audio", **kwargs)
+
+
+class ChatMessageInputAudio(_model_base.Model):
+    """The details of an audio chat message content part.
+
+    :ivar data: Base64 encoded audio data. Required.
+    :vartype data: str
+    :ivar format: The audio format of the audio content. Required. Known values are: "wav" and
+     "mp3".
+    :vartype format: str or ~azure.ai.inference.models.AudioContentFormat
+    """
+
+    data: str = rest_field()
+    """Base64 encoded audio data. Required."""
+    format: Union[str, "_models.AudioContentFormat"] = rest_field()
+    """The audio format of the audio content. Required. Known values are: \"wav\" and \"mp3\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data: str,
+        format: Union[str, "_models.AudioContentFormat"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ChatRequestMessage(_model_base.Model):
     """An abstract representation of a chat message as provided in a request.
 
@@ -672,38 +772,6 @@ class CompletionsUsage(_model_base.Model):
         completion_tokens: int,
         prompt_tokens: int,
         total_tokens: int,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ContentItem(_model_base.Model):
-    """An abstract representation of a structured content item within a chat message.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ImageContentItem, TextContentItem
-
-    :ivar type: The discriminated object type. Required. Default value is None.
-    :vartype type: str
-    """
-
-    __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
-    """The discriminated object type. Required. Default value is None."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: str,
     ) -> None: ...
 
     @overload

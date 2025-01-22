@@ -20,6 +20,8 @@ from ._models import (  # type: ignore
     ChatCompletionsNamedToolChoiceFunction,
     ChatCompletionsToolCall,
     ChatCompletionsToolDefinition,
+    ChatMessageAudioContentItem,
+    ChatMessageInputAudio,
     ChatResponseMessage,
     CompletionsUsage,
     ContentItem,
@@ -41,6 +43,7 @@ from ._models import (  # type: ignore
 )
 
 from ._enums import (  # type: ignore
+    AudioContentFormat,
     ChatCompletionsToolChoicePreset,
     ChatRole,
     CompletionsFinishReason,
@@ -60,6 +63,8 @@ __all__ = [
     "ChatCompletionsNamedToolChoiceFunction",
     "ChatCompletionsToolCall",
     "ChatCompletionsToolDefinition",
+    "ChatMessageAudioContentItem",
+    "ChatMessageInputAudio",
     "ChatResponseMessage",
     "CompletionsUsage",
     "ContentItem",
@@ -78,6 +83,7 @@ __all__ = [
     "StreamingChatResponseMessageUpdate",
     "StreamingChatResponseToolCallUpdate",
     "TextContentItem",
+    "AudioContentFormat",
     "ChatCompletionsToolChoicePreset",
     "ChatRole",
     "CompletionsFinishReason",
