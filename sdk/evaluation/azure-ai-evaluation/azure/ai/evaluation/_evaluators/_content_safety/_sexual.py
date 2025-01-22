@@ -9,6 +9,7 @@ from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 from azure.ai.evaluation._model_configurations import Conversation
+from azure.ai.evaluation._constants import AggregationType
 
 
 @experimental
@@ -67,6 +68,7 @@ class SexualEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             eval_metric=EvaluationMetrics.SEXUAL,
             azure_ai_project=azure_ai_project,
             credential=credential,
+            conversation_aggregation_type=AggregationType.MAX,
         )
 
     @overload

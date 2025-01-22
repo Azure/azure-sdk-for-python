@@ -6238,14 +6238,14 @@ class TextSource(_serialization.Model):
     :vartype text: str
     :ivar source_locale: Source language locale to be played
      Refer to available locales here: :code:`<seealso
-     href="https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"
+     href="https://learn.microsoft.com/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"
      />`.
     :vartype source_locale: str
     :ivar voice_kind: Voice kind type. Known values are: "male" and "female".
     :vartype voice_kind: str or ~azure.communication.callautomation.models.VoiceKind
     :ivar voice_name: Voice name to be played
      Refer to available Text-to-speech voices here: :code:`<seealso
-     href="https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"
+     href="https://learn.microsoft.com/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"
      />`.
     :vartype voice_name: str
     :ivar custom_voice_endpoint_id: Endpoint where the custom voice was deployed.
@@ -6279,14 +6279,14 @@ class TextSource(_serialization.Model):
         :paramtype text: str
         :keyword source_locale: Source language locale to be played
          Refer to available locales here: :code:`<seealso
-         href="https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"
+         href="https://learn.microsoft.com/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"
          />`.
         :paramtype source_locale: str
         :keyword voice_kind: Voice kind type. Known values are: "male" and "female".
         :paramtype voice_kind: str or ~azure.communication.callautomation.models.VoiceKind
         :keyword voice_name: Voice name to be played
          Refer to available Text-to-speech voices here: :code:`<seealso
-         href="https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"
+         href="https://learn.microsoft.com/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"
          />`.
         :paramtype voice_name: str
         :keyword custom_voice_endpoint_id: Endpoint where the custom voice was deployed.

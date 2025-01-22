@@ -2019,7 +2019,7 @@ class RouteOperations:
 
         Routing service provides a set of parameters for a detailed description of vehicle-specific
         Consumption Model. Please check `Consumption Model
-        <https://docs.microsoft.com/azure/azure-maps/consumption-model>`_ for detailed explanation of
+        <https://learn.microsoft.com/azure/azure-maps/consumption-model>`_ for detailed explanation of
         the concepts and parameters involved.
 
         :param format: Desired format of the response. Value can be either *json* or *xml*. Known
@@ -2088,7 +2088,7 @@ class RouteOperations:
          if that is not available, they are returned in an available language  that is close to it.
          Allowed values are (a subset of) the IETF language tags. The currently supported  languages are
          listed in the `Supported languages  section
-         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`_.
+         <https://learn.microsoft.com/azure/azure-maps/supported-languages>`_.
 
          Default value: en-GB. Default value is None.
         :paramtype language: str
@@ -2525,7 +2525,7 @@ class RouteOperations:
 
         Routing service provides a set of parameters for a detailed description of a vehicle-specific
         Consumption Model. Please check `Consumption Model
-        <https://docs.microsoft.com/azure/azure-maps/consumption-model>`_ for detailed explanation of
+        <https://learn.microsoft.com/azure/azure-maps/consumption-model>`_ for detailed explanation of
         the concepts and parameters involved.
 
         :param route_direction_parameters: Used for reconstructing a route and for calculating zero or
@@ -2976,7 +2976,7 @@ class RouteOperations:
 
         Routing service provides a set of parameters for a detailed description of a vehicle-specific
         Consumption Model. Please check `Consumption Model
-        <https://docs.microsoft.com/azure/azure-maps/consumption-model>`_ for detailed explanation of
+        <https://learn.microsoft.com/azure/azure-maps/consumption-model>`_ for detailed explanation of
         the concepts and parameters involved.
 
         :param route_direction_parameters: Used for reconstructing a route and for calculating zero or
@@ -3427,7 +3427,7 @@ class RouteOperations:
 
         Routing service provides a set of parameters for a detailed description of a vehicle-specific
         Consumption Model. Please check `Consumption Model
-        <https://docs.microsoft.com/azure/azure-maps/consumption-model>`_ for detailed explanation of
+        <https://learn.microsoft.com/azure/azure-maps/consumption-model>`_ for detailed explanation of
         the concepts and parameters involved.
 
         :param route_direction_parameters: Used for reconstructing a route and for calculating zero or
@@ -3955,7 +3955,7 @@ class RouteOperations:
         the result of the origin point.
 
         The returned polygon can be used for further processing such as  `Search Inside Geometry
-        <https://docs.microsoft.com/rest/api/maps/search/postsearchinsidegeometry>`_ to  search for
+        <https://learn.microsoft.com/rest/api/maps/search/postsearchinsidegeometry>`_ to  search for
         POIs within the provided Isochrone.
 
         :param format: Desired format of the response. Value can be either *json* or *xml*. Known
@@ -4396,7 +4396,7 @@ class RouteOperations:
         **Applies to**\\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         The Route Directions Batch API sends batches of queries to `Route Directions API
-        <https://docs.microsoft.com/rest/api/maps/route/getroutedirections>`_ using just a single API
+        <https://learn.microsoft.com/rest/api/maps/route/getroutedirections>`_ using just a single API
         call. You can call Route Directions Batch API to run either asynchronously (async) or
         synchronously (sync). The async API allows caller to batch up to **700** queries and sync API
         up to **100** queries.
@@ -4469,7 +4469,7 @@ class RouteOperations:
         A *route directions* query in a batch is just a partial URL *without* the protocol, base URL,
         path, api-version and subscription-key. It can accept any of the supported *route directions*
         `URI parameters
-        <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#uri-parameters>`_. The
+        <https://learn.microsoft.com/rest/api/maps/route/getroutedirections#uri-parameters>`_. The
         string values in the *route directions* query must be properly escaped (e.g. " character should
         be escaped with ) and it should also be properly URL-encoded.
 
@@ -4517,7 +4517,7 @@ class RouteOperations:
 
 
         * `\\ ``RouteDirections``
-          <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
+          <https://learn.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
           query completed successfully.
 
         * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
@@ -4626,7 +4626,7 @@ class RouteOperations:
         **Applies to**\\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         The Route Directions Batch API sends batches of queries to `Route Directions API
-        <https://docs.microsoft.com/rest/api/maps/route/getroutedirections>`_ using just a single API
+        <https://learn.microsoft.com/rest/api/maps/route/getroutedirections>`_ using just a single API
         call. You can call Route Directions Batch API to run either asynchronously (async) or
         synchronously (sync). The async API allows caller to batch up to **700** queries and sync API
         up to **100** queries.
@@ -4699,7 +4699,7 @@ class RouteOperations:
         A *route directions* query in a batch is just a partial URL *without* the protocol, base URL,
         path, api-version and subscription-key. It can accept any of the supported *route directions*
         `URI parameters
-        <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#uri-parameters>`_. The
+        <https://learn.microsoft.com/rest/api/maps/route/getroutedirections#uri-parameters>`_. The
         string values in the *route directions* query must be properly escaped (e.g. " character should
         be escaped with ) and it should also be properly URL-encoded.
 
@@ -4747,7 +4747,7 @@ class RouteOperations:
 
 
         * `\\ ``RouteDirections``
-          <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
+          <https://learn.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
           query completed successfully.
 
         * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
@@ -4854,7 +4854,7 @@ class RouteOperations:
         **Applies to**\\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         The Route Directions Batch API sends batches of queries to `Route Directions API
-        <https://docs.microsoft.com/rest/api/maps/route/getroutedirections>`_ using just a single API
+        <https://learn.microsoft.com/rest/api/maps/route/getroutedirections>`_ using just a single API
         call. You can call Route Directions Batch API to run either asynchronously (async) or
         synchronously (sync). The async API allows caller to batch up to **700** queries and sync API
         up to **100** queries.
@@ -4927,7 +4927,7 @@ class RouteOperations:
         A *route directions* query in a batch is just a partial URL *without* the protocol, base URL,
         path, api-version and subscription-key. It can accept any of the supported *route directions*
         `URI parameters
-        <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#uri-parameters>`_. The
+        <https://learn.microsoft.com/rest/api/maps/route/getroutedirections#uri-parameters>`_. The
         string values in the *route directions* query must be properly escaped (e.g. " character should
         be escaped with ) and it should also be properly URL-encoded.
 
@@ -4975,7 +4975,7 @@ class RouteOperations:
 
 
         * `\\ ``RouteDirections``
-          <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
+          <https://learn.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
           query completed successfully.
 
         * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
@@ -5209,7 +5209,7 @@ class RouteOperations:
 
 
         * `\\ ``RouteDirections``
-          <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
+          <https://learn.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
           query completed successfully.
 
         * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
@@ -5349,7 +5349,7 @@ class RouteOperations:
         **Applies to**\\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         The Route Directions Batch API sends batches of queries to `Route Directions API
-        <https://docs.microsoft.com/rest/api/maps/route/getroutedirections>`_ using just a single API
+        <https://learn.microsoft.com/rest/api/maps/route/getroutedirections>`_ using just a single API
         call. You can call Route Directions Batch API to run either asynchronously (async) or
         synchronously (sync). The async API allows caller to batch up to **700** queries and sync API
         up to **100** queries.
@@ -5383,7 +5383,7 @@ class RouteOperations:
 
 
         * `\\ ``RouteDirections``
-          <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
+          <https://learn.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
           query completed successfully.
 
         * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
@@ -5492,7 +5492,7 @@ class RouteOperations:
         **Applies to**\\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         The Route Directions Batch API sends batches of queries to `Route Directions API
-        <https://docs.microsoft.com/rest/api/maps/route/getroutedirections>`_ using just a single API
+        <https://learn.microsoft.com/rest/api/maps/route/getroutedirections>`_ using just a single API
         call. You can call Route Directions Batch API to run either asynchronously (async) or
         synchronously (sync). The async API allows caller to batch up to **700** queries and sync API
         up to **100** queries.
@@ -5526,7 +5526,7 @@ class RouteOperations:
 
 
         * `\\ ``RouteDirections``
-          <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
+          <https://learn.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
           query completed successfully.
 
         * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
@@ -5633,7 +5633,7 @@ class RouteOperations:
         **Applies to**\\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         The Route Directions Batch API sends batches of queries to `Route Directions API
-        <https://docs.microsoft.com/rest/api/maps/route/getroutedirections>`_ using just a single API
+        <https://learn.microsoft.com/rest/api/maps/route/getroutedirections>`_ using just a single API
         call. You can call Route Directions Batch API to run either asynchronously (async) or
         synchronously (sync). The async API allows caller to batch up to **700** queries and sync API
         up to **100** queries.
@@ -5667,7 +5667,7 @@ class RouteOperations:
 
 
         * `\\ ``RouteDirections``
-          <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
+          <https://learn.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
           query completed successfully.
 
         * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
