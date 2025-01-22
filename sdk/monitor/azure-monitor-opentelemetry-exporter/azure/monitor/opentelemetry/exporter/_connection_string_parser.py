@@ -7,6 +7,7 @@ import typing
 LIVE_ENDPOINT = "liveendpoint"
 INGESTION_ENDPOINT = "ingestionendpoint"
 INSTRUMENTATION_KEY = "instrumentationkey"
+AAD_AUDIENCE = "aadaudience"
 
 # Validate UUID format
 # Specs taken from https://tools.ietf.org/html/rfc4122
@@ -26,6 +27,7 @@ class ConnectionStringParser:
         self.endpoint = ""
         self.live_endpoint = ""
         self._connection_string = connection_string
+        self.aad_audience = ""
         self._initialize()
         self._validate_instrumentation_key()
 
@@ -53,6 +55,10 @@ class ConnectionStringParser:
         )
         self.live_endpoint = (
             code_cs.get(LIVE_ENDPOINT) or env_cs.get(LIVE_ENDPOINT) or "https://rt.services.visualstudio.com"
+        )
+        # The AUDIENCE is a url that identifies Azure Monitor in a specific cloud (For example: "https://monitor.azure.com/").
+        self.aad_audience = (
+            code_cs.get(AAD_AUDIENCE) or env_cs.get(AAD_AUDIENCE)  # type: ignore
         )
 
     def _validate_instrumentation_key(self) -> None:
