@@ -110,7 +110,7 @@ stages:
                 runOnce:
                   deploy:
                     steps:
-                      - checkout: self
+                      # - checkout: self
 
 # todo: re-enable by publishing the necessary scripts as a build artifact that can be downloaded
                       # - download: current
