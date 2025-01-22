@@ -100,7 +100,7 @@ class TestInference(InferenceTestBase):
     @recorded_by_proxy
     def test_inference_get_chat_completions_client_key_auth(self, **kwargs):
         model = kwargs.pop("azure_ai_projects_inference_tests_chat_completions_model_deployment_name")
-        with self.get_sync_client(**kwargs) as project_client:
+        with self.get_sync_client(user_agent="MyAppId", **kwargs) as project_client:
             with project_client.inference.get_chat_completions_client() as chat_completions_client:
                 response = chat_completions_client.complete(
                     model=model,
@@ -108,11 +108,13 @@ class TestInference(InferenceTestBase):
                         SystemMessage(content="You are a helpful assistant."),
                         UserMessage(content="How many feet are in a mile?"),
                     ],
+                    raw_request_hook=self.request_callback,
                 )
                 print("\nChatCompletionsClient response:")
                 pprint.pprint(response)
                 contains = ["5280", "5,280"]
                 assert any(item in response.choices[0].message.content for item in contains)
+                self.validate_user_agent(starts_with="MyAppId-AIProjectClient azsdk-python-ai-inference/")
 
     @servicePreparerInferenceTests()
     @recorded_by_proxy
@@ -129,11 +131,13 @@ class TestInference(InferenceTestBase):
                         SystemMessage(content="You are a helpful assistant."),
                         UserMessage(content="How many feet are in a mile?"),
                     ],
+                    raw_request_hook=self.request_callback,
                 )
                 print("\nChatCompletionsClient response:")
                 pprint.pprint(response)
                 contains = ["5280", "5,280"]
                 assert any(item in response.choices[0].message.content for item in contains)
+                self.validate_user_agent(starts_with="AIProjectClient azsdk-python-ai-inference/")
 
     @servicePreparerInferenceTests()
     def test_inference_get_chat_completions_client_with_empty_connection_name(self, **kwargs):
@@ -164,9 +168,13 @@ class TestInference(InferenceTestBase):
     @recorded_by_proxy
     def test_inference_get_embeddings_client_key_auth(self, **kwargs):
         model = kwargs.pop("azure_ai_projects_inference_tests_embeddings_model_deployment_name")
-        with self.get_sync_client(**kwargs) as project_client:
+        with self.get_sync_client(user_agent="MyAppId", **kwargs) as project_client:
             with project_client.inference.get_embeddings_client() as embeddings_client:
-                response = embeddings_client.embed(model=model, input=["first phrase", "second phrase", "third phrase"])
+                response = embeddings_client.embed(
+                    model=model,
+                    input=["first phrase", "second phrase", "third phrase"],
+                    raw_request_hook=self.request_callback,
+                )
                 print("\nEmbeddingsClient response:")
                 for item in response.data:
                     length = len(item.embedding)
@@ -179,6 +187,7 @@ class TestInference(InferenceTestBase):
                     assert len(item.embedding) > 0
                     assert item.embedding[0] != 0
                     assert item.embedding[-1] != 0
+                self.validate_user_agent(starts_with="MyAppId-AIProjectClient azsdk-python-ai-inference/")
 
     @servicePreparerInferenceTests()
     @recorded_by_proxy
@@ -187,7 +196,11 @@ class TestInference(InferenceTestBase):
         model = kwargs.pop("azure_ai_projects_inference_tests_embeddings_model_deployment_name")
         with self.get_sync_client(**kwargs) as project_client:
             with project_client.inference.get_embeddings_client(connection_name=connection_name) as embeddings_client:
-                response = embeddings_client.embed(model=model, input=["first phrase", "second phrase", "third phrase"])
+                response = embeddings_client.embed(
+                    model=model,
+                    input=["first phrase", "second phrase", "third phrase"],
+                    raw_request_hook=self.request_callback,
+                )
                 print("\nEmbeddingsClient response:")
                 for item in response.data:
                     length = len(item.embedding)
@@ -200,6 +213,7 @@ class TestInference(InferenceTestBase):
                     assert len(item.embedding) > 0
                     assert item.embedding[0] != 0
                     assert item.embedding[-1] != 0
+                self.validate_user_agent(starts_with="AIProjectClient azsdk-python-ai-inference/")
 
     @servicePreparerInferenceTests()
     def test_inference_get_embeddings_client_with_empty_connection_name(self, **kwargs):
@@ -230,9 +244,13 @@ class TestInference(InferenceTestBase):
     @recorded_by_proxy
     def test_inference_get_image_embeddings_client_key_auth(self, **kwargs):
         model = kwargs.pop("azure_ai_projects_inference_tests_embeddings_model_deployment_name")
-        with self.get_sync_client(**kwargs) as project_client:
+        with self.get_sync_client(user_agent="MyAppId", **kwargs) as project_client:
             with project_client.inference.get_image_embeddings_client() as embeddings_client:
-                response = embeddings_client.embed(model=model, input=[InferenceTestBase.get_image_embeddings_input()])
+                response = embeddings_client.embed(
+                    model=model,
+                    input=[InferenceTestBase.get_image_embeddings_input()],
+                    raw_request_hook=self.request_callback,
+                )
                 print("\nImageEmbeddingsClient response:")
                 for item in response.data:
                     length = len(item.embedding)
@@ -245,6 +263,7 @@ class TestInference(InferenceTestBase):
                 assert len(response.data[0].embedding) > 0
                 assert response.data[0].embedding[0] != 0.0
                 assert response.data[0].embedding[-1] != 0.0
+                self.validate_user_agent(starts_with="MyAppId-AIProjectClient azsdk-python-ai-inference/")
 
     @servicePreparerInferenceTests()
     @recorded_by_proxy
@@ -255,7 +274,11 @@ class TestInference(InferenceTestBase):
             with project_client.inference.get_image_embeddings_client(
                 connection_name=connection_name
             ) as embeddings_client:
-                response = embeddings_client.embed(model=model, input=[InferenceTestBase.get_image_embeddings_input()])
+                response = embeddings_client.embed(
+                    model=model,
+                    input=[InferenceTestBase.get_image_embeddings_input()],
+                    raw_request_hook=self.request_callback,
+                )
                 print("\nImageEmbeddingsClient response:")
                 for item in response.data:
                     length = len(item.embedding)
@@ -268,6 +291,7 @@ class TestInference(InferenceTestBase):
                 assert len(response.data[0].embedding) > 0
                 assert response.data[0].embedding[0] != 0.0
                 assert response.data[0].embedding[-1] != 0.0
+                self.validate_user_agent(starts_with="AIProjectClient azsdk-python-ai-inference/")
 
     @servicePreparerInferenceTests()
     def test_inference_get_image_embeddings_client_with_empty_connection_name(self, **kwargs):

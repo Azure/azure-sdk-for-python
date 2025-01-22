@@ -63,9 +63,19 @@ _Unset: Any = object()
 
 class InferenceOperations:
 
-    USER_AGENT_APP_ID = "AIProjectClient"
-
     def __init__(self, outer_instance):
+
+        # All returned inference clients will have this application id set on their user-agent.
+        # For more info on user-agent HTTP header, see: https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy
+        USER_AGENT_APP_ID = "AIProjectClient"
+
+        if hasattr(outer_instance, "_user_agent") and outer_instance._user_agent:
+            # If the calling application has set "user_agent" when constructing the AIProjectClient,
+            # take that value and prepend it to USER_AGENT_APP_ID.
+            self._user_agent = f"{outer_instance._user_agent}-{USER_AGENT_APP_ID}"
+        else:
+            self._user_agent = USER_AGENT_APP_ID
+
         self._outer_instance = outer_instance
 
     @distributed_trace_async
@@ -133,11 +143,6 @@ class InferenceOperations:
             endpoint = f"{connection.endpoint_url}/models"
             credential_scopes = ["https://cognitiveservices.azure.com/.default"]
 
-        if self._outer_instance._user_agent:
-            user_agent = f"{self._outer_instance._user_agent}-{self.USER_AGENT_APP_ID}"
-        else:
-            user_agent = self.USER_AGENT_APP_ID
-
         if connection.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client]"
@@ -145,14 +150,21 @@ class InferenceOperations:
             )
             from azure.core.credentials import AzureKeyCredential
 
-            client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key), user_agent=user_agent)
+            client = ChatCompletionsClient(
+                endpoint=endpoint,
+                credential=AzureKeyCredential(connection.key),
+                user_agent=self._user_agent,
+            )
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client]"
                 + " Creating ChatCompletionsClient using Entra ID authentication"
             )
             client = ChatCompletionsClient(
-                endpoint=endpoint, credential=connection.token_credential, credential_scopes=credential_scopes, user_agent=user_agent
+                endpoint=endpoint,
+                credential=connection.token_credential,
+                credential_scopes=credential_scopes,
+                user_agent=self._user_agent,
             )
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(
@@ -236,13 +248,18 @@ class InferenceOperations:
             )
             from azure.core.credentials import AzureKeyCredential
 
-            client = EmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
+            client = EmbeddingsClient(
+                endpoint=endpoint, credential=AzureKeyCredential(connection.key), user_agent=self._user_agent
+            )
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using Entra ID authentication"
             )
             client = EmbeddingsClient(
-                endpoint=endpoint, credential=connection.token_credential, credential_scopes=credential_scopes
+                endpoint=endpoint,
+                credential=connection.token_credential,
+                credential_scopes=credential_scopes,
+                user_agent=self._user_agent,
             )
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(
@@ -326,14 +343,19 @@ class InferenceOperations:
             )
             from azure.core.credentials import AzureKeyCredential
 
-            client = ImageEmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
+            client = ImageEmbeddingsClient(
+                endpoint=endpoint, credential=AzureKeyCredential(connection.key), user_agent=self._user_agent
+            )
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             logger.debug(
                 "[InferenceOperations.get_image_embeddings_client] "
                 "Creating ImageEmbeddingsClient using Entra ID authentication"
             )
             client = ImageEmbeddingsClient(
-                endpoint=endpoint, credential=connection.token_credential, credential_scopes=credential_scopes
+                endpoint=endpoint,
+                credential=connection.token_credential,
+                credential_scopes=credential_scopes,
+                user_agent=self._user_agent,
             )
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(
