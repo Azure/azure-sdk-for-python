@@ -13,7 +13,7 @@ import config
 # Prerequisites -
 #
 # 1. An Azure Cosmos account -
-#    https://docs.microsoft.com/azure/cosmos-db/create-sql-api-python#create-a-database-account
+#    https://learn.microsoft.com/azure/cosmos-db/create-sql-api-python#create-a-database-account
 #
 # 2. Microsoft Azure Cosmos PyPi package -
 #    https://pypi.python.org/pypi/azure-cosmos/
