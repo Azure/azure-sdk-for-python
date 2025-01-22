@@ -89,10 +89,8 @@ class TestConversationBot:
                 session=client, conversation_history=[], max_history=0, turn_number=0
             )
 
-        assert (
-            parsed_response["samples"][0]
-            == bot_invalid_jinja_params["instantiation_parameters"]["conversation_starter"]
-        )
+        assert parsed_response["message_content"] == bot_invalid_jinja_params["instantiation_parameters"]["conversation_starter"]
+
 
     @pytest.mark.asyncio
     async def test_conversation_bot_initialization_assistant(self, bot_assistant_params):
@@ -106,7 +104,8 @@ class TestConversationBot:
         bot = ConversationBot(**bot_user_params)
         session = AsyncMock()
         response, request, time_taken, full_response = await bot.generate_response(session, [], 0, 0)
-        assert response["samples"][0] == "Hello, world!"
+        assert response["message_content"] == "Hello, world!"
+
         assert time_taken == 0
 
     @pytest.mark.asyncio

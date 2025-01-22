@@ -258,7 +258,10 @@ class CallbackConversationBot(ConversationBot):
         msg_copy = copy.deepcopy(chat_protocol_message)
         result = {}
         start_time = time.time()
-        result = await self.callback(messages=msg_copy, stream=False, session_state=self._session_state, context=None)
+        if self._session_state:
+            result = await self.callback(messages=msg_copy, session_state=self._session_state)
+        else:
+            result = await self.callback(messages=msg_copy)
         if "session_state" in result:
             self._session_state = {**self._session_state, **result["session_state"]}
         result["session_state"] = self._session_state

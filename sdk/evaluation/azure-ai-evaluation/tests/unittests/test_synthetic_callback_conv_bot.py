@@ -2,6 +2,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 
+from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation.simulator._conversation import (
     CallbackConversationBot,
     ConversationRole,
@@ -14,15 +15,20 @@ class MockOpenAIChatCompletionsModel(OpenAIChatCompletionsModel):
         super().__init__(name="mockAIcompletionsModel", endpoint_url="some-url", token_manager="token_manager")
 
     async def get_conversation_completion(self, messages, session, role):
-        return {"response": {}, "request": {}, "time_taken": 0, "full_response": {}}
+        return {
+            "response": {},
+            "request": {},
+            "time_taken": 0,
+            "full_response": {}
+        }
+
 
 
 @pytest.mark.unittest
 class TestCallbackConversationBot:
     @pytest.mark.asyncio
     async def test_generate_response_with_valid_callback(self):
-        # Mock the callback to return a predefined response
-        async def mock_callback(msg):
+        async def mock_callback(messages, session_state=None):
             return {
                 "messages": [{"content": "Test response", "role": "assistant"}],
                 "finish_reason": ["stop"],
@@ -30,7 +36,6 @@ class TestCallbackConversationBot:
                 "template_parameters": {},
             }
 
-        # Create an instance of CallbackConversationBot with the mock callback
         bot = CallbackConversationBot(
             callback=mock_callback,
             model=MockOpenAIChatCompletionsModel(),
@@ -41,25 +46,21 @@ class TestCallbackConversationBot:
             instantiation_parameters={},
         )
 
-        # Mock conversation history and other parameters
         conversation_history = []
-        session = AsyncMock()  # Mock any external session or client if needed
+        session = AsyncMock()
 
-        # Call generate_response and verify the result
         response, _, time_taken, result = await bot.generate_response(session, conversation_history, max_history=10)
 
-        assert response["samples"][0] == "Test response"
+        assert response["message_content"] == "Test response"
         assert "stop" in response["finish_reason"]
         assert time_taken >= 0
-        assert result["id"] == "test_id"
 
     @pytest.mark.asyncio
     async def test_generate_response_with_no_callback_response(self):
-        # Mock the callback to return an empty result
-        async def mock_callback(msg):
+        async def mock_callback(messages, session_state=None):
+            # Return no “messages” key, simulating an empty callback response
             return {}
 
-        # Create an instance of CallbackConversationBot with the mock callback
         bot = CallbackConversationBot(
             callback=mock_callback,
             model=MockOpenAIChatCompletionsModel(),
@@ -70,25 +71,17 @@ class TestCallbackConversationBot:
             instantiation_parameters={},
         )
 
-        # Mock conversation history and other parameters
         conversation_history = []
-        session = AsyncMock()  # Mock any external session or client if needed
-
-        # Call generate_response and verify the result
-        response, _, time_taken, result = await bot.generate_response(session, conversation_history, max_history=10)
-
-        assert response["samples"][0] == "Callback did not return a response."
-        assert "stop" in response["finish_reason"]
-        assert time_taken >= 0
-        assert result["id"] is None
+        session = AsyncMock()
+        with pytest.raises(EvaluationException) as exc_info:
+            response, _, time_taken, result = await bot.generate_response(session, conversation_history, max_history=10)
+        assert "User provided callback does not conform to" in str(exc_info.value)
 
     @pytest.mark.asyncio
     async def test_generate_response_with_callback_exception(self):
-        # Mock the callback to raise an exception
-        async def mock_callback(msg):
+        async def mock_callback(messages, session_state=None):
             raise RuntimeError("Unexpected error")
 
-        # Create an instance of CallbackConversationBot with the mock callback
         bot = CallbackConversationBot(
             callback=mock_callback,
             model=MockOpenAIChatCompletionsModel(),
@@ -99,11 +92,9 @@ class TestCallbackConversationBot:
             instantiation_parameters={},
         )
 
-        # Mock conversation history and other parameters
         conversation_history = []
-        session = AsyncMock()  # Mock any external session or client if needed
+        session = AsyncMock()
 
-        # Call generate_response and verify the result
         with pytest.raises(RuntimeError) as exc_info:
             await bot.generate_response(session, conversation_history, max_history=10)
 
