@@ -108,11 +108,11 @@ additional questions or comments.
 
 <!-- LINKS -->
 [overview]: https://learn.microsoft.com/azure/communication-services/concepts/voice-video-calling/call-automation
-[product_docs]: https://docs.microsoft.com/azure/communication-services/overview
-[azure_cli]: https://docs.microsoft.com/cli/azure
+[product_docs]: https://learn.microsoft.com/azure/communication-services/overview
+[azure_cli]: https://learn.microsoft.com/cli/azure
 [azure_sub]: https://azure.microsoft.com/free/
 [azure_portal]: https://portal.azure.com
-[azure_powershell]: https://docs.microsoft.com/powershell/module/az.communication/new-azcommunicationservice
+[azure_powershell]: https://learn.microsoft.com/powershell/module/az.communication/new-azcommunicationservice
 [build_doc]: https://aka.ms/AzureSDKBundling
 [incomingcall]: https://learn.microsoft.com/azure/communication-services/concepts/voice-video-calling/incoming-call-notification
 [build1]: https://learn.microsoft.com/azure/communication-services/quickstarts/voice-video-calling/callflows-for-customer-interactions?pivots=programming-language-csha
