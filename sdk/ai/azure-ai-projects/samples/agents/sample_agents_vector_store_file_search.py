@@ -22,7 +22,11 @@ USAGE:
 
 import os
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import FileSearchTool, FilePurpose
+from azure.ai.projects.models import (
+    FileSearchTool,
+    FilePurpose,
+    MessageTextContent
+)
 from azure.identity import DefaultAzureCredential
 
 project_client = AIProjectClient.from_connection_string(
@@ -72,7 +76,9 @@ with project_client:
     messages = project_client.agents.list_messages(thread_id=thread.id)
     
     for message in reversed(messages.data):
+        if not isinstance(message.content[0], MessageTextContent):
+            continue
         # To remove characters, which are not correctly handled by print, we will encode the message
         # and then decode it again. 
         clean_message = message.content[0].text.value.encode('ascii', 'ignore').decode('utf-8')
-        print(f"Role: {message.role.value}  Message: {clean_message}")
+        print(f"Role: {message.role}  Message: {clean_message}")
