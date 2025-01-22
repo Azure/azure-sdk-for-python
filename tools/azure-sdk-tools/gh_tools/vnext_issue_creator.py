@@ -107,7 +107,11 @@ def get_labels(package_name: str, service: str) -> list[str]:
             parts = [part for part in line.split("@")[0].split("/") if part.strip()][1:]
             if len(parts) > 2:
                 continue
-            service_directory = parts[0]
+            try:
+                service_directory = parts[0]
+            except IndexError:
+                # it was a single file
+                continue
             try:
                 library = parts[1]
                 if package_name == library:

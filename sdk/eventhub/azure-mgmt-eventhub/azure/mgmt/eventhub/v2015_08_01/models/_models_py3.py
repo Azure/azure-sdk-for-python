@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13,7 +13,6 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from ... import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -667,7 +666,7 @@ class TrackedResource(Resource):
         self.tags = tags
 
 
-class NamespaceResource(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class NamespaceResource(TrackedResource):
     """Single Namespace item in List or Get Operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
