@@ -34,6 +34,13 @@ def questions_file():
     data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
     return os.path.join(data_path, "questions.jsonl")
 
+@pytest.fixture
+def run_from_temp_dir(tmp_path):
+    original_cwd = os.getcwd()
+    os.chdir(tmp_path)
+    yield
+    os.chdir(original_cwd)
+
 
 def answer_evaluator(response):
     return {"length": len(response)}
@@ -211,7 +218,7 @@ class TestEvaluate:
             {"default": {"column_mapping": {"another_question": "${target.query}"}}},
         ],
     )
-    def test_evaluate_another_questions(self, questions_file, evaluation_config):
+    def test_evaluate_another_questions(self, questions_file, evaluation_config, run_from_temp_dir):
         """Test evaluation with target function."""
         from .target_fn import target_fn3
 
