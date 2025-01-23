@@ -7,7 +7,7 @@ CHUNK_SIZE = 1024
 PROCESSES_PER_CORE = 2
 # number of parallel connections to be used for uploads > 64MB and downloads
 # pylint: disable=line-too-long
-# (Azure Storage param: https://docs.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.blobclient?view=azure-python#upload-blob-data--blob-type--blobtype-blockblob---blockblob----length-none--metadata-none----kwargs-)
+# (Azure Storage param: https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.blobclient?view=azure-python#upload-blob-data--blob-type--blobtype-blockblob---blockblob----length-none--metadata-none----kwargs-)
 MAX_CONCURRENCY = 16
 
 ARTIFACT_ORIGIN = "LocalUpload"
@@ -30,7 +30,7 @@ EMPTY_DIRECTORY_ERROR = "Directory {0} is empty. path or local_path must be a no
 FILE_SIZE_WARNING = (
     "Your file exceeds 100 MB. If you experience low speeds, latency, or broken connections, we recommend using "
     "the AzCopyv10 tool for this file transfer.\n\nExample: azcopy copy '{source}' '{destination}' "  # cspell:disable-line
-    "\n\nSee https://docs.microsoft.com/azure/storage/common/storage-use-azcopy-v10 for more information."
+    "\n\nSee https://learn.microsoft.com/azure/storage/common/storage-use-azcopy-v10 for more information."
 )
 INVALID_MLTABLE_METADATA_SCHEMA_MSG = "Invalid MLTable metadata schema"
 INVALID_MLTABLE_METADATA_SCHEMA_ERROR = (
@@ -54,7 +54,7 @@ SAS_KEY_AUTHENTICATION_ERROR_MSG = (
     "{0}\n{1}\n"
     "This SAS token is derived from an account key, but key-based authentication is not permitted "
     "for this storage account. To update workspace properties, please see the documentation: "
-    "https://review.learn.microsoft.com/en-us/azure/machine-learning/how-to-disable-local-auth-storage?view="
+    "https://review.learn.microsoft.com/azure/machine-learning/how-to-disable-local-auth-storage?view="
     "azureml-api-2&branch=pr-en-us-278974&tabs=cli#update-an-existing-workspace"
 )
 KEY_AUTHENTICATION_ERROR_CODE = "KeyBasedAuthenticationNotPermitted"
