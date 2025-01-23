@@ -119,17 +119,15 @@ def load_client(
     on the given endpoint, to determine the model type and therefore which client to instantiate.
     This method will only work when using Serverless API or Managed Compute endpoint.
     It will not work for GitHub Models endpoint or Azure OpenAI endpoint.
+    Keyword arguments are passed through to the client constructor (you can set keywords such as
+    `api_version`, `user_agent`, `logging_enable` etc. on the client constructor).
 
-    :param endpoint: Service host. Required.
+    :param endpoint: Service endpoint URL for AI model inference. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2024-05-01-preview". Note that overriding this default value may result in unsupported
-     behavior.
-    :paramtype api_version: str
     :return: The appropriate synchronous client associated with the given endpoint
     :rtype: ~azure.ai.inference.ChatCompletionsClient or ~azure.ai.inference.EmbeddingsClient
      or ~azure.ai.inference.ImageEmbeddingsClient
@@ -196,7 +194,7 @@ def load_client(
 class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=too-many-instance-attributes
     """ChatCompletionsClient.
 
-    :param endpoint: Service host. Required.
+    :param endpoint: Service endpoint URL for AI model inference. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
@@ -280,8 +278,31 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         self,
         endpoint: str,
         credential: Union[AzureKeyCredential, "TokenCredential"],
-        **kwargs: Any,
     ) -> None: ...
+
+    @overload
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "TokenCredential"],
+        *,
+        frequency_penalty: Optional[float] = None,
+        presence_penalty: Optional[float] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        max_tokens: Optional[int] = None,
+        response_format: Optional[Union[Literal["text", "json_object"], _models.JsonSchemaFormat]] = None,
+        stop: Optional[List[str]] = None,
+        tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
+        tool_choice: Optional[
+            Union[str, _models.ChatCompletionsToolChoicePreset, _models.ChatCompletionsNamedToolChoice]
+        ] = None,
+        seed: Optional[int] = None,
+        model: Optional[str] = None,
+        model_extras: Optional[Dict[str, Any]] = None,
+        **kwargs: Any,
+    ) -> None:
+        ...
 
     def __init__(
         self,
@@ -767,7 +788,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
 class EmbeddingsClient(EmbeddingsClientGenerated):
     """EmbeddingsClient.
 
-    :param endpoint: Service host. Required.
+    :param endpoint: Service endpoint URL for AI model inference. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
@@ -802,6 +823,19 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         self,
         endpoint: str,
         credential: Union[AzureKeyCredential, "TokenCredential"],
+    ) -> None: ...
+
+    @overload
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "TokenCredential"],
+        *,
+        dimensions: Optional[int] = None,
+        encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
+        input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
+        model: Optional[str] = None,
+        model_extras: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
     ) -> None: ...
 
@@ -1071,7 +1105,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
 class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
     """ImageEmbeddingsClient.
 
-    :param endpoint: Service host. Required.
+    :param endpoint: Service endpoint URL for AI model inference. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
@@ -1106,6 +1140,19 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         self,
         endpoint: str,
         credential: Union[AzureKeyCredential, "TokenCredential"],
+    ) -> None: ...
+
+    @overload
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "TokenCredential"],
+        *,
+        dimensions: Optional[int] = None,
+        encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
+        input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
+        model: Optional[str] = None,
+        model_extras: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
     ) -> None: ...
 
