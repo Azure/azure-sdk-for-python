@@ -62,7 +62,7 @@ def change_log_generate(
         else:
             last_version[-1] = str(last_release)
     except:
-        return "### Other Changes\n\n  - Initial version"
+        return ("### Other Changes\n\n  - Initial version", last_version)
 
     # try new changelog tool
     if prefolder and not is_multiapi:
