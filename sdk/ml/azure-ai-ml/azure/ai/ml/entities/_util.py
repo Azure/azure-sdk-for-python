@@ -213,7 +213,7 @@ def decorate_validation_error(schema: Any, pretty_error: str, additional_message
     additional_message += (
         "\nThe easiest way to author a specification file is using IntelliSense and auto-completion Azure ML VS "
         "code extension provides: https://code.visualstudio.com/docs/datascience/azure-machine-learning. "
-        "To set up: https://docs.microsoft.com/azure/machine-learning/how-to-setup-vs-code"
+        "To set up: https://learn.microsoft.com/azure/machine-learning/how-to-setup-vs-code"
     )
     return f"Validation for {schema.__name__} failed:\n\n {pretty_error} \n\n {additional_message}"
 

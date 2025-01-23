@@ -303,7 +303,7 @@ def _get_clouds_by_metadata_url(metadata_url: str) -> Dict[str, Dict[str, str]]:
             "SDK requires outbound access to Azure Resource Manager. Please contact your networking team "
             "to configure outbound access to Azure Resource Manager on both Network Security Group and "
             "Firewall. For more details on required configurations, see "
-            "https://docs.microsoft.com/azure/machine-learning/how-to-access-azureml-behind-firewall.",
+            "https://learn.microsoft.com/azure/machine-learning/how-to-access-azureml-behind-firewall.",
             metadata_url,
             ex,
         )
